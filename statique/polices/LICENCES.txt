@@ -1,0 +1,5 @@
+Polices hébergées sur le site, toutes sous licence SIL Open Font License 1.1 (libres, usage commercial permis) :
+- Fraunces (Undercase Type), titres
+- Atkinson Hyperlegible (Braille Institute of America), texte
+- Caveat (Impallari Type), notes manuscrites
+Fichiers WOFF2 issus des paquets @fontsource (npm), sous-ensemble « latin ».

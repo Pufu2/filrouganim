@@ -4,9 +4,9 @@
 <div class="cadre">
   <h1>Les guides du BAFA</h1>
   <p class="chapo">Des réponses courtes et vérifiées, avec leurs sources officielles.</p>
-  <ul class="cartes-guides">
-    {% for g in site.guides %}<li><a href="{{ lien(g.url) }}"><b>{{ g.court }}</b><span>{{ g.resume }}</span></a></li>{% endfor %}
-  </ul>
+  <ol class="guides-liste">
+    {% for g in site.guides %}<li><a href="{{ lien(g.url) }}">{{ g.court }}</a><span>{{ g.resume }}</span></li>{% endfor %}
+  </ol>
   {{ m.encart_jeuphorie(site) }}
 </div>
 {% endblock %}

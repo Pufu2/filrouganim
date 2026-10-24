@@ -16,6 +16,8 @@
 <meta name="theme-color" content="#c8102e">
 {% if site.google_site_verification %}<meta name="google-site-verification" content="{{ site.google_site_verification }}">{% endif %}
 <link rel="icon" href="{{ statique('favicon.svg') }}" type="image/svg+xml">
+<link rel="preload" href="{{ statique('polices/atkinson-hyperlegible-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ statique('polices/fraunces-latin-600-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ statique('css/site.css') }}">
 {% if fil_jsonld %}<script type="application/ld+json">{{ fil_jsonld | safe }}</script>{% endif %}
 {% block schema %}{% endblock %}
@@ -29,10 +31,8 @@
       <span class="logo-nom">Fil Roug'<b>Anim</b></span>
     </a>
     <nav class="menu" aria-label="Menu principal">
-      <a href="{{ lien('/') }}#sessions">Sessions</a>
-      <a href="{{ lien('/bafa/') }}">Par département</a>
-      <a href="{{ lien('/guides/') }}">Guides</a>
-      <a href="{{ lien('/organismes/') }}">Organismes</a>
+      <a href="{{ lien('/') }}#sessions">Les sessions</a>
+      <a href="{{ lien('/guides/') }}">Les guides</a>
     </nav>
   </div>
 </header>
@@ -52,6 +52,12 @@
       <p>{{ site.accroche }}. Un comparateur gratuit et indépendant des sessions BAFA et BAFD, sans compte et sans publicité.</p>
       <p class="petit">Les informations viennent des pages publiques des organismes : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
     </div>
+    <nav aria-label="Chercher">
+      <p class="pied-titre">Chercher</p>
+      <a href="{{ lien('/bafa/') }}">Par département et par vacances</a>
+      <a href="{{ lien('/organismes/') }}">Par organisme</a>
+      <a href="{{ lien('/bafd/') }}">Le BAFD</a>
+    </nav>
     <nav aria-label="Pages utiles">
       <p class="pied-titre">Le site</p>
       <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>

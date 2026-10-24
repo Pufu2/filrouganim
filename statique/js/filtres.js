@@ -6,7 +6,6 @@
   var cartes = Array.prototype.slice.call(document.querySelectorAll(".session"));
   var compte = document.getElementById("compte");
   var aucune = document.getElementById("aucune");
-  form.hidden = false;
 
   // Les filtres choisis sont gardés dans l'adresse (ex. ?dep=93&periode=hiver-2027) : on peut partager le lien.
   var params = new URLSearchParams(location.search);
@@ -42,6 +41,21 @@
     var q = p.toString();
     history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
   }
+  // Dans la phrase « Je cherche… », chaque liste prend la largeur du choix affiché (et pas du plus long).
+  var mesure = document.createElement("span");
+  mesure.style.cssText = "position:absolute;visibility:hidden;white-space:pre";
+  document.body.appendChild(mesure);
+  function ajuster() {
+    Array.prototype.forEach.call(form.querySelectorAll(".phrase > label select"), function (s) {
+      mesure.style.font = getComputedStyle(s).font;
+      mesure.textContent = s.options[s.selectedIndex].text;
+      s.style.width = Math.ceil(mesure.getBoundingClientRect().width + 30) + "px";
+    });
+  }
+  form.addEventListener("change", ajuster);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+  ajuster();
+
   form.addEventListener("input", appliquer);
   form.addEventListener("change", appliquer);
   form.addEventListener("submit", function (e) { e.preventDefault(); });

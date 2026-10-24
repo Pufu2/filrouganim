@@ -8,9 +8,9 @@
   {{ m.encart_jeuphorie(site) }}
   <nav class="bloc" aria-label="Autres guides">
     <h2>Les autres guides</h2>
-    <ul class="cartes-guides">
-      {% for g in site.guides if g.url != page.url %}<li><a href="{{ lien(g.url) }}"><b>{{ g.court }}</b><span>{{ g.resume }}</span></a></li>{% endfor %}
-    </ul>
+    <ol class="guides-liste">
+      {% for g in site.guides if g.url != page.url %}<li><a href="{{ lien(g.url) }}">{{ g.court }}</a><span>{{ g.resume }}</span></li>{% endfor %}
+    </ol>
   </nav>
 </article>
 {% endblock %}

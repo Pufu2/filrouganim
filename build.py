@@ -146,7 +146,8 @@ class Site:
         self.env = Environment(loader=FileSystemLoader(RACINE / "gabarits"),
                                autoescape=select_autoescape(["html", "xml"]),
                                trim_blocks=True, lstrip_blocks=True)
-        self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume)
+        self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
+                                majuscule=lambda t: t[:1].upper() + t[1:] if t else t)
         self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES)
         self.pages = []
 
