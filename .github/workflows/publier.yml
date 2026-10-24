@@ -1,12 +1,14 @@
 name: Publier le site
 
 on:
-  # à chaque modification envoyée sur la branche principale
-  push:
-    branches: [main]
-  # chaque matin à 6 h 15 (heure de Paris en hiver) : les sessions terminées disparaissent
-  schedule:
-    - cron: "15 5 * * *"
+  # Publication pas encore autorisée : seul le bouton « Run workflow » existe.
+  # Le jour de la mise en ligne (docs/PUBLIER.md, étape 2), retirer les « # » ci-dessous :
+  # # à chaque modification envoyée sur la branche principale
+  # push:
+  #   branches: [main]
+  # # chaque matin à 6 h 15 (heure de Paris en hiver) : les sessions terminées disparaissent
+  # schedule:
+  #   - cron: "15 5 * * *"
   # bouton « Run workflow » dans l'onglet Actions
   workflow_dispatch:
 

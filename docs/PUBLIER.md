@@ -15,8 +15,11 @@ Ensuite, Claude y copie le dossier `filrouganim/` du dépôt Jeuphorie, avec son
 
 ## 2. Activer GitHub Pages
 
-Dans le dépôt : Settings → Pages → Source : **GitHub Actions**. La publication part toute seule
-à chaque modification de la branche `main`, et chaque matin.
+Dans le dépôt : Settings → Pages → Source : **GitHub Actions**. Puis, dans
+`.github/workflows/publier.yml`, retirer les « # » devant `push` et `schedule` : la publication
+partira alors toute seule à chaque modification de la branche `main`, et chaque matin.
+Le dépôt doit passer en **Public** (Settings → General → Danger Zone → Change visibility) :
+GitHub Pages gratuit ne publie que les dépôts publics.
 
 ## 3. Relier le domaine filrouganim.fr (OVHcloud)
 
