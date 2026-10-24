@@ -10,7 +10,8 @@ Ce que fait l'outil (voir docs/METTRE-A-JOUR-LES-SESSIONS.md) :
 - AFOCAL : parcourt la liste Île-de-France (formations générales, approfondissements), puis lit
   chaque fiche (dates, lieu, thème, tarif, places) ; IFAC : lit la liste Île-de-France, puis la
   fiche des sessions retenues (tarif) ;
-- garde les sessions des vacances à venir (donnees/territoire.yml) et les sessions BAFD ;
+- garde les sessions des vacances à venir (donnees/territoire.yml) et les sessions BAFD,
+  qui commencent dans 3 jours ou plus ;
 - sélection : par organisme, une session par département, par vacances et par étape (la première
   non complète, par date puis par prix), pour ne pas reprendre l'essentiel de leur base ;
 - n'enregistre que des faits, jamais leurs textes ; aucune donnée personnelle ;
@@ -248,7 +249,8 @@ def main():
     groupes = {}
     for s in candidates:
         s["periode"] = periode(s["debut"])
-        if (s["departement"] not in DEPS_IDF or s["debut"] < aujourdhui
+        # moins de 3 jours avant le début : trop tard pour s'inscrire, inutile de l'afficher
+        if (s["departement"] not in DEPS_IDF or s["debut"] < aujourdhui + dt.timedelta(days=3)
                 or (s["periode"] is None and s["diplome"] != "BAFD")):
             continue
         cle = (s["organisme"], s["departement"], s["periode"], s["diplome"], s["type"])
