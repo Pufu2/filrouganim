@@ -1,0 +1,47 @@
+name: Publier le site
+
+on:
+  # à chaque modification envoyée sur la branche principale
+  push:
+    branches: [main]
+  # chaque matin à 6 h 15 (heure de Paris en hiver) : les sessions terminées disparaissent
+  schedule:
+    - cron: "15 5 * * *"
+  # bouton « Run workflow » dans l'onglet Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  fabriquer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Outils de fabrication
+        run: pip install -r requirements.txt
+      - name: Fabriquer le site
+        run: python3 build.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  publier:
+    needs: fabriquer
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

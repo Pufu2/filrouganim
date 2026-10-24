@@ -1,0 +1,48 @@
+{# Morceaux réutilisés par plusieurs pages #}
+
+{% macro carte_session(s, lien) %}
+<article class="session{% if s.complet %} session-complete{% endif %}"
+  data-dep="{{ s.departement }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}"
+  data-type="{{ s.diplome }}-{{ s.type }}" data-formule="{{ s.formule or '' }}"
+  data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}">
+  <p class="session-etiquettes">
+    <span class="etiquette etiquette-{{ s.type }}">{{ s.diplome }} · {{ s.type_nom }}</span>
+    {% if s.complet %}<span class="etiquette etiquette-complet">Complet</span>{% endif %}
+  </p>
+  <h3 class="session-dates">{{ dates_fr(s.debut, s.fin) | capitalize }}</h3>
+  {% if s.theme %}<p class="session-theme">{{ s.theme }}</p>{% endif %}
+  <dl class="session-faits">
+    <div><dt>Lieu</dt><dd>{{ s.ville }} ({{ s.departement }})</dd></div>
+    <div><dt>Formule</dt><dd>{{ FORMULES.get(s.formule, "À vérifier") }}</dd></div>
+    <div><dt>Prix</dt><dd class="session-prix">{% if s.prix is not none %}{{ s.prix | euros }}{% else %}Non relevé{% endif %}{% if s.prix_note %}<small> {{ s.prix_note }}</small>{% endif %}</dd></div>
+    <div><dt>Organisme</dt><dd>{% if s.org.en_ligne %}<a href="{{ lien('/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</dd></div>
+  </dl>
+  {% if s.aides %}<p class="session-aides">Aides citées par l'organisme : {{ s.aides | join(", ") }}.</p>{% endif %}
+  <a class="bouton bouton-session" href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir chez {{ s.org.nom }}<span class="sr"> (nouvel onglet)</span> ↗</a>
+  <p class="session-verif">
+    {% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}, <strong>pas encore revérifié</strong>{% endif %}.
+    À confirmer auprès de l'organisme.
+  </p>
+</article>
+{% endmacro %}
+
+{% macro liste_sessions(sessions, lien) %}
+<div class="sessions">
+  {% for s in sessions %}{{ carte_session(s, lien) }}{% endfor %}
+</div>
+{% endmacro %}
+
+{% macro encart_jeuphorie(site) %}
+<aside class="encart-jeuphorie">
+  <p>{{ site.jeuphorie.texte }} <a href="{{ site.jeuphorie.url }}" rel="noopener">Voir les jeux de Jeuphorie ↗</a></p>
+</aside>
+{% endmacro %}
+
+{% macro etapes(lien) %}
+<ol class="etapes">
+  <li><span class="etape-noeud" aria-hidden="true"></span><b>Formation générale</b><span>8 jours</span><a href="{{ lien('/bafa/formation-generale/') }}">Les sessions</a></li>
+  <li><span class="etape-noeud" aria-hidden="true"></span><b>Stage pratique</b><span>14 jours minimum</span><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Le trouver</a></li>
+  <li><span class="etape-noeud" aria-hidden="true"></span><b>Approfondissement ou qualification</b><span>6 ou 8 jours</span><a href="{{ lien('/bafa/approfondissement/') }}">Les sessions</a></li>
+  <li><span class="etape-noeud" aria-hidden="true"></span><b>Premier job d'anim</b><span>Bientôt sur le site</span><a href="{{ lien('/guides/etapes-du-bafa/') }}">Les étapes</a></li>
+</ol>
+{% endmacro %}

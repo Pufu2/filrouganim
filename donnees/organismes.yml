@@ -1,0 +1,102 @@
+# Organismes de formation BAFA / BAFD présents sur le site.
+# Référence officielle des habilitations : arrêté du 4 septembre 2026 (JO du 17 sept. 2026),
+# période du 1er janvier 2026 au 31 janvier 2029. Article 1 : habilitations nationales ;
+# article 3 : habilitations régionales.
+# https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054850965
+# Liste officielle consultable : https://bafa-bafd.jeunes.gouv.fr/baf-candidat/app/liste-organisme-formation
+#
+# Champs :
+#   id            identifiant court (utilisé dans sessions.yml et dans l'adresse de la page)
+#   nom           nom affiché
+#   habilitation  nationale | régionale (à confirmer dans l'arrêté avant publication)
+#   site          page d'accueil BAFA de l'organisme
+#   page_sessions page où l'organisme publie ses sessions en Île-de-France (null : à trouver)
+#   prix_en_ligne true si l'organisme affiche ses prix sur ses pages de sessions
+#   en_ligne      true : une page est créée sur le site pour cet organisme
+# Le texte de présentation est écrit par nous (jamais copié du site de l'organisme).
+
+organismes:
+  - id: afocal
+    nom: AFOCAL
+    habilitation: nationale
+    site: https://www.afocal.fr/bafa/formation-bafa.html
+    page_sessions: https://www.afocal.fr/bafa/recherche-bafa-ile-de-france-1-5.html
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Association nationale de formation à l'animation. En Île-de-France, elle
+      organise des formations générales, des approfondissements et des sessions
+      BAFD, surtout en externat. Chaque fiche de session affiche le prix et le
+      nombre de places restantes.
+
+  - id: ifac
+    nom: IFAC
+    habilitation: nationale
+    site: https://ifac-formation.fr/formations/bafa-bafd/173
+    page_sessions: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France"
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Institut de formation à l'animation et aux métiers de la petite enfance.
+      En Île-de-France, il propose de nombreuses formations générales pendant
+      les vacances scolaires, à Paris et en banlieue, et des approfondissements
+      à thème. Le prix figure sur la fiche de chaque session.
+
+  - id: ufcv
+    nom: UFCV
+    habilitation: nationale
+    site: https://bafa.ufcv.fr/
+    page_sessions: https://bafa.ufcv.fr/Bafa-Bafd-Ufcv-Ile-de-France
+    prix_en_ligne: true
+    en_ligne: false   # aucune session 2027 relevée pour l'instant
+
+  - id: ligue-idf
+    nom: Ligue de l'enseignement Île-de-France
+    habilitation: nationale
+    site: https://www.laligueidf.org/bafa-bafd/
+    page_sessions: https://www.laligueidf.org/bafa-bafd/
+    prix_en_ligne: true   # brochure annuelle en PDF
+    en_ligne: false
+
+  - id: fscf-idf
+    nom: FSCF Île-de-France
+    habilitation: nationale
+    site: https://www.bafaidf.com/
+    page_sessions: https://www.bafaidf.com/agenda-des-formations
+    prix_en_ligne: true
+    en_ligne: false
+
+  - id: cemea-idf
+    nom: CEMEA Île-de-France
+    habilitation: nationale
+    site: https://cemea-idf.org/formations/bafa/
+    page_sessions: https://cemea-formation.com/bafa/ile-de-france/
+    prix_en_ligne: null
+    en_ligne: false
+
+  - id: planete-sciences
+    nom: Planète Sciences
+    habilitation: nationale
+    site: https://www.planete-sciences.org/animations-formations/formations-53/BAFA
+    page_sessions: null
+    prix_en_ligne: null
+    en_ligne: false
+
+  - id: ucpa
+    nom: UCPA
+    habilitation: nationale
+    site: https://www.ucpa.com/nos-formations-par-secteurs/bafa-bafd
+    page_sessions: null
+    prix_en_ligne: null
+    en_ligne: false
+
+  - id: fsgt-idf
+    nom: FSGT Île-de-France
+    habilitation: à confirmer
+    site: https://idf.fsgt.org/les-bafa/
+    page_sessions: https://idf.fsgt.org/les-bafa/
+    prix_en_ligne: null
+    en_ligne: false
+
+  # À trouver : Francas, Léo Lagrange, Familles Rurales, scoutisme (SGDF, EEDF, EEUdF),
+  # CPCV Île-de-France, et les organismes de l'article 3 de l'arrêté (habilitation régionale).

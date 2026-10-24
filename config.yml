@@ -1,0 +1,39 @@
+# Réglages du site Fil Roug'Anim
+
+nom: Fil Roug'Anim
+accroche: Ne perds pas le fil de ton anim
+description: >-
+  Comparez les sessions BAFA et BAFD en Île-de-France : dates, ville, formule
+  et prix, avec le lien vers chaque organisme. Gratuit, sans inscription.
+
+url: https://filrouganim.fr
+# Domaine acheté chez OVHcloud le 25 octobre 2026. Le fichier CNAME est créé à la fabrication.
+nom_de_domaine: filrouganim.fr
+chemin_de_base: ""
+langue: fr
+
+# Google Search Console : la valeur « content » de la balise meta proposée (à remplir par Pufu2).
+google_site_verification: ""
+# Mesure d'audience sans cookie (GoatCounter) : code du compte, vide = aucune mesure.
+goatcounter: ""
+
+# Adresse de contact affichée sur le site (à créer : par exemple contact@filrouganim.fr).
+email: "[[adresse e-mail de contact]]"
+
+# Lien vers Jeuphorie (encart discret sur les guides et les pages de sessions)
+jeuphorie:
+  url: https://jeuphorie.fr/jeux-gratuits/
+  texte: "Nouvel animateur ? Jeuphorie propose des grands jeux prêts à imprimer, dont 3 offerts, pour ton premier séjour ou ton stage pratique."
+
+# Informations légales (mentions légales). Une seule micro-entreprise pour tous les sites.
+editeur:
+  nom: "[[Prénom NOM]]"
+  statut: "[[Entrepreneur individuel (EI), micro-entreprise : après la déclaration]]"
+  adresse: "[[Adresse postale ou domiciliation]]"
+  siren: "[[Numéro SIREN : après la déclaration]]"
+
+hebergeur:
+  nom: GitHub, Inc.
+  adresse: 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis
+  telephone: "+1 877 448 4820"
+  site: https://github.com

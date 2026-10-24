@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block contenu %}
+<div class="cadre">
+  <h1>Les organismes de formation BAFA et BAFD en Île-de-France</h1>
+  <p class="chapo">Seuls des organismes habilités par l'État peuvent organiser les sessions du BAFA et du BAFD. La liste officielle est fixée par l'<a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054850965" rel="noopener" target="_blank">arrêté du 4 septembre 2026 ↗</a>, pour la période 2026-2029.</p>
+  <ul class="organismes">
+    {% for o in page.organismes %}
+    <li>
+      {% if o.en_ligne %}<a href="{{ lien('/organismes/' ~ o.id ~ '/') }}"><b>{{ o.nom }}</b></a>{% else %}<b>{{ o.nom }}</b>{% endif %}
+      {% set n = toutes_sessions | selectattr("organisme", "equalto", o.id) | list | length %}
+      <span>{% if n %}{{ n }} session{{ 's' if n > 1 }} à venir sur le site{% else %}Sessions pas encore relevées{% endif %}</span>
+      <a class="petit" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site ↗</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="petit">Un organisme manque ou une information est fausse ? Écrivez à {{ site.email }} : la liste est revérifiée chaque semaine.</p>
+</div>
+{% endblock %}

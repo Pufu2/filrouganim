@@ -1,0 +1,322 @@
+# Sessions BAFA / BAFD en Île-de-France.
+# Faits seulement (dates, lieu, formule, prix) et lien vers la page de l'organisme :
+# jamais les textes des organismes. Voir docs/METTRE-A-JOUR-LES-SESSIONS.md.
+#
+# Champs :
+#   id           identifiant unique et stable
+#   organisme    id dans organismes.yml
+#   diplome      BAFA | BAFD
+#   type         formation-generale | approfondissement | qualification | perfectionnement
+#   theme        thème de l'approfondissement ou de la qualification (null sinon)
+#   debut, fin   AAAA-MM-JJ (la période de vacances est calculée toute seule)
+#   ville        commune (et arrondissement à Paris si connu)
+#   departement  "75", "77"…
+#   formule      internat | demi-pension | externat | null (pas encore relevée)
+#   prix         en euros, tel qu'affiché par l'organisme ; null si non relevé
+#   prix_note    précision éventuelle sur le prix
+#   aides        aides mentionnées par l'organisme sur la page de la session
+#   complet      true si l'organisme indique « complet »
+#   url          page de la session chez l'organisme (ou sa liste de sessions)
+#   releve_le    date du relevé
+#   verifie_le   date de la dernière vérification sur la page de l'organisme (null : pas encore)
+#   source       page-organisme | moteur-de-recherche (relevé indirect, à revérifier)
+#
+# Relevé du 25 octobre 2026 : fait à partir des pages des organismes telles qu'elles
+# apparaissent dans un moteur de recherche (le réseau de l'espace de travail ne joignait
+# pas les sites). Tout est donc « à revérifier » avant la mise en ligne.
+
+sessions:
+  # ---------------------------------------------------------------- AFOCAL
+  - id: afocal-0627006a
+    organisme: afocal
+    diplome: BAFA
+    type: formation-generale
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: Chelles
+    departement: "77"
+    formule: externat
+    prix: 435
+    prix_note: null
+    aides: [aides possibles pour les habitants d'Île-de-France]
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627006a.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-0627017a
+    organisme: afocal
+    diplome: BAFA
+    type: formation-generale
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: Vigneux-sur-Seine
+    departement: "91"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627017a.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-2027-02-paris-fg
+    organisme: afocal
+    diplome: BAFA
+    type: formation-generale
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: Paris
+    departement: "75"
+    formule: null
+    prix: null
+    prix_note: "399 € ou 435 € selon la session (à vérifier)"
+    aides: []
+    complet: false
+    url: https://www.afocal.fr/bafa/recherche-bafa-ile-de-france-1-5.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-2027-02-franconville-appro
+    organisme: afocal
+    diplome: BAFA
+    type: approfondissement
+    theme: Jeux collectifs et jeux sportifs
+    debut: 2027-02-06
+    fin: 2027-02-11
+    ville: Franconville
+    departement: "95"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: https://iledefrance.afocal.fr/bafa-bafd/
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-2027-02-paris-appro-musique
+    organisme: afocal
+    diplome: BAFA
+    type: approfondissement
+    theme: Activités sonores et musicales
+    debut: 2027-02-08
+    fin: 2027-02-13
+    ville: Paris
+    departement: "75"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: https://iledefrance.afocal.fr/bafa-bafd/
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-0627212a
+    organisme: afocal
+    diplome: BAFA
+    type: approfondissement
+    theme: Handicap
+    debut: 2027-04-12
+    fin: 2027-04-17
+    ville: Meaux
+    departement: "77"
+    formule: externat
+    prix: 340
+    prix_note: null
+    aides: []
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627212a.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-0627211a
+    organisme: afocal
+    diplome: BAFA
+    type: approfondissement
+    theme: Activités manuelles et petite enfance
+    debut: 2027-04-12
+    fin: 2027-04-17
+    ville: Chelles
+    departement: "77"
+    formule: externat
+    prix: 340
+    prix_note: null
+    aides: []
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627211a.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-0627203
+    organisme: afocal
+    diplome: BAFA
+    type: approfondissement
+    theme: null
+    debut: 2026-12-28
+    fin: 2027-01-03
+    ville: Paris
+    departement: "75"
+    formule: externat
+    prix: 360
+    prix_note: "thème à confirmer auprès de l'organisme"
+    aides: [aides possibles pour les habitants d'Île-de-France]
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627203.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  - id: afocal-0627401
+    organisme: afocal
+    diplome: BAFD
+    type: formation-generale
+    theme: null
+    debut: 2027-01-23
+    fin: null
+    ville: Paris
+    departement: "75"
+    formule: externat
+    prix: 520
+    prix_note: "date de fin à confirmer"
+    aides: []
+    complet: false
+    url: https://www.afocal.fr/bafa/stage-bafa-0627401.html
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+
+  # ---------------------------------------------------------------- IFAC
+  # Formations générales du 6 au 13 février 2027 (liste Île-de-France de l'IFAC)
+  - &ifac_fg_fevrier
+    id: ifac-2027-02-06-paris-7
+    organisme: ifac
+    diplome: BAFA
+    type: formation-generale
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: Paris 7e
+    departement: "75"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France"
+    releve_le: 2026-10-25
+    verifie_le: null
+    source: moteur-de-recherche
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-draveil
+    ville: Draveil
+    departement: "91"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-chennevieres
+    ville: Chennevières-sur-Marne
+    departement: "94"
+    complet: true
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-sucy
+    ville: Sucy-en-Brie
+    departement: "94"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-beauchamp
+    ville: Beauchamp
+    departement: "95"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-enghien
+    ville: Enghien-les-Bains
+    departement: "95"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-garges
+    ville: Garges-lès-Gonesse
+    departement: "95"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-06-versailles
+    ville: Versailles
+    departement: "78"
+
+  # Formations générales du 14 au 21 février 2027
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-14-paris-15
+    debut: 2027-02-14
+    fin: 2027-02-21
+    ville: Paris 15e
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-14-paris-11
+    debut: 2027-02-14
+    fin: 2027-02-21
+    ville: Paris 11e
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-14-savigny
+    debut: 2027-02-14
+    fin: 2027-02-21
+    ville: Savigny-sur-Orge
+    departement: "91"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-14-clichy
+    debut: 2027-02-14
+    fin: 2027-02-21
+    ville: Clichy
+    departement: "92"
+
+  # Formations générales à Paris pendant les vacances de printemps 2027
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-04-03-paris
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: Paris
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-04-11-paris
+    debut: 2027-04-11
+    fin: 2027-04-18
+    ville: Paris
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"
+
+  # Approfondissements à Paris
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-02-15-paris-19-appro
+    type: approfondissement
+    theme: Activités manuelles, activités de récupération
+    debut: 2027-02-15
+    fin: 2027-02-20
+    ville: Paris 19e
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-04-05-paris-7-ados
+    type: approfondissement
+    theme: Animer les accueils et séjours des préados et ados
+    debut: 2027-04-05
+    fin: 2027-04-10
+    ville: Paris 7e
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-04-05-paris-7-jeux
+    type: approfondissement
+    theme: Création de jeux et animation de nouvelles activités
+    debut: 2027-04-05
+    fin: 2027-04-10
+    ville: Paris 7e
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"
+  - <<: *ifac_fg_fevrier
+    id: ifac-2027-04-12-paris-12-handicap
+    type: approfondissement
+    theme: Accueil d'enfant en situation de handicap
+    debut: 2027-04-12
+    fin: 2027-04-17
+    ville: Paris 12e
+    url: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France/Paris/Paris"

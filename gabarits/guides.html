@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block contenu %}
+<div class="cadre">
+  <h1>Les guides du BAFA</h1>
+  <p class="chapo">Des réponses courtes et vérifiées, avec leurs sources officielles.</p>
+  <ul class="cartes-guides">
+    {% for g in site.guides %}<li><a href="{{ lien(g.url) }}"><b>{{ g.court }}</b><span>{{ g.resume }}</span></a></li>{% endfor %}
+  </ul>
+  {{ m.encart_jeuphorie(site) }}
+</div>
+{% endblock %}

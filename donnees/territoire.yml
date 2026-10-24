@@ -1,0 +1,26 @@
+# Départements et périodes de vacances utilisés pour fabriquer les pages.
+
+departements:
+  - {code: "75", nom: Paris, slug: paris, a: "à Paris", de: "de Paris"}
+  - {code: "77", nom: Seine-et-Marne, slug: seine-et-marne, a: "en Seine-et-Marne", de: "de Seine-et-Marne"}
+  - {code: "78", nom: Yvelines, slug: yvelines, a: "dans les Yvelines", de: "des Yvelines"}
+  - {code: "91", nom: Essonne, slug: essonne, a: "en Essonne", de: "de l'Essonne"}
+  - {code: "92", nom: Hauts-de-Seine, slug: hauts-de-seine, a: "dans les Hauts-de-Seine", de: "des Hauts-de-Seine"}
+  - {code: "93", nom: Seine-Saint-Denis, slug: seine-saint-denis, a: "en Seine-Saint-Denis", de: "de Seine-Saint-Denis"}
+  - {code: "94", nom: Val-de-Marne, slug: val-de-marne, a: "dans le Val-de-Marne", de: "du Val-de-Marne"}
+  - {code: "95", nom: Val-d'Oise, slug: val-d-oise, a: "dans le Val-d'Oise", de: "du Val-d'Oise"}
+
+# Vacances scolaires de la zone C (Paris, Créteil, Versailles), année 2026-2027.
+# Source : arrêté du 22 octobre 2025 (calendrier scolaire), dates reprises par Service-Public
+# et l'Onisep : https://www.onisep.fr/vacances-scolaires-2026-2027
+# Une session est rattachée à la période qui contient sa date de début.
+periodes:
+  - {id: toussaint-2026, nom: "vacances de la Toussaint 2026", court: "Toussaint 2026", slug: vacances-toussaint-2026, debut: 2026-10-17, fin: 2026-11-02}
+  - {id: noel-2026, nom: "vacances de Noël 2026", court: "Noël 2026", slug: vacances-noel-2026, debut: 2026-12-19, fin: 2027-01-04}
+  - {id: hiver-2027, nom: "vacances d'hiver 2027", court: "Hiver 2027", slug: vacances-hiver-2027, debut: 2027-02-06, fin: 2027-02-22}
+  - {id: printemps-2027, nom: "vacances de printemps 2027", court: "Printemps 2027", slug: vacances-printemps-2027, debut: 2027-04-03, fin: 2027-04-19}
+
+types:
+  - {id: formation-generale, diplome: BAFA, nom: "Formation générale", slug: formation-generale, etape: 1}
+  - {id: approfondissement, diplome: BAFA, nom: "Approfondissement", slug: approfondissement, etape: 3}
+  - {id: qualification, diplome: BAFA, nom: "Qualification", slug: qualification, etape: 3}

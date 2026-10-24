@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block contenu %}
+<section class="une">
+  <div class="cadre">
+    <p class="surtitre">{{ site.accroche }}</p>
+    <h1>Toutes les sessions BAFA d'Île-de-France, avec leurs dates et leurs prix</h1>
+    <p class="chapo">Formation générale, approfondissement, BAFD : comparez les sessions des organismes au même endroit, puis inscrivez-vous directement chez eux. Gratuit, sans compte.</p>
+    {{ m.etapes(lien) }}
+  </div>
+</section>
+
+<section class="cadre" id="sessions" aria-labelledby="titre-sessions">
+  <h2 id="titre-sessions">Les prochaines sessions</h2>
+  <form class="filtres" id="filtres" aria-label="Filtrer les sessions" hidden>
+    <label>Département
+      <select name="dep"><option value="">Toute l'Île-de-France</option>
+        {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
+      </select></label>
+    <label>Vacances
+      <select name="periode"><option value="">Toutes les dates</option>
+        {% for p in periodes if p.fin >= aujourdhui %}<option value="{{ p.id }}">{{ p.court }}</option>{% endfor %}
+        <option value="autre">Hors vacances scolaires</option>
+      </select></label>
+    <label>Étape
+      <select name="type"><option value="">Toutes</option>
+        <option value="BAFA-formation-generale">BAFA · Formation générale</option>
+        <option value="BAFA-approfondissement">BAFA · Approfondissement</option>
+        <option value="BAFA-qualification">BAFA · Qualification</option>
+        <option value="BAFD-formation-generale">BAFD · Formation générale</option>
+        <option value="BAFD-perfectionnement">BAFD · Perfectionnement</option>
+      </select></label>
+    <label>Formule
+      <select name="formule"><option value="">Toutes</option>
+        <option value="externat">Externat</option><option value="demi-pension">Demi-pension</option><option value="internat">Internat</option>
+      </select></label>
+    <label>Prix maximum (€)
+      <input name="prix" type="number" inputmode="numeric" min="0" step="10" placeholder="ex. 450"></label>
+    <label class="case"><input name="libres" type="checkbox"> Cacher les sessions complètes</label>
+  </form>
+  <p class="compte" id="compte" aria-live="polite">{{ page.sessions | length }} sessions à venir.</p>
+  {{ m.liste_sessions(page.sessions, lien) }}
+  <p class="aucune" id="aucune" hidden>Aucune session ne correspond à ces filtres. Essayez un département voisin ou d'autres vacances.</p>
+  <p class="petit">Les sessions sont classées par date de début, puis par prix. <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>.</p>
+</section>
+
+<section class="cadre bloc" aria-labelledby="titre-dep">
+  <h2 id="titre-dep">Chercher par département</h2>
+  <ul class="pastilles">
+    {% for d in departements %}<li><a href="{{ lien('/bafa/' ~ d.slug ~ '/') }}">BAFA {{ d.nom }} <small>({{ d.code }})</small></a></li>{% endfor %}
+  </ul>
+</section>
+
+<section class="cadre bloc" aria-labelledby="titre-guides">
+  <h2 id="titre-guides">Les guides pour ne pas perdre le fil</h2>
+  <ul class="cartes-guides">
+    {% for g in site.guides %}<li><a href="{{ lien(g.url) }}"><b>{{ g.court }}</b><span>{{ g.resume }}</span></a></li>{% endfor %}
+  </ul>
+  {{ m.encart_jeuphorie(site) }}
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}

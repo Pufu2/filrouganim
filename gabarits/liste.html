@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block contenu %}
+<div class="cadre">
+  <h1>{{ page.h1 or page.titre }}</h1>
+  {% if page.intro %}<p class="chapo">{{ page.intro }}</p>{% endif %}
+
+  {% if page.organisme %}{% set o = page.organisme %}
+  <div class="fiche-organisme">
+    <p>{{ o.presentation }}</p>
+    <ul>
+      <li>Habilitation : {{ o.habilitation }} (arrêté du 4 septembre 2026).</li>
+      <li><a href="{{ o.site }}" rel="noopener nofollow" target="_blank">Le BAFA sur le site de {{ o.nom }} ↗</a></li>
+      {% if o.page_sessions %}<li><a href="{{ o.page_sessions }}" rel="noopener nofollow" target="_blank">Toutes ses sessions en Île-de-France ↗</a></li>{% endif %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if page.type_session %}{% set t = page.type_session %}
+  <div class="texte">
+    {% if t.id == "formation-generale" %}
+    <p>La formation générale est la <strong>première étape</strong> du BAFA : 8 jours pour apprendre les bases (sécurité, rythme de l'enfant, jeux, vie collective). Il faut avoir <strong>16 ans le premier jour</strong> et s'être inscrit au préalable sur le site du ministère. <a href="{{ lien('/guides/etapes-du-bafa/') }}">Toutes les étapes du BAFA</a>.</p>
+    {% elif t.id == "approfondissement" %}
+    <p>L'approfondissement est la <strong>dernière étape</strong> du BAFA : 6 jours sur un thème (petite enfance, jeux, handicap, ados…), après le stage pratique. C'est aussi après cette session qu'on peut demander l'aide de la CAF. <a href="{{ lien('/guides/financer-son-bafa/') }}">Financer son BAFA</a>.</p>
+    {% else %}
+    <p>La qualification remplace l'approfondissement pour la dernière étape : 8 jours pour obtenir une compétence reconnue, comme <strong>surveillant de baignade</strong>. <a href="{{ lien('/guides/etapes-du-bafa/') }}">Toutes les étapes du BAFA</a>.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if page.departement and not page.periode %}
+  <p class="chapo">Les sessions BAFA dont le lieu est {{ page.departement.a }}. Une session peut se suivre dans n'importe quel département, et même dans une autre région : regardez aussi les départements voisins.</p>
+  {% endif %}
+
+  {% if page.sessions %}
+  <p class="compte">{{ page.sessions | length }} session{{ 's' if page.sessions|length > 1 }} à venir, classée{{ 's' if page.sessions|length > 1 }} par date de début puis par prix.</p>
+  {{ m.liste_sessions(page.sessions, lien) }}
+  {% else %}
+  <p class="aucune">Aucune session relevée pour l'instant ici. La liste est revérifiée chaque semaine : en attendant, <a href="{{ lien('/') }}#sessions">voyez toutes les sessions d'Île-de-France</a>.</p>
+  {% endif %}
+
+  {% if page.departement %}
+  <nav class="bloc" aria-label="Autres pages">
+    {% set periodes_dep = page.periodes_dep or [] %}
+    {% if periodes_dep %}
+    <h2>BAFA {{ page.departement.a }} par vacances</h2>
+    <ul class="pastilles">{% for p in periodes_dep %}<li><a href="{{ lien('/bafa/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.court }}</a></li>{% endfor %}</ul>
+    {% endif %}
+    <h2>Les autres départements</h2>
+    <ul class="pastilles">{% for d in departements if d.code != page.departement.code %}<li><a href="{{ lien('/bafa/' ~ d.slug ~ '/') }}">{{ d.nom }}</a></li>{% endfor %}</ul>
+  </nav>
+  {% elif page.periode %}
+  <nav class="bloc" aria-label="Autres pages">
+    <h2>Par département</h2>
+    <ul class="pastilles">{% for d in departements %}<li><a href="{{ lien('/bafa/' ~ d.slug ~ '/') }}">{{ d.nom }}</a></li>{% endfor %}</ul>
+  </nav>
+  {% endif %}
+
+  <section class="bloc">
+    <h2>Avant de vous inscrire</h2>
+    <ul>
+      <li>Inscrivez-vous d'abord sur <a href="https://bafa-bafd.jeunes.gouv.fr/" rel="noopener" target="_blank">le site officiel BAFA-BAFD du ministère ↗</a> : il donne le numéro à transmettre à l'organisme.</li>
+      <li>Vérifiez le prix, la formule et les places sur la page de l'organisme : les informations ci-dessus peuvent avoir changé.</li>
+      <li>Demandez les aides : <a href="{{ lien('/guides/financer-son-bafa/') }}">comment financer son BAFA</a>.</li>
+    </ul>
+  </section>
+  {{ m.encart_jeuphorie(site) }}
+</div>
+{% endblock %}

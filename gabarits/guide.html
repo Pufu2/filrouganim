@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block contenu %}
+<article class="cadre texte">
+  <h1>{{ page.titre }}</h1>
+  <p class="petit">Mis à jour le {{ page.entete.mis_a_jour | date_fr }}. Ce guide résume des règles officielles : en cas de doute, la source citée fait foi.</p>
+  {{ contenu | safe }}
+  {{ m.encart_jeuphorie(site) }}
+  <nav class="bloc" aria-label="Autres guides">
+    <h2>Les autres guides</h2>
+    <ul class="cartes-guides">
+      {% for g in site.guides if g.url != page.url %}<li><a href="{{ lien(g.url) }}"><b>{{ g.court }}</b><span>{{ g.resume }}</span></a></li>{% endfor %}
+    </ul>
+  </nav>
+</article>
+{% endblock %}

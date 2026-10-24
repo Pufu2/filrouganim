@@ -1,0 +1,124 @@
+/* Fil Roug'Anim : un fil rouge sur fond papier, lisible d'abord sur téléphone. */
+:root {
+  --rouge: #c8102e;
+  --rouge-fonce: #9b0c23;
+  --encre: #1f2433;
+  --gris: #5b6172;
+  --papier: #fbf7f1;
+  --blanc: #ffffff;
+  --trait: #e6ddd0;
+  --vert: #1f7a4d;
+  --rayon: 14px;
+  --police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: 1.0625rem/1.6 var(--police); color: var(--encre); background: var(--papier); }
+img, svg { max-width: 100%; }
+a { color: var(--rouge-fonce); text-underline-offset: .15em; }
+a:hover { color: var(--rouge); }
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: clamp(1.7rem, 5vw, 2.6rem); margin: .6em 0 .4em; letter-spacing: -.01em; }
+h2 { font-size: clamp(1.3rem, 3.6vw, 1.7rem); margin: 1.6em 0 .6em; }
+.cadre { width: min(1100px, 100% - 32px); margin-inline: auto; }
+.texte { max-width: 760px; }
+.chapo { font-size: 1.15rem; color: var(--gris); max-width: 760px; }
+.petit { font-size: .9rem; color: var(--gris); }
+.surtitre { color: var(--rouge); font-weight: 700; margin: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.evitement { position: absolute; left: -999px; }
+.evitement:focus { left: 16px; top: 8px; background: var(--blanc); padding: 8px 12px; z-index: 10; }
+mark.a-completer { background: #fff1a8; padding: 0 .2em; }
+:focus-visible { outline: 3px solid var(--rouge); outline-offset: 2px; }
+
+/* En-tête et logo : le fil part du F */
+.entete { background: var(--blanc); border-bottom: 1px solid var(--trait); }
+.entete-cadre { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; padding: 10px 0; }
+.logo { display: inline-flex; align-items: center; gap: 2px; text-decoration: none; color: var(--encre); }
+.logo-fil { width: 46px; height: 30px; color: var(--rouge); }
+.logo-nom { font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; }
+.logo-nom b, .pied-nom b { color: var(--rouge); }
+.menu { display: flex; flex-wrap: wrap; gap: 4px 18px; font-weight: 600; font-size: .98rem; }
+.menu a { color: var(--encre); text-decoration: none; padding: 6px 0; }
+.menu a:hover { color: var(--rouge); }
+.fil-ariane { font-size: .9rem; color: var(--gris); padding-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.fil-ariane a { color: var(--gris); }
+
+/* La une et les étapes reliées par le fil rouge */
+.une { padding: 8px 0 24px; }
+.etapes { list-style: none; padding: 0; margin: 28px 0 8px; display: grid; gap: 14px; position: relative; }
+.etapes::before { content: ""; position: absolute; left: 13px; top: 14px; bottom: 14px; width: 3px; background: var(--rouge); border-radius: 3px; }
+.etapes li { position: relative; padding: 2px 0 2px 44px; display: flex; flex-direction: column; }
+.etapes b { font-size: 1.05rem; }
+.etapes span:not(.etape-noeud) { color: var(--gris); font-size: .95rem; }
+.etapes a { font-size: .95rem; font-weight: 600; }
+.etape-noeud { position: absolute; left: 4px; top: 4px; width: 21px; height: 21px; border-radius: 50%; background: var(--papier); border: 4px solid var(--rouge); }
+.etapes li:last-child .etape-noeud { background: var(--rouge); }
+@media (min-width: 820px) {
+  .etapes { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .etapes::before { left: 12px; right: 12px; top: 13px; bottom: auto; width: auto; height: 3px; }
+  .etapes li { padding: 40px 8px 0 0; }
+  .etape-noeud { top: 4px; left: 0; }
+}
+
+/* Filtres */
+.filtres { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; background: var(--blanc); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 16px; margin-bottom: 12px; }
+.filtres label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; font-weight: 600; }
+.filtres select, .filtres input[type=number] { font: inherit; font-weight: 400; padding: 9px 10px; border: 1px solid #c9bfb1; border-radius: 10px; background: var(--blanc); color: var(--encre); width: 100%; }
+.filtres .case { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; }
+.filtres .case input { width: 20px; height: 20px; accent-color: var(--rouge); }
+.compte { font-weight: 600; }
+
+/* Cartes de session */
+.sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 12px 0 20px; }
+.session { background: var(--blanc); border: 1px solid var(--trait); border-left: 5px solid var(--rouge); border-radius: var(--rayon); padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.session[hidden] { display: none; }
+.session-complete { opacity: .7; border-left-color: var(--gris); }
+.session-etiquettes { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.etiquette { font-size: .8rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #fde7ea; color: var(--rouge-fonce); }
+.etiquette-approfondissement, .etiquette-qualification { background: #e8eefc; color: #23439b; }
+.etiquette-complet { background: #ececec; color: #444; }
+.session-dates { margin: 2px 0 0; font-size: 1.15rem; }
+.session-theme { margin: 0; font-weight: 600; color: var(--gris); }
+.session-faits { margin: 4px 0; display: grid; gap: 2px; }
+.session-faits div { display: flex; gap: 8px; }
+.session-faits dt { min-width: 84px; color: var(--gris); font-size: .92rem; }
+.session-faits dd { margin: 0; font-weight: 600; }
+.session-prix small { display: block; font-weight: 400; color: var(--gris); }
+.session-aides { margin: 0; font-size: .9rem; color: var(--vert); }
+.session-verif { margin: 4px 0 0; font-size: .82rem; color: var(--gris); }
+.bouton { display: inline-block; text-align: center; background: var(--rouge); color: var(--blanc); text-decoration: none; font-weight: 700; padding: 11px 16px; border-radius: 999px; margin-top: auto; }
+.bouton:hover { background: var(--rouge-fonce); color: var(--blanc); }
+.aucune { background: var(--blanc); border: 1px dashed #c9bfb1; border-radius: var(--rayon); padding: 16px; }
+
+/* Listes de liens */
+.bloc { margin: 28px 0; }
+.pastilles { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.pastilles a { display: inline-block; padding: 8px 14px; background: var(--blanc); border: 1px solid var(--trait); border-radius: 999px; text-decoration: none; color: var(--encre); font-weight: 600; }
+.pastilles a:hover { border-color: var(--rouge); color: var(--rouge-fonce); }
+.cartes-guides { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.cartes-guides a { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 16px; background: var(--blanc); border: 1px solid var(--trait); border-top: 4px solid var(--rouge); border-radius: var(--rayon); text-decoration: none; color: var(--encre); }
+.cartes-guides span { color: var(--gris); font-size: .95rem; }
+.organismes { list-style: none; padding: 0; display: grid; gap: 10px; }
+.organismes li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; background: var(--blanc); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 12px 16px; }
+.organismes span { color: var(--gris); font-size: .95rem; }
+.fiche-organisme { background: var(--blanc); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 4px 18px; max-width: 760px; }
+
+/* Encart Jeuphorie, discret */
+.encart-jeuphorie { margin: 28px 0; padding: 14px 16px; border-radius: var(--rayon); background: #fff4dc; border: 1px solid #f1dca8; font-size: .95rem; max-width: 760px; }
+.encart-jeuphorie p { margin: 0; }
+
+/* Textes des guides */
+.texte table { border-collapse: collapse; width: 100%; font-size: .95rem; display: block; overflow-x: auto; }
+.texte th, .texte td { border: 1px solid var(--trait); padding: 8px; text-align: left; vertical-align: top; }
+.texte blockquote { margin: 1em 0; padding: 10px 16px; border-left: 4px solid var(--rouge); background: var(--blanc); }
+
+/* Pied de page */
+.pied { margin-top: 48px; background: var(--encre); color: #e9e6f0; padding: 28px 0 36px; }
+.pied a { color: #ffd5dc; }
+.pied .petit { color: #c3c6d2; }
+.pied-cadre { display: grid; gap: 24px; }
+.pied-nom { font-size: 1.3rem; font-weight: 800; margin: 0; }
+.pied-titre { font-weight: 700; margin: 0 0 6px; }
+.pied nav { display: flex; flex-direction: column; gap: 6px; }
+@media (min-width: 820px) { .pied-cadre { grid-template-columns: 2fr 1fr; } }

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="{{ site.langue }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if page.url == "/" %}{{ page.titre }} | {{ site.nom }}{% else %}{{ page.titre }} | {{ site.nom }}{% endif %}</title>
+<meta name="description" content="{{ page.description | resume }}">
+{% if not page.indexer %}<meta name="robots" content="noindex, follow">{% endif %}
+<link rel="canonical" href="{{ url_complete }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.nom }}">
+<meta property="og:title" content="{{ page.titre }}">
+<meta property="og:description" content="{{ page.description | resume }}">
+<meta property="og:url" content="{{ url_complete }}">
+<meta property="og:locale" content="fr_FR">
+<meta name="theme-color" content="#c8102e">
+{% if site.google_site_verification %}<meta name="google-site-verification" content="{{ site.google_site_verification }}">{% endif %}
+<link rel="icon" href="{{ statique('favicon.svg') }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ statique('css/site.css') }}">
+{% if fil_jsonld %}<script type="application/ld+json">{{ fil_jsonld | safe }}</script>{% endif %}
+{% block schema %}{% endblock %}
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="entete">
+  <div class="cadre entete-cadre">
+    <a class="logo" href="{{ lien('/') }}" aria-label="{{ site.nom }}, accueil">
+      <svg class="logo-fil" viewBox="0 0 64 40" aria-hidden="true"><path d="M3 34 C 14 34, 12 8, 24 8 C 34 8, 30 26, 22 24 C 14 22, 24 6, 40 12 S 54 30, 62 20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <span class="logo-nom">Fil Roug'<b>Anim</b></span>
+    </a>
+    <nav class="menu" aria-label="Menu principal">
+      <a href="{{ lien('/') }}#sessions">Sessions</a>
+      <a href="{{ lien('/bafa/') }}">Par département</a>
+      <a href="{{ lien('/guides/') }}">Guides</a>
+      <a href="{{ lien('/organismes/') }}">Organismes</a>
+    </nav>
+  </div>
+</header>
+{% if page.fil %}
+<nav class="cadre fil-ariane" aria-label="Fil d'Ariane">
+  <a href="{{ lien('/') }}">Accueil</a>
+  {% for nom, url in page.fil %}<span aria-hidden="true">›</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+</nav>
+{% endif %}
+<main id="contenu">
+{% block contenu %}{% endblock %}
+</main>
+<footer class="pied">
+  <div class="cadre pied-cadre">
+    <div>
+      <p class="pied-nom">Fil Roug'<b>Anim</b></p>
+      <p>{{ site.accroche }}. Un comparateur gratuit et indépendant des sessions BAFA et BAFD, sans compte et sans publicité.</p>
+      <p class="petit">Les informations viennent des pages publiques des organismes : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
+    </div>
+    <nav aria-label="Pages utiles">
+      <p class="pied-titre">Le site</p>
+      <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>
+      <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>
+      <a href="{{ lien('/confidentialite/') }}">Confidentialité</a>
+      <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a>
+    </nav>
+  </div>
+</footer>
+{% if site.goatcounter and not apercu %}<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
+{% block scripts %}{% endblock %}
+</body>
+</html>
