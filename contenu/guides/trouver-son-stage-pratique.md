@@ -4,7 +4,7 @@ court: Trouver son stage pratique
 resume: "Les règles du stage, où chercher en Île-de-France et comment se présenter."
 description: "Le stage pratique du BAFA : 14 jours au minimum, dans les 18 mois après la formation générale. Où le chercher (mairie, colos, organismes), quand candidater et quoi mettre dans son CV."
 ordre: 3
-mis_a_jour: 2026-10-25
+mis_a_jour: 2026-10-24
 ---
 
 Le stage pratique est la deuxième étape du BAFA, entre la formation générale et l'approfondissement. C'est aussi, souvent, votre premier job d'animateur.

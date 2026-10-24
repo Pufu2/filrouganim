@@ -1,6 +1,6 @@
 # Étape A — Le nom du site (proposition, rien n'est acheté ni publié)
 
-## Décision (25 octobre 2026)
+## Décision (24 octobre 2026)
 
 **Fil Roug'Anim**, domaine **filrouganim.fr** (choisi par Pufu2).
 - Accroche : « Ne perds pas le fil de ton anim ».

@@ -4,7 +4,7 @@ court: Les étapes du BAFA
 resume: "16 ans, 3 étapes, 30 mois au plus : le parcours complet, dans l'ordre."
 description: "Comment passer le BAFA : l'inscription en ligne, la formation générale (8 jours), le stage pratique (14 jours), l'approfondissement ou la qualification, et les délais à respecter."
 ordre: 1
-mis_a_jour: 2026-10-25
+mis_a_jour: 2026-10-24
 ---
 
 Le BAFA (brevet d'aptitude aux fonctions d'animateur) permet d'encadrer des enfants et des ados **de façon occasionnelle** en accueil collectif de mineurs : centre de loisirs, colo, séjour de vacances. C'est la porte d'entrée de l'animation.

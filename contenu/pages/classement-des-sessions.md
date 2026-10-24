@@ -22,7 +22,8 @@ Vous pouvez filtrer la liste par département, vacances, étape, formule et prix
 
 ## Quelles sessions apparaissent
 
-- Les sessions **BAFA et BAFD** des organismes **habilités par l'État**, publiées sur leurs pages publiques, en **Île-de-France** pour commencer.
+- Les sessions **BAFA et BAFD** des organismes **habilités par l'État**, publiées sur leurs pages publiques, en **Île-de-France** pour commencer, pendant les **prochaines vacances scolaires** (et toutes les sessions BAFD).
+- **Une sélection, pas tout le catalogue** : pour chaque organisme, le site montre une session par département, par vacances et par étape. C'est la première qui a encore des places, par date puis par prix. Les autres sessions du même organisme sont sur son site : suivez le lien « Voir la session », puis sa liste de sessions.
 - Une session disparaît automatiquement **une fois terminée**. Une session marquée « complet » par l'organisme reste visible avec cette mention.
 - Le relevé est fait organisme par organisme : **tous les organismes ne sont pas encore présents**. La liste à jour est sur la page [Organismes](/organismes/).
 

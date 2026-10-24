@@ -1,6 +1,6 @@
 # Ce que Fil Roug'Anim fait que les autres ne font pas
 
-Décidé le 25 octobre 2026, après avoir vu que le portail du ministère
+Décidé le 24 octobre 2026, après avoir vu que le portail du ministère
 (bafa-bafd.jeunes.gouv.fr, liste des sessions) et formation-animation.com listent
 déjà des sessions avec leurs dates.
 

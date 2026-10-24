@@ -207,7 +207,7 @@ class Site:
         S = self.sessions
         bafa = [s for s in S if s["diplome"] == "BAFA"]
         self.ajouter("/", "accueil.html",
-                     titre="BAFA en Île-de-France : toutes les sessions, dates et prix",
+                     titre="BAFA en Île-de-France : sessions, dates et prix",
                      description="Comparez les sessions BAFA et BAFD en Île-de-France : dates, ville, formule et prix, organisme par organisme. Gratuit, sans inscription.",
                      sessions=S, schema=self.schema_sessions(S))
 

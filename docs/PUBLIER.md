@@ -1,6 +1,6 @@
 # Mettre Fil Roug'Anim en ligne
 
-**Mise en ligne autorisée par Pufu2 le 25 octobre 2026.**
+**Mise en ligne autorisée par Pufu2 le 24 octobre 2026.**
 Avant la mise en ligne : revérifier toutes les sessions (voir METTRE-A-JOUR-LES-SESSIONS.md) et
 remplir `config.yml` (adresse e-mail ; nom, adresse et SIREN dès la déclaration de la micro-entreprise).
 
@@ -16,7 +16,7 @@ Ensuite, Claude y copie le dossier `filrouganim/` du dépôt Jeuphorie, avec son
 ## 2. Activer GitHub Pages
 
 Dans le dépôt : Settings → Pages → Source : **GitHub Actions**. La publication part toute seule
-à chaque modification de la branche `main`, et chaque matin (déclencheurs activés le 25/10/2026,
+à chaque modification de la branche `main`, et chaque matin (déclencheurs activés le 24/10/2026,
 après l'accord de Pufu2).
 Le dépôt doit passer en **Public** (Settings → General → Danger Zone → Change visibility) :
 GitHub Pages gratuit ne publie que les dépôts publics.

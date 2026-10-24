@@ -4,7 +4,7 @@ court: Financer son BAFA
 resume: "L'aide de 200 € de la CAF, les aides locales, et un exemple de calcul."
 description: "Combien coûte le BAFA et comment le financer : l'aide nationale de 200 € de la CAF sans condition de ressources, le BAFA Populaire à Paris, les aides des communes et des employeurs."
 ordre: 2
-mis_a_jour: 2026-10-25
+mis_a_jour: 2026-10-24
 ---
 
 Le BAFA coûte deux sessions payantes : la formation générale et l'approfondissement (ou la qualification). Le stage pratique, lui, ne coûte rien et il est souvent payé. Plusieurs aides peuvent réduire la facture.

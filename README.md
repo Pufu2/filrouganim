@@ -19,7 +19,7 @@ python3 build.py              # version en ligne (avec sitemap.xml et robots.txt
 
 | Quoi | Où |
 |---|---|
-| Les sessions | `donnees/sessions.yml` (voir `docs/METTRE-A-JOUR-LES-SESSIONS.md`) |
+| Les sessions | `donnees/sessions.yml`, réécrit par `outils/relever.py` (voir `docs/METTRE-A-JOUR-LES-SESSIONS.md`) |
 | Les organismes | `donnees/organismes.yml` |
 | Départements, vacances scolaires | `donnees/territoire.yml` |
 | Les guides | `contenu/guides/*.md` |
