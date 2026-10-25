@@ -55,7 +55,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 /* le logo : la tête du chat (fil rouge) et le titre, dessinés (gabarits/svg/) */
 .logo { gap: 8px; }
 .logo-chat { height: 42px; width: auto; color: var(--fil-clair); flex: none; }
-.logo-titre { height: 30px; width: auto; color: var(--creme); }
+.logo-titre { height: 32px; width: auto; color: var(--creme); }
 .logo-titre .fil { fill: var(--fil-clair); }
 @media (max-width: 380px) { .logo-chat { height: 34px; } .logo-titre { height: 24px; } }
 .menu { display: flex; gap: 6px; font-size: 1rem; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
