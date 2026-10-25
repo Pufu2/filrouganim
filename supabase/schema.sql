@@ -2,6 +2,7 @@
 -- À coller dans Supabase > SQL Editor > New query, puis « Run ». Voir docs/COMPTES-SUPABASE.md.
 -- Peut être relancé sans danger : les tables et les données sont gardées, les règles sont remplacées.
 -- Version 2 du 25/10/2026 : candidatures, favoris, profils et offres plus complets, purge des comptes inactifs.
+-- Version 3 du 26/10/2026 : pages publiques des structures, alertes e-mail des candidats.
 --
 -- Qui voit quoi :
 --   - les offres publiées des structures vérifiées : tout le monde (le site, Google) ;
@@ -93,6 +94,21 @@ alter table public.offres add column if not exists type_accueil text
   check (type_accueil in ('accueil-de-loisirs', 'periscolaire', 'sejour-vacances', 'mini-camp', 'accueil-de-jeunes', 'scoutisme', 'autre'));
 alter table public.offres add column if not exists age_min smallint check (age_min between 2 and 17);
 alter table public.offres add column if not exists age_max smallint check (age_max between 2 and 17 and age_max >= age_min);
+
+-- version 3 : la page publique de chaque structure vérifiée, qu'elle personnalise
+alter table public.structures add column if not exists slug text unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$' and char_length(slug) between 3 and 60);
+alter table public.structures add column if not exists accroche text check (char_length(accroche) <= 140);
+alter table public.structures add column if not exists couleur text not null default 'rouge'
+  check (couleur in ('rouge', 'sauge', 'bleu', 'prune', 'ocre', 'nuit'));
+alter table public.structures add column if not exists publics text[] not null default '{}'
+  check (publics <@ array['3-5', '6-11', '12-14', '15-17', 'handicap', 'familles']);
+alter table public.structures add column if not exists activites text[] not null default '{}'
+  check (cardinality(activites) <= 12 and char_length(array_to_string(activites, ',')) <= 400);
+alter table public.structures add column if not exists lieux text check (char_length(lieux) <= 300);
+alter table public.structures add column if not exists projet text check (char_length(projet) <= 2000);
+alter table public.structures add column if not exists avantages text check (char_length(avantages) <= 800);
+alter table public.structures add column if not exists page_publique boolean not null default true;
+alter table public.profils add column if not exists alertes boolean not null default false;
 
 -- candidatures : un candidat postule avec son profil à une offre en ligne
 create table if not exists public.candidatures (
@@ -193,18 +209,21 @@ grant execute on function public.supprimer_mon_compte() to authenticated;
 
 revoke all on public.structures, public.profils, public.offres, public.candidatures, public.favoris from anon, authenticated;
 
-grant select (id, nom, type, ville, departement, site, presentation) on public.structures to anon;
+grant select (id, nom, type, ville, departement, site, presentation, fondatrice, slug, accroche, couleur, publics, activites,
+              lieux, projet, avantages, page_publique) on public.structures to anon;
 grant select on public.structures to authenticated;
-grant insert (nom, type, ville, departement, identifiant, site, email_contact, presentation) on public.structures to authenticated;
-grant update (nom, type, ville, departement, identifiant, site, email_contact, presentation) on public.structures to authenticated;
+grant insert (nom, type, ville, departement, identifiant, site, email_contact, presentation,
+         slug, accroche, couleur, publics, activites, lieux, projet, avantages, page_publique) on public.structures to authenticated;
+grant update (nom, type, ville, departement, identifiant, site, email_contact, presentation,
+         slug, accroche, couleur, publics, activites, lieux, projet, avantages, page_publique) on public.structures to authenticated;
 grant delete on public.structures to authenticated;
 
 grant select, delete on public.profils to authenticated;
 grant insert (prenom, departement, mobilite, diplomes, recherche, disponibilites, presentation, email_contact, seize_ans, publie,
-         poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin)
+         poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin, alertes)
   on public.profils to authenticated;
 grant update (prenom, departement, mobilite, diplomes, recherche, disponibilites, presentation, email_contact, seize_ans, publie,
-         poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin)
+         poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin, alertes)
   on public.profils to authenticated;
 
 grant select on public.offres to anon, authenticated;

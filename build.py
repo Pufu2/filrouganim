@@ -77,6 +77,23 @@ def paragraphes(texte):
     return "".join("<p>" + html.escape(b).replace("\n", "<br>") + "</p>" for b in blocs)
 
 
+# Libellés partagés avec la page Mon compte (gabarits/compte.html)
+TYPES_STRUCTURE = {"accueil-de-loisirs": "Accueil de loisirs", "sejours": "Organisateur de séjours", "accueil-de-jeunes": "Accueil de jeunes",
+                   "periscolaire": "Accueil périscolaire", "association": "Association", "collectivite": "Collectivité", "autre": "Structure d'animation"}
+PUBLICS = {"3-5": "3-5 ans", "6-11": "6-11 ans", "12-14": "12-14 ans", "15-17": "15-17 ans", "handicap": "Enfants en situation de handicap",
+           "familles": "Familles"}
+DIPLOMES_PROFIL = {"stagiaire-bafa": "Stagiaire BAFA", "bafa": "BAFA", "stagiaire-bafd": "Stagiaire BAFD", "bafd": "BAFD", "psc1": "PSC1",
+                   "surveillant-baignade": "Surveillant de baignade", "cqp-ap": "CQP animateur périscolaire", "cpjeps": "CPJEPS",
+                   "bpjeps": "BPJEPS", "dejeps": "DEJEPS", "desjeps": "DESJEPS", "autre": "Autre diplôme"}
+RECHERCHE = {"stage-pratique": "Stage pratique BAFA", "ete": "Séjours ou centre l'été", "petites-vacances": "Petites vacances",
+             "mercredis": "Mercredis", "periscolaire": "Périscolaire (soirs, midis)", "annee": "Poste à l'année",
+             "direction": "Direction ou adjoint", "alternance": "Alternance (BPJEPS, DEJEPS)"}
+EXPERIENCES = {"petite-enfance": "Moins de 6 ans", "enfants": "6-11 ans", "ados": "Ados", "handicap": "Enfants en situation de handicap",
+               "sejours": "Séjours avec nuitées", "itinerance": "Séjours itinérants, camping", "etranger": "Séjours à l'étranger",
+               "periscolaire": "Périscolaire", "direction": "Direction, adjoint", "baignade": "Surveillance de baignade"}
+CONTRATS = {"cee": "Contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI", "stage-pratique": "Stage pratique BAFA",
+            "apprentissage": "Apprentissage", "benevole": "Bénévolat"}
+
 OUTILS = [("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires pour votre accueil."),
           ("/outils/salaire-cee/", "Contrat d'engagement éducatif", "La rémunération minimale et les 80 jours sur 12 mois."),
           ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement.")]
@@ -176,7 +193,8 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
-        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS,
+        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
+                                PUBLICS=PUBLICS, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
 
@@ -240,43 +258,63 @@ class Site:
         offres.sort(key=lambda o: (o["debut"], o["id"]))
         return offres
 
-    def offres_en_ligne(self):
-        """Offres publiées par les structures vérifiées depuis leur compte (Supabase, lecture publique).
-        Les règles d'accès de la base ne laissent passer que les offres en ligne et non expirées."""
+    def lire_supabase(self, chemin, quoi):
+        """Lecture publique de la base des comptes (Supabase) : seulement ce que les règles d'accès montrent à tous."""
         sb = self.config.get("supabase") or {}
         if not (sb.get("url") and sb.get("cle")):
             return []
-        champs = ("id,intitule,poste,contrat,ville,departement,debut,fin,public,remuneration_montant,"
-                  "remuneration_unite,loge,diplomes,texte,candidater,expire_le,cree_le,structures(nom,type,site)")
-        requete = urllib.request.Request(f"{sb['url']}/rest/v1/offres?select={champs}&order=debut",
+        requete = urllib.request.Request(f"{sb['url']}/rest/v1/{chemin}",
                                          headers={"apikey": sb["cle"], "Authorization": f"Bearer {sb['cle']}"})
         try:
             with urllib.request.urlopen(requete, timeout=30) as r:
-                lignes = json.load(r)
+                return json.load(r)
         except Exception as e:
-            if isinstance(e, urllib.error.HTTPError) and e.code == 404:
-                # les tables ne sont pas encore créées (supabase/schema.sql pas encore lancé)
-                print("Attention : la table des offres n'existe pas encore dans Supabase", file=sys.stderr)
+            if isinstance(e, urllib.error.HTTPError) and e.code in (400, 404):
+                # tables ou colonnes pas encore créées (supabase/schema.sql pas encore relancé)
+                print(f"Attention : {quoi} pas encore lisibles dans Supabase ({e})", file=sys.stderr)
                 return []
             # en ligne (GitHub Actions), mieux vaut ne pas publier que publier un site sans ses offres
             if os.environ.get("CI"):
-                sys.exit(f"Offres des comptes illisibles : {e}")
-            print(f"Attention : offres des comptes non lues ({e})", file=sys.stderr)
+                sys.exit(f"{quoi} illisibles : {e}")
+            print(f"Attention : {quoi} non lues ({e})", file=sys.stderr)
             return []
+
+    def offres_en_ligne(self):
+        """Offres publiées par les structures vérifiées depuis leur compte.
+        Les règles d'accès de la base ne laissent passer que les offres en ligne et non expirées."""
+        champs = ("id,intitule,poste,contrat,ville,departement,debut,fin,public,remuneration_montant,"
+                  "remuneration_unite,loge,diplomes,texte,candidater,expire_le,cree_le,nb_postes,type_accueil,age_min,age_max,"
+                  "structures(nom,type,site,slug,fondatrice,page_publique)")
+        lignes = self.lire_supabase(f"offres?select={champs}&order=debut", "offres des comptes")
+        if lignes == [] and self.config.get("supabase"):
+            # base pas encore en version 3 : lecture avec les colonnes de la version 1
+            ancien = champs.split(",nb_postes")[0] + ",structures(nom,type,site)"
+            lignes = self.lire_supabase(f"offres?select={ancien}&order=debut", "offres des comptes (version 1)")
         offres = []
         for l in lignes:
             st = l.get("structures") or {}
             offres.append({
                 "id": str(l["id"]), "intitule": l["intitule"], "poste": l["poste"], "contrat": l["contrat"],
-                "structure": {"nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site")},
+                "structure": {"nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site"),
+                              "fondatrice": st.get("fondatrice"),
+                              "slug": st.get("slug") if st.get("page_publique") else None},
                 "ville": l["ville"], "departement": l["departement"],
                 "debut": en_date(l["debut"]), "fin": en_date(l.get("fin")), "public": l.get("public"),
                 "remuneration": ({"montant": float(l["remuneration_montant"]), "unite": l.get("remuneration_unite") or "jour",
                                   "brut": True} if l.get("remuneration_montant") else None),
                 "loge": l.get("loge"), "diplomes": [l["diplomes"]] if l.get("diplomes") else [],
+                "nb_postes": l.get("nb_postes") or 1, "type_accueil": l.get("type_accueil"),
+                "age_min": l.get("age_min"), "age_max": l.get("age_max"),
                 "texte": l["texte"], "brut": True, "candidater": l["candidater"],
                 "publiee_le": en_date(l["cree_le"][:10]), "expire_le": en_date(l["expire_le"])})
         return offres
+
+    def structures_en_ligne(self):
+        """Pages publiques des structures vérifiées (les règles d'accès ne montrent que celles-là)."""
+        champs = "nom,type,ville,departement,site,presentation,fondatrice,slug,accroche,couleur,publics,activites,lieux,projet,avantages"
+        lignes = self.lire_supabase(f"structures?select={champs}&page_publique=is.true&slug=not.is.null&order=nom",
+                                    "pages des structures")
+        return [dict(l, exemple=False) for l in lignes if l.get("departement") in self.departements]
 
     def schema_offre(self, o):
         """Données structurées JobPosting (Google pour l'emploi)."""
@@ -478,6 +516,39 @@ class Site:
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
                          fil=[("Trouver un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+        self.ajouter("/trouver-un-poste/offres/", "offres.html", titre="Offres de stages pratiques BAFA et de jobs d'animation",
+                     description="Les offres de stages pratiques BAFA, de jobs d'été et de postes d'animation publiées par les structures vérifiées, avec des filtres par département, contrat, poste et date.",
+                     h1="Les offres d'animation", indexer=bool(self.offres),
+                     mois=sorted({o["debut"].strftime("%Y-%m") for o in self.offres}),
+                     fil=[("Trouver un poste", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
+        # pages publiques des structures vérifiées, et les exemples fictifs
+        TP = ("Trouver un poste", "/trouver-un-poste/")
+        STR = ("Les structures", "/trouver-un-poste/structures/")
+        structures = self.structures_en_ligne()
+        for st in structures:
+            st["offres"] = [o for o in self.offres if o["structure"].get("slug") == st["slug"]]
+            url = f"/trouver-un-poste/structures/{st['slug']}/"
+            self.ajouter(url, "structure.html", titre=f"{st['nom']} : {TYPES_STRUCTURE.get(st['type'], 'structure')} à {st['ville']}",
+                         description=(st.get("accroche") or f"{st['nom']}, {TYPES_STRUCTURE.get(st['type'], 'structure d animation').lower()} à {st['ville']}") + " Ses offres de stages et de jobs d'animation.",
+                         structure=st, fil=[TP, STR, (st["nom"], url)])
+        self.ajouter("/trouver-un-poste/structures/", "structures.html", titre="Les structures d'animation qui recrutent",
+                     description="Les centres de loisirs, organisateurs de séjours et associations d'animation inscrits et vérifiés : leur projet, leurs publics et leurs offres.",
+                     h1="Les structures qui recrutent", structures=structures, indexer=bool(structures), fil=[TP, STR])
+        ex = self.donnees.get("exemples", {})
+        if ex.get("structure"):
+            st = dict(ex["structure"], exemple=True)
+            st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
+            self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
+                         description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
+                         indexer=False, structure=st, fil=[("Recruter", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+        if ex.get("profil"):
+            pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
+                      maj_le=en_date(ex["profil"].get("maj_le")))
+            self.ajouter("/trouver-un-poste/exemple-de-profil/", "exemple-profil.html", titre="Exemple de profil de candidat",
+                         description="À quoi ressemble un profil de candidat sur Fil Roug'Anim, et qui peut le voir : un exemple fictif.",
+                         h1="Un exemple de profil", indexer=False, profil=pr,
+                         intro="Voici ce que voit une structure vérifiée quand elle consulte un profil. Ce profil est fictif.",
+                         fil=[TP, ("Exemple de profil", "/trouver-un-poste/exemple-de-profil/")])
         # outils gratuits (calculs dans le navigateur)
         OT = ("Outils", "/outils/")
         self.ajouter("/outils/", "outils.html", titre="Outils gratuits pour l'animation : encadrement, CEE, BAFA",

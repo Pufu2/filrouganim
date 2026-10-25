@@ -45,6 +45,7 @@
     if (e && (e.status === 429 || /rate limit/i.test(t))) return "Trop de demandes d'un coup : réessayez dans quelques minutes.";
     if (/check constraint/i.test(t)) return "Un champ n'est pas au bon format (adresse e-mail, lien commençant par https://, dates, longueur du texte…).";
     if (/déjà/.test(t)) return t;
+    if (/structures_slug_key|duplicate key/i.test(t)) return "Cette adresse de page est déjà prise : choisissez-en une autre.";
     if (/fetch|network/i.test(t)) return "Connexion au service impossible. Vérifiez votre connexion internet et réessayez.";
     return "Ça n'a pas marché : " + t;
   }
@@ -162,11 +163,19 @@
   });
 
   /* -- structure -- */
-  var CHAMPS_STRUCTURE = ["nom", "type", "ville", "departement", "email_contact", "site", "identifiant", "presentation"];
+  var CHAMPS_STRUCTURE = ["nom", "type", "ville", "departement", "email_contact", "site", "identifiant", "presentation",
+                          "page_publique", "slug", "accroche", "couleur", "publics", "activites", "lieux", "projet", "avantages"];
+  function enSlug(t) {
+    return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  }
   function voirStructure() {
     montrer("v-structure", "v-session");
     var f = $("f-structure");
-    remplir(f, structure || { email_contact: utilisateur.email });
+    remplir(f, structure || { email_contact: utilisateur.email, page_publique: true, couleur: "rouge" });
+    Array.prototype.forEach.call(f.querySelectorAll('[name="couleur"]'), function (r) { r.checked = r.value === ((structure && structure.couleur) || "rouge"); });
+    var voir = $("voir-ma-page");
+    voir.hidden = !(structure && structure.verifiee && structure.slug && structure.page_publique);
+    if (!voir.hidden) voir.href = L.lien_structures + structure.slug + "/";
     $("accord-structure").hidden = !!structure;
     f.accord.required = !structure;
     var st = $("statut-structure");
@@ -194,6 +203,11 @@
   $("f-structure").addEventListener("submit", async function (e) {
     e.preventDefault();
     var form = this, d = lire(form, CHAMPS_STRUCTURE);
+    var coche = form.querySelector('[name="couleur"]:checked');
+    d.couleur = coche ? coche.value : "rouge";
+    d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 12);
+    d.slug = enSlug(d.slug || d.nom);
+    if (d.slug.length < 3) d.slug = null;
     occupe(form, true);
     var r = structure
       ? await sb.from("structures").update(d).eq("id", utilisateur.id).select().single()

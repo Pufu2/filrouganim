@@ -1,0 +1,47 @@
+# Exemples fictifs montrés aux candidats et aux structures : ce n'est ni une vraie structure, ni une vraie personne.
+structure:
+  nom: "L'Atelier des Pelotes"
+  slug: exemple-de-page-structure
+  type: accueil-de-loisirs
+  ville: Créteil
+  departement: "94"
+  couleur: sauge
+  fondatrice: true
+  accroche: "Un centre de loisirs où les enfants choisissent leurs activités, et une équipe qui se forme ensemble."
+  publics: ["3-5", "6-11", handicap]
+  activites: [grands jeux, cuisine, jardin, théâtre, sorties nature, ateliers vélo]
+  lieux: "Accueil de loisirs à Créteil (mercredis et vacances), mini-camps en Seine-et-Marne l'été."
+  presentation: |-
+    Nous accueillons jusqu'à 80 enfants de 3 à 11 ans, les mercredis et pendant les vacances scolaires.
+
+    L'équipe compte une dizaine d'animateurs, dont des stagiaires BAFA que nous accompagnons tout au long de leur stage pratique.
+  projet: |-
+    Laisser les enfants choisir : chaque matin, ils votent pour les activités de l'après-midi.
+
+    Accueillir tout le monde : un animateur référent suit les enfants en situation de handicap, avec leurs familles.
+  avantages: |-
+    Un temps de préparation payé avant chaque période de vacances.
+    Un tuteur pour chaque stagiaire BAFA, et une aide pour financer l'approfondissement.
+    Des réunions d'équipe courtes, chaque semaine.
+  site: null
+  offres:
+    - {intitule: "Animateur·rice stagiaire BAFA, vacances d'hiver", ville: Créteil, departement: "94", debut: 2027-02-08, contrat: cee}
+    - {intitule: "Animateur·rice BAFA, mercredis 2026-2027", ville: Créteil, departement: "94", debut: 2026-11-04, contrat: cdd}
+
+profil:
+  prenom: Camille
+  ville: Vitry-sur-Seine
+  departement: "94"
+  poste_recherche: "Animatrice en séjour l'été, stagiaire BAFA"
+  diplomes: [stagiaire-bafa, psc1]
+  permis_b: false
+  recherche: [stage-pratique, ete]
+  experiences: [enfants, sejours]
+  activites: [grands jeux, chant, bricolage, anglais]
+  mobilite: ["75", "77", france]
+  dispo_debut: 2027-07-06
+  dispo_fin: 2027-08-28
+  disponibilites: "Tout l'été, et les vacances de printemps."
+  presentation: |-
+    J'ai fait ma formation générale BAFA en février. J'ai été bénévole deux ans dans un club de foot pour les 8-10 ans, et j'adore inventer des grands jeux.
+  maj_le: 2026-10-20

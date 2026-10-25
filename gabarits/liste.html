@@ -37,6 +37,20 @@
 </section>
 
 {% if page.departement %}
+{% set offres_dep = offres | selectattr("departement", "equalto", page.departement.code) | list %}
+<section class="bande bande-blanc" aria-labelledby="t-recrutent">
+  <div class="cadre">
+    <p class="note-main">après la formation</p>
+    <h2 id="t-recrutent">{% if offres_dep %}Les structures {{ page.departement.de | default("de " ~ page.departement.nom) }} recrutent{% else %}Ton stage pratique, ensuite{% endif %}</h2>
+    {% if offres_dep %}
+    <div class="sessions">{% for o in offres_dep[:4] %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>
+    <p><a href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ page.departement.code }}">{{ offres_dep | length }} offre{{ 's' if offres_dep | length > 1 }} dans ce département</a></p>
+    {% else %}
+    <p>Après la formation générale, il faut un stage pratique de 14 jours. Crée ton profil gratuit : les structures vérifiées {{ page.departement.de | default("de " ~ page.departement.nom) }} peuvent te trouver et t'écrire.</p>
+    <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
+    {% endif %}
+  </div>
+</section>
 <section class="bande bande-sable">
   <div class="cadre explorer">
     {% if page.periodes_dep %}<div><h3>{{ page.departement.nom }}, par vacances</h3><ul>{% for p in page.periodes_dep %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endfor %}</ul></div>{% endif %}

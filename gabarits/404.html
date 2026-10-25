@@ -1,3 +1,6 @@
 {% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
 {% block h1 %}Page introuvable{% endblock %}
-{% block tete_chapo %}<p class="chapo">Cette page n'existe pas ou plus : une session terminée disparaît du site.</p><p><a class="bouton-r" href="{{ lien('/se-former/sessions/') }}">Voir les sessions à venir <span aria-hidden="true">→</span></a></p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Bobine a dû emmêler le fil : cette page n'existe pas ou plus. Une session terminée ou une offre pourvue disparaît du site.</p>
+<p class="boutons"><a class="bouton-r" href="{{ lien('/') }}">Revenir à l'accueil <span aria-hidden="true">→</span></a> <a class="bouton-blanc" href="{{ lien('/se-former/sessions/') }}">Voir les sessions à venir</a></p>
+{{ m.mascotte("mascotte-petite") }}{% endblock %}

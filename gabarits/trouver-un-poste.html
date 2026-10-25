@@ -24,21 +24,11 @@
     <h2 id="t-offres">{% if offres %}Les offres du moment{% else %}Les offres{% endif %}</h2>
     {% if offres %}
     <div class="sessions">
-    {% for o in offres %}
-      <article class="session offre">
-        <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
-        <div class="s-corps">
-          <h3 class="s-titre"><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
-          <p class="s-infos"><b>{{ o.structure.nom }}</b> · {{ o.ville }} ({{ o.departement }}){% if o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
-          <p class="s-verif">Publiée le {{ o.publiee_le | date_fr }} · jusqu'au {{ o.expire_le | date_fr }}</p>
-        </div>
-        <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>
-        <a class="s-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
-      </article>
-    {% endfor %}
+    {% for o in offres[:6] %}{{ m.carte_offre(o, lien) }}{% endfor %}
     </div>
+    <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>
     {% else %}
-    <p class="aucune">Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes depuis leur compte. Toujours gratuit pour les candidats.</p>
+    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes depuis leur compte. Toujours gratuit pour les candidats.</p></div>
     {% endif %}
   </div>
 </section>
@@ -46,6 +36,7 @@
   <div class="cadre">
     <h2 id="t-conseils">Bien démarrer</h2>
     {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list, page.url, lien) }}
+    <p class="liens-exemples"><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir un exemple de profil</a> · <a href="{{ lien('/trouver-un-poste/structures/') }}">Les structures qui recrutent</a></p>
     <h3>Outils gratuits</h3>
     <ul class="liste-outils">{% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>{% endfor %}</ul>
     {{ m.encart_jeuphorie(site) }}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
 {# Mon compte : tout se passe dans le navigateur (statique/js/compte.js), avec Supabase.
    Les données des personnes ne sont jamais écrites dans la page fabriquée. #}
 {% set DIPLOMES = [("stagiaire-bafa", "Stagiaire BAFA"), ("bafa", "BAFA"), ("stagiaire-bafd", "Stagiaire BAFD"), ("bafd", "BAFD"),
@@ -34,6 +35,7 @@
 
   {# 1. Connexion #}
   <div class="compte-vue carte-compte" id="v-connexion" hidden>
+    {{ m.mascotte("mascotte-petite mascotte-coin") }}
     <h2>Se connecter ou créer son compte</h2>
     <form id="f-connexion" class="formulaire">
       <label class="champ"><span>Votre adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200"></label>
@@ -130,7 +132,24 @@
           <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
           <label class="champ"><span>SIRET, RNA ou n° de déclaration (pour la vérification)</span><input name="identifiant" maxlength="40"></label>
         </div>
-        <label class="champ"><span>Présentation (facultatif)</span><textarea name="presentation" rows="4" maxlength="1000"></textarea></label>
+        <label class="champ"><span>Qui sommes-nous ? (facultatif)</span><textarea name="presentation" rows="4" maxlength="1000"></textarea></label>
+        <fieldset class="page-publique">
+          <legend>Ma page publique</legend>
+          <p class="petit">Une fois la structure vérifiée, elle a sa page sur Fil Roug'Anim, avec ses offres. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}" target="_blank" rel="noopener">Voir un exemple</a> · <a id="voir-ma-page" href="#" target="_blank" rel="noopener" hidden>Voir ma page</a></p>
+          <label class="case-accord"><input type="checkbox" name="page_publique"> Afficher la page de ma structure</label>
+          <div class="champs-2">
+            <label class="champ"><span>Adresse de la page</span><span class="champ-prefixe">filrouganim.fr/trouver-un-poste/structures/<input name="slug" maxlength="60" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="mon-centre-de-loisirs"></span></label>
+            <label class="champ"><span>Accroche (une phrase)</span><input name="accroche" maxlength="140" placeholder="Ex. : Un centre où les enfants choisissent leurs activités"></label>
+          </div>
+          <div class="champ"><span>Couleur de la page</span>
+            <div class="couleurs">{% for c, l in [("rouge", "Rouge"), ("sauge", "Sauge"), ("bleu", "Bleu"), ("prune", "Prune"), ("ocre", "Ocre"), ("nuit", "Nuit")] %}<label class="theme-{{ c }}"><input type="radio" name="couleur" value="{{ c }}"><span>{{ l }}</span></label>{% endfor %}</div>
+          </div>
+          <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
+          <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400" placeholder="Ex. : grands jeux, cuisine, jardin, théâtre"></label>
+          <label class="champ"><span>Où (lieux d'accueil, séjours)</span><input name="lieux" maxlength="300"></label>
+          <label class="champ"><span>Notre projet</span><textarea name="projet" rows="4" maxlength="2000"></textarea></label>
+          <label class="champ"><span>Ce que nous offrons à l'équipe (préparation, tutorat, formation…)</span><textarea name="avantages" rows="3" maxlength="800"></textarea></label>
+        </fieldset>
         <label class="case-accord" id="accord-structure"><input type="checkbox" name="accord" required> J'agis pour cette structure et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
         <button class="bouton-r" type="submit">Enregistrer</button>
       </form>
@@ -193,7 +212,7 @@
 </div>
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
-  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list} | tojson }}</script>
+  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list} | tojson }}</script>
 {% endblock %}
 {% block scripts %}
 <script src="{{ statique('js/supabase-2.117.3.js') }}"></script>

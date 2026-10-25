@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block tete_note %}<p class="note-main">les offres</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Stages pratiques BAFA, jobs d'été, postes à l'année : les offres publiées par les structures vérifiées. La candidature est toujours gratuite.</p>{% endblock %}
+{% block tete_plus %}
+<form class="carte-recherche" id="filtres-offres" role="search" aria-label="Filtrer les offres">
+  <div class="recherche-cases recherche-cases-offres">
+    <label class="case-r case-r-texte"><span class="case-titre">Où ?</span><select name="dep"><option value="">Partout</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+    <label class="case-r case-r-texte"><span class="case-titre">Contrat</span><select name="contrat"><option value="">Tous</option>{% for c, l in CONTRATS.items() %}<option value="{{ c }}">{{ l }}</option>{% endfor %}</select></label>
+    <label class="case-r case-r-texte"><span class="case-titre">Poste</span><select name="poste"><option value="">Tous</option><option value="animateur">Animateur</option><option value="animateur-stagiaire">Stagiaire BAFA</option><option value="directeur-adjoint">Directeur adjoint</option><option value="directeur">Directeur</option><option value="surveillant-baignade">Surveillant de baignade</option><option value="coordinateur">Coordinateur</option></select></label>
+    <label class="case-r case-r-texte"><span class="case-titre">Quand ?</span><select name="mois"><option value="">Toutes les dates</option>{% for mo in page.mois %}<option value="{{ mo }}">{{ mois_nom(mo) | majuscule }}</option>{% endfor %}</select></label>
+  </div>
+</form>
+{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <p class="compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
+    {% if offres %}
+    <div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>
+    {% endif %}
+    <div class="aucune aucune-mascotte" id="aucune-offre"{% if offres %} hidden{% endif %}>{{ m.mascotte("mascotte-vide") }}<p>Aucune offre ne correspond pour l'instant. Avec un <a href="{{ lien('/trouver-un-poste/') }}#inscription">profil gratuit</a>, les structures de ton secteur peuvent te trouver même sans offre publiée.</p></div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>
+(function () {
+  var f = document.getElementById("filtres-offres"), cartes = document.querySelectorAll("#liste-offres-publiques .offre");
+  if (!f) return;
+  var p = new URLSearchParams(location.search);
+  ["dep", "contrat", "poste", "mois"].forEach(function (k) { if (p.get(k)) f[k].value = p.get(k); });
+  function filtrer() {
+    var n = 0, q = new URLSearchParams();
+    ["dep", "contrat", "poste", "mois"].forEach(function (k) { if (f[k].value) q.set(k, f[k].value); });
+    Array.prototype.forEach.call(cartes, function (c) {
+      var ok = (!f.dep.value || c.dataset.dep === f.dep.value) && (!f.contrat.value || c.dataset.contrat === f.contrat.value) &&
+               (!f.poste.value || c.dataset.poste === f.poste.value) && (!f.mois.value || c.dataset.mois === f.mois.value);
+      c.hidden = !ok; if (ok) n++;
+    });
+    document.getElementById("compte-offres").textContent = n + " offre" + (n > 1 ? "s" : "");
+    document.getElementById("aucune-offre").hidden = n > 0;
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
+  }
+  f.addEventListener("change", filtrer);
+  filtrer();
+})();
+</script>{% endblock %}

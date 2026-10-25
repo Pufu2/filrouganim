@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endblock %}
 {% set o = page.offre %}
-{% block tete_note %}<p class="note-main">{{ o.structure.nom }}</p>{% endblock %}
+{% block tete_note %}<p class="note-main">{% if o.structure.slug %}<a class="lien-note" href="{{ lien('/trouver-un-poste/structures/' ~ o.structure.slug ~ '/') }}">{{ o.structure.nom }}</a>{% else %}{{ o.structure.nom }}{% endif %}</p>{% if o.structure.fondatrice %}<ul class="pastilles pastilles-tete"><li class="pastille-fondatrice">Structure fondatrice</li></ul>{% endif %}{% endblock %}
 {% block h1 %}{{ o.intitule }}{% endblock %}
 {% block tete_chapo %}{% endblock %}
 {% block tete_plus %}
@@ -9,7 +9,8 @@
   <li><span>Où</span><b>{{ o.ville }} ({{ o.departement }})</b></li>
   <li><span>Quand</span><b>{% if o.fin %}{{ dates_fr(o.debut, o.fin) | majuscule }}{% else %}À partir du {{ o.debut | date_fr }}{% endif %}</b></li>
   {% if o.remuneration and o.remuneration.montant %}<li><span>Rémunération</span><b>{{ o.remuneration.montant | euros }} {{ 'brut ' if o.remuneration.brut }}par {{ o.remuneration.unite }}</b></li>{% endif %}
-  {% if o.public %}<li><span>Public</span><b>{{ o.public }}</b></li>{% endif %}
+  {% if o.age_min and o.age_max %}<li><span>Enfants</span><b>{{ o.age_min }}-{{ o.age_max }} ans</b></li>{% elif o.public %}<li><span>Public</span><b>{{ o.public }}</b></li>{% endif %}
+  {% if o.nb_postes and o.nb_postes > 1 %}<li><span>Postes</span><b>{{ o.nb_postes }}</b></li>{% endif %}
 </ul>
 <p class="boutons">{% if site.comptes_ouverts and o.brut %}<a class="bouton-r" href="{{ lien('/compte/') }}?postuler={{ o.id }}">Postuler avec mon profil <span aria-hidden="true">→</span></a> {% endif %}<a class="{{ 'bouton-blanc' if site.comptes_ouverts and o.brut else 'bouton-r' }}" href="{{ ('mailto:' ~ o.candidater) if '@' in o.candidater and not o.candidater.startswith('http') else o.candidater }}" rel="noopener nofollow">Candidater auprès de la structure <span aria-hidden="true">→</span></a></p>
 {% endblock %}
@@ -18,7 +19,7 @@
   <article class="cadre texte">
     <p><b>Contrat :</b> {{ {"cee": "contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI", "stage-pratique": "stage pratique BAFA", "apprentissage": "apprentissage", "benevole": "bénévolat"}[o.contrat] }}{% if o.loge %} · logé sur place{% endif %}{% if o.diplomes %} · <b>Diplômes :</b> {{ o.diplomes | join(", ") }}{% endif %}</p>
     {% if o.brut %}{{ o.texte | paragraphes | safe }}{% else %}{{ o.texte | markdown | safe }}{% endif %}
-    <p class="petit">Offre publiée le {{ o.publiee_le | date_fr }} par la structure, sous sa responsabilité, visible jusqu'au {{ o.expire_le | date_fr }}. La candidature est gratuite et se fait directement auprès de la structure. <a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Vos droits avec un contrat d'engagement éducatif</a> · <a href="mailto:{{ site.email }}?subject=Signaler%20l%27offre%20{{ o.id }}">Signaler cette offre</a></p>
+    <p class="petit">Offre publiée le {{ o.publiee_le | date_fr }} par la structure, sous sa responsabilité, visible jusqu'au {{ o.expire_le | date_fr }}. La candidature est gratuite et se fait directement auprès de la structure. <a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Vos droits avec un contrat d'engagement éducatif</a> · <a href="mailto:{{ site.email }}?subject=Signaler%20l%27offre%20{{ o.id }}">Signaler cette offre</a>{% if o.structure.slug %} · <a href="{{ lien('/trouver-un-poste/structures/' ~ o.structure.slug ~ '/') }}">La page de {{ o.structure.nom }}</a>{% endif %}</p>
   </article>
 </section>
 {% endblock %}

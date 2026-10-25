@@ -6,15 +6,13 @@
 {# L'accueil suit le fil : chaque grande partie du site est un nœud sur le fil rouge, avec ses sous-parties #}
 {% block tete %}
 <section class="tete tete-accueil">
-  <div class="cadre">
-    <p class="note-main une-note">{{ site.accroche }}</p>
-    <h1 class="h1-accueil">Toute l'animation, sur un seul fil</h1>
-    <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe : l'animation en Île-de-France, au même endroit. Gratuit pour les jeunes.</p>
-    <nav class="noeuds" aria-label="Les trois parties du site">
-      <a href="#se-former"><span>1</span>Se former</a>
-      <a href="#trouver-un-poste"><span>2</span>Trouver un poste</a>
-      <a href="#recruter"><span>3</span>Recruter</a>
-    </nav>
+  <div class="cadre tete-accueil-cadre">
+    <div>
+      <p class="note-main une-note">{{ site.accroche }}</p>
+      <h1 class="h1-accueil">Toute l'animation, sur un seul fil</h1>
+      <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe : l'animation, au même endroit. Gratuit pour les jeunes.</p>
+    </div>
+    {{ m.mascotte("mascotte-accueil", "Bobine, le chat de Fil Roug'Anim, joue avec la pelote du fil rouge") }}
   </div>
   <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
 </section>
@@ -24,68 +22,37 @@
 <div class="parcours">
   <svg class="parcours-fil" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0 C 50 60, 20 90, 30 160 S 75 250, 68 340 S 25 450, 32 530 S 72 640, 66 720 S 40 840, 50 1000"/></svg>
 
-  <section class="station" id="se-former" aria-labelledby="t-se-former">
-    <div class="station-noeud" aria-hidden="true">1</div>
-    <div class="station-carte">
-      <p class="note-main">se former</p>
-      <h2 id="t-se-former">Trouver sa formation</h2>
-      <p>Le BAFA, le BAFD et les autres formations de l'animation. Les sessions d'Île-de-France avec leurs dates et leurs prix, organisme par organisme.</p>
-      <form class="station-form" action="{{ lien('/se-former/sessions/') }}" method="get">
-        <label class="sr" for="dep-accueil">Département</label>
-        <select id="dep-accueil" name="dep">
-          <option value="">Toute l'Île-de-France</option>
-          {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
-        </select>
-        <button class="bouton-r" type="submit">Voir les sessions <span aria-hidden="true">→</span></button>
-      </form>
-      <p class="station-chiffre"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · vérifiées chaque semaine</p>
-      <ul class="station-liens">
-        <li><a href="{{ lien('/se-former/sessions/') }}">Sessions BAFA et BAFD</a></li>
-        <li><a href="{{ lien('/se-former/bafa/') }}">Le BAFA</a></li>
-        <li><a href="{{ lien('/se-former/bafd/') }}">Le BAFD</a></li>
-        <li><a href="{{ lien('/se-former/psc1/') }}">PSC1</a></li>
-        <li><a href="{{ lien('/se-former/surveillant-de-baignade/') }}">Surveillant de baignade</a></li>
-        <li><a href="{{ lien('/se-former/bpjeps/') }}">BPJEPS et DEJEPS</a></li>
-        <li><a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a></li>
-        <li><a href="{{ lien('/outils/mon-parcours-bafa/') }}">Mes dates limites BAFA</a></li>
-        <li><a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a></li>
-      </ul>
-    </div>
-  </section>
+  <a class="station station-lien" href="{{ lien('/se-former/') }}">
+    <span class="station-noeud" aria-hidden="true">1</span>
+    <span class="station-carte">
+      <span class="note-main">se former</span>
+      <span class="station-titre">Trouver sa formation</span>
+      <span class="station-texte">BAFA, BAFD, PSC1, BPJEPS, DEJEPS : les sessions avec leurs dates et leurs prix, et les guides pour s'y retrouver.</span>
+      <span class="station-chiffre"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes</span>
+      <span class="station-aller">Se former <span aria-hidden="true">→</span></span>
+    </span>
+  </a>
 
-  <section class="station station-droite" id="trouver-un-poste" aria-labelledby="t-animateurs">
-    <div class="station-noeud" aria-hidden="true">2</div>
-    <div class="station-carte">
-      <p class="note-main">trouver un poste</p>
-      <h2 id="t-animateurs">Trouver son stage ou son job</h2>
-      <p>Stage pratique BAFA, job d'été, poste à l'année ou alternance : crée ton profil gratuit, les structures de ton secteur te trouvent. Ton profil n'est jamais public.</p>
-      <p><a class="bouton-r" href="{{ lien('/compte/') ~ '?role=candidat' if site.comptes_ouverts else lien('/trouver-un-poste/') ~ '#inscription' }}">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
-      <p class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</p>
-      <ul class="station-liens">
-        <li><a href="{{ lien('/trouver-un-poste/') }}#inscription">Mon profil</a></li>
-        <li><a href="{{ lien('/trouver-un-poste/') }}#offres">Les offres</a></li>
-        <li><a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a></li>
-        <li><a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Le contrat d'engagement éducatif</a></li>
-        <li><a href="{{ lien('/outils/salaire-cee/') }}">Vérifier mon salaire</a></li>
-      </ul>
-    </div>
-  </section>
+  <a class="station station-droite station-lien" href="{{ lien('/trouver-un-poste/') }}">
+    <span class="station-noeud" aria-hidden="true">2</span>
+    <span class="station-carte">
+      <span class="note-main">trouver un poste</span>
+      <span class="station-titre">Trouver son stage ou son job</span>
+      <span class="station-texte">Stage pratique BAFA, job d'été, poste à l'année, alternance : un profil gratuit, jamais public, et les offres des structures.</span>
+      <span class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</span>
+      <span class="station-aller">Trouver un poste <span aria-hidden="true">→</span></span>
+    </span>
+  </a>
 
-  <section class="station" id="recruter" aria-labelledby="t-recruteurs">
-    <div class="station-noeud station-noeud-plein" aria-hidden="true">3</div>
-    <div class="station-carte station-carte-rouge">
-      <p class="note-main">recruter</p>
-      <h2 id="t-recruteurs">Recruter son équipe d'animation</h2>
-      <p>Centres de loisirs, organisateurs de séjours : publiez vous-même vos offres là où les jeunes cherchent leur BAFA, et consultez les profils des animateurs de votre secteur.</p>
-      <p><a class="bouton-blanc" href="{{ lien('/recruter/') }}">Publier une offre <span aria-hidden="true">→</span></a></p>
-      <p class="station-chiffre"><b>Offre fondateurs</b> : moitié prix à vie{% if restantes > 0 %} · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }} restante{{ 's' if restantes > 1 }}{% endif %}</p>
-      <ul class="station-liens">
-        <li><a href="{{ lien('/recruter/') }}#fondateurs">L'offre fondateurs</a></li>
-        <li><a href="{{ lien('/recruter/') }}#inclus">Ce qui est inclus</a></li>
-        <li><a href="{{ lien('/recruter/') }}#publier">Comment ça marche</a></li>
-        <li><a href="{{ lien('/outils/taux-d-encadrement/') }}">Calculer le taux d'encadrement</a></li>
-      </ul>
-    </div>
-  </section>
+  <a class="station station-lien station-lien-rouge" href="{{ lien('/recruter/') }}">
+    <span class="station-noeud station-noeud-plein" aria-hidden="true">3</span>
+    <span class="station-carte station-carte-rouge">
+      <span class="note-main">recruter</span>
+      <span class="station-titre">Recruter son équipe d'animation</span>
+      <span class="station-texte">Vos offres là où les jeunes cherchent leur BAFA, les profils des animateurs de votre secteur, une page pour votre structure.</span>
+      <span class="station-chiffre"><b>Offre fondateurs</b> : moitié prix à vie{% if restantes > 0 %} · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% endif %}</span>
+      <span class="station-aller">Recruter <span aria-hidden="true">→</span></span>
+    </span>
+  </a>
 </div>
 {% endblock %}
