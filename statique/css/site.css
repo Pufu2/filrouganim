@@ -255,3 +255,36 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .pied nav { display: flex; flex-direction: column; gap: 5px; }
 .pied p { max-width: 520px; }
 @media (min-width: 820px) { .pied-cadre { grid-template-columns: 2fr 1fr 1fr; } }
+
+/* ---------- L'accueil : un panneau d'entrée, trois portes */
+.tete-accueil { text-align: center; }
+.tete-accueil .cadre { padding-bottom: 40px; }
+.h1-accueil { margin: .1em auto .1em; max-width: none; font-size: clamp(2.6rem, 9vw, 4.6rem); }
+.h1-accueil span { color: var(--fil-clair); }
+.devise { margin: 0 0 30px; font-size: clamp(1.1rem, 3.2vw, 1.45rem); color: #fff; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 14px; }
+.devise i { width: 12px; height: 12px; border-radius: 50%; background: var(--fil-clair); display: inline-block; }
+.portail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; text-align: left; }
+@media (max-width: 900px) { .portail { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; } }
+.portail-carte { min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 18px; background: var(--nuit-2); border: 1px solid #4a3d35; }
+.portail-carte h2 { margin: 0; font-size: 1.45rem; color: #fff; }
+.portail-recruteur { background: var(--fil); border-color: var(--fil); }
+.portail-form { display: flex; gap: 10px; }
+.portail-form select { flex: 1; min-width: 0; font: inherit; font-weight: 700; color: var(--encre); background: var(--blanc); border: 0; border-radius: 12px; padding: 12px 34px 12px 14px;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23c4372d' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 12px; }
+.bouton-large { width: 100%; justify-content: space-between; padding: 14px 20px; font-size: 1.05rem; }
+.portail-info { margin: 0; color: #e9ddcd; font-size: .97rem; }
+.portail-info b { color: #fff; }
+.portail-recruteur .portail-info { color: #ffe8e1; }
+.portail-lien { margin-top: auto; display: flex; justify-content: space-between; gap: 10px; padding: 12px 16px; border: 1px solid #5b4b41; border-radius: 12px; color: #fff !important; text-decoration: none; font-weight: 700; }
+.portail-lien:hover { background: rgba(255, 255, 255, .06); }
+.portail-recruteur .portail-lien { border-color: rgba(255, 255, 255, .45); }
+
+/* ---------- Le sommaire de tout le site */
+.sommaire { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.sommaire a { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 16px 18px; background: var(--blanc); border: 1px solid var(--trait); border-radius: 14px; text-decoration: none; color: var(--encre); }
+.sommaire a:hover { border-color: var(--fil); color: var(--encre); }
+.sommaire b { font-family: var(--titres); font-size: 1.2rem; color: var(--fil-fonce); }
+.sommaire span { color: var(--doux); font-size: .95rem; }
+.tete .bouton-blanc, .tete .bouton-blanc:hover { color: var(--fil-fonce); }

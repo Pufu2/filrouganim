@@ -56,19 +56,22 @@ structure (recrutement@…), ou celle d'une personne qui a donné son accord. Le
 (vu sur jobanim.com le 25/10/2026). Faire payer dès le départ face à un concurrent gratuit et
 connu sera difficile.
 
-Proposition :
+Choix de Pufu2 (25/10/2026) : **offre fondateurs**.
 
-1. **Saison de lancement gratuite** (hiver-printemps 2027) : publier gratuitement les offres de
-   stages pratiques et de jobs d'été, pour avoir des offres à montrer et des premières visites
-   depuis Google pour l'emploi.
-2. **Ensuite, un pass simple** :
-   - **pass saison** : publication illimitée pendant une saison (été, ou mercredis et petites vacances) ;
-   - **pass année** : toute l'année, avec la mise en avant de l'offre sur les pages de sessions
-     du même département (là où les futurs stagiaires cherchent leur BAFA : c'est l'argument
-     que Jobanim n'a pas).
-   Prix à fixer après la saison de lancement, au vu du nombre de candidatures que reçoivent les
-   structures.
-3. Paiement : lien de paiement Stripe, comme pour Jeuphorie, **seulement après la déclaration de
+1. **Les premières structures paient moitié prix, à vie** (tant que le service existe), dans la
+   limite d'un nombre de places. Réglage dans `config.yml` : `fondateurs.places` (30 pour l'instant,
+   à confirmer) et `fondateurs.reservees` (à augmenter de 1 à chaque structure qui réserve) ;
+   l'accueil et la page des recruteurs affichent les places restantes.
+2. Réserver sa place est **gratuit et sans engagement** (un e-mail) : rien n'est vendu avant la
+   déclaration de la micro-entreprise. Le prix normal est annoncé avant l'ouverture.
+3. **Un pass simple** : **pass saison** (été, ou mercredis et petites vacances) ou **pass année**,
+   avec la mise en avant de l'offre sur les pages BAFA du même département (là où les futurs
+   stagiaires cherchent leur BAFA : c'est l'argument que Jobanim n'a pas).
+   Prix à fixer avant l'ouverture. Attention : Jobanim est gratuit pour les recruteurs, le prix
+   doit rester bas.
+4. Tenir un fichier simple des structures fondatrices (nom, date de réservation) : la promesse
+   « moitié prix à vie » les engage, il faudra pouvoir la tenir.
+5. Paiement : lien de paiement Stripe, comme pour Jeuphorie, **seulement après la déclaration de
    la micro-entreprise** et la mise à jour des mentions légales et des conditions de vente.
 
 Rappel AAH : chaque euro gagné compte environ pour moitié ; à vérifier avec la CAF au moment de
@@ -76,7 +79,7 @@ la déclaration.
 
 ## Ce qu'il reste à faire, dans l'ordre
 
-1. Décider : saison de lancement gratuite ou non.
+1. Fixer le nombre de places fondateurs (30 ?) et le prix normal des pass.
 2. Faire valider la lecture de l'article L5331-1 (juriste, ou service juridique d'un réseau
    d'éducation populaire).
 3. Écrire aux structures qu'on connaît (centres de loisirs, organisateurs de séjours) pour les

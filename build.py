@@ -286,12 +286,10 @@ class Site:
 
         for q in self.faq:
             q["r_rendu"] = " ".join(self.env.from_string(q["r"]).render(stats=self.stats).split())
-        faq_accueil = [q for q in self.faq if q.get("accueil")]
         self.ajouter("/", "accueil.html",
-                     titre="BAFA, BAFD et métiers de l'animation en Île-de-France",
-                     description="Sessions BAFA et BAFD avec leurs dates et leurs prix, guides vérifiés, formations de l'animation : tout pour passer son BAFA en Île-de-France sans perdre le fil. Gratuit, sans compte.",
-                     prochaines=[s for s in S if not s["complet"]][:5], faq=faq_accueil,
-                     schema=self.schema_faq(faq_accueil))
+                     titre="BAFA, stages et jobs de l'animation en Île-de-France",
+                     description="Se former, trouver un stage, recruter : les sessions BAFA et BAFD avec leurs dates et leurs prix, les offres de stages et de jobs, et des guides vérifiés. Gratuit pour les jeunes, sans compte.",
+                     schema=None)
 
         # ---- rubrique Sessions
         self.ajouter("/sessions/", "sessions.html",

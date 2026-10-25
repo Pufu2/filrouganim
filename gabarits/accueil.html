@@ -1,75 +1,61 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":{{ site.nom | tojson }},"url":{{ (site.url ~ "/") | tojson }},"potentialAction":{"@type":"SearchAction","target":{{ (site.url ~ "/sessions/?q={search_term_string}") | tojson }},"query-input":"required name=search_term_string"}}</script>{% endblock %}
-{% block tete_note %}<p class="note-main une-note">{{ site.accroche }}</p>{% endblock %}
-{% block h1 %}Le BAFA et les métiers de l'animation, sans perdre le fil{% endblock %}
-{% block tete_chapo %}<p class="chapo">Les sessions d'Île-de-France avec leurs dates et leurs prix, des guides vérifiés, et bientôt les stages et les jobs. Gratuit, sans compte.</p>{% endblock %}
-{% block tete_plus %}
-<div class="carte-recherche">
-  <h2 class="carte-recherche-titre">Trouver une session BAFA ou BAFD</h2>
-  {{ m.recherche(lien, departements, periodes, aujourdhui, stats) }}
-</div>
-<ul class="chiffres">
-  <li><b>{{ stats.nb }}</b> sessions à venir</li>
-  <li><b>{{ stats.nb_organismes }}</b> organismes</li>
-  <li><b>{{ stats.nb_deps }}</b> départements</li>
-  {% if stats.verifie_le %}<li>vérifiées le <b>{{ stats.verifie_le | date_fr(False) }}</b></li>{% endif %}
-</ul>
-{% endblock %}
-{% block contenu %}
-<section class="bande bande-papier" aria-labelledby="titre-offre">
+{% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
+{% block schema %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":{{ site.nom | tojson }},"url":{{ (site.url ~ "/") | tojson }},"potentialAction":{"@type":"SearchAction","target":{{ (site.url ~ "/sessions/?q={search_term_string}") | tojson }},"query-input":"required name=search_term_string"}}</script>{% endblock %}
+
+{# L'accueil : une seule bande, trois portes comme sur un panneau d'entrée, puis la liste de tout le site #}
+{% block tete %}
+<section class="tete tete-accueil">
   <div class="cadre">
-    <p class="note-main">tout au même endroit</p>
-    <h2 id="titre-offre">Du premier jour au premier job</h2>
-    <ul class="portes">
-      <li><a href="{{ lien('/sessions/') }}"><span class="porte-chiffre">{{ stats.nb }}</span><b>Sessions BAFA et BAFD</b><span>Dates, lieu, formule et prix, organisme par organisme.</span><span class="porte-lien">Comparer →</span></a></li>
-      <li><a href="{{ lien('/guides/') }}"><span class="porte-chiffre">{{ site.guides | length }}</span><b>Guides vérifiés</b><span>Les étapes, l'aide de 200 € de la CAF, le stage pratique, le contrat.</span><span class="porte-lien">Lire →</span></a></li>
-      <li><a href="{{ lien('/formations/') }}"><span class="porte-chiffre">{{ site.formations | length }}</span><b>Formations de l'animation</b><span>Du BAFA au DEJEPS : âge, durée et niveau de chacune.</span><span class="porte-lien">Découvrir →</span></a></li>
-      <li class="porte-bientot"><a href="{{ lien('/stages-et-jobs/') }}"><span class="porte-chiffre">bientôt</span><b>Stages et jobs</b><span>Les offres des centres de loisirs et des colos. Gratuit pour les candidats.</span><span class="porte-lien">En savoir plus →</span></a></li>
+    <p class="note-main une-note">{{ site.accroche }}</p>
+    <h1 class="h1-accueil">Fil Roug'<span>Anim</span></h1>
+    <p class="devise">Se former <i aria-hidden="true"></i> Trouver un stage <i aria-hidden="true"></i> Recruter</p>
+
+    <div class="portail">
+      <section class="portail-carte" aria-labelledby="p-former">
+        <h2 id="p-former">Tu cherches ton BAFA&nbsp;?</h2>
+        <form class="portail-form" action="{{ lien('/sessions/') }}" method="get">
+          <label class="sr" for="p-dep">Département</label>
+          <select id="p-dep" name="dep">
+            <option value="">Toute l'Île-de-France</option>
+            {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
+          </select>
+          <button class="bouton-r" type="submit">Go <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="portail-info"><b>{{ stats.nb }}</b> sessions BAFA et BAFD, avec leurs dates et leurs prix</p>
+        <a class="portail-lien" href="{{ lien('/formations/') }}">Comprendre le BAFA et les formations <span aria-hidden="true">→</span></a>
+      </section>
+
+      <section class="portail-carte" aria-labelledby="p-stage">
+        <h2 id="p-stage">Tu cherches un stage ou un job&nbsp;?</h2>
+        <a class="bouton-r bouton-large" href="{{ lien('/stages-et-jobs/') }}">{% if offres %}Voir les {{ offres | length }} offres{% else %}Stages et jobs{% endif %} <span aria-hidden="true">→</span></a>
+        <p class="portail-info">{% if offres %}Publiées par les centres de loisirs et les colos.{% else %}Les offres des centres de loisirs et des colos arrivent. Toujours gratuit pour les candidats.{% endif %}</p>
+        <a class="portail-lien" href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Trouver son stage pratique <span aria-hidden="true">→</span></a>
+      </section>
+
+      <section class="portail-carte portail-recruteur" aria-labelledby="p-recruter">
+        <h2 id="p-recruter">Vous recrutez des animateurs&nbsp;?</h2>
+        <a class="bouton-blanc bouton-large" href="{{ lien('/stages-et-jobs/recruteurs/') }}">Publier une offre <span aria-hidden="true">→</span></a>
+        <p class="portail-info"><b>Offre fondateurs</b> : moitié prix à vie pour les {{ site.fondateurs.places }} premières structures. {% if restantes > 0 %}<b>{{ restantes }}</b> place{{ 's' if restantes > 1 }} restante{{ 's' if restantes > 1 }}.{% else %}Toutes les places sont prises.{% endif %}</p>
+        <a class="portail-lien" href="{{ lien('/stages-et-jobs/recruteurs/') }}">Comment ça marche <span aria-hidden="true">→</span></a>
+      </section>
+    </div>
+  </div>
+  <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
+</section>
+{% endblock %}
+
+{% block contenu %}
+<section class="bande bande-papier" aria-labelledby="titre-tout">
+  <div class="cadre">
+    <h2 id="titre-tout" class="sr">Tout le site</h2>
+    <ul class="sommaire">
+      <li><a href="{{ lien('/sessions/') }}"><b>Sessions</b><span>Comparer les dates et les prix du BAFA et du BAFD</span></a></li>
+      <li><a href="{{ lien('/formations/') }}"><b>Formations</b><span>BAFA, BAFD, PSC1, surveillant de baignade, BPJEPS, DEJEPS</span></a></li>
+      <li><a href="{{ lien('/guides/') }}"><b>Guides</b><span>Les étapes, les aides, le stage pratique, le contrat</span></a></li>
+      <li><a href="{{ lien('/stages-et-jobs/') }}"><b>Stages et jobs</b><span>Les offres des structures, gratuites pour les candidats</span></a></li>
+      <li><a href="{{ lien('/stages-et-jobs/recruteurs/') }}"><b>Recruteurs</b><span>Publier une offre, offre fondateurs</span></a></li>
     </ul>
   </div>
 </section>
-
-<section class="bande bande-blanc" aria-labelledby="titre-prochaines">
-  <div class="cadre">
-    <div class="titre-ligne">
-      <h2 id="titre-prochaines">Les prochaines sessions</h2>
-      <a class="bouton-r" href="{{ lien('/sessions/') }}">Voir les {{ stats.nb }} sessions <span aria-hidden="true">→</span></a>
-    </div>
-    <div class="sessions">{% for s in page.prochaines %}{{ m.carte_session(s, lien) }}{% endfor %}</div>
-  </div>
-</section>
-
-<section class="bande bande-sable" aria-labelledby="titre-etapes">
-  <div class="cadre">
-    <p class="note-main">le BAFA, en 3 étapes</p>
-    <h2 id="titre-etapes">Le parcours, sur le fil</h2>
-    {{ m.etapes(lien) }}
-  </div>
-</section>
-
-<section class="bande bande-rouge" aria-labelledby="titre-structures">
-  <div class="cadre bande-rouge-cadre">
-    <div>
-      <p class="note-main">vous recrutez ?</p>
-      <h2 id="titre-structures">Vos offres, là où les futurs animateurs cherchent</h2>
-      <p>Centres de loisirs, colos : bientôt, publiez vos offres de stages pratiques et de jobs. Des offres, pas une base de CV.</p>
-    </div>
-    <a class="bouton-blanc" href="{{ lien('/stages-et-jobs/recruteurs/') }}">Être prévenu <span aria-hidden="true">→</span></a>
-  </div>
-</section>
-
-<section class="bande bande-papier" aria-labelledby="titre-faq">
-  <div class="cadre deux-colonnes deux-colonnes-faq">
-    <div>
-      <p class="note-main">en bref</p>
-      <h2 id="titre-faq">Les questions qu'on se pose</h2>
-      <p>Des réponses courtes, et le guide qui cite la source officielle.</p>
-      <p><a href="{{ lien('/guides/questions-frequentes/') }}">Toutes les questions →</a></p>
-    </div>
-    {{ m.faq(page.faq, lien) }}
-  </div>
-</section>
 {% endblock %}
-{% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}

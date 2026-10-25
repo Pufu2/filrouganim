@@ -37,3 +37,9 @@ hebergeur:
   adresse: 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis
   telephone: "+1 877 448 4820"
   site: https://github.com
+
+# Offre fondateurs (étape 2) : les premières structures paieront moitié prix, à vie, tant que le service existe.
+# « places » : le nombre total (à décider par Pufu2) ; « reservees » : à augmenter à chaque structure inscrite.
+fondateurs:
+  places: 30
+  reservees: 0
