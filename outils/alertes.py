@@ -43,6 +43,17 @@ def envoyer(cle_brevo, expediteur, nom_site, a, sujet, texte, html_contenu):
         return r.status
 
 
+def garder_la_cle_active(cle_brevo):
+    """Une lecture sans effet chaque lundi : une clé Brevo inutilisée 90 jours expire, même sans offre à envoyer."""
+    req = urllib.request.Request("https://api.brevo.com/v3/smtp/statistics/aggregatedReport?days=7",
+                                 headers={"api-key": cle_brevo, "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return r.status
+    except Exception as e:
+        print(f"Alertes : la clé Brevo ne répond pas ({e})", file=sys.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--essai", action="store_true", help="n'envoie rien")
@@ -54,6 +65,8 @@ def main():
     if not (sb.get("url") and cle and (cle_brevo or args.essai)):
         print("Alertes : secrets SUPABASE_SECRET_KEY et BREVO_API_KEY absents, rien n'est envoyé.")
         return
+    if cle_brevo:
+        garder_la_cle_active(cle_brevo)
     base, site = sb["url"].rstrip("/") + "/rest/v1", config["url"].rstrip("/")
     depuis = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     aujourdhui = dt.date.today().isoformat()
