@@ -92,10 +92,18 @@ son secteur (`.github/workflows/alertes.yml`). Sans les deux secrets ci-dessous,
    fondateurs ; augmenter alors `fondateurs.reservees` dans config.yml).
 4. Ses offres arrivent sur le site dans l'heure (le site se refabrique toutes les heures).
 
+## Les e-mails de connexion (en place le 26/10/2026)
+
+Envoyés par Brevo (SMTP, expéditeur `connexion@filrouganim.fr`), en français, 30 par heure au plus.
+Réglés par `outils/configurer_emails.py` (onglet Actions > « Configurer les e-mails de connexion »),
+avec les secrets `SUPABASE_ACCESS_TOKEN` (jeton de 7 jours : Project Settings et Auth en écriture,
+projet filrouganim seulement), `BREVO_SMTP_LOGIN` et `BREVO_SMTP_KEY`. Les textes sont dans
+`supabase/emails/`. Pour les changer : modifier les fichiers, créer un nouveau jeton, le mettre
+dans le secret, relancer l'action.
+
 ## Avant d'ouvrir les comptes au public (`comptes_ouverts: true` dans config.yml)
 
-1. Envoi des e-mails par **Brevo** (SMTP) : Authentication > Emails > SMTP Settings.
-2. Modèle de l'e-mail « Magic Link » en français (Authentication > Emails > Templates).
+1. ~~Envoi des e-mails par Brevo et textes en français~~ : fait le 26/10/2026.
 3. Mentions légales complètes (éditeur), et relecture des pages Confidentialité et Conditions.
 4. Vérifier que la purge des comptes inactifs (2 ans) est programmée : SQL Editor,
    `select jobname, schedule from cron.job;` doit montrer `purger-comptes-inactifs`. Sinon :
