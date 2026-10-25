@@ -29,6 +29,60 @@
 # robots.txt respectés (aucune page de session interdite).
 
 sessions:
+  - id: afocal-0626042
+    organisme: "afocal"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-11-02
+    fin: 2026-11-13
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 395
+    prix_note: "en plusieurs parties (une interruption est prévue)"
+    aides: ["aides possibles pour les habitants d'Île-de-France"]
+    complet: false
+    url: "https://www.afocal.fr/bafa/stage-bafa-0626042.html"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-150248
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Assistant sanitaire"
+    debut: 2026-11-02
+    fin: 2026-11-08
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150248"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-150123
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2026-11-07
+    fin: 2026-11-12
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 399
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150123"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
   - id: ifac-11967
     organisme: "ifac"
     diplome: "BAFD"
@@ -45,7 +99,115 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11967"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4083
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2026-11-16
+    fin: 2026-11-21
+    ville: "Vaux-le-Pénil"
+    departement: "77"
+    formule: "demi-pension"
+    prix: 450
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafd-perfectionnement/session-de-formation-bafd-perfectionnement-a-vaux-le-penil-77-le-16-novembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4084
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-11-16
+    fin: 2026-11-27
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "demi-pension"
+    prix: 560
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafd-formation-generale/session-de-formation-generale-bafd-a-evry-courcouronnes-91-le-16-novembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4082
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2026-11-16
+    fin: 2026-11-21
+    ville: "Osny"
+    departement: "95"
+    formule: "demi-pension"
+    prix: 450
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafd-perfectionnement/session-de-formation-bafd-perfectionnement-a-osny-95-le-16-novembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4498
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-29
+    ville: "Aubergenville"
+    departement: "78"
+    formule: "demi-pension"
+    prix: 560
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafd-formation-generale/session-de-formation-generale-bafd-maison-des-associations-a-aubergenville-78-le-21-novembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4085
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-29
+    ville: "Nanterre"
+    departement: "92"
+    formule: "demi-pension"
+    prix: 560
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafd-formation-generale/session-de-formation-generale-bafd-a-nanterre-92-le-21-novembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-150110
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-29
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 569
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150110"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11969
     organisme: "ifac"
@@ -63,7 +225,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11969"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11302
     organisme: "ifac"
@@ -81,7 +243,25 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11302"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4086
+    organisme: "ligue-idf"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2026-12-07
+    fin: 2026-12-12
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "demi-pension"
+    prix: 450
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafd-perfectionnement/session-de-formation-bafd-perfectionnement-a-evry-courcouronnes-91-le-7-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0626045
     organisme: "afocal"
@@ -99,7 +279,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0626045.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0626047
     organisme: "afocal"
@@ -117,7 +297,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0626047.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0626046a
     organisme: "afocal"
@@ -135,7 +315,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0626046a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11971
     organisme: "ifac"
@@ -153,7 +333,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11971"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11977
     organisme: "ifac"
@@ -171,7 +351,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11977"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11985
     organisme: "ifac"
@@ -189,7 +369,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11985"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-10786
     organisme: "ifac"
@@ -207,7 +387,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/10786"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11987
     organisme: "ifac"
@@ -225,7 +405,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11987"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11992
     organisme: "ifac"
@@ -243,7 +423,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11992"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11995
     organisme: "ifac"
@@ -261,7 +441,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11995"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11996
     organisme: "ifac"
@@ -279,7 +459,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11996"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11997
     organisme: "ifac"
@@ -297,7 +477,133 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11997"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4088
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-24
+    ville: "Vaux-le-Pénil"
+    departement: "77"
+    formule: "demi-pension"
+    prix: 395
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-approfondissement-qualification/session-de-formation-bafa-approfondissement-qualification-a-vaux-le-penil-77-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4092
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-27
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "demi-pension"
+    prix: 440
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-evry-courcouronnes-91-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4090
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-27
+    ville: "Nanterre"
+    departement: "92"
+    formule: "demi-pension"
+    prix: 440
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-nanterre-92-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4091
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-24
+    ville: "Nanterre"
+    departement: "92"
+    formule: "demi-pension"
+    prix: 395
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-approfondissement-qualification/session-de-formation-bafa-approfondissement-qualification-a-nanterre-92-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4089
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-27
+    ville: "Créteil"
+    departement: "94"
+    formule: "demi-pension"
+    prix: 440
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-creteil-94-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4087
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-26
+    ville: "Cergy-Pontoise"
+    departement: "95"
+    formule: "demi-pension"
+    prix: 440
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-cergy-pontoise-95-le-19-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-150101
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Jeux de société"
+    debut: 2026-12-19
+    fin: 2026-12-24
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150101"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11998
     organisme: "ifac"
@@ -315,7 +621,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11998"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12006
     organisme: "ifac"
@@ -333,7 +639,25 @@ sessions:
     complet: true
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12006"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4093
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: null
+    debut: 2026-12-21
+    fin: 2026-12-27
+    ville: "Créteil"
+    departement: "94"
+    formule: "demi-pension"
+    prix: 395
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-approfondissement-qualification/session-de-formation-bafa-approfondissement-qualification-a-creteil-94-le-21-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-11303
     organisme: "ifac"
@@ -351,7 +675,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11303"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12240
     organisme: "ifac"
@@ -369,7 +693,25 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12240"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4094
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: null
+    debut: 2026-12-26
+    fin: 2026-12-31
+    ville: "Osny"
+    departement: "95"
+    formule: "demi-pension"
+    prix: 395
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-approfondissement-qualification/session-de-formation-bafa-approfondissement-qualification-a-osny-95-le-26-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627203
     organisme: "afocal"
@@ -387,7 +729,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627203.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627202a
     organisme: "afocal"
@@ -405,7 +747,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627202a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627201a
     organisme: "afocal"
@@ -423,7 +765,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627201a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12028
     organisme: "ifac"
@@ -441,7 +783,25 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12028"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4095
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: null
+    debut: 2026-12-28
+    fin: 2027-01-03
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "demi-pension"
+    prix: 395
+    prix_note: null
+    aides: []
+    complet: true
+    url: "https://formation-bafa-bafd.org/stages/bafa-approfondissement-qualification/session-de-formation-bafa-approfondissement-qualification-a-evry-courcouronnes-91-le-28-decembre-2026/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12052
     organisme: "ifac"
@@ -459,7 +819,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12052"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627401
     organisme: "afocal"
@@ -477,7 +837,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627401.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627004
     organisme: "afocal"
@@ -495,7 +855,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627004.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627006a
     organisme: "afocal"
@@ -513,7 +873,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627006a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627007a
     organisme: "afocal"
@@ -531,7 +891,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627007a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627044a
     organisme: "afocal"
@@ -549,7 +909,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627044a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627020a
     organisme: "afocal"
@@ -567,7 +927,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627020a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627214a
     organisme: "afocal"
@@ -585,7 +945,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627214a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12054
     organisme: "ifac"
@@ -603,7 +963,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12054"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12061
     organisme: "ifac"
@@ -621,7 +981,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12061"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12062
     organisme: "ifac"
@@ -639,7 +999,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12062"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12065
     organisme: "ifac"
@@ -657,7 +1017,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12065"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12067
     organisme: "ifac"
@@ -675,7 +1035,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12067"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12069
     organisme: "ifac"
@@ -693,7 +1053,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12069"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12145
     organisme: "ifac"
@@ -711,7 +1071,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12145"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12241
     organisme: "ifac"
@@ -729,7 +1089,151 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12241"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ligue-4598
+    organisme: "ligue-idf"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Saint-Cloud"
+    departement: "92"
+    formule: "demi-pension"
+    prix: 440
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-saint-cloud-92-le-6-fevrier-2027/"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156652
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-14
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 569
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156652"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156691
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156691"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156694
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Assistant sanitaire"
+    debut: 2027-02-06
+    fin: 2027-02-12
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156694"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156692
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Versailles"
+    departement: "78"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156692"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156661
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "qualification"
+    theme: "Surveillance des baignades"
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Bagneux"
+    departement: "92"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156661"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156689
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Maisons-Alfort"
+    departement: "94"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156689"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156662
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "qualification"
+    theme: "Surveillance des baignades"
+    debut: 2027-02-06
+    fin: 2027-02-13
+    ville: "Taverny"
+    departement: "95"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156662"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627206
     organisme: "afocal"
@@ -747,7 +1251,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627206.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627205a
     organisme: "afocal"
@@ -765,7 +1269,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627205a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12210
     organisme: "ifac"
@@ -783,7 +1287,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12210"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12232
     organisme: "ifac"
@@ -801,7 +1305,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12232"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12706
     organisme: "ifac"
@@ -819,7 +1323,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12706"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12344
     organisme: "ifac"
@@ -837,7 +1341,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12344"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12301
     organisme: "ifac"
@@ -855,7 +1359,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12301"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12287
     organisme: "ifac"
@@ -873,7 +1377,61 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12287"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156720
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Accueils de loisirs"
+    debut: 2027-02-08
+    fin: 2027-02-13
+    ville: "Melun"
+    departement: "77"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156720"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156696
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Jeux et grandes animations"
+    debut: 2027-02-08
+    fin: 2027-02-13
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156696"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156693
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Animer les sciences"
+    debut: 2027-02-08
+    fin: 2027-02-13
+    ville: "Créteil"
+    departement: "94"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156693"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12359
     organisme: "ifac"
@@ -891,7 +1449,25 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12359"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156788
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-14
+    fin: 2027-02-21
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156788"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12384
     organisme: "ifac"
@@ -909,7 +1485,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12384"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12206
     organisme: "ifac"
@@ -927,7 +1503,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12206"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12247
     organisme: "ifac"
@@ -945,7 +1521,43 @@ sessions:
     complet: true
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12247"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156478
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2027-02-15
+    fin: 2027-02-20
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 399
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156478"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156698
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Jeux et grandes animations"
+    debut: 2027-02-15
+    fin: 2027-02-20
+    ville: "Versailles"
+    departement: "78"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156698"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12406
     organisme: "ifac"
@@ -963,7 +1575,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12406"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627013
     organisme: "afocal"
@@ -981,7 +1593,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627013.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627015a
     organisme: "afocal"
@@ -999,7 +1611,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627015a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627014a
     organisme: "afocal"
@@ -1017,7 +1629,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627014a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627017a
     organisme: "afocal"
@@ -1035,7 +1647,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627017a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12564
     organisme: "ifac"
@@ -1053,7 +1665,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12564"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12569
     organisme: "ifac"
@@ -1071,7 +1683,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12569"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12570
     organisme: "ifac"
@@ -1089,7 +1701,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12570"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12575
     organisme: "ifac"
@@ -1107,7 +1719,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12575"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12577
     organisme: "ifac"
@@ -1125,7 +1737,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12577"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12578
     organisme: "ifac"
@@ -1143,7 +1755,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12578"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12581
     organisme: "ifac"
@@ -1161,7 +1773,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12581"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12248
     organisme: "ifac"
@@ -1179,7 +1791,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12248"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12249
     organisme: "ifac"
@@ -1197,7 +1809,151 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12249"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156775
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Expression et Spectacle"
+    debut: 2027-04-03
+    fin: 2027-04-08
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156775"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156800
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156800"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156833
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-11
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 569
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156833"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156903
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Melun"
+    departement: "77"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156903"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156900
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Versailles"
+    departement: "78"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156900"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156681
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "qualification"
+    theme: "Surveillance des baignades"
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Bagneux"
+    departement: "92"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156681"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156799
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Maisons-Alfort"
+    departement: "94"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156799"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156682
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "qualification"
+    theme: "Surveillance des baignades"
+    debut: 2027-04-03
+    fin: 2027-04-10
+    ville: "Taverny"
+    departement: "95"
+    formule: "externat"
+    prix: 520
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156682"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627209
     organisme: "afocal"
@@ -1215,7 +1971,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627209.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12612
     organisme: "ifac"
@@ -1233,7 +1989,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12612"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12614
     organisme: "ifac"
@@ -1251,7 +2007,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12614"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12616
     organisme: "ifac"
@@ -1269,7 +2025,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12616"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12620
     organisme: "ifac"
@@ -1287,7 +2043,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12620"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12284
     organisme: "ifac"
@@ -1305,7 +2061,43 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12284"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-157024
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Jeux et grandes animations"
+    debut: 2027-04-05
+    fin: 2027-04-10
+    ville: "Créteil"
+    departement: "94"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=157024"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-157023
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Jeux et grandes animations"
+    debut: 2027-04-10
+    fin: 2027-04-15
+    ville: "Courdimanche"
+    departement: "95"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=157023"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12755
     organisme: "ifac"
@@ -1323,7 +2115,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12755"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12758
     organisme: "ifac"
@@ -1341,7 +2133,25 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12758"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156905
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-04-11
+    fin: 2027-04-18
+    ville: "Évry-Courcouronnes"
+    departement: "91"
+    formule: "externat"
+    prix: 425
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156905"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627211a
     organisme: "afocal"
@@ -1359,7 +2169,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627211a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627210a
     organisme: "afocal"
@@ -1377,7 +2187,7 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627210a.html"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12747
     organisme: "ifac"
@@ -1395,7 +2205,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12747"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12705
     organisme: "ifac"
@@ -1413,7 +2223,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12705"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12603
     organisme: "ifac"
@@ -1431,7 +2241,43 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12603"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156555
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2027-04-12
+    fin: 2027-04-17
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 399
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156555"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156723
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Accueils de loisirs"
+    debut: 2027-04-12
+    fin: 2027-04-17
+    ville: "Versailles"
+    departement: "78"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156723"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12765
     organisme: "ifac"
@@ -1449,7 +2295,7 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12765"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
     source: page-organisme
   - id: ifac-12768
     organisme: "ifac"
@@ -1467,5 +2313,23 @@ sessions:
     complet: false
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12768"
     releve_le: 2026-10-24
-    verifie_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ufcv-156853
+    organisme: "ufcv"
+    diplome: "BAFD"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-06-12
+    fin: 2027-06-20
+    ville: "Ivry-sur-Seine"
+    departement: "94"
+    formule: "externat"
+    prix: 569
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156853"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
     source: page-organisme

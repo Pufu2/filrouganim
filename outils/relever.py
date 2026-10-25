@@ -36,7 +36,8 @@ AGENT = "Mozilla/5.0 (compatible; FilRougAnim-verif; +https://filrouganim.fr)"
 PAUSE = 0.6  # secondes entre deux pages, pour ne pas charger les sites
 DEPS_IDF = {"75", "77", "78", "91", "92", "93", "94", "95"}
 PETITS = {"sur", "sous", "le", "la", "les", "de", "du", "des", "en", "aux", "au", "et", "lès"}
-ACCENTS = {"Velizy-Villacoublay": "Vélizy-Villacoublay", "L'haÿ-les-Roses": "L'Haÿ-les-Roses"}
+ACCENTS = {"Velizy-Villacoublay": "Vélizy-Villacoublay", "L'haÿ-les-Roses": "L'Haÿ-les-Roses",
+           "Evry-Courcouronnes": "Évry-Courcouronnes", "Vaux-le-Penil": "Vaux-le-Pénil"}
 FORMULES = {"externat": "externat", "demi-pension": "demi-pension", "½ pension": "demi-pension",
             "1/2 pension": "demi-pension", "pension complète": "internat", "pension": "internat", "internat": "internat"}
 
@@ -284,6 +285,8 @@ def ufcv(dans_periode):
         else:
             type_ = "approfondissement"
         etat = next((l for l in L if l.startswith("En date du")), "")
+        if b["theme"]:
+            b["theme"] = re.sub(r"^Qualification\s+", "", b["theme"])
         sessions.append({"id": "ufcv-" + b["id"], "organisme": "ufcv", "diplome": diplome, "type": type_, "theme": b["theme"],
                          "debut": b["debut"], "fin": b["fin"], "ville": commune(lieu.group(1)), "departement": lieu.group(2),
                          "formule": formule, "prix": prix if prix is not None else b["prix_liste"], "prix_note": note,
