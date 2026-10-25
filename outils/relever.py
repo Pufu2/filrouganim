@@ -333,6 +333,55 @@ def ligue(dans_periode):
     return sessions
 
 
+# ---------------------------------------------------------------- IFAC : formations professionnelles de l'animation
+
+IFAC_PRO = {92: "CQP-AP", 93: "CPJEPS", 94: "BPJEPS", 97: "DEJEPS", 99: "DESJEPS"}
+
+
+def ifac_pro():
+    """Les sessions en Île-de-France des formations professionnelles (CQP, CPJEPS, BPJEPS, DEJEPS, DESJEPS)."""
+    sessions = []
+    for page, diplome in IFAC_PRO.items():
+        brut, _ = lire(f"https://ifac-formation.fr/formations/professionnelles/{page}")
+        for ident in dict.fromkeys(re.findall(r'href="/formations/sessions/(\d+)"', brut)):
+            url = f"https://ifac-formation.fr/formations/sessions/professionnelles/{ident}"
+            try:
+                _, L = lire(url)
+            except Exception as e:
+                print(f"  IFAC pro {ident} : illisible ({e})", file=sys.stderr)
+                continue
+            if "Informations pratiques" not in L:
+                continue
+            k = L.index("Informations pratiques")
+            bloc = L[k + 1:k + 30]
+            dates = next((dates_texte(l) for l in bloc if l.startswith("Du ")), (None, None))
+            cp = next((re.search(r"(\d{5}) (.+)$", l) for l in bloc if re.search(r"\b(7[5789]|9[1-5])\d{3} ", l)), None)
+            if not dates[0] or not cp:
+                continue
+            duree = next((re.search(r"(\d+) heures", l).group(1) for l in bloc if re.match(r"Durée : \d+ heures", l)), None)
+            prix = None
+            if "Parcours complet" in bloc:
+                v = re.match(r"([\d ]+)\s*€", bloc[bloc.index("Parcours complet") + 1])
+                prix = int(v.group(1).replace(" ", "")) if v else None
+            limite = next((l for l in L if l.startswith("Merci de compléter et nous adresser votre dossier")), "")
+            m_lim = re.search(r"avant le : (\d{1,2}) (\w+) (\d{4})", limite)
+            notes = []
+            if duree:
+                notes.append(f"{duree} heures de formation")
+            if m_lim:
+                notes.append(f"dossier avant le {m_lim.group(1)} {m_lim.group(2)} {m_lim.group(3)}")
+            if any("apprentissage" in l.lower() for l in L):
+                notes.append("possible en apprentissage (sans frais pour l'apprenti)")
+            code = cp.group(1)
+            ville = (f"Paris {int(code[3:])}{'er' if int(code[3:]) == 1 else 'e'}" if code.startswith("75") else commune(cp.group(2)))
+            sessions.append({"id": "ifac-pro-" + ident, "organisme": "ifac", "diplome": diplome, "type": "parcours",
+                             "theme": bloc[0] if bloc and bloc[0] != diplome else None,
+                             "debut": dates[0], "fin": dates[1], "ville": ville, "departement": code[:2],
+                             "formule": "alternance", "prix": prix, "prix_note": " ; ".join(notes) or None,
+                             "aides": [], "complet": "Complet" in bloc, "url": url, "pro": True})
+    return sessions
+
+
 # ---------------------------------------------------------------- sélection et écriture
 
 def ecrire(chemin, sessions, entete):
@@ -386,6 +435,8 @@ def main():
     candidates += ufcv(dans_periode)
     print("Ligue de l'enseignement…", file=sys.stderr)
     candidates += ligue(dans_periode)
+    print("IFAC, formations professionnelles…", file=sys.stderr)
+    pro = [x for x in ifac_pro() if x["debut"] >= aujourdhui]
     groupes = {}
     for s in candidates:
         s["periode"] = periode(s["debut"])
@@ -405,6 +456,11 @@ def main():
     for s in retenues:
         s["releve_le"] = anciens.get(s["id"], {}).get("releve_le") or aujourdhui
         s["verifie_le"] = aujourdhui
+    # formations professionnelles : peu nombreuses, toutes gardées (pas de sélection)
+    for x in pro:
+        x["releve_le"] = anciens.get(x["id"], {}).get("releve_le") or aujourdhui
+        x["verifie_le"] = aujourdhui
+    retenues += pro
     retenues.sort(key=lambda s: (s["debut"], s["organisme"], s["departement"], s["id"]))
 
     nouveaux = {s["id"] for s in retenues}

@@ -1,7 +1,7 @@
 {# Morceaux réutilisés par plusieurs pages #}
 
 {# Petites icônes dessinées au trait, dans la couleur du fil #}
-{% macro icone(nom) %}<svg class="icone" viewBox="0 0 24 24" aria-hidden="true">{% if nom == "lieu" %}<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>{% elif nom == "date" %}<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>{% elif nom == "etape" %}<path d="M4 18c4 0 3-8 8-8s4 8 8 8"/><circle cx="4" cy="18" r="1.6"/><circle cx="12" cy="10" r="1.6"/><circle cx="20" cy="18" r="1.6"/>{% elif nom == "prix" %}<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>{% elif nom == "cherche" %}<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>{% endif %}</svg>{% endmacro %}
+{% macro icone(nom) %}<svg class="icone" viewBox="0 0 24 24" aria-hidden="true">{% if nom == "lieu" %}<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>{% elif nom == "date" %}<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>{% elif nom == "etape" %}<path d="M4 18c4 0 3-8 8-8s4 8 8 8"/><circle cx="4" cy="18" r="1.6"/><circle cx="12" cy="10" r="1.6"/><circle cx="20" cy="18" r="1.6"/>{% elif nom == "prix" %}<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>{% elif nom == "diplome" %}<path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/>{% elif nom == "cherche" %}<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>{% endif %}</svg>{% endmacro %}
 
 {# Le fil rouge, dessiné à la main, qui relie les parties de la page #}
 {% macro fil(note="") %}
@@ -14,38 +14,47 @@
 {# La barre de recherche en cases : Où ? Quand ? Quelle étape ? Budget ? + mot-clé.
    Sur l'accueil elle envoie vers /se-former/sessions/ ; sur /se-former/sessions/ elle filtre en direct. #}
 {% macro recherche(lien, departements, periodes, aujourdhui, stats, en_direct=False) %}
-<form class="recherche" action="{{ lien('/se-former/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une session BAFA ou BAFD">
-  <div class="recherche-cases">
+<form class="recherche" action="{{ lien('/se-former/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une formation">
+  <div class="recherche-cases recherche-cases-5">
+    <label class="case-r">{{ icone("diplome") }}<span class="case-titre">Quel diplôme ?</span>
+      <select name="diplome">
+        <option value="">Tous</option>
+        {% for d in diplomes %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
+      </select></label>
+    <label class="case-r">{{ icone("etape") }}<span class="case-titre">Quelle étape ?</span>
+      <select name="type">
+        <option value="">Toutes</option>
+        <option value="BAFA-formation-generale" data-diplome="BAFA">BAFA : formation générale</option>
+        <option value="BAFA-approfondissement" data-diplome="BAFA">BAFA : approfondissement</option>
+        <option value="BAFA-qualification" data-diplome="BAFA">BAFA : qualification</option>
+        <option value="BAFD-formation-generale" data-diplome="BAFD">BAFD : formation générale</option>
+        <option value="BAFD-perfectionnement" data-diplome="BAFD">BAFD : perfectionnement</option>
+      </select></label>
     <label class="case-r">{{ icone("lieu") }}<span class="case-titre">Où ?</span>
       <select name="dep">
         <option value="">Partout</option>
         {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
       </select></label>
     <label class="case-r">{{ icone("date") }}<span class="case-titre">Quand ?</span>
-      <select name="periode">
-        <option value="">Toutes</option>
-        {% for p in periodes if p.fin >= aujourdhui %}<option value="{{ p.id }}">{{ p.court }}</option>{% endfor %}
-        <option value="autre">Hors vacances</option>
-      </select></label>
-    <label class="case-r">{{ icone("etape") }}<span class="case-titre">Quelle étape ?</span>
-      <select name="type">
-        <option value="">Toutes</option>
-        <option value="BAFA-formation-generale">Formation générale</option>
-        <option value="BAFA-approfondissement">Approfondissement</option>
-        <option value="BAFA-qualification">Qualification</option>
-        <option value="BAFD-formation-generale">BAFD : formation</option>
-        <option value="BAFD-perfectionnement">BAFD : perfectionnement</option>
+      <select name="quand">
+        <option value="">Toutes les dates</option>
+        <optgroup label="Vacances scolaires (BAFA, BAFD)">
+          {% for p in periodes if p.fin >= aujourdhui %}<option value="p:{{ p.id }}">{{ p.court }}</option>{% endfor %}
+        </optgroup>
+        <optgroup label="Mois de début">
+          {% for mo in mois_sessions %}<option value="m:{{ mo }}">{{ mois_nom(mo) | majuscule }}</option>{% endfor %}
+        </optgroup>
       </select></label>
     <label class="case-r">{{ icone("prix") }}<span class="case-titre">Budget ?</span>
       <select name="prix">
         <option value="">Tous</option>
-        {% for b in [350, 400, 450, 500, 600] %}<option value="{{ b }}">{{ b }} € max.</option>{% endfor %}
+        {% for b in [350, 400, 450, 500, 600, 1000, 5000, 8000] %}<option value="{{ b }}">{{ "{:,}".format(b).replace(",", " ") }} € max.</option>{% endfor %}
       </select></label>
   </div>
   <div class="recherche-bas">
     <label class="recherche-mot">{{ icone("cherche") }}<span class="sr">Mot-clé</span>
       <input name="q" type="search" placeholder="Ville, thème, organisme…" autocomplete="off"></label>
-    {% if not en_direct %}<button class="bouton-r" type="submit">Voir les sessions <span aria-hidden="true">→</span></button>{% endif %}
+    {% if not en_direct %}<button class="bouton-r" type="submit">Voir les formations <span aria-hidden="true">→</span></button>{% endif %}
   </div>
 </form>
 {% endmacro %}
@@ -53,13 +62,13 @@
 {# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}
 {% macro carte_session(s, lien) %}
 <article class="session{% if s.complet %} session-complete{% endif %}"
-  data-dep="{{ s.departement }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}"
+  data-dep="{{ s.departement }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
   data-type="{{ s.diplome }}-{{ s.type }}" data-formule="{{ s.formule or '' }}"
   data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
-  data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.diplome }}">
+  data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }}">
   <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
   <div class="s-corps">
-    <h3 class="s-titre">{% if s.diplome == "BAFD" %}BAFD · {% endif %}{{ s.type_nom }}{% if s.theme %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
+    <h3 class="s-titre">{{ s.dipl.nom }}{% if s.type != "parcours" %} · {{ s.type_nom | lower }}{% endif %}{% if s.theme and s.type != "parcours" %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
     <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/se-former/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
     <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}{% endif %}, à confirmer chez l'organisme</p>
   </div>
@@ -87,9 +96,9 @@
   <svg class="etapes-fil" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M10 60 C 90 20, 160 100, 250 60 S 400 20, 500 60 S 660 100, 750 60 S 900 25, 990 58" /></svg>
   <ol class="etapes">
     <li><span class="etape-noeud" aria-hidden="true">1</span><b>Formation générale</b><span>8 jours, dès 16 ans</span><a href="{{ lien('/se-former/sessions/formation-generale/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Le trouver</a></li>
+    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Le trouver</a></li>
     <li><span class="etape-noeud" aria-hidden="true">3</span><b>Approfondissement</b><span>6 jours (ou qualification, 8 jours)</span><a href="{{ lien('/se-former/sessions/approfondissement/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/animateurs/') }}">Stages et jobs</a></li>
+    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/trouver-un-poste/') }}">Stages et jobs</a></li>
   </ol>
 </div>
 {% endmacro %}
@@ -116,7 +125,8 @@
     <div class="explorer">
       <div><h3>Par département</h3><ul>{% for d in departements %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
       <div><h3>Par vacances</h3><ul>{% for p in periodes if p.fin >= aujourdhui %}{% for s in toutes_sessions if s.periode is sameas p and s.diplome == "BAFA" %}{% if loop.first %}<li><a href="{{ lien('/se-former/sessions/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endif %}{% endfor %}{% endfor %}</ul></div>
-      <div><h3>Par étape</h3><ul>{% for t in types %}<li><a href="{{ lien('/se-former/sessions/' ~ t.slug ~ '/') }}">{{ t.nom }}</a></li>{% endfor %}<li><a href="{{ lien('/se-former/sessions/bafd/') }}">BAFD (directeur)</a></li></ul></div>
+      <div><h3>Par diplôme</h3><ul>{% for d in diplomes %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.long }}</a></li>{% endfor %}</ul></div>
+      <div><h3>BAFA, par étape</h3><ul>{% for t in types %}<li><a href="{{ lien('/se-former/sessions/' ~ t.slug ~ '/') }}">{{ t.nom }}</a></li>{% endfor %}</ul></div>
       <div><h3>Par organisme</h3><ul><li><a href="{{ lien('/se-former/sessions/organismes/') }}">Tous les organismes</a></li></ul></div>
     </div>
   </div>
@@ -133,4 +143,25 @@
     <span class="porte-lien">Lire →</span></a></li>
   {% endfor %}
 </ul>
+{% endmacro %}
+
+{# Le parcours d'un diplôme, en étapes enfilées sur le fil (d'après les fiches officielles, voir « Se former ») #}
+{% set PARCOURS = {
+  "BAFA": [("Formation générale", "8 jours, dès 16 ans"), ("Stage pratique", "14 jours au moins, dans les 18 mois"), ("Approfondissement", "6 jours, ou qualification de 8 jours"), ("Jury", "le diplôme, en 30 mois au plus")],
+  "BAFD": [("Formation générale", "9 ou 10 jours, dès 18 ans"), ("1er stage pratique", "14 jours en direction ou adjoint"), ("Perfectionnement", "6 jours"), ("2e stage pratique", "14 jours comme directeur, en 4 ans au plus")],
+  "CQP-AP": [("Inscription", "aucun diplôme requis"), ("Formation en alternance", "sur les temps périscolaires"), ("Certification", "délivrée par la branche Éclat")],
+  "CPJEPS": [("Prérequis", "PSC1, et savoir encadrer un groupe en sécurité"), ("Formation en alternance", "en accueil de loisirs ou en séjour"), ("Diplôme", "niveau 3")],
+  "BPJEPS": [("Prérequis", "PSC1 et 200 heures d'animation"), ("Sélection", "épreuves de l'organisme"), ("Formation en alternance", "4 blocs de compétences"), ("Diplôme", "niveau 4")],
+  "DEJEPS": [("Prérequis", "un diplôme de niveau 4 de l'animation, ou de l'expérience"), ("Sélection", "épreuves de l'organisme"), ("Formation en alternance", "coordonner des projets"), ("Diplôme", "niveau 5")],
+  "DESJEPS": [("Prérequis", "un diplôme de niveau 5 ou 6, et 36 mois d'expérience"), ("Sélection", "épreuves de l'organisme"), ("Formation en alternance", "diriger une structure"), ("Diplôme", "niveau 6")]
+} %}
+{% macro parcours(diplomes, lien, seul=None) %}
+{% for d in diplomes if not seul or d.id == seul %}
+<div class="parcours-diplome" data-parcours="{{ d.id }}" {% if not seul and d.id != "BAFA" %}hidden{% endif %}>
+  <div class="titre-ligne"><h2>Le parcours : {{ d.long }}</h2><a href="{{ lien(d.fiche) }}">Tout savoir sur le {{ d.nom }} →</a></div>
+  <ol class="etapes etapes-{{ PARCOURS[d.id] | length }}">
+    {% for nom, detail in PARCOURS[d.id] %}<li><span class="etape-noeud{% if loop.last %} etape-fin{% endif %}" aria-hidden="true">{% if loop.last %}★{% else %}{{ loop.index }}{% endif %}</span><b>{{ nom }}</b><span>{{ detail }}</span></li>{% endfor %}
+  </ol>
+</div>
+{% endfor %}
 {% endmacro %}

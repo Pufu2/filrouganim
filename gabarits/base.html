@@ -32,8 +32,8 @@
     </a>
     <nav class="menu" aria-label="Menu principal">
       <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
-      <a href="{{ lien('/animateurs/') }}"{% if page.url.startswith('/animateurs/') %} aria-current="page"{% endif %}>Animateurs</a>
-      <a href="{{ lien('/recruteurs/') }}"{% if page.url.startswith('/recruteurs/') %} aria-current="page"{% endif %}>Recruteurs</a>
+      <a href="{{ lien('/trouver-un-poste/') }}"{% if page.url.startswith('/trouver-un-poste/') %} aria-current="page"{% endif %}>Trouver un poste</a>
+      <a href="{{ lien('/recruter/') }}"{% if page.url.startswith('/recruter/') %} aria-current="page"{% endif %}>Recruter</a>
     </nav>
   </div>
 </header>
@@ -72,12 +72,12 @@
       <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
       <a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a>
     </nav>
-    <nav aria-label="Animateurs et recruteurs">
-      <p class="pied-titre">Animateurs</p>
-      <a href="{{ lien('/animateurs/') }}">Inscription gratuite et offres</a>
-      <a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
-      <p class="pied-titre pied-titre-2">Recruteurs</p>
-      <a href="{{ lien('/recruteurs/') }}">Publier une offre</a>
+    <nav aria-label="Trouver un poste et recruter">
+      <p class="pied-titre">Trouver un poste</p>
+      <a href="{{ lien('/trouver-un-poste/') }}">Inscription gratuite et offres</a>
+      <a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
+      <p class="pied-titre pied-titre-2">Recruter</p>
+      <a href="{{ lien('/recruter/') }}">Publier une offre</a>
     </nav>
     <nav aria-label="Le site">
       <p class="pied-titre">Le site</p>

@@ -26,4 +26,4 @@ Chaque année, je vois des jeunes perdre du temps, et parfois renoncer, parce qu
 
 ## La suite
 
-Après les sessions de formation viendront les **offres de stages pratiques et de jobs** publiées par les structures, puis les autres formations de l'animation. [Ce qui arrive](/animateurs/)
+Après les sessions de formation viendront les **offres de stages pratiques et de jobs** publiées par les structures, puis les autres formations de l'animation. [Ce qui arrive](/trouver-un-poste/)

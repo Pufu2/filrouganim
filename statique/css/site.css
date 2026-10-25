@@ -326,3 +326,11 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .sommaire b { font-family: var(--titres); font-size: 1.2rem; color: var(--fil-fonce); }
 .sommaire span { color: var(--doux); font-size: .95rem; }
 .tete .bouton-blanc, .tete .bouton-blanc:hover { color: var(--fil-fonce); }
+
+/* ---------- Recherche à 5 cases, parcours par diplôme */
+.recherche-cases-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .recherche-cases-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .recherche-cases-5 { grid-template-columns: 1fr 1fr; } }
+.case-r select:disabled { color: var(--doux); cursor: default; }
+.parcours-diplome[hidden] { display: none; }
+@media (min-width: 820px) { .etapes-3 { grid-template-columns: repeat(3, 1fr); } }

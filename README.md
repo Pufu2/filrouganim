@@ -32,8 +32,8 @@ python3 build.py              # version en ligne (avec sitemap.xml et robots.txt
 |---|---|
 | Accueil `/` | les 3 parties enfilées sur le fil rouge, chacune avec ses sous-parties |
 | **Se former** `/se-former/` | recherche de sessions, fiches BAFA, BAFD, PSC1, surveillant de baignade, BPJEPS, DEJEPS (`contenu/formations/`), guides « étapes » et « financer » (`partie: se-former`), questions fréquentes ; les sessions : `/se-former/sessions/` puis département, ville, vacances, étape, BAFD, organismes |
-| **Animateurs** `/animateurs/` | inscription gratuite aux offres (formulaire Brevo, `inscription_animateurs` dans config.yml), les offres (`donnees/offres.yml`, une page par offre), guides « stage pratique » et « contrat » (`partie: animateurs`) |
-| **Recruteurs** `/recruteurs/` | offre fondateurs (`fondateurs` dans config.yml), ce qui est inclus, comment publier |
+| **Animateurs** `/trouver-un-poste/` | inscription gratuite aux offres (formulaire Brevo, `inscription_animateurs` dans config.yml), les offres (`donnees/offres.yml`, une page par offre), guides « stage pratique » et « contrat » (`partie: animateurs`) |
+| **Recruteurs** `/recruter/` | offre fondateurs (`fondateurs` dans config.yml), ce qui est inclus, comment publier |
 | Le site (pied de page) | à propos, contact, classement des sessions, pages légales (`contenu/pages/`) |
 
 Les adresses des versions précédentes (`/bafa/…`, `/sessions/…`, `/formations/…`, `/guides/…`, `/stages-et-jobs/…`) redirigent vers les nouvelles (`ajouter_redirections` dans build.py).

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block tete_note %}<p class="note-main">animateurs</p>{% endblock %}
+{% block tete_note %}<p class="note-main">trouver un poste</p>{% endblock %}
 {% block h1 %}Trouver son stage pratique ou son job d'animateur{% endblock %}
 {% block tete_chapo %}<p class="chapo">Inscris-toi gratuitement pour recevoir les offres de ton département. Les structures te présentent leurs postes ; tu choisis à qui répondre.</p>{% endblock %}
 {% block tete_plus %}
@@ -33,12 +33,12 @@
       <article class="session offre">
         <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
         <div class="s-corps">
-          <h3 class="s-titre"><a href="{{ lien('/animateurs/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
+          <h3 class="s-titre"><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
           <p class="s-infos"><b>{{ o.structure.nom }}</b> · {{ o.ville }} ({{ o.departement }}){% if o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
           <p class="s-verif">Publiée le {{ o.publiee_le | date_fr }} · jusqu'au {{ o.expire_le | date_fr }}</p>
         </div>
         <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>
-        <a class="s-lien" href="{{ lien('/animateurs/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
+        <a class="s-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
       </article>
     {% endfor %}
     </div>
@@ -50,7 +50,7 @@
 <section class="bande bande-sable" aria-labelledby="t-conseils">
   <div class="cadre">
     <h2 id="t-conseils">Bien démarrer</h2>
-    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "animateurs") | list, page.url, lien) }}
+    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list, page.url, lien) }}
     {{ m.encart_jeuphorie(site) }}
   </div>
 </section>

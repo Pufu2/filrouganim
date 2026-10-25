@@ -25,7 +25,7 @@ Les offres sont publiées par les structures qui recrutent. L'adresse de candida
 
 {% endif %}{% if site.inscription_animateurs %}## L'inscription des animateurs aux offres
 
-Si vous vous inscrivez sur la page Animateurs, nous gardons votre adresse e-mail, votre département et votre profil, pour vous envoyer les offres de votre département, rien d'autre. Ces données sont hébergées par Brevo, prestataire français d'envoi d'e-mails, qui envoie les e-mails pour nous. Elles ne sont jamais montrées aux structures ni vendues. Un lien de désinscription figure dans chaque e-mail ; les données sont supprimées à la désinscription, ou après 2 ans sans ouverture d'e-mail.
+Si vous vous inscrivez sur la page Trouver un poste, nous gardons votre adresse e-mail, votre département et votre profil, pour vous envoyer les offres de votre département, rien d'autre. Ces données sont hébergées par Brevo, prestataire français d'envoi d'e-mails, qui envoie les e-mails pour nous. Elles ne sont jamais montrées aux structures ni vendues. Un lien de désinscription figure dans chaque e-mail ; les données sont supprimées à la désinscription, ou après 2 ans sans ouverture d'e-mail.
 
 {% endif %}## Liens vers d'autres sites
 

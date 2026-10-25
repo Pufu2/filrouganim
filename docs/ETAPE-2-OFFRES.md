@@ -14,7 +14,7 @@ Pour l'ouvrir (Pufu2, 15 minutes, dans Brevo) :
 2. Créer un formulaire d'inscription relié à cette liste, avec **double confirmation**, et les
    champs EMAIL, DEPARTEMENT, PROFIL et la case d'accord OPT_IN.
 3. Copier l'adresse « action » du formulaire (https://….sibforms.com/serve/…) dans
-   `inscription_animateurs` de config.yml : le formulaire apparaît sur `/animateurs/`.
+   `inscription_animateurs` de config.yml : le formulaire apparaît sur `/trouver-un-poste/`.
 4. À chaque nouvelle offre : une campagne Brevo envoyée aux inscrits du département (segment).
 Avant d'ouvrir : compléter la page Confidentialité (finalité, durée de conservation, Brevo comme
 sous-traitant, désinscription).
@@ -23,13 +23,13 @@ sous-traitant, désinscription).
 
 - `donnees/offres.yml` : le format d'une offre (champs expliqués en tête du fichier). Liste vide.
 - Dès qu'une offre est ajoutée :
-  - elle apparaît en haut de `/animateurs/` (date, structure, ville, public, salaire) ;
-  - elle a sa page `/animateurs/offres/<id>/`, avec un bouton « Candidater auprès de la structure »
+  - elle apparaît en haut de `/trouver-un-poste/` (date, structure, ville, public, salaire) ;
+  - elle a sa page `/trouver-un-poste/offres/<id>/`, avec un bouton « Candidater auprès de la structure »
     (e-mail ou lien de la structure : le site ne reçoit aucune candidature) ;
   - la page porte les données structurées **JobPosting** : l'offre peut apparaître dans
     **Google pour l'emploi**, ce qui est le meilleur levier de visites gratuit pour cette étape ;
   - elle disparaît toute seule après sa date `expire_le`.
-- `/recruteurs/` : la page pour les structures (ce qui arrive, ce qu'il faut envoyer).
+- `/recruter/` : la page pour les structures (ce qui arrive, ce qu'il faut envoyer).
 
 Testé le 25/10/2026 avec une offre fictive, retirée ensuite : page, bouton de candidature et
 données JobPosting valides.
@@ -78,7 +78,7 @@ Choix de Pufu2 (25/10/2026) : **offre fondateurs**.
 1. **Les premières structures paient moitié prix, à vie** (tant que le service existe), dans la
    limite d'un nombre de places. Réglage dans `config.yml` : `fondateurs.places` (30 pour l'instant,
    à confirmer) et `fondateurs.reservees` (à augmenter de 1 à chaque structure qui réserve) ;
-   l'accueil et la page des recruteurs affichent les places restantes.
+   l'accueil et la page Recruter affichent les places restantes.
 2. Réserver sa place est **gratuit et sans engagement** (un e-mail) : rien n'est vendu avant la
    déclaration de la micro-entreprise. Le prix normal est annoncé avant l'ouverture.
 3. **Un pass simple** : **pass saison** (été, ou mercredis et petites vacances) ou **pass année**,

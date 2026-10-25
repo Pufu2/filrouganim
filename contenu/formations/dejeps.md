@@ -4,10 +4,11 @@ court: DEJEPS
 nom: Diplôme d'État de la jeunesse, de l'éducation populaire et du sport
 resume: "Coordinateur, responsable de secteur : le niveau 5 de l'animation."
 description: "Le DEJEPS spécialité animation socio-éducative ou culturelle, mention coordination de projets : diplôme de niveau 5 pour coordonner une équipe et des projets. Conditions d'entrée et nouveautés depuis 2025."
-ordre: 6
+ordre: 8
 age: "Selon l'expérience"
 duree: "Formation en alternance"
 niveau: "Diplôme d'État, niveau 5 (bac + 2)"
+sessions: /se-former/sessions/dejeps/
 mis_a_jour: 2026-10-25
 ---
 

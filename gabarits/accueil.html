@@ -12,8 +12,8 @@
     <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe : l'animation en Île-de-France, au même endroit. Gratuit pour les jeunes.</p>
     <nav class="noeuds" aria-label="Les trois parties du site">
       <a href="#se-former"><span>1</span>Se former</a>
-      <a href="#animateurs"><span>2</span>Animateurs</a>
-      <a href="#recruteurs"><span>3</span>Recruteurs</a>
+      <a href="#trouver-un-poste"><span>2</span>Trouver un poste</a>
+      <a href="#recruter"><span>3</span>Recruter</a>
     </nav>
   </div>
   <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
@@ -52,35 +52,35 @@
     </div>
   </section>
 
-  <section class="station station-droite" id="animateurs" aria-labelledby="t-animateurs">
+  <section class="station station-droite" id="trouver-un-poste" aria-labelledby="t-animateurs">
     <div class="station-noeud" aria-hidden="true">2</div>
     <div class="station-carte">
-      <p class="note-main">animateurs</p>
+      <p class="note-main">trouver un poste</p>
       <h2 id="t-animateurs">Trouver son stage ou son job</h2>
       <p>Inscris-toi gratuitement : tu reçois les offres de stages pratiques et de jobs de ton département, dès qu'elles sont publiées. Aucun profil public, aucun CV en ligne.</p>
-      <p><a class="bouton-r" href="{{ lien('/animateurs/') }}#inscription">M'inscrire gratuitement <span aria-hidden="true">→</span></a></p>
+      <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">M'inscrire gratuitement <span aria-hidden="true">→</span></a></p>
       <p class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</p>
       <ul class="station-liens">
-        <li><a href="{{ lien('/animateurs/') }}#inscription">Recevoir les offres</a></li>
-        <li><a href="{{ lien('/animateurs/') }}#offres">Les offres</a></li>
-        <li><a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a></li>
-        <li><a href="{{ lien('/animateurs/contrat-d-engagement-educatif/') }}">Le contrat d'engagement éducatif</a></li>
+        <li><a href="{{ lien('/trouver-un-poste/') }}#inscription">Recevoir les offres</a></li>
+        <li><a href="{{ lien('/trouver-un-poste/') }}#offres">Les offres</a></li>
+        <li><a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a></li>
+        <li><a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Le contrat d'engagement éducatif</a></li>
       </ul>
     </div>
   </section>
 
-  <section class="station" id="recruteurs" aria-labelledby="t-recruteurs">
+  <section class="station" id="recruter" aria-labelledby="t-recruteurs">
     <div class="station-noeud station-noeud-plein" aria-hidden="true">3</div>
     <div class="station-carte station-carte-rouge">
-      <p class="note-main">recruteurs</p>
+      <p class="note-main">recruter</p>
       <h2 id="t-recruteurs">Recruter son équipe d'animation</h2>
       <p>Centres de loisirs, organisateurs de séjours : publiez vos offres là où les jeunes cherchent leur BAFA. Elles sont envoyées aux animateurs inscrits de votre département.</p>
-      <p><a class="bouton-blanc" href="{{ lien('/recruteurs/') }}">Publier une offre <span aria-hidden="true">→</span></a></p>
+      <p><a class="bouton-blanc" href="{{ lien('/recruter/') }}">Publier une offre <span aria-hidden="true">→</span></a></p>
       <p class="station-chiffre"><b>Offre fondateurs</b> : moitié prix à vie{% if restantes > 0 %} · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }} restante{{ 's' if restantes > 1 }}{% endif %}</p>
       <ul class="station-liens">
-        <li><a href="{{ lien('/recruteurs/') }}#fondateurs">L'offre fondateurs</a></li>
-        <li><a href="{{ lien('/recruteurs/') }}#inclus">Ce qui est inclus</a></li>
-        <li><a href="{{ lien('/recruteurs/') }}#publier">Comment publier</a></li>
+        <li><a href="{{ lien('/recruter/') }}#fondateurs">L'offre fondateurs</a></li>
+        <li><a href="{{ lien('/recruter/') }}#inclus">Ce qui est inclus</a></li>
+        <li><a href="{{ lien('/recruter/') }}#publier">Comment publier</a></li>
       </ul>
     </div>
   </section>

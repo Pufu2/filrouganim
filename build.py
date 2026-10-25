@@ -29,7 +29,7 @@ SORTIE = RACINE / "_site"
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
         "août", "septembre", "octobre", "novembre", "décembre"]
 MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
-FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": "Externat"}
+FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": "Externat", "alternance": "En alternance"}
 
 
 # ---------------------------------------------------------------- lecture
@@ -149,6 +149,7 @@ class Site:
         self.departements = {d["code"]: d for d in t["departements"]}
         self.periodes = [{**p, "debut": en_date(p["debut"]), "fin": en_date(p["fin"])} for p in t["periodes"]]
         self.types = t["types"]
+        self.diplomes = {d["id"]: d for d in t["diplomes"]}
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
         self.sessions = self.charger_sessions()
         self.stats = self.calculer_stats()
@@ -161,7 +162,8 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown)
-        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES)
+        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES,
+                                mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
 
     # -- sessions
@@ -187,7 +189,10 @@ class Site:
             s["dep"] = self.departements[s["departement"]]
             s["periode"] = self.periode_de(s["debut"])
             s["type_nom"] = {"formation-generale": "Formation générale", "approfondissement": "Approfondissement",
-                             "qualification": "Qualification", "perfectionnement": "Perfectionnement"}[s["type"]]
+                             "qualification": "Qualification", "perfectionnement": "Perfectionnement",
+                             "parcours": "Formation complète"}[s["type"]]
+            s["dipl"] = self.diplomes[s["diplome"]]
+            s["mois"] = s["debut"].strftime("%Y-%m")
             sessions.append(s)
         # Classement (expliqué sur /classement-des-sessions/) : date de début, puis prix, puis organisme
         sessions.sort(key=lambda s: (s["debut"], s["prix"] is None, s["prix"] or 0, s["org"]["nom"], s["ville"]))
@@ -258,7 +263,7 @@ class Site:
         """Données structurées schema.org (Course + CourseInstance) pour une liste de sessions."""
         objets = []
         for s in sessions:
-            nom = f"{s['diplome']} – {s['type_nom']}" + (f" : {s['theme']}" if s["theme"] else "")
+            nom = f"{s['dipl']['nom']} – {s['type_nom']}" + (f" : {s['theme']}" if s["theme"] else "")
             instance = {"@type": "CourseInstance", "courseMode": "Onsite",
                         "startDate": s["debut"].isoformat(),
                         "location": {"@type": "Place", "name": s["ville"],
@@ -267,7 +272,7 @@ class Site:
             if s["fin"]:
                 instance["endDate"] = s["fin"].isoformat()
             objet = {"@context": "https://schema.org", "@type": "Course", "name": nom,
-                     "description": f"Session de {s['diplome']} ({s['type_nom'].lower()}) organisée par {s['org']['nom']} à {s['ville']}, {dates_fr(s['debut'], s['fin'])}.",
+                     "description": f"Session de {s['dipl']['nom']} ({s['type_nom'].lower()}) organisée par {s['org']['nom']} à {s['ville']}, {dates_fr(s['debut'], s['fin'])}.",
                      "provider": {"@type": "Organization", "name": s["org"]["nom"], "sameAs": s["org"]["site"]},
                      "hasCourseInstance": instance}
             if s["prix"] is not None:
@@ -279,8 +284,8 @@ class Site:
     # -- déclaration des pages
     def declarer(self):
         """Le site est rangé en 3 grandes parties ; chaque page traite un seul sujet, sous l'adresse de sa partie :
-        /se-former/… (sessions, formations, guides du BAFA)  /animateurs/… (inscription, offres, stage, contrat)
-        /recruteurs/ (publier une offre)  + accueil, à propos, contact, pages légales"""
+        /se-former/… (sessions, formations, guides du BAFA)  /trouver-un-poste/… (inscription, offres, stage, contrat)
+        /recruter/ (publier une offre)  + accueil, à propos, contact, pages légales"""
         S = self.sessions
         bafa = [s for s in S if s["diplome"] == "BAFA"]
         SF = ("Se former", "/se-former/")
@@ -342,6 +347,16 @@ class Site:
                          h1=f"BAFA : {t['nom'].lower()}",
                          description=f"Les sessions de {t['nom'].lower()} du BAFA en Île-de-France : dates, villes, formules et prix, avec le lien vers chaque organisme.",
                          type_session=t, sessions=liste, indexer=bool(liste), fil=[SF, RUB, (t["nom"], f"/se-former/sessions/{t['slug']}/")])
+        for d in self.diplomes.values():
+            if d["id"] == "BAFD":
+                continue
+            liste = [s for s in S if s["diplome"] == d["id"]]
+            self.ajouter(f"/se-former/sessions/{d['slug']}/", "liste.html",
+                         titre=f"{d['nom']} en Île-de-France : sessions, dates et prix",
+                         h1=f"Les sessions {d['long']} en Île-de-France",
+                         description=f"Les prochaines sessions {d['long']} en Île-de-France : dates, lieu, durée et prix, organisme par organisme, avec le lien vers chaque organisme.",
+                         intro=None, diplome_page=d, sessions=liste, indexer=bool(liste),
+                         fil=[SF, RUB, (d["nom"], f"/se-former/sessions/{d['slug']}/")])
         bafd = [s for s in S if s["diplome"] == "BAFD"]
         self.ajouter("/se-former/sessions/bafd/", "liste.html", titre="BAFD en Île-de-France : sessions, dates et prix",
                      h1="Les sessions BAFD en Île-de-France",
@@ -376,8 +391,8 @@ class Site:
                      description="Trouver une session de BAFA ou de BAFD en Île-de-France, comprendre chaque formation de l'animation, du PSC1 au DEJEPS, et financer son BAFA.",
                      fil=[SF])
 
-        # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: animateurs »)
-        PARTIES = {"se-former": SF, "animateurs": ("Animateurs", "/animateurs/")}
+        # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Trouver un poste", "/trouver-un-poste/")}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -402,10 +417,10 @@ class Site:
                          description=entete.get("description", ""), indexer=entete.get("indexer", True),
                          corps_md=corps, entete=entete, fil=fil)
         for o in self.offres:
-            self.ajouter(f"/animateurs/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
+            self.ajouter(f"/trouver-un-poste/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
-                         fil=[("Animateurs", "/animateurs/"), (o["intitule"], f"/animateurs/offres/{o['id']}/")])
+                         fil=[("Trouver un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
         self.ajouter("/404.html", "404.html", titre="Page introuvable", indexer=False)
 
         # ---- anciennes adresses : une page de redirection pour chacune
@@ -417,8 +432,8 @@ class Site:
                  "/se-former/sessions/bafd/": ["/bafd/", "/sessions/bafd/"],
                  "/se-former/sessions/organismes/": ["/organismes/", "/sessions/organismes/"],
                  "/se-former/questions-frequentes/": ["/questions-frequentes/", "/guides/questions-frequentes/"],
-                 "/animateurs/": ["/stages-et-jobs/"],
-                 "/recruteurs/": ["/structures/", "/stages-et-jobs/recruteurs/"]}
+                 "/trouver-un-poste/": ["/stages-et-jobs/", "/animateurs/"],
+                 "/recruter/": ["/structures/", "/stages-et-jobs/recruteurs/", "/recruteurs/"]}
         anciennes = {}
         for pg in list(self.pages):
             u = pg["url"]
@@ -429,14 +444,17 @@ class Site:
                 anciennes["/sessions/" + reste] = u
                 if reste.startswith("organismes/"):
                     anciennes["/" + reste] = u
-                elif reste and not pg.get("ville"):
+                elif reste and not pg.get("ville") and not pg.get("diplome_page"):
                     anciennes["/bafa/" + reste] = u
             elif pg["gabarit"] == "formation.html":
                 anciennes["/formations/" + u.split("/")[2] + "/"] = u
             elif pg["gabarit"] == "guide.html":
                 anciennes["/guides/" + u.split("/")[2] + "/"] = u
-            elif u.startswith("/animateurs/offres/"):
-                anciennes[u.replace("/animateurs/", "/stages-et-jobs/", 1)] = u
+                if u.startswith("/trouver-un-poste/"):
+                    anciennes[u.replace("/trouver-un-poste/", "/animateurs/", 1)] = u
+            elif u.startswith("/trouver-un-poste/offres/"):
+                anciennes[u.replace("/trouver-un-poste/", "/stages-et-jobs/", 1)] = u
+                anciennes[u.replace("/trouver-un-poste/", "/animateurs/", 1)] = u
         existantes = {pg["url"] for pg in self.pages}
         for ancienne, nouvelle in sorted(anciennes.items()):
             if ancienne not in existantes:
@@ -467,7 +485,8 @@ class Site:
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
             "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
-            "stats": self.stats, "offres": self.offres,
+            "stats": self.stats, "offres": self.offres, "diplomes": list(self.diplomes.values()),
+            "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types,
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

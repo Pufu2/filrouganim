@@ -52,23 +52,46 @@
   var compte = document.getElementById("compte");
   var aucune = document.getElementById("aucune");
 
-  // Les choix sont gardés dans l'adresse (ex. ?dep=93&periode=hiver-2027) : on peut partager le lien.
+  // Les choix sont gardés dans l'adresse (ex. ?diplome=BAFA&dep=93&quand=p:hiver-2027) : on peut partager le lien.
   var params = new URLSearchParams(location.search);
+  if (params.has("periode") && !params.has("quand")) params.set("quand", "p:" + params.get("periode")); // anciens liens
   Array.prototype.forEach.call(form.elements, function (el) {
     if (!el.name || !params.has(el.name)) return;
     if (el.type === "checkbox") el.checked = params.get(el.name) === "1";
     else el.value = params.get(el.name);
   });
 
+  // « Quelle étape ? » ne propose que les étapes du diplôme choisi (le BPJEPS, le DEJEPS… se suivent d'un bloc)
+  var selEtape = form.elements.type;
+  var etapes = Array.prototype.slice.call(selEtape.options, 1);
+  function adapterEtapes() {
+    var dip = form.elements.diplome.value;
+    var visibles = 0;
+    etapes.forEach(function (o) {
+      var montrer = !dip || o.dataset.diplome === dip;
+      o.hidden = !montrer; o.disabled = !montrer;
+      if (montrer) visibles++;
+    });
+    if (selEtape.selectedOptions[0] && selEtape.selectedOptions[0].disabled) selEtape.value = "";
+    selEtape.disabled = visibles === 0;
+    selEtape.options[0].textContent = visibles === 0 ? "Formation complète" : "Toutes";
+    // le parcours affiché sous les résultats suit le diplôme choisi
+    Array.prototype.forEach.call(document.querySelectorAll("[data-parcours]"), function (bloc) {
+      bloc.hidden = bloc.dataset.parcours !== (dip || "BAFA");
+    });
+  }
+
   function appliquer(majAdresse) {
     var f = form.elements;
-    var dep = f.dep.value, periode = f.periode.value, type = f.type.value;
-    var prix = parseFloat(f.prix.value), libres = f.libres && f.libres.checked;
+    adapterEtapes();
+    var dip = f.diplome.value, dep = f.dep.value, quand = f.quand.value, type = f.type.value;
+    var prix = parseFloat(f.prix.value);
     var mots = sansAccents(f.q.value).split(/\s+/).filter(Boolean);
     liste.cartes.forEach(function (c) {
       var d = c.dataset;
-      var ok = (!dep || d.dep === dep) && (!periode || d.periode === periode) && (!type || d.type === type) &&
-        (isNaN(prix) || (d.prix !== "" && parseFloat(d.prix) <= prix)) && (!libres || d.complet !== "oui") &&
+      var okQuand = !quand || (quand.slice(0, 2) === "p:" ? d.periode === quand.slice(2) : d.mois === quand.slice(2));
+      var ok = (!dip || d.diplome === dip) && (!dep || d.dep === dep) && okQuand && (!type || d.type === type) &&
+        (isNaN(prix) || (d.prix !== "" && parseFloat(d.prix) <= prix)) &&
         mots.every(function (m) { return d.texteNorm.indexOf(m) !== -1; });
       d.ok = ok ? "1" : "0";
     });
@@ -80,7 +103,7 @@
     if (majAdresse) {
       var p = new URLSearchParams();
       Array.prototype.forEach.call(form.elements, function (el) {
-        if (!el.name) return;
+        if (!el.name || el.disabled) return;
         if (el.type === "checkbox") { if (el.checked) p.set(el.name, "1"); }
         else if (el.value) p.set(el.name, el.value);
       });
@@ -95,5 +118,5 @@
     appliquer(true);
     document.getElementById("resultats").scrollIntoView({ behavior: "smooth" });
   });
-  if (params.toString()) appliquer(false);
+  if (params.toString()) appliquer(false); else adapterEtapes();
 })();

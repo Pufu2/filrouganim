@@ -6,12 +6,14 @@
 {% set prix = page.sessions | selectattr("prix") | map(attribute="prix") | list %}{% if prix %}<li>de <b>{{ prix | min | euros }}</b> à <b>{{ prix | max | euros }}</b></li>{% endif %}</ul>{% endif %}
 {% endblock %}
 {% block contenu %}
-{% if page.organisme or page.type_session %}
+{% if page.organisme or page.type_session or page.diplome_page %}
 <section class="bande bande-blanc">
   <div class="cadre texte">
     {% if page.organisme %}{% set o = page.organisme %}
     <p>{{ o.presentation }}</p>
     <p class="petit">Habilitation {{ o.habilitation }} (arrêté du 4 septembre 2026). <a href="{{ o.site }}" rel="noopener nofollow" target="_blank">Le BAFA sur le site de {{ o.nom }} ↗</a>{% if o.page_sessions %} · <a href="{{ o.page_sessions }}" rel="noopener nofollow" target="_blank">toutes ses sessions ↗</a>{% endif %}</p>
+    {% elif page.diplome_page %}
+    <p>Les sessions relevées sur les pages des organismes, en Île-de-France. Conditions d'entrée, contenu et débouchés : <a href="{{ lien(page.diplome_page.fiche) }}">tout savoir sur le {{ page.diplome_page.nom }}</a>.</p>
     {% elif page.type_session.id == "formation-generale" %}
     <p>La formation générale est la <strong>première étape</strong> du BAFA : 8 jours pour apprendre les bases (sécurité, rythme de l'enfant, jeux, vie collective). Il faut avoir <strong>16 ans le premier jour</strong> et s'être inscrit sur le site du ministère. <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Les étapes du BAFA</a></p>
     {% elif page.type_session.id == "approfondissement" %}
@@ -43,6 +45,7 @@
   </div>
 </section>
 {% else %}
+{% if page.diplome_page %}<section class="bande bande-sable"><div class="cadre">{{ m.parcours(diplomes, lien, seul=page.diplome_page.id) }}</div></section>{% endif %}
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endif %}
 

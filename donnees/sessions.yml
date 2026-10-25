@@ -65,6 +65,24 @@ sessions:
     releve_le: 2026-10-25
     verifie_le: 2026-10-25
     source: page-organisme
+  - id: ifac-pro-11291
+    organisme: "ifac"
+    diplome: "BPJEPS"
+    type: "parcours"
+    theme: "BPJEPS Animation Socio-Educative ou Culturelle"
+    debut: 2026-11-04
+    fin: 2027-10-29
+    ville: "Asnières-sur-Seine"
+    departement: "92"
+    formule: "alternance"
+    prix: 6800
+    prix_note: "570 heures de formation ; dossier avant le 01 octobre 2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://ifac-formation.fr/formations/sessions/professionnelles/11291"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
   - id: ufcv-150123
     organisme: "ufcv"
     diplome: "BAFD"
@@ -80,6 +98,24 @@ sessions:
     aides: []
     complet: false
     url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150123"
+    releve_le: 2026-10-25
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ifac-pro-10452
+    organisme: "ifac"
+    diplome: "CPJEPS"
+    type: "parcours"
+    theme: "CPJEPS Animateur d’activités et de vie quotidienne"
+    debut: 2026-11-09
+    fin: 2027-11-05
+    ville: "Franconville"
+    departement: "95"
+    formule: "alternance"
+    prix: null
+    prix_note: "553 heures de formation ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://ifac-formation.fr/formations/sessions/professionnelles/10452"
     releve_le: 2026-10-25
     verifie_le: 2026-10-25
     source: page-organisme
@@ -837,6 +873,24 @@ sessions:
     complet: false
     url: "https://www.afocal.fr/bafa/stage-bafa-0627401.html"
     releve_le: 2026-10-24
+    verifie_le: 2026-10-25
+    source: page-organisme
+  - id: ifac-pro-11431
+    organisme: "ifac"
+    diplome: "DEJEPS"
+    type: "parcours"
+    theme: "DEJEPS Coordination de projets"
+    debut: 2027-01-27
+    fin: 2028-04-11
+    ville: "Asnières-sur-Seine"
+    departement: "92"
+    formule: "alternance"
+    prix: null
+    prix_note: "756 heures de formation ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://ifac-formation.fr/formations/sessions/professionnelles/11431"
+    releve_le: 2026-10-25
     verifie_le: 2026-10-25
     source: page-organisme
   - id: afocal-0627004

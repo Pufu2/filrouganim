@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block h1 %}Sessions BAFA et BAFD en Île-de-France{% endblock %}
-{% block tete_chapo %}<p class="chapo">Comparez ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
+{% block h1 %}Trouver une formation en Île-de-France{% endblock %}
+{% block tete_chapo %}<p class="chapo">BAFA, BAFD, CQP, CPJEPS, BPJEPS, DEJEPS, DESJEPS : comparez les sessions ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
 {% block tete_plus %}<div class="carte-recherche carte-recherche-direct">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
@@ -13,16 +13,9 @@
     <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
   </div>
 </section>
-{{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
-<section class="bande bande-blanc">
-  <div class="cadre">
-    <h2>Avant de vous inscrire</h2>
-    <ol class="trois-pas">
-      <li><b>S'inscrire sur le site du ministère</b><span>Il donne le numéro à transmettre à l'organisme.</span><a href="https://bafa-bafd.jeunes.gouv.fr/" rel="noopener" target="_blank">bafa-bafd.jeunes.gouv.fr ↗</a></li>
-      <li><b>Demander les aides</b><span>200 € de la CAF, et les aides de votre ville.</span><a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a></li>
-      <li><b>Penser au stage pratique</b><span>Dans les 18 mois après la formation générale.</span><a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Trouver son stage</a></li>
-    </ol>
-  </div>
+<section class="bande bande-sable" aria-label="Le parcours">
+  <div class="cadre">{{ m.parcours(diplomes, lien) }}</div>
 </section>
+{{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}
