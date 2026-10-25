@@ -56,3 +56,5 @@ supabase:
 comptes_ouverts: false
 # Adresse d'envoi des alertes du lundi (outils/alertes.py) : une adresse du domaine, validée dans Brevo.
 email_alertes: alertes@filrouganim.fr
+# Adresse d'envoi des e-mails de connexion (outils/configurer_emails.py), sur le domaine authentifié dans Brevo.
+email_connexion: connexion@filrouganim.fr

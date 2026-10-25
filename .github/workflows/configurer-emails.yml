@@ -1,0 +1,24 @@
+name: Configurer les e-mails de connexion
+
+# lancé à la main (onglet Actions > Run workflow), après avoir modifié supabase/emails/ ou changé de clé SMTP
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  configurer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Régler Supabase (SMTP Brevo, textes en français)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          BREVO_SMTP_LOGIN: ${{ secrets.BREVO_SMTP_LOGIN }}
+          BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
+        run: python3 outils/configurer_emails.py
