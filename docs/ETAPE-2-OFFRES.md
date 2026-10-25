@@ -2,17 +2,34 @@
 
 État au 25 octobre 2026 : **tout est prêt techniquement, rien n'est en vente, aucune offre n'est publiée.**
 
+## L'inscription gratuite des animateurs (choix du 25/10/2026)
+
+Pas de compte : une **inscription aux alertes** par e-mail (adresse, département, profil), gérée par
+**Brevo** (déjà utilisé pour Jeuphorie). C'est plus simple, plus sûr pour des jeunes de 16-17 ans,
+et sans mot de passe à gérer. Aucun profil n'est visible par les structures : ce sont les offres
+qui vont aux animateurs, pas l'inverse.
+
+Pour l'ouvrir (Pufu2, 15 minutes, dans Brevo) :
+1. Créer une liste « Fil Roug'Anim animateurs » et les attributs DEPARTEMENT et PROFIL (texte).
+2. Créer un formulaire d'inscription relié à cette liste, avec **double confirmation**, et les
+   champs EMAIL, DEPARTEMENT, PROFIL et la case d'accord OPT_IN.
+3. Copier l'adresse « action » du formulaire (https://….sibforms.com/serve/…) dans
+   `inscription_animateurs` de config.yml : le formulaire apparaît sur `/animateurs/`.
+4. À chaque nouvelle offre : une campagne Brevo envoyée aux inscrits du département (segment).
+Avant d'ouvrir : compléter la page Confidentialité (finalité, durée de conservation, Brevo comme
+sous-traitant, désinscription).
+
 ## Ce qui existe déjà sur le site
 
 - `donnees/offres.yml` : le format d'une offre (champs expliqués en tête du fichier). Liste vide.
 - Dès qu'une offre est ajoutée :
-  - elle apparaît en haut de `/stages-et-jobs/` (date, structure, ville, public, salaire) ;
-  - elle a sa page `/stages-et-jobs/offres/<id>/`, avec un bouton « Candidater auprès de la structure »
+  - elle apparaît en haut de `/animateurs/` (date, structure, ville, public, salaire) ;
+  - elle a sa page `/animateurs/offres/<id>/`, avec un bouton « Candidater auprès de la structure »
     (e-mail ou lien de la structure : le site ne reçoit aucune candidature) ;
   - la page porte les données structurées **JobPosting** : l'offre peut apparaître dans
     **Google pour l'emploi**, ce qui est le meilleur levier de visites gratuit pour cette étape ;
   - elle disparaît toute seule après sa date `expire_le`.
-- `/stages-et-jobs/recruteurs/` : la page pour les structures (ce qui arrive, ce qu'il faut envoyer).
+- `/recruteurs/` : la page pour les structures (ce qui arrive, ce qu'il faut envoyer).
 
 Testé le 25/10/2026 avec une offre fictive, retirée ensuite : page, bouton de candidature et
 données JobPosting valides.

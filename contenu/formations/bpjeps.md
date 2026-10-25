@@ -26,7 +26,7 @@ Les conditions d'entrée sont fixées mention par mention : vérifiez celles de 
 
 ## Après
 
-Le BPJEPS ouvre la porte du [DEJEPS](/formations/dejeps/) (niveau 5), pour coordonner des projets et des équipes.
+Le BPJEPS ouvre la porte du [DEJEPS](/se-former/dejeps/) (niveau 5), pour coordonner des projets et des équipes.
 
 ## Source
 

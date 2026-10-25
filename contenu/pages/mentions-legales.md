@@ -15,10 +15,9 @@ description: "Éditeur, hébergeur et informations légales du site Fil Roug'Ani
 - Contact : {{ site.email }}
 - Directeur de la publication : {{ site.editeur.nom }}
 {% else %}
-{{ site.nom }} ({{ site.url }}) est édité **à titre non professionnel** par Rafaël, directeur adjoint d'accueil de loisirs et créateur de [Jeuphorie](https://jeuphorie.fr). Comme la loi le permet à un éditeur non professionnel, les éléments permettant de l'identifier sont détenus par l'hébergeur. Ces mentions seront complétées (nom, adresse, SIREN) dès que le site aura une activité commerciale.
+{{ site.nom }} ({{ site.url }}) est édité **à titre non professionnel** par un professionnel de l'animation, également éditeur de [Jeuphorie](https://jeuphorie.fr). Comme la loi le permet à un éditeur non professionnel, les éléments permettant de l'identifier sont détenus par l'hébergeur. Ces mentions seront complétées (nom, adresse, SIREN) dès que le site aura une activité commerciale.
 
 - Contact : {{ site.email }}
-- Directeur de la publication : Rafaël
 {% endif %}
 
 ## Hébergeur

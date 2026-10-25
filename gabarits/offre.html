@@ -18,7 +18,7 @@
   <article class="cadre texte">
     <p><b>Contrat :</b> {{ {"cee": "contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI", "stage-pratique": "stage pratique BAFA", "benevole": "bénévolat"}[o.contrat] }}{% if o.loge %} · logé sur place{% endif %}{% if o.diplomes %} · <b>Diplômes :</b> {{ o.diplomes | join(", ") }}{% endif %}</p>
     {{ o.texte | markdown | safe }}
-    <p class="petit">Offre publiée le {{ o.publiee_le | date_fr }} par la structure, visible jusqu'au {{ o.expire_le | date_fr }}. La candidature est gratuite et se fait directement auprès de la structure. <a href="{{ lien('/guides/contrat-d-engagement-educatif/') }}">Vos droits avec un contrat d'engagement éducatif</a></p>
+    <p class="petit">Offre publiée le {{ o.publiee_le | date_fr }} par la structure, visible jusqu'au {{ o.expire_le | date_fr }}. La candidature est gratuite et se fait directement auprès de la structure. <a href="{{ lien('/animateurs/contrat-d-engagement-educatif/') }}">Vos droits avec un contrat d'engagement éducatif</a></p>
   </article>
 </section>
 {% endblock %}

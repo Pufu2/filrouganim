@@ -13,11 +13,11 @@
     <p>{{ o.presentation }}</p>
     <p class="petit">Habilitation {{ o.habilitation }} (arrêté du 4 septembre 2026). <a href="{{ o.site }}" rel="noopener nofollow" target="_blank">Le BAFA sur le site de {{ o.nom }} ↗</a>{% if o.page_sessions %} · <a href="{{ o.page_sessions }}" rel="noopener nofollow" target="_blank">toutes ses sessions ↗</a>{% endif %}</p>
     {% elif page.type_session.id == "formation-generale" %}
-    <p>La formation générale est la <strong>première étape</strong> du BAFA : 8 jours pour apprendre les bases (sécurité, rythme de l'enfant, jeux, vie collective). Il faut avoir <strong>16 ans le premier jour</strong> et s'être inscrit sur le site du ministère. <a href="{{ lien('/guides/etapes-du-bafa/') }}">Les étapes du BAFA</a></p>
+    <p>La formation générale est la <strong>première étape</strong> du BAFA : 8 jours pour apprendre les bases (sécurité, rythme de l'enfant, jeux, vie collective). Il faut avoir <strong>16 ans le premier jour</strong> et s'être inscrit sur le site du ministère. <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Les étapes du BAFA</a></p>
     {% elif page.type_session.id == "approfondissement" %}
-    <p>L'approfondissement est la <strong>dernière étape</strong> du BAFA : 6 jours sur un thème (petite enfance, jeux, handicap, ados…), après le stage pratique. C'est après cette session qu'on demande l'aide de la CAF. <a href="{{ lien('/guides/financer-son-bafa/') }}">Financer son BAFA</a></p>
+    <p>L'approfondissement est la <strong>dernière étape</strong> du BAFA : 6 jours sur un thème (petite enfance, jeux, handicap, ados…), après le stage pratique. C'est après cette session qu'on demande l'aide de la CAF. <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a></p>
     {% else %}
-    <p>La qualification remplace l'approfondissement : 8 jours pour une compétence reconnue, comme <strong>surveillant de baignade</strong>. <a href="{{ lien('/formations/surveillant-de-baignade/') }}">Surveillant de baignade</a></p>
+    <p>La qualification remplace l'approfondissement : 8 jours pour une compétence reconnue, comme <strong>surveillant de baignade</strong>. <a href="{{ lien('/se-former/surveillant-de-baignade/') }}">Surveillant de baignade</a></p>
     {% endif %}
   </div>
 </section>
@@ -27,9 +27,9 @@
   <div class="cadre">
     {% if page.sessions %}
     {{ m.liste_sessions(page.sessions, lien) }}
-    <p class="petit">Classement par date puis par prix. <a href="{{ lien('/sessions/') }}">Toutes les sessions d'Île-de-France, avec les filtres</a></p>
+    <p class="petit">Classement par date puis par prix. <a href="{{ lien('/se-former/sessions/') }}">Toutes les sessions d'Île-de-France, avec les filtres</a></p>
     {% else %}
-    <p class="aucune">Aucune session relevée ici pour l'instant. La liste est revérifiée chaque semaine : en attendant, <a href="{{ lien('/sessions/') }}">voyez toutes les sessions d'Île-de-France</a>.</p>
+    <p class="aucune">Aucune session relevée ici pour l'instant. La liste est revérifiée chaque semaine : en attendant, <a href="{{ lien('/se-former/sessions/') }}">voyez toutes les sessions d'Île-de-France</a>.</p>
     {% endif %}
   </div>
 </section>
@@ -37,9 +37,9 @@
 {% if page.departement %}
 <section class="bande bande-sable">
   <div class="cadre explorer">
-    {% if page.periodes_dep %}<div><h3>{{ page.departement.nom }}, par vacances</h3><ul>{% for p in page.periodes_dep %}<li><a href="{{ lien('/sessions/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endfor %}</ul></div>{% endif %}
-    {% if page.villes %}<div><h3>{{ page.departement.nom }}, par ville</h3><ul>{% for v in page.villes %}<li><a href="{{ lien('/sessions/' ~ page.departement.slug ~ '/' ~ v.slug ~ '/') }}">{{ v.nom }}</a> <small>{{ v.sessions | length }}</small></li>{% endfor %}</ul></div>{% endif %}
-    <div><h3>Les autres départements</h3><ul>{% for d in departements if d.code != page.departement.code %}<li><a href="{{ lien('/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
+    {% if page.periodes_dep %}<div><h3>{{ page.departement.nom }}, par vacances</h3><ul>{% for p in page.periodes_dep %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endfor %}</ul></div>{% endif %}
+    {% if page.villes %}<div><h3>{{ page.departement.nom }}, par ville</h3><ul>{% for v in page.villes %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ v.slug ~ '/') }}">{{ v.nom }}</a> <small>{{ v.sessions | length }}</small></li>{% endfor %}</ul></div>{% endif %}
+    <div><h3>Les autres départements</h3><ul>{% for d in departements if d.code != page.departement.code %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
   </div>
 </section>
 {% else %}
@@ -52,7 +52,7 @@
     <ol class="trois-pas">
       <li><b>S'inscrire sur le site du ministère</b><span>Il donne le numéro à transmettre à l'organisme.</span><a href="https://bafa-bafd.jeunes.gouv.fr/" rel="noopener" target="_blank">bafa-bafd.jeunes.gouv.fr ↗</a></li>
       <li><b>Vérifier chez l'organisme</b><span>Prix, formule et places peuvent avoir changé depuis la vérification.</span><a href="{{ lien('/classement-des-sessions/') }}">Comment c'est relevé</a></li>
-      <li><b>Demander les aides</b><span>200 € de la CAF, et les aides de votre ville.</span><a href="{{ lien('/guides/financer-son-bafa/') }}">Financer son BAFA</a></li>
+      <li><b>Demander les aides</b><span>200 € de la CAF, et les aides de votre ville.</span><a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a></li>
     </ol>
     {{ m.encart_jeuphorie(site) }}
   </div>

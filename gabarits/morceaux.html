@@ -12,9 +12,9 @@
 {% endmacro %}
 
 {# La barre de recherche en cases : Où ? Quand ? Quelle étape ? Budget ? + mot-clé.
-   Sur l'accueil elle envoie vers /sessions/ ; sur /sessions/ elle filtre en direct. #}
+   Sur l'accueil elle envoie vers /se-former/sessions/ ; sur /se-former/sessions/ elle filtre en direct. #}
 {% macro recherche(lien, departements, periodes, aujourdhui, stats, en_direct=False) %}
-<form class="recherche" action="{{ lien('/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une session BAFA ou BAFD">
+<form class="recherche" action="{{ lien('/se-former/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une session BAFA ou BAFD">
   <div class="recherche-cases">
     <label class="case-r">{{ icone("lieu") }}<span class="case-titre">Où ?</span>
       <select name="dep">
@@ -60,7 +60,7 @@
   <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
   <div class="s-corps">
     <h3 class="s-titre">{% if s.diplome == "BAFD" %}BAFD · {% endif %}{{ s.type_nom }}{% if s.theme %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
-    <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
+    <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/se-former/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
     <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}{% endif %}, à confirmer chez l'organisme</p>
   </div>
   <p class="s-prix">{% if s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
@@ -86,10 +86,10 @@
 <div class="etapes-cadre">
   <svg class="etapes-fil" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M10 60 C 90 20, 160 100, 250 60 S 400 20, 500 60 S 660 100, 750 60 S 900 25, 990 58" /></svg>
   <ol class="etapes">
-    <li><span class="etape-noeud" aria-hidden="true">1</span><b>Formation générale</b><span>8 jours, dès 16 ans</span><a href="{{ lien('/sessions/formation-generale/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Le trouver</a></li>
-    <li><span class="etape-noeud" aria-hidden="true">3</span><b>Approfondissement</b><span>6 jours (ou qualification, 8 jours)</span><a href="{{ lien('/sessions/approfondissement/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/stages-et-jobs/') }}">Stages et jobs</a></li>
+    <li><span class="etape-noeud" aria-hidden="true">1</span><b>Formation générale</b><span>8 jours, dès 16 ans</span><a href="{{ lien('/se-former/sessions/formation-generale/') }}">Les sessions</a></li>
+    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Le trouver</a></li>
+    <li><span class="etape-noeud" aria-hidden="true">3</span><b>Approfondissement</b><span>6 jours (ou qualification, 8 jours)</span><a href="{{ lien('/se-former/sessions/approfondissement/') }}">Les sessions</a></li>
+    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/animateurs/') }}">Stages et jobs</a></li>
   </ol>
 </div>
 {% endmacro %}
@@ -114,10 +114,10 @@
     <p class="note-main">chercher autrement</p>
     <h2 id="titre-explorer">Explorer les sessions</h2>
     <div class="explorer">
-      <div><h3>Par département</h3><ul>{% for d in departements %}<li><a href="{{ lien('/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
-      <div><h3>Par vacances</h3><ul>{% for p in periodes if p.fin >= aujourdhui %}{% for s in toutes_sessions if s.periode is sameas p and s.diplome == "BAFA" %}{% if loop.first %}<li><a href="{{ lien('/sessions/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endif %}{% endfor %}{% endfor %}</ul></div>
-      <div><h3>Par étape</h3><ul>{% for t in types %}<li><a href="{{ lien('/sessions/' ~ t.slug ~ '/') }}">{{ t.nom }}</a></li>{% endfor %}<li><a href="{{ lien('/sessions/bafd/') }}">BAFD (directeur)</a></li></ul></div>
-      <div><h3>Par organisme</h3><ul><li><a href="{{ lien('/sessions/organismes/') }}">Tous les organismes</a></li></ul></div>
+      <div><h3>Par département</h3><ul>{% for d in departements %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
+      <div><h3>Par vacances</h3><ul>{% for p in periodes if p.fin >= aujourdhui %}{% for s in toutes_sessions if s.periode is sameas p and s.diplome == "BAFA" %}{% if loop.first %}<li><a href="{{ lien('/se-former/sessions/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endif %}{% endfor %}{% endfor %}</ul></div>
+      <div><h3>Par étape</h3><ul>{% for t in types %}<li><a href="{{ lien('/se-former/sessions/' ~ t.slug ~ '/') }}">{{ t.nom }}</a></li>{% endfor %}<li><a href="{{ lien('/se-former/sessions/bafd/') }}">BAFD (directeur)</a></li></ul></div>
+      <div><h3>Par organisme</h3><ul><li><a href="{{ lien('/se-former/sessions/organismes/') }}">Tous les organismes</a></li></ul></div>
     </div>
   </div>
 </section>
@@ -129,7 +129,7 @@
   {% for g in elements if g.url != url_page %}
   <li><a href="{{ lien(g.url) }}">
     <b>{{ g.court }}</b><span>{{ g.resume }}</span>
-    {% if details %}<span class="carte-details">Dès {{ g.age }} · {{ g.niveau }}</span>{% endif %}
+    {% if details %}<span class="carte-details">{{ g.age }} · {{ g.niveau }}</span>{% endif %}
     <span class="porte-lien">Lire →</span></a></li>
   {% endfor %}
 </ul>

@@ -1,4 +1,5 @@
 ---
+partie: se-former
 titre: "Financer son BAFA en Île-de-France : aide CAF de 200 € et autres aides"
 court: Financer son BAFA
 resume: "L'aide de 200 € de la CAF, les aides locales, et un exemple de calcul."

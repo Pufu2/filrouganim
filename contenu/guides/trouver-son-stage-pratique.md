@@ -1,4 +1,5 @@
 ---
+partie: animateurs
 titre: "Trouver son stage pratique BAFA : où chercher, quand, comment"
 court: Trouver son stage pratique
 resume: "Les règles du stage, où chercher en Île-de-France et comment se présenter."

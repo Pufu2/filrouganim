@@ -5,11 +5,11 @@ url: /confidentialite/
 description: "Fil Roug'Anim ne demande aucun compte, ne dépose aucun cookie et ne collecte aucune donnée personnelle."
 ---
 
-**En bref : pas de compte, pas de formulaire, pas de cookie, pas de publicité.** Vous consultez le site sans rien nous donner.
+**En bref : pas de compte, pas de cookie, pas de publicité.** Vous consultez le site sans rien nous donner{% if site.inscription_animateurs %}, sauf si vous vous inscrivez aux offres (voir plus bas){% endif %}.
 
 ## Ce que le site ne fait pas
 
-- Il ne demande **aucune inscription** et ne contient **aucun formulaire**.
+- Il ne demande **aucun compte**.{% if not site.inscription_animateurs %} Il ne contient **aucun formulaire**.{% endif %}
 - Il ne dépose **aucun cookie**, ni publicitaire ni de mesure d'audience.
 - Les filtres de recherche fonctionnent **dans votre navigateur** : vos choix ne sont envoyés à personne. Ils s'affichent seulement dans l'adresse de la page, pour que vous puissiez la partager.
 
@@ -22,6 +22,10 @@ description: "Fil Roug'Anim ne demande aucun compte, ne dépose aucun cookie et 
 {% if offres %}## Les offres de stages et de jobs
 
 Les offres sont publiées par les structures qui recrutent. L'adresse de candidature affichée est celle que la structure a choisie (de préférence une adresse générique). Le site ne reçoit aucune candidature et ne publie aucun CV.
+
+{% endif %}{% if site.inscription_animateurs %}## L'inscription des animateurs aux offres
+
+Si vous vous inscrivez sur la page Animateurs, nous gardons votre adresse e-mail, votre département et votre profil, pour vous envoyer les offres de votre département, rien d'autre. Ces données sont hébergées par Brevo, prestataire français d'envoi d'e-mails, qui envoie les e-mails pour nous. Elles ne sont jamais montrées aux structures ni vendues. Un lien de désinscription figure dans chaque e-mail ; les données sont supprimées à la désinscription, ou après 2 ans sans ouverture d'e-mail.
 
 {% endif %}## Liens vers d'autres sites
 

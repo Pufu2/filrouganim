@@ -1,4 +1,5 @@
 ---
+partie: se-former
 titre: "Les étapes du BAFA : âge, durée, délais (guide 2026-2027)"
 court: Les étapes du BAFA
 resume: "16 ans, 3 étapes, 30 mois au plus : le parcours complet, dans l'ordre."
@@ -22,11 +23,11 @@ Le BAFA (brevet d'aptitude aux fonctions d'animateur) permet d'encadrer des enfa
 | 2. Stage pratique | 14 jours effectifs au minimum | Dans un centre de loisirs, une colo, un accueil de jeunes… |
 | 3. Approfondissement **ou** qualification | 6 jours (approfondissement) ou 8 jours (qualification) | Chez un organisme habilité |
 
-**1. La formation générale.** Huit jours pour apprendre les bases : la sécurité, les besoins de l'enfant, les jeux, la vie collective, le rôle de l'animateur. [Voir les sessions de formation générale en Île-de-France](/sessions/formation-generale/).
+**1. La formation générale.** Huit jours pour apprendre les bases : la sécurité, les besoins de l'enfant, les jeux, la vie collective, le rôle de l'animateur. [Voir les sessions de formation générale en Île-de-France](/se-former/sessions/formation-generale/).
 
-**2. Le stage pratique.** Au moins 14 jours comme animateur, dans un accueil collectif de mineurs déclaré, au plus tard **18 mois après la formation générale**. C'est souvent votre premier vrai poste, et il est souvent payé. [Comment trouver son stage pratique](/guides/trouver-son-stage-pratique/).
+**2. Le stage pratique.** Au moins 14 jours comme animateur, dans un accueil collectif de mineurs déclaré, au plus tard **18 mois après la formation générale**. C'est souvent votre premier vrai poste, et il est souvent payé. [Comment trouver son stage pratique](/animateurs/trouver-son-stage-pratique/).
 
-**3. L'approfondissement ou la qualification.** Six jours sur un thème (petite enfance, jeux sportifs, handicap, ados…) ou huit jours de qualification, par exemple **surveillant de baignade**. [Voir les approfondissements en Île-de-France](/sessions/approfondissement/).
+**3. L'approfondissement ou la qualification.** Six jours sur un thème (petite enfance, jeux sportifs, handicap, ados…) ou huit jours de qualification, par exemple **surveillant de baignade**. [Voir les approfondissements en Île-de-France](/se-former/sessions/approfondissement/).
 
 ## Le délai total : 30 mois
 

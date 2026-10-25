@@ -7,7 +7,7 @@
       {% for o in page.organismes %}
       {% set n = toutes_sessions | selectattr("organisme", "equalto", o.id) | list | length %}
       <li class="{{ 'organisme-actif' if n else '' }}">
-        {% if o.en_ligne and n %}<a href="{{ lien('/sessions/organismes/' ~ o.id ~ '/') }}"><b>{{ o.nom }}</b></a>{% else %}<b>{{ o.nom }}</b>{% endif %}
+        {% if o.en_ligne and n %}<a href="{{ lien('/se-former/sessions/organismes/' ~ o.id ~ '/') }}"><b>{{ o.nom }}</b></a>{% else %}<b>{{ o.nom }}</b>{% endif %}
         <span>{% if n %}{{ n }} session{{ 's' if n > 1 }} sur le site{% else %}pas encore relevé{% endif %}</span>
         <a class="petit" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site ↗</a>
       </li>

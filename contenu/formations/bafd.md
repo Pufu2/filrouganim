@@ -5,10 +5,10 @@ nom: Brevet d'aptitude aux fonctions de directeur
 resume: "Diriger un accueil collectif de mineurs, dès 18 ans."
 description: "Le BAFD en bref : dès 18 ans avec le BAFA, 2 sessions et 2 stages pratiques en 4 ans au plus, pour diriger une colo ou un centre de loisirs. Conditions, étapes et sessions."
 ordre: 2
-age: "18 ans"
+age: "Dès 18 ans"
 duree: "9 + 14 + 6 + 14 jours minimum"
 niveau: "Brevet non professionnel, valable 5 ans"
-sessions: /sessions/bafd/
+sessions: /se-former/sessions/bafd/
 mis_a_jour: 2026-10-25
 ---
 
@@ -33,7 +33,7 @@ Le **BAFD** permet de **diriger**, de façon occasionnelle, un accueil collectif
 
 Chaque stage peut être coupé en 2 parties de 4 jours minimum ; le périscolaire compte pour 6 jours au plus.
 
-[Les sessions BAFD en Île-de-France](/sessions/bafd/)
+[Les sessions BAFD en Île-de-France](/se-former/sessions/bafd/)
 
 ## Source
 

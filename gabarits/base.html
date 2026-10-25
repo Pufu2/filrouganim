@@ -31,10 +31,9 @@
       <span class="logo-nom">Fil Roug'<b>Anim</b></span>
     </a>
     <nav class="menu" aria-label="Menu principal">
-      <a href="{{ lien('/sessions/') }}"{% if page.url.startswith('/sessions/') %} aria-current="page"{% endif %}>Sessions</a>
-      <a href="{{ lien('/formations/') }}"{% if page.url.startswith('/formations/') %} aria-current="page"{% endif %}>Formations</a>
-      <a href="{{ lien('/guides/') }}"{% if page.url.startswith('/guides/') %} aria-current="page"{% endif %}>Guides</a>
-      <a href="{{ lien('/stages-et-jobs/') }}"{% if page.url.startswith('/stages-et-jobs/') %} aria-current="page"{% endif %}>Stages et jobs</a>
+      <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
+      <a href="{{ lien('/animateurs/') }}"{% if page.url.startswith('/animateurs/') %} aria-current="page"{% endif %}>Animateurs</a>
+      <a href="{{ lien('/recruteurs/') }}"{% if page.url.startswith('/recruteurs/') %} aria-current="page"{% endif %}>Recruteurs</a>
     </nav>
   </div>
 </header>
@@ -63,23 +62,28 @@
   <div class="cadre pied-cadre">
     <div>
       <p class="pied-nom">Fil Roug'<b>Anim</b></p>
-      <p>{{ site.accroche }}. Un comparateur gratuit et indépendant des sessions BAFA et BAFD, sans compte et sans publicité.</p>
-      <p class="petit">Les informations viennent des pages publiques des organismes : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
+      <p>{{ site.accroche }}. Se former, trouver un stage ou un job, recruter : l'animation en Île-de-France, sur un seul fil. Gratuit pour les jeunes, sans publicité.</p>
+      <p class="petit">Les sessions viennent des pages publiques des organismes : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
     </div>
-    <nav aria-label="Chercher">
-      <p class="pied-titre">Chercher</p>
-      <a href="{{ lien('/sessions/') }}">Toutes les sessions</a>
-      <a href="{{ lien('/sessions/') }}">Par département et par vacances</a>
-      <a href="{{ lien('/sessions/organismes/') }}">Par organisme</a>
-      <a href="{{ lien('/formations/') }}">Les formations</a>
-      <a href="{{ lien('/guides/questions-frequentes/') }}">Questions fréquentes</a>
+    <nav aria-label="Se former">
+      <p class="pied-titre">Se former</p>
+      <a href="{{ lien('/se-former/sessions/') }}">Les sessions BAFA et BAFD</a>
+      <a href="{{ lien('/se-former/') }}">Les formations</a>
+      <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
+      <a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a>
     </nav>
-    <nav aria-label="Pages utiles">
+    <nav aria-label="Animateurs et recruteurs">
+      <p class="pied-titre">Animateurs</p>
+      <a href="{{ lien('/animateurs/') }}">Inscription gratuite et offres</a>
+      <a href="{{ lien('/animateurs/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
+      <p class="pied-titre pied-titre-2">Recruteurs</p>
+      <a href="{{ lien('/recruteurs/') }}">Publier une offre</a>
+    </nav>
+    <nav aria-label="Le site">
       <p class="pied-titre">Le site</p>
       <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
-      <a href="{{ lien('/stages-et-jobs/recruteurs/') }}">Vous recrutez ?</a>
       <a href="{{ lien('/contact/') }}">Contact</a>
-      <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>
+      <a href="{{ lien('/classement-des-sessions/') }}">Classement des sessions</a>
       <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>
       <a href="{{ lien('/confidentialite/') }}">Confidentialité</a>
       <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a>

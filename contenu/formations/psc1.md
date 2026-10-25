@@ -5,7 +5,7 @@ nom: Prévention et secours civiques de niveau 1
 resume: "Les gestes de premiers secours, en une journée, dès 10 ans."
 description: "Le PSC1 (prévention et secours civiques de niveau 1) : au moins 7 heures, dès 10 ans, pour apprendre les gestes qui sauvent. Exigé pour le BPJEPS et souvent pour la qualification surveillant de baignade."
 ordre: 4
-age: "10 ans"
+age: "Dès 10 ans"
 duree: "7 heures minimum"
 niveau: "Certificat de compétences (sécurité civile)"
 mis_a_jour: 2026-10-25

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block tete_note %}<p class="note-main">animateurs</p>{% endblock %}
+{% block h1 %}Trouver son stage pratique ou son job d'animateur{% endblock %}
+{% block tete_chapo %}<p class="chapo">Inscris-toi gratuitement pour recevoir les offres de ton département. Les structures te présentent leurs postes ; tu choisis à qui répondre.</p>{% endblock %}
+{% block tete_plus %}
+<div class="carte-recherche" id="inscription">
+  <h2 class="carte-recherche-titre">Recevoir les offres, gratuitement</h2>
+  {% if site.inscription_animateurs %}
+  <form class="inscription" action="{{ site.inscription_animateurs }}" method="post">
+    <div class="recherche-cases">
+      <label class="case-r case-r-texte"><span class="case-titre">Ton e-mail</span><input type="email" name="EMAIL" required autocomplete="email"></label>
+      <label class="case-r case-r-texte"><span class="case-titre">Ton département</span>
+        <select name="DEPARTEMENT" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+      <label class="case-r case-r-texte"><span class="case-titre">Tu es</span>
+        <select name="PROFIL" required><option value="">Choisir</option><option>Stagiaire BAFA</option><option>Titulaire du BAFA</option><option>Titulaire du BAFD</option><option>Animateur professionnel (BPJEPS…)</option></select></label>
+    </div>
+    <label class="case-accord"><input type="checkbox" name="OPT_IN" value="1" required> J'ai 16 ans ou plus et j'accepte de recevoir les offres par e-mail. Je peux me désinscrire à tout moment (<a href="{{ lien('/confidentialite/') }}">confidentialité</a>).</label>
+    <button class="bouton-r" type="submit">M'inscrire gratuitement <span aria-hidden="true">→</span></button>
+  </form>
+  {% else %}
+  <p class="inscription-bientot">Les inscriptions ouvrent avec les premières offres. Ce sera gratuit, sans compte et sans profil public : ton e-mail, ton département et ton profil (stagiaire BAFA, BAFA, BAFD…), rien de plus.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier" id="offres" aria-labelledby="t-offres">
+  <div class="cadre">
+    <h2 id="t-offres">{% if offres %}Les offres du moment{% else %}Les offres{% endif %}</h2>
+    {% if offres %}
+    <div class="sessions">
+    {% for o in offres %}
+      <article class="session offre">
+        <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
+        <div class="s-corps">
+          <h3 class="s-titre"><a href="{{ lien('/animateurs/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
+          <p class="s-infos"><b>{{ o.structure.nom }}</b> · {{ o.ville }} ({{ o.departement }}){% if o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
+          <p class="s-verif">Publiée le {{ o.publiee_le | date_fr }} · jusqu'au {{ o.expire_le | date_fr }}</p>
+        </div>
+        <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>
+        <a class="s-lien" href="{{ lien('/animateurs/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
+      </article>
+    {% endfor %}
+    </div>
+    {% else %}
+    <p class="aucune">Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes. Toujours gratuit pour les candidats.</p>
+    {% endif %}
+  </div>
+</section>
+<section class="bande bande-sable" aria-labelledby="t-conseils">
+  <div class="cadre">
+    <h2 id="t-conseils">Bien démarrer</h2>
+    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "animateurs") | list, page.url, lien) }}
+    {{ m.encart_jeuphorie(site) }}
+  </div>
+</section>
+{% endblock %}

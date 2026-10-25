@@ -26,18 +26,17 @@ python3 build.py              # version en ligne (avec sitemap.xml et robots.txt
 | Les pages légales | `contenu/pages/*.md` et `config.yml` (éditeur, SIREN, e-mail) |
 | L'apparence | `statique/css/site.css`, `gabarits/` |
 
-## Pages fabriquées : une rubrique, un sujet par page
+## Pages fabriquées : 3 grandes parties, un sujet par page
 
-| Rubrique | Pages |
+| Partie | Pages |
 |---|---|
-| Accueil `/` | présentation de tout le site, recherche, prochaines sessions, questions fréquentes |
-| Sessions `/sessions/` | toutes les sessions (filtres, « Voir plus ») ; par département `/sessions/paris/`, par ville `/sessions/val-de-marne/creteil/`, par vacances `/sessions/vacances-hiver-2027/`, département + vacances, par étape `/sessions/formation-generale/`, BAFD `/sessions/bafd/`, organismes `/sessions/organismes/…` |
-| Formations `/formations/` | BAFA, BAFD, surveillant de baignade, PSC1, BPJEPS, DEJEPS (`contenu/formations/`) |
-| Guides `/guides/` | les guides (`contenu/guides/`) et les questions fréquentes (`donnees/faq.yml`) |
-| Stages et jobs `/stages-et-jobs/` | les offres (`donnees/offres.yml`, étape 2), une page par offre, la page des recruteurs |
+| Accueil `/` | les 3 parties enfilées sur le fil rouge, chacune avec ses sous-parties |
+| **Se former** `/se-former/` | recherche de sessions, fiches BAFA, BAFD, PSC1, surveillant de baignade, BPJEPS, DEJEPS (`contenu/formations/`), guides « étapes » et « financer » (`partie: se-former`), questions fréquentes ; les sessions : `/se-former/sessions/` puis département, ville, vacances, étape, BAFD, organismes |
+| **Animateurs** `/animateurs/` | inscription gratuite aux offres (formulaire Brevo, `inscription_animateurs` dans config.yml), les offres (`donnees/offres.yml`, une page par offre), guides « stage pratique » et « contrat » (`partie: animateurs`) |
+| **Recruteurs** `/recruteurs/` | offre fondateurs (`fondateurs` dans config.yml), ce qui est inclus, comment publier |
 | Le site (pied de page) | à propos, contact, classement des sessions, pages légales (`contenu/pages/`) |
 
-Les anciennes adresses (`/bafa/…`, `/organismes/…`, `/structures/`…) redirigent vers les nouvelles.
+Les adresses des versions précédentes (`/bafa/…`, `/sessions/…`, `/formations/…`, `/guides/…`, `/stages-et-jobs/…`) redirigent vers les nouvelles (`ajouter_redirections` dans build.py).
 `sitemap.xml`, `robots.txt`, données structurées schema.org (Course, JobPosting, FAQPage, WebSite, fil d'Ariane).
 
 Les prix cités dans les textes (« de 300 à 435 € ») sont recalculés à chaque fabrication à partir des

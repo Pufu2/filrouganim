@@ -9,8 +9,8 @@
 </section>
 <section class="bande bande-sable">
   <div class="cadre">
-    <h2>Les autres guides</h2>
-    {{ m.cartes_liens(site.guides, page.url, lien) }}
+    <h2>À lire aussi</h2>
+    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", page.entete.partie) | list, page.url, lien) }}
     {{ m.encart_jeuphorie(site) }}
   </div>
 </section>

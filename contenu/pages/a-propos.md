@@ -7,7 +7,7 @@ description: "Fil Roug'Anim est fait par un professionnel de l'animation en Île
 
 ## Un site fait par quelqu'un du métier
 
-Je m'appelle Rafaël. Je suis **directeur adjoint d'un accueil de loisirs à Paris**, et j'ai créé [Jeuphorie](https://jeuphorie.fr), des grands jeux et des outils d'animation à imprimer.
+Fil Roug'Anim est fait par **un professionnel de l'animation qui travaille en accueil de loisirs en Île-de-France**, également à l'origine de [Jeuphorie](https://jeuphorie.fr), des grands jeux et des outils d'animation à imprimer.
 
 Chaque année, je vois des jeunes perdre du temps, et parfois renoncer, parce qu'ils doivent fouiller les sites des organismes un par un pour trouver une session de BAFA à leurs dates et à leur prix. Fil Roug'Anim rassemble ces informations au même endroit, et explique le parcours sans jargon.
 
@@ -26,4 +26,4 @@ Chaque année, je vois des jeunes perdre du temps, et parfois renoncer, parce qu
 
 ## La suite
 
-Après les sessions de formation viendront les **offres de stages pratiques et de jobs** publiées par les structures, puis les autres formations de l'animation. [Ce qui arrive](/stages-et-jobs/)
+Après les sessions de formation viendront les **offres de stages pratiques et de jobs** publiées par les structures, puis les autres formations de l'animation. [Ce qui arrive](/animateurs/)

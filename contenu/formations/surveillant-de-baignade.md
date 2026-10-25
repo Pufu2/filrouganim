@@ -5,10 +5,10 @@ nom: Qualification « surveillance des baignades » du BAFA
 resume: "Encadrer la baignade en colo et en centre de loisirs."
 description: "La qualification surveillance des baignades du BAFA : au moins 8 jours, à la place de l'approfondissement, pour encadrer la baignade en accueil collectif de mineurs. Renouvelable tous les 5 ans."
 ordre: 3
-age: "Dès la 3e étape du BAFA"
+age: "3e étape du BAFA, ou après"
 duree: "8 jours minimum"
 niveau: "Qualification du BAFA, valable 5 ans"
-sessions: /sessions/qualification/
+sessions: /se-former/sessions/qualification/
 mis_a_jour: 2026-10-25
 ---
 
@@ -26,9 +26,9 @@ La qualification **surveillance des baignades** est une **session de qualificati
 ## Avant de s'inscrire
 
 - S'inscrire d'abord sur [bafa-bafd.jeunes.gouv.fr](https://bafa-bafd.jeunes.gouv.fr/), puis auprès de l'organisme.
-- Les organismes demandent en général de **savoir nager** et d'avoir le **PSC1** (premiers secours) : vérifiez leurs conditions et leurs tests d'entrée sur la page de la session. [Le PSC1](/formations/psc1/)
+- Les organismes demandent en général de **savoir nager** et d'avoir le **PSC1** (premiers secours) : vérifiez leurs conditions et leurs tests d'entrée sur la page de la session. [Le PSC1](/se-former/psc1/)
 
-[Les sessions de qualification en Île-de-France](/sessions/qualification/)
+[Les sessions de qualification en Île-de-France](/se-former/sessions/qualification/)
 
 ## Source
 

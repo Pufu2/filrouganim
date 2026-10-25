@@ -254,32 +254,70 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .pied-titre { font-weight: 700; margin: 0 0 4px; color: #fff; }
 .pied nav { display: flex; flex-direction: column; gap: 5px; }
 .pied p { max-width: 520px; }
-@media (min-width: 820px) { .pied-cadre { grid-template-columns: 2fr 1fr 1fr; } }
+@media (min-width: 820px) { .pied-cadre { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
 
-/* ---------- L'accueil : un panneau d'entrée, trois portes */
+/* ---------- L'accueil : les trois grandes parties, enfilées sur le fil */
 .tete-accueil { text-align: center; }
-.tete-accueil .cadre { padding-bottom: 40px; }
-.h1-accueil { margin: .1em auto .1em; max-width: none; font-size: clamp(2.6rem, 9vw, 4.6rem); }
-.h1-accueil span { color: var(--fil-clair); }
-.devise { margin: 0 0 30px; font-size: clamp(1.1rem, 3.2vw, 1.45rem); color: #fff; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 14px; }
-.devise i { width: 12px; height: 12px; border-radius: 50%; background: var(--fil-clair); display: inline-block; }
-.portail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; text-align: left; }
-@media (max-width: 900px) { .portail { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; } }
-.portail-carte { min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 18px; background: var(--nuit-2); border: 1px solid #4a3d35; }
-.portail-carte h2 { margin: 0; font-size: 1.45rem; color: #fff; }
-.portail-recruteur { background: var(--fil); border-color: var(--fil); }
-.portail-form { display: flex; gap: 10px; }
-.portail-form select { flex: 1; min-width: 0; font: inherit; font-weight: 700; color: var(--encre); background: var(--blanc); border: 0; border-radius: 12px; padding: 12px 34px 12px 14px;
+.tete-accueil .cadre { padding-bottom: 34px; }
+.h1-accueil { margin: .15em auto .25em; max-width: 18ch; font-size: clamp(2.2rem, 7vw, 3.8rem); }
+.chapo-accueil { margin: 0 auto 26px; }
+.noeuds { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.noeuds a { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; background: var(--nuit-2); color: #fff !important; text-decoration: none; font-weight: 700; border: 1px solid #4a3d35; }
+.noeuds a:hover { border-color: var(--fil-clair); }
+.noeuds span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--fil-clair); color: var(--fil-clair); font-family: var(--main); font-size: 1.3rem; }
+
+.parcours { position: relative; width: min(1080px, 100% - 32px); margin: 0 auto; padding: 50px 0 30px; display: grid; gap: 46px; }
+.parcours-fil { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.parcours-fil path { fill: none; stroke: var(--fil); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .85; }
+.station { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: start; width: min(640px, 100%); }
+.station-droite { margin-left: auto; }
+.station-noeud { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--papier); border: 3px solid var(--fil); color: var(--fil);
+  font-family: var(--main); font-size: 2.2rem; position: relative; z-index: 1; margin-top: 10px; }
+.station-noeud-plein { background: var(--fil); color: #fff; }
+.station-carte { position: relative; z-index: 1; background: var(--blanc); border: 1px solid var(--trait); border-radius: 20px; padding: 24px; box-shadow: 0 18px 36px -26px rgba(60, 40, 20, .55); }
+.station-carte h2 { margin: .1em 0 .4em; }
+.station-carte > p { margin: 0 0 14px; }
+.station-carte-rouge { background: var(--fil); border-color: var(--fil); color: #fff; }
+.station-carte-rouge h2 { color: #fff; }
+.station-carte-rouge .note-main { color: #ffe3d8; }
+.station-carte-rouge .station-liens a { color: #fff; border-color: rgba(255, 255, 255, .5); background: rgba(255, 255, 255, .08); }
+.station-form { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
+.station-form select { flex: 1 1 200px; min-width: 0; font: inherit; font-weight: 700; color: var(--encre); background: var(--papier); border: 1.5px solid var(--trait); border-radius: 12px; padding: 12px 34px 12px 14px;
   appearance: none; -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23c4372d' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center; background-size: 12px; }
-.bouton-large { width: 100%; justify-content: space-between; padding: 14px 20px; font-size: 1.05rem; }
-.portail-info { margin: 0; color: #e9ddcd; font-size: .97rem; }
-.portail-info b { color: #fff; }
-.portail-recruteur .portail-info { color: #ffe8e1; }
-.portail-lien { margin-top: auto; display: flex; justify-content: space-between; gap: 10px; padding: 12px 16px; border: 1px solid #5b4b41; border-radius: 12px; color: #fff !important; text-decoration: none; font-weight: 700; }
-.portail-lien:hover { background: rgba(255, 255, 255, .06); }
-.portail-recruteur .portail-lien { border-color: rgba(255, 255, 255, .45); }
+@media (max-width: 520px) { .station-form .bouton-r { flex: 1 1 100%; } }
+.station-chiffre { font-size: .95rem; color: var(--doux); }
+.station-carte-rouge .station-chiffre { color: #ffe8e1; }
+.station-chiffre b { font-family: var(--titres); font-size: 1.2rem; color: var(--encre); }
+.station-carte-rouge .station-chiffre b { color: #fff; }
+.station-liens { list-style: none; padding: 14px 0 0; margin: 0; border-top: 1px dashed var(--trait); display: flex; flex-wrap: wrap; gap: 8px; }
+.station-carte-rouge .station-liens { border-top-color: rgba(255, 255, 255, .4); }
+.station-liens a { display: inline-block; padding: 6px 12px; border: 1px solid var(--trait); border-radius: 999px; background: var(--papier); color: var(--encre); text-decoration: none; font-weight: 700; font-size: .93rem; }
+.station-liens a:hover { border-color: var(--fil); color: var(--fil-fonce); }
+@media (max-width: 760px) {
+  .parcours { gap: 30px; }
+  .parcours-fil { display: none; }
+  .parcours::before { content: ""; position: absolute; left: 31px; top: 40px; bottom: 60px; border-left: 3px solid var(--fil); }
+  .station { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .station-carte { padding: 18px; }
+  .station-noeud { width: 52px; height: 52px; font-size: 1.8rem; margin-left: 6px; }
+}
+
+/* ---------- Inscription des animateurs, offre fondateurs */
+.case-r-texte { padding: 9px 12px; }
+.case-r-texte input { font: inherit; font-weight: 700; border: 0; background: transparent; color: var(--encre); padding: 2px 0; width: 100%; }
+.case-r-texte input:focus { outline: none; }
+.inscription { display: flex; flex-direction: column; gap: 12px; }
+.recherche-cases:has(.case-r-texte) { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) { .recherche-cases:has(.case-r-texte) { grid-template-columns: 1fr; } }
+.case-accord { display: flex; gap: 10px; align-items: flex-start; font-size: .93rem; color: var(--doux); }
+.case-accord input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--fil); flex: none; }
+.inscription .bouton-r { align-self: flex-start; }
+.inscription-bientot { margin: 0; color: var(--doux); }
+.carte-fondateurs .note-main { color: var(--fil); }
+.carte-fondateurs p { margin: 0 0 12px; }
+.pied-titre-2 { margin-top: 14px !important; }
 
 /* ---------- Le sommaire de tout le site */
 .sommaire { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }

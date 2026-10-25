@@ -1,4 +1,5 @@
 ---
+partie: animateurs
 titre: "Le contrat d'engagement éducatif (CEE) : salaire, repos, durée"
 court: Le contrat d'engagement éducatif
 resume: "Le contrat des animateurs de colo et de centre de loisirs : 52,93 € brut par jour minimum."

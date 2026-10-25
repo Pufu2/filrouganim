@@ -43,3 +43,7 @@ hebergeur:
 fondateurs:
   places: 30
   reservees: 0
+
+# Inscription gratuite des animateurs (alertes d'offres par e-mail, sans profil public).
+# Adresse « action » d'un formulaire Brevo (liste dédiée, double confirmation). Vide : inscriptions pas encore ouvertes.
+inscription_animateurs: ""
