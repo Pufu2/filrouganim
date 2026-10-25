@@ -28,6 +28,7 @@ SORTIE = RACINE / "_site"
 
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
         "août", "septembre", "octobre", "novembre", "décembre"]
+MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
 FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": "Externat"}
 
 
@@ -143,11 +144,14 @@ class Site:
         self.types = t["types"]
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
         self.sessions = self.charger_sessions()
+        self.stats = self.calculer_stats()
+        self.faq = self.donnees.get("faq", {}).get("questions", [])
         self.env = Environment(loader=FileSystemLoader(RACINE / "gabarits"),
                                autoescape=select_autoescape(["html", "xml"]),
                                trim_blocks=True, lstrip_blocks=True)
         self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
-                                majuscule=lambda t: t[:1].upper() + t[1:] if t else t)
+                                majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
+                                mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1])
         self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES)
         self.pages = []
 
@@ -180,6 +184,25 @@ class Site:
         sessions.sort(key=lambda s: (s["debut"], s["prix"] is None, s["prix"] or 0, s["org"]["nom"], s["ville"]))
         return sessions
 
+    def calculer_stats(self):
+        """Chiffres affichés sur le site (prix min/max…), recalculés à chaque fabrication."""
+        def fourchette(diplome, type_, formule):
+            prix = [s["prix"] for s in self.sessions if s["diplome"] == diplome and s["type"] == type_
+                    and s["formule"] == formule and s["prix"] is not None]
+            return {"min": min(prix), "max": max(prix)} if prix else {"min": "?", "max": "?"}
+        verif = [s["verifie_le"] for s in self.sessions if s["verifie_le"]]
+        return {"fg_ext": fourchette("BAFA", "formation-generale", "externat"),
+                "ap_ext": fourchette("BAFA", "approfondissement", "externat"),
+                "nb": len(self.sessions),
+                "nb_organismes": len({s["organisme"] for s in self.sessions}),
+                "nb_deps": len({s["departement"] for s in self.sessions}),
+                "verifie_le": max(verif) if verif else None}
+
+    def schema_faq(self, questions):
+        return json_ld({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q["q"], "acceptedAnswer": {"@type": "Answer", "text": q["r_rendu"]}}
+            for q in questions]})
+
     def schema_sessions(self, sessions):
         """Données structurées schema.org (Course + CourseInstance) pour une liste de sessions."""
         objets = []
@@ -206,10 +229,18 @@ class Site:
     def declarer(self):
         S = self.sessions
         bafa = [s for s in S if s["diplome"] == "BAFA"]
+        for q in self.faq:
+            q["r_rendu"] = " ".join(self.env.from_string(q["r"]).render(stats=self.stats).split())
+        faq_accueil = [q for q in self.faq if q.get("accueil")]
         self.ajouter("/", "accueil.html",
-                     titre="BAFA en Île-de-France : sessions, dates et prix",
-                     description="Comparez les sessions BAFA et BAFD en Île-de-France : dates, ville, formule et prix, organisme par organisme. Gratuit, sans inscription.",
-                     sessions=S, schema=self.schema_sessions(S))
+                     titre="BAFA, BAFD et métiers de l'animation en Île-de-France",
+                     description="Sessions BAFA et BAFD avec leurs dates et leurs prix, guides vérifiés, formations de l'animation : tout pour passer son BAFA en Île-de-France sans perdre le fil. Gratuit, sans compte.",
+                     prochaines=[s for s in S if not s["complet"]][:5], faq=faq_accueil,
+                     schema=self.schema_faq(faq_accueil))
+        self.ajouter("/sessions/", "sessions.html",
+                     titre="Sessions BAFA et BAFD en Île-de-France : dates et prix",
+                     description="Comparez les sessions BAFA et BAFD en Île-de-France : dates, ville, formule et prix, organisme par organisme. Filtres par département, vacances, étape et budget.",
+                     sessions=S, fil=[("Sessions", "/sessions/")])
 
         # une page par période de vacances, toute l'Île-de-France
         for p in self.periodes:
@@ -277,6 +308,21 @@ class Site:
                          organisme=o, sessions=liste,
                          fil=[("Organismes", "/organismes/"), (o["nom"], f"/organismes/{o['id']}/")])
 
+        # formations de l'animation (Markdown)
+        formations = []
+        for f in sorted((RACINE / "contenu" / "formations").glob("*.md")):
+            entete, corps = lire_markdown(f)
+            url = f"/formations/{f.stem}/"
+            formations.append({**entete, "url": url})
+            self.ajouter(url, "formation.html", titre=entete["titre"], description=entete["description"],
+                         corps_md=corps, entete=entete, fil=[("Formations", "/formations/"), (entete["court"], url)])
+        formations.sort(key=lambda g: g.get("ordre", 99))
+        self.config["formations"] = formations
+        self.ajouter("/formations/", "formations.html",
+                     titre="Les formations de l'animation : BAFA, BAFD, BPJEPS, DEJEPS, PSC1",
+                     description="Du BAFA au DEJEPS : âge, durée et niveau de chaque formation de l'animation, du premier job d'été au métier d'animateur ou de coordinateur.",
+                     fil=[("Formations", "/formations/")])
+
         # guides et pages fixes (Markdown)
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
@@ -287,13 +333,15 @@ class Site:
                          corps_md=corps, entete=entete, fil=[("Guides", "/guides/"), (entete["court"], url)])
         guides.sort(key=lambda g: g.get("ordre", 99))
         self.config["guides"] = guides
-        self.ajouter("/guides/", "guides.html", titre="Guides du BAFA : étapes, financement, stage pratique",
-                     description="Des guides clairs et vérifiés pour passer le BAFA : les étapes, les aides pour le financer, trouver son stage pratique.",
+        self.ajouter("/guides/", "guides.html", titre="Guides du BAFA : étapes, financement, stage pratique, contrat",
+                     description="Des guides clairs et vérifiés pour passer le BAFA : les étapes, les aides pour le financer, trouver son stage pratique, le contrat d'engagement éducatif.",
                      fil=[("Guides", "/guides/")])
         for f in sorted((RACINE / "contenu" / "pages").glob("*.md")):
             entete, corps = lire_markdown(f)
-            self.ajouter(entete["url"], "page.html", titre=entete["titre"], description=entete.get("description", ""),
-                         indexer=entete.get("indexer", True), corps_md=corps, entete=entete)
+            extra = {"faq": self.faq, "schema": self.schema_faq(self.faq)} if entete.get("gabarit") == "faq.html" else {}
+            self.ajouter(entete["url"], entete.get("gabarit", "page.html"), titre=entete["titre"],
+                         description=entete.get("description", ""), indexer=entete.get("indexer", True),
+                         corps_md=corps, entete=entete, fil=[(entete.get("court", entete["titre"]), entete["url"])], **extra)
         self.ajouter("/404.html", "404.html", titre="Page introuvable", indexer=False)
 
     def ajouter(self, url, gabarit, titre, description=None, indexer=True, **extra):
@@ -314,6 +362,7 @@ class Site:
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
             "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
+            "stats": self.stats,
             "periodes": self.periodes, "types": self.types,
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

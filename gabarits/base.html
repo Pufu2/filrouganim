@@ -31,8 +31,10 @@
       <span class="logo-nom">Fil Roug'<b>Anim</b></span>
     </a>
     <nav class="menu" aria-label="Menu principal">
-      <a href="{{ lien('/') }}#sessions">Les sessions</a>
-      <a href="{{ lien('/guides/') }}">Les guides</a>
+      <a href="{{ lien('/sessions/') }}"{% if page.url.startswith('/sessions/') %} aria-current="page"{% endif %}>Sessions</a>
+      <a href="{{ lien('/formations/') }}"{% if page.url.startswith('/formations/') %} aria-current="page"{% endif %}>Formations</a>
+      <a href="{{ lien('/guides/') }}"{% if page.url.startswith('/guides/') %} aria-current="page"{% endif %}>Guides</a>
+      <a href="{{ lien('/stages-et-jobs/') }}"{% if page.url.startswith('/stages-et-jobs/') %} aria-current="page"{% endif %}>Stages et jobs</a>
     </nav>
   </div>
 </header>
@@ -54,12 +56,17 @@
     </div>
     <nav aria-label="Chercher">
       <p class="pied-titre">Chercher</p>
+      <a href="{{ lien('/sessions/') }}">Toutes les sessions</a>
       <a href="{{ lien('/bafa/') }}">Par département et par vacances</a>
       <a href="{{ lien('/organismes/') }}">Par organisme</a>
-      <a href="{{ lien('/bafd/') }}">Le BAFD</a>
+      <a href="{{ lien('/formations/') }}">Les formations</a>
+      <a href="{{ lien('/questions-frequentes/') }}">Questions fréquentes</a>
     </nav>
     <nav aria-label="Pages utiles">
       <p class="pied-titre">Le site</p>
+      <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
+      <a href="{{ lien('/structures/') }}">Vous recrutez ?</a>
+      <a href="{{ lien('/contact/') }}">Contact</a>
       <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>
       <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>
       <a href="{{ lien('/confidentialite/') }}">Confidentialité</a>

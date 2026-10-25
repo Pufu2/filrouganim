@@ -1,5 +1,8 @@
 {# Morceaux réutilisés par plusieurs pages #}
 
+{# Petites icônes dessinées au trait, dans la couleur du fil #}
+{% macro icone(nom) %}<svg class="icone" viewBox="0 0 24 24" aria-hidden="true">{% if nom == "lieu" %}<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>{% elif nom == "date" %}<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>{% elif nom == "etape" %}<path d="M4 18c4 0 3-8 8-8s4 8 8 8"/><circle cx="4" cy="18" r="1.6"/><circle cx="12" cy="10" r="1.6"/><circle cx="20" cy="18" r="1.6"/>{% elif nom == "prix" %}<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>{% elif nom == "cherche" %}<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>{% endif %}</svg>{% endmacro %}
+
 {# Le fil rouge, dessiné à la main, qui relie les parties de la page #}
 {% macro fil(note="") %}
 <div class="fil-separateur" aria-hidden="true">
@@ -8,34 +11,70 @@
 </div>
 {% endmacro %}
 
+{# La barre de recherche en cases : Où ? Quand ? Quelle étape ? Budget ? + mot-clé.
+   Sur l'accueil elle envoie vers /sessions/ ; sur /sessions/ elle filtre en direct. #}
+{% macro recherche(lien, departements, periodes, aujourdhui, stats, en_direct=False) %}
+<form class="recherche" action="{{ lien('/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une session BAFA ou BAFD">
+  <div class="recherche-cases">
+    <label class="case-r">{{ icone("lieu") }}<span class="case-titre">Où ?</span>
+      <select name="dep">
+        <option value="">Partout</option>
+        {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
+      </select></label>
+    <label class="case-r">{{ icone("date") }}<span class="case-titre">Quand ?</span>
+      <select name="periode">
+        <option value="">Toutes</option>
+        {% for p in periodes if p.fin >= aujourdhui %}<option value="{{ p.id }}">{{ p.court }}</option>{% endfor %}
+        <option value="autre">Hors vacances</option>
+      </select></label>
+    <label class="case-r">{{ icone("etape") }}<span class="case-titre">Quelle étape ?</span>
+      <select name="type">
+        <option value="">Toutes</option>
+        <option value="BAFA-formation-generale">Formation générale</option>
+        <option value="BAFA-approfondissement">Approfondissement</option>
+        <option value="BAFA-qualification">Qualification</option>
+        <option value="BAFD-formation-generale">BAFD : formation</option>
+        <option value="BAFD-perfectionnement">BAFD : perfectionnement</option>
+      </select></label>
+    <label class="case-r">{{ icone("prix") }}<span class="case-titre">Budget ?</span>
+      <select name="prix">
+        <option value="">Tous</option>
+        {% for b in [350, 400, 450, 500, 600] %}<option value="{{ b }}">{{ b }} € max.</option>{% endfor %}
+      </select></label>
+  </div>
+  <div class="recherche-bas">
+    <label class="recherche-mot">{{ icone("cherche") }}<span class="sr">Mot-clé</span>
+      <input name="q" type="search" placeholder="Ville, thème, organisme…" autocomplete="off"></label>
+    {% if not en_direct %}<button class="bouton-r" type="submit">Voir les sessions <span aria-hidden="true">→</span></button>{% endif %}
+  </div>
+  {% if en_direct %}<label class="recherche-option"><input name="libres" type="checkbox"> Cacher les sessions complètes</label>{% endif %}
+</form>
+{% endmacro %}
+
+{# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}
 {% macro carte_session(s, lien) %}
 <article class="session{% if s.complet %} session-complete{% endif %}"
   data-dep="{{ s.departement }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}"
   data-type="{{ s.diplome }}-{{ s.type }}" data-formule="{{ s.formule or '' }}"
-  data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}">
-  <div class="session-haut">
-    <p class="session-type">{% if s.diplome == "BAFD" %}BAFD · {% endif %}{{ s.type_nom }}{% if s.complet %} · <b>complet</b>{% endif %}</p>
-    <p class="session-prix">{% if s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
+  data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
+  data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.diplome }}">
+  <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
+  <div class="s-corps">
+    <h3 class="s-titre">{% if s.diplome == "BAFD" %}BAFD · {% endif %}{{ s.type_nom }}{% if s.theme %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
+    <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
+    <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}{% endif %}, à confirmer chez l'organisme</p>
   </div>
-  <h3 class="session-dates">{{ dates_fr(s.debut, s.fin) | majuscule }}</h3>
-  <p class="session-lieu">{{ s.ville }} <span>({{ s.departement }})</span>{% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %}</p>
-  {% if s.theme %}<p class="session-theme">{{ s.theme }}</p>{% endif %}
-  {% if s.prix_note %}<p class="session-note">{{ s.prix_note }}</p>{% endif %}
-  {% if s.aides %}<p class="session-aides">{{ s.aides | join(", ") | majuscule }}</p>{% endif %}
-  <p class="session-lien">
-    {% if s.org.en_ligne %}<a class="session-org" href="{{ lien('/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}<span class="session-org">{{ s.org.nom }}</span>{% endif %}
-    <a href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir la session<span class="sr"> chez {{ s.org.nom }} (nouvel onglet)</span> →</a>
-  </p>
-  <p class="session-verif">
-    {% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}, pas encore revérifié{% endif %} · à confirmer auprès de l'organisme
-  </p>
+  <p class="s-prix">{% if s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
+  <a class="s-lien" href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir<span class="sr"> la session chez {{ s.org.nom }} (nouvel onglet)</span> <span aria-hidden="true">→</span></a>
 </article>
 {% endmacro %}
 
-{% macro liste_sessions(sessions, lien) %}
-<div class="sessions">
+{# La liste, avec « Voir plus » : 10 sessions d'abord, puis 10 de plus à chaque clic (sans JavaScript : tout est affiché) #}
+{% macro liste_sessions(sessions, lien, par_page=10) %}
+<div class="sessions" data-par-page="{{ par_page }}">
   {% for s in sessions %}{{ carte_session(s, lien) }}{% endfor %}
 </div>
+<p class="voir-plus-cadre"><button class="voir-plus" type="button" hidden>Voir plus de sessions</button></p>
 {% endmacro %}
 
 {% macro encart_jeuphorie(site) %}
@@ -49,9 +88,33 @@
   <svg class="etapes-fil" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M10 60 C 90 20, 160 100, 250 60 S 400 20, 500 60 S 660 100, 750 60 S 900 25, 990 58" /></svg>
   <ol class="etapes">
     <li><span class="etape-noeud" aria-hidden="true">1</span><b>Formation générale</b><span>8 jours, dès 16 ans</span><a href="{{ lien('/bafa/formation-generale/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins</span><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Le trouver</a></li>
+    <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Le trouver</a></li>
     <li><span class="etape-noeud" aria-hidden="true">3</span><b>Approfondissement</b><span>6 jours (ou qualification, 8 jours)</span><a href="{{ lien('/bafa/approfondissement/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/guides/etapes-du-bafa/') }}">Tout le parcours</a></li>
+    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/stages-et-jobs/') }}">Stages et jobs</a></li>
   </ol>
 </div>
+{% endmacro %}
+
+{# Questions fréquentes en accordéon #}
+{% macro faq(questions, lien) %}
+<div class="faq">
+  {% for q in questions %}
+  <details>
+    <summary>{{ q.q }}</summary>
+    <p>{{ q.r_rendu }}{% if q.lien %} <a href="{{ lien(q.lien[1]) }}">{{ q.lien[0] }}</a>{% endif %}</p>
+  </details>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# Raccourcis en pastilles qui défilent sur téléphone #}
+{% macro raccourcis(lien) %}
+<nav class="raccourcis" aria-label="Raccourcis">
+  <a href="{{ lien('/guides/etapes-du-bafa/') }}">Les étapes du BAFA</a>
+  <a href="{{ lien('/guides/financer-son-bafa/') }}">Aides : 200 € de la CAF</a>
+  <a href="{{ lien('/bafa/') }}">Par département</a>
+  <a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Trouver son stage</a>
+  <a href="{{ lien('/organismes/') }}">Les organismes</a>
+  <a href="{{ lien('/questions-frequentes/') }}">Questions fréquentes</a>
+</nav>
 {% endmacro %}

@@ -1,0 +1,74 @@
+# Questions fréquentes (accueil et /questions-frequentes/). Les réponses citent leurs sources dans les guides.
+# accueil: true -> la question apparaît aussi sur la page d'accueil.
+
+questions:
+  - q: À partir de quel âge peut-on passer le BAFA ?
+    r: >-
+      À 16 ans révolus le premier jour de la formation générale. L'inscription sur le site officiel
+      bafa-bafd.jeunes.gouv.fr est possible 3 mois avant.
+    lien: [Les étapes du BAFA, /guides/etapes-du-bafa/]
+    accueil: true
+
+  - q: Combien coûte le BAFA en Île-de-France ?
+    r: >-
+      Chaque organisme fixe ses prix. Sur les sessions relevées ici, une formation générale en
+      externat coûte de {{ stats.fg_ext.min }} à {{ stats.fg_ext.max }} €, un approfondissement en externat
+      de {{ stats.ap_ext.min }} à {{ stats.ap_ext.max }} €. L'aide de la CAF
+      (200 €, sans condition de ressources) et les aides locales peuvent réduire la facture.
+    lien: [Financer son BAFA, /guides/financer-son-bafa/]
+    accueil: true
+
+  - q: Combien de temps faut-il pour avoir le BAFA ?
+    r: >-
+      Trois étapes, dans l'ordre : 8 jours de formation générale, au moins 14 jours de stage
+      pratique, puis 6 jours d'approfondissement (ou 8 de qualification). Le tout en 30 mois au
+      maximum, avec 18 mois au plus entre la formation générale et le stage pratique.
+    lien: [Les étapes du BAFA, /guides/etapes-du-bafa/]
+    accueil: true
+
+  - q: Est-ce que le stage pratique est payé ?
+    r: >-
+      Souvent, oui. En colo ou en centre de loisirs, l'animateur occasionnel est en général embauché
+      avec un contrat d'engagement éducatif : au moins 52,93 € brut par jour en 2026.
+    lien: [Le contrat d'engagement éducatif, /guides/contrat-d-engagement-educatif/]
+    accueil: true
+
+  - q: Faut-il faire toutes les étapes chez le même organisme ?
+    r: >-
+      Non. Vous pouvez faire la formation générale chez un organisme et l'approfondissement chez un
+      autre, dans n'importe quel département ou région.
+    lien: [Comparer les sessions, /sessions/]
+    accueil: true
+
+  - q: Fil Roug'Anim est-il payant ?
+    r: >-
+      Non, et il le restera pour les jeunes et les familles. Aucun compte, aucun cookie publicitaire,
+      et aucun organisme ne paie pour être mieux placé.
+    lien: [Comment les sessions sont classées, /classement-des-sessions/]
+    accueil: true
+
+  - q: Comment passer le BAFD ?
+    r: >-
+      Dès 18 ans, avec le BAFA ou un diplôme d'animation reconnu. Le parcours compte une formation
+      générale (9 ou 10 jours), un stage pratique de 14 jours en direction ou adjoint, un
+      perfectionnement de 6 jours, puis un second stage de 14 jours comme directeur, en 4 ans au plus.
+    lien: [Le BAFD, /formations/bafd/]
+
+  - q: Qu'est-ce que la qualification surveillant de baignade ?
+    r: >-
+      Une session de qualification du BAFA d'au moins 8 jours, qui remplace l'approfondissement et
+      donne le droit d'encadrer la baignade en accueil collectif de mineurs. Elle se renouvelle tous
+      les 5 ans.
+    lien: [Surveillant de baignade, /formations/surveillant-de-baignade/]
+
+  - q: Peut-on faire son stage pratique à l'étranger ?
+    r: >-
+      Non. Le stage pratique du BAFA doit se dérouler en France, dans un accueil collectif de mineurs
+      déclaré (séjour de vacances, accueil de loisirs ou accueil de scoutisme).
+    lien: [Trouver son stage pratique, /guides/trouver-son-stage-pratique/]
+
+  - q: Et après le BAFA, comment en faire son métier ?
+    r: >-
+      Le BAFA est un brevet non professionnel. Pour travailler toute l'année dans l'animation, les
+      diplômes professionnels sont le BPJEPS (niveau 4), puis le DEJEPS (niveau 5).
+    lien: [Les formations de l'animation, /formations/]

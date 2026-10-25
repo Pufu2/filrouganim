@@ -1,13 +1,58 @@
-// Filtres des sessions, entièrement dans le navigateur (aucun serveur, aucun cookie).
-// Sans JavaScript, toutes les sessions restent affichées.
+// Recherche, filtres et « Voir plus », entièrement dans le navigateur (aucun serveur, aucun cookie).
+// Sans JavaScript, toutes les sessions restent affichées et le formulaire de l'accueil ouvre /sessions/.
 (function () {
+  function sansAccents(t) {
+    return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  }
+
+  // --- « Voir plus » : chaque liste montre N sessions, puis N de plus à chaque clic
+  var listes = Array.prototype.map.call(document.querySelectorAll(".sessions[data-par-page]"), function (el) {
+    var bouton = el.nextElementSibling && el.nextElementSibling.querySelector(".voir-plus");
+    var liste = { el: el, cartes: Array.prototype.slice.call(el.querySelectorAll(".session")),
+                  par: parseInt(el.dataset.parPage, 10) || 10, bouton: bouton };
+    liste.limite = liste.par;
+    liste.cartes.forEach(function (c) { c.dataset.ok = "1"; c.dataset.texteNorm = sansAccents(c.dataset.texte); });
+    if (bouton) bouton.addEventListener("click", function () {
+      var premiereCachee = liste.cartes.filter(function (c) { return c.dataset.ok === "1"; })[liste.limite];
+      liste.limite += liste.par;
+      afficher(liste);
+      if (premiereCachee) premiereCachee.querySelector("a").focus({ preventScroll: true });
+    });
+    afficher(liste);
+    return liste;
+  });
+
+  function afficher(liste) {
+    var n = 0;
+    liste.cartes.forEach(function (c) {
+      var ok = c.dataset.ok === "1";
+      c.hidden = !ok || n >= liste.limite;
+      if (ok) n++;
+    });
+    if (liste.bouton) {
+      var reste = n - liste.limite;
+      liste.bouton.hidden = reste <= 0;
+      liste.bouton.textContent = "Voir plus de sessions (" + reste + " de plus)";
+    }
+    return n;
+  }
+
+  // --- Accueil : l'adresse de /sessions/ ne garde que les critères choisis
+  Array.prototype.forEach.call(document.querySelectorAll("form.recherche:not(#filtres)"), function (f) {
+    f.addEventListener("submit", function () {
+      Array.prototype.forEach.call(f.elements, function (el) { if (el.name && !el.value) el.disabled = true; });
+      setTimeout(function () { Array.prototype.forEach.call(f.elements, function (el) { el.disabled = false; }); }, 0);
+    });
+  });
+
+  // --- Filtres en direct (page /sessions/)
   var form = document.getElementById("filtres");
-  if (!form) return;
-  var cartes = Array.prototype.slice.call(document.querySelectorAll(".session"));
+  if (!form || !listes.length) return;
+  var liste = listes[0];
   var compte = document.getElementById("compte");
   var aucune = document.getElementById("aucune");
 
-  // Les filtres choisis sont gardés dans l'adresse (ex. ?dep=93&periode=hiver-2027) : on peut partager le lien.
+  // Les choix sont gardés dans l'adresse (ex. ?dep=93&periode=hiver-2027) : on peut partager le lien.
   var params = new URLSearchParams(location.search);
   Array.prototype.forEach.call(form.elements, function (el) {
     if (!el.name || !params.has(el.name)) return;
@@ -15,49 +60,40 @@
     else el.value = params.get(el.name);
   });
 
-  function appliquer() {
+  function appliquer(majAdresse) {
     var f = form.elements;
-    var dep = f.dep.value, periode = f.periode.value, type = f.type.value, formule = f.formule.value;
-    var prix = parseFloat(f.prix.value), libres = f.libres.checked;
-    var n = 0;
-    cartes.forEach(function (c) {
+    var dep = f.dep.value, periode = f.periode.value, type = f.type.value;
+    var prix = parseFloat(f.prix.value), libres = f.libres && f.libres.checked;
+    var mots = sansAccents(f.q.value).split(/\s+/).filter(Boolean);
+    liste.cartes.forEach(function (c) {
       var d = c.dataset;
-      var ok = (!dep || d.dep === dep) && (!periode || d.periode === periode) &&
-        (!type || d.type === type) && (!formule || d.formule === formule) &&
-        (isNaN(prix) || (d.prix !== "" && parseFloat(d.prix) <= prix)) &&
-        (!libres || d.complet !== "oui");
-      c.hidden = !ok;
-      if (ok) n++;
+      var ok = (!dep || d.dep === dep) && (!periode || d.periode === periode) && (!type || d.type === type) &&
+        (isNaN(prix) || (d.prix !== "" && parseFloat(d.prix) <= prix)) && (!libres || d.complet !== "oui") &&
+        mots.every(function (m) { return d.texteNorm.indexOf(m) !== -1; });
+      d.ok = ok ? "1" : "0";
     });
-    compte.textContent = n + (n > 1 ? " sessions correspondent." : " session correspond.") +
-      (isNaN(prix) ? "" : " Les sessions sans prix relevé sont cachées par le filtre de prix.");
+    liste.limite = liste.par;
+    var n = afficher(liste);
+    compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
+      ", de la plus proche à la plus lointaine.";
     aucune.hidden = n > 0;
-    var p = new URLSearchParams();
-    Array.prototype.forEach.call(form.elements, function (el) {
-      if (!el.name) return;
-      if (el.type === "checkbox") { if (el.checked) p.set(el.name, "1"); }
-      else if (el.value) p.set(el.name, el.value);
-    });
-    var q = p.toString();
-    history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
+    if (majAdresse) {
+      var p = new URLSearchParams();
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name) return;
+        if (el.type === "checkbox") { if (el.checked) p.set(el.name, "1"); }
+        else if (el.value) p.set(el.name, el.value);
+      });
+      var q = p.toString();
+      history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
+    }
   }
-  // Dans la phrase « Je cherche… », chaque liste prend la largeur du choix affiché (et pas du plus long).
-  var mesure = document.createElement("span");
-  mesure.style.cssText = "position:absolute;visibility:hidden;white-space:pre";
-  document.body.appendChild(mesure);
-  function ajuster() {
-    Array.prototype.forEach.call(form.querySelectorAll(".phrase > label select"), function (s) {
-      mesure.style.font = getComputedStyle(s).font;
-      mesure.textContent = s.options[s.selectedIndex].text;
-      s.style.width = Math.ceil(mesure.getBoundingClientRect().width + 30) + "px";
-    });
-  }
-  form.addEventListener("change", ajuster);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
-  ajuster();
-
-  form.addEventListener("input", appliquer);
-  form.addEventListener("change", appliquer);
-  form.addEventListener("submit", function (e) { e.preventDefault(); });
-  if (params.toString()) appliquer();
+  form.addEventListener("change", function () { appliquer(true); });
+  form.addEventListener("input", function (e) { if (e.target.name === "q") appliquer(true); });
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    appliquer(true);
+    document.getElementById("resultats").scrollIntoView({ behavior: "smooth" });
+  });
+  if (params.toString()) appliquer(false);
 })();

@@ -28,15 +28,18 @@ python3 build.py              # version en ligne (avec sitemap.xml et robots.txt
 
 ## Pages fabriquées
 
-- l'accueil, avec toutes les sessions et les filtres (dans le navigateur, sans serveur) ;
-- une page par département, par vacances, et par département et vacances
-  (ex. `/bafa/paris/vacances-hiver-2027/`) ;
-- une page par étape (formation générale, approfondissement, qualification) et une pour le BAFD ;
-- une page par organisme ;
-- les guides et les pages légales ;
-- `sitemap.xml`, `robots.txt`, données structurées schema.org (Course, CourseInstance, fil d'Ariane).
+- l'accueil (page de garde) : recherche en cases (où, quand, étape, budget, mot-clé), les 4 portes
+  d'entrée du site, les prochaines sessions, les étapes, les questions fréquentes ;
+- `/sessions/` : toutes les sessions, filtres en direct dans le navigateur, « Voir plus » par 10 ;
+- une page par département, par vacances, par département et vacances, par étape, pour le BAFD,
+  et par organisme ;
+- `/formations/` : BAFA, BAFD, surveillant de baignade, PSC1, BPJEPS, DEJEPS (`contenu/formations/`) ;
+- `/guides/` (`contenu/guides/`), `/questions-frequentes/` (`donnees/faq.yml`) ;
+- `/stages-et-jobs/`, `/structures/`, `/a-propos/`, `/contact/` et les pages légales (`contenu/pages/`) ;
+- `sitemap.xml`, `robots.txt`, données structurées schema.org (Course, FAQPage, WebSite, fil d'Ariane).
 
-Les sessions terminées disparaissent toutes seules : le site est refabriqué chaque matin.
+Les prix cités dans les textes (« de 300 à 435 € ») sont recalculés à chaque fabrication à partir des
+sessions : `{{ stats.fg_ext.min }}` dans un fichier Markdown ou dans faq.yml.
 
 ## Documents
 

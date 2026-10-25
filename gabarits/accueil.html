@@ -1,57 +1,56 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":{{ site.nom | tojson }},"url":{{ (site.url ~ "/") | tojson }},"potentialAction":{"@type":"SearchAction","target":{{ (site.url ~ "/sessions/?q={search_term_string}") | tojson }},"query-input":"required name=search_term_string"}}</script>{% endblock %}
 {% block contenu %}
-<section class="une">
+<section class="une une-garde">
   <div class="cadre">
     <p class="note-main une-note">{{ site.accroche }}</p>
-    <h1>Les sessions BAFA d'Île-de-France, au même endroit</h1>
-    <p class="chapo">Dates, lieu et prix des sessions, organisme par organisme, pour chaque département et chaque vacances. Vous comparez ici, vous vous inscrivez chez eux. Gratuit, sans compte.</p>
+    <h1>Le BAFA et les métiers de l'animation, sans perdre le fil</h1>
+    <p class="chapo">Les sessions BAFA et BAFD d'Île-de-France avec leurs dates et leurs prix, des guides vérifiés, et bientôt les stages et les jobs. Gratuit, sans compte.</p>
 
-    <form class="phrase" id="filtres" aria-label="Chercher une session">
-      <span>Je cherche</span>
-      <label><span class="sr">Étape</span>
-        <select name="type">
-          <option value="">une session BAFA ou BAFD</option>
-          <option value="BAFA-formation-generale">une formation générale</option>
-          <option value="BAFA-approfondissement">un approfondissement</option>
-          <option value="BAFA-qualification">une qualification</option>
-          <option value="BAFD-formation-generale">une formation BAFD</option>
-          <option value="BAFD-perfectionnement">un perfectionnement BAFD</option>
-        </select></label>
-      <label><span class="sr">Département</span>
-        <select name="dep">
-          <option value="">dans toute l'Île-de-France</option>
-          {% for d in departements %}<option value="{{ d.code }}">{{ d.a }}</option>{% endfor %}
-        </select></label>
-      <label><span class="sr">Période</span>
-        <select name="periode">
-          <option value="">à n'importe quelle date</option>
-          {% for p in periodes if p.fin >= aujourdhui %}<option value="{{ p.id }}">pendant les {{ p.nom }}</option>{% endfor %}
-          <option value="autre">hors vacances scolaires</option>
-        </select></label>
-      <details class="plus">
-        <summary>Plus de critères</summary>
-        <div class="plus-cadre">
-          <label>Formule
-            <select name="formule"><option value="">toutes</option>
-              <option value="externat">externat</option><option value="demi-pension">demi-pension</option><option value="internat">internat</option>
-            </select></label>
-          <label>Prix maximum
-            <input name="prix" type="number" inputmode="numeric" min="0" step="10" placeholder="en euros"></label>
-          <label class="case"><input name="libres" type="checkbox"> sans les sessions complètes</label>
-        </div>
-      </details>
-    </form>
+    <div class="carte-recherche">
+      <h2 class="carte-recherche-titre">Trouver une session</h2>
+      {{ m.recherche(lien, departements, periodes, aujourdhui, stats) }}
+      <p class="compteurs"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · <b>{{ stats.nb_deps }}</b> départements{% if stats.verifie_le %} · vérifiées le {{ stats.verifie_le | date_fr }}{% endif %}</p>
+    </div>
   </div>
 </section>
 
-<section class="cadre" id="sessions" aria-labelledby="titre-sessions">
-  <h2 id="titre-sessions" class="sr">Les sessions</h2>
-  <p class="compte" id="compte" aria-live="polite">{{ page.sessions | length }} sessions à venir, de la plus proche à la plus lointaine.</p>
-  {{ m.liste_sessions(page.sessions, lien) }}
-  <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin ou d'autres vacances : une session peut se suivre n'importe où.</p>
-  <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
+<section class="cadre" aria-labelledby="titre-offre">
+  <h2 id="titre-offre">Tout ce qu'il faut, du premier jour au premier job</h2>
+  <ul class="portes">
+    <li><a href="{{ lien('/sessions/') }}">
+      <span class="porte-tag">En ligne</span>
+      <b>Les sessions BAFA et BAFD</b>
+      <span>{{ stats.nb }} sessions en Île-de-France : dates, lieu, formule et prix, organisme par organisme.</span>
+      <span class="porte-lien">Comparer les sessions →</span></a></li>
+    <li><a href="{{ lien('/guides/') }}">
+      <span class="porte-tag">En ligne</span>
+      <b>Les guides</b>
+      <span>Les étapes, l'aide de 200 € de la CAF, trouver son stage pratique, le contrat d'engagement éducatif.</span>
+      <span class="porte-lien">Lire les guides →</span></a></li>
+    <li><a href="{{ lien('/formations/') }}">
+      <span class="porte-tag">En ligne</span>
+      <b>Les formations de l'animation</b>
+      <span>BAFA, BAFD, surveillant de baignade, PSC1, BPJEPS, DEJEPS : âge, durée et niveau de chacune.</span>
+      <span class="porte-lien">Voir les formations →</span></a></li>
+    <li class="porte-bientot"><a href="{{ lien('/stages-et-jobs/') }}">
+      <span class="porte-tag">Bientôt</span>
+      <b>Stages pratiques et jobs</b>
+      <span>Les offres des centres de loisirs et des colos, publiées par les structures. Toujours gratuit pour les candidats.</span>
+      <span class="porte-lien">Ce qui arrive →</span></a></li>
+  </ul>
+</section>
+
+<section class="cadre" aria-labelledby="titre-prochaines">
+  <div class="titre-ligne">
+    <h2 id="titre-prochaines">Les prochaines sessions</h2>
+    <a href="{{ lien('/sessions/') }}">Toutes les sessions ({{ stats.nb }}) →</a>
+  </div>
+  <div class="sessions">
+    {% for s in page.prochaines %}{{ m.carte_session(s, lien) }}{% endfor %}
+  </div>
 </section>
 
 {{ m.fil("le BAFA, en 3 étapes") }}
@@ -69,12 +68,31 @@
     </ul>
   </div>
   <div>
-    <h2>Les guides</h2>
-    <ol class="guides-liste">
-      {% for g in site.guides %}<li><a href="{{ lien(g.url) }}">{{ g.court }}</a><span>{{ g.resume }}</span></li>{% endfor %}
-    </ol>
+    <h2>Par vacances</h2>
+    <ul class="pastilles">
+      {% for p in periodes if p.fin >= aujourdhui %}{% for s in toutes_sessions if s.periode is sameas p and s.diplome == "BAFA" %}{% if loop.first %}<li><a href="{{ lien('/bafa/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endif %}{% endfor %}{% endfor %}
+      <li><a href="{{ lien('/bafd/') }}">Le BAFD (directeur)</a></li>
+    </ul>
   </div>
 </section>
+
+<section class="cadre bande-structures" aria-labelledby="titre-structures">
+  <div>
+    <p class="note-main">Vous recrutez ?</p>
+    <h2 id="titre-structures">Centres de loisirs, colos : vos offres, là où les futurs animateurs cherchent</h2>
+    <p>Bientôt, publiez vos offres de stages pratiques et de jobs. Des offres, pas une base de CV : les candidats vous contactent directement.</p>
+  </div>
+  <a class="bouton-r" href="{{ lien('/structures/') }}">Être prévenu <span aria-hidden="true">→</span></a>
+</section>
+
+<section class="cadre" aria-labelledby="titre-faq">
+  <div class="titre-ligne">
+    <h2 id="titre-faq">Les questions qu'on se pose</h2>
+    <a href="{{ lien('/questions-frequentes/') }}">Toutes les questions →</a>
+  </div>
+  {{ m.faq(page.faq, lien) }}
+</section>
+
 <div class="cadre">{{ m.encart_jeuphorie(site) }}</div>
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}
