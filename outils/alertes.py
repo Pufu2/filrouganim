@@ -60,8 +60,9 @@ def main():
     args = parser.parse_args()
     config = yaml.safe_load((RACINE / "config.yml").read_text(encoding="utf-8"))
     sb = config.get("supabase") or {}
-    cle = os.environ.get("SUPABASE_SECRET_KEY")
-    cle_brevo = os.environ.get("BREVO_API_KEY")
+    # .strip() : une clé collée dans GitHub garde parfois un retour à la ligne à la fin
+    cle = (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()
+    cle_brevo = (os.environ.get("BREVO_API_KEY") or "").strip()
     if not (sb.get("url") and cle and (cle_brevo or args.essai)):
         print("Alertes : secrets SUPABASE_SECRET_KEY et BREVO_API_KEY absents, rien n'est envoyé.")
         return
