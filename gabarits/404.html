@@ -1,7 +1,3 @@
 {% extends "base.html" %}
-{% block contenu %}
-<div class="cadre texte">
-  <h1>Page introuvable</h1>
-  <p>Cette page n'existe pas ou plus : une session passée disparaît du site. <a href="{{ lien('/') }}#sessions">Voir toutes les sessions à venir</a>.</p>
-</div>
-{% endblock %}
+{% block h1 %}Page introuvable{% endblock %}
+{% block tete_chapo %}<p class="chapo">Cette page n'existe pas ou plus : une session terminée disparaît du site.</p><p><a class="bouton-r" href="{{ lien('/sessions/') }}">Voir les sessions à venir <span aria-hidden="true">→</span></a></p>{% endblock %}

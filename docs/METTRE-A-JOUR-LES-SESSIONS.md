@@ -12,7 +12,10 @@ de 8 jours**, en tenant dans **1 heure par semaine** au plus.
 3. **Pas l'essentiel d'une base** : on relève les sessions utiles (Île-de-France, les deux
    prochaines vacances scolaires), avec un lien vers chaque page. On ne recopie pas tout le
    catalogue national d'un organisme.
-4. **robots.txt** : avant d'ajouter un organisme, ouvrir `https://son-site/robots.txt` et vérifier
+4. **robots.txt** : l'outil le lit à chaque page, et **ne lit jamais un site qui ferme sa porte aux
+   robots d'IA** (ClaudeBot, anthropic-ai…). C'est le cas de bafaidf.com (FSCF) et de cemea-idf.org
+   (CEMEA) au 25/10/2026 : leurs sessions ne seront ajoutées qu'avec leur accord écrit.
+   Avant d'ajouter un organisme, ouvrir `https://son-site/robots.txt` et vérifier
    que ses pages de sessions ne sont pas interdites (`Disallow`). Si elles le sont : pas de relevé
    automatique, seulement un lien vers sa page.
 5. **Pas de données personnelles** : jamais le nom d'un formateur ou d'un contact, seulement
@@ -22,7 +25,7 @@ de 8 jours**, en tenant dans **1 heure par semaine** au plus.
 
 ## La routine de la semaine (environ 15 minutes)
 
-L'outil `outils/relever.py` fait le relevé pour AFOCAL et l'IFAC :
+L'outil `outils/relever.py` fait le relevé pour AFOCAL, l'IFAC, l'UFCV et la Ligue de l'enseignement Île-de-France :
 
 ```
 pip install -r requirements.txt

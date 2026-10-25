@@ -1,23 +1,26 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
+{% block tete_note %}<p class="note-main">{{ page.entete.nom }}</p>{% endblock %}
+{% block tete_chapo %}{% endblock %}
+{% block tete_plus %}
+<ul class="chiffres chiffres-fiche">
+  <li><span>Dès</span><b>{{ page.entete.age }}</b></li>
+  <li><span>Durée</span><b>{{ page.entete.duree }}</b></li>
+  <li><span>Niveau</span><b>{{ page.entete.niveau }}</b></li>
+</ul>
+{% if page.entete.sessions %}<p><a class="bouton-r" href="{{ lien(page.entete.sessions) }}">Voir les sessions en Île-de-France <span aria-hidden="true">→</span></a></p>{% endif %}
+{% endblock %}
 {% block contenu %}
-<article class="cadre texte">
-  <p class="note-main">{{ page.entete.nom }}</p>
-  <h1>{{ page.titre }}</h1>
-  <ul class="fiche-cles">
-    <li><span>Dès</span><b>{{ page.entete.age }}</b></li>
-    <li><span>Durée</span><b>{{ page.entete.duree }}</b></li>
-    <li><span>Niveau</span><b>{{ page.entete.niveau }}</b></li>
-  </ul>
-  {% if page.entete.sessions %}<p><a class="bouton-r" href="{{ lien(page.entete.sessions) }}">Voir les sessions en Île-de-France <span aria-hidden="true">→</span></a></p>{% endif %}
-  {{ contenu | safe }}
-  <p class="petit">Mis à jour le {{ page.entete.mis_a_jour | date_fr }}. Ce résumé ne remplace pas les textes officiels cités.</p>
-  <nav class="bloc" aria-label="Autres formations">
+<section class="bande bande-papier">
+  <article class="cadre texte">
+    {{ contenu | safe }}
+    <p class="petit">Mis à jour le {{ page.entete.mis_a_jour | date_fr }}. Ce résumé ne remplace pas les textes officiels cités.</p>
+  </article>
+</section>
+<section class="bande bande-sable">
+  <div class="cadre">
     <h2>Les autres formations</h2>
-    <ul class="pastilles">
-      {% for f in site.formations if f.url != page.url %}<li><a href="{{ lien(f.url) }}">{{ f.court }}</a></li>{% endfor %}
-    </ul>
-  </nav>
-  {{ m.encart_jeuphorie(site) }}
-</article>
+    {{ m.cartes_liens(site.formations, page.url, lien) }}
+  </div>
+</section>
 {% endblock %}

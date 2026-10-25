@@ -8,7 +8,7 @@ ordre: 1
 age: "16 ans"
 duree: "8 + 14 + 6 jours minimum"
 niveau: "Brevet non professionnel"
-sessions: /bafa/formation-generale/
+sessions: /sessions/formation-generale/
 mis_a_jour: 2026-10-25
 ---
 
@@ -31,9 +31,9 @@ Assurer la sécurité physique et morale des enfants, animer la vie quotidienne 
 ## Les étapes, une par une
 
 1. **S'inscrire** sur [bafa-bafd.jeunes.gouv.fr](https://bafa-bafd.jeunes.gouv.fr/) pour obtenir son numéro (possible 3 mois avant ses 16 ans).
-2. **Formation générale** chez un organisme habilité : [voir les sessions](/bafa/formation-generale/).
+2. **Formation générale** chez un organisme habilité : [voir les sessions](/sessions/formation-generale/).
 3. **Stage pratique** de 14 jours effectifs au moins, en France, dans un accueil déclaré. Il peut être coupé en 2 parties de 4 jours minimum ; le périscolaire compte pour 6 jours au plus. [Trouver son stage](/guides/trouver-son-stage-pratique/).
-4. **Approfondissement** (6 jours) ou **qualification** (8 jours : surveillance de baignade, voile, canoë-kayak…) : [voir les sessions](/bafa/approfondissement/).
+4. **Approfondissement** (6 jours) ou **qualification** (8 jours : surveillance de baignade, voile, canoë-kayak…) : [voir les sessions](/sessions/approfondissement/).
 5. **Jury** : le dossier part tout seul quand les étapes sont validées.
 
 [Le guide complet des étapes](/guides/etapes-du-bafa/) · [Financer son BAFA](/guides/financer-son-bafa/)

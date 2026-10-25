@@ -1,4 +1,5 @@
 ---
+court: À propos
 titre: "Qui fait Fil Roug'Anim ?"
 url: /a-propos/
 description: "Fil Roug'Anim est fait par un professionnel de l'animation en Île-de-France : pourquoi ce site existe, comment il est fait, et ce qu'il ne fera jamais."

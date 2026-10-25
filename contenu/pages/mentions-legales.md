@@ -1,4 +1,5 @@
 ---
+court: Mentions légales
 titre: Mentions légales
 url: /mentions-legales/
 description: "Éditeur, hébergeur et informations légales du site Fil Roug'Anim."

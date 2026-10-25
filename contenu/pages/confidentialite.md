@@ -1,4 +1,5 @@
 ---
+court: Confidentialité
 titre: Confidentialité
 url: /confidentialite/
 description: "Fil Roug'Anim ne demande aucun compte, ne dépose aucun cookie et ne collecte aucune donnée personnelle."
@@ -18,7 +19,11 @@ description: "Fil Roug'Anim ne demande aucun compte, ne dépose aucun cookie et 
 {% if site.goatcounter %}- **La mesure d'audience** utilise GoatCounter, un outil **sans cookie** qui compte les visites de façon agrégée, sans suivre les personnes d'un site à l'autre.
 {% endif %}- **Google Search Console** nous montre comment le site apparaît dans les résultats de Google (nombre de clics, recherches tapées), de façon agrégée. Ces données viennent de Google, pas du site.
 
-## Liens vers d'autres sites
+{% if offres %}## Les offres de stages et de jobs
+
+Les offres sont publiées par les structures qui recrutent. L'adresse de candidature affichée est celle que la structure a choisie (de préférence une adresse générique). Le site ne reçoit aucune candidature et ne publie aucun CV.
+
+{% endif %}## Liens vers d'autres sites
 
 Les boutons « Voir chez… » mènent aux sites des organismes, qui ont leurs propres règles de confidentialité.
 

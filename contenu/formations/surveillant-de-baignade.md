@@ -8,7 +8,7 @@ ordre: 3
 age: "Dès la 3e étape du BAFA"
 duree: "8 jours minimum"
 niveau: "Qualification du BAFA, valable 5 ans"
-sessions: /bafa/qualification/
+sessions: /sessions/qualification/
 mis_a_jour: 2026-10-25
 ---
 
@@ -28,7 +28,7 @@ La qualification **surveillance des baignades** est une **session de qualificati
 - S'inscrire d'abord sur [bafa-bafd.jeunes.gouv.fr](https://bafa-bafd.jeunes.gouv.fr/), puis auprès de l'organisme.
 - Les organismes demandent en général de **savoir nager** et d'avoir le **PSC1** (premiers secours) : vérifiez leurs conditions et leurs tests d'entrée sur la page de la session. [Le PSC1](/formations/psc1/)
 
-[Les sessions de qualification en Île-de-France](/bafa/qualification/)
+[Les sessions de qualification en Île-de-France](/sessions/qualification/)
 
 ## Source
 

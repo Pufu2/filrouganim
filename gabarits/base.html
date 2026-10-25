@@ -38,13 +38,25 @@
     </nav>
   </div>
 </header>
-{% if page.fil %}
-<nav class="cadre fil-ariane" aria-label="Fil d'Ariane">
-  <a href="{{ lien('/') }}">Accueil</a>
-  {% for nom, url in page.fil %}<span aria-hidden="true">›</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
-</nav>
-{% endif %}
 <main id="contenu">
+{# Le haut de chaque page : une bande foncée avec le fil d'Ariane, le titre et l'essentiel #}
+{% block tete %}
+<section class="tete">
+  <div class="cadre">
+    {% if page.fil %}
+    <nav class="fil-ariane" aria-label="Fil d'Ariane">
+      <a href="{{ lien('/') }}">Accueil</a>
+      {% for nom, url in page.fil %}<span aria-hidden="true">›</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+    </nav>
+    {% endif %}
+    {% block tete_note %}{% endblock %}
+    <h1>{% block h1 %}{{ page.h1 or page.titre }}{% endblock %}</h1>
+    {% block tete_chapo %}{% if page.intro %}<p class="chapo">{{ page.intro }}</p>{% endif %}{% endblock %}
+    {% block tete_plus %}{% endblock %}
+  </div>
+  <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
+</section>
+{% endblock %}
 {% block contenu %}{% endblock %}
 </main>
 <footer class="pied">
@@ -57,15 +69,15 @@
     <nav aria-label="Chercher">
       <p class="pied-titre">Chercher</p>
       <a href="{{ lien('/sessions/') }}">Toutes les sessions</a>
-      <a href="{{ lien('/bafa/') }}">Par département et par vacances</a>
-      <a href="{{ lien('/organismes/') }}">Par organisme</a>
+      <a href="{{ lien('/sessions/') }}">Par département et par vacances</a>
+      <a href="{{ lien('/sessions/organismes/') }}">Par organisme</a>
       <a href="{{ lien('/formations/') }}">Les formations</a>
-      <a href="{{ lien('/questions-frequentes/') }}">Questions fréquentes</a>
+      <a href="{{ lien('/guides/questions-frequentes/') }}">Questions fréquentes</a>
     </nav>
     <nav aria-label="Pages utiles">
       <p class="pied-titre">Le site</p>
       <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
-      <a href="{{ lien('/structures/') }}">Vous recrutez ?</a>
+      <a href="{{ lien('/stages-et-jobs/recruteurs/') }}">Vous recrutez ?</a>
       <a href="{{ lien('/contact/') }}">Contact</a>
       <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a>
       <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>

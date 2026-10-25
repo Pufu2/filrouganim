@@ -26,17 +26,19 @@ python3 build.py              # version en ligne (avec sitemap.xml et robots.txt
 | Les pages légales | `contenu/pages/*.md` et `config.yml` (éditeur, SIREN, e-mail) |
 | L'apparence | `statique/css/site.css`, `gabarits/` |
 
-## Pages fabriquées
+## Pages fabriquées : une rubrique, un sujet par page
 
-- l'accueil (page de garde) : recherche en cases (où, quand, étape, budget, mot-clé), les 4 portes
-  d'entrée du site, les prochaines sessions, les étapes, les questions fréquentes ;
-- `/sessions/` : toutes les sessions, filtres en direct dans le navigateur, « Voir plus » par 10 ;
-- une page par département, par vacances, par département et vacances, par étape, pour le BAFD,
-  et par organisme ;
-- `/formations/` : BAFA, BAFD, surveillant de baignade, PSC1, BPJEPS, DEJEPS (`contenu/formations/`) ;
-- `/guides/` (`contenu/guides/`), `/questions-frequentes/` (`donnees/faq.yml`) ;
-- `/stages-et-jobs/`, `/structures/`, `/a-propos/`, `/contact/` et les pages légales (`contenu/pages/`) ;
-- `sitemap.xml`, `robots.txt`, données structurées schema.org (Course, FAQPage, WebSite, fil d'Ariane).
+| Rubrique | Pages |
+|---|---|
+| Accueil `/` | présentation de tout le site, recherche, prochaines sessions, questions fréquentes |
+| Sessions `/sessions/` | toutes les sessions (filtres, « Voir plus ») ; par département `/sessions/paris/`, par ville `/sessions/val-de-marne/creteil/`, par vacances `/sessions/vacances-hiver-2027/`, département + vacances, par étape `/sessions/formation-generale/`, BAFD `/sessions/bafd/`, organismes `/sessions/organismes/…` |
+| Formations `/formations/` | BAFA, BAFD, surveillant de baignade, PSC1, BPJEPS, DEJEPS (`contenu/formations/`) |
+| Guides `/guides/` | les guides (`contenu/guides/`) et les questions fréquentes (`donnees/faq.yml`) |
+| Stages et jobs `/stages-et-jobs/` | les offres (`donnees/offres.yml`, étape 2), une page par offre, la page des recruteurs |
+| Le site (pied de page) | à propos, contact, classement des sessions, pages légales (`contenu/pages/`) |
+
+Les anciennes adresses (`/bafa/…`, `/organismes/…`, `/structures/`…) redirigent vers les nouvelles.
+`sitemap.xml`, `robots.txt`, données structurées schema.org (Course, JobPosting, FAQPage, WebSite, fil d'Ariane).
 
 Les prix cités dans les textes (« de 300 à 435 € ») sont recalculés à chaque fabrication à partir des
 sessions : `{{ stats.fg_ext.min }}` dans un fichier Markdown ou dans faq.yml.
@@ -45,4 +47,5 @@ sessions : `{{ stats.fg_ext.min }}` dans un fichier Markdown ou dans faq.yml.
 
 - `docs/PUBLIER.md` : mettre le site en ligne (dépôt, GitHub Pages, domaine OVHcloud, Search Console).
 - `docs/METTRE-A-JOUR-LES-SESSIONS.md` : la vérification de chaque semaine.
+- `docs/ETAPE-2-OFFRES.md` : les offres de stages et de jobs (format, cadre légal, modèle économique).
 - `docs/NOMS.md`, `docs/POSITIONNEMENT.md` : le choix du nom et de ce qui distingue le site.

@@ -1,30 +1,24 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
+{% block h1 %}Les formations de l'animation{% endblock %}
+{% block tete_chapo %}<p class="chapo">Du premier job d'été au métier : âge d'entrée, durée et niveau de chaque formation, d'après les textes officiels.</p>{% endblock %}
 {% block contenu %}
-<div class="cadre">
-  <h1>Les formations de l'animation</h1>
-  <p class="chapo">Du premier job d'été au métier : chaque formation, son âge d'entrée, sa durée et son niveau. Les règles viennent des textes officiels, cités sur chaque page.</p>
-
-  <div class="tableau-formations">
-    <table>
-      <thead><tr><th>Formation</th><th>Pour quoi faire</th><th>Dès</th><th>Durée</th><th>Niveau</th></tr></thead>
-      <tbody>
-      {% for f in site.formations %}
-        <tr><th><a href="{{ lien(f.url) }}">{{ f.court }}</a></th><td>{{ f.resume }}</td><td>{{ f.age }}</td><td>{{ f.duree }}</td><td>{{ f.niveau }}</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
+<section class="bande bande-papier">
+  <div class="cadre">
+    {{ m.cartes_liens(site.formations, page.url, lien, details=True) }}
   </div>
-
-  {{ m.fil("du job d'été au métier") }}
-  <h2>Le chemin le plus courant</h2>
-  <ol class="guides-liste">
-    <li><a href="{{ lien('/formations/bafa/') }}">BAFA</a><span>Dès 16 ans : colos et centres de loisirs pendant les vacances.</span></li>
-    <li><a href="{{ lien('/formations/psc1/') }}">PSC1</a><span>Les premiers secours, une journée : à faire tôt.</span></li>
-    <li><a href="{{ lien('/formations/bafd/') }}">BAFD</a><span>Dès 18 ans : diriger un séjour ou un centre de loisirs.</span></li>
-    <li><a href="{{ lien('/formations/bpjeps/') }}">BPJEPS</a><span>Le métier d'animateur toute l'année, niveau 4.</span></li>
-    <li><a href="{{ lien('/formations/dejeps/') }}">DEJEPS</a><span>Coordonner des projets et une équipe, niveau 5.</span></li>
-  </ol>
-  {{ m.encart_jeuphorie(site) }}
-</div>
+</section>
+<section class="bande bande-sable">
+  <div class="cadre">
+    <p class="note-main">du job d'été au métier</p>
+    <h2>Le chemin le plus courant</h2>
+    <ol class="trois-pas cinq-pas">
+      <li><b>BAFA</b><span>Dès 16 ans : colos et centres de loisirs pendant les vacances.</span><a href="{{ lien('/formations/bafa/') }}">Le BAFA</a></li>
+      <li><b>PSC1</b><span>Les premiers secours, une journée : à faire tôt.</span><a href="{{ lien('/formations/psc1/') }}">Le PSC1</a></li>
+      <li><b>BAFD</b><span>Dès 18 ans : diriger un séjour ou un centre de loisirs.</span><a href="{{ lien('/formations/bafd/') }}">Le BAFD</a></li>
+      <li><b>BPJEPS</b><span>Le métier d'animateur toute l'année, niveau 4.</span><a href="{{ lien('/formations/bpjeps/') }}">Le BPJEPS</a></li>
+      <li><b>DEJEPS</b><span>Coordonner des projets et une équipe, niveau 5.</span><a href="{{ lien('/formations/dejeps/') }}">Le DEJEPS</a></li>
+    </ol>
+  </div>
+</section>
 {% endblock %}

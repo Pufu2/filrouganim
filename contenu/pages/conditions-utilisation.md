@@ -1,4 +1,5 @@
 ---
+court: Conditions d'utilisation
 titre: Conditions d'utilisation
 url: /conditions-utilisation/
 description: "Les règles d'utilisation du comparateur gratuit des sessions BAFA et BAFD Fil Roug'Anim."

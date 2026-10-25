@@ -123,6 +123,13 @@ def faire_lien(depuis, vers, apercu, base=""):
     return posixpath.relpath(fichier_de_sortie(vers), dossier or ".") + ancre
 
 
+def slug(texte):
+    """« Saint-Ouen-sur-Seine » -> « saint-ouen-sur-seine »"""
+    import unicodedata
+    t = unicodedata.normalize("NFD", texte).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+
+
 def json_ld(objet):
     """JSON-LD sûr à placer dans une balise <script>."""
     return json.dumps(objet, ensure_ascii=False, indent=1).replace("</", "<\\/")
@@ -146,12 +153,14 @@ class Site:
         self.sessions = self.charger_sessions()
         self.stats = self.calculer_stats()
         self.faq = self.donnees.get("faq", {}).get("questions", [])
+        self.offres = self.charger_offres()
         self.env = Environment(loader=FileSystemLoader(RACINE / "gabarits"),
                                autoescape=select_autoescape(["html", "xml"]),
                                trim_blocks=True, lstrip_blocks=True)
         self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
-                                mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1])
+                                mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
+                                markdown=convertir_markdown)
         self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES)
         self.pages = []
 
@@ -183,6 +192,48 @@ class Site:
         # Classement (expliqué sur /classement-des-sessions/) : date de début, puis prix, puis organisme
         sessions.sort(key=lambda s: (s["debut"], s["prix"] is None, s["prix"] or 0, s["org"]["nom"], s["ville"]))
         return sessions
+
+    def charger_offres(self):
+        """Offres de stages et de jobs (étape 2) : celles dont la date d'expiration est passée disparaissent."""
+        offres, ids = [], set()
+        obligatoires = ["id", "intitule", "poste", "contrat", "structure", "ville", "departement", "debut",
+                        "texte", "candidater", "publiee_le", "expire_le"]
+        for o in self.donnees.get("offres", {}).get("offres", []) or []:
+            manque = [c for c in obligatoires if not o.get(c)]
+            if manque:
+                sys.exit(f"Offre {o.get('id')} : champs manquants {manque}")
+            if o["id"] in ids:
+                sys.exit(f"Identifiant d'offre en double : {o['id']}")
+            if o["departement"] not in self.departements:
+                sys.exit(f"Offre {o['id']} : département inconnu {o['departement']}")
+            ids.add(o["id"])
+            o = dict(o)
+            for c in ("debut", "fin", "publiee_le", "expire_le"):
+                o[c] = en_date(o.get(c))
+            if o["expire_le"] < self.aujourdhui:
+                continue
+            o["dep"] = self.departements[o["departement"]]
+            offres.append(o)
+        offres.sort(key=lambda o: (o["debut"], o["id"]))
+        return offres
+
+    def schema_offre(self, o):
+        """Données structurées JobPosting (Google pour l'emploi)."""
+        types = {"cee": "TEMPORARY", "cdd": "TEMPORARY", "cdi": "FULL_TIME", "stage-pratique": "INTERN", "benevole": "VOLUNTEER"}
+        objet = {"@context": "https://schema.org", "@type": "JobPosting", "title": o["intitule"],
+                 "description": convertir_markdown(o["texte"]), "datePosted": o["publiee_le"].isoformat(),
+                 "validThrough": o["expire_le"].isoformat() + "T23:59", "employmentType": types.get(o["contrat"], "OTHER"),
+                 "hiringOrganization": {"@type": "Organization", "name": o["structure"]["nom"],
+                                        **({"sameAs": o["structure"]["site"]} if o["structure"].get("site") else {})},
+                 "jobLocation": {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": o["ville"],
+                                 "addressRegion": "Île-de-France", "addressCountry": "FR"}},
+                 "directApply": False}
+        r = o.get("remuneration")
+        if r and r.get("montant"):
+            objet["baseSalary"] = {"@type": "MonetaryAmount", "currency": "EUR", "value": {
+                "@type": "QuantitativeValue", "value": r["montant"],
+                "unitText": {"jour": "DAY", "mois": "MONTH", "heure": "HOUR"}.get(r.get("unite"), "DAY")}}
+        return json_ld(objet)
 
     def calculer_stats(self):
         """Chiffres affichés sur le site (prix min/max…), recalculés à chaque fabrication."""
@@ -227,8 +278,12 @@ class Site:
 
     # -- déclaration des pages
     def declarer(self):
+        """Le site est rangé en rubriques : chaque page traite un seul sujet, sous l'adresse de sa rubrique.
+        /sessions/…  /formations/…  /guides/…  /stages-et-jobs/…  (+ accueil, à propos, contact, pages légales)"""
         S = self.sessions
         bafa = [s for s in S if s["diplome"] == "BAFA"]
+        RUB = ("Sessions", "/sessions/")
+
         for q in self.faq:
             q["r_rendu"] = " ".join(self.env.from_string(q["r"]).render(stats=self.stats).split())
         faq_accueil = [q for q in self.faq if q.get("accueil")]
@@ -237,78 +292,76 @@ class Site:
                      description="Sessions BAFA et BAFD avec leurs dates et leurs prix, guides vérifiés, formations de l'animation : tout pour passer son BAFA en Île-de-France sans perdre le fil. Gratuit, sans compte.",
                      prochaines=[s for s in S if not s["complet"]][:5], faq=faq_accueil,
                      schema=self.schema_faq(faq_accueil))
+
+        # ---- rubrique Sessions
         self.ajouter("/sessions/", "sessions.html",
                      titre="Sessions BAFA et BAFD en Île-de-France : dates et prix",
                      description="Comparez les sessions BAFA et BAFD en Île-de-France : dates, ville, formule et prix, organisme par organisme. Filtres par département, vacances, étape et budget.",
-                     sessions=S, fil=[("Sessions", "/sessions/")])
-
-        # une page par période de vacances, toute l'Île-de-France
+                     sessions=S, fil=[RUB])
         for p in self.periodes:
             liste = [s for s in bafa if s["periode"] is p]
             if liste:
-                self.ajouter(f"/bafa/{p['slug']}/", "liste.html",
+                self.ajouter(f"/sessions/{p['slug']}/", "liste.html",
                              titre=f"BAFA {p['nom']} en Île-de-France : dates et prix",
-                             h1=f"BAFA pendant les {p['nom']} en Île-de-France",
+                             h1=f"BAFA pendant les {p['nom']}",
                              description=f"Les sessions BAFA des {p['nom']} en Île-de-France ({dates_fr(p['debut'], p['fin'])}) : formation générale et approfondissement, ville, formule et prix.",
-                             intro=f"Les {p['nom']} vont {dates_fr(p['debut'], p['fin'])} pour la zone C (Paris, Créteil, Versailles). Voici les sessions qui commencent pendant ces vacances.",
-                             sessions=liste, periode=p, fil=[("BAFA", "/bafa/"), (p["court"], f"/bafa/{p['slug']}/")])
-
-        # une page par département, et par département et période
+                             intro=f"Les {p['nom']} vont {dates_fr(p['debut'], p['fin'])} pour la zone C (Paris, Créteil, Versailles). Voici les sessions qui commencent pendant ces vacances, partout en Île-de-France.",
+                             sessions=liste, periode=p, fil=[RUB, (p["court"], f"/sessions/{p['slug']}/")])
         for dep in self.departements.values():
             du_dep = [s for s in bafa if s["dep"] is dep]
-            self.ajouter(f"/bafa/{dep['slug']}/", "liste.html",
+            villes = self.villes(du_dep) if dep["code"] != "75" else []
+            per_dep = [p for p in self.periodes if any(s["periode"] is p for s in du_dep)]
+            self.ajouter(f"/sessions/{dep['slug']}/", "liste.html",
                          titre=f"BAFA {dep['nom']} ({dep['code']}) : sessions, dates et prix",
-                         h1=f"Passer le BAFA {dep['a']} ({dep['code']})",
-                         description=f"Toutes les sessions BAFA {dep['a']} ({dep['code']}) : formation générale, approfondissement, dates, formule et prix par organisme.",
-                         intro=None, departement=dep, sessions=du_dep, indexer=bool(du_dep),
-                         periodes_dep=[p for p in self.periodes if any(s["periode"] is p for s in du_dep)],
-                         fil=[("BAFA", "/bafa/"), (dep["nom"], f"/bafa/{dep['slug']}/")])
-            for p in self.periodes:
+                         h1=f"Passer le BAFA {dep['a']}",
+                         description=f"Les sessions BAFA {dep['a']} ({dep['code']}) : formation générale, approfondissement, dates, formule et prix par organisme.",
+                         intro=f"Les sessions dont le lieu est {dep['a']}. Une session peut se suivre dans n'importe quel département : regardez aussi les départements voisins.",
+                         departement=dep, sessions=du_dep, indexer=bool(du_dep), periodes_dep=per_dep, villes=villes,
+                         fil=[RUB, (dep["nom"], f"/sessions/{dep['slug']}/")])
+            for p in per_dep:
                 liste = [s for s in du_dep if s["periode"] is p]
-                if liste:
-                    self.ajouter(f"/bafa/{dep['slug']}/{p['slug']}/", "liste.html",
-                                 titre=f"BAFA {dep['nom']} {p['nom']} : dates et prix",
-                                 h1=f"BAFA {dep['a']} pendant les {p['nom']}",
-                                 description=f"Sessions BAFA {dep['a']} ({dep['code']}) pendant les {p['nom']} : dates, ville, formule, prix et lien vers l'organisme.",
-                                 intro=f"Les {p['nom']} vont {dates_fr(p['debut'], p['fin'])} en Île-de-France (zone C).",
-                                 departement=dep, periode=p, sessions=liste,
-                                 periodes_dep=[q for q in self.periodes if any(s["periode"] is q for s in du_dep)],
-                                 fil=[("BAFA", "/bafa/"), (dep["nom"], f"/bafa/{dep['slug']}/"),
-                                      (p["court"], f"/bafa/{dep['slug']}/{p['slug']}/")])
-
-        # une page par type de session
+                self.ajouter(f"/sessions/{dep['slug']}/{p['slug']}/", "liste.html",
+                             titre=f"BAFA {dep['nom']} {p['nom']} : dates et prix",
+                             h1=f"BAFA {dep['a']} pendant les {p['nom']}",
+                             description=f"Sessions BAFA {dep['a']} ({dep['code']}) pendant les {p['nom']} : dates, ville, formule, prix et lien vers l'organisme.",
+                             intro=f"Les {p['nom']} vont {dates_fr(p['debut'], p['fin'])} en Île-de-France (zone C).",
+                             departement=dep, periode=p, sessions=liste, periodes_dep=per_dep, villes=villes,
+                             fil=[RUB, (dep["nom"], f"/sessions/{dep['slug']}/"), (p["court"], f"/sessions/{dep['slug']}/{p['slug']}/")])
+            for v in villes:
+                self.ajouter(f"/sessions/{dep['slug']}/{v['slug']}/", "liste.html",
+                             titre=f"BAFA {v['nom']} ({dep['code']}) : sessions, dates et prix",
+                             h1=f"Passer le BAFA à {v['nom']}",
+                             description=f"Les sessions BAFA à {v['nom']} ({dep['code']}) : formation générale, approfondissement, dates, formule et prix, avec le lien vers l'organisme.",
+                             intro=f"Les sessions qui ont lieu à {v['nom']}. D'autres sessions ont lieu tout près, {dep['a']}.",
+                             departement=dep, ville=v, sessions=v["sessions"], periodes_dep=per_dep, villes=villes,
+                             fil=[RUB, (dep["nom"], f"/sessions/{dep['slug']}/"), (v["nom"], f"/sessions/{dep['slug']}/{v['slug']}/")])
         for t in self.types:
             liste = [s for s in bafa if s["type"] == t["id"]]
-            self.ajouter(f"/bafa/{t['slug']}/", "liste.html",
+            self.ajouter(f"/sessions/{t['slug']}/", "liste.html",
                          titre=f"BAFA {t['nom'].lower()} en Île-de-France : sessions et prix",
-                         h1=f"BAFA : {t['nom'].lower()} en Île-de-France",
+                         h1=f"BAFA : {t['nom'].lower()}",
                          description=f"Les sessions de {t['nom'].lower()} du BAFA en Île-de-France : dates, villes, formules et prix, avec le lien vers chaque organisme.",
-                         type_session=t, sessions=liste, indexer=bool(liste),
-                         fil=[("BAFA", "/bafa/"), (t["nom"], f"/bafa/{t['slug']}/")])
-        self.ajouter("/bafa/", "bafa.html", titre="Sessions BAFA en Île-de-France par département et par vacances",
-                     description="Trouvez une session BAFA en Île-de-France par département, par période de vacances ou par étape : formation générale, approfondissement, qualification.",
-                     fil=[("BAFA", "/bafa/")])
+                         type_session=t, sessions=liste, indexer=bool(liste), fil=[RUB, (t["nom"], f"/sessions/{t['slug']}/")])
         bafd = [s for s in S if s["diplome"] == "BAFD"]
-        self.ajouter("/bafd/", "liste.html", titre="BAFD en Île-de-France : sessions, dates et prix",
-                     h1="Passer le BAFD en Île-de-France",
-                     description="Les sessions de formation BAFD (directeur d'accueil collectif de mineurs) en Île-de-France : dates, lieu, formule et prix.",
-                     sessions=bafd, diplome="BAFD", indexer=bool(bafd), fil=[("BAFD", "/bafd/")])
-
-        # organismes
+        self.ajouter("/sessions/bafd/", "liste.html", titre="BAFD en Île-de-France : sessions, dates et prix",
+                     h1="Les sessions BAFD en Île-de-France",
+                     description="Les sessions de formation BAFD (directeur d'accueil collectif de mineurs) en Île-de-France : formation générale et perfectionnement, dates, lieu, formule et prix.",
+                     intro="Formation générale et perfectionnement du BAFD, dès 18 ans avec le BAFA.",
+                     sessions=bafd, diplome="BAFD", indexer=bool(bafd), fil=[RUB, ("BAFD", "/sessions/bafd/")])
         en_ligne = [o for o in self.organismes.values() if o.get("en_ligne")]
-        self.ajouter("/organismes/", "organismes.html", titre="Organismes de formation BAFA et BAFD en Île-de-France",
+        self.ajouter("/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA et BAFD en Île-de-France",
                      description="Les organismes qui forment au BAFA et au BAFD en Île-de-France, avec leurs prochaines sessions et le lien vers leur site.",
-                     organismes=list(self.organismes.values()), fil=[("Organismes", "/organismes/")])
+                     organismes=list(self.organismes.values()), fil=[RUB, ("Organismes", "/sessions/organismes/")])
         for o in en_ligne:
             liste = [s for s in S if s["organisme"] == o["id"]]
-            self.ajouter(f"/organismes/{o['id']}/", "liste.html",
+            self.ajouter(f"/sessions/organismes/{o['id']}/", "liste.html",
                          titre=f"BAFA avec {o['nom']} en Île-de-France : sessions et prix",
-                         h1=f"{o['nom']} : sessions BAFA et BAFD en Île-de-France",
+                         h1=f"{o['nom']} : sessions BAFA et BAFD",
                          description=f"Les prochaines sessions BAFA et BAFD de {o['nom']} en Île-de-France : dates, villes, formules et prix, avec le lien vers sa page.",
-                         organisme=o, sessions=liste,
-                         fil=[("Organismes", "/organismes/"), (o["nom"], f"/organismes/{o['id']}/")])
+                         organisme=o, sessions=liste, indexer=bool(liste),
+                         fil=[RUB, ("Organismes", "/sessions/organismes/"), (o["nom"], f"/sessions/organismes/{o['id']}/")])
 
-        # formations de l'animation (Markdown)
+        # ---- rubrique Formations
         formations = []
         for f in sorted((RACINE / "contenu" / "formations").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -323,7 +376,7 @@ class Site:
                      description="Du BAFA au DEJEPS : âge, durée et niveau de chaque formation de l'animation, du premier job d'été au métier d'animateur ou de coordinateur.",
                      fil=[("Formations", "/formations/")])
 
-        # guides et pages fixes (Markdown)
+        # ---- rubrique Guides (dont les questions fréquentes)
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -334,15 +387,53 @@ class Site:
         guides.sort(key=lambda g: g.get("ordre", 99))
         self.config["guides"] = guides
         self.ajouter("/guides/", "guides.html", titre="Guides du BAFA : étapes, financement, stage pratique, contrat",
-                     description="Des guides clairs et vérifiés pour passer le BAFA : les étapes, les aides pour le financer, trouver son stage pratique, le contrat d'engagement éducatif.",
+                     description="Des guides clairs et vérifiés pour passer le BAFA : les étapes, les aides pour le financer, trouver son stage pratique, le contrat d'engagement éducatif, et les questions fréquentes.",
                      fil=[("Guides", "/guides/")])
+        self.ajouter("/guides/questions-frequentes/", "faq.html",
+                     titre="BAFA, BAFD, stage pratique : les questions fréquentes",
+                     description="Âge, prix, durée, stage pratique payé ou non, BAFD, surveillant de baignade : les réponses courtes aux questions les plus posées sur le BAFA, avec leurs sources.",
+                     faq=self.faq, schema=self.schema_faq(self.faq),
+                     fil=[("Guides", "/guides/"), ("Questions fréquentes", "/guides/questions-frequentes/")])
+
+        # ---- pages fixes en Markdown (rubrique Stages et jobs, à propos, contact, pages légales)
         for f in sorted((RACINE / "contenu" / "pages").glob("*.md")):
             entete, corps = lire_markdown(f)
-            extra = {"faq": self.faq, "schema": self.schema_faq(self.faq)} if entete.get("gabarit") == "faq.html" else {}
+            fil = [tuple(x) for x in entete.get("fil", [])] + [(entete.get("court", entete["titre"]), entete["url"])]
             self.ajouter(entete["url"], entete.get("gabarit", "page.html"), titre=entete["titre"],
                          description=entete.get("description", ""), indexer=entete.get("indexer", True),
-                         corps_md=corps, entete=entete, fil=[(entete.get("court", entete["titre"]), entete["url"])], **extra)
+                         corps_md=corps, entete=entete, fil=fil)
+        for o in self.offres:
+            self.ajouter(f"/stages-et-jobs/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
+                         description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
+                         offre=o, schema=self.schema_offre(o),
+                         fil=[("Stages et jobs", "/stages-et-jobs/"), (o["intitule"], f"/stages-et-jobs/offres/{o['id']}/")])
         self.ajouter("/404.html", "404.html", titre="Page introuvable", indexer=False)
+
+        # ---- anciennes adresses (avant le rangement en rubriques) : pages de redirection
+        anciennes = {"/bafa/": "/sessions/", "/bafd/": "/sessions/bafd/", "/organismes/": "/sessions/organismes/",
+                     "/questions-frequentes/": "/guides/questions-frequentes/", "/structures/": "/stages-et-jobs/recruteurs/"}
+        for o in en_ligne:
+            anciennes[f"/organismes/{o['id']}/"] = f"/sessions/organismes/{o['id']}/"
+        for t in self.types:
+            anciennes[f"/bafa/{t['slug']}/"] = f"/sessions/{t['slug']}/"
+        for p in self.periodes:
+            anciennes[f"/bafa/{p['slug']}/"] = f"/sessions/{p['slug']}/"
+        for dep in self.departements.values():
+            anciennes[f"/bafa/{dep['slug']}/"] = f"/sessions/{dep['slug']}/"
+            for p in self.periodes:
+                anciennes[f"/bafa/{dep['slug']}/{p['slug']}/"] = f"/sessions/{dep['slug']}/{p['slug']}/"
+        existantes = {pg["url"] for pg in self.pages}
+        for ancienne, nouvelle in anciennes.items():
+            if nouvelle not in existantes:
+                nouvelle = nouvelle.rsplit("/", 2)[0] + "/" if nouvelle.count("/") > 3 else "/sessions/"
+            self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=nouvelle)
+
+    def villes(self, sessions, minimum=2):
+        """Les communes qui ont assez de sessions pour mériter leur page."""
+        par_ville = {}
+        for s in sessions:
+            par_ville.setdefault(s["ville"], []).append(s)
+        return [{"nom": v, "slug": slug(v), "sessions": l} for v, l in sorted(par_ville.items()) if len(l) >= minimum]
 
     def ajouter(self, url, gabarit, titre, description=None, indexer=True, **extra):
         if extra.get("sessions") and "schema" not in extra:
@@ -362,7 +453,7 @@ class Site:
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
             "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
-            "stats": self.stats,
+            "stats": self.stats, "offres": self.offres,
             "periodes": self.periodes, "types": self.types,
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

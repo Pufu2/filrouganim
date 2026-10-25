@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block tete_chapo %}<p class="chapo">{% if offres %}{{ offres | length }} offre{{ 's' if offres|length > 1 }} de stages pratiques et de jobs, publiées par les structures. Toujours gratuit pour les candidats.{% else %}Les offres des centres de loisirs et des colos arrivent ici. Toujours gratuit pour les candidats.{% endif %}</p>{% endblock %}
+{% block contenu %}
+{% if offres %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <div class="sessions">
+    {% for o in offres %}
+      <article class="session offre">
+        <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
+        <div class="s-corps">
+          <h2 class="s-titre"><a href="{{ lien('/stages-et-jobs/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h2>
+          <p class="s-infos"><b>{{ o.structure.nom }}</b> · {{ o.ville }} ({{ o.departement }}){% if o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
+          <p class="s-verif">Publiée le {{ o.publiee_le | date_fr }} · jusqu'au {{ o.expire_le | date_fr }}</p>
+        </div>
+        <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>
+        <a class="s-lien" href="{{ lien('/stages-et-jobs/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
+      </article>
+    {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+<section class="bande bande-blanc">
+  <article class="cadre texte">
+    {{ contenu | safe }}
+  </article>
+</section>
+{% endblock %}

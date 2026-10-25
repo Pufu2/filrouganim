@@ -51,16 +51,21 @@ def autorise(url):
         with urlopen(Request(hote + "/robots.txt", headers={"User-Agent": AGENT}), timeout=30) as r:
             rp.parse(r.read().decode("utf-8", errors="ignore").splitlines())
         _robots[hote] = rp
-    return _robots[hote].can_fetch(AGENT, url)
+    # un site qui ferme sa porte aux robots d'IA (dont ceux d'Anthropic) n'est jamais lu
+    return all(_robots[hote].can_fetch(a, url) for a in (AGENT, "ClaudeBot", "Claude-User", "anthropic-ai"))
 
 
-def lire(url):
-    """Texte de la page en lignes (balises retirées)."""
+def lire_brut(url):
     if not autorise(url):
         sys.exit(f"robots.txt interdit cette page : {url}")
     time.sleep(PAUSE)
     with urlopen(Request(url, headers={"User-Agent": AGENT}), timeout=30) as r:
-        brut = r.read().decode("utf-8", errors="ignore")
+        return r.read().decode("utf-8", errors="ignore")
+
+
+def lire(url):
+    """Texte de la page en lignes (balises retirées)."""
+    brut = lire_brut(url)
     brut = re.sub(r"<script.*?</script>|<style.*?</style>", "", brut, flags=re.S)
     return brut, [" ".join(l.split()) for l in html.unescape(re.sub(r"<[^>]+>", "\n", brut)).split("\n") if l.strip()]
 
@@ -200,6 +205,131 @@ def ifac_fiche(s):
     return True
 
 
+# ---------------------------------------------------------------- UFCV
+
+def dates_texte(l):
+    m = re.search(r"Du (\d\d)/(\d\d)/(\d{4}) au (\d\d)/(\d\d)/(\d{4})", l)
+    if not m:
+        return None, None
+    return (dt.date(int(m.group(3)), int(m.group(2)), int(m.group(1))),
+            dt.date(int(m.group(6)), int(m.group(5)), int(m.group(4))))
+
+
+def ufcv(dans_periode):
+    """Liste Île-de-France (idRegion=10), puis la fiche des sessions des vacances à venir (département, tarifs)."""
+    base = "https://bafa.ufcv.fr/R%C3%A9sultats-de-recherche?idType=0&idRegion=10&page="
+    vus, blocs = set(), []
+    for n in range(1, 80):
+        brut, L = lire(base + str(n))
+        ids = list(dict.fromkeys(re.findall(r"idPeriode=(\d+)", brut)))
+        nouveaux = [i for i in ids if i not in vus]
+        if not nouveaux:
+            break
+        # la liste commence après l'en-tête « TYPE / DATE / LIEU / PRIX » (avant : les menus de recherche)
+        k = next((x + 1 for x in range(len(L) - 2) if L[x:x + 3] == ["TYPE", "DATE / LIEU", "PRIX"]), len(L))
+        fin_liste = next((x for x in range(k, len(L)) if L[x] == "TROUVER UNE FORMATION"), len(L))
+        lus = []
+        while k < fin_liste:
+            if re.match(r"BAF[AD] \d - ", L[k]):
+                type_l = L[k]
+                j = k + 1
+                theme = None
+                if not L[j].startswith("Du "):
+                    theme, j = L[j], j + 1
+                debut, fin = dates_texte(L[j])
+                while j < len(L) and L[j].startswith("Du "):
+                    j += 1
+                prix = re.match(r"([\d ]+) €$", L[j + 1]) if j + 1 < len(L) else None
+                lus.append({"type_l": type_l, "theme": theme, "debut": debut, "fin": fin,
+                            "prix_liste": float(prix.group(1).replace(" ", "")) if prix else None})
+                k = j + 1
+            else:
+                k += 1
+        if len(lus) != len(ids):
+            sys.exit(f"UFCV : la page a changé de forme ({len(ids)} liens, {len(lus)} sessions) : à regarder à la main")
+        for i, b in zip(ids, lus):
+            if i not in vus:
+                vus.add(i)
+                b["id"] = i
+                blocs.append(b)
+    sessions = []
+    for b in blocs:
+        if not b["debut"] or not dans_periode(b["debut"], b["type_l"].startswith("BAFD")):
+            continue
+        url = "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=" + b["id"]
+        try:
+            _, L = lire(url)
+        except Exception as e:
+            print(f"  UFCV {b['id']} : illisible ({e})", file=sys.stderr)
+            continue
+        i = next((k for k, l in enumerate(L) if dates_texte(l) == (b["debut"], b["fin"])), None)
+        lieu = re.match(r"(.+?) (\d{2}) - ", L[i + 1]) if i is not None else None
+        if not lieu:
+            print(f"  UFCV {b['id']} : lieu illisible, session écartée", file=sys.stderr)
+            continue
+        tarifs = {}
+        if "Montant" in L:
+            k = L.index("Montant") + 1
+            while k + 1 < len(L) and re.match(r"([\d ]+(?:,\d+)?) €$", L[k + 1]) and L[k].lower() in FORMULES:
+                tarifs[FORMULES[L[k].lower()]] = float(re.match(r"([\d ]+(?:,\d+)?) €$", L[k + 1]).group(1).replace(" ", "").replace(",", "."))
+                k += 2
+        formule, prix, note = formule_prix(tarifs)
+        diplome = b["type_l"][:4]
+        if "Formation Générale" in b["type_l"]:
+            type_ = "formation-generale"
+        elif "Perfectionnement" in b["type_l"]:
+            type_ = "perfectionnement"
+        elif b["theme"] and re.search(r"baignade|qualification", b["theme"], re.I):
+            type_ = "qualification"
+        else:
+            type_ = "approfondissement"
+        etat = next((l for l in L if l.startswith("En date du")), "")
+        sessions.append({"id": "ufcv-" + b["id"], "organisme": "ufcv", "diplome": diplome, "type": type_, "theme": b["theme"],
+                         "debut": b["debut"], "fin": b["fin"], "ville": commune(lieu.group(1)), "departement": lieu.group(2),
+                         "formule": formule, "prix": prix if prix is not None else b["prix_liste"], "prix_note": note,
+                         "aides": [], "complet": bool(etat) and "places disponibles" not in etat,
+                         "url": url})
+    return sessions
+
+
+# ---------------------------------------------------------------- Ligue de l'enseignement Île-de-France
+
+def ligue(dans_periode):
+    """Boutique formation-bafa-bafd.org (liste publique des produits), puis la fiche pour les dates et la formule."""
+    produits = []
+    for n in range(1, 20):
+        page = json.loads(lire_brut(f"https://formation-bafa-bafd.org/wp-json/wc/store/v1/products?per_page=100&page={n}"))
+        if not page:
+            break
+        produits += page
+    cats = {"bafa-formation-generale": ("BAFA", "formation-generale"),
+            "bafa-approfondissement-qualification": ("BAFA", "approfondissement"),
+            "bafd-formation-generale": ("BAFD", "formation-generale"), "bafd-perfectionnement": ("BAFD", "perfectionnement")}
+    sessions = []
+    for p in produits:
+        cat = next((cats[c["slug"]] for c in p.get("categories", []) if c["slug"] in cats), None)
+        nom = html.unescape(p["name"])
+        lieu = re.search(r" à (.+?) \((\d{2})\)", nom)
+        if not cat or not lieu:
+            continue
+        _, L = lire(p["permalink"])
+        i = next((k for k, l in enumerate(L) if re.match(r"Du \d\d/\d\d/\d{4}$", l)), None)
+        if i is None or not re.match(r"au \d\d/\d\d/\d{4}$", L[i + 1]):
+            continue
+        d = lambda t: dt.date(int(t[-4:]), int(t[-7:-5]), int(t[-10:-8]))
+        debut, fin = d(L[i]), d(L[i + 1])
+        if not dans_periode(debut, cat[0] == "BAFD"):
+            continue
+        formule = next((FORMULES[l.lower()] for l in L[i + 2:i + 8] if l.lower() in FORMULES), None)
+        prix = int(p["prices"]["price"]) / 10 ** p["prices"].get("currency_minor_unit", 2)
+        sessions.append({"id": "ligue-" + str(p["id"]), "organisme": "ligue-idf", "diplome": cat[0], "type": cat[1],
+                         "theme": None, "debut": debut, "fin": fin,
+                         "ville": commune(lieu.group(1).split(" • ")[-1]),
+                         "departement": lieu.group(2), "formule": formule, "prix": int(prix) if prix.is_integer() else prix,
+                         "prix_note": None, "aides": [], "complet": not p.get("is_in_stock", True), "url": p["permalink"]})
+    return sessions
+
+
 # ---------------------------------------------------------------- sélection et écriture
 
 def ecrire(chemin, sessions, entete):
@@ -242,10 +372,17 @@ def main():
         return next((p["id"] for p in periodes
                      if dt.date.fromisoformat(str(p["debut"])) <= d <= dt.date.fromisoformat(str(p["fin"]))), None)
 
+    def dans_periode(d, bafd=False):
+        return d >= aujourdhui + dt.timedelta(days=3) and (bafd or periode(d) is not None)
+
     print("AFOCAL…", file=sys.stderr)
     candidates = afocal(anciens)
     print("IFAC…", file=sys.stderr)
     candidates += ifac_liste()
+    print("UFCV…", file=sys.stderr)
+    candidates += ufcv(dans_periode)
+    print("Ligue de l'enseignement…", file=sys.stderr)
+    candidates += ligue(dans_periode)
     groupes = {}
     for s in candidates:
         s["periode"] = periode(s["debut"])

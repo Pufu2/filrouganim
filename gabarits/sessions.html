@@ -1,40 +1,28 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block h1 %}Sessions BAFA et BAFD en Île-de-France{% endblock %}
+{% block tete_chapo %}<p class="chapo">Comparez ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
+{% block tete_plus %}<div class="carte-recherche carte-recherche-direct">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div>{% endblock %}
 {% block contenu %}
-<section class="une une-sessions">
+<section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
   <div class="cadre">
-    <h1>Sessions BAFA et BAFD en Île-de-France</h1>
-    <p class="chapo">Comparez ici, inscrivez-vous chez l'organisme. Les sessions sont vérifiées chaque semaine sur leurs pages.</p>
-    {{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}
-    {{ m.raccourcis(lien) }}
+    <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions | length }} sessions à venir</span></h2>
+    {{ m.liste_sessions(page.sessions, lien) }}
+    <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin, d'autres vacances ou un budget plus large : une session peut se suivre n'importe où.</p>
+    <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
   </div>
 </section>
-
-<section class="cadre" id="resultats" aria-labelledby="titre-resultats">
-  <h2 id="titre-resultats" class="sr">Résultats</h2>
-  <p class="compte" id="compte" aria-live="polite">{{ page.sessions | length }} sessions à venir, de la plus proche à la plus lointaine.</p>
-  {{ m.liste_sessions(page.sessions, lien) }}
-  <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin, d'autres vacances ou un budget plus large : une session peut se suivre n'importe où.</p>
-  <p class="petit">Classement par date puis par prix, jamais payant. Une sélection par organisme, département, vacances et étape : <a href="{{ lien('/classement-des-sessions/') }}">comment c'est classé</a>.</p>
-</section>
-
-<section class="cadre deux-colonnes">
-  <div>
+{{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
+<section class="bande bande-blanc">
+  <div class="cadre">
     <h2>Avant de vous inscrire</h2>
-    <ol class="guides-liste">
-      <li><a href="https://bafa-bafd.jeunes.gouv.fr/" rel="noopener" target="_blank">S'inscrire sur le site du ministère ↗</a><span>Il donne le numéro à transmettre à l'organisme.</span></li>
-      <li><a href="{{ lien('/guides/financer-son-bafa/') }}">Demander les aides</a><span>200 € de la CAF, et les aides de votre ville.</span></li>
-      <li><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Penser au stage pratique</a><span>À faire dans les 18 mois après la formation générale.</span></li>
+    <ol class="trois-pas">
+      <li><b>S'inscrire sur le site du ministère</b><span>Il donne le numéro à transmettre à l'organisme.</span><a href="https://bafa-bafd.jeunes.gouv.fr/" rel="noopener" target="_blank">bafa-bafd.jeunes.gouv.fr ↗</a></li>
+      <li><b>Demander les aides</b><span>200 € de la CAF, et les aides de votre ville.</span><a href="{{ lien('/guides/financer-son-bafa/') }}">Financer son BAFA</a></li>
+      <li><b>Penser au stage pratique</b><span>Dans les 18 mois après la formation générale.</span><a href="{{ lien('/guides/trouver-son-stage-pratique/') }}">Trouver son stage</a></li>
     </ol>
   </div>
-  <div>
-    <h2>Chercher autrement</h2>
-    <ul class="pastilles">
-      {% for d in departements %}<li><a href="{{ lien('/bafa/' ~ d.slug ~ '/') }}">{{ d.nom }} <small>{{ d.code }}</small></a></li>{% endfor %}
-    </ul>
-  </div>
 </section>
-<div class="cadre">{{ m.encart_jeuphorie(site) }}</div>
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}

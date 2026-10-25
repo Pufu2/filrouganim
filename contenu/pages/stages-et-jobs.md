@@ -1,16 +1,20 @@
 ---
+court: Stages et jobs
+gabarit: stages.html
 titre: "Stages pratiques BAFA et jobs d'animateur en Île-de-France"
 url: /stages-et-jobs/
 description: "Trouver son stage pratique BAFA ou un job d'animateur en Île-de-France : les offres des structures arrivent sur Fil Roug'Anim. En attendant, où chercher et comment se présenter."
 ---
 
+{% if not offres %}
 ## Bientôt : les offres des structures
 
 Les **offres de stages pratiques BAFA et de jobs** (centres de loisirs, colos, séjours) arrivent sur Fil Roug'Anim. Elles seront publiées par les structures elles-mêmes, avec les dates, le lieu, le public et le salaire.
 
 **Pour les candidats, ce sera toujours gratuit**, sans compte et sans CV en ligne : vous contacterez directement la structure.
 
-## En attendant : où chercher
+{% endif %}
+## {% if offres %}Chercher aussi ailleurs{% else %}En attendant : où chercher{% endif %}
 
 1. **Le service enfance-jeunesse de votre mairie**, pour les centres de loisirs (mercredis et vacances).
 2. **Les organisateurs de séjours de vacances**, qui recrutent pour l'été dès l'hiver.
@@ -21,4 +25,4 @@ Les **offres de stages pratiques BAFA et de jobs** (centres de loisirs, colos, s
 
 ## Vous êtes une structure ?
 
-[Ce qui arrive pour les structures qui recrutent](/structures/)
+[Ce qui arrive pour les structures qui recrutent](/stages-et-jobs/recruteurs/)

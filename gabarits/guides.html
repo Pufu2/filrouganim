@@ -1,12 +1,21 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
+{% block h1 %}Les guides du BAFA{% endblock %}
+{% block tete_chapo %}<p class="chapo">Des réponses courtes et vérifiées, avec leurs sources officielles.</p>{% endblock %}
 {% block contenu %}
-<div class="cadre">
-  <h1>Les guides du BAFA</h1>
-  <p class="chapo">Des réponses courtes et vérifiées, avec leurs sources officielles.</p>
-  <ol class="guides-liste">
-    {% for g in site.guides %}<li><a href="{{ lien(g.url) }}">{{ g.court }}</a><span>{{ g.resume }}</span></li>{% endfor %}
-  </ol>
-  {{ m.encart_jeuphorie(site) }}
-</div>
+<section class="bande bande-papier">
+  <div class="cadre">
+    {{ m.cartes_liens(site.guides, page.url, lien) }}
+  </div>
+</section>
+<section class="bande bande-blanc">
+  <div class="cadre deux-colonnes deux-colonnes-faq">
+    <div>
+      <p class="note-main">en bref</p>
+      <h2>Les questions fréquentes</h2>
+      <p><a href="{{ lien('/guides/questions-frequentes/') }}">Toutes les questions →</a></p>
+    </div>
+    <div>{{ m.encart_jeuphorie(site) }}</div>
+  </div>
+</section>
 {% endblock %}

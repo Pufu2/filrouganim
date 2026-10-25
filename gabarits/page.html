@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% block tete_chapo %}{% if page.description %}<p class="chapo">{{ page.description }}</p>{% endif %}{% endblock %}
 {% block contenu %}
-<article class="cadre texte">
-  <h1>{{ page.titre }}</h1>
-  {{ contenu | safe }}
-</article>
+<section class="bande bande-papier">
+  <article class="cadre texte">
+    {{ contenu | safe }}
+  </article>
+</section>
 {% endblock %}

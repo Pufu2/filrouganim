@@ -48,17 +48,26 @@ organismes:
     site: https://bafa.ufcv.fr/
     page_sessions: https://bafa.ufcv.fr/Bafa-Bafd-Ufcv-Ile-de-France
     prix_en_ligne: true
-    en_ligne: false   # aucune session 2027 relevée pour l'instant
+    en_ligne: true
+    presentation: >-
+      Union nationale d'éducation populaire, l'un des plus grands organismes de formation au BAFA
+      et au BAFD. En Île-de-France, ses sessions ont surtout lieu à Paris et en proche banlieue,
+      en externat, avec de nombreux thèmes d'approfondissement.
 
   - id: ligue-idf
     nom: Ligue de l'enseignement Île-de-France
     habilitation: nationale
     site: https://www.laligueidf.org/bafa-bafd/
-    page_sessions: https://www.laligueidf.org/bafa-bafd/
-    prix_en_ligne: true   # brochure annuelle en PDF
-    en_ligne: false
+    page_sessions: https://formation-bafa-bafd.org/rechercher-un-stage/
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Fédération régionale d'un grand mouvement d'éducation populaire. Ses sessions BAFA et BAFD
+      ont lieu dans plusieurs départements franciliens, souvent en demi-pension, et se réservent
+      sur son site dédié.
 
   - id: fscf-idf
+    # robots.txt de bafaidf.com : interdit aux robots d'IA (dont Anthropic) -> jamais relevé automatiquement
     nom: FSCF Île-de-France
     habilitation: nationale
     site: https://www.bafaidf.com/
@@ -67,6 +76,7 @@ organismes:
     en_ligne: false
 
   - id: cemea-idf
+    # robots.txt de cemea-idf.org : interdit aux robots d'IA ; cemea-formation.com : pas de liste lisible (25/10/2026)
     nom: CEMEA Île-de-France
     habilitation: nationale
     site: https://cemea-idf.org/formations/bafa/

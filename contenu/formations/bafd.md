@@ -8,7 +8,7 @@ ordre: 2
 age: "18 ans"
 duree: "9 + 14 + 6 + 14 jours minimum"
 niveau: "Brevet non professionnel, valable 5 ans"
-sessions: /bafd/
+sessions: /sessions/bafd/
 mis_a_jour: 2026-10-25
 ---
 
@@ -33,7 +33,7 @@ Le **BAFD** permet de **diriger**, de façon occasionnelle, un accueil collectif
 
 Chaque stage peut être coupé en 2 parties de 4 jours minimum ; le périscolaire compte pour 6 jours au plus.
 
-[Les sessions BAFD en Île-de-France](/bafd/)
+[Les sessions BAFD en Île-de-France](/sessions/bafd/)
 
 ## Source
 

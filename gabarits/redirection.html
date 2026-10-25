@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>{{ page.titre }} | {{ site.nom }}</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="{{ site.url.rstrip('/') ~ page.vers }}">
+<meta http-equiv="refresh" content="0; url={{ lien(page.vers) }}">
+</head>
+<body>
+<p>Cette page a changé d'adresse : <a href="{{ lien(page.vers) }}">{{ site.url.rstrip('/') ~ page.vers }}</a>.</p>
+</body>
+</html>
