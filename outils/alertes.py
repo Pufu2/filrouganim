@@ -17,6 +17,7 @@ import html
 import json
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -30,8 +31,11 @@ CONTRATS = {"cee": "contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI",
 
 def lire(url, cle):
     req = urllib.request.Request(url, headers={"apikey": cle, "Authorization": f"Bearer {cle}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        sys.exit(f"Alertes : Supabase refuse la lecture ({e.code}) : {e.read().decode(errors='ignore')[:300]}")
 
 
 def envoyer(cle_brevo, expediteur, nom_site, a, sujet, texte, html_contenu):
@@ -50,8 +54,10 @@ def garder_la_cle_active(cle_brevo):
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             return r.status
+    except urllib.error.HTTPError as e:
+        print(f"Alertes : Brevo refuse la clé ({e.code}) : {e.read().decode(errors='ignore')[:300]}", file=sys.stderr)
     except Exception as e:
-        print(f"Alertes : la clé Brevo ne répond pas ({e})", file=sys.stderr)
+        print(f"Alertes : Brevo ne répond pas ({e})", file=sys.stderr)
 
 
 def main():

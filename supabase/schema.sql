@@ -254,6 +254,10 @@ grant update (intitule, poste, contrat, ville, departement, debut, fin, public, 
               loge, diplomes, texte, candidater, expire_le, publiee, nb_postes, type_accueil, age_min, age_max) on public.offres to authenticated;
 grant delete on public.offres to authenticated;
 
+-- le rôle serveur (clé secrète, utilisée seulement par les alertes du lundi sur GitHub) : lecture seule
+grant usage on schema public to service_role;
+grant select on public.structures, public.profils, public.offres to service_role;
+
 grant select, delete on public.candidatures to authenticated;
 grant insert (offre_id, message) on public.candidatures to authenticated;
 grant update (statut) on public.candidatures to authenticated;
