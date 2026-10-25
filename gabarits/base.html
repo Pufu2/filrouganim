@@ -27,8 +27,7 @@
 <header class="entete">
   <div class="cadre entete-cadre">
     <a class="logo" href="{{ lien('/') }}" aria-label="{{ site.nom }}, accueil">
-      <svg class="logo-fil" viewBox="0 0 64 40" aria-hidden="true"><path d="M3 34 C 14 34, 12 8, 24 8 C 34 8, 30 26, 22 24 C 14 22, 24 6, 40 12 S 54 30, 62 20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
-      <span class="logo-nom">Fil Roug'<b>Anim</b></span>
+      {% include "svg/logo-tete.svg" %}{% include "svg/logo-titre.svg" %}
     </a>
     <nav class="menu" aria-label="Menu principal">
       <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
@@ -62,7 +61,7 @@
 <footer class="pied">
   <div class="cadre pied-cadre">
     <div>
-      <p class="pied-nom">Fil Roug'<b>Anim</b></p>
+      <p class="pied-nom">{% include "svg/logo-titre.svg" %}</p>
       <p>{{ site.accroche }}. Se former, trouver un stage ou un job, recruter : l'animation, sur un seul fil. Gratuit pour les jeunes, sans publicité.</p>
       <p class="petit">Les sessions viennent des pages publiques des organismes : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
     </div>

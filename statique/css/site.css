@@ -52,9 +52,12 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .entete-cadre { display: flex; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 16px 0 8px; flex-wrap: wrap; }
 .logo { display: inline-flex; align-items: center; gap: 4px; text-decoration: none; color: var(--creme); }
 .logo:hover { color: var(--creme); }
-.logo-fil { width: 50px; height: 32px; color: var(--fil-clair); }
-.logo-nom { font-family: var(--titres); font-weight: 600; font-size: 1.45rem; }
-.logo-nom b { color: var(--fil-clair); font-weight: 600; }
+/* le logo : la tête du chat (fil rouge) et le titre, dessinés (gabarits/svg/) */
+.logo { gap: 8px; }
+.logo-chat { height: 42px; width: auto; color: var(--fil-clair); flex: none; }
+.logo-titre { height: 30px; width: auto; color: var(--creme); }
+.logo-titre .fil { fill: var(--fil-clair); }
+@media (max-width: 380px) { .logo-chat { height: 34px; } .logo-titre { height: 24px; } }
 .menu { display: flex; gap: 6px; font-size: 1rem; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
 .menu a { flex: none; color: var(--creme); text-decoration: none; padding: 7px 12px; border-radius: 999px; }
 .menu a:hover { background: var(--nuit-2); color: #fff; }
@@ -250,7 +253,8 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .pied a { color: #ffd6cc; }
 .pied .petit { color: #cbbca9; }
 .pied-cadre { display: grid; gap: 22px; }
-.pied-nom { font-family: var(--titres); font-size: 1.4rem; margin: 0; color: #fff; }
+.pied-nom { margin: 0 0 6px; color: #fff; }
+.pied-nom .logo-titre { height: 28px; color: #fff; }
 .pied-nom b { color: var(--fil-clair); font-weight: 600; }
 .pied-titre { font-weight: 700; margin: 0 0 4px; color: #fff; }
 .pied nav { display: flex; flex-direction: column; gap: 5px; }
@@ -446,20 +450,21 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .liste-outils-grande a { padding: 22px; }
 
 /* ---------------------------------------------------------------- Bobine, la mascotte */
-.mascotte { display: block; color: var(--nuit); }
+.mascotte { display: block; color: var(--fil); }
+.mascotte svg { display: block; width: 100%; height: auto; }
 .mascotte .m-fil, .mascotte .m-collier { stroke: var(--fil); }
 .mascotte .m-pelote { fill: var(--fil); }
 .mascotte .m-brins, .mascotte .m-rose { stroke: var(--fil-clair); fill: none; }
 .mascotte .m-rose { fill: var(--fil-clair); stroke: none; }
 .mascotte .m-yeux { stroke: var(--creme); }
-.tete .mascotte, .pied .mascotte { color: var(--creme); }
+.tete .mascotte, .pied .mascotte { color: var(--fil-clair); }
 .tete .mascotte .m-yeux, .pied .mascotte .m-yeux { stroke: var(--nuit); }
 .tete-accueil-cadre { position: relative; }
-.mascotte-accueil { position: absolute; right: 0; bottom: -30px; width: 92px; z-index: 2; }
-@media (max-width: 900px) { .mascotte-accueil { width: 70px; bottom: -26px; } }
-@media (max-width: 640px) { .mascotte-accueil { width: 58px; right: 4px; bottom: -24px; } }
-.mascotte-petite { width: 110px; }
-.mascotte-vide { width: 120px; margin: 0 auto 6px; }
+.mascotte-accueil { position: absolute; right: 0; bottom: -20px; width: 150px; z-index: 2; }
+@media (max-width: 900px) { .mascotte-accueil { width: 110px; } }
+@media (max-width: 640px) { .mascotte-accueil { width: 84px; right: 2px; bottom: -18px; } }
+.mascotte-petite { width: 170px; }
+.mascotte-vide { width: 140px; margin: 0 auto 6px; }
 
 /* les stations de l'accueil sont des liens entiers */
 .station-lien { text-decoration: none; color: inherit; }
@@ -476,11 +481,11 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 @media (prefers-reduced-motion: reduce) { .station-lien .station-carte { transition: none; } }
 .aucune-mascotte { display: flex; align-items: center; gap: 16px; }
 .aucune-mascotte p { margin: 0; }
-.aucune-mascotte .mascotte-vide { flex: none; width: 90px; margin: 0; }
+.aucune-mascotte .mascotte-vide { flex: none; width: 120px; margin: 0; }
 @media (max-width: 520px) { .aucune-mascotte { flex-direction: column; text-align: center; } }
 #v-connexion { position: relative; }
-.mascotte-coin { position: absolute; right: 18px; top: -62px; width: 96px; }
-@media (max-width: 520px) { .mascotte-coin { width: 74px; top: -50px; } }
+.mascotte-coin { position: absolute; right: 18px; top: -78px; width: 130px; }
+@media (max-width: 520px) { .mascotte-coin { width: 96px; top: -60px; } }
 
 /* ---------------------------------------------------------------- pages des structures */
 .theme-rouge { --theme: #c4372d; --theme-fonce: #9a2a22; }
