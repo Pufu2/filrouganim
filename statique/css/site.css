@@ -454,9 +454,10 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .mascotte .m-yeux { stroke: var(--creme); }
 .tete .mascotte, .pied .mascotte { color: var(--creme); }
 .tete .mascotte .m-yeux, .pied .mascotte .m-yeux { stroke: var(--nuit); }
-.tete-accueil-cadre { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px 30px; }
-.mascotte-accueil { width: clamp(120px, 22vw, 220px); margin-bottom: -18px; position: relative; z-index: 2; }
-@media (max-width: 640px) { .tete-accueil-cadre { grid-template-columns: 1fr; } .mascotte-accueil { width: 120px; justify-self: end; margin-top: -10px; } }
+.tete-accueil-cadre { position: relative; }
+.mascotte-accueil { position: absolute; right: 0; bottom: -30px; width: 92px; z-index: 2; }
+@media (max-width: 900px) { .mascotte-accueil { width: 70px; bottom: -26px; } }
+@media (max-width: 640px) { .mascotte-accueil { width: 58px; right: 4px; bottom: -24px; } }
 .mascotte-petite { width: 110px; }
 .mascotte-vide { width: 120px; margin: 0 auto 6px; }
 
