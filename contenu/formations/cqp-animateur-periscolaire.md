@@ -3,7 +3,7 @@ titre: "CQP animateur périscolaire : se professionnaliser sans diplôme requis"
 court: CQP animateur périscolaire
 nom: Certificat de qualification professionnelle « animateur périscolaire »
 resume: "Animer les temps périscolaires, sans diplôme requis à l'entrée."
-description: "Le CQP animateur périscolaire de la branche Éclat : une certification professionnelle pour animer les temps avant et après l'école, accessible sans diplôme. Contenu et sessions en Île-de-France."
+description: "Le CQP animateur périscolaire de la branche Éclat : une certification professionnelle pour animer les temps avant et après l'école, accessible sans diplôme. Contenu et sessions."
 ordre: 5
 age: "Sans diplôme requis"
 duree: "Selon l'organisme, en alternance"

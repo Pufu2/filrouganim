@@ -8,7 +8,7 @@
   <li><span>Durée</span><b>{{ page.entete.duree }}</b></li>
   <li><span>Niveau</span><b>{{ page.entete.niveau }}</b></li>
 </ul>
-{% if page.entete.sessions %}<p><a class="bouton-r" href="{{ lien(page.entete.sessions) }}">Voir les sessions en Île-de-France <span aria-hidden="true">→</span></a></p>{% endif %}
+{% if page.entete.sessions %}<p><a class="bouton-r" href="{{ lien(page.entete.sessions) }}">Voir les sessions <span aria-hidden="true">→</span></a></p>{% endif %}
 {% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">

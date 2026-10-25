@@ -34,13 +34,13 @@
       </select></label>
     <label class="case-r">{{ icone("lieu") }}<span class="case-titre">Où ?</span>
       <select name="dep">
-        <option value="">Partout</option>
-        {% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}
+        <option value="">Partout en France</option>
+        {% for r in regions %}<optgroup label="{{ r.nom }}"><option value="r:{{ r.id }}">{{ r.nom }} : toute la région</option>{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}
       </select></label>
     <label class="case-r">{{ icone("date") }}<span class="case-titre">Quand ?</span>
       <select name="quand">
         <option value="">Toutes les dates</option>
-        <optgroup label="Vacances scolaires (BAFA, BAFD)">
+        <optgroup label="Vacances scolaires (selon la zone)">
           {% for p in periodes if p.fin >= aujourdhui %}<option value="p:{{ p.id }}">{{ p.court }}</option>{% endfor %}
         </optgroup>
         <optgroup label="Mois de début">
@@ -64,7 +64,7 @@
 {# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}
 {% macro carte_session(s, lien) %}
 <article class="session{% if s.complet %} session-complete{% endif %}"
-  data-dep="{{ s.departement }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
+  data-dep="{{ s.departement }}" data-region="{{ s.dep.region }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
   data-type="{{ s.diplome }}-{{ s.type }}" data-formule="{{ s.formule or '' }}"
   data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
   data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }}">
@@ -125,7 +125,7 @@
     <p class="note-main">chercher autrement</p>
     <h2 id="titre-explorer">Explorer les sessions</h2>
     <div class="explorer">
-      <div><h3>Par département</h3><ul>{% for d in departements %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}</ul></div>
+      <div><h3>Par région</h3><ul>{% for r in regions %}<li><a href="{{ lien('/se-former/sessions/' ~ r.slug ~ '/') }}">{{ r.nom }}</a></li>{% endfor %}</ul></div>
       <div><h3>Par vacances</h3><ul>{% for p in periodes if p.fin >= aujourdhui %}{% for s in toutes_sessions if s.periode is sameas p and s.diplome == "BAFA" %}{% if loop.first %}<li><a href="{{ lien('/se-former/sessions/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endif %}{% endfor %}{% endfor %}</ul></div>
       <div><h3>Par diplôme</h3><ul>{% for d in diplomes %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.long }}</a></li>{% endfor %}</ul></div>
       <div><h3>BAFA, par étape</h3><ul>{% for t in types %}<li><a href="{{ lien('/se-former/sessions/' ~ t.slug ~ '/') }}">{{ t.nom }}</a></li>{% endfor %}</ul></div>

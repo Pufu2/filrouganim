@@ -10,7 +10,7 @@
 #   nom           nom affiché
 #   habilitation  nationale | régionale (à confirmer dans l'arrêté avant publication)
 #   site          page d'accueil BAFA de l'organisme
-#   page_sessions page où l'organisme publie ses sessions en Île-de-France (null : à trouver)
+#   page_sessions page où l'organisme publie ses sessions (null : à trouver)
 #   prix_en_ligne true si l'organisme affiche ses prix sur ses pages de sessions
 #   en_ligne      true : une page est créée sur le site pour cet organisme
 # Le texte de présentation est écrit par nous (jamais copié du site de l'organisme).
@@ -20,39 +20,40 @@ organismes:
     nom: AFOCAL
     habilitation: nationale
     site: https://www.afocal.fr/bafa/formation-bafa.html
-    page_sessions: https://www.afocal.fr/bafa/recherche-bafa-ile-de-france-1-5.html
+    page_sessions: https://www.afocal.fr/bafa/recherche-bafa-ile-de-france-1-1.html
     prix_en_ligne: true
     en_ligne: true
     presentation: >-
-      Association nationale de formation à l'animation. En Île-de-France, elle
-      organise des formations générales, des approfondissements et des sessions
-      BAFD, surtout en externat. Chaque fiche de session affiche le prix et le
-      nombre de places restantes.
+      Association nationale de formation à l'animation, présente dans la plupart
+      des régions. Elle organise des formations générales, des approfondissements et
+      des sessions BAFD, souvent en externat. Chaque fiche de session affiche le prix
+      et le nombre de places restantes.
 
   - id: ifac
     nom: IFAC
     habilitation: nationale
     site: https://ifac-formation.fr/formations/bafa-bafd/173
-    page_sessions: "https://ifac-formation.fr/formations/sessions/bafa/%C3%8Ele-de-France"
+    page_sessions: "https://ifac-formation.fr/formations/sessions/bafa"
     prix_en_ligne: true
     en_ligne: true
     presentation: >-
-      Institut de formation à l'animation et aux métiers de la petite enfance.
-      En Île-de-France, il propose de nombreuses formations générales pendant
-      les vacances scolaires, à Paris et en banlieue, et des approfondissements
-      à thème. Le prix figure sur la fiche de chaque session.
+      Institut de formation à l'animation et aux métiers de la petite enfance,
+      présent dans plusieurs régions. Il propose de nombreuses formations générales
+      pendant les vacances scolaires, des approfondissements à thème, et des
+      formations professionnelles (CPJEPS, BPJEPS, DEJEPS, DESJEPS), souvent en
+      apprentissage. Le prix figure sur la fiche de chaque session.
 
   - id: ufcv
     nom: UFCV
     habilitation: nationale
     site: https://bafa.ufcv.fr/
-    page_sessions: https://bafa.ufcv.fr/Bafa-Bafd-Ufcv-Ile-de-France
+    page_sessions: https://bafa.ufcv.fr/
     prix_en_ligne: true
     en_ligne: true
     presentation: >-
       Union nationale d'éducation populaire, l'un des plus grands organismes de formation au BAFA
-      et au BAFD. En Île-de-France, ses sessions ont surtout lieu à Paris et en proche banlieue,
-      en externat, avec de nombreux thèmes d'approfondissement.
+      et au BAFD, présent dans toutes les régions, avec de nombreux thèmes d'approfondissement
+      et des sessions en externat, en demi-pension ou en internat.
 
   - id: ligue-idf
     nom: Ligue de l'enseignement Île-de-France
@@ -110,3 +111,16 @@ organismes:
 
   # À trouver : Francas, Léo Lagrange, Familles Rurales, scoutisme (SGDF, EEDF, EEUdF),
   # CPCV Île-de-France, et les organismes de l'article 3 de l'arrêté (habilitation régionale).
+
+  - id: protection-civile
+    nom: Protection civile
+    habilitation: premiers secours
+    site: https://formations.protection-civile.org/formation-psc/
+    page_sessions: https://formations.protection-civile.org/formation-psc/
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Fédération nationale de protection civile, association agréée de sécurité civile.
+      Ses associations départementales organisent le PSC1 (7 heures, en une journée) dans
+      presque toute la France. Le PSC1 n'est pas une étape du BAFA, mais il est souvent
+      demandé aux animateurs et il est obligatoire pour entrer en BPJEPS.

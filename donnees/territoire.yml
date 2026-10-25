@@ -1,24 +1,149 @@
-# Départements et périodes de vacances utilisés pour fabriquer les pages.
+# Départements, régions et vacances scolaires utilisés pour fabriquer les pages.
+# France métropolitaine et Corse (les départements d'outre-mer ont leurs propres calendriers : à venir).
 
+regions:
+  - {id: ara, nom: "Auvergne-Rhône-Alpes", slug: auvergne-rhone-alpes, a: "en Auvergne-Rhône-Alpes"}
+  - {id: bfc, nom: "Bourgogne-Franche-Comté", slug: bourgogne-franche-comte, a: "en Bourgogne-Franche-Comté"}
+  - {id: bre, nom: "Bretagne", slug: bretagne, a: "en Bretagne"}
+  - {id: cvl, nom: "Centre-Val de Loire", slug: centre-val-de-loire, a: "en Centre-Val de Loire"}
+  - {id: cor, nom: "Corse", slug: corse, a: "en Corse"}
+  - {id: ge, nom: "Grand Est", slug: grand-est, a: "dans le Grand Est"}
+  - {id: hdf, nom: "Hauts-de-France", slug: hauts-de-france, a: "dans les Hauts-de-France"}
+  - {id: idf, nom: "Île-de-France", slug: ile-de-france, a: "en Île-de-France"}
+  - {id: nor, nom: "Normandie", slug: normandie, a: "en Normandie"}
+  - {id: naq, nom: "Nouvelle-Aquitaine", slug: nouvelle-aquitaine, a: "en Nouvelle-Aquitaine"}
+  - {id: occ, nom: "Occitanie", slug: occitanie, a: "en Occitanie"}
+  - {id: pdl, nom: "Pays de la Loire", slug: pays-de-la-loire, a: "dans les Pays de la Loire"}
+  - {id: paca, nom: "Provence-Alpes-Côte d'Azur", slug: provence-alpes-cote-d-azur, a: "en Provence-Alpes-Côte d'Azur"}
+
+# zone : zone de vacances scolaires (A, B ou C ; la Corse suit les dates de la zone A en 2026-2027).
 departements:
-  - {code: "75", nom: Paris, slug: paris, a: "à Paris", de: "de Paris"}
-  - {code: "77", nom: Seine-et-Marne, slug: seine-et-marne, a: "en Seine-et-Marne", de: "de Seine-et-Marne"}
-  - {code: "78", nom: Yvelines, slug: yvelines, a: "dans les Yvelines", de: "des Yvelines"}
-  - {code: "91", nom: Essonne, slug: essonne, a: "en Essonne", de: "de l'Essonne"}
-  - {code: "92", nom: Hauts-de-Seine, slug: hauts-de-seine, a: "dans les Hauts-de-Seine", de: "des Hauts-de-Seine"}
-  - {code: "93", nom: Seine-Saint-Denis, slug: seine-saint-denis, a: "en Seine-Saint-Denis", de: "de Seine-Saint-Denis"}
-  - {code: "94", nom: Val-de-Marne, slug: val-de-marne, a: "dans le Val-de-Marne", de: "du Val-de-Marne"}
-  - {code: "95", nom: Val-d'Oise, slug: val-d-oise, a: "dans le Val-d'Oise", de: "du Val-d'Oise"}
+  - {code: "01", nom: "Ain", slug: ain, a: "dans l'Ain", de: "de l'Ain", region: ara, zone: A}
+  - {code: "02", nom: "Aisne", slug: aisne, a: "dans l'Aisne", de: "de l'Aisne", region: hdf, zone: B}
+  - {code: "03", nom: "Allier", slug: allier, a: "dans l'Allier", de: "de l'Allier", region: ara, zone: A}
+  - {code: "04", nom: "Alpes-de-Haute-Provence", slug: alpes-de-haute-provence, a: "dans les Alpes-de-Haute-Provence", de: "des Alpes-de-Haute-Provence", region: paca, zone: B}
+  - {code: "05", nom: "Hautes-Alpes", slug: hautes-alpes, a: "dans les Hautes-Alpes", de: "des Hautes-Alpes", region: paca, zone: B}
+  - {code: "06", nom: "Alpes-Maritimes", slug: alpes-maritimes, a: "dans les Alpes-Maritimes", de: "des Alpes-Maritimes", region: paca, zone: B}
+  - {code: "07", nom: "Ardèche", slug: ardeche, a: "en Ardèche", de: "de l'Ardèche", region: ara, zone: A}
+  - {code: "08", nom: "Ardennes", slug: ardennes, a: "dans les Ardennes", de: "des Ardennes", region: ge, zone: B}
+  - {code: "09", nom: "Ariège", slug: ariege, a: "en Ariège", de: "de l'Ariège", region: occ, zone: C}
+  - {code: "10", nom: "Aube", slug: aube, a: "dans l'Aube", de: "de l'Aube", region: ge, zone: B}
+  - {code: "11", nom: "Aude", slug: aude, a: "dans l'Aude", de: "de l'Aude", region: occ, zone: C}
+  - {code: "12", nom: "Aveyron", slug: aveyron, a: "dans l'Aveyron", de: "de l'Aveyron", region: occ, zone: C}
+  - {code: "13", nom: "Bouches-du-Rhône", slug: bouches-du-rhone, a: "dans les Bouches-du-Rhône", de: "des Bouches-du-Rhône", region: paca, zone: B}
+  - {code: "14", nom: "Calvados", slug: calvados, a: "dans le Calvados", de: "du Calvados", region: nor, zone: B}
+  - {code: "15", nom: "Cantal", slug: cantal, a: "dans le Cantal", de: "du Cantal", region: ara, zone: A}
+  - {code: "16", nom: "Charente", slug: charente, a: "en Charente", de: "de la Charente", region: naq, zone: A}
+  - {code: "17", nom: "Charente-Maritime", slug: charente-maritime, a: "en Charente-Maritime", de: "de la Charente-Maritime", region: naq, zone: A}
+  - {code: "18", nom: "Cher", slug: cher, a: "dans le Cher", de: "du Cher", region: cvl, zone: B}
+  - {code: "19", nom: "Corrèze", slug: correze, a: "en Corrèze", de: "de la Corrèze", region: naq, zone: A}
+  - {code: "2A", nom: "Corse-du-Sud", slug: corse-du-sud, a: "en Corse-du-Sud", de: "de la Corse-du-Sud", region: cor, zone: A}
+  - {code: "2B", nom: "Haute-Corse", slug: haute-corse, a: "en Haute-Corse", de: "de la Haute-Corse", region: cor, zone: A}
+  - {code: "21", nom: "Côte-d'Or", slug: cote-d-or, a: "en Côte-d'Or", de: "de la Côte-d'Or", region: bfc, zone: A}
+  - {code: "22", nom: "Côtes-d'Armor", slug: cotes-d-armor, a: "dans les Côtes-d'Armor", de: "des Côtes-d'Armor", region: bre, zone: B}
+  - {code: "23", nom: "Creuse", slug: creuse, a: "dans la Creuse", de: "de la Creuse", region: naq, zone: A}
+  - {code: "24", nom: "Dordogne", slug: dordogne, a: "en Dordogne", de: "de la Dordogne", region: naq, zone: A}
+  - {code: "25", nom: "Doubs", slug: doubs, a: "dans le Doubs", de: "du Doubs", region: bfc, zone: A}
+  - {code: "26", nom: "Drôme", slug: drome, a: "dans la Drôme", de: "de la Drôme", region: ara, zone: A}
+  - {code: "27", nom: "Eure", slug: eure, a: "dans l'Eure", de: "de l'Eure", region: nor, zone: B}
+  - {code: "28", nom: "Eure-et-Loir", slug: eure-et-loir, a: "en Eure-et-Loir", de: "d'Eure-et-Loir", region: cvl, zone: B}
+  - {code: "29", nom: "Finistère", slug: finistere, a: "dans le Finistère", de: "du Finistère", region: bre, zone: B}
+  - {code: "30", nom: "Gard", slug: gard, a: "dans le Gard", de: "du Gard", region: occ, zone: C}
+  - {code: "31", nom: "Haute-Garonne", slug: haute-garonne, a: "en Haute-Garonne", de: "de la Haute-Garonne", region: occ, zone: C}
+  - {code: "32", nom: "Gers", slug: gers, a: "dans le Gers", de: "du Gers", region: occ, zone: C}
+  - {code: "33", nom: "Gironde", slug: gironde, a: "en Gironde", de: "de la Gironde", region: naq, zone: A}
+  - {code: "34", nom: "Hérault", slug: herault, a: "dans l'Hérault", de: "de l'Hérault", region: occ, zone: C}
+  - {code: "35", nom: "Ille-et-Vilaine", slug: ille-et-vilaine, a: "en Ille-et-Vilaine", de: "d'Ille-et-Vilaine", region: bre, zone: B}
+  - {code: "36", nom: "Indre", slug: indre, a: "dans l'Indre", de: "de l'Indre", region: cvl, zone: B}
+  - {code: "37", nom: "Indre-et-Loire", slug: indre-et-loire, a: "en Indre-et-Loire", de: "d'Indre-et-Loire", region: cvl, zone: B}
+  - {code: "38", nom: "Isère", slug: isere, a: "en Isère", de: "de l'Isère", region: ara, zone: A}
+  - {code: "39", nom: "Jura", slug: jura, a: "dans le Jura", de: "du Jura", region: bfc, zone: A}
+  - {code: "40", nom: "Landes", slug: landes, a: "dans les Landes", de: "des Landes", region: naq, zone: A}
+  - {code: "41", nom: "Loir-et-Cher", slug: loir-et-cher, a: "en Loir-et-Cher", de: "de Loir-et-Cher", region: cvl, zone: B}
+  - {code: "42", nom: "Loire", slug: loire, a: "dans la Loire", de: "de la Loire", region: ara, zone: A}
+  - {code: "43", nom: "Haute-Loire", slug: haute-loire, a: "en Haute-Loire", de: "de la Haute-Loire", region: ara, zone: A}
+  - {code: "44", nom: "Loire-Atlantique", slug: loire-atlantique, a: "en Loire-Atlantique", de: "de la Loire-Atlantique", region: pdl, zone: B}
+  - {code: "45", nom: "Loiret", slug: loiret, a: "dans le Loiret", de: "du Loiret", region: cvl, zone: B}
+  - {code: "46", nom: "Lot", slug: lot, a: "dans le Lot", de: "du Lot", region: occ, zone: C}
+  - {code: "47", nom: "Lot-et-Garonne", slug: lot-et-garonne, a: "en Lot-et-Garonne", de: "de Lot-et-Garonne", region: naq, zone: A}
+  - {code: "48", nom: "Lozère", slug: lozere, a: "en Lozère", de: "de la Lozère", region: occ, zone: C}
+  - {code: "49", nom: "Maine-et-Loire", slug: maine-et-loire, a: "en Maine-et-Loire", de: "de Maine-et-Loire", region: pdl, zone: B}
+  - {code: "50", nom: "Manche", slug: manche, a: "dans la Manche", de: "de la Manche", region: nor, zone: B}
+  - {code: "51", nom: "Marne", slug: marne, a: "dans la Marne", de: "de la Marne", region: ge, zone: B}
+  - {code: "52", nom: "Haute-Marne", slug: haute-marne, a: "en Haute-Marne", de: "de la Haute-Marne", region: ge, zone: B}
+  - {code: "53", nom: "Mayenne", slug: mayenne, a: "en Mayenne", de: "de la Mayenne", region: pdl, zone: B}
+  - {code: "54", nom: "Meurthe-et-Moselle", slug: meurthe-et-moselle, a: "en Meurthe-et-Moselle", de: "de Meurthe-et-Moselle", region: ge, zone: B}
+  - {code: "55", nom: "Meuse", slug: meuse, a: "dans la Meuse", de: "de la Meuse", region: ge, zone: B}
+  - {code: "56", nom: "Morbihan", slug: morbihan, a: "dans le Morbihan", de: "du Morbihan", region: bre, zone: B}
+  - {code: "57", nom: "Moselle", slug: moselle, a: "en Moselle", de: "de la Moselle", region: ge, zone: B}
+  - {code: "58", nom: "Nièvre", slug: nievre, a: "dans la Nièvre", de: "de la Nièvre", region: bfc, zone: A}
+  - {code: "59", nom: "Nord", slug: nord, a: "dans le Nord", de: "du Nord", region: hdf, zone: B}
+  - {code: "60", nom: "Oise", slug: oise, a: "dans l'Oise", de: "de l'Oise", region: hdf, zone: B}
+  - {code: "61", nom: "Orne", slug: orne, a: "dans l'Orne", de: "de l'Orne", region: nor, zone: B}
+  - {code: "62", nom: "Pas-de-Calais", slug: pas-de-calais, a: "dans le Pas-de-Calais", de: "du Pas-de-Calais", region: hdf, zone: B}
+  - {code: "63", nom: "Puy-de-Dôme", slug: puy-de-dome, a: "dans le Puy-de-Dôme", de: "du Puy-de-Dôme", region: ara, zone: A}
+  - {code: "64", nom: "Pyrénées-Atlantiques", slug: pyrenees-atlantiques, a: "dans les Pyrénées-Atlantiques", de: "des Pyrénées-Atlantiques", region: naq, zone: A}
+  - {code: "65", nom: "Hautes-Pyrénées", slug: hautes-pyrenees, a: "dans les Hautes-Pyrénées", de: "des Hautes-Pyrénées", region: occ, zone: C}
+  - {code: "66", nom: "Pyrénées-Orientales", slug: pyrenees-orientales, a: "dans les Pyrénées-Orientales", de: "des Pyrénées-Orientales", region: occ, zone: C}
+  - {code: "67", nom: "Bas-Rhin", slug: bas-rhin, a: "dans le Bas-Rhin", de: "du Bas-Rhin", region: ge, zone: B}
+  - {code: "68", nom: "Haut-Rhin", slug: haut-rhin, a: "dans le Haut-Rhin", de: "du Haut-Rhin", region: ge, zone: B}
+  - {code: "69", nom: "Rhône", slug: rhone, a: "dans le Rhône", de: "du Rhône", region: ara, zone: A}
+  - {code: "70", nom: "Haute-Saône", slug: haute-saone, a: "en Haute-Saône", de: "de la Haute-Saône", region: bfc, zone: A}
+  - {code: "71", nom: "Saône-et-Loire", slug: saone-et-loire, a: "en Saône-et-Loire", de: "de Saône-et-Loire", region: bfc, zone: A}
+  - {code: "72", nom: "Sarthe", slug: sarthe, a: "dans la Sarthe", de: "de la Sarthe", region: pdl, zone: B}
+  - {code: "73", nom: "Savoie", slug: savoie, a: "en Savoie", de: "de la Savoie", region: ara, zone: A}
+  - {code: "74", nom: "Haute-Savoie", slug: haute-savoie, a: "en Haute-Savoie", de: "de la Haute-Savoie", region: ara, zone: A}
+  - {code: "75", nom: "Paris", slug: paris, a: "à Paris", de: "de Paris", region: idf, zone: C}
+  - {code: "76", nom: "Seine-Maritime", slug: seine-maritime, a: "en Seine-Maritime", de: "de la Seine-Maritime", region: nor, zone: B}
+  - {code: "77", nom: "Seine-et-Marne", slug: seine-et-marne, a: "en Seine-et-Marne", de: "de Seine-et-Marne", region: idf, zone: C}
+  - {code: "78", nom: "Yvelines", slug: yvelines, a: "dans les Yvelines", de: "des Yvelines", region: idf, zone: C}
+  - {code: "79", nom: "Deux-Sèvres", slug: deux-sevres, a: "dans les Deux-Sèvres", de: "des Deux-Sèvres", region: naq, zone: A}
+  - {code: "80", nom: "Somme", slug: somme, a: "dans la Somme", de: "de la Somme", region: hdf, zone: B}
+  - {code: "81", nom: "Tarn", slug: tarn, a: "dans le Tarn", de: "du Tarn", region: occ, zone: C}
+  - {code: "82", nom: "Tarn-et-Garonne", slug: tarn-et-garonne, a: "en Tarn-et-Garonne", de: "de Tarn-et-Garonne", region: occ, zone: C}
+  - {code: "83", nom: "Var", slug: var, a: "dans le Var", de: "du Var", region: paca, zone: B}
+  - {code: "84", nom: "Vaucluse", slug: vaucluse, a: "dans le Vaucluse", de: "du Vaucluse", region: paca, zone: B}
+  - {code: "85", nom: "Vendée", slug: vendee, a: "en Vendée", de: "de la Vendée", region: pdl, zone: B}
+  - {code: "86", nom: "Vienne", slug: vienne, a: "dans la Vienne", de: "de la Vienne", region: naq, zone: A}
+  - {code: "87", nom: "Haute-Vienne", slug: haute-vienne, a: "en Haute-Vienne", de: "de la Haute-Vienne", region: naq, zone: A}
+  - {code: "88", nom: "Vosges", slug: vosges, a: "dans les Vosges", de: "des Vosges", region: ge, zone: B}
+  - {code: "89", nom: "Yonne", slug: yonne, a: "dans l'Yonne", de: "de l'Yonne", region: bfc, zone: A}
+  - {code: "90", nom: "Territoire de Belfort", slug: territoire-de-belfort, a: "dans le Territoire de Belfort", de: "du Territoire de Belfort", region: bfc, zone: A}
+  - {code: "91", nom: "Essonne", slug: essonne, a: "en Essonne", de: "de l'Essonne", region: idf, zone: C}
+  - {code: "92", nom: "Hauts-de-Seine", slug: hauts-de-seine, a: "dans les Hauts-de-Seine", de: "des Hauts-de-Seine", region: idf, zone: C}
+  - {code: "93", nom: "Seine-Saint-Denis", slug: seine-saint-denis, a: "en Seine-Saint-Denis", de: "de Seine-Saint-Denis", region: idf, zone: C}
+  - {code: "94", nom: "Val-de-Marne", slug: val-de-marne, a: "dans le Val-de-Marne", de: "du Val-de-Marne", region: idf, zone: C}
+  - {code: "95", nom: "Val-d'Oise", slug: val-d-oise, a: "dans le Val-d'Oise", de: "du Val-d'Oise", region: idf, zone: C}
 
-# Vacances scolaires de la zone C (Paris, Créteil, Versailles), année 2026-2027.
-# Source : arrêté du 22 octobre 2025 (calendrier scolaire), dates reprises par Service-Public
-# et l'Onisep : https://www.onisep.fr/vacances-scolaires-2026-2027
-# Une session est rattachée à la période qui contient sa date de début.
+# Vacances scolaires 2026-2027 par zone. Source : Onisep, « Vacances scolaires : calendrier 2026-2027 »,
+# https://www.onisep.fr/vacances-scolaires-calendrier-2026-2027 (lu le 26 octobre 2026), d'après l'arrêté du
+# 22 octobre 2025. debut : premier jour des vacances ; fin : jour de la reprise. Une session est rattachée aux
+# vacances de la zone de son département qui contiennent sa date de début.
+# Été 2027 : à partir du 3 juillet ; la date de la rentrée 2027 n'étant pas encore connue, fin au 31 août.
 periodes:
   - {id: toussaint-2026, nom: "vacances de la Toussaint 2026", court: "Toussaint 2026", slug: vacances-toussaint-2026, debut: 2026-10-17, fin: 2026-11-02}
   - {id: noel-2026, nom: "vacances de Noël 2026", court: "Noël 2026", slug: vacances-noel-2026, debut: 2026-12-19, fin: 2027-01-04}
-  - {id: hiver-2027, nom: "vacances d'hiver 2027", court: "Hiver 2027", slug: vacances-hiver-2027, debut: 2027-02-06, fin: 2027-02-22}
-  - {id: printemps-2027, nom: "vacances de printemps 2027", court: "Printemps 2027", slug: vacances-printemps-2027, debut: 2027-04-03, fin: 2027-04-19}
+  - id: hiver-2027
+    nom: "vacances d'hiver 2027"
+    court: "Hiver 2027"
+    slug: vacances-hiver-2027
+    debut: 2027-02-06
+    fin: 2027-03-08
+    zones:
+      A: {debut: 2027-02-13, fin: 2027-03-01}
+      B: {debut: 2027-02-20, fin: 2027-03-08}
+      C: {debut: 2027-02-06, fin: 2027-02-22}
+  - id: printemps-2027
+    nom: "vacances de printemps 2027"
+    court: "Printemps 2027"
+    slug: vacances-printemps-2027
+    debut: 2027-04-03
+    fin: 2027-05-03
+    zones:
+      A: {debut: 2027-04-10, fin: 2027-04-26}
+      B: {debut: 2027-04-17, fin: 2027-05-03}
+      C: {debut: 2027-04-03, fin: 2027-04-19}
+  - {id: ete-2027, nom: "vacances d'été 2027", court: "Été 2027", slug: vacances-ete-2027, debut: 2027-07-03, fin: 2027-08-31}
 
 types:
   - {id: formation-generale, diplome: BAFA, nom: "Formation générale", slug: formation-generale, etape: 1}
@@ -38,3 +163,4 @@ diplomes:
   - {id: BPJEPS, nom: "BPJEPS", long: "BPJEPS animation (niveau 4)", slug: bpjeps, fiche: /se-former/bpjeps/, pro: true, etapes: []}
   - {id: DEJEPS, nom: "DEJEPS", long: "DEJEPS (niveau 5)", slug: dejeps, fiche: /se-former/dejeps/, pro: true, etapes: []}
   - {id: DESJEPS, nom: "DESJEPS", long: "DESJEPS (niveau 6)", slug: desjeps, fiche: /se-former/desjeps/, pro: true, etapes: []}
+  - {id: PSC1, nom: "PSC1", long: "PSC1 (premiers secours)", slug: psc1, fiche: /se-former/psc1/, etapes: []}

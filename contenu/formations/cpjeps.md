@@ -3,7 +3,7 @@ titre: "CPJEPS : devenir animateur d'activités et de vie quotidienne (niveau 3)
 court: CPJEPS
 nom: Certificat professionnel de la jeunesse, de l'éducation populaire et du sport
 resume: "Le premier diplôme professionnel d'animateur, niveau 3."
-description: "Le CPJEPS mention animateur d'activités et de vie quotidienne : premier diplôme professionnel de l'animation (niveau 3), pour travailler en accueil de loisirs et en séjour. Conditions d'entrée et sessions en Île-de-France."
+description: "Le CPJEPS mention animateur d'activités et de vie quotidienne : premier diplôme professionnel de l'animation (niveau 3), pour travailler en accueil de loisirs et en séjour. Conditions d'entrée et sessions."
 ordre: 6
 age: "Selon l'organisme"
 duree: "Selon l'organisme, en alternance"

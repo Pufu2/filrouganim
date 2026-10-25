@@ -28,7 +28,7 @@ La qualification **surveillance des baignades** est une **session de qualificati
 - S'inscrire d'abord sur [bafa-bafd.jeunes.gouv.fr](https://bafa-bafd.jeunes.gouv.fr/), puis auprès de l'organisme.
 - Les organismes demandent en général de **savoir nager** et d'avoir le **PSC1** (premiers secours) : vérifiez leurs conditions et leurs tests d'entrée sur la page de la session. [Le PSC1](/se-former/psc1/)
 
-[Les sessions de qualification en Île-de-France](/se-former/sessions/qualification/)
+[Les sessions de qualification](/se-former/sessions/qualification/)
 
 ## Source
 

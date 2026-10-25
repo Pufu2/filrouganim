@@ -33,7 +33,7 @@ Le **BAFD** permet de **diriger**, de façon occasionnelle, un accueil collectif
 
 Chaque stage peut être coupé en 2 parties de 4 jours minimum ; le périscolaire compte pour 6 jours au plus.
 
-[Les sessions BAFD en Île-de-France](/se-former/sessions/bafd/)
+[Les sessions BAFD](/se-former/sessions/bafd/)
 
 ## Source
 

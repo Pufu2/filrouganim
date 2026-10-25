@@ -524,3 +524,4 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .recherche-cases.recherche-cases-offres { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 860px) { .recherche-cases.recherche-cases-offres { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .recherche-cases.recherche-cases-offres { grid-template-columns: 1fr; } }
+.liste-suite { font-weight: 700; background: var(--blanc); border: 1px dashed var(--trait); border-radius: 12px; padding: 12px 16px; }

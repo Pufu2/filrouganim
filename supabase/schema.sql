@@ -109,6 +109,23 @@ alter table public.structures add column if not exists projet text check (char_l
 alter table public.structures add column if not exists avantages text check (char_length(avantages) <= 800);
 alter table public.structures add column if not exists page_publique boolean not null default true;
 alter table public.profils add column if not exists alertes boolean not null default false;
+-- jeton du lien « se désabonner » des alertes : il suffit de cliquer, sans se connecter
+alter table public.profils add column if not exists jeton_alertes uuid not null default gen_random_uuid();
+
+-- version 3 : toute la France métropolitaine et la Corse (et plus seulement l'Île-de-France)
+do $$
+declare dep constant text := '^(0[1-9]|1[0-9]|2[1-9AB]|[3-8][0-9]|9[0-5])$';
+begin
+  alter table public.structures drop constraint if exists structures_departement_check;
+  alter table public.profils    drop constraint if exists profils_departement_check;
+  alter table public.offres     drop constraint if exists offres_departement_check;
+  alter table public.profils    drop constraint if exists profils_mobilite_check;
+  execute format('alter table public.structures add constraint structures_departement_check check (departement ~ %L)', dep);
+  execute format('alter table public.profils add constraint profils_departement_check check (departement ~ %L)', dep);
+  execute format('alter table public.offres add constraint offres_departement_check check (departement ~ %L)', dep);
+  alter table public.profils add constraint profils_mobilite_check
+    check (array_to_string(mobilite, ',') ~ '^((0[1-9]|1[0-9]|2[1-9AB]|[3-8][0-9]|9[0-5]|france)(,|$))*$');
+end $$;
 
 -- candidatures : un candidat postule avec son profil à une offre en ligne
 create table if not exists public.candidatures (
@@ -218,7 +235,11 @@ grant update (nom, type, ville, departement, identifiant, site, email_contact, p
          slug, accroche, couleur, publics, activites, lieux, projet, avantages, page_publique) on public.structures to authenticated;
 grant delete on public.structures to authenticated;
 
-grant select, delete on public.profils to authenticated;
+-- tout sauf le jeton des alertes (lui ne sert qu'au lien de désabonnement envoyé au candidat)
+grant delete on public.profils to authenticated;
+grant select (id, prenom, departement, mobilite, diplomes, recherche, disponibilites, presentation, email_contact, seize_ans,
+              publie, cree_le, maj_le, poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin, alertes)
+  on public.profils to authenticated;
 grant insert (prenom, departement, mobilite, diplomes, recherche, disponibilites, presentation, email_contact, seize_ans, publie,
          poste_recherche, ville, permis_b, experiences, activites, dispo_debut, dispo_fin, alertes)
   on public.profils to authenticated;
@@ -326,3 +347,12 @@ begin
 exception when others then
   raise notice 'pg_cron indisponible : activer l''extension (Database > Extensions > pg_cron) puis relancer ce fichier';
 end $$;
+
+-- ------------------------------------------------------------------ alertes e-mail
+
+-- désabonnement en un clic depuis l'e-mail (le jeton est propre à chaque candidat)
+create or replace function public.desabonner_alertes(jeton uuid) returns boolean
+language sql security definer set search_path = '' as $$
+  update public.profils set alertes = false where jeton_alertes = jeton returning true $$;
+revoke all on function public.desabonner_alertes(uuid) from public;
+grant execute on function public.desabonner_alertes(uuid) to anon, authenticated;

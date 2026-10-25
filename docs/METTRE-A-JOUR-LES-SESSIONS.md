@@ -9,9 +9,10 @@ de 8 jours**, en tenant dans **1 heure par semaine** au plus.
    Jamais les textes de présentation des organismes, jamais leurs photos ni leurs logos.
 2. **Toujours à la source** : la page de l'organisme lui-même. Jamais depuis le portail du
    ministère, formation-animation.com, Animyjob ou un autre comparateur (ce sont leurs bases de données).
-3. **Pas l'essentiel d'une base** : on relève les sessions utiles (Île-de-France, les deux
-   prochaines vacances scolaires), avec un lien vers chaque page. On ne recopie pas tout le
-   catalogue national d'un organisme.
+3. **Pas l'essentiel d'une base** : on relève une **sélection** (France métropolitaine et Corse,
+   les 10 prochains mois), avec un lien vers chaque page : par organisme, une session par
+   département, par vacances scolaires (ou par mois hors vacances), par diplôme et par étape.
+   On ne recopie jamais tout le catalogue d'un organisme.
 4. **robots.txt** : l'outil le lit à chaque page, et **ne lit jamais un site qui ferme sa porte aux
    robots d'IA** (ClaudeBot, anthropic-ai…). C'est le cas de bafaidf.com (FSCF) et de cemea-idf.org
    (CEMEA) au 25/10/2026 : leurs sessions ne seront ajoutées qu'avec leur accord écrit.
@@ -25,7 +26,18 @@ de 8 jours**, en tenant dans **1 heure par semaine** au plus.
 
 ## La routine de la semaine (environ 15 minutes)
 
-L'outil `outils/relever.py` fait le relevé pour AFOCAL, l'IFAC, l'UFCV et la Ligue de l'enseignement Île-de-France :
+L'outil `outils/relever.py` fait le relevé pour (au 26/10/2026) :
+
+| Organisme | Ce qui est lu | Où |
+|---|---|---|
+| AFOCAL | BAFA, BAFD | les listes de chaque région, puis chaque fiche |
+| IFAC | BAFA, BAFD, CQP, CPJEPS, BPJEPS, DEJEPS, DESJEPS | la liste nationale (une page), puis la fiche des sessions retenues |
+| UFCV | BAFA, BAFD | la liste de chaque département, puis la fiche des sessions retenues |
+| Ligue de l'enseignement Île-de-France | BAFA, BAFD | sa boutique en ligne |
+| Protection civile | PSC1 | la liste nationale écrite dans la page de la formation |
+
+Un organisme dont la page a changé de forme ne bloque pas les autres : ses sessions déjà relevées
+sont gardées telles quelles (sans nouvelle date de vérification), et le résumé le signale.
 
 ```
 pip install -r requirements.txt
@@ -33,18 +45,21 @@ python3 outils/relever.py --essai   # affiche ce qui changerait, sans rien écri
 python3 outils/relever.py           # réécrit donnees/sessions.yml
 ```
 
-Il lit robots.txt, parcourt les listes Île-de-France, lit chaque fiche (dates, lieu, thème, prix,
-places), applique la sélection (une session par organisme, département, vacances et étape : la
-première non complète, par date puis par prix), garde la date du premier relevé et met
-`verifie_le` à la date du jour. Il affiche : confirmées, modifiées, ajoutées, retirées.
+Il lit robots.txt, parcourt les listes, applique la sélection (la première session non complète,
+par date puis par prix), relit la fiche des sessions retenues (tarifs, places), garde la date du
+premier relevé et met `verifie_le` à la date du jour. Il affiche : sessions par organisme et par
+diplôme, départements couverts, confirmées, modifiées, ajoutées, retirées. Durée : de 30 à
+60 minutes (une pause de 0,6 seconde entre deux pages, pour ne pas charger les sites).
 
 Puis, à la main :
 
 1. Relire le résumé : un nombre de sessions qui s'effondre (0 retenue, par exemple) veut dire
    qu'un site a changé de forme. Dans ce cas, ne pas enregistrer : ouvrir la page et corriger l'outil.
 2. Ouvrir 2 ou 3 sessions au hasard sur le site de l'organisme et comparer (dates, prix).
-3. Une fois par mois : ajouter la période de vacances suivante dans `donnees/territoire.yml`
-   (dates officielles sur education.gouv.fr ou l'Onisep), et un organisme de la liste « À trouver »
+3. Une fois par an (au printemps) : ajouter les vacances de l'année scolaire suivante dans
+   `donnees/territoire.yml`, **zone par zone** (A, B, C ; dates officielles sur l'Onisep), et
+   remplacer la fin provisoire de l'été (31 août) par la date de la rentrée.
+   Une fois par mois : un organisme de la liste « À trouver »
    (en bas de organismes.yml). Un nouvel organisme demande d'ajouter sa lecture dans l'outil ;
    en attendant, ses sessions peuvent être saisies à la main dans sessions.yml (même format).
 

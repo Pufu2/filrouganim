@@ -2,7 +2,7 @@
 {% import "morceaux.html" as m with context %}
 {% block tete_note %}<p class="note-main">se former</p>{% endblock %}
 {% block h1 %}Trouver sa formation dans l'animation{% endblock %}
-{% block tete_chapo %}<p class="chapo">Les sessions de BAFA et de BAFD en Île-de-France, et toutes les formations pour aller plus loin.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Les sessions de BAFA, de BAFD, de PSC1 et des diplômes professionnels partout en France, et toutes les formations pour aller plus loin.</p>{% endblock %}
 {% block tete_plus %}<div class="carte-recherche"><h2 class="carte-recherche-titre">Trouver une session BAFA ou BAFD</h2>{{ m.recherche(lien, departements, periodes, aujourdhui, stats) }}</div>
 <ul class="chiffres"><li><b>{{ stats.nb }}</b> sessions à venir</li><li><b>{{ stats.nb_organismes }}</b> organismes</li>{% if stats.verifie_le %}<li>vérifiées le <b>{{ stats.verifie_le | date_fr(False) }}</b></li>{% endif %}</ul>{% endblock %}
 {% block contenu %}

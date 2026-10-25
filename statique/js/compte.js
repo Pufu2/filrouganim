@@ -94,7 +94,7 @@
     utilisateur = session.user;
     $("email-session").textContent = utilisateur.email;
     var rep = await Promise.all([
-      sb.from("profils").select("*").eq("id", utilisateur.id).maybeSingle(),
+      sb.from("profils").select(CHAMPS_VUS + ",publie,seize_ans,alertes").eq("id", utilisateur.id).maybeSingle(),
       sb.from("structures").select("*").eq("id", utilisateur.id).maybeSingle()
     ]);
     if (rep[0].error || rep[1].error) { montrer("v-session"); message(erreurLisible(rep[0].error || rep[1].error), true); return; }
@@ -128,11 +128,12 @@
 
   /* -- candidat -- */
   var CHAMPS_PROFIL = ["prenom", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
-                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans"];
+                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans", "alertes"];
   function voirCandidat() {
     montrer("v-candidat", "v-session");
     $("chapo-compte").textContent = profil ? "Ton espace : tes candidatures, les offres pour toi et ton profil." : "Crée ton profil en deux minutes. C'est gratuit, et ça le restera.";
     remplir($("f-profil"), profil || { email_contact: utilisateur.email, publie: true });
+    montrerMobilite();
     $("bloc-profil").open = !profil;
     $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = !profil;
     $("tuiles-candidat").hidden = !profil;
@@ -144,6 +145,16 @@
     tableauCandidat();
     if (params.get("postuler")) ouvrirPostuler(params.get("postuler"));
   }
+  // « Je peux aussi travailler… » : les départements de la région du candidat (et ceux déjà cochés)
+  function montrerMobilite() {
+    var f = $("f-profil"), i = L.deps.indexOf(f.departement.value), region = i < 0 ? null : L.regions_deps[i];
+    Array.prototype.forEach.call(document.querySelectorAll("#cases-mobilite label"), function (l) {
+      var c = l.querySelector("input");
+      l.hidden = !(l.dataset.region === "toutes" || l.dataset.region === region || c.checked) || c.value === f.departement.value;
+    });
+  }
+  $("f-profil").departement.addEventListener("change", montrerMobilite);
+
   $("f-profil").addEventListener("submit", async function (e) {
     e.preventDefault();
     var form = this, d = lire(form, CHAMPS_PROFIL);
@@ -151,8 +162,8 @@
     if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de tes disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
-      ? await sb.from("profils").update(d).eq("id", utilisateur.id).select().single()
-      : await sb.from("profils").insert(d).select().single();
+      ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single()
+      : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
     var nouveau = !profil;

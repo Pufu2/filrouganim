@@ -1,6 +1,6 @@
 ---
 partie: se-former
-titre: "Financer son BAFA en Île-de-France : aide CAF de 200 € et autres aides"
+titre: "Financer son BAFA : aide CAF de 200 € et autres aides"
 court: Financer son BAFA
 resume: "L'aide de 200 € de la CAF, les aides locales, et un exemple de calcul."
 description: "Combien coûte le BAFA et comment le financer : l'aide nationale de 200 € de la CAF sans condition de ressources, le BAFA Populaire à Paris, les aides des communes et des employeurs."
@@ -20,7 +20,7 @@ La CAF verse une **aide nationale de 200 €** pour le BAFA, **sans condition de
 
 Sources : Service-Public, [actualité du 25 mars 2026 sur l'aide de la Caf au Bafa](https://www.service-public.gouv.fr/particuliers/actualites/A16188) ; Caf, [« L'aide au Bafa pour accompagner les jeunes vers l'animation »](https://www.caf.fr/allocataires/actualites/actualites-nationales/l-aide-au-bafa-pour-accompagner-les-jeunes-vers-l-animation).
 
-## À Paris : le BAFA Populaire
+## Un exemple de ville : le BAFA Populaire à Paris
 
 La Ville de Paris propose le **BAFA Populaire**, un parcours **gratuit** pour les **16-25 ans** qui habitent Paris dans un **quartier populaire ou prioritaire**. Après une préinscription et une vérification des conditions, le stage pratique se fait dans un centre de loisirs parisien. L'ancien dispositif « BAFA citoyen » est fermé.
 
@@ -46,4 +46,4 @@ Avec deux sessions relevées sur ce site chez le même organisme, en externat en
 
 Ces prix sont ceux affichés par l'organisme au moment du relevé : vérifiez-les avant de vous inscrire. Avec une aide de votre ville ou d'un employeur, le reste à payer peut baisser encore.
 
-[Comparer les prix des sessions en Île-de-France](/#sessions)
+[Comparer les prix des sessions](/se-former/sessions/)

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block tete_chapo %}<p class="chapo" id="etat-desabonnement">Un instant…</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre texte">
+    {{ m.mascotte("mascotte-petite") }}
+    <p>Tu ne recevras plus les alertes du lundi. Ton profil, lui, ne change pas : tu peux le modifier, le cacher ou le supprimer dans <a href="{{ lien('/compte/') }}">Mon compte</a>, et y réactiver les alertes quand tu veux.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>
+(function () {
+  var etat = document.getElementById("etat-desabonnement");
+  var jeton = new URLSearchParams(location.search).get("j");
+  if (!jeton) { etat.textContent = "Ce lien est incomplet. Tu peux arrêter les alertes depuis Mon compte."; return; }
+  fetch({{ (site.supabase.url ~ "/rest/v1/rpc/desabonner_alertes") | tojson }}, {
+    method: "POST",
+    headers: { "apikey": {{ site.supabase.cle | tojson }}, "Authorization": "Bearer " + {{ site.supabase.cle | tojson }}, "Content-Type": "application/json" },
+    body: JSON.stringify({ jeton: jeton })
+  }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (ok) {
+    etat.textContent = ok ? "C'est fait : tu es désabonné·e des alertes." : "Ce lien n'est plus valable. Tu peux arrêter les alertes depuis Mon compte.";
+  }).catch(function () { etat.textContent = "Ça n'a pas marché. Réessaie plus tard, ou arrête les alertes depuis Mon compte."; });
+})();
+</script>{% endblock %}

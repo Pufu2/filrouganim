@@ -39,6 +39,8 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 
 **Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les e-mails de connexion sont envoyés par ce service.
 
+**Les alertes du lundi** (si vous les demandez dans votre profil) : chaque lundi, un e-mail avec les nouvelles offres de votre secteur. Il est envoyé par **Brevo** (Sendinblue SAS, France), notre sous-traitant pour l'envoi d'e-mails, qui reçoit seulement votre prénom, votre adresse et le contenu de l'e-mail. Chaque e-mail contient un lien pour arrêter, en un clic.
+
 **Combien de temps** : tant que le compte existe. Un compte sans connexion depuis 2 ans est supprimé automatiquement, avec toutes ses données. Une candidature disparaît quand le candidat la retire ou quand l'offre est supprimée.
 
 **Dans votre navigateur** : une fois connecté, le site garde votre session dans le stockage local du navigateur, pour que vous restiez connecté. C'est indispensable au service et ce n'est pas un traceur publicitaire. « Se déconnecter » l'efface.

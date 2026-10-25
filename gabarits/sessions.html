@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block h1 %}Trouver une formation en Île-de-France{% endblock %}
-{% block tete_chapo %}<p class="chapo">BAFA, BAFD, CQP, CPJEPS, BPJEPS, DEJEPS, DESJEPS : comparez les sessions ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
+{% block h1 %}Trouver une formation{% endblock %}
+{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC1, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : comparez les sessions ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
 {% block tete_plus %}<div class="carte-recherche carte-recherche-direct">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
   <div class="cadre">
-    <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions | length }} sessions à venir</span></h2>
-    {{ m.liste_sessions(page.sessions, lien) }}
+    <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions_total }} sessions à venir</span></h2>
+    <div class="sessions" data-par-page="10" data-source="{{ lien('/se-former/sessions/sessions.json') }}" data-organismes="{{ lien('/se-former/sessions/organismes/') }}">
+      {% for s in page.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}
+    </div>
+    <p class="voir-plus-cadre"><button class="voir-plus" type="button" hidden>Voir plus de sessions</button></p>
+    <noscript><p>Les {{ page.sessions | length }} sessions les plus proches. Pour les autres, choisissez <a href="#titre-explorer">une région ou un diplôme</a>.</p></noscript>
     <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin, d'autres vacances ou un budget plus large : une session peut se suivre n'importe où.</p>
     <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
   </div>

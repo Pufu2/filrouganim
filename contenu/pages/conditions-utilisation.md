@@ -7,7 +7,7 @@ description: "Les règles d'utilisation de Fil Roug'Anim : sessions de formation
 
 ## Le service
 
-{{ site.nom }} est un service **d'information et de mise en relation** dans l'animation en Île-de-France :
+{{ site.nom }} est un service **d'information et de mise en relation** dans l'animation, en France :
 
 - il rassemble les sessions de formation (BAFA, BAFD, BPJEPS…) publiées par les organismes, avec leurs dates, leur lieu, leur formule et leur prix, et renvoie vers la page de chaque organisme. **L'inscription et le paiement d'une formation se font toujours chez l'organisme**, jamais sur ce site ;
 - il permet aux structures d'animation de publier des offres, et aux candidats de créer un profil visible par les structures vérifiées. **Les candidatures et les embauches se font directement** entre le candidat et la structure.

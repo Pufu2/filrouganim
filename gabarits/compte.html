@@ -19,6 +19,7 @@
                       ("periscolaire", "Périscolaire"), ("direction", "Direction, adjoint"), ("baignade", "Surveillance de baignade")] %}
 {% set ACCUEILS = [("accueil-de-loisirs", "Accueil de loisirs (centre de loisirs)"), ("periscolaire", "Accueil périscolaire"), ("sejour-vacances", "Séjour de vacances (colo)"),
                    ("mini-camp", "Mini-camp"), ("accueil-de-jeunes", "Accueil de jeunes"), ("scoutisme", "Scoutisme"), ("autre", "Autre")] %}
+{% macro select_deps(nom, vide="Choisir", requis=True) %}<select name="{{ nom }}"{% if requis %} required{% endif %}><option value="">{{ vide }}</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select>{% endmacro %}
 {% macro choix(nom, options, vide=None) %}<select name="{{ nom }}" id="{{ nom }}"{% if not vide %} required{% endif %}>{% if vide %}<option value="">{{ vide }}</option>{% else %}<option value="">Choisir</option>{% endif %}{% for v, l in options %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>{% endmacro %}
 {% macro cases(nom, options) %}<div class="cases">{% for v, l in options %}<label><input type="checkbox" name="{{ nom }}" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>{% endmacro %}
 {% block tete_note %}<p class="note-main">mon compte</p>{% endblock %}
@@ -86,7 +87,7 @@
       <div class="champs-2">
         <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
         <label class="champ"><span>E-mail où les structures vous écrivent</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
-        <label class="champ"><span>Votre département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+        <label class="champ"><span>Votre département</span>{{ select_deps("departement") }}</label>
         <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
         <label class="champ champ-large"><span>Le poste que je cherche, en quelques mots</span><input name="poste_recherche" maxlength="60" placeholder="Ex. : Animateur en colo cet été, stagiaire BAFA"></label>
         <label class="champ"><span>Disponible à partir du</span><input type="date" name="dispo_debut"></label>
@@ -99,11 +100,13 @@
       <label class="champ"><span>Mes activités et talents (séparés par des virgules, 10 au plus)</span><input name="activites" maxlength="320" placeholder="Ex. : grands jeux, guitare, théâtre, cuisine, anglais"></label>
       <label class="case-accord"><input type="checkbox" name="permis_b"> J'ai le permis B</label>
       <fieldset><legend>Je peux aussi travailler…</legend>
-        <div class="cases">{% for d in departements %}<label><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
+        <p class="petit">Les départements de ta région (choisis d'abord ton département plus haut).</p>
+        <div class="cases" id="cases-mobilite">{% for d in departements %}<label data-region="{{ d.region }}" hidden><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label data-region="toutes"><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
       </fieldset>
       <label class="champ"><span>Quelques mots sur vous (expériences, envies, activités préférées)</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>
       <p class="petit">N'écrivez ni votre adresse, ni votre numéro de téléphone, ni votre nom de famille : les structures vous contactent par e-mail.</p>
       <label class="case-accord"><input type="checkbox" name="publie"> Montrer mon profil aux structures vérifiées (décochez pour le cacher sans le supprimer)</label>
+      <label class="case-accord" id="alertes"><input type="checkbox" name="alertes"> M'envoyer chaque lundi les nouvelles offres de mon secteur par e-mail (un lien dans chaque e-mail pour arrêter)</label>
       <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
       <button class="bouton-r" type="submit">Enregistrer mon profil</button>
     </form>
@@ -127,7 +130,7 @@
           <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization"></label>
           <label class="champ"><span>Type</span>{{ choix("type", TYPES) }}</label>
           <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-          <label class="champ"><span>Département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
           <label class="champ"><span>E-mail de recrutement (de préférence générique)</span><input type="email" name="email_contact" required maxlength="200"></label>
           <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
           <label class="champ"><span>SIRET, RNA ou n° de déclaration (pour la vérification)</span><input name="identifiant" maxlength="40"></label>
@@ -165,7 +168,7 @@
           <label class="champ"><span>Poste</span>{{ choix("poste", POSTES) }}</label>
           <label class="champ"><span>Contrat</span>{{ choix("contrat", CONTRATS) }}</label>
           <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-          <label class="champ"><span>Département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
           <label class="champ"><span>Début</span><input type="date" name="debut" required></label>
           <label class="champ"><span>Fin (vide pour un poste à l'année)</span><input type="date" name="fin"></label>
           <label class="champ"><span>Type d'accueil</span>{{ choix("type_accueil", ACCUEILS, "Choisir") }}</label>
@@ -190,7 +193,7 @@
     <div class="carte-compte" id="bloc-candidats" hidden>
       <h2>Les candidats</h2>
       <form id="f-candidats" class="filtres-candidats">
-        <label class="champ"><span>Département</span><select name="dep"><option value="">Tous</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+        <label class="champ"><span>Département</span>{{ select_deps("dep", "Tous", False) }}</label>
         <label class="champ"><span>Diplôme</span>{{ choix("diplome", DIPLOMES, "Tous") }}</label>
         <label class="champ"><span>Recherche</span>{{ choix("cherche", RECHERCHE, "Tout") }}</label>
         <label class="case-accord case-filtre"><input type="checkbox" name="favoris"> Seulement mes favoris</label>
@@ -212,7 +215,8 @@
 </div>
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
-  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list} | tojson }}</script>
+  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
+  "regions_deps": departements | map(attribute="region") | list} | tojson }}</script>
 {% endblock %}
 {% block scripts %}
 <script src="{{ statique('js/supabase-2.117.3.js') }}"></script>

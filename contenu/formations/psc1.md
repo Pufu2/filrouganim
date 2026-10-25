@@ -8,7 +8,8 @@ ordre: 4
 age: "Dès 10 ans"
 duree: "7 heures minimum"
 niveau: "Certificat de compétences (sécurité civile)"
-mis_a_jour: 2026-10-25
+sessions: /se-former/sessions/psc1/
+mis_a_jour: 2026-10-26
 ---
 
 Le **PSC1** apprend les **gestes de premiers secours** : protéger, alerter, et agir face à une personne qui s'étouffe, qui saigne beaucoup, qui est inconsciente, en arrêt cardiaque, qui fait un malaise ou qui s'est blessée. Pour un animateur, c'est une évidence, et souvent une condition.

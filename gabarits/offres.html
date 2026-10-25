@@ -5,7 +5,7 @@
 {% block tete_plus %}
 <form class="carte-recherche" id="filtres-offres" role="search" aria-label="Filtrer les offres">
   <div class="recherche-cases recherche-cases-offres">
-    <label class="case-r case-r-texte"><span class="case-titre">Où ?</span><select name="dep"><option value="">Partout</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+    <label class="case-r case-r-texte"><span class="case-titre">Où ?</span><select name="dep"><option value="">Partout</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select></label>
     <label class="case-r case-r-texte"><span class="case-titre">Contrat</span><select name="contrat"><option value="">Tous</option>{% for c, l in CONTRATS.items() %}<option value="{{ c }}">{{ l }}</option>{% endfor %}</select></label>
     <label class="case-r case-r-texte"><span class="case-titre">Poste</span><select name="poste"><option value="">Tous</option><option value="animateur">Animateur</option><option value="animateur-stagiaire">Stagiaire BAFA</option><option value="directeur-adjoint">Directeur adjoint</option><option value="directeur">Directeur</option><option value="surveillant-baignade">Surveillant de baignade</option><option value="coordinateur">Coordinateur</option></select></label>
     <label class="case-r case-r-texte"><span class="case-titre">Quand ?</span><select name="mois"><option value="">Toutes les dates</option>{% for mo in page.mois %}<option value="{{ mo }}">{{ mois_nom(mo) | majuscule }}</option>{% endfor %}</select></label>

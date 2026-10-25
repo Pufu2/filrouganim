@@ -1,9 +1,9 @@
 ---
-titre: "Le BAFA : âge, durée, prix et sessions en Île-de-France"
+titre: "Le BAFA : âge, durée, prix et sessions"
 court: BAFA
 nom: Brevet d'aptitude aux fonctions d'animateur
 resume: "Encadrer des enfants en colo ou en centre de loisirs, dès 16 ans."
-description: "Le BAFA en bref : dès 16 ans, 3 étapes en 30 mois au plus, pour encadrer des enfants en colo ou en centre de loisirs. Prix, aides et sessions en Île-de-France."
+description: "Le BAFA en bref : dès 16 ans, 3 étapes en 30 mois au plus, pour encadrer des enfants en colo ou en centre de loisirs. Prix, aides et sessions partout en France."
 ordre: 1
 age: "Dès 16 ans"
 duree: "8 + 14 + 6 jours minimum"
@@ -21,7 +21,7 @@ Le **BAFA** permet d'encadrer des enfants et des adolescents **de façon occasio
 | Âge | 16 ans le premier jour de la formation générale |
 | Étapes | Formation générale (8 jours) → stage pratique (14 jours effectifs) → approfondissement (6 jours) ou qualification (8 jours) |
 | Délai | 30 mois au plus (prorogation possible de 12 mois), 18 mois au plus entre la formation générale et le stage |
-| Prix | Libre selon l'organisme. Sur les sessions relevées ici en Île-de-France : formation générale en externat de {{ stats.fg_ext.min }} à {{ stats.fg_ext.max }} €, approfondissement en externat de {{ stats.ap_ext.min }} à {{ stats.ap_ext.max }} € |
+| Prix | Libre selon l'organisme. Sur les sessions relevées ici : formation générale en externat de {{ stats.fg_ext.min }} à {{ stats.fg_ext.max }} €, approfondissement en externat de {{ stats.ap_ext.min }} à {{ stats.ap_ext.max }} € |
 | Aides | CAF : 200 € sans condition de ressources, après la dernière session ; aides locales |
 
 ## Ce qu'on apprend

@@ -65,6 +65,24 @@ Testé sur une copie locale : mise à jour depuis la version 1 avec des données
 (un candidat ne peut pas changer le statut de sa candidature, ni postuler à une offre d'une
 structure non vérifiée ; une structure non vérifiée ne voit ni candidature ni profil).
 
+## Version 3 (26/10/2026) : relancer encore le fichier
+
+Ajouts : les pages publiques des structures (adresse, accroche, couleur, publics, activités,
+lieux, projet, ce qui est offert à l'équipe), toute la France (et plus seulement l'Île-de-France),
+les alertes du lundi et leur lien de désabonnement. Même manipulation : SQL Editor > coller > Run.
+
+## Les alertes du lundi (quand Brevo sera prêt)
+
+`outils/alertes.py` envoie chaque lundi, à chaque candidat qui l'a demandé, les nouvelles offres de
+son secteur (`.github/workflows/alertes.yml`). Sans les deux secrets ci-dessous, il ne fait rien.
+1. Brevo : créer une clé d'API (SMTP & API > Clés API) et valider l'adresse d'envoi
+   `alertes@filrouganim.fr` (domaine filrouganim.fr à authentifier dans Brevo : enregistrements DNS
+   à ajouter chez OVHcloud).
+2. GitHub, dépôt filrouganim : Settings > Secrets and variables > Actions > New repository secret :
+   `BREVO_API_KEY` (la clé Brevo) et `SUPABASE_SECRET_KEY` (Supabase > Project Settings > API Keys >
+   la clé secrète). Ces clés ne doivent être collées que là, jamais dans une conversation ni un fichier.
+3. Tester : onglet Actions > « Alertes du lundi » > Run workflow.
+
 ## Vérifier une structure (à chaque nouvelle structure)
 
 1. **Table Editor**, table `structures` : la nouvelle ligne a `verifiee` à `false`.

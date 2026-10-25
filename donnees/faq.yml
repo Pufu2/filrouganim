@@ -9,7 +9,7 @@ questions:
     lien: [Les étapes du BAFA, /se-former/etapes-du-bafa/]
     accueil: true
 
-  - q: Combien coûte le BAFA en Île-de-France ?
+  - q: Combien coûte le BAFA ?
     r: >-
       Chaque organisme fixe ses prix. Sur les sessions relevées ici, une formation générale en
       externat coûte de {{ stats.fg_ext.min }} à {{ stats.fg_ext.max }} €, un approfondissement en externat

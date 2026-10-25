@@ -2,7 +2,7 @@
 partie: trouver-un-poste
 titre: "Trouver son stage pratique BAFA : où chercher, quand, comment"
 court: Trouver son stage pratique
-resume: "Les règles du stage, où chercher en Île-de-France et comment se présenter."
+resume: "Les règles du stage, où chercher près de chez soi et comment se présenter."
 description: "Le stage pratique du BAFA : 14 jours au minimum, dans les 18 mois après la formation générale. Où le chercher (mairie, colos, organismes), quand candidater et quoi mettre dans son CV."
 ordre: 3
 mis_a_jour: 2026-10-24
@@ -19,7 +19,7 @@ Le stage pratique est la deuxième étape du BAFA, entre la formation générale
 
 Source : ministère chargé de la jeunesse, [le BAFA](https://www.jeunes.gouv.fr/le-brevet-d-aptitude-aux-fonctions-d-animateur-bafa-253).
 
-## Où chercher en Île-de-France
+## Où chercher
 
 1. **Le service enfance-jeunesse de votre mairie.** Les centres de loisirs municipaux accueillent des stagiaires pour les mercredis et les vacances. C'est souvent le plus simple, près de chez vous.
 2. **Les organisateurs de séjours de vacances.** Les colos recrutent beaucoup d'animateurs stagiaires pour l'été.
