@@ -13,10 +13,13 @@ import argparse
 import datetime as dt
 import html
 import json
+import os
 import posixpath
 import re
 import shutil
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import markdown
@@ -66,6 +69,12 @@ def en_date(d):
     if d is None or isinstance(d, dt.date):
         return d
     return dt.date.fromisoformat(str(d))
+
+
+def paragraphes(texte):
+    """Texte écrit par une structure depuis son compte : jamais de HTML, seulement des paragraphes."""
+    blocs = [b.strip() for b in re.split(r"\n\s*\n", texte.replace("\r", "")) if b.strip()]
+    return "".join("<p>" + html.escape(b).replace("\n", "<br>") + "</p>" for b in blocs)
 
 
 def date_fr(d, annee=True):
@@ -132,7 +141,7 @@ def slug(texte):
 
 def json_ld(objet):
     """JSON-LD sûr à placer dans une balise <script>."""
-    return json.dumps(objet, ensure_ascii=False, indent=1).replace("</", "<\\/")
+    return json.dumps(objet, ensure_ascii=False, indent=1).replace("<", "\\u003c").replace(">", "\\u003e")
 
 
 # ---------------------------------------------------------------- fabrique
@@ -161,7 +170,7 @@ class Site:
         self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
-                                markdown=convertir_markdown)
+                                markdown=convertir_markdown, paragraphes=paragraphes)
         self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
@@ -219,14 +228,57 @@ class Site:
                 continue
             o["dep"] = self.departements[o["departement"]]
             offres.append(o)
+        for o in self.offres_en_ligne():
+            if o["expire_le"] >= self.aujourdhui and o["departement"] in self.departements:
+                o["dep"] = self.departements[o["departement"]]
+                offres.append(o)
         offres.sort(key=lambda o: (o["debut"], o["id"]))
+        return offres
+
+    def offres_en_ligne(self):
+        """Offres publiées par les structures vérifiées depuis leur compte (Supabase, lecture publique).
+        Les règles d'accès de la base ne laissent passer que les offres en ligne et non expirées."""
+        sb = self.config.get("supabase") or {}
+        if not (sb.get("url") and sb.get("cle")):
+            return []
+        champs = ("id,intitule,poste,contrat,ville,departement,debut,fin,public,remuneration_montant,"
+                  "remuneration_unite,loge,diplomes,texte,candidater,expire_le,cree_le,structures(nom,type,site)")
+        requete = urllib.request.Request(f"{sb['url']}/rest/v1/offres?select={champs}&order=debut",
+                                         headers={"apikey": sb["cle"], "Authorization": f"Bearer {sb['cle']}"})
+        try:
+            with urllib.request.urlopen(requete, timeout=30) as r:
+                lignes = json.load(r)
+        except Exception as e:
+            if isinstance(e, urllib.error.HTTPError) and e.code == 404:
+                # les tables ne sont pas encore créées (supabase/schema.sql pas encore lancé)
+                print("Attention : la table des offres n'existe pas encore dans Supabase", file=sys.stderr)
+                return []
+            # en ligne (GitHub Actions), mieux vaut ne pas publier que publier un site sans ses offres
+            if os.environ.get("CI"):
+                sys.exit(f"Offres des comptes illisibles : {e}")
+            print(f"Attention : offres des comptes non lues ({e})", file=sys.stderr)
+            return []
+        offres = []
+        for l in lignes:
+            st = l.get("structures") or {}
+            offres.append({
+                "id": str(l["id"]), "intitule": l["intitule"], "poste": l["poste"], "contrat": l["contrat"],
+                "structure": {"nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site")},
+                "ville": l["ville"], "departement": l["departement"],
+                "debut": en_date(l["debut"]), "fin": en_date(l.get("fin")), "public": l.get("public"),
+                "remuneration": ({"montant": float(l["remuneration_montant"]), "unite": l.get("remuneration_unite") or "jour",
+                                  "brut": True} if l.get("remuneration_montant") else None),
+                "loge": l.get("loge"), "diplomes": [l["diplomes"]] if l.get("diplomes") else [],
+                "texte": l["texte"], "brut": True, "candidater": l["candidater"],
+                "publiee_le": en_date(l["cree_le"][:10]), "expire_le": en_date(l["expire_le"])})
         return offres
 
     def schema_offre(self, o):
         """Données structurées JobPosting (Google pour l'emploi)."""
-        types = {"cee": "TEMPORARY", "cdd": "TEMPORARY", "cdi": "FULL_TIME", "stage-pratique": "INTERN", "benevole": "VOLUNTEER"}
+        types = {"cee": "TEMPORARY", "cdd": "TEMPORARY", "cdi": "FULL_TIME", "stage-pratique": "INTERN",
+                 "apprentissage": "OTHER", "benevole": "VOLUNTEER"}
         objet = {"@context": "https://schema.org", "@type": "JobPosting", "title": o["intitule"],
-                 "description": convertir_markdown(o["texte"]), "datePosted": o["publiee_le"].isoformat(),
+                 "description": paragraphes(o["texte"]) if o.get("brut") else convertir_markdown(o["texte"]), "datePosted": o["publiee_le"].isoformat(),
                  "validThrough": o["expire_le"].isoformat() + "T23:59", "employmentType": types.get(o["contrat"], "OTHER"),
                  "hiringOrganization": {"@type": "Organization", "name": o["structure"]["nom"],
                                         **({"sameAs": o["structure"]["site"]} if o["structure"].get("site") else {})},
@@ -421,6 +473,10 @@ class Site:
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
                          fil=[("Trouver un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+        if (self.config.get("supabase") or {}).get("url"):
+            self.ajouter("/compte/", "compte.html", titre="Mon compte", indexer=False,
+                         description="Votre compte Fil Roug'Anim : profil de candidat, ou fiche de structure et offres.",
+                         fil=[("Mon compte", "/compte/")])
         self.ajouter("/404.html", "404.html", titre="Page introuvable", indexer=False)
 
         # ---- anciennes adresses : une page de redirection pour chacune

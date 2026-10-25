@@ -334,3 +334,64 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .case-r select:disabled { color: var(--doux); cursor: default; }
 .parcours-diplome[hidden] { display: none; }
 @media (min-width: 820px) { .etapes-3 { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------------------------------------------------------------- mon compte */
+.espace-compte { max-width: 860px; }
+.espace-compte [hidden] { display: none !important; }
+.espace-compte h2 { font-size: clamp(1.35rem, 3.6vw, 1.7rem); }
+.carte-compte { background: var(--blanc); border: 1px solid var(--trait); border-radius: 18px; padding: clamp(18px, 4vw, 30px); margin: 0 0 22px; }
+.compte-message { background: #e8f0e6; border-left: 5px solid var(--sauge); border-radius: 10px; padding: 12px 16px; margin: 0 0 20px; font-weight: 700; }
+.compte-message.erreur { background: #fbe4df; border-left-color: var(--fil); }
+.formulaire { display: grid; gap: 14px; }
+.champs-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.champ-large { grid-column: 1 / -1; }
+.champ { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.champ > span { font-size: .9rem; font-weight: 700; color: var(--doux); }
+.champ input, .champ select, .champ textarea { font: inherit; color: var(--encre); background: var(--papier); border: 1.5px solid var(--trait); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; }
+.champ textarea { resize: vertical; }
+.champ input:focus, .champ select:focus, .champ textarea:focus { outline: none; border-color: var(--fil); box-shadow: 0 0 0 3px rgba(196, 55, 45, .15); }
+.formulaire fieldset { border: 1.5px solid var(--trait); border-radius: 12px; padding: 10px 14px 14px; margin: 0; min-width: 0; }
+.formulaire legend { font-weight: 700; padding: 0 6px; }
+.cases { display: flex; flex-wrap: wrap; gap: 8px; }
+.cases label { display: inline-flex; align-items: center; gap: 7px; background: var(--papier); border: 1px solid var(--trait); border-radius: 999px; padding: 6px 13px; cursor: pointer; }
+.cases label:has(input:checked) { background: #fbe4df; border-color: var(--fil); }
+.cases input, .case-accord input { accent-color: var(--fil); width: 1.1em; height: 1.1em; flex: none; }
+.case-accord { display: flex; gap: 10px; align-items: flex-start; }
+.case-accord input { margin-top: .3em; }
+.formulaire .bouton-r { justify-self: start; border: 0; cursor: pointer; }
+.choix-role { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.role { font: inherit; text-align: left; color: var(--encre); background: var(--blanc); border: 2px solid var(--trait); border-radius: 18px; padding: 22px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+.role b { font-family: var(--titres); font-size: 1.3rem; color: var(--fil-fonce); }
+.role span { color: var(--doux); }
+.role:hover, .role:focus-visible { border-color: var(--fil); }
+.statut { border-radius: 12px; padding: 12px 16px; margin: 0 0 20px; background: var(--sable); }
+.statut-attente { background: #fff1d6; }
+.statut-ok { background: #e8f0e6; }
+.titre-et-bouton { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.titre-et-bouton h2 { margin: 0; }
+.titre-et-bouton .bouton-r, .ligne-compte .bouton-r { border: 0; cursor: pointer; padding: 10px 18px; }
+.liste-compte { display: grid; gap: 12px; margin-bottom: 14px; }
+.ligne-compte { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 20px; background: var(--papier); border-radius: 14px; padding: 14px 16px; }
+.ligne-compte > div:first-child { flex: 1 1 320px; min-width: 0; }
+.ligne-compte h3 { margin: 0 0 4px; }
+.ligne-compte p { margin: 2px 0; overflow-wrap: anywhere; }
+.profil-candidat .presentation { white-space: pre-line; margin: 8px 0; }
+.etat { display: inline-block; font-size: .88rem; font-weight: 700; border-radius: 999px; padding: 2px 10px; margin-top: 6px !important; }
+.etat-ok { background: #e8f0e6; color: #2f4a34; }
+.etat-attente { background: #fff1d6; color: #6b4d12; }
+.etat-off { background: var(--trait); color: var(--doux); }
+.formulaire-offre { border-top: 1px solid var(--trait); padding-top: 18px; }
+.formulaire-offre h3 { margin: 0; }
+.boutons { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.bouton-texte { font: inherit; font-weight: 700; color: var(--fil-fonce); background: transparent; border: 1.5px solid var(--trait); border-radius: 10px; padding: 8px 14px; cursor: pointer; }
+.bouton-texte:hover { border-color: var(--fil); }
+.bouton-danger { color: #8a1c14; }
+.filtres-candidats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 10px; }
+.compte-pied { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; color: var(--doux); border-top: 1px solid var(--trait); padding-top: 16px; margin-top: 10px; }
+.compte-pied p { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .champs-2, .choix-role, .filtres-candidats { grid-template-columns: 1fr; }
+}
+.liste-coches { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 6px; }
+.liste-coches li { position: relative; padding-left: 28px; }
+.liste-coches li::before { content: "✓"; position: absolute; left: 4px; top: 0; font-weight: 700; color: var(--fil); }

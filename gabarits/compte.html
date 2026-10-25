@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{# Mon compte : tout se passe dans le navigateur (statique/js/compte.js), avec Supabase.
+   Les données des personnes ne sont jamais écrites dans la page fabriquée. #}
+{% set DIPLOMES = [("stagiaire-bafa", "Stagiaire BAFA"), ("bafa", "BAFA"), ("stagiaire-bafd", "Stagiaire BAFD"), ("bafd", "BAFD"),
+                   ("psc1", "PSC1"), ("surveillant-baignade", "Surveillant de baignade"), ("cqp-ap", "CQP animateur périscolaire"),
+                   ("cpjeps", "CPJEPS"), ("bpjeps", "BPJEPS"), ("dejeps", "DEJEPS"), ("desjeps", "DESJEPS"), ("autre", "Autre diplôme")] %}
+{% set RECHERCHE = [("stage-pratique", "Stage pratique BAFA"), ("ete", "Séjours ou centre l'été"), ("petites-vacances", "Petites vacances"),
+                    ("mercredis", "Mercredis"), ("periscolaire", "Périscolaire (soirs, midis)"), ("annee", "Poste à l'année"),
+                    ("direction", "Direction ou adjoint"), ("alternance", "Alternance (BPJEPS, DEJEPS)")] %}
+{% set TYPES = [("accueil-de-loisirs", "Accueil de loisirs"), ("sejours", "Organisateur de séjours"), ("accueil-de-jeunes", "Accueil de jeunes"),
+                ("periscolaire", "Accueil périscolaire"), ("association", "Association"), ("collectivite", "Collectivité"), ("autre", "Autre")] %}
+{% set POSTES = [("animateur", "Animateur·rice"), ("animateur-stagiaire", "Animateur·rice stagiaire BAFA"), ("directeur-adjoint", "Directeur·rice adjoint·e"),
+                 ("directeur", "Directeur·rice"), ("surveillant-baignade", "Surveillant·e de baignade"), ("coordinateur", "Coordinateur·rice"), ("autre", "Autre")] %}
+{% set CONTRATS = [("cee", "Contrat d'engagement éducatif"), ("cdd", "CDD"), ("cdi", "CDI"), ("stage-pratique", "Stage pratique BAFA"),
+                   ("apprentissage", "Apprentissage"), ("benevole", "Bénévolat")] %}
+{% macro choix(nom, options, vide=None) %}<select name="{{ nom }}" id="{{ nom }}"{% if not vide %} required{% endif %}>{% if vide %}<option value="">{{ vide }}</option>{% else %}<option value="">Choisir</option>{% endif %}{% for v, l in options %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>{% endmacro %}
+{% macro cases(nom, options) %}<div class="cases">{% for v, l in options %}<label><input type="checkbox" name="{{ nom }}" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>{% endmacro %}
+{% block tete_note %}<p class="note-main">mon compte</p>{% endblock %}
+{% block h1 %}Mon compte{% endblock %}
+{% block tete_chapo %}<p class="chapo" id="chapo-compte">Un seul compte, sans mot de passe : vous recevez un lien de connexion par e-mail.</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+<div class="cadre espace-compte" id="espace-compte" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
+
+  <p class="compte-message" id="message" role="status" aria-live="polite" hidden></p>
+  <noscript><p class="aucune">Le compte a besoin de JavaScript pour fonctionner.</p></noscript>
+
+  <div class="compte-vue" id="v-chargement"><p>Chargement…</p></div>
+
+  {# 1. Connexion #}
+  <div class="compte-vue carte-compte" id="v-connexion" hidden>
+    <h2>Se connecter ou créer son compte</h2>
+    <form id="f-connexion" class="formulaire">
+      <label class="champ"><span>Votre adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200"></label>
+      <button class="bouton-r" type="submit">Recevoir mon lien de connexion <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="petit">Le lien est valable une heure. Pas de mot de passe à retenir. Si vous n'avez pas encore de compte, il est créé à la première connexion. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+  </div>
+
+  {# 2. Premier passage : candidat ou structure #}
+  <div class="compte-vue" id="v-choix" hidden>
+    <h2>Vous êtes…</h2>
+    <div class="choix-role">
+      <button type="button" class="role" data-role="candidat"><b>Je cherche un poste</b><span>Stage pratique BAFA, job d'été, poste à l'année, alternance. Gratuit, toujours.</span></button>
+      <button type="button" class="role" data-role="structure"><b>Je recrute pour une structure</b><span>Accueil de loisirs, séjours, périscolaire, association, collectivité.</span></button>
+    </div>
+  </div>
+
+  {# 3. Profil candidat #}
+  <div class="compte-vue carte-compte" id="v-candidat" hidden>
+    <h2>Mon profil</h2>
+    <p>Votre profil n'est visible que par les <b>structures inscrites et vérifiées</b>. Il n'est jamais public, ni sur Google. Elles vous écrivent à l'adresse choisie ci-dessous ; vous répondez si vous voulez.</p>
+    <form id="f-profil" class="formulaire">
+      <div class="champs-2">
+        <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
+        <label class="champ"><span>E-mail où les structures vous écrivent</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
+        <label class="champ"><span>Votre département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+        <label class="champ"><span>Disponibilités</span><input name="disponibilites" maxlength="300" placeholder="Ex. : juillet et août, mercredis"></label>
+      </div>
+      <fieldset><legend>Mes diplômes</legend>{{ cases("diplomes", DIPLOMES) }}</fieldset>
+      <fieldset><legend>Ce que je cherche</legend>{{ cases("recherche", RECHERCHE) }}</fieldset>
+      <fieldset><legend>Je peux aussi travailler…</legend>
+        <div class="cases">{% for d in departements %}<label><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
+      </fieldset>
+      <label class="champ"><span>Quelques mots sur vous (expériences, envies, activités préférées)</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>
+      <p class="petit">N'écrivez ni votre adresse, ni votre numéro de téléphone, ni votre nom de famille : les structures vous contactent par e-mail.</p>
+      <label class="case-accord"><input type="checkbox" name="publie"> Montrer mon profil aux structures vérifiées (décochez pour le cacher sans le supprimer)</label>
+      <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
+      <button class="bouton-r" type="submit">Enregistrer mon profil</button>
+    </form>
+  </div>
+
+  {# 4. Structure #}
+  <div class="compte-vue" id="v-structure" hidden>
+    <p class="statut" id="statut-structure" hidden></p>
+    <div class="carte-compte">
+      <h2>Ma structure</h2>
+      <form id="f-structure" class="formulaire">
+        <div class="champs-2">
+          <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization"></label>
+          <label class="champ"><span>Type</span>{{ choix("type", TYPES) }}</label>
+          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
+          <label class="champ"><span>Département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+          <label class="champ"><span>E-mail de recrutement (de préférence générique)</span><input type="email" name="email_contact" required maxlength="200"></label>
+          <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
+          <label class="champ"><span>SIRET, RNA ou n° de déclaration (pour la vérification)</span><input name="identifiant" maxlength="40"></label>
+        </div>
+        <label class="champ"><span>Présentation (facultatif)</span><textarea name="presentation" rows="4" maxlength="1000"></textarea></label>
+        <label class="case-accord" id="accord-structure"><input type="checkbox" name="accord" required> J'agis pour cette structure et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
+        <button class="bouton-r" type="submit">Enregistrer</button>
+      </form>
+    </div>
+
+    <div class="carte-compte" id="bloc-offres" hidden>
+      <div class="titre-et-bouton"><h2>Mes offres</h2><button type="button" class="bouton-r" id="nouvelle-offre">Nouvelle offre</button></div>
+      <div id="liste-offres" class="liste-compte"></div>
+      <form id="f-offre" class="formulaire formulaire-offre" hidden>
+        <h3 id="titre-f-offre">Nouvelle offre</h3>
+        <div class="champs-2">
+          <label class="champ champ-large"><span>Intitulé du poste</span><input name="intitule" required minlength="5" maxlength="120" placeholder="Ex. : Animateur·rice séjour d'été, stagiaire BAFA accepté"></label>
+          <label class="champ"><span>Poste</span>{{ choix("poste", POSTES) }}</label>
+          <label class="champ"><span>Contrat</span>{{ choix("contrat", CONTRATS) }}</label>
+          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
+          <label class="champ"><span>Département</span><select name="departement" required><option value="">Choisir</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+          <label class="champ"><span>Début</span><input type="date" name="debut" required></label>
+          <label class="champ"><span>Fin (vide pour un poste à l'année)</span><input type="date" name="fin"></label>
+          <label class="champ"><span>Public accueilli</span><input name="public" maxlength="80" placeholder="Ex. : 6-11 ans"></label>
+          <label class="champ"><span>Diplômes demandés</span><input name="diplomes" maxlength="200" placeholder="Ex. : BAFA ou stagiaire BAFA, PSC1"></label>
+          <label class="champ"><span>Rémunération brute (facultatif)</span><input type="number" name="remuneration_montant" min="0" step="0.01" inputmode="decimal"></label>
+          <label class="champ"><span>Par</span><select name="remuneration_unite"><option value="jour">jour</option><option value="mois">mois</option><option value="heure">heure</option></select></label>
+          <label class="champ"><span>Pour candidater : e-mail ou lien</span><input name="candidater" required maxlength="200"></label>
+          <label class="champ"><span>En ligne jusqu'au</span><input type="date" name="expire_le" required></label>
+        </div>
+        <label class="champ"><span>Présentation du poste (en français)</span><textarea name="texte" rows="8" required minlength="30" maxlength="4000"></textarea></label>
+        <label class="case-accord"><input type="checkbox" name="loge"> Logé sur place</label>
+        <label class="case-accord"><input type="checkbox" name="publiee" checked> Offre en ligne (décochez pour la mettre en pause)</label>
+        <p class="petit">Une offre ne peut pas fixer d'âge maximum, ni de critère de sexe, d'origine ou d'apparence, et ne doit rien affirmer de faux sur le poste (code du travail, articles L5331-2, L5331-3 et L1132-1). Elle apparaît sur le site dans l'heure.</p>
+        <div class="boutons"><button class="bouton-r" type="submit">Enregistrer l'offre</button><button type="button" class="bouton-texte" id="annuler-offre">Annuler</button></div>
+      </form>
+    </div>
+
+    <div class="carte-compte" id="bloc-candidats" hidden>
+      <h2>Les candidats</h2>
+      <form id="f-candidats" class="filtres-candidats">
+        <label class="champ"><span>Département</span><select name="dep"><option value="">Tous</option>{% for d in departements %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</select></label>
+        <label class="champ"><span>Diplôme</span>{{ choix("diplome", DIPLOMES, "Tous") }}</label>
+        <label class="champ"><span>Recherche</span>{{ choix("cherche", RECHERCHE, "Tout") }}</label>
+      </form>
+      <p class="petit" id="compte-candidats"></p>
+      <div id="liste-candidats" class="liste-compte"></div>
+      <p class="petit">Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas. Beaucoup de candidats ont 16 ou 17 ans.</p>
+    </div>
+  </div>
+
+  {# 5. Toujours en bas une fois connecté #}
+  <div class="compte-vue compte-pied" id="v-session" hidden>
+    <p>Connecté avec <b id="email-session"></b></p>
+    <div class="boutons">
+      <button type="button" class="bouton-texte" id="deconnexion">Se déconnecter</button>
+      <button type="button" class="bouton-texte bouton-danger" id="supprimer">Supprimer mon compte</button>
+    </div>
+  </div>
+</div>
+</section>
+<script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
+  "contrats": CONTRATS | list, "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list} | tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ statique('js/supabase-2.117.3.js') }}"></script>
+<script src="{{ statique('js/compte.js') }}"></script>
+{% endblock %}

@@ -34,6 +34,7 @@
       <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
       <a href="{{ lien('/trouver-un-poste/') }}"{% if page.url.startswith('/trouver-un-poste/') %} aria-current="page"{% endif %}>Trouver un poste</a>
       <a href="{{ lien('/recruter/') }}"{% if page.url.startswith('/recruter/') %} aria-current="page"{% endif %}>Recruter</a>
+      {% if site.comptes_ouverts %}<a class="menu-compte" href="{{ lien('/compte/') }}"{% if page.url == '/compte/' %} aria-current="page"{% endif %}>Mon compte</a>{% endif %}
     </nav>
   </div>
 </header>
@@ -74,10 +75,11 @@
     </nav>
     <nav aria-label="Trouver un poste et recruter">
       <p class="pied-titre">Trouver un poste</p>
-      <a href="{{ lien('/trouver-un-poste/') }}">Inscription gratuite et offres</a>
+      <a href="{{ lien('/trouver-un-poste/') }}">Profil gratuit et offres</a>
       <a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
       <p class="pied-titre pied-titre-2">Recruter</p>
       <a href="{{ lien('/recruter/') }}">Publier une offre</a>
+      {% if site.comptes_ouverts %}<a href="{{ lien('/compte/') }}">Mon compte</a>{% endif %}
     </nav>
     <nav aria-label="Le site">
       <p class="pied-titre">Le site</p>

@@ -3,13 +3,13 @@
 {% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
 {% block tete_note %}<p class="note-main">recruter</p>{% endblock %}
 {% block h1 %}Recruter son équipe d'animation{% endblock %}
-{% block tete_chapo %}<p class="chapo">Publiez vos offres de stages pratiques et de jobs là où les jeunes cherchent leur BAFA. Elles sont envoyées aux animateurs inscrits de votre département.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Publiez vous-même vos offres de stages pratiques, de jobs et de postes, là où les jeunes cherchent leur BAFA. Et trouvez des candidats parmi les profils des animateurs de votre secteur.</p>{% endblock %}
 {% block tete_plus %}
 <div class="carte-recherche carte-fondateurs" id="fondateurs">
   <p class="note-main">offre fondateurs</p>
   <h2 class="carte-recherche-titre">Moitié prix, à vie, pour les {{ site.fondateurs.places }} premières structures</h2>
-  <p>{% if restantes > 0 %}<b>Il reste {{ restantes }} place{{ 's' if restantes > 1 }}.</b>{% else %}Toutes les places sont prises.{% endif %} Réserver ne coûte rien et n'engage à rien : le prix sera annoncé avant l'ouverture, et vous choisirez alors de vous abonner ou non. La réduction vaut tant que le service existe.</p>
-  <p><a class="bouton-r" href="mailto:{{ site.email }}?subject=Offre%20fondateurs%20Fil%20Roug%27Anim&body=Nom%20de%20la%20structure%20%3A%0AType%20(accueil%20de%20loisirs%2C%20s%C3%A9jours%E2%80%A6)%20%3A%0AVille%20et%20d%C3%A9partement%20%3A%0AAdresse%20de%20contact%20%3A">Réserver ma place <span aria-hidden="true">→</span></a></p>
+  <p>{% if restantes > 0 %}<b>Il reste {{ restantes }} place{{ 's' if restantes > 1 }}.</b>{% else %}Toutes les places sont prises.{% endif %} Créer son compte et publier ne coûte rien pendant le lancement. Le prix sera annoncé avant la fin du lancement, et vous choisirez alors de vous abonner ou non. La réduction vaut tant que le service existe.</p>
+  <p>{% if site.comptes_ouverts %}<a class="bouton-r" href="{{ lien('/compte/') }}?role=structure">Créer le compte de ma structure <span aria-hidden="true">→</span></a>{% else %}<a class="bouton-r" href="mailto:{{ site.email }}?subject=Offre%20fondateurs%20Fil%20Roug%27Anim&body=Nom%20de%20la%20structure%20%3A%0AType%20(accueil%20de%20loisirs%2C%20s%C3%A9jours%E2%80%A6)%20%3A%0AVille%20et%20d%C3%A9partement%20%3A%0AAdresse%20de%20contact%20%3A">Réserver ma place <span aria-hidden="true">→</span></a>{% endif %}</p>
 </div>
 {% endblock %}
 {% block contenu %}
@@ -17,21 +17,25 @@
   <div class="cadre">
     <h2 id="t-inclus">Ce qui est inclus</h2>
     <ol class="trois-pas">
-      <li><b>Votre offre en ligne</b><span>Une page par offre, lisible par Google pour l'emploi, qui disparaît d'elle-même à la date choisie.</span></li>
-      <li><b>Envoyée aux animateurs inscrits</b><span>Les stagiaires et animateurs de votre département la reçoivent par e-mail.</span></li>
-      <li><b>Au bon moment</b><span>Affichée sur les pages BAFA de votre département, là où les futurs stagiaires cherchent leur formation.</span></li>
+      <li><b>Vos offres, par vous-même</b><span>Vous les écrivez, les modifiez, les mettez en pause depuis votre compte. Une page par offre, lisible par Google pour l'emploi.</span></li>
+      <li><b>Les profils des candidats</b><span>Stagiaires BAFA, animateurs, BAFD, BPJEPS, DEJEPS : filtrez par département, diplôme et disponibilité, et écrivez-leur.</span></li>
+      <li><b>Au bon moment</b><span>Là où les futurs stagiaires cherchent leur formation BAFA, dans votre département.</span></li>
     </ol>
   </div>
 </section>
 <section class="bande bande-blanc" id="publier" aria-labelledby="t-publier">
   <article class="cadre texte">
-    <h2 id="t-publier">Comment publier</h2>
-    <p>Envoyez par e-mail le nom et le type de votre structure, la ville, l'intitulé du poste, le contrat (contrat d'engagement éducatif, CDD…), les dates, le public, la rémunération, le logement, les diplômes demandés, un court texte et l'adresse pour candidater. L'offre est relue puis publiée.</p>
-    <p><b>Une formule à la saison ou à l'année</b>, sans engagement de durée.</p>
+    <h2 id="t-publier">Comment ça marche</h2>
+    <ol>
+      <li><b>Créez le compte de la structure</b> : une adresse e-mail suffit, pas de mot de passe (un lien de connexion arrive par e-mail).</li>
+      <li><b>Remplissez la fiche</b> de la structure, avec son SIRET, son numéro RNA ou de déclaration. Nous la vérifions, en général sous 2 jours ouvrés.</li>
+      <li><b>Publiez vos offres</b> et consultez les profils dès que la structure est vérifiée. Une offre apparaît sur le site dans l'heure et disparaît d'elle-même à la date choisie.</li>
+    </ol>
+    <p><b>Une formule à la saison ou à l'année</b>, sans engagement de durée. Gratuit pendant le lancement.</p>
     <h2>Nos engagements</h2>
     <ul>
       <li><b>Gratuit pour les candidats</b>, toujours (code du travail, article L5321-3).</li>
-      <li><b>Des offres, pas une base de CV</b> : beaucoup d'animateurs ont 16 ou 17 ans, aucun profil de jeune n'est publié ni vendu.</li>
+      <li><b>Des profils protégés</b> : beaucoup d'animateurs ont 16 ou 17 ans. Leurs profils ne sont jamais publics ni vendus, seules les structures vérifiées les voient, et chacun peut cacher ou supprimer le sien.</li>
       <li>Les offres respectent les règles des annonces d'emploi : en français, sans limite d'âge supérieure, sans information trompeuse.</li>
     </ul>
     <p><a href="{{ lien('/contact/') }}">Une question ? Écrivez-nous</a></p>

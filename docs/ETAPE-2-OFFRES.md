@@ -2,6 +2,12 @@
 
 État au 25 octobre 2026 : **tout est prêt techniquement, rien n'est en vente, aucune offre n'est publiée.**
 
+> **Mise à jour du 25/10/2026 (soir)** : l'inscription par e-mail (Brevo) et l'envoi des offres
+> par e-mail sont **remplacés par des comptes** (Supabase) : les candidats créent un profil visible
+> par les structures vérifiées, les structures publient elles-mêmes leurs offres.
+> Voir **docs/COMPTES-SUPABASE.md**. Les sections ci-dessous sur Brevo et sur l'ajout des offres
+> à la main restent valables seulement comme solution de secours.
+
 ## L'inscription gratuite des animateurs (choix du 25/10/2026)
 
 Pas de compte : une **inscription aux alertes** par e-mail (adresse, département, profil), gérée par

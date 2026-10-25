@@ -44,6 +44,13 @@ fondateurs:
   places: 30
   reservees: 0
 
-# Inscription gratuite des animateurs (alertes d'offres par e-mail, sans profil public).
-# Adresse « action » d'un formulaire Brevo (liste dédiée, double confirmation). Vide : inscriptions pas encore ouvertes.
-inscription_animateurs: ""
+# Comptes des candidats et des structures (Supabase, projet « filrouganim », région Paris).
+# L'URL et la clé « publishable » sont faites pour être publiques : la sécurité vient des règles
+# d'accès de la base (supabase/schema.sql). Ne jamais mettre ici la clé secrète.
+supabase:
+  url: https://abjimkhwbuhsfdnhweyy.supabase.co
+  cle: sb_publishable_AMVfIm318LnwSUxNfQcNzQ_ZsOKvsJb
+# false : la page /compte/ existe pour les essais, mais le site n'y renvoie pas encore.
+# true : les boutons « Créer mon profil » et « Créer le compte de ma structure » apparaissent.
+# À passer à true après : l'envoi des e-mails par Brevo (SMTP), les mentions légales complètes.
+comptes_ouverts: false

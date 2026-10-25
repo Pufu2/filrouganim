@@ -4,9 +4,10 @@ on:
   # à chaque modification envoyée sur la branche principale (mise en ligne autorisée le 24/10/2026)
   push:
     branches: [main]
-  # chaque matin à 6 h 15 (heure de Paris en hiver) : les sessions terminées disparaissent
+  # toutes les heures de 6 h à 23 h (heure de Paris en hiver) : les offres publiées depuis les comptes
+  # arrivent sur le site, les sessions terminées et les offres expirées disparaissent
   schedule:
-    - cron: "15 5 * * *"
+    - cron: "23 5-22 * * *"
   # bouton « Run workflow » dans l'onglet Actions
   workflow_dispatch:
 
