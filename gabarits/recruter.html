@@ -41,4 +41,10 @@
     <p><a href="{{ lien('/contact/') }}">Une question ? Écrivez-nous</a></p>
   </article>
 </section>
+<section class="bande bande-sable" aria-labelledby="t-outils">
+  <div class="cadre">
+    <h2 id="t-outils">Les outils gratuits pour votre équipe</h2>
+    <ul class="liste-outils">{% for u, t, d in OUTILS %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>{% endfor %}</ul>
+  </div>
+</section>
 {% endblock %}

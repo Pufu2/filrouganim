@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Les outils gratuits : le calcul se fait dans le navigateur (statique/js/outils.js), rien n'est envoyé. #}
+{% set o = page.outil %}
+{% block tete_note %}<p class="note-main">outil gratuit</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+<div class="cadre outil" data-outil="{{ o }}">
+
+{% if o == "encadrement" %}
+  <form class="carte-compte formulaire" id="f-outil">
+    <div class="champs-2">
+      <label class="champ champ-large"><span>Type d'accueil</span>
+        <select name="accueil">
+          <option value="extra">Accueil de loisirs extrascolaire (vacances, samedis sans école, dimanches)</option>
+          <option value="peri">Accueil de loisirs périscolaire (jours d'école, mercredis)</option>
+          <option value="peri-pedt">Accueil de loisirs périscolaire dans un projet éducatif territorial (PEDT)</option>
+          <option value="sejour">Séjour de vacances (colo, 4 nuits ou plus)</option>
+          <option value="minicamp">Mini-camp de 1 à 4 nuits rattaché à un accueil de loisirs</option>
+        </select></label>
+      <label class="champ" data-si="peri peri-pedt"><span>Durée de l'accueil</span>
+        <select name="duree"><option value="court">5 heures consécutives ou moins</option><option value="long">Plus de 5 heures consécutives</option></select></label>
+      <label class="champ"><span>Enfants de moins de 6 ans</span><input type="number" name="moins6" min="0" max="999" value="0" inputmode="numeric"></label>
+      <label class="champ"><span>Enfants de 6 ans ou plus</span><input type="number" name="plus6" min="0" max="999" value="0" inputmode="numeric"></label>
+    </div>
+  </form>
+  <div class="carte-compte resultat" id="resultat" aria-live="polite"></div>
+  <article class="texte">
+    <h2>Les règles appliquées</h2>
+    <ul>
+      <li><b>Séjours de vacances et accueils de loisirs extrascolaires</b> : 1 animateur pour 8 enfants de moins de 6 ans, 1 pour 12 enfants de 6 ans ou plus (article R227-15).</li>
+      <li><b>Accueils de loisirs périscolaires</b> : 1 pour 10 moins de 6 ans et 1 pour 14 plus de 6 ans quand l'accueil dure 5 heures consécutives ou moins ; 1 pour 8 et 1 pour 12 au-delà (article R227-16, I).</li>
+      <li><b>Périscolaire dans un PEDT</b> : au moins 1 pour 14 et 1 pour 18 (5 heures ou moins) ; 1 pour 10 et 1 pour 14 au-delà. Pendant les trajets entre l'école et les locaux, ce sont les taux du périscolaire sans PEDT qui s'appliquent (article R227-16, II).</li>
+      <li><b>L'équipe</b> : au moins la <b>moitié</b> de l'effectif requis est diplômée (BAFA ou équivalent) ; au plus <b>20 %</b> sans diplôme ni formation en cours, ou <b>une personne</b> quand l'effectif est de 3 ou 4 ; les autres sont stagiaires (article R227-12).</li>
+      <li><b>Séjour de vacances</b> : jamais moins de 2 encadrants ; au-delà de 100 mineurs, un directeur adjoint de plus par tranche de 50 (article R227-18). Mini-camp de 1 à 4 nuits pour des moins de 14 ans : mêmes taux que les séjours, au moins 2 personnes (article R227-17).</li>
+      <li>Les personnes qui encadrent <b>ponctuellement</b> ne comptent pas, sauf dans un PEDT pendant leur présence (article R227-20). Le directeur peut compter dans l'effectif dans certains petits accueils, sous des seuils fixés par arrêté : demandez à votre SDJES.</li>
+      <li>Ces taux ne remplacent pas les règles propres aux <b>activités physiques</b> (baignade, escalade, vélo…), qui ont leurs propres taux (article R227-13 et arrêté du 25 avril 2012).</li>
+    </ul>
+    <p class="petit">Calcul prudent : chaque tranche d'âge est arrondie à l'animateur supérieur. Source : code de l'action sociale et des familles, articles R227-1 et R227-12 à R227-20, version en vigueur au 23 octobre 2026 (lue le 25 octobre 2026). Cet outil aide à préparer une équipe ; en cas de doute, le service départemental à la jeunesse, à l'engagement et aux sports (SDJES) fait foi.</p>
+  </article>
+
+{% elif o == "cee" %}
+  <form class="carte-compte formulaire" id="f-outil">
+    <div class="champs-2">
+      <label class="champ"><span>Nombre de jours travaillés au contrat</span><input type="number" name="jours" min="1" max="80" value="14" inputmode="numeric"></label>
+      <label class="champ"><span>Rémunération brute proposée par jour (€)</span><input type="number" name="brut" min="0" step="0.01" value="52.93" inputmode="decimal"></label>
+      <label class="champ champ-large"><span>Jours déjà faits en CEE dans les 12 derniers mois (tous employeurs)</span><input type="number" name="deja" min="0" max="365" value="0" inputmode="numeric"></label>
+    </div>
+  </form>
+  <div class="carte-compte resultat" id="resultat" aria-live="polite" data-smic="12.31" data-coef="4.30"></div>
+  <article class="texte">
+    <h2>Les règles du contrat d'engagement éducatif</h2>
+    <ul>
+      <li><b>Rémunération</b> : au moins <b>4,30 fois le Smic horaire par jour</b> (article D432-2), soit <b>52,93 € brut</b> avec le Smic horaire à 12,31 €. Quand le poste demande une présence continue, les repas et le logement sont à la charge de l'organisateur et ne sont pas des avantages en nature.</li>
+      <li><b>80 jours au plus</b> sur 12 mois consécutifs (article L432-4).</li>
+      <li><b>48 heures par semaine au plus</b> en moyenne sur 6 mois, tous contrats confondus (article L432-4).</li>
+      <li><b>Repos</b> : 11 heures consécutives par période de 24 heures, qui peuvent être réduites jusqu'à 8 heures ou supprimées avec un repos compensateur (articles L432-5, D432-3 et D432-4) ; et <b>24 heures consécutives</b> par période de 7 jours (article L432-6).</li>
+    </ul>
+    <p class="petit">Sources : code de l'action sociale et des familles, version en vigueur au 23 octobre 2026 ; Service-Public, <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F2300">montant du Smic</a> et <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F23425">contrat d'engagement éducatif</a> (vérifiés le 1er juin 2026, lus le 25 octobre 2026). Montants bruts : le net dépend des cotisations. Cet outil ne remplace pas un conseil juridique.</p>
+    <p><a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Le guide complet du contrat d'engagement éducatif</a></p>
+  </article>
+
+{% elif o == "parcours" %}
+  <form class="carte-compte formulaire" id="f-outil">
+    <div class="champs-2">
+      <label class="champ"><span>Début de ma formation générale</span><input type="date" name="fg"></label>
+      <label class="champ"><span>Mon stage pratique : fait le (facultatif)</span><input type="date" name="stage"></label>
+    </div>
+    <p class="petit">Rien n'est envoyé : le calcul se fait sur votre téléphone ou votre ordinateur, qui garde vos dates pour la prochaine fois.</p>
+  </form>
+  <div class="carte-compte resultat" id="resultat" aria-live="polite" data-sessions="{{ lien('/se-former/sessions/') }}"></div>
+  <article class="texte">
+    <h2>Les délais du BAFA</h2>
+    <p>Les trois étapes se font dans l'ordre : formation générale, stage pratique d'au moins 14 jours, puis approfondissement (6 jours) ou qualification (8 jours). Le stage pratique doit avoir lieu <b>au plus tard 18 mois</b> après la formation générale, et le parcours entier tient en <b>30 mois</b> au plus.</p>
+    <p class="petit">Les dates sont indicatives : la date qui fait foi est celle de votre dossier sur <a href="https://bafa-bafd.jeunes.gouv.fr/">bafa-bafd.jeunes.gouv.fr</a>, et votre organisme de formation peut vous confirmer les délais. <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Le guide des étapes du BAFA, avec ses sources</a>.</p>
+  </article>
+{% endif %}
+
+  <nav class="autres-outils" aria-label="Les autres outils">
+    <h2>Les autres outils gratuits</h2>
+    <ul class="liste-outils">
+    {% for u, t, d in OUTILS if u != page.url %}
+      <li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>
+    {% endfor %}
+    </ul>
+  </nav>
+</div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ statique('js/outils.js') }}"></script>{% endblock %}

@@ -54,6 +54,17 @@ Ce que les règles garantissent (testé sur une copie locale de la base le 25/10
 - un compte est soit candidat, soit structure ;
 - « Supprimer mon compte » efface le compte et toutes ses données.
 
+## Version 2 (25/10/2026, soir) : relancer le fichier
+
+`supabase/schema.sql` a été complété : **candidatures** (un candidat postule avec son profil, la
+structure répond vue / retenue / non retenue), **favoris** des structures, profils plus complets
+(poste recherché, ville, dates de disponibilité, expériences, activités, permis B), offres plus
+précises (type d'accueil, nombre de postes, âge des enfants), et purge mensuelle des comptes
+inactifs. Le relancer (SQL Editor > coller > Run) : les données déjà saisies sont gardées.
+Testé sur une copie locale : mise à jour depuis la version 1 avec des données, puis les règles
+(un candidat ne peut pas changer le statut de sa candidature, ni postuler à une offre d'une
+structure non vérifiée ; une structure non vérifiée ne voit ni candidature ni profil).
+
 ## Vérifier une structure (à chaque nouvelle structure)
 
 1. **Table Editor**, table `structures` : la nouvelle ligne a `verifiee` à `false`.
@@ -68,8 +79,9 @@ Ce que les règles garantissent (testé sur une copie locale de la base le 25/10
 1. Envoi des e-mails par **Brevo** (SMTP) : Authentication > Emails > SMTP Settings.
 2. Modèle de l'e-mail « Magic Link » en français (Authentication > Emails > Templates).
 3. Mentions légales complètes (éditeur), et relecture des pages Confidentialité et Conditions.
-4. Suppression des comptes sans connexion depuis 2 ans (promise dans la page Confidentialité) :
-   une tâche mensuelle à mettre en place.
+4. Vérifier que la purge des comptes inactifs (2 ans) est programmée : SQL Editor,
+   `select jobname, schedule from cron.job;` doit montrer `purger-comptes-inactifs`. Sinon :
+   Database > Extensions > activer **pg_cron**, puis relancer `supabase/schema.sql`.
 5. Tester soi-même : un compte structure, une offre, un compte candidat.
 
 Jusque-là, la page `/compte/` existe pour les essais, mais le site n'y renvoie pas.
@@ -91,6 +103,6 @@ Jusque-là, la page `/compte/` existe pour les essais, mais le site n'y renvoie 
 
 - Supabase est le **sous-traitant** : le nommer dans la page Confidentialité, avec la région.
 - Chacun peut modifier ou **supprimer son compte** lui-même.
-- Compte candidat supprimé après 2 ans sans connexion (e-mail de rappel avant).
+- Compte supprimé après 2 ans sans connexion (fonction `purger_comptes_inactifs`, chaque mois).
 - Pas de photo, pas de date de naissance complète (une case « j'ai 16 ans ou plus »),
   pas de numéro de téléphone dans les profils ; pas de données de santé.

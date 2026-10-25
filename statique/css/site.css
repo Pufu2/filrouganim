@@ -395,3 +395,51 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .liste-coches { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 6px; }
 .liste-coches li { position: relative; padding-left: 28px; }
 .liste-coches li::before { content: "✓"; position: absolute; left: 4px; top: 0; font-weight: 700; color: var(--fil); }
+.tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 0 0 22px; }
+.tuile { display: flex; flex-direction: column; gap: 2px; background: var(--nuit); color: var(--creme); border-radius: 16px; padding: 16px 18px; text-decoration: none; }
+.tuile b { font-family: var(--titres); font-size: 2rem; line-height: 1.1; color: #fff; }
+.tuile span { font-size: .95rem; }
+.tuile:hover { background: var(--nuit-2); color: #fff; text-decoration: none; }
+.carte-accent { border: 2px solid var(--fil); }
+.replier > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.replier > summary::-webkit-details-marker { display: none; }
+.replier > summary::after { content: "Modifier ▾"; font-weight: 700; color: var(--fil-fonce); white-space: nowrap; }
+.replier[open] > summary::after { content: "Replier ▴"; }
+.replier > summary h2 { margin: 0; }
+.replier[open] > summary { margin-bottom: 16px; }
+.pastilles { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.pastilles li { background: #fbe4df; color: var(--fil-fonce); font-weight: 700; font-size: .88rem; border-radius: 999px; padding: 2px 10px; }
+.accroche-profil { font-weight: 700; }
+.boutons-colonne { flex-direction: column; align-items: stretch; }
+.bouton-favori[aria-pressed="true"] { color: #8a5a00; border-color: #e0b44a; background: #fff6dd; }
+.candidature { border: 1px solid var(--trait); border-radius: 16px; padding: 12px; display: grid; gap: 8px; }
+.candidature-tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.candidature-tete p { margin: 0; font-weight: 700; }
+.statut-select { font: inherit; font-weight: 700; border: 1.5px solid var(--trait); border-radius: 10px; padding: 6px 10px; background: var(--blanc); }
+.message-candidat { margin: 0; font-style: italic; }
+.case-filtre { align-self: end; padding-bottom: 10px; }
+
+/* ---------------------------------------------------------------- outils */
+.outil { max-width: 860px; }
+.outil .texte { margin-top: 10px; }
+.outil [hidden] { display: none !important; }
+.resultat { border: 2px solid var(--fil); }
+.grand-chiffre { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 10px; }
+.grand-chiffre b { font-family: var(--titres); font-size: clamp(2rem, 7vw, 3rem); line-height: 1; color: var(--fil); }
+.grand-chiffre span { font-weight: 700; }
+.detail, .etapes-dates { margin: 0 0 12px; padding-left: 1.2em; display: grid; gap: 6px; }
+.detail .alerte, .etapes-dates .alerte { color: #8a1c14; font-weight: 700; }
+.detail .ok { color: #2f4a34; }
+.etapes-dates { list-style: none; padding: 0; }
+.etapes-dates li { padding-left: 30px; position: relative; }
+.etapes-dates li::before { position: absolute; left: 0; font-weight: 700; }
+.etapes-dates .fait::before { content: "✓"; color: var(--sauge); }
+.etapes-dates .a-faire::before { content: "○"; color: var(--fil); }
+.etapes-dates .alerte::before { content: "!"; color: #8a1c14; }
+.autres-outils { margin-top: 30px; }
+.liste-outils { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.liste-outils a { display: flex; flex-direction: column; gap: 4px; height: 100%; background: var(--blanc); border: 1px solid var(--trait); border-radius: 14px; padding: 16px; text-decoration: none; color: var(--encre); }
+.liste-outils a:hover { border-color: var(--fil); }
+.liste-outils b { font-family: var(--titres); font-size: 1.15rem; color: var(--fil-fonce); }
+.liste-outils span { color: var(--doux); }
+.liste-outils-grande a { padding: 22px; }

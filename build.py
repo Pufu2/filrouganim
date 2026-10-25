@@ -77,6 +77,11 @@ def paragraphes(texte):
     return "".join("<p>" + html.escape(b).replace("\n", "<br>") + "</p>" for b in blocs)
 
 
+OUTILS = [("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires pour votre accueil."),
+          ("/outils/salaire-cee/", "Contrat d'engagement éducatif", "La rémunération minimale et les 80 jours sur 12 mois."),
+          ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement.")]
+
+
 def date_fr(d, annee=True):
     d = en_date(d)
     jour = "1er" if d.day == 1 else str(d.day)
@@ -171,7 +176,7 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
-        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES,
+        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
 
@@ -473,6 +478,23 @@ class Site:
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
                          fil=[("Trouver un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+        # outils gratuits (calculs dans le navigateur)
+        OT = ("Outils", "/outils/")
+        self.ajouter("/outils/", "outils.html", titre="Outils gratuits pour l'animation : encadrement, CEE, BAFA",
+                     description="Calculer le taux d'encadrement d'un accueil de mineurs, vérifier un contrat d'engagement éducatif, suivre les délais de son BAFA : des outils gratuits, sans compte, avec les textes officiels.",
+                     h1="Les outils gratuits", intro="Pour préparer une équipe, vérifier un contrat ou ne pas rater une date. Gratuits, sans compte, rien n'est envoyé.", fil=[OT])
+        for url, gab, titre, h1, intro, description, outil in [
+            ("/outils/taux-d-encadrement/", "outil.html", "Calculer le taux d'encadrement d'un accueil de mineurs (ACM)",
+             "Calculer le taux d'encadrement", "Combien d'animateurs pour votre accueil de loisirs, votre périscolaire ou votre séjour ? Et combien de diplômés, de stagiaires, de non-diplômés ?",
+             "Calculateur gratuit du taux d'encadrement en accueil collectif de mineurs : séjour, accueil de loisirs, périscolaire, PEDT. Avec la répartition diplômés, stagiaires et non-diplômés, d'après le code de l'action sociale et des familles.", "encadrement"),
+            ("/outils/salaire-cee/", "outil.html", "Contrat d'engagement éducatif : vérifier sa rémunération et ses jours",
+             "Vérifier un contrat d'engagement éducatif", "La rémunération proposée respecte-t-elle le minimum légal ? Combien de jours de CEE vous reste-t-il sur 12 mois ?",
+             "Calculateur gratuit du contrat d'engagement éducatif (CEE) : rémunération minimale de 52,93 € brut par jour, plafond de 80 jours sur 12 mois, repos. D'après le code de l'action sociale et des familles.", "cee"),
+            ("/outils/mon-parcours-bafa/", "outil.html", "Mon parcours BAFA : les dates limites de chaque étape",
+             "Mon parcours BAFA : mes dates limites", "Entrez la date de votre formation générale : vous voyez jusqu'à quand faire votre stage pratique et votre approfondissement.",
+             "Calculez les dates limites de votre BAFA : stage pratique dans les 18 mois, parcours complet en 30 mois, et les sessions d'approfondissement à temps.", "parcours"),
+        ]:
+            self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, fil=[OT, (h1, url)])
         if (self.config.get("supabase") or {}).get("url"):
             self.ajouter("/compte/", "compte.html", titre="Mon compte", indexer=False,
                          description="Votre compte Fil Roug'Anim : profil de candidat, ou fiche de structure et offres.",

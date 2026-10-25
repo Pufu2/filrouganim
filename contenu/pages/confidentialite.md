@@ -26,20 +26,20 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 **Ce que nous gardons**
 
 - Pour tous : l'adresse e-mail de connexion et les dates de connexion.
-- **Candidats** : le profil que vous remplissez (prénom ou pseudo, département, diplômes, ce que vous cherchez, disponibilités, présentation, e-mail de contact) et la case « 16 ans ou plus ». Nous ne demandons ni nom de famille, ni date de naissance, ni adresse, ni téléphone, ni photo.
-- **Structures** : la fiche de la structure (nom, type, ville, e-mail de recrutement, site, SIRET, RNA ou n° de déclaration) et ses offres.
+- **Candidats** : le profil que vous remplissez (prénom ou pseudo, département et ville si vous le souhaitez, diplômes, permis B, expériences, activités, ce que vous cherchez, disponibilités, présentation, e-mail de contact), la case « 16 ans ou plus », et vos candidatures (l'offre, votre message, la réponse de la structure). Nous ne demandons ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone, ni photo.
+- **Structures** : la fiche de la structure (nom, type, ville, e-mail de recrutement, site, SIRET, RNA ou n° de déclaration), ses offres et ses profils favoris.
 
 **Pourquoi** : mettre en relation les candidats et les structures d'animation, et vérifier que les structures sont réelles. Le traitement repose sur votre **consentement** (vous créez le compte et choisissez de montrer votre profil) ; vous pouvez le retirer à tout moment.
 
 **Qui voit quoi**
 
-- Votre profil de candidat n'est **jamais public** et n'apparaît pas sur Google. Seules les **structures inscrites et vérifiées** le voient, tant que vous le laissez visible.
+- Votre profil de candidat n'est **jamais public** et n'apparaît pas sur Google. Seules les **structures inscrites et vérifiées** le voient, tant que vous le laissez visible. Quand vous postulez à une offre, la structure qui l'a publiée voit votre profil et votre message, même si votre profil est caché.
 - Les offres et le nom, la ville et le site des structures vérifiées sont publics.
 - Les structures s'engagent à n'utiliser les profils que pour recruter, sans les copier ni les transmettre.
 
 **Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les e-mails de connexion sont envoyés par ce service.
 
-**Combien de temps** : tant que le compte existe. Un compte sans connexion depuis 2 ans est supprimé, après un e-mail de rappel.
+**Combien de temps** : tant que le compte existe. Un compte sans connexion depuis 2 ans est supprimé automatiquement, avec toutes ses données. Une candidature disparaît quand le candidat la retire ou quand l'offre est supprimée.
 
 **Dans votre navigateur** : une fois connecté, le site garde votre session dans le stockage local du navigateur, pour que vous restiez connecté. C'est indispensable au service et ce n'est pas un traceur publicitaire. « Se déconnecter » l'efface.
 

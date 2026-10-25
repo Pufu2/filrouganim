@@ -24,6 +24,7 @@ Chaque session indique la date à laquelle elle a été relevée ou vérifiée. 
 - Une **structure** n'est publiée qu'après vérification. Elle n'utilise les profils des candidats **que pour leur proposer un poste** : pas de copie, pas de transmission à d'autres, pas de prospection commerciale.
 - Une **offre** est rédigée en français, décrit un poste réel et disponible, et ne contient ni limite d'âge supérieure, ni critère discriminatoire, ni information fausse ou trompeuse (code du travail, articles L5331-2, L5331-3, L5331-4 et L1132-1). La structure en est responsable.
 - Nous pouvons retirer une offre ou un profil qui ne respecte pas ces règles, et fermer le compte concerné. Pour signaler un problème : {{ site.email }}.
+- Un candidat peut **postuler** avec son profil aux offres en ligne : la structure voit alors son profil et son message, et lui répond directement. La structure indique où en est la candidature (vue, retenue, non retenue) ; elle reste libre de son choix, dans le respect de la non-discrimination.
 - Chacun peut supprimer son compte à tout moment depuis « Mon compte ».
 
 ## Responsabilité

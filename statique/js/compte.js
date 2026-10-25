@@ -55,7 +55,7 @@
       if (!c.name || !(c.name in donnees)) return;
       var v = donnees[c.name];
       if (c.type === "checkbox") c.checked = Array.isArray(v) ? v.indexOf(c.value) >= 0 : !!v;
-      else c.value = v == null ? "" : v;
+      else c.value = v == null ? "" : (Array.isArray(v) ? v.join(", ") : v);
     });
   }
   function lire(form, champs) {
@@ -100,7 +100,7 @@
     profil = rep[0].data; structure = rep[1].data;
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
-    if (params.get("role") === "candidat") return voirCandidat();
+    if (params.get("role") === "candidat" || params.get("postuler")) return voirCandidat();
     if (params.get("role") === "structure") return voirStructure();
     montrer("v-choix", "v-session");
   }
@@ -109,7 +109,9 @@
     e.preventDefault();
     var form = this, email = form.email.value.trim();
     occupe(form, true);
-    var retour = location.origin + location.pathname + (params.get("role") ? "?role=" + encodeURIComponent(params.get("role")) : "");
+    var garder = new URLSearchParams();
+    ["role", "postuler"].forEach(function (k) { if (params.get(k)) garder.set(k, params.get(k)); });
+    var retour = location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
     var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: retour } });
     occupe(form, false);
     if (r.error) message(erreurLisible(r.error), true);
@@ -124,15 +126,28 @@
   });
 
   /* -- candidat -- */
-  var CHAMPS_PROFIL = ["prenom", "email_contact", "departement", "disponibilites", "diplomes", "recherche", "mobilite", "presentation", "publie", "seize_ans"];
+  var CHAMPS_PROFIL = ["prenom", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
+                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans"];
   function voirCandidat() {
     montrer("v-candidat", "v-session");
-    $("chapo-compte").textContent = profil ? "Votre profil, que seules les structures vérifiées peuvent voir." : "Créez votre profil en deux minutes. C'est gratuit, et ça le restera.";
+    $("chapo-compte").textContent = profil ? "Ton espace : tes candidatures, les offres pour toi et ton profil." : "Crée ton profil en deux minutes. C'est gratuit, et ça le restera.";
     remplir($("f-profil"), profil || { email_contact: utilisateur.email, publie: true });
+    $("bloc-profil").open = !profil;
+    $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = !profil;
+    $("tuiles-candidat").hidden = !profil;
+    if (!profil) {
+      if (params.get("postuler")) message("Crée d'abord ton profil : ta candidature partira juste après.");
+      $("bloc-profil").open = true;
+      return;
+    }
+    tableauCandidat();
+    if (params.get("postuler")) ouvrirPostuler(params.get("postuler"));
   }
   $("f-profil").addEventListener("submit", async function (e) {
     e.preventDefault();
     var form = this, d = lire(form, CHAMPS_PROFIL);
+    d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 10);
+    if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de tes disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
       ? await sb.from("profils").update(d).eq("id", utilisateur.id).select().single()
@@ -141,8 +156,8 @@
     if (r.error) { message(erreurLisible(r.error), true); return; }
     var nouveau = !profil;
     profil = r.data;
-    message(nouveau ? "Votre profil est créé. Les structures vérifiées de votre secteur peuvent maintenant vous écrire."
-                    : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus."));
+    message(nouveau ? "Ton profil est créé. Les structures vérifiées de ton secteur peuvent maintenant t'écrire."
+                    : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus (sauf celles à qui tu as postulé)."));
     voirCandidat();
   });
 
@@ -171,7 +186,9 @@
     }
     $("bloc-offres").hidden = !structure;
     $("bloc-candidats").hidden = !(structure && structure.verifiee);
-    if (structure) chargerOffres();
+    $("bloc-structure").open = !structure;
+    $("tuiles-structure").hidden = !structure;
+    if (structure) chargerOffres().then(tableauStructure);
     if (structure && structure.verifiee) chargerCandidats();
   }
   $("f-structure").addEventListener("submit", async function (e) {
@@ -190,10 +207,12 @@
   });
 
   /* -- offres de la structure -- */
-  var CHAMPS_OFFRE = ["intitule", "poste", "contrat", "ville", "departement", "debut", "fin", "public", "diplomes",
+  var CHAMPS_OFFRE = ["intitule", "poste", "contrat", "type_accueil", "nb_postes", "age_min", "age_max", "ville", "departement", "debut", "fin", "public", "diplomes",
                       "remuneration_montant", "remuneration_unite", "candidater", "expire_le", "texte", "loge", "publiee"];
+  var mesOffres = [];
   async function chargerOffres() {
     var r = await sb.from("offres").select("*").eq("structure_id", utilisateur.id).order("debut");
+    mesOffres = r.data || [];
     var liste = $("liste-offres");
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
@@ -246,6 +265,7 @@
     var form = this, d = lire(form, CHAMPS_OFFRE);
     if (!d.remuneration_montant) d.remuneration_unite = null;
     if (d.fin && d.fin < d.debut) { message("La date de fin est avant la date de début.", true); return; }
+    if (d.age_min && d.age_max && +d.age_max < +d.age_min) { message("L'âge maximum des enfants est plus petit que l'âge minimum.", true); return; }
     occupe(form, true);
     var r = offreEnCours
       ? await sb.from("offres").update(d).eq("id", offreEnCours.id)
@@ -254,40 +274,240 @@
     if (r.error) { message(erreurLisible(r.error), true); return; }
     form.hidden = true; offreEnCours = null;
     message(structure.verifiee ? "Offre enregistrée. Elle apparaît sur le site dans l'heure." : "Offre enregistrée. Elle sera en ligne dès que la structure sera vérifiée.");
-    chargerOffres();
+    chargerOffres().then(tableauStructure);
   });
 
+  /* -- un profil de candidat, affiché pour une structure -- */
+  var favoris = [];
+  function carteProfil(p, avecFavori) {
+    var c = el("article", "ligne-compte profil-candidat");
+    var corps = el("div");
+    corps.appendChild(el("h3", null, p.prenom + " · " + (p.ville ? p.ville + ", " : "") + nomDep(p.departement)));
+    if (p.poste_recherche) corps.appendChild(el("p", "accroche-profil", p.poste_recherche));
+    if (p.diplomes && p.diplomes.length) {
+      var ul = el("ul", "pastilles");
+      p.diplomes.forEach(function (x) { ul.appendChild(el("li", null, libelle("diplomes", x))); });
+      if (p.permis_b) ul.appendChild(el("li", null, "Permis B"));
+      corps.appendChild(ul);
+    }
+    if (p.recherche && p.recherche.length) corps.appendChild(el("p", "petit", "Cherche : " + p.recherche.map(function (x) { return libelle("recherche", x); }).join(", ")));
+    if (p.experiences && p.experiences.length) corps.appendChild(el("p", "petit", "Expérience : " + p.experiences.map(function (x) { return libelle("experiences", x); }).join(", ")));
+    if (p.activites && p.activites.length) corps.appendChild(el("p", "petit", "Activités : " + p.activites.join(", ")));
+    var dispo = [];
+    if (p.dispo_debut) dispo.push((p.dispo_fin ? "du " : "à partir du ") + dateFr(p.dispo_debut) + (p.dispo_fin ? " au " + dateFr(p.dispo_fin) : ""));
+    if (p.disponibilites) dispo.push(p.disponibilites);
+    if (dispo.length) corps.appendChild(el("p", "petit", "Disponible : " + dispo.join(" · ")));
+    if (p.mobilite && p.mobilite.length) corps.appendChild(el("p", "petit", "Peut aussi travailler : " + p.mobilite.map(nomDep).join(", ")));
+    if (p.presentation) corps.appendChild(el("p", "presentation", p.presentation));
+    if (p.maj_le) corps.appendChild(el("p", "petit", "Profil mis à jour le " + dateFr(p.maj_le)));
+    c.appendChild(corps);
+    var actions = el("div", "boutons boutons-colonne");
+    var a = el("a", "bouton-r", "Écrire");
+    a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
+    actions.appendChild(a);
+    if (avecFavori && p.id) {
+      var f = el("button", "bouton-texte bouton-favori");
+      f.type = "button";
+      var maj = function () { var oui = favoris.indexOf(p.id) >= 0; f.textContent = oui ? "★ Favori" : "☆ Mettre en favori"; f.setAttribute("aria-pressed", oui); };
+      maj();
+      f.addEventListener("click", async function () {
+        var oui = favoris.indexOf(p.id) >= 0;
+        var r = oui ? await sb.from("favoris").delete().eq("profil_id", p.id) : await sb.from("favoris").insert({ profil_id: p.id });
+        if (r.error) { message(erreurLisible(r.error), true); return; }
+        if (oui) favoris.splice(favoris.indexOf(p.id), 1); else favoris.push(p.id);
+        maj(); tableauStructure();
+      });
+      actions.appendChild(f);
+    }
+    c.appendChild(actions);
+    return c;
+  }
+
   /* -- candidats (structures vérifiées seulement : la base refuse les autres) -- */
+  var CHAMPS_VUS = "id,prenom,departement,ville,poste_recherche,mobilite,diplomes,recherche,experiences,activites,permis_b," +
+                   "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le";
   async function chargerCandidats() {
     var f = $("f-candidats");
-    var q = sb.from("profils").select("prenom,departement,mobilite,diplomes,recherche,disponibilites,presentation,email_contact,maj_le")
-      .eq("publie", true).order("maj_le", { ascending: false }).limit(100);
+    var fav = await sb.from("favoris").select("profil_id");
+    favoris = (fav.data || []).map(function (x) { return x.profil_id; });
+    var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).order("maj_le", { ascending: false }).limit(100);
     if (f.dep.value) q = q.or("departement.eq." + f.dep.value + ",mobilite.cs.{" + f.dep.value + "}");
     if (f.diplome.value) q = q.contains("diplomes", [f.diplome.value]);
     if (f.cherche.value) q = q.contains("recherche", [f.cherche.value]);
+    if (f.favoris.checked) q = q.in("id", favoris.length ? favoris : ["00000000-0000-0000-0000-000000000000"]);
     var r = await q;
     var liste = $("liste-candidats");
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
     $("compte-candidats").textContent = r.data.length ? r.data.length + " profil" + (r.data.length > 1 ? "s" : "") + (r.data.length === 100 ? " (les 100 plus récents)" : "") : "";
-    if (!r.data.length) { liste.appendChild(el("p", "aucune", "Aucun profil ne correspond pour l'instant.")); return; }
-    r.data.forEach(function (p) {
-      var c = el("article", "ligne-compte profil-candidat");
-      var corps = el("div");
-      corps.appendChild(el("h3", null, p.prenom + " · " + nomDep(p.departement)));
-      if (p.diplomes.length) corps.appendChild(el("p", null, p.diplomes.map(function (x) { return libelle("diplomes", x); }).join(", ")));
-      if (p.recherche.length) corps.appendChild(el("p", "petit", "Cherche : " + p.recherche.map(function (x) { return libelle("recherche", x); }).join(", ")));
-      if (p.mobilite.length) corps.appendChild(el("p", "petit", "Peut aussi travailler : " + p.mobilite.map(nomDep).join(", ")));
-      if (p.disponibilites) corps.appendChild(el("p", "petit", "Disponible : " + p.disponibilites));
-      if (p.presentation) corps.appendChild(el("p", "presentation", p.presentation));
-      corps.appendChild(el("p", "petit", "Profil mis à jour le " + dateFr(p.maj_le)));
-      c.appendChild(corps);
-      var a = el("a", "bouton-r", "Écrire");
-      a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
-      c.appendChild(a);
-      liste.appendChild(c);
+    if (!r.data.length) { liste.appendChild(el("p", "aucune", f.favoris.checked ? "Aucun favori pour l'instant : cliquez sur « Mettre en favori » sous un profil." : "Aucun profil ne correspond pour l'instant.")); return; }
+    r.data.forEach(function (p) { liste.appendChild(carteProfil(p, true)); });
+    tableauStructure();
+  }
+
+  /* -- candidatures reçues par la structure -- */
+  var STATUTS = [["envoyee", "Nouvelle"], ["vue", "Vue"], ["retenue", "Retenue"], ["non-retenue", "Non retenue"]];
+  var recues = [];
+  async function chargerCandidaturesRecues() {
+    var ids = mesOffres.map(function (o) { return o.id; });
+    var bloc = $("bloc-candidatures-recues"), liste = $("liste-candidatures-recues");
+    if (!ids.length) { bloc.hidden = true; recues = []; return; }
+    if (structure.verifiee && !favoris.length) {
+      var fav = await sb.from("favoris").select("profil_id");
+      favoris = (fav.data || []).map(function (x) { return x.profil_id; });
+    }
+    var r = await sb.from("candidatures").select("id,offre_id,message,statut,cree_le,profils(" + CHAMPS_VUS + ")")
+      .in("offre_id", ids).order("cree_le", { ascending: false });
+    recues = r.data || [];
+    bloc.hidden = false;
+    liste.textContent = "";
+    if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
+    if (!recues.length) { liste.appendChild(el("p", "aucune", "Pas encore de candidature. Elles arrivent ici dès qu'un candidat postule à l'une de vos offres en ligne.")); return; }
+    recues.forEach(function (c) {
+      var offre = mesOffres.filter(function (o) { return o.id === c.offre_id; })[0];
+      var bloc1 = el("div", "candidature");
+      var tete = el("div", "candidature-tete");
+      tete.appendChild(el("p", null, "Pour « " + (offre ? offre.intitule : "offre supprimée") + " », le " + dateFr(c.cree_le)));
+      var sel = el("select", "statut-select");
+      sel.setAttribute("aria-label", "Statut de la candidature");
+      STATUTS.forEach(function (st) { var o = el("option", null, st[1]); o.value = st[0]; sel.appendChild(o); });
+      sel.value = c.statut;
+      sel.addEventListener("change", async function () {
+        var u = await sb.from("candidatures").update({ statut: sel.value }).eq("id", c.id);
+        if (u.error) message(erreurLisible(u.error), true); else { c.statut = sel.value; tableauStructure(); }
+      });
+      tete.appendChild(sel);
+      bloc1.appendChild(tete);
+      if (c.message) bloc1.appendChild(el("p", "presentation message-candidat", "« " + c.message + " »"));
+      if (c.profils) bloc1.appendChild(carteProfil(c.profils, structure.verifiee));
+      liste.appendChild(bloc1);
+      if (c.statut === "envoyee") {
+        // ouverte par la structure : le candidat voit « vue »
+        sb.from("candidatures").update({ statut: "vue" }).eq("id", c.id).then(function () { c.statut = "vue"; });
+      }
     });
   }
+
+  /* -- tableaux de bord -- */
+  function tuile(conteneur, chiffre, texte, cible) {
+    var a = el("a", "tuile");
+    a.href = "#" + cible;
+    a.appendChild(el("b", null, String(chiffre)));
+    a.appendChild(el("span", null, texte));
+    conteneur.appendChild(a);
+  }
+  var tableauEnCours = false;
+  async function tableauStructure() {
+    if (!structure || tableauEnCours) return;
+    tableauEnCours = true;
+    if (!recues.length && mesOffres.length && !tableauStructure.fait) { tableauStructure.fait = true; await chargerCandidaturesRecues(); }
+    var t = $("tuiles-structure");
+    t.textContent = "";
+    var enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= aujourdhui(); }).length;
+    var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
+    tuile(t, enLigne, enLigne > 1 ? "offres en ligne" : "offre en ligne", "bloc-offres");
+    tuile(t, recues.length, (recues.length > 1 ? "candidatures" : "candidature") + (nouvelles ? " dont " + nouvelles + " nouvelle" + (nouvelles > 1 ? "s" : "") : ""), "bloc-candidatures-recues");
+    if (structure.verifiee) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
+    tableauEnCours = false;
+  }
+
+  /* -- espace candidat : candidatures, offres pour toi -- */
+  var mesCandidatures = [];
+  async function tableauCandidat() {
+    var deps = [profil.departement].concat(profil.mobilite || []).filter(function (d) { return d !== "france"; });
+    var rep = await Promise.all([
+      sb.from("candidatures").select("id,offre_id,statut,cree_le,offres(intitule,ville,departement,debut,structures(nom))").order("cree_le", { ascending: false }),
+      sb.from("offres").select("id,intitule,ville,departement,debut,fin,contrat,poste,structures(nom)").in("departement", deps).order("debut").limit(30)
+    ]);
+    mesCandidatures = rep[0].data || [];
+    var offres = rep[1].data || [];
+    var t = $("tuiles-candidat");
+    t.textContent = "";
+    tuile(t, mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature", "bloc-mes-candidatures");
+    tuile(t, offres.length, offres.length > 1 ? "offres pour toi" : "offre pour toi", "bloc-offres-pour-toi");
+    var vis = el("a", "tuile");
+    vis.href = "#bloc-profil";
+    vis.appendChild(el("b", null, profil.publie ? "Visible" : "Caché"));
+    vis.appendChild(el("span", null, profil.publie ? "ton profil, pour les structures vérifiées" : "ton profil : les structures ne le voient pas"));
+    t.appendChild(vis);
+
+    var l1 = $("liste-mes-candidatures");
+    l1.textContent = "";
+    if (!mesCandidatures.length) l1.appendChild(el("p", "aucune", "Pas encore de candidature. Choisis une offre ci-dessous et postule avec ton profil."));
+    mesCandidatures.forEach(function (c) {
+      var o = c.offres || {};
+      var item = el("article", "ligne-compte");
+      var corps = el("div");
+      corps.appendChild(el("h3", null, o.intitule || "Offre retirée"));
+      corps.appendChild(el("p", "petit", ((o.structures && o.structures.nom) || "") + (o.ville ? " · " + o.ville : "") + " · envoyée le " + dateFr(c.cree_le)));
+      var etats = { envoyee: ["Envoyée", "etat etat-attente"], vue: ["Vue par la structure", "etat etat-attente"], retenue: ["Retenue : la structure va te contacter", "etat etat-ok"], "non-retenue": ["Non retenue", "etat etat-off"] };
+      corps.appendChild(el("p", etats[c.statut][1], etats[c.statut][0]));
+      item.appendChild(corps);
+      var b = el("button", "bouton-texte", "Retirer");
+      b.type = "button";
+      b.addEventListener("click", async function () {
+        if (!confirm("Retirer cette candidature ?")) return;
+        var d = await sb.from("candidatures").delete().eq("id", c.id);
+        if (d.error) message(erreurLisible(d.error), true); else { message("Candidature retirée."); tableauCandidat(); }
+      });
+      item.appendChild(b);
+      l1.appendChild(item);
+    });
+
+    var l2 = $("liste-offres-pour-toi");
+    l2.textContent = "";
+    if (!offres.length) l2.appendChild(el("p", "aucune", "Pas d'offre en ligne dans ton secteur pour l'instant. Les structures recrutent souvent dès l'hiver pour l'été : reviens bientôt."));
+    offres.forEach(function (o) {
+      var deja = mesCandidatures.some(function (c) { return c.offre_id === o.id; });
+      var item = el("article", "ligne-compte");
+      var corps = el("div");
+      var titre = el("h3");
+      var a = el("a", null, o.intitule);
+      a.href = L.lien_offre + o.id + "/";
+      titre.appendChild(a);
+      corps.appendChild(titre);
+      corps.appendChild(el("p", "petit", ((o.structures && o.structures.nom) || "") + " · " + o.ville + " (" + o.departement + ") · à partir du " + dateFr(o.debut) + " · " + libelle("contrats", o.contrat)));
+      item.appendChild(corps);
+      if (deja) item.appendChild(el("p", "etat etat-ok", "Candidature envoyée"));
+      else {
+        var b = el("button", "bouton-r", "Postuler");
+        b.type = "button";
+        b.addEventListener("click", function () { ouvrirPostuler(o.id); });
+        item.appendChild(b);
+      }
+      l2.appendChild(item);
+    });
+  }
+
+  var offreVisee = null;
+  async function ouvrirPostuler(id) {
+    var r = await sb.from("offres").select("id,intitule,ville,departement,debut,contrat,structures(nom)").eq("id", id).maybeSingle();
+    if (r.error || !r.data) { message("Cette offre n'est plus en ligne.", true); return; }
+    if (mesCandidatures.some(function (c) { return c.offre_id === r.data.id; })) { message("Tu as déjà postulé à cette offre : tu suis la réponse dans « Mes candidatures »."); return; }
+    offreVisee = r.data;
+    $("postuler-titre").textContent = offreVisee.intitule;
+    $("postuler-infos").textContent = ((offreVisee.structures && offreVisee.structures.nom) || "") + " · " + offreVisee.ville + " (" + offreVisee.departement + ") · à partir du " + dateFr(offreVisee.debut);
+    $("bloc-postuler").hidden = false;
+    $("bloc-postuler").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  $("annuler-postuler").addEventListener("click", function () { $("bloc-postuler").hidden = true; offreVisee = null; });
+  $("f-postuler").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    if (!offreVisee) return;
+    var form = this;
+    occupe(form, true);
+    var r = await sb.from("candidatures").insert({ offre_id: offreVisee.id, message: form.message.value.trim() || null });
+    occupe(form, false);
+    if (r.error) { message(/duplicate|unique/i.test(r.error.message) ? "Tu as déjà postulé à cette offre." : erreurLisible(r.error), true); return; }
+    form.reset();
+    $("bloc-postuler").hidden = true;
+    offreVisee = null;
+    if (params.get("postuler")) history.replaceState(null, "", location.pathname);
+    params.delete("postuler");
+    message("Candidature envoyée. La structure voit ton profil et ton message ; tu suis sa réponse dans « Mes candidatures ».");
+    tableauCandidat();
+  });
+
   Array.prototype.forEach.call($("f-candidats").elements, function (c) { c.addEventListener("change", chargerCandidats); });
   $("f-candidats").addEventListener("submit", function (e) { e.preventDefault(); });
 

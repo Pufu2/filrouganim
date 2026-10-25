@@ -11,7 +11,7 @@
   {% if o.remuneration and o.remuneration.montant %}<li><span>Rémunération</span><b>{{ o.remuneration.montant | euros }} {{ 'brut ' if o.remuneration.brut }}par {{ o.remuneration.unite }}</b></li>{% endif %}
   {% if o.public %}<li><span>Public</span><b>{{ o.public }}</b></li>{% endif %}
 </ul>
-<p><a class="bouton-r" href="{{ ('mailto:' ~ o.candidater) if '@' in o.candidater and not o.candidater.startswith('http') else o.candidater }}" rel="noopener nofollow">Candidater auprès de la structure <span aria-hidden="true">→</span></a></p>
+<p class="boutons">{% if site.comptes_ouverts and o.brut %}<a class="bouton-r" href="{{ lien('/compte/') }}?postuler={{ o.id }}">Postuler avec mon profil <span aria-hidden="true">→</span></a> {% endif %}<a class="{{ 'bouton-blanc' if site.comptes_ouverts and o.brut else 'bouton-r' }}" href="{{ ('mailto:' ~ o.candidater) if '@' in o.candidater and not o.candidater.startswith('http') else o.candidater }}" rel="noopener nofollow">Candidater auprès de la structure <span aria-hidden="true">→</span></a></p>
 {% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">

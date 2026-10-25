@@ -46,6 +46,8 @@
   <div class="cadre">
     <h2 id="t-conseils">Bien démarrer</h2>
     {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list, page.url, lien) }}
+    <h3>Outils gratuits</h3>
+    <ul class="liste-outils">{% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>{% endfor %}</ul>
     {{ m.encart_jeuphorie(site) }}
   </div>
 </section>
