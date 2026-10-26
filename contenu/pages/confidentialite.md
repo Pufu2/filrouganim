@@ -37,7 +37,7 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 - Les offres et le nom, la ville et le site des structures vérifiées sont publics.
 - Les structures s'engagent à n'utiliser les profils que pour recruter, sans les copier ni les transmettre.
 
-**Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les e-mails de connexion sont envoyés par ce service.
+**Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les e-mails de connexion (le lien pour se connecter) sont envoyés par **Brevo** (Sendinblue SAS, France), qui reçoit seulement votre adresse et le contenu de l'e-mail.
 
 **Les alertes du lundi** (si vous les demandez dans votre profil) : chaque lundi, un e-mail avec les nouvelles offres de votre secteur. Il est envoyé par **Brevo** (Sendinblue SAS, France), notre sous-traitant pour l'envoi d'e-mails, qui reçoit seulement votre prénom, votre adresse et le contenu de l'e-mail. Chaque e-mail contient un lien pour arrêter, en un clic.
 

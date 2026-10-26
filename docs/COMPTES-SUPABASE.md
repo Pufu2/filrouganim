@@ -101,16 +101,18 @@ projet filrouganim seulement), `BREVO_SMTP_LOGIN` et `BREVO_SMTP_KEY`. Les texte
 `supabase/emails/`. Pour les changer : modifier les fichiers, créer un nouveau jeton, le mettre
 dans le secret, relancer l'action.
 
-## Avant d'ouvrir les comptes au public (`comptes_ouverts: true` dans config.yml)
+## Ouverture des comptes au public (`comptes_ouverts: true`, le 26/10/2026)
 
 1. ~~Envoi des e-mails par Brevo et textes en français~~ : fait le 26/10/2026.
-3. Mentions légales complètes (éditeur), et relecture des pages Confidentialité et Conditions.
+3. Mentions légales : éditeur non professionnel (identité détenue par l'hébergeur, LCEN art. 6) ;
+   à compléter (nom, adresse, SIREN) avant tout paiement. Confidentialité : Brevo ajouté pour les
+   e-mails de connexion.
 4. Vérifier que la purge des comptes inactifs (2 ans) est programmée : SQL Editor,
    `select jobname, schedule from cron.job;` doit montrer `purger-comptes-inactifs`. Sinon :
    Database > Extensions > activer **pg_cron**, puis relancer `supabase/schema.sql`.
 5. Tester soi-même : un compte structure, une offre, un compte candidat.
 
-Jusque-là, la page `/compte/` existe pour les essais, mais le site n'y renvoie pas.
+Restent à faire par Pufu2 : les points 4 et 5. Pour refermer : `comptes_ouverts: false`.
 
 ## Ce qui est en place (25/10/2026)
 

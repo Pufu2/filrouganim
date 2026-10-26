@@ -50,10 +50,10 @@ fondateurs:
 supabase:
   url: https://abjimkhwbuhsfdnhweyy.supabase.co
   cle: sb_publishable_AMVfIm318LnwSUxNfQcNzQ_ZsOKvsJb
-# false : la page /compte/ existe pour les essais, mais le site n'y renvoie pas encore.
+# Ouverts au public le 26/10/2026. false : la page /compte/ existe, mais le site n'y renvoie pas.
 # true : les boutons « Créer mon profil » et « Créer le compte de ma structure » apparaissent.
 # À passer à true après : l'envoi des e-mails par Brevo (SMTP), les mentions légales complètes.
-comptes_ouverts: false
+comptes_ouverts: true
 # Adresse d'envoi des alertes du lundi (outils/alertes.py) : une adresse du domaine, validée dans Brevo.
 email_alertes: alertes@filrouganim.fr
 # Adresse d'envoi des e-mails de connexion (outils/configurer_emails.py), sur le domaine authentifié dans Brevo.
