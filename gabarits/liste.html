@@ -13,7 +13,7 @@
     <p>{{ o.presentation }}</p>
     <p class="petit">{% if o.habilitation in ('nationale', 'régionale') %}Habilitation BAFA-BAFD {{ o.habilitation }} (arrêté du 4 septembre 2026). {% endif %}<a href="{{ o.site }}" rel="noopener nofollow" target="_blank">Le BAFA sur le site de {{ o.nom }} ↗</a>{% if o.page_sessions %} · <a href="{{ o.page_sessions }}" rel="noopener nofollow" target="_blank">toutes ses sessions ↗</a>{% endif %}</p>
     {% elif page.diplome_page %}
-    <p>Les sessions relevées sur les pages des organismes, partout en France. Conditions d'entrée, contenu et débouchés : <a href="{{ lien(page.diplome_page.fiche) }}">tout savoir sur le {{ page.diplome_page.nom }}</a>.</p>
+    <p>Les sessions relevées sur les pages des organismes et dans le catalogue national de l'apprentissage, partout en France. Conditions d'entrée, contenu et débouchés : <a href="{{ lien(page.diplome_page.fiche) }}">tout savoir sur le {{ page.diplome_page.nom }}</a>.</p>
     {% elif page.type_session.id == "formation-generale" %}
     <p>La formation générale est la <strong>première étape</strong> du BAFA : 8 jours pour apprendre les bases (sécurité, rythme de l'enfant, jeux, vie collective). Il faut avoir <strong>16 ans le premier jour</strong> et s'être inscrit sur le site du ministère. <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Les étapes du BAFA</a></p>
     {% elif page.type_session.id == "approfondissement" %}

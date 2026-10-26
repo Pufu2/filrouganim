@@ -1,0 +1,104 @@
+# Spécialités (mentions) des diplômes professionnels de l'animation et du sport.
+# Noms officiels des certifications (Certif Info, Réseau des Carif-Oref, lu le 26/10/2026) ;
+# plusieurs codes Certif Info pour une même mention (ancienne et nouvelle fiche, options) sont réunis.
+# Champs :
+#   id         identifiant court (dans sessions.yml : specialite)
+#   nom        nom affiché (sigle courant entre parenthèses quand il existe)
+#   groupe     spécialité du diplôme (animateur, éducateur sportif…)
+#   certifinfo codes Certif Info rattachés à cette mention
+#   mots       mots cherchés dans l'intitulé quand le code est inconnu (expression régulière, sans accents, minuscules)
+
+CPJEPS:
+  - {id: aavq, nom: "Animateur d'activités et de vie quotidienne (AAVQ)", groupe: Animation, certifinfo: [106401, 117918], mots: "vie quotidienne|aavq"}
+
+BPJEPS:
+  - {id: asec, nom: "Animation socio-éducative ou culturelle (ASEC)", groupe: Animateur, certifinfo: [117943], mots: "socio.?educative|asec"}
+  - {id: ltp, nom: "Loisirs tous publics (LTP)", groupe: Animateur, certifinfo: [90313], mots: "loisirs tous publics|\\bltp\\b"}
+  - {id: animation-sociale, nom: "Animation sociale (AS)", groupe: Animateur, certifinfo: [93227], mots: "animation sociale"}
+  - {id: animation-culturelle, nom: "Animation culturelle (AC)", groupe: Animateur, certifinfo: [94573], mots: "animation culturelle"}
+  - {id: eedd, nom: "Éducation à l'environnement vers un développement durable (EEDD)", groupe: Animateur, certifinfo: [94575], mots: "environnement|eedd"}
+  - {id: apt, nom: "Activités physiques pour tous (APT)", groupe: Éducateur sportif, certifinfo: [114235, 89805], mots: "physiques pour tous|\\bapt\\b"}
+  - {id: maps, nom: "Multi-activités physiques ou sportives pour tous (MAPS)", groupe: Éducateur sportif, certifinfo: [117905], mots: "multi.?activites|\\bmaps\\b"}
+  - {id: forme, nom: "Activités de la forme (AF)", groupe: Éducateur sportif, certifinfo: [113878, 113879, 119606], mots: "de la forme|cours collectifs|musculation"}
+  - {id: aan, nom: "Activités aquatiques et de la natation (AAN)", groupe: Éducateur sportif, certifinfo: [112352, 121704], mots: "aquatiques|natation|\\baan\\b"}
+  - {id: equitation, nom: "Équitation, activités équestres", groupe: Éducateur sportif, certifinfo: [117965, 93217, 93223, 93225], mots: "equitation|equestre"}
+  - {id: voile, nom: "Voile", groupe: Éducateur sportif, certifinfo: [118437, 118438, 97167, 97169], mots: "voile(?! a)|\\bvoile$"}
+  - {id: char-a-voile, nom: "Char à voile", groupe: Éducateur sportif, certifinfo: [113920], mots: "char a voile"}
+  - {id: canoe-kayak, nom: "Canoë-kayak et disciplines associées", groupe: Éducateur sportif, certifinfo: [118002, 118003, 118004], mots: "canoe|kayak"}
+  - {id: surf, nom: "Surf et disciplines associées", groupe: Éducateur sportif, certifinfo: [114024], mots: "surf"}
+  - {id: ski-nautique, nom: "Ski nautique et disciplines associées", groupe: Éducateur sportif, certifinfo: [119172, 119174], mots: "ski nautique"}
+  - {id: glisse-aerotractee, nom: "Glisse aérotractée et disciplines associées", groupe: Éducateur sportif, certifinfo: [119579], mots: "aerotract"}
+  - {id: motonautisme, nom: "Motonautisme et disciplines associées", groupe: Éducateur sportif, certifinfo: [119453, 115060], mots: "motonautisme"}
+  - {id: plongee, nom: "Plongée subaquatique", groupe: Éducateur sportif, certifinfo: [121758, 115523, 115524], mots: "plongee"}
+  - {id: peche, nom: "Pêche de loisirs", groupe: Éducateur sportif, certifinfo: [118679, 118681], mots: "peche"}
+  - {id: aviron, nom: "Aviron", groupe: Éducateur sportif, certifinfo: [118690], mots: "aviron"}
+  - {id: velo, nom: "Activités du vélo", groupe: Éducateur sportif, certifinfo: [118399], mots: "velo|cyclisme"}
+  - {id: basket-ball, nom: "Basket-ball", groupe: Éducateur sportif, certifinfo: [118464, 113813], mots: "basket"}
+  - {id: rugby, nom: "Rugby à XV", groupe: Éducateur sportif, certifinfo: [119577, 112225], mots: "rugby"}
+  - {id: volley-ball, nom: "Volley-ball et disciplines associées", groupe: Éducateur sportif, certifinfo: [118435], mots: "volley"}
+  - {id: tennis-de-table, nom: "Tennis de table", groupe: Éducateur sportif, certifinfo: [119564, 113918], mots: "tennis de table"}
+  - {id: golf, nom: "Golf", groupe: Éducateur sportif, certifinfo: [118689, 114369], mots: "golf"}
+  - {id: judo, nom: "Judo-jujitsu", groupe: Éducateur sportif, certifinfo: [118434, 113822], mots: "judo"}
+  - {id: sports-de-contact, nom: "Sports de contact", groupe: Éducateur sportif, certifinfo: [118215], mots: "sports de contact"}
+  - {id: boxe, nom: "Boxe anglaise", groupe: Éducateur sportif, certifinfo: [118895], mots: "boxe"}
+  - {id: lutte, nom: "Luttes olympiques et disciplines associées", groupe: Éducateur sportif, certifinfo: [118436], mots: "lutte"}
+  - {id: escrime, nom: "Escrime pour tous", groupe: Éducateur sportif, certifinfo: [117955, 117956, 117957], mots: "escrime"}
+  - {id: gymnastique, nom: "Activités et disciplines gymniques", groupe: Éducateur sportif, certifinfo: [114233, 114234, 118816, 118817], mots: "gymni"}
+  - {id: sports-de-glace, nom: "Sports de glace", groupe: Éducateur sportif, certifinfo: [118250, 118251], mots: "glace"}
+  - {id: sport-automobile, nom: "Sport automobile, karting", groupe: Éducateur sportif, certifinfo: [118376, 118386, 118387], mots: "automobile|karting"}
+  - {id: parachutisme, nom: "Parachutisme", groupe: Éducateur sportif, certifinfo: [118080, 112430, 112434, 112435], mots: "parachut"}
+
+DEJEPS:
+  - {id: coordination-de-projets, nom: "Coordination de projets", groupe: Animation socio-éducative ou culturelle, certifinfo: [118019], mots: "coordination de projets"}
+  - {id: developpement-de-projets, nom: "Développement de projets, territoires et réseaux", groupe: Animation socio-éducative ou culturelle, certifinfo: [53982], mots: "territoires|developpement de projets"}
+  - {id: animation-sociale, nom: "Animation sociale", groupe: Animation socio-éducative ou culturelle, certifinfo: [57867], mots: "animation sociale"}
+  - {id: apsa, nom: "Activités physiques et sportives adaptées", groupe: Perfectionnement sportif, certifinfo: [114372], mots: "adaptees"}
+  - {id: handisport, nom: "Handisport", groupe: Perfectionnement sportif, certifinfo: [114570], mots: "handisport"}
+  - {id: athletisme, nom: "Athlétisme et disciplines associées", groupe: Perfectionnement sportif, certifinfo: [117493, 71539], mots: "athletisme"}
+  - {id: attelages-canins, nom: "Attelages canins", groupe: Perfectionnement sportif, certifinfo: [118216], mots: "attelage"}
+  - {id: aviron, nom: "Aviron", groupe: Perfectionnement sportif, certifinfo: [114936], mots: "aviron"}
+  - {id: badminton, nom: "Badminton", groupe: Perfectionnement sportif, certifinfo: [112925], mots: "badminton"}
+  - {id: basket-ball, nom: "Basket-ball", groupe: Perfectionnement sportif, certifinfo: [113814], mots: "basket"}
+  - {id: boxe, nom: "Boxe", groupe: Perfectionnement sportif, certifinfo: [113803], mots: "boxe(?! thai)"}
+  - {id: canoe-kayak, nom: "Canoë-kayak en eau calme", groupe: Perfectionnement sportif, certifinfo: [117960], mots: "canoe|kayak"}
+  - {id: canyonisme, nom: "Canyonisme", groupe: Perfectionnement sportif, certifinfo: [116271], mots: "canyon"}
+  - {id: cyclisme, nom: "Cyclisme (BMX, route, VTT)", groupe: Perfectionnement sportif, certifinfo: [117723, 117724, 117725], mots: "cyclisme|vtt|bmx"}
+  - {id: gymnastique, nom: "Disciplines gymniques", groupe: Perfectionnement sportif, certifinfo: [114612, 114613], mots: "gymni"}
+  - {id: escalade, nom: "Escalade", groupe: Perfectionnement sportif, certifinfo: [116548], mots: "escalade(?! en milieux)"}
+  - {id: escalade-milieux-naturels, nom: "Escalade en milieux naturels", groupe: Perfectionnement sportif, certifinfo: [116549, 77145], mots: "escalade en milieux"}
+  - {id: escrime, nom: "Escrime", groupe: Perfectionnement sportif, certifinfo: [117959], mots: "escrime"}
+  - {id: glisses-aerotractees, nom: "Glisses aérotractées nautiques", groupe: Perfectionnement sportif, certifinfo: [117952], mots: "aerotract"}
+  - {id: golf, nom: "Golf", groupe: Perfectionnement sportif, certifinfo: [114620], mots: "golf"}
+  - {id: halterophilie, nom: "Haltérophilie, musculation et force athlétique", groupe: Perfectionnement sportif, certifinfo: [113801], mots: "halterophilie|musculation|halterof"}
+  - {id: hockey, nom: "Hockey", groupe: Perfectionnement sportif, certifinfo: [114574], mots: "hockey"}
+  - {id: judo, nom: "Judo-jujitsu", groupe: Perfectionnement sportif, certifinfo: [113823], mots: "judo"}
+  - {id: lutte, nom: "Lutte et disciplines associées", groupe: Perfectionnement sportif, certifinfo: [117146], mots: "lutte"}
+  - {id: motocyclisme, nom: "Motocyclisme", groupe: Perfectionnement sportif, certifinfo: [114569], mots: "motocyclisme"}
+  - {id: natation, nom: "Natation et disciplines associées", groupe: Perfectionnement sportif, certifinfo: [117711, 117712, 117714], mots: "natation|water.?polo"}
+  - {id: petanque, nom: "Pétanque", groupe: Perfectionnement sportif, certifinfo: [117489], mots: "petanque"}
+  - {id: plongee, nom: "Plongée subaquatique", groupe: Perfectionnement sportif, certifinfo: [115513], mots: "plongee"}
+  - {id: rugby-xiii, nom: "Rugby à XIII", groupe: Perfectionnement sportif, certifinfo: [71305], mots: "rugby a xiii"}
+  - {id: rugby, nom: "Rugby à XV", groupe: Perfectionnement sportif, certifinfo: [55130], mots: "rugby"}
+  - {id: sport-automobile, nom: "Sport automobile, karting", groupe: Perfectionnement sportif, certifinfo: [113674, 113676, 113678], mots: "automobile|karting|rallye"}
+  - {id: sports-de-contact, nom: "Sports de contact (kick-boxing, muay thaï)", groupe: Perfectionnement sportif, certifinfo: [112224, 112226], mots: "kick|muay|sports de contact"}
+  - {id: sports-de-glace, nom: "Sports de glace", groupe: Perfectionnement sportif, certifinfo: [113828], mots: "glace"}
+  - {id: sports-a-roulettes, nom: "Sports à roulettes", groupe: Perfectionnement sportif, certifinfo: [117290], mots: "roulettes"}
+  - {id: sports-equestres, nom: "Sports équestres", groupe: Perfectionnement sportif, certifinfo: [103821, 117329], mots: "equestre|equitation"}
+  - {id: speleologie, nom: "Spéléologie", groupe: Perfectionnement sportif, certifinfo: [114349], mots: "speleo"}
+  - {id: tennis, nom: "Tennis", groupe: Perfectionnement sportif, certifinfo: [114572], mots: "tennis(?! de table)"}
+  - {id: tennis-de-table, nom: "Tennis de table", groupe: Perfectionnement sportif, certifinfo: [114933, 55002], mots: "tennis de table"}
+  - {id: tir-sportif, nom: "Tir sportif", groupe: Perfectionnement sportif, certifinfo: [56925], mots: "tir sportif"}
+  - {id: triathlon, nom: "Triathlon et disciplines enchaînées", groupe: Perfectionnement sportif, certifinfo: [112604], mots: "triathlon"}
+  - {id: voile, nom: "Voile", groupe: Perfectionnement sportif, certifinfo: [117242], mots: "voile"}
+  - {id: vol-libre, nom: "Vol libre (parapente, deltaplane)", groupe: Perfectionnement sportif, certifinfo: [113675, 113680], mots: "vol libre|parapente|deltaplane"}
+  - {id: volley-ball, nom: "Volley-ball", groupe: Perfectionnement sportif, certifinfo: [113821], mots: "volley"}
+
+DESJEPS:
+  - {id: direction, nom: "Direction de structure et de projet", groupe: Animation socio-éducative ou culturelle, certifinfo: [55876, 117949], mots: "direction de structure"}
+  - {id: cyclisme, nom: "Cyclisme", groupe: Performance sportive, certifinfo: [117492], mots: "cyclisme"}
+  - {id: equitation, nom: "Équitation", groupe: Performance sportive, certifinfo: [117012], mots: "equitation|equestre"}
+  - {id: football, nom: "Football", groupe: Performance sportive, certifinfo: [77704], mots: "football"}
+  - {id: judo, nom: "Judo-jujitsu", groupe: Performance sportive, certifinfo: [113824], mots: "judo"}
+  - {id: rugby, nom: "Rugby à XV", groupe: Performance sportive, certifinfo: [55126], mots: "rugby"}
+  - {id: speleologie, nom: "Spéléologie", groupe: Performance sportive, certifinfo: [114571], mots: "speleo"}
+  - {id: tennis, nom: "Tennis", groupe: Performance sportive, certifinfo: [114573], mots: "tennis"}

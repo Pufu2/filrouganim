@@ -68,6 +68,7 @@ sessions:
   - id: ifac-pro-11791
     organisme: "ifac"
     diplome: "BPJEPS"
+    specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2026-10-29
@@ -428,6 +429,7 @@ sessions:
   - id: ifac-pro-11291
     organisme: "ifac"
     diplome: "BPJEPS"
+    specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2026-11-04
@@ -896,6 +898,7 @@ sessions:
   - id: ifac-pro-11452
     organisme: "ifac"
     diplome: "BPJEPS"
+    specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2026-11-09
@@ -914,6 +917,7 @@ sessions:
   - id: ifac-pro-11476
     organisme: "ifac"
     diplome: "BPJEPS"
+    specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2026-11-09
@@ -968,6 +972,7 @@ sessions:
   - id: ifac-pro-10452
     organisme: "ifac"
     diplome: "CPJEPS"
+    specialite: "aavq"
     type: "parcours"
     theme: null
     debut: 2026-11-09
@@ -2642,6 +2647,7 @@ sessions:
   - id: ifac-pro-11848
     organisme: "ifac"
     diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-12-10
@@ -5576,6 +5582,7 @@ sessions:
   - id: ifac-pro-7339
     organisme: "ifac"
     diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2027-01-04
@@ -6260,6 +6267,7 @@ sessions:
   - id: ifac-pro-11431
     organisme: "ifac"
     diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2027-01-27

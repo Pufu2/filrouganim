@@ -159,9 +159,11 @@ TYPES_IFAC = {"Formation Générale BAFA": ("BAFA", "formation-generale"), "Appr
               "Perfectionnement BAFD": ("BAFD", "perfectionnement")}
 
 
-IFAC_PRO_LIBELLES = {"CQP- Animation Périscolaire": "CQP-AP", "CPJEPS Animateur d’activités et de vie quotidienne": "CPJEPS",
-                     "BPJEPS Animation Socio-Educative ou Culturelle": "BPJEPS", "DEJEPS Coordination de projets": "DEJEPS",
-                     "DESJEPS Direction de structure": "DESJEPS"}
+IFAC_PRO_LIBELLES = {"CQP- Animation Périscolaire": ("CQP-AP", None),
+                     "CPJEPS Animateur d’activités et de vie quotidienne": ("CPJEPS", "aavq"),
+                     "BPJEPS Animation Socio-Educative ou Culturelle": ("BPJEPS", "asec"),
+                     "DEJEPS Coordination de projets": ("DEJEPS", "coordination-de-projets"),
+                     "DESJEPS Direction de structure": ("DESJEPS", "direction")}  # spécialités : donnees/specialites.yml
 
 
 def ifac_liste():
@@ -196,7 +198,8 @@ def ifac_liste():
                                  theme=re.sub(r"^Qualification\s+", "", sous_titre) if sous_titre else None,
                                  url=f"https://ifac-formation.fr/formations/sessions/bafa-bafd/{ident}"))
         elif titre in IFAC_PRO_LIBELLES:
-            sessions.append(dict(base, id="ifac-pro-" + ident, organisme="ifac", diplome=IFAC_PRO_LIBELLES[titre],
+            sessions.append(dict(base, id="ifac-pro-" + ident, organisme="ifac", diplome=IFAC_PRO_LIBELLES[titre][0],
+                                 specialite=IFAC_PRO_LIBELLES[titre][1],
                                  type="parcours", theme=None, formule="alternance", pro=True,
                                  url=f"https://ifac-formation.fr/formations/sessions/professionnelles/{ident}"))
     if len(sessions) < 100:
@@ -419,6 +422,8 @@ def ecrire(chemin, sessions, entete):
         for k in ["organisme", "diplome", "type", "theme", "debut", "fin", "ville", "departement",
                   "formule", "prix", "prix_note"]:
             lignes.append(f"    {k}: {q(s[k])}")
+            if k == "diplome" and s.get("specialite"):
+                lignes.append(f"    specialite: {q(s['specialite'])}")
         lignes.append(f"    aides: [{', '.join(q(a) for a in s['aides'])}]")
         for k in ["complet", "url", "releve_le", "verifie_le"]:
             lignes.append(f"    {k}: {q(s[k])}")

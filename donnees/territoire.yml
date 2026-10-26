@@ -160,7 +160,7 @@ diplomes:
      etapes: [formation-generale, perfectionnement]}
   - {id: CQP-AP, nom: "CQP animateur périscolaire", long: "CQP animateur périscolaire", slug: cqp-animateur-periscolaire, fiche: /se-former/cqp-animateur-periscolaire/, pro: true, etapes: []}
   - {id: CPJEPS, nom: "CPJEPS", long: "CPJEPS (niveau 3)", slug: cpjeps, fiche: /se-former/cpjeps/, pro: true, etapes: []}
-  - {id: BPJEPS, nom: "BPJEPS", long: "BPJEPS animation (niveau 4)", slug: bpjeps, fiche: /se-former/bpjeps/, pro: true, etapes: []}
+  - {id: BPJEPS, nom: "BPJEPS", long: "BPJEPS (niveau 4)", slug: bpjeps, fiche: /se-former/bpjeps/, pro: true, etapes: []}
   - {id: DEJEPS, nom: "DEJEPS", long: "DEJEPS (niveau 5)", slug: dejeps, fiche: /se-former/dejeps/, pro: true, etapes: []}
   - {id: DESJEPS, nom: "DESJEPS", long: "DESJEPS (niveau 6)", slug: desjeps, fiche: /se-former/desjeps/, pro: true, etapes: []}
   - {id: PSC1, nom: "PSC1", long: "PSC1 (premiers secours)", slug: psc1, fiche: /se-former/psc1/, etapes: []}

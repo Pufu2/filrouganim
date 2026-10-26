@@ -2,7 +2,7 @@
 {% import "morceaux.html" as m with context %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
 {% block h1 %}Trouver une formation{% endblock %}
-{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC1, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : comparez les sessions ici, inscrivez-vous chez l'organisme. Vérifiées chaque semaine sur leurs pages.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC1, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
 {% block tete_plus %}<div class="carte-recherche carte-recherche-direct">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">

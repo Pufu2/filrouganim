@@ -26,7 +26,7 @@ description: "Éditeur, hébergeur et informations légales du site Fil Roug'Ani
 
 ## Contenus et sources
 
-Les textes, guides et la présentation du site sont la propriété de l'éditeur. Les informations sur les sessions (dates, lieu, formule, prix) sont des **faits** relevés sur les pages publiques des organismes de formation, avec un lien vers chacune d'elles. Les noms des organismes et leurs marques appartiennent à leurs titulaires. Le site n'est lié à aucun organisme de formation ni au ministère chargé de la jeunesse.
+Les textes, guides et la présentation du site sont la propriété de l'éditeur. Les informations sur les sessions (dates, lieu, formule, prix) sont des **faits** relevés sur les pages publiques des organismes de formation, avec un lien vers chacune d'elles. Les sessions des diplômes professionnels en apprentissage (CPJEPS, BPJEPS, DEJEPS, DESJEPS) viennent du catalogue national des formations en apprentissage, publié par le Réseau des Carif-Oref ; le lien mène à la fiche de la formation sur La bonne alternance. Les noms des organismes et leurs marques appartiennent à leurs titulaires. Le site n'est lié à aucun organisme de formation ni au ministère chargé de la jeunesse.
 
 Un organisme qui souhaite corriger une information ou ne plus apparaître peut écrire à {{ site.email }} : la demande est traitée sous 7 jours.
 

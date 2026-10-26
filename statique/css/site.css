@@ -152,6 +152,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .s-complet { color: var(--fil-fonce); }
 .s-prix { grid-area: prix; margin: 0; font-family: var(--titres); font-size: 1.45rem; text-align: right; white-space: nowrap; }
 .s-prix span { font-family: var(--texte); font-size: .85rem; color: var(--doux); }
+.s-prix .s-prix-sous { display: block; font-size: .78rem; }
 .s-lien { grid-area: lien; justify-self: end; font-weight: 700; font-size: .95rem; color: #fff; background: var(--fil); border-radius: 999px; padding: 5px 14px; text-decoration: none; white-space: nowrap; }
 .s-lien:hover { background: var(--fil-fonce); color: #fff; text-decoration: none; }
 @media (max-width: 560px) {
@@ -333,7 +334,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .tete .bouton-blanc, .tete .bouton-blanc:hover { color: var(--fil-fonce); }
 
 /* ---------- Recherche à 5 cases, parcours par diplôme */
-.recherche-cases-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.recherche-cases-5 { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, .95fr); }
 @media (max-width: 1000px) { .recherche-cases-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .recherche-cases-5 { grid-template-columns: 1fr 1fr; } }
 .case-r select:disabled { color: var(--doux); cursor: default; }
@@ -531,3 +532,13 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 @media (max-width: 860px) { .recherche-cases.recherche-cases-offres { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .recherche-cases.recherche-cases-offres { grid-template-columns: 1fr; } }
 .liste-suite { font-weight: 700; background: var(--blanc); border: 1px dashed var(--trait); border-radius: 12px; padding: 12px 16px; }
+
+/* Recherche : « Où ? » tapé librement, « Quand ? » en mois + année */
+.case-ou input[type="search"] { font: inherit; font-weight: 700; color: var(--encre); background: transparent; border: 0; padding: 2px 0; width: 100%; min-width: 0; }
+.case-ou input[type="search"]::placeholder { font-weight: 400; color: var(--doux); }
+.case-ou input[type="search"]:focus { outline: none; }
+.case-ou input:invalid { color: var(--fil); }
+.quand-choix { display: flex; gap: 6px; min-width: 0; }
+.quand-choix select:first-child { flex: 1.4; min-width: 0; }
+.quand-choix select:last-child { flex: 1; min-width: 0; }
+@media (max-width: 640px) { .recherche-cases-5 .case-quand, .recherche-cases-5 .case-ou { grid-column: span 2; } }

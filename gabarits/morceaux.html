@@ -23,39 +23,39 @@
         <option value="">Tous</option>
         {% for d in diplomes %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
       </select></label>
-    <label class="case-r">{{ icone("etape") }}<span class="case-titre">Quelle étape ?</span>
+    <label class="case-r">{{ icone("etape") }}<span class="case-titre" data-titre-etape>Étape ou spécialité ?</span>
       <select name="type">
         <option value="">Toutes</option>
-        <option value="BAFA-formation-generale" data-diplome="BAFA">BAFA : formation générale</option>
-        <option value="BAFA-approfondissement" data-diplome="BAFA">BAFA : approfondissement</option>
-        <option value="BAFA-qualification" data-diplome="BAFA">BAFA : qualification</option>
-        <option value="BAFD-formation-generale" data-diplome="BAFD">BAFD : formation générale</option>
-        <option value="BAFD-perfectionnement" data-diplome="BAFD">BAFD : perfectionnement</option>
+        {% for g in filtres.etapes %}<optgroup label="{{ g.titre }}" data-diplome="{{ g.diplome }}">{% for v, nom in g.options %}<option value="{{ v }}" data-diplome="{{ g.diplome }}">{{ nom }}</option>{% endfor %}</optgroup>{% endfor %}
       </select></label>
-    <label class="case-r">{{ icone("lieu") }}<span class="case-titre">Où ?</span>
-      <select name="dep">
-        <option value="">Partout en France</option>
-        {% for r in regions %}<optgroup label="{{ r.nom }}"><option value="r:{{ r.id }}">{{ r.nom }} : toute la région</option>{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}
-      </select></label>
-    <label class="case-r">{{ icone("date") }}<span class="case-titre">Quand ?</span>
-      <select name="quand">
-        <option value="">Toutes les dates</option>
-        <optgroup label="Vacances scolaires (selon la zone)">
-          {% for p in periodes if p.fin >= aujourdhui %}<option value="p:{{ p.id }}">{{ p.court }}</option>{% endfor %}
-        </optgroup>
-        <optgroup label="Mois de début">
-          {% for mo in mois_sessions %}<option value="m:{{ mo }}">{{ mois_nom(mo) | majuscule }}</option>{% endfor %}
-        </optgroup>
-      </select></label>
+    <div class="case-r case-ou">{{ icone("lieu") }}<label class="case-titre" for="ou-{{ 'f' if en_direct else 'a' }}">Où ?</label>
+      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" list="lieux-{{ 'f' if en_direct else 'a' }}" placeholder="Ex. : 93 ou Gironde" autocomplete="off" enterkeyhint="search">
+      <input type="hidden" name="dep" value="">
+      <datalist id="lieux-{{ 'f' if en_direct else 'a' }}">
+        {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
+        {% for r in regions | sort(attribute="nom") %}<option value="{{ r.nom }} (région)" data-dep="r:{{ r.id }}"></option>{% endfor %}
+      </datalist></div>
+    <div class="case-r case-quand">{{ icone("date") }}<span class="case-titre" id="quand-{{ 'f' if en_direct else 'a' }}">Quand ?</span>
+      <span class="quand-choix" role="group" aria-labelledby="quand-{{ 'f' if en_direct else 'a' }}">
+        <select name="mois" aria-label="Mois de début">
+          <option value="">Tous les mois</option>
+          {% for mo in ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"] %}<option value="m:{{ '%02d' % loop.index }}">{{ mo | majuscule }}</option>{% endfor %}
+          <optgroup label="Vacances scolaires (selon la zone)">{% for v, nom in filtres.vacances %}<option value="v:{{ v }}">Vacances : {{ nom }}</option>{% endfor %}</optgroup>
+        </select>
+        <select name="annee" aria-label="Année">
+          <option value="">Toutes</option>
+          {% for a in filtres.annees %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+        </select>
+      </span></div>
     <label class="case-r">{{ icone("prix") }}<span class="case-titre">Budget ?</span>
       <select name="prix">
         <option value="">Tous</option>
-        {% for b in [350, 400, 450, 500, 600, 1000, 5000, 8000] %}<option value="{{ b }}">{{ "{:,}".format(b).replace(",", " ") }} € max.</option>{% endfor %}
+        {% for di, b, nom in filtres.budgets %}<option value="{{ b }}" data-diplome="{{ di }}">{{ nom }}</option>{% endfor %}
       </select></label>
   </div>
   <div class="recherche-bas">
     <label class="recherche-mot">{{ icone("cherche") }}<span class="sr">Mot-clé</span>
-      <input name="q" type="search" placeholder="Ville, thème, organisme…" autocomplete="off"></label>
+      <input name="q" type="search" placeholder="Ville, école, sport, thème…" autocomplete="off"></label>
     {% if not en_direct %}<button class="bouton-r" type="submit">Voir les formations <span aria-hidden="true">→</span></button>{% endif %}
   </div>
 </form>
@@ -65,17 +65,17 @@
 {% macro carte_session(s, lien) %}
 <article class="session{% if s.complet %} session-complete{% endif %}"
   data-dep="{{ s.departement }}" data-region="{{ s.dep.region }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
-  data-type="{{ s.diplome }}-{{ s.type }}" data-formule="{{ s.formule or '' }}"
+  data-type="{{ s.diplome }}-{{ s.specialite or s.type }}" data-formule="{{ s.formule or '' }}"
   data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
-  data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }}">
+  data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }} {{ s.sp.nom if s.sp else '' }} {{ s.sp.groupe if s.sp else '' }}">
   <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
   <div class="s-corps">
-    <h3 class="s-titre">{{ s.dipl.nom }}{% if s.type != "parcours" %} · {{ s.type_nom | lower }}{% endif %}{% if s.theme and s.type != "parcours" %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
+    <h3 class="s-titre">{{ s.dipl.nom }}{% if s.sp %} · {{ s.sp.nom }}{% elif s.type != "parcours" %} · {{ s.type_nom | lower }}{% endif %}{% if s.theme and s.type != "parcours" %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
     <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/se-former/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
-    <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}{% else %}Relevé le {{ s.releve_le | date_fr }}{% endif %}, à confirmer chez l'organisme</p>
+    <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.source_nom %}{{ s.source_nom }}, relevé le {{ (s.verifie_le or s.releve_le) | date_fr }}, à confirmer auprès de l'école{% elif s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}, à confirmer chez l'organisme{% else %}Relevé le {{ s.releve_le | date_fr }}, à confirmer chez l'organisme{% endif %}</p>
   </div>
-  <p class="s-prix">{% if s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
-  <a class="s-lien" href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir<span class="sr"> la session chez {{ s.org.nom }} (nouvel onglet)</span> <span aria-hidden="true">→</span></a>
+  <p class="s-prix">{% if s.prix == 0 and s.formule == "apprentissage" %}Gratuit<span class="s-prix-sous">en apprentissage</span>{% elif s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
+  <a class="s-lien" href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir<span class="sr">{% if s.source == "catalogue-apprentissage" %} la formation sur La bonne alternance{% else %} la session chez {{ s.org.nom }}{% endif %} (nouvel onglet)</span> <span aria-hidden="true">→</span></a>
 </article>
 {% endmacro %}
 

@@ -74,6 +74,64 @@ python3 build.py --apercu      # aucune erreur ? ouvrir _site/index.html
 Le message d'enregistrement (commit) : `Sessions : vérification du JJ/MM/AAAA`.
 La publication part toute seule une fois la modification sur la branche `main`.
 
+
+## Les diplômes professionnels (CPJEPS, BPJEPS, DEJEPS, DESJEPS) : automatique depuis le 26/10/2026
+
+`outils/relever_pro.py` lit des sources nationales, **toutes écoles confondues** (CREPS, associations,
+organismes privés, CFA…), et écrit `donnees/sessions-pro.yml` (ne pas modifier à la main) :
+
+1. **Catalogue national des formations en apprentissage** (Réseau des Carif-Oref, API ouverte :
+   https://catalogue-apprentissage.intercariforef.org/api/docs/ ; présenté sur data.gouv.fr,
+   « Catalogue Apprentissage »). C'est l'offre reprise par La bonne alternance et Parcoursup.
+   Le bouton « Voir » ouvre la fiche de la formation sur La bonne alternance (contact de l'école).
+   En apprentissage, la formation est gratuite pour l'apprenti (Code du travail, art. L6211-1) :
+   le site affiche « Gratuit, en apprentissage ».
+2. **API Offre Info** (Réseau des Carif-Oref) : toute l'offre de formation (pas seulement
+   l'apprentissage), avec les prix. Il faut un jeton gratuit, à demander par e-mail (voir plus bas).
+   Une fois reçu, le coller dans GitHub : Settings > Secrets and variables > Actions >
+   New repository secret, nom `RCO_OFFREINFO_TOKEN`. L'outil s'en sert tout seul au relevé suivant.
+   Conditions du RCO : citer la source avec son logo, ne jamais vendre ces données, ne pas
+   transmettre le jeton.
+
+Le site intercariforef.org lui-même (pages de recherche) n'est **pas** recopié : ses conditions
+d'utilisation demandent une autorisation pour toute reproduction.
+
+Les spécialités (ASEC, LTP, APT, AF, AAN, équitation…) sont dans `donnees/specialites.yml`, avec
+leurs codes Certif Info. Une session dont le code est inconnu est rattachée par les mots de son
+intitulé ; si une nouvelle mention apparaît, l'ajouter dans ce fichier.
+
+### Le relevé automatique (GitHub Actions, `.github/workflows/relever.yml`)
+
+- **Chaque nuit** (3 h 41 UTC) : diplômes professionnels.
+- **Le lundi et le jeudi** : en plus, BAFA, BAFD et PSC1 (`outils/relever.py`).
+- Le site est refabriqué pour contrôle ; si les données ont changé, elles sont enregistrées sur
+  `main` (commit « Sessions : relevé du JJ/MM/AAAA », signé Pufu2) et le site les publie à la
+  fabrication horaire suivante.
+- Une source en panne ne vide pas le site : ses sessions actuelles sont gardées.
+- Bouton « Run workflow » (onglet Actions > « Relever les sessions ») pour tout relever à la demande.
+
+### Demander le jeton Offre Info (Pufu2, 2 minutes)
+
+Depuis l'adresse de contact du site (config.yml, champ `email`), à api-offreinfo@intercariforef.org :
+
+> Objet : Demande d'accès à l'API Offre Info – Fil Roug'Anim
+>
+> Bonjour,
+>
+> J'édite Fil Roug'Anim (https://filrouganim.fr), un site gratuit qui aide les jeunes et les
+> animateurs à trouver une formation dans l'animation (BAFA, BAFD, CPJEPS, BPJEPS, DEJEPS, DESJEPS)
+> partout en France.
+>
+> Je souhaiterais obtenir un jeton d'accès à l'API Offre Info pour afficher les sessions des
+> formations CPJEPS, BPJEPS, DEJEPS et DESJEPS (dates, lieu, organisme, prix), avec un lien vers
+> la fiche de chaque formation. Les données seraient lues une fois par jour au plus, affichées
+> gratuitement, jamais revendues, avec la mention de la source et le logo du Réseau des Carif-Oref.
+>
+> Je reste à votre disposition pour toute précision ou pour signer le contrat d'interface.
+>
+> Bien cordialement,
+> L'équipe Fil Roug'Anim
+
 ## La tâche programmée (créée le 24 octobre 2026 avec l'accord de Pufu2)
 
 - **Quand** : chaque lundi à 7 h 43 (heure de Paris).

@@ -10,6 +10,7 @@ Les sessions passées disparaissent toutes seules à chaque fabrication.
 """
 
 import argparse
+import collections
 import datetime as dt
 import html
 import json
@@ -33,7 +34,15 @@ SORTIE = RACINE / "_site"
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
         "août", "septembre", "octobre", "novembre", "décembre"]
 MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
-FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": "Externat", "alternance": "En alternance"}
+FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": "Externat", "alternance": "En alternance",
+            "apprentissage": "En apprentissage", "distance": "À distance"}
+# Budgets proposés dans la recherche, selon le diplôme : seuls ceux qui trient vraiment les sessions sont gardés
+BUDGETS = {"BAFA": [300, 350, 400, 450, 500, 600, 700, 800, 1000], "BAFD": [400, 500, 600, 700, 800, 1000, 1200],
+           "PSC1": [40, 50, 60, 70, 80, 100], "CQP-AP": [1000, 1500, 2000, 3000, 4000],
+           "CPJEPS": [1000, 2000, 3000, 4000, 5000, 6000], "BPJEPS": [2000, 3000, 4000, 5000, 6000, 7000, 8000, 10000],
+           "DEJEPS": [3000, 5000, 7000, 9000, 12000, 15000], "DESJEPS": [5000, 7000, 9000, 12000, 15000, 20000],
+           "": [100, 300, 500, 800, 1000, 3000, 6000, 10000]}
+SOURCES = {"catalogue-apprentissage": "Catalogue national de l'apprentissage (Carif-Oref)", "offre-info": "Offre Info (Carif-Oref)"}
 
 
 # ---------------------------------------------------------------- lecture
@@ -190,9 +199,12 @@ class Site:
                          for p in t["periodes"]]
         self.types = t["types"]
         self.diplomes = {d["id"]: d for d in t["diplomes"]}
+        # spécialités (mentions) des diplômes professionnels : {"BPJEPS": {"asec": {...}}}
+        self.specialites = {di: {sp["id"]: sp for sp in liste} for di, liste in self.donnees.get("specialites", {}).items()}
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
         self.sessions = self.charger_sessions()
         self.stats = self.calculer_stats()
+        self.filtres = self.calculer_filtres()
         self.faq = self.donnees.get("faq", {}).get("questions", [])
         self.offres = self.charger_offres()
         self.env = Environment(loader=FileSystemLoader(RACINE / "gabarits"),
@@ -227,20 +239,27 @@ class Site:
 
     def charger_sessions(self):
         sessions, ids = [], set()
-        for s in self.donnees["sessions"]["sessions"]:
+        # sessions.yml : relevées sur les pages des organismes ; sessions-pro.yml : diplômes professionnels
+        # de toutes les écoles (outils/relever_pro.py), dont l'école n'a pas forcément de fiche (organisme_nom)
+        toutes = self.donnees["sessions"]["sessions"] + (self.donnees.get("sessions-pro", {}).get("sessions") or [])
+        for s in toutes:
             s = dict(s)
             if s["id"] in ids:
                 sys.exit(f"Identifiant de session en double : {s['id']}")
             ids.add(s["id"])
-            if s["organisme"] not in self.organismes:
+            if s["organisme"] not in self.organismes and not (s["organisme"] is None and s.get("organisme_nom")):
                 sys.exit(f"Organisme inconnu dans la session {s['id']} : {s['organisme']}")
+            if s.get("specialite") and s["specialite"] not in self.specialites.get(s["diplome"], {}):
+                sys.exit(f"Spécialité inconnue dans la session {s['id']} : {s['diplome']} {s['specialite']}")
             if s["departement"] not in self.departements:
                 sys.exit(f"Département inconnu dans la session {s['id']} : {s['departement']}")
             s["debut"], s["fin"] = en_date(s["debut"]), en_date(s.get("fin"))
             s["releve_le"], s["verifie_le"] = en_date(s.get("releve_le")), en_date(s.get("verifie_le"))
             if (s["fin"] or s["debut"]) < self.aujourdhui:
                 continue  # session passée : elle disparaît du site
-            s["org"] = self.organismes[s["organisme"]]
+            s["org"] = self.organismes.get(s["organisme"]) or {"id": None, "nom": s["organisme_nom"], "site": s["url"], "en_ligne": False}
+            s["sp"] = self.specialites.get(s["diplome"], {}).get(s.get("specialite"))
+            s["source_nom"] = SOURCES.get(s.get("source"))
             s["dep"] = self.departements[s["departement"]]
             s["periode"] = self.periode_de(s["debut"], s["dep"])
             s["type_nom"] = {"formation-generale": "Formation générale", "approfondissement": "Approfondissement",
@@ -368,9 +387,44 @@ class Site:
         return {"fg_ext": fourchette("BAFA", "formation-generale", "externat"),
                 "ap_ext": fourchette("BAFA", "approfondissement", "externat"),
                 "nb": len(self.sessions),
-                "nb_organismes": len({s["organisme"] for s in self.sessions}),
+                "nb_organismes": len({s["org"]["nom"] for s in self.sessions}),
                 "nb_deps": len({s["departement"] for s in self.sessions}),
                 "verifie_le": max(verif) if verif else None}
+
+    def calculer_filtres(self):
+        """Les choix de la barre de recherche, d'après les sessions en ligne (spécialités présentes, budgets utiles)."""
+        S = self.sessions
+        etapes = []
+        for d in self.diplomes.values():
+            if d["etapes"]:
+                noms = {t["id"]: t["nom"] for t in self.types}
+                etapes.append({"diplome": d["id"], "titre": d["nom"],
+                               "options": [(f"{d['id']}-{e}", noms.get(e, e.replace("-", " ").capitalize())) for e in d["etapes"]]})
+            presentes = collections.Counter(s["specialite"] for s in S if s["diplome"] == d["id"] and s.get("specialite"))
+            groupes = {}
+            for sp in self.specialites.get(d["id"], {}).values():
+                if presentes[sp["id"]]:
+                    groupes.setdefault(sp["groupe"], []).append((f"{d['id']}-{sp['id']}", f"{sp['nom']} ({presentes[sp['id']]})"))
+            for groupe, options in groupes.items():
+                etapes.append({"diplome": d["id"], "titre": f"{d['nom']} · {groupe}", "options": sorted(options, key=lambda o: o[1])})
+        budgets = []
+        for di, paliers in BUDGETS.items():
+            prix = sorted(s["prix"] for s in S if (s["diplome"] == di or not di) and s["prix"])
+            if di and any(s["prix"] == 0 for s in S if s["diplome"] == di):
+                budgets.append((di, 0, "Gratuit (apprentissage)"))
+            if not prix:
+                continue
+            gardes = [b for b in paliers if prix[0] <= b < prix[-1]]
+            plus_haut = next((b for b in paliers if b >= prix[-1]), None)
+            for b in gardes + ([plus_haut] if plus_haut else []):
+                budgets.append((di, b, "{:,}".format(b).replace(",", " ") + " € max."))
+        vacances = []
+        for p in self.periodes:
+            base = p["id"].rsplit("-", 1)[0]
+            if p["fin"] >= self.aujourdhui and base not in [v[0] for v in vacances]:
+                vacances.append((base, p["court"].rsplit(" ", 1)[0]))
+        return {"etapes": etapes, "budgets": budgets, "vacances": vacances,
+                "annees": [self.aujourdhui.year, self.aujourdhui.year + 1]}
 
     def schema_faq(self, questions):
         return json_ld({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -381,7 +435,7 @@ class Site:
         """Données structurées schema.org (Course + CourseInstance) pour une liste de sessions."""
         objets = []
         for s in sessions:
-            nom = f"{s['dipl']['nom']} – {s['type_nom']}" + (f" : {s['theme']}" if s["theme"] else "")
+            nom = f"{s['dipl']['nom']} – " + (s["sp"]["nom"] if s["sp"] else s["type_nom"]) + (f" : {s['theme']}" if s["theme"] else "")
             instance = {"@type": "CourseInstance", "courseMode": "Onsite",
                         "startDate": s["debut"].isoformat(),
                         "location": {"@type": "Place", "name": s["ville"],
@@ -395,7 +449,7 @@ class Site:
                      "hasCourseInstance": instance}
             if s["prix"] is not None:
                 objet["offers"] = {"@type": "Offer", "price": s["prix"], "priceCurrency": "EUR",
-                                   "category": "Paid", "url": s["url"]}
+                                   "category": "Free" if s["prix"] == 0 else "Paid", "url": s["url"]}
             objets.append(objet)
         return json_ld(objets) if objets else ""
 
@@ -429,7 +483,7 @@ class Site:
                              h1=f"BAFA pendant les {p['nom']}",
                              description=f"Les sessions BAFA des {p['nom']} partout en France : formation générale et approfondissement, ville, formule et prix.",
                              intro=f"Les dates des {p['nom']} dépendent de la zone : {self.dates_vacances(p)}. Chaque session est rattachée aux vacances de la zone où elle a lieu.",
-                             sessions=liste, periode=p, lien_tout=f"/se-former/sessions/?diplome=BAFA&quand=p:{p['id']}",
+                             sessions=liste, periode=p, lien_tout=f"/se-former/sessions/?diplome=BAFA&mois=v:{p['id'].rsplit('-', 1)[0]}&annee={p['id'].rsplit('-', 1)[1]}",
                              fil=[SF, RUB, (p["court"], f"/se-former/sessions/{p['slug']}/")])
         for r in self.regions.values():
             de_la_region = [s for s in bafa if s["dep"]["reg"] is r]
@@ -680,7 +734,7 @@ class Site:
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
             "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
-            "stats": self.stats, "offres": self.offres, "diplomes": list(self.diplomes.values()),
+            "stats": self.stats, "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
@@ -720,7 +774,11 @@ class Site:
         """Toutes les sessions, en données compactes, pour la recherche avec filtres (lue par statique/js/filtres.js)."""
         donnees = []
         for s in self.sessions:
-            verif = (f"Vérifié le {date_fr(s['verifie_le'])}" if s["verifie_le"] else f"Relevé le {date_fr(s['releve_le'])}")
+            if s["source_nom"]:
+                verif = f"{s['source_nom']}, relevé le {date_fr(s['verifie_le'] or s['releve_le'])}, à confirmer auprès de l'école"
+            else:
+                verif = (f"Vérifié le {date_fr(s['verifie_le'])}" if s["verifie_le"] else f"Relevé le {date_fr(s['releve_le'])}") + \
+                    ", à confirmer chez l'organisme"
             notes = ([s["prix_note"][0].upper() + s["prix_note"][1:]] if s.get("prix_note") else []) + \
                     ([", ".join(s["aides"])[0].upper() + ", ".join(s["aides"])[1:]] if s.get("aides") else [])
             donnees.append({
@@ -731,7 +789,9 @@ class Site:
                 "p": s["periode"]["id"] if s["periode"] else "autre",
                 "f": FORMULES[s["formule"]].lower() if s.get("formule") else None,
                 "o": s["org"]["nom"], "oi": s["org"]["id"] if s["org"].get("en_ligne") else None,
-                "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"]})
+                "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"],
+                "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
+                "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage"})
         cible = SORTIE / "se-former" / "sessions" / "sessions.json"
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

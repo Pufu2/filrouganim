@@ -1,0 +1,53 @@
+name: Relever les sessions
+
+on:
+  # chaque nuit : les diplômes professionnels (catalogue national, 5 requêtes) ;
+  # le lundi et le jeudi : en plus, les sessions BAFA, BAFD et PSC1 sur les pages des organismes
+  schedule:
+    - cron: "41 3 * * *"
+  # bouton « Run workflow » dans l'onglet Actions (tout est relevé)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: relever
+  cancel-in-progress: false
+
+jobs:
+  relever:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Outils
+        run: pip install -r requirements.txt
+      - name: Diplômes professionnels (CPJEPS, BPJEPS, DEJEPS, DESJEPS)
+        continue-on-error: true
+        env:
+          RCO_OFFREINFO_TOKEN: ${{ secrets.RCO_OFFREINFO_TOKEN }}
+        run: python3 outils/relever_pro.py
+      - name: BAFA, BAFD, PSC1 (lundi et jeudi)
+        continue-on-error: true
+        run: |
+          jour=$(date -u +%u)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$jour" = "1" ] || [ "$jour" = "4" ]; then
+            python3 outils/relever.py
+          else
+            echo "Pas aujourd'hui (lundi et jeudi seulement)."
+          fi
+      - name: Le site se fabrique-t-il toujours ?
+        run: python3 build.py
+      - name: Enregistrer les changements
+        run: |
+          git add donnees/sessions.yml donnees/sessions-pro.yml
+          if git diff --cached --quiet; then
+            echo "Aucun changement."
+            exit 0
+          fi
+          git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com commit -m "Sessions : relevé du $(date -u +%d/%m/%Y)"
+          git push
