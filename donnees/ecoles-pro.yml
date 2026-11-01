@@ -272,7 +272,7 @@ ecoles:
   - {organisme_nom: "Centre Régional Actions Formations Sport et Santé", diplome: CPJEPS, specialite: "aavq", ville: "Colombelles", departement: "14", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Fédération Nationale Profession Sport Loisirs", diplome: CPJEPS, specialite: "aavq", ville: "La Rochelle", departement: "17", derniere_rentree: 2026-09-01}
   - {organisme_nom: "IRFA Bourgogne Franche-Comté", diplome: CPJEPS, specialite: "aavq", ville: "Chenôve", departement: "21", derniere_rentree: 2026-09-14}
-  - {organisme_nom: "Apsalc 21", diplome: CPJEPS, specialite: "aavq", ville: "Fontaine-lès-Dijon,-Bourgogne,-France", departement: "21", derniere_rentree: 2026-09-28}
+  - {organisme_nom: "Apsalc 21", diplome: CPJEPS, specialite: "aavq", ville: "Fontaine-lès-Dijon", departement: "21", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Askoria", diplome: CPJEPS, specialite: "aavq", ville: "Saint-Brieuc", departement: "22", derniere_rentree: 2026-09-07}
   - {organisme_nom: "CEMEA de Bourgogne Franche-Comté", diplome: CPJEPS, specialite: "aavq", ville: "Besançon", departement: "25", derniere_rentree: 2026-09-14}
   - {organisme_nom: "FORMAPI : Association de gestion et de développement du club Camus", diplome: CPJEPS, specialite: "aavq", ville: "Pontarlier", departement: "25", derniere_rentree: 2026-09-03}

@@ -2406,6 +2406,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
+  - id: leo-5432ab9c64
+    organisme: null
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-02-01
+    fin: 2028-01-25
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
+    aides: []
+    complet: false
+    url: "https://www.leolagrange-formation.fr/formation/animation/cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle/"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-01
+    source: "page-organisme"
   - id: for-27075DEBC0001
     organisme: null
     organisme_nom: "Challenges Academia"
@@ -2586,6 +2606,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
+  - id: leo-329ba84c05
+    organisme: null
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-03-19
+    fin: 2028-10-08
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
+    aides: []
+    complet: false
+    url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-01
+    source: "page-organisme"
   - id: app-be95f1ca22-20270326
     organisme: null
     organisme_nom: "Association Region des CEMEA des Pays de Loire"
@@ -2646,6 +2686,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "foromes"
+  - id: leo-c9a459d406
+    organisme: null
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-04-05
+    fin: 2029-03-09
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
+    aides: []
+    complet: false
+    url: "https://www.leolagrange-formation.fr/formation/animation/dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets/"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-01
+    source: "page-organisme"
   - id: app-e834d74648-20270524
     organisme: null
     organisme_nom: "FRAFR Angers"
