@@ -2,7 +2,7 @@
 {% import "morceaux.html" as m with context %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
 {% block h1 %}Trouver une formation{% endblock %}
-{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC1, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
 {% block tete_plus %}<div class="carte-recherche carte-recherche-direct">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
@@ -14,6 +14,11 @@
     <p class="voir-plus-cadre"><button class="voir-plus" type="button" hidden>Voir plus de sessions</button></p>
     <noscript><p>Les {{ page.sessions | length }} sessions les plus proches. Pour les autres, choisissez <a href="#titre-explorer">une région ou un diplôme</a>.</p></noscript>
     <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin, d'autres vacances ou un budget plus large : une session peut se suivre n'importe où.</p>
+    <div class="ecoles-pro" id="ecoles" data-source="{{ lien('/se-former/sessions/ecoles.json') }}" hidden>
+      <h3 id="ecoles-titre">Les écoles qui forment à ce diplôme</h3>
+      <p class="petit">Elles ont ouvert une session dans l'année (calendrier national des formations). Leur prochaine rentrée n'est pas encore déclarée : renseignez-vous directement auprès d'elles.</p>
+      <ul class="ecoles-liste" id="ecoles-liste"></ul>
+    </div>
     <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
   </div>
 </section>

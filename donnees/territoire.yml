@@ -158,10 +158,67 @@ diplomes:
      etapes: [formation-generale, approfondissement, qualification]}
   - {id: BAFD, nom: "BAFD", long: "BAFD (directeur)", slug: bafd, fiche: /se-former/bafd/,
      etapes: [formation-generale, perfectionnement]}
-  - {id: CQP-AP, nom: "CQP animateur périscolaire", long: "CQP animateur périscolaire", slug: cqp-animateur-periscolaire, fiche: /se-former/cqp-animateur-periscolaire/, pro: true, etapes: []}
   - {id: CC-ACM, nom: "CC direction d'ACM", long: "CC direction d'accueil collectif de mineurs", slug: cc-direction-acm, fiche: /se-former/bpjeps/, pro: true, etapes: []}
   - {id: CPJEPS, nom: "CPJEPS", long: "CPJEPS (niveau 3)", slug: cpjeps, fiche: /se-former/cpjeps/, pro: true, etapes: []}
   - {id: BPJEPS, nom: "BPJEPS", long: "BPJEPS (niveau 4)", slug: bpjeps, fiche: /se-former/bpjeps/, pro: true, etapes: []}
   - {id: DEJEPS, nom: "DEJEPS", long: "DEJEPS (niveau 5)", slug: dejeps, fiche: /se-former/dejeps/, pro: true, etapes: []}
   - {id: DESJEPS, nom: "DESJEPS", long: "DESJEPS (niveau 6)", slug: desjeps, fiche: /se-former/desjeps/, pro: true, etapes: []}
   - {id: PSC1, nom: "PSC", long: "PSC, premiers secours (ex-PSC1)", slug: psc1, fiche: /se-former/psc1/, etapes: []}
+
+# Grandes villes (plus de 75 000 habitants environ) proposées dans « Où ? », avec les arrondissements
+# de Paris (20), Lyon (9) et Marseille (16).
+grandes_villes:
+  - {nom: "Paris", dep: "75"}
+  - {nom: "Marseille", dep: "13"}
+  - {nom: "Lyon", dep: "69"}
+  - {nom: "Toulouse", dep: "31"}
+  - {nom: "Nice", dep: "06"}
+  - {nom: "Nantes", dep: "44"}
+  - {nom: "Montpellier", dep: "34"}
+  - {nom: "Strasbourg", dep: "67"}
+  - {nom: "Bordeaux", dep: "33"}
+  - {nom: "Lille", dep: "59"}
+  - {nom: "Rennes", dep: "35"}
+  - {nom: "Toulon", dep: "83"}
+  - {nom: "Reims", dep: "51"}
+  - {nom: "Saint-Étienne", dep: "42"}
+  - {nom: "Le Havre", dep: "76"}
+  - {nom: "Villeurbanne", dep: "69"}
+  - {nom: "Dijon", dep: "21"}
+  - {nom: "Grenoble", dep: "38"}
+  - {nom: "Angers", dep: "49"}
+  - {nom: "Saint-Denis", dep: "93"}
+  - {nom: "Nîmes", dep: "30"}
+  - {nom: "Clermont-Ferrand", dep: "63"}
+  - {nom: "Aix-en-Provence", dep: "13"}
+  - {nom: "Le Mans", dep: "72"}
+  - {nom: "Brest", dep: "29"}
+  - {nom: "Tours", dep: "37"}
+  - {nom: "Amiens", dep: "80"}
+  - {nom: "Limoges", dep: "87"}
+  - {nom: "Annecy", dep: "74"}
+  - {nom: "Boulogne-Billancourt", dep: "92"}
+  - {nom: "Perpignan", dep: "66"}
+  - {nom: "Metz", dep: "57"}
+  - {nom: "Besançon", dep: "25"}
+  - {nom: "Orléans", dep: "45"}
+  - {nom: "Rouen", dep: "76"}
+  - {nom: "Montreuil", dep: "93"}
+  - {nom: "Argenteuil", dep: "95"}
+  - {nom: "Caen", dep: "14"}
+  - {nom: "Mulhouse", dep: "68"}
+  - {nom: "Nancy", dep: "54"}
+  - {nom: "Roubaix", dep: "59"}
+  - {nom: "Tourcoing", dep: "59"}
+  - {nom: "Nanterre", dep: "92"}
+  - {nom: "Vitry-sur-Seine", dep: "94"}
+  - {nom: "Créteil", dep: "94"}
+  - {nom: "Avignon", dep: "84"}
+  - {nom: "Poitiers", dep: "86"}
+  - {nom: "Aubervilliers", dep: "93"}
+  - {nom: "Dunkerque", dep: "59"}
+  - {nom: "Pau", dep: "64"}
+  - {nom: "Versailles", dep: "78"}
+  - {nom: "La Rochelle", dep: "17"}
+  - {nom: "Colombes", dep: "92"}
+  - {nom: "Asnières-sur-Seine", dep: "92"}

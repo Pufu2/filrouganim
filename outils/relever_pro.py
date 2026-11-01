@@ -138,7 +138,7 @@ def specialite_de(diplome, certifinfo, *textes):
 
 def ville_de(nom):
     """commune() de relever.py, plus la majuscule après l'apostrophe : « L'ETRAT » → « L'Étrat »."""
-    v = commune(nom or "")
+    v = commune((nom or "").split(",")[0])
     v = re.sub(r"^([LlDd]')(\w)", lambda m: m.group(1).upper() + m.group(2).upper(), v)  # en tête : L'Étrat
     return re.sub(r"-([LlDd]')(\w)", lambda m: "-" + m.group(1).lower() + m.group(2).upper(), v)  # Saint-Martin-d'Hères
 
@@ -301,6 +301,9 @@ FOROMES_PAGE = "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formati
 FOROMES_TYPES = {25: "CPJEPS", 24: "BPJEPS", 20: "BPJEPS", 26: "DEJEPS", 13: "DEJEPS", 27: "DESJEPS", 16: "DESJEPS", 21: "CC-ACM"}
 
 
+RECENTES = []  # sessions FOROMES déjà commencées depuis moins d'un an : les écoles qui forment à ce diplôme
+
+
 def foromes(aujourdhui):
     """Le calendrier national des formations du ministère (FOROMES, Licence Ouverte) : toutes les sessions habilitées
     de toutes les régions, déclarées environ trois mois avant leur début. On n'en garde que les faits sur la session,
@@ -334,6 +337,11 @@ def foromes(aujourdhui):
                     notes.append(f"inscription avant le {dt.date.fromisoformat(limite[:10]):%d/%m/%Y}")
                 if f.get("ouvertApprentissage"):
                     notes.append("possible en apprentissage (sans frais pour l'apprenti)")
+                debut_f = dt.date.fromisoformat(f["dateDebut"][:10])
+                if aujourdhui - dt.timedelta(days=365) <= debut_f < aujourdhui + dt.timedelta(days=3):
+                    RECENTES.append({"organisme_nom": nom_organisme(o.get("nom")), "diplome": diplome, "specialite": sp,
+                                     "ville": ville_de(re.sub(r"\s+cedex.*$", "", lieu.group(2), flags=re.I)),
+                                     "departement": departement_de(cp, None), "debut": debut_f})
                 sessions.append({
                     "id": "for-" + re.sub(r"[^A-Za-z0-9]", "", f["numero"]), "organisme": None,
                     "organisme_nom": nom_organisme(o.get("nom")), "diplome": diplome, "specialite": sp, "type": "parcours",
@@ -350,8 +358,7 @@ def foromes(aujourdhui):
 
 LEO = {"bpjeps-mention-animation-socioeducative-et-culturelle-asec": ("BPJEPS", "asec"),
        "cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle": ("CPJEPS", "aavq"),
-       "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets"),
-       "cqp-animateur-periscolaire": ("CQP-AP", None)}
+       "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets")}
 
 
 def leo_lagrange(aujourdhui):
@@ -421,6 +428,29 @@ def ecrire(chemin, sessions):
     Path(chemin).write_text("\n".join(lignes) + "\n", encoding="utf-8")
 
 
+def ecrire_ecoles(aujourdhui):
+    """donnees/ecoles-pro.yml : les écoles qui ont ouvert une session dans l'année (calendrier national), avec la date
+    de leur dernière rentrée. Utile tant que les sessions suivantes ne sont pas encore déclarées."""
+    chemin = RACINE / "donnees" / "ecoles-pro.yml"
+    if not RECENTES:
+        return  # source en panne : la liste actuelle est gardée
+    ecoles = {}
+    for e in RECENTES:
+        if e["departement"] not in DEPS or not e["organisme_nom"]:
+            continue
+        cle = (sans_accents(e["organisme_nom"]), sans_accents(e["ville"]), e["diplome"], e["specialite"])
+        if cle not in ecoles or e["debut"] > ecoles[cle]["debut"]:
+            ecoles[cle] = e
+    lignes = ["# Écoles qui ont ouvert une session dans les 12 derniers mois (calendrier national FOROMES).",
+              "# Fichier écrit par outils/relever_pro.py : ne pas modifier à la main.", "", "ecoles:"]
+    for e in sorted(ecoles.values(), key=lambda e: (e["diplome"], e["departement"], e["ville"], e["organisme_nom"])):
+        lignes.append(f"  - {{organisme_nom: {json.dumps(e['organisme_nom'], ensure_ascii=False)}, diplome: {e['diplome']}, "
+                      f"specialite: {json.dumps(e['specialite'])}, ville: {json.dumps(e['ville'], ensure_ascii=False)}, "
+                      f"departement: \"{e['departement']}\", derniere_rentree: {e['debut'].isoformat()}}}")
+    chemin.write_text("\n".join(lignes) + "\n", encoding="utf-8")
+    print(f"Écoles (dernière rentrée connue) : {len(ecoles)} ; écrit : {chemin}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--essai", action="store_true", help="n'écrit rien, affiche le résumé")
@@ -484,6 +514,7 @@ def main():
     print(f"Ajoutées : {len({s['id'] for s in retenues} - set(anciens))} ; retirées : {len(set(anciens) - {s['id'] for s in retenues})}")
     if not args.essai:
         ecrire(chemin, retenues)
+        ecrire_ecoles(aujourdhui)
         print(f"Écrit : {chemin}")
 
 

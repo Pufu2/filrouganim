@@ -165,8 +165,7 @@ TYPES_IFAC = {"Formation Générale BAFA": ("BAFA", "formation-generale"), "Appr
               "Perfectionnement BAFD": ("BAFD", "perfectionnement")}
 
 
-IFAC_PRO_LIBELLES = {"CQP- Animation Périscolaire": ("CQP-AP", None),
-                     "CPJEPS Animateur d’activités et de vie quotidienne": ("CPJEPS", "aavq"),
+IFAC_PRO_LIBELLES = {"CPJEPS Animateur d’activités et de vie quotidienne": ("CPJEPS", "aavq"),
                      "BPJEPS Animation Socio-Educative ou Culturelle": ("BPJEPS", "asec"),
                      "DEJEPS Coordination de projets": ("DEJEPS", "coordination-de-projets"),
                      "DESJEPS Direction de structure": ("DESJEPS", "direction")}  # spécialités : donnees/specialites.yml

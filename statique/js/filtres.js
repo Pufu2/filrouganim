@@ -53,7 +53,7 @@
   // --- les listes : chaque élément a ses critères (d) et sa carte (déjà dans la page, ou fabriquée au besoin)
   function depuisCarte(c) {
     var d = c.dataset;
-    return { el: c, d: { dep: d.dep, region: d.region, periode: d.periode, mois: d.mois, diplome: d.diplome, type: d.type,
+    return { el: c, d: { dep: d.dep, ville: d.ville, region: d.region, periode: d.periode, mois: d.mois, diplome: d.diplome, type: d.type,
                          prix: d.prix, texte: sansAccents(d.texte) }, ok: true };
   }
   var listes = Array.prototype.map.call(document.querySelectorAll(".sessions[data-par-page]"), function (conteneur) {
@@ -119,10 +119,10 @@
   function lieuDe(f, dep) {
     return lieux(f).filter(function (l) { return l.dep === dep; })[0] || null;
   }
-  // « Quel diplôme ? » décide des étapes ou spécialités et des budgets proposés
+  // « Quel diplôme ? » décide des étapes ou spécialités proposées
   function adapterChoix(f) {
     var dip = f.elements.diplome.value;
-    var selEtape = f.elements.type, selPrix = f.elements.prix;
+    var selEtape = f.elements.type;
     var visibles = 0;
     Array.prototype.forEach.call(selEtape.querySelectorAll("optgroup"), function (g) {
       var montrer = !dip || g.dataset.diplome === dip;
@@ -136,12 +136,6 @@
     selEtape.options[0].textContent = visibles === 0 ? (dip === "PSC1" ? "Une journée" : "Formation complète") : (pro ? "Toutes les spécialités" : "Toutes");
     var titre = f.querySelector("[data-titre-etape]");
     if (titre) titre.textContent = !dip ? "Étape ou spécialité ?" : pro ? "Quelle spécialité ?" : "Quelle étape ?";
-    Array.prototype.forEach.call(selPrix.options, function (o, i) {
-      if (!i) return;
-      var montrer = (o.dataset.diplome || "") === (dip || "");
-      o.hidden = !montrer; o.disabled = !montrer;
-    });
-    if (selPrix.selectedOptions[0] && selPrix.selectedOptions[0].disabled) selPrix.value = "";
   }
   Array.prototype.forEach.call(document.querySelectorAll("form.recherche"), function (f) {
     if (!f.elements.ou) return;
@@ -198,7 +192,6 @@
   });
   adapterChoix(form);
   if (params.get("type")) form.elements.type.value = params.get("type");
-  if (params.get("prix")) form.elements.prix.value = params.get("prix");
   // « Où ? » : le texte tapé, ou le département reçu dans l'adresse
   if (params.get("ou") && !params.get("dep")) form._majLieu();
   else if (params.get("dep")) { var l0 = lieuDe(form, params.get("dep")); form.elements.ou.value = l0 ? l0.texte : ""; }
@@ -215,19 +208,20 @@
     var f = form.elements;
     adapterChoix(form); adapterParcours();
     var dip = f.diplome.value, dep = f.dep.value, mois = f.mois.value, annee = f.annee.value, type = f.type.value;
-    var prix = parseFloat(f.prix.value);
     var mots = sansAccents(f.q.value).split(/\s+/).filter(Boolean);
     liste.items.forEach(function (i) {
       var d = i.d;
-      var okDep = !dep || (dep.slice(0, 2) === "r:" ? d.region === dep.slice(2) : d.dep === dep);
+      var v = dep.slice(2), ville = sansAccents(d.ville);
+      var okDep = !dep || (dep.slice(0, 2) === "r:" ? d.region === v
+        : dep.slice(0, 2) === "v:" ? (ville === sansAccents(v) || ville.indexOf(sansAccents(v) + " ") === 0) : d.dep === dep);
       var okQuand = (!annee || d.mois.slice(0, 4) === annee) && (!mois || (mois.slice(0, 2) === "v:"
         ? d.periode.replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
       i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) &&
-        (isNaN(prix) || (d.prix !== "" && d.prix !== null && parseFloat(d.prix) <= prix)) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
     });
     liste.limite = liste.par;
     var n = afficher(liste);
+    afficherEcoles(dip, type, dep);
     compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
       ", de la plus proche à la plus lointaine.";
     aucune.hidden = n > 0;
@@ -241,6 +235,37 @@
       var q = p.toString();
       history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash);
     }
+  }
+
+  // Les écoles qui forment à un diplôme pro (leur prochaine rentrée n'est souvent pas encore déclarée)
+  var blocEcoles = document.getElementById("ecoles"), ecoles = null;
+  function afficherEcoles(dip, type, dep) {
+    if (!blocEcoles) return;
+    if (!dip || ["BAFA", "BAFD", "PSC1"].indexOf(dip) !== -1) { blocEcoles.hidden = true; return; }
+    if (!ecoles) {
+      ecoles = [];
+      fetch(blocEcoles.dataset.source).then(function (r) { return r.json(); }).then(function (d) {
+        ecoles = d; afficherEcoles(form.elements.diplome.value, form.elements.type.value, form.elements.dep.value);
+      }).catch(function () {});
+      return;
+    }
+    var v = sansAccents(dep.slice(2));
+    var choix = ecoles.filter(function (e) {
+      var ville = sansAccents(e.v);
+      return e.di === dip && (!type || type === e.di + "-" + e.sp) && (!dep ||
+        (dep.slice(0, 2) === "r:" ? e.r === dep.slice(2) : dep.slice(0, 2) === "v:" ? (ville === v || ville.indexOf(v + " ") === 0) : e.d === dep));
+    });
+    var ul = document.getElementById("ecoles-liste");
+    ul.textContent = "";
+    choix.forEach(function (e) {
+      var li = el("li"); li.appendChild(el("b", null, e.o));
+      li.appendChild(el("small", null, e.v + " (" + e.d + ")" + (e.spn ? " · " + e.spn : "") + " · dernière rentrée : " + e.dr));
+      ul.appendChild(li);
+    });
+    document.getElementById("ecoles-titre").textContent = choix.length
+      ? choix.length + (choix.length > 1 ? " écoles ont" : " école a") + " ouvert le " + choix[0].dn + " cette année" + (dep ? " dans ce secteur" : "")
+      : "Aucune autre école connue pour ce diplôme dans ce secteur";
+    blocEcoles.hidden = false;
   }
 
   function f2dep() { return form.elements.dep.value; }
@@ -267,7 +292,7 @@
     liste.items.forEach(function (i) { if (i.el) i.el.remove(); });
     liste.items = donnees.map(function (x) {
       return { x: x, el: null, ok: true, d: {
-        dep: x.d, region: x.r, periode: x.p, mois: x.m, diplome: x.di, type: x.di + "-" + (x.sp || x.t),
+        dep: x.d, ville: x.v, region: x.r, periode: x.p, mois: x.m, diplome: x.di, type: x.di + "-" + (x.sp || x.t),
         prix: x.px === null ? "" : x.px,
         texte: sansAccents([x.v, x.dn2, x.d, x.th || "", x.o, x.tn, x.dl, x.spn || "", x.spg || ""].join(" ")) } };
     });

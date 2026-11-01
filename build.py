@@ -49,6 +49,19 @@ SOURCES = {"catalogue-apprentissage": "Catalogue national de l'apprentissage (Ca
 
 # ---------------------------------------------------------------- lecture
 
+def ville_propre(v):
+    """Une même ville écrite de plusieurs façons par les sources : « Paris-75012 », « Lyon-7e-Arrondissement »,
+    « Marseille,marseille-2e-Arrondissement » → « Paris 12e », « Lyon 7e », « Marseille 2e »."""
+    v = " ".join((v or "").split())
+    m = re.match(r"(?i)(paris|lyon|marseille)\b.*?(?:(\d{1,2})(?:e|er|eme|ème)?(?:[- ]arrondissement)?|(?:75|69|13)0?(\d\d))$", v)
+    if m:
+        n = int(m.group(2) or m.group(3))
+        maxi = {"paris": 20, "lyon": 9, "marseille": 16}[m.group(1).lower()]
+        if 1 <= n <= maxi:
+            return f"{m.group(1).capitalize()} {n}{'er' if n == 1 else 'e'}"
+    return v.split(",")[0].strip(" -")  # « Fontaine-lès-Dijon, Bourgogne, France » → « Fontaine-lès-Dijon »
+
+
 def lire_yaml(chemin):
     with open(chemin, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
@@ -262,6 +275,7 @@ class Site:
             s["org"] = self.organismes.get(s["organisme"]) or {"id": None, "nom": s["organisme_nom"], "site": s["url"], "en_ligne": False}
             s["sp"] = self.specialites.get(s["diplome"], {}).get(s.get("specialite"))
             s["source_nom"] = SOURCES.get(s.get("source"))
+            s["ville"] = ville_propre(s["ville"])
             s["dep"] = self.departements[s["departement"]]
             s["periode"] = self.periode_de(s["debut"], s["dep"])
             s["type_nom"] = {"formation-generale": "Formation générale", "approfondissement": "Approfondissement",
@@ -425,7 +439,13 @@ class Site:
             base = p["id"].rsplit("-", 1)[0]
             if p["fin"] >= self.aujourdhui and base not in [v[0] for v in vacances]:
                 vacances.append((base, p["court"].rsplit(" ", 1)[0]))
-        return {"etapes": etapes, "budgets": budgets, "vacances": vacances,
+        lieux = []
+        for v in self.donnees["territoire"].get("grandes_villes", []):
+            lieux.append((f"{v['nom']} ({v['dep']})", f"v:{v['nom']}"))
+            maxi = {"Paris": 20, "Lyon": 9, "Marseille": 16}.get(v["nom"])
+            for n in range(1, (maxi or 0) + 1):
+                lieux.append((f"{v['nom']} {n}{'er' if n == 1 else 'e'}", f"v:{v['nom']} {n}{'er' if n == 1 else 'e'}"))
+        return {"etapes": etapes, "budgets": budgets, "vacances": vacances, "villes": lieux,
                 "annees": [self.aujourdhui.year, self.aujourdhui.year + 1]}
 
     def schema_faq(self, questions):
@@ -675,7 +695,8 @@ class Site:
 
     def ajouter_redirections(self):
         """Les adresses des versions précédentes du site renvoient vers les nouvelles."""
-        fixes = {"/se-former/": ["/formations/", "/guides/", "/bafa/"],
+        fixes = {"/se-former/": ["/formations/", "/guides/", "/bafa/", "/se-former/cqp-animateur-periscolaire/",
+                                 "/se-former/sessions/cqp-animateur-periscolaire/"],
                  "/se-former/sessions/bafd/": ["/bafd/", "/sessions/bafd/"],
                  "/se-former/sessions/organismes/": ["/organismes/", "/sessions/organismes/"],
                  "/se-former/questions-frequentes/": ["/questions-frequentes/", "/guides/questions-frequentes/"],
@@ -795,6 +816,20 @@ class Site:
                 "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
                 "site": s.get("source") == "ministere"})
+        # les écoles qui ont ouvert un diplôme pro dans l'année (affichées sous les résultats, sans date à venir)
+        ecoles = []
+        for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:
+            dep = self.departements.get(e["departement"])
+            if not dep or e["diplome"] not in self.diplomes:
+                continue
+            sp = self.specialites.get(e["diplome"], {}).get(e.get("specialite"))
+            rentree = en_date(e["derniere_rentree"])
+            ecoles.append({"di": e["diplome"], "dn": self.diplomes[e["diplome"]]["nom"], "sp": e.get("specialite"),
+                           "spn": sp["nom"] if sp else None, "o": e["organisme_nom"], "v": ville_propre(e["ville"]),
+                           "d": e["departement"], "r": dep["region"], "dr": f"{MOIS[rentree.month - 1]} {rentree.year}"})
+        (SORTIE / "se-former" / "sessions").mkdir(parents=True, exist_ok=True)
+        (SORTIE / "se-former" / "sessions" / "ecoles.json").write_text(
+            json.dumps(ecoles, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         cible = SORTIE / "se-former" / "sessions" / "sessions.json"
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

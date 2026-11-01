@@ -1,4 +1,5 @@
 # Spécialités (mentions) des diplômes professionnels de l'animation.
+# BPJEPS, DEJEPS et DESJEPS : seulement la spécialité animation socio-éducative ou culturelle (ASEC).
 # Le site ne présente que l'animation : les mentions sportives (éducateur sportif, perfectionnement
 # et performance sportive) sont volontairement absentes, et leurs sessions ne sont pas relevées.
 # Noms officiels des certifications (Certif Info, Réseau des Carif-Oref, lu le 26/10/2026) ;
@@ -15,10 +16,6 @@ CPJEPS:
 
 BPJEPS:
   - {id: asec, nom: "Animation socio-éducative ou culturelle (ASEC)", groupe: Animateur, certifinfo: [117943], mots: "socio.?educative|asec"}
-  - {id: ltp, nom: "Loisirs tous publics (LTP)", groupe: Animateur, certifinfo: [90313], mots: "loisirs tous publics|\\bltp\\b"}
-  - {id: animation-sociale, nom: "Animation sociale (AS)", groupe: Animateur, certifinfo: [93227], mots: "animation sociale"}
-  - {id: animation-culturelle, nom: "Animation culturelle (AC)", groupe: Animateur, certifinfo: [94573], mots: "animation culturelle"}
-  - {id: eedd, nom: "Éducation à l'environnement vers un développement durable (EEDD)", groupe: Animateur, certifinfo: [94575], mots: "environnement|eedd"}
 
 DEJEPS:
   - {id: coordination-de-projets, nom: "Coordination de projets", groupe: Animation socio-éducative ou culturelle, certifinfo: [118019], mots: "coordination de projets"}

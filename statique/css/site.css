@@ -542,3 +542,12 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .quand-choix select:first-child { flex: 1.4; min-width: 0; }
 .quand-choix select:last-child { flex: 1; min-width: 0; }
 @media (max-width: 640px) { .recherche-cases-5 .case-quand, .recherche-cases-5 .case-ou { grid-column: span 2; } }
+.recherche-cases-4c { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 1.1fr) minmax(0, 1.4fr); }
+@media (max-width: 1000px) { .recherche-cases-4c { grid-template-columns: 1fr 1fr; } }
+
+/* Écoles qui forment à un diplôme pro (sous les résultats) */
+.ecoles-pro { margin: 28px 0 8px; padding: 18px 20px; background: var(--papier); border: 1.5px solid var(--trait); border-radius: 14px; }
+.ecoles-pro h3 { margin: 0 0 4px; }
+.ecoles-liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 18px; }
+.ecoles-liste li { padding: 8px 0; border-top: 1px solid var(--trait); line-height: 1.4; }
+.ecoles-liste small { display: block; color: var(--doux); }

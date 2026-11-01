@@ -17,7 +17,7 @@
    Sur l'accueil elle envoie vers /se-former/sessions/ ; sur /se-former/sessions/ elle filtre en direct. #}
 {% macro recherche(lien, departements, periodes, aujourdhui, stats, en_direct=False) %}
 <form class="recherche" action="{{ lien('/se-former/sessions/') }}" method="get" {% if en_direct %}id="filtres"{% endif %} role="search" aria-label="Chercher une formation">
-  <div class="recherche-cases recherche-cases-5">
+  <div class="recherche-cases recherche-cases-5 recherche-cases-4c">
     <label class="case-r">{{ icone("diplome") }}<span class="case-titre">Quel diplôme ?</span>
       <select name="diplome">
         <option value="">Tous</option>
@@ -29,11 +29,12 @@
         {% for g in filtres.etapes %}<optgroup label="{{ g.titre }}" data-diplome="{{ g.diplome }}">{% for v, nom in g.options %}<option value="{{ v }}" data-diplome="{{ g.diplome }}">{{ nom }}</option>{% endfor %}</optgroup>{% endfor %}
       </select></label>
     <div class="case-r case-ou">{{ icone("lieu") }}<label class="case-titre" for="ou-{{ 'f' if en_direct else 'a' }}">Où ?</label>
-      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" list="lieux-{{ 'f' if en_direct else 'a' }}" placeholder="Ex. : 93 ou Gironde" autocomplete="off" enterkeyhint="search">
+      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" list="lieux-{{ 'f' if en_direct else 'a' }}" placeholder="Ex. : 93, Gironde, Lyon 3e" autocomplete="off" enterkeyhint="search">
       <input type="hidden" name="dep" value="">
       <datalist id="lieux-{{ 'f' if en_direct else 'a' }}">
         {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
         {% for r in regions | sort(attribute="nom") %}<option value="{{ r.nom }} (région)" data-dep="r:{{ r.id }}"></option>{% endfor %}
+        {% for nom, v in filtres.villes %}<option value="{{ nom }}" data-dep="{{ v }}"></option>{% endfor %}
       </datalist></div>
     <div class="case-r case-quand">{{ icone("date") }}<span class="case-titre" id="quand-{{ 'f' if en_direct else 'a' }}">Quand ?</span>
       <span class="quand-choix" role="group" aria-labelledby="quand-{{ 'f' if en_direct else 'a' }}">
@@ -47,15 +48,10 @@
           {% for a in filtres.annees %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
         </select>
       </span></div>
-    <label class="case-r">{{ icone("prix") }}<span class="case-titre">Budget ?</span>
-      <select name="prix">
-        <option value="">Tous</option>
-        {% for di, b, nom in filtres.budgets %}<option value="{{ b }}" data-diplome="{{ di }}">{{ nom }}</option>{% endfor %}
-      </select></label>
   </div>
   <div class="recherche-bas">
     <label class="recherche-mot">{{ icone("cherche") }}<span class="sr">Mot-clé</span>
-      <input name="q" type="search" placeholder="Ville, école, sport, thème…" autocomplete="off"></label>
+      <input name="q" type="search" placeholder="Ville, organisme, thème…" autocomplete="off"></label>
     {% if not en_direct %}<button class="bouton-r" type="submit">Voir les formations <span aria-hidden="true">→</span></button>{% endif %}
   </div>
 </form>
@@ -64,7 +60,7 @@
 {# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}
 {% macro carte_session(s, lien) %}
 <article class="session{% if s.complet %} session-complete{% endif %}"
-  data-dep="{{ s.departement }}" data-region="{{ s.dep.region }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
+  data-dep="{{ s.departement }}" data-ville="{{ s.ville }}" data-region="{{ s.dep.region }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
   data-type="{{ s.diplome }}-{{ s.specialite or s.type }}" data-formule="{{ s.formule or '' }}"
   data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
   data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }} {{ s.sp.nom if s.sp else '' }} {{ s.sp.groupe if s.sp else '' }}">

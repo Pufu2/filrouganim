@@ -6,26 +6,6 @@
 # de organismes.yml) et source (catalogue-apprentissage | offre-info).
 
 sessions:
-  - id: app-eeb32ae3d4-20261104
-    organisme: null
-    organisme_nom: "Association Education Environnement 64"
-    diplome: "BPJEPS"
-    specialite: "animation-sociale"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-04
-    fin: 2028-03-31
-    ville: "Buzy"
-    departement: "64"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/093227P01213817199620003138171996200031-64157%23L01/specialite-animateur-mention-animation-sociale-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: for-26NPPBPBC0043
     organisme: null
     organisme_nom: "CEMEA de Picardie"
@@ -906,26 +886,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "foromes"
-  - id: leo-b61169c1ae
-    organisme: null
-    organisme_nom: "Léo Lagrange Formation"
-    diplome: "CQP-AP"
-    specialite: null
-    type: "parcours"
-    theme: null
-    debut: 2026-11-19
-    fin: 2027-06-23
-    ville: "Toulouse"
-    departement: "31"
-    formule: "alternance"
-    prix: null
-    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
-    aides: []
-    complet: false
-    url: "https://www.leolagrange-formation.fr/formation/animation/cqp-animateur-periscolaire/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "page-organisme"
   - id: app-28531088e3-20261120
     organisme: null
     organisme_nom: "TF Formation"
@@ -2446,26 +2406,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: leo-5432ab9c64
-    organisme: null
-    organisme_nom: "Léo Lagrange Formation"
-    diplome: "CPJEPS"
-    specialite: "aavq"
-    type: "parcours"
-    theme: null
-    debut: 2027-02-01
-    fin: 2028-01-25
-    ville: "Vénissieux"
-    departement: "69"
-    formule: "alternance"
-    prix: null
-    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
-    aides: []
-    complet: false
-    url: "https://www.leolagrange-formation.fr/formation/animation/cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "page-organisme"
   - id: for-27075DEBC0001
     organisme: null
     organisme_nom: "Challenges Academia"
@@ -2646,26 +2586,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: leo-329ba84c05
-    organisme: null
-    organisme_nom: "Léo Lagrange Formation"
-    diplome: "BPJEPS"
-    specialite: "asec"
-    type: "parcours"
-    theme: null
-    debut: 2027-03-19
-    fin: 2028-10-08
-    ville: "Vénissieux"
-    departement: "69"
-    formule: "alternance"
-    prix: null
-    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
-    aides: []
-    complet: false
-    url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "page-organisme"
   - id: app-be95f1ca22-20270326
     organisme: null
     organisme_nom: "Association Region des CEMEA des Pays de Loire"
@@ -2726,26 +2646,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "foromes"
-  - id: leo-c9a459d406
-    organisme: null
-    organisme_nom: "Léo Lagrange Formation"
-    diplome: "DEJEPS"
-    specialite: "coordination-de-projets"
-    type: "parcours"
-    theme: null
-    debut: 2027-04-05
-    fin: 2029-03-09
-    ville: "Vénissieux"
-    departement: "69"
-    formule: "alternance"
-    prix: null
-    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
-    aides: []
-    complet: false
-    url: "https://www.leolagrange-formation.fr/formation/animation/dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "page-organisme"
   - id: app-e834d74648-20270524
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -3603,26 +3503,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217791054850001477910548500014-15187%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-e8bc98ed43-20271102
-    organisme: null
-    organisme_nom: "GRETA - CFA Aquitaine"
-    diplome: "BPJEPS"
-    specialite: "animation-culturelle"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-02
-    fin: 2028-10-13
-    ville: "Agen"
-    departement: "47"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/094573P01111933002330003119330023300031-47001%23L01/specialite-animateur-mention-animation-culturelle-bp-jeps"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
