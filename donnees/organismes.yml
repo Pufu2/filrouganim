@@ -121,6 +121,19 @@ organismes:
     en_ligne: true
     presentation: >-
       Fédération nationale de protection civile, association agréée de sécurité civile.
-      Ses associations départementales organisent le PSC1 (7 heures, en une journée) dans
-      presque toute la France. Le PSC1 n'est pas une étape du BAFA, mais il est souvent
-      demandé aux animateurs et il est obligatoire pour entrer en BPJEPS.
+      Ses associations départementales organisent le PSC (premiers secours citoyen, ex-PSC1 :
+      7 heures, en une journée) dans presque toute la France. Le PSC n'est pas une étape du
+      BAFA, mais il est souvent demandé aux animateurs et il est obligatoire pour entrer en BPJEPS.
+
+  - id: croix-rouge
+    nom: Croix-Rouge française
+    habilitation: premiers secours
+    site: https://inscription-formation.croix-rouge.fr/
+    page_sessions: https://inscription-formation.croix-rouge.fr/
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Association agréée de sécurité civile. Ses unités locales organisent le PSC (premiers
+      secours citoyen, ex-PSC1) partout en France, en une journée ou en version hybride (une
+      partie en ligne avant la journée). Les sessions, leur prix et les places restantes sont
+      sur sa plateforme nationale d'inscription.

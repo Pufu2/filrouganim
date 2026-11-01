@@ -66,26 +66,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-719ffa58de-20261109
-    organisme: null
-    organisme_nom: "TF Formation"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-09
-    fin: 2027-11-19
-    ville: "Paris-5e-Arrondissement"
-    departement: "75"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113900031270006039000312700060-75105%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-70f12934ac-20261109
     organisme: null
     organisme_nom: "ADSCI Canteleu"
@@ -126,26 +106,6 @@ sessions:
     releve_le: 2026-10-27
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-23af348d28-20261113
-    organisme: null
-    organisme_nom: "Humanitaria"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-13
-    fin: 2027-09-30
-    ville: "Massy"
-    departement: "91"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114896243870001048962438700010-91377%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-91a8f8eb4b-20261113
     organisme: null
     organisme_nom: "CFPPA du Morvan"
@@ -163,26 +123,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01211958010140003419580101400026-58051%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-326fd864b4-20261116
-    organisme: null
-    organisme_nom: "FAL Nantes"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-16
-    fin: 2027-09-30
-    ville: "Nantes"
-    departement: "44"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118124253790002978601876200124-44109%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -204,46 +144,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01111300279310045513002793100315-66167%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-30
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-f4f3d3b0e5-20261116
-    organisme: null
-    organisme_nom: "FFP Aubervilliers"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-16
-    fin: 2027-11-19
-    ville: "Saint-Denis"
-    departement: "93"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115345859300001753458593000017-93066%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1d9ce06210-20261116
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "DEJEPS"
-    specialite: "cyclisme"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-16
-    fin: 2027-07-13
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117724P01113999262600004919210071700011-25056%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-0348e87118-20261116
@@ -286,26 +186,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-488088b070-20261116
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-16
-    fin: 2027-09-17
-    ville: "Cluny"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01113999262600004939992626000049-71137%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-98239f53e5-20261116
     organisme: null
     organisme_nom: "ADSCI Canteleu"
@@ -323,26 +203,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01215030538780003231184406200035-76157%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-e08cdcb6b5-20261116
-    organisme: null
-    organisme_nom: "UCPA Formation"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-16
-    fin: 2027-11-09
-    ville: "Bois-le-Roi"
-    departement: "77"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01118538665560001485386655600014-77037%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -406,6 +266,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
+  - id: leo-b61169c1ae
+    organisme: null
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "CQP-AP"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2026-11-19
+    fin: 2027-06-23
+    ville: "Toulouse"
+    departement: "31"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
+    aides: []
+    complet: false
+    url: "https://www.leolagrange-formation.fr/formation/animation/cqp-animateur-periscolaire/"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-01
+    source: "page-organisme"
   - id: app-28531088e3-20261120
     organisme: null
     organisme_nom: "TF Formation"
@@ -463,7 +343,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01214099687160005340416999700081-38317%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-b6ec1b581f-20261123
@@ -526,26 +406,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-15cbced0ff-20261123
-    organisme: null
-    organisme_nom: "Ligue de Voile de Normandie"
-    diplome: "DEJEPS"
-    specialite: "voile"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-23
-    fin: 2027-11-20
-    ville: "Le Havre"
-    departement: "76"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117242P01117897565250002682053421200015-76351%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-be839f7ade-20261123
     organisme: null
     organisme_nom: "TF Formation"
@@ -563,7 +423,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01213900031270006039000312700060-75105%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-b852f48bc2-20261124
@@ -583,26 +443,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117785724040002977857240400029-71133%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-128037cae3-20261130
-    organisme: null
-    organisme_nom: "Centre de Voile de Bordeaux Lac"
-    diplome: "BPJEPS"
-    specialite: "voile"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-30
-    fin: 2027-10-01
-    ville: "Bruges"
-    departement: "33"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118438P01113239950350001732399503500017-33075%23L01/specialite-educateur-sportif-mention-voile-bp-jeps"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -644,26 +484,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113838622730005938386227300059-76217%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-6125c0334f-20261130
-    organisme: null
-    organisme_nom: "FFP Aubervilliers"
-    diplome: "BPJEPS"
-    specialite: "aan"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-30
-    fin: 2027-11-26
-    ville: "Saint-Denis"
-    departement: "93"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/112352P01115345859300001753458593000017-93066%23L01/specialite-educateur-sportif-mention-activites-aquatiques-et-de-la-natation-bp-j"
-    releve_le: 2026-10-29
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-13cadd63ae-20261130
@@ -763,27 +583,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01113900031270006039000312700060-75105%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-40f18c1843-20261208
-    organisme: null
-    organisme_nom: "Apradis"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2026-12-08
-    fin: 2027-12-04
-    ville: "Amiens"
-    departement: "80"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01117806125940001778061259400017-80021%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-27
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-ac8e9283d4-20261214
@@ -803,46 +603,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114920592410001777571367000039-83137%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-81c71151c8-20261214
-    organisme: null
-    organisme_nom: "JEKA - School"
-    diplome: "DEJEPS"
-    specialite: "golf"
-    type: "parcours"
-    theme: null
-    debut: 2026-12-14
-    fin: 2027-12-17
-    ville: "Aix-en-Provence"
-    departement: "13"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114620P01118078600850002480786008500024-13001%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b72e5d4662-20261215
-    organisme: null
-    organisme_nom: "Cefter PACA"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2026-12-15
-    fin: 2027-12-15
-    ville: "Barcillonnette"
-    departement: "05"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01114143091380005843465897700013-05013%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -886,46 +646,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-3cd3a9e5d7-20270104
+  - id: leo-7f0a38cbc7
     organisme: null
-    organisme_nom: "Les Glenans"
+    organisme_nom: "Léo Lagrange Formation"
     diplome: "BPJEPS"
-    specialite: "voile"
+    specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2027-01-04
-    fin: 2028-12-15
-    ville: "Concarneau"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
+    fin: 2027-12-09
+    ville: "Mainvilliers"
+    departement: "28"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118437P01117756881790001677568817900016-29039%23L01/specialite-educateur-sportif-mention-voile-bp-jeps"
-    releve_le: 2026-10-26
+    url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-aa366dc6c6-20270104
-    organisme: null
-    organisme_nom: "Prosportconcept"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-04
-    fin: 2027-12-03
-    ville: "Saint-Vincent-de-Tyrosse"
-    departement: "40"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118197601170001381976011700013-40284%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
   - id: app-51a0867661-20270104
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -983,7 +723,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01111992161930003719921619300037-92019%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-86bd21080b-20270111
@@ -1003,46 +743,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-01053%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-eaf9ecdc31-20270111
-    organisme: null
-    organisme_nom: "Le Chambon Centre de Plein Air de la Charente"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-11
-    fin: 2028-03-31
-    ville: "Eymouthiers"
-    departement: "16"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118341798480001720002484200011-16135%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3cd3a9e5d7-20270111
-    organisme: null
-    organisme_nom: "Les Glenans"
-    diplome: "BPJEPS"
-    specialite: "voile"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-11
-    fin: 2028-12-22
-    ville: "Concarneau"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118437P01117756881790001677568817900016-29039%23L01/specialite-educateur-sportif-mention-voile-bp-jeps"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -1126,26 +826,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-40c3499149-20270118
-    organisme: null
-    organisme_nom: "Eurofitness"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-18
-    fin: 2027-12-14
-    ville: "Bordeaux"
-    departement: "33"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114214574170005142145741700051-33063%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-990d1fccc9-20270118
     organisme: null
     organisme_nom: "Les Francas Auvergne Rhone-Alpes"
@@ -1163,26 +843,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-42279%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-264142f59b-20270118
-    organisme: null
-    organisme_nom: "UCPA Formation"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-18
-    fin: 2027-12-17
-    ville: "Paris-19e-Arrondissement"
-    departement: "75"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01118538665560001485386655600014-75119%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -1206,26 +866,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-15bd4f47ec-20270125
-    organisme: null
-    organisme_nom: "Institut National du Nautisme"
-    diplome: "BPJEPS"
-    specialite: "glisse-aerotractee"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-25
-    fin: 2027-11-13
-    ville: "Saint-Pierre-Quiberon"
-    departement: "56"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119579P01111956008530001219560085300012-56234%23L01/specialite-educateur-sportif-mention-activites-de-glisse-aerotractee-et-discipli"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-030171fcbb-20270126
     organisme: null
     organisme_nom: "Ocellia"
@@ -1246,86 +886,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-7b8dd2d899-20270127
+  - id: leo-5432ab9c64
     organisme: null
-    organisme_nom: "Eurofitness"
-    diplome: "DEJEPS"
-    specialite: "halterophilie"
-    type: "parcours"
-    theme: null
-    debut: 2027-01-27
-    fin: 2027-12-10
-    ville: "Bordeaux"
-    departement: "33"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/113801P01114214574170005142145741700051-33063%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4316732686-20270201
-    organisme: null
-    organisme_nom: "Maison Familiale Rurale"
-    diplome: "BPJEPS"
-    specialite: "peche"
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "CPJEPS"
+    specialite: "aavq"
     type: "parcours"
     theme: null
     debut: 2027-02-01
-    fin: 2027-10-22
-    ville: "Naucelle"
-    departement: "12"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
+    fin: 2028-01-25
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118679P01117881855280002378818552800023-12169%23L01/specialite-educateur-sportif-mention-peche-de-loisirs-a-pieds-ou-en-embarcation-"
-    releve_le: 2026-10-26
+    url: "https://www.leolagrange-formation.fr/formation/animation/cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle/"
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-74196fb988-20270201
-    organisme: null
-    organisme_nom: "Maison Familiale Rurale de Perigueux"
-    diplome: "BPJEPS"
-    specialite: "peche"
-    type: "parcours"
-    theme: null
-    debut: 2027-02-01
-    fin: 2027-11-19
-    ville: "Périgueux"
-    departement: "24"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118679P01113227469260001132274692600011-24322%23L01/specialite-educateur-sportif-mention-peche-de-loisirs-a-pieds-ou-en-embarcation-"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7d768c7c27-20270202
-    organisme: null
-    organisme_nom: "Auto Sport Academy"
-    diplome: "BPJEPS"
-    specialite: "sport-automobile"
-    type: "parcours"
-    theme: null
-    debut: 2027-02-02
-    fin: 2027-11-30
-    ville: "Le Mans"
-    departement: "72"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118376P01118124253790002939529035600025-72181%23L01/specialite-educateur-sportif-mention-activites-de-sport-automobile-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
   - id: app-d29e3756f2-20270203
     organisme: null
     organisme_nom: "O'F Redon"
@@ -1343,46 +923,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002951836823800045-35236%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7dcb9c5154-20270209
-    organisme: null
-    organisme_nom: "Horizon"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-02-09
-    fin: 2027-11-26
-    ville: "Mandelieu-la-Napoule"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113841541420003638415414200036-06079%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-27
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-124dc2095a-20270218
-    organisme: null
-    organisme_nom: "Global Training Formation"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-02-18
-    fin: 2027-12-10
-    ville: "Paris-15e-Arrondissement"
-    departement: "75"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115005411150003550054111500035-75115%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -1506,6 +1046,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
+  - id: leo-329ba84c05
+    organisme: null
+    organisme_nom: "Léo Lagrange Formation"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-03-19
+    fin: 2028-10-08
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
+    aides: []
+    complet: false
+    url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-01
+    source: "page-organisme"
   - id: app-be95f1ca22-20270326
     organisme: null
     organisme_nom: "Association Region des CEMEA des Pays de Loire"
@@ -1523,7 +1083,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01218124253790002933748609600049-44109%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-f564ad76cf-20270401
@@ -1546,46 +1106,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-1320d97a19-20270419
+  - id: leo-c9a459d406
     organisme: null
-    organisme_nom: "CAPA Sports"
-    diplome: "BPJEPS"
-    specialite: "motonautisme"
-    type: "parcours"
-    theme: null
-    debut: 2027-04-19
-    fin: 2028-11-05
-    ville: "Antibes"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119453P01118034305780001080343057800010-06004%23L01/specialite-educateur-sportif-mention-activites-de-motonautisme-et-disciplines-as"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-0fed492919-20270505
-    organisme: null
-    organisme_nom: "IFV Voiron"
+    organisme_nom: "Léo Lagrange Formation"
     diplome: "DEJEPS"
-    specialite: "cyclisme"
+    specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
-    debut: 2027-05-05
-    fin: 2028-11-17
-    ville: "Voiron"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
+    debut: 2027-04-05
+    fin: 2029-03-09
+    ville: "Vénissieux"
+    departement: "69"
+    formule: "alternance"
+    prix: null
+    prix_note: "dates prévisionnelles, ajustées selon le nombre d'inscrits"
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117725P01114099687160005353427748800019-38563%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
+    url: "https://www.leolagrange-formation.fr/formation/animation/dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets/"
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
   - id: app-e834d74648-20270524
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -1603,207 +1143,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01218124253790002932751175400043-49007%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-27
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1c97592ff4-20270824
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-24
-    fin: 2028-06-24
-    ville: "Beaune"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01113999262600004939992626000049-21054%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9fd7bc8418-20270826
-    organisme: null
-    organisme_nom: "CREPS Vallon-Pont-D'arc"
-    diplome: "BPJEPS"
-    specialite: "tennis-de-table"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-26
-    fin: 2028-08-24
-    ville: "Voiron"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119564P01111300189140001513001891400015-38563%23L01/specialite-educateur-sportif-mention-activites-du-tennis-de-table-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-717af37e2c-20270830
-    organisme: null
-    organisme_nom: "Maison Familiale Rurale du Perigordvert"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-30
-    fin: 2028-06-30
-    ville: "Thiviers"
-    departement: "24"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01117817409980001378174099800013-24551%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-8a158f4166-20270830
-    organisme: null
-    organisme_nom: "Lbfchb Besancon"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-30
-    fin: 2028-06-30
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113274371170003632743711700036-25056%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4ed0bf8856-20270830
-    organisme: null
-    organisme_nom: "SAS Ecurie ADM"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-30
-    fin: 2028-08-25
-    ville: "Strasbourg"
-    departement: "67"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01118127995750001281279957500012-67482%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ebee752df4-20270831
-    organisme: null
-    organisme_nom: "Association Develop Profes Sportifs la Gauthiere"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-08-31
-    fin: 2028-07-16
-    ville: "Clermont-Ferrand"
-    departement: "63"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01114515029180001945150291800019-63113%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-fdf4152e73-20270901
-    organisme: null
-    organisme_nom: "CFAA des Ardennes"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "Rethel"
-    departement: "08"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111908080480001019080804800069-08362%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-e21aac60f6-20270901
-    organisme: null
-    organisme_nom: "CFPPA de Saint Affrique"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "Saint-Affrique"
-    departement: "12"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111912093860001719120938600041-12208%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-298e55a0fe-20270901
-    organisme: null
-    organisme_nom: "IRSS Caen"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Caen"
-    departement: "14"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500172-14118%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-6bb53608b6-20270901
-    organisme: null
-    organisme_nom: "IRSS Caen"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Caen"
-    departement: "14"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500172-14118%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-e741d41f90-20270901
@@ -1823,46 +1163,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500172-14118%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3bf40135ec-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Royan"
-    departement: "17"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500123-17306%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-48f73c2832-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Royan"
-    departement: "17"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500123-17306%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -1886,106 +1186,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-094f8345bb-20270901
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "BPJEPS"
-    specialite: "gymnastique"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118816P01114219875870001919210071700011-25056%23L01/specialite-educateur-sportif-mention-activites-gymniques-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-53d4225e25-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Brest"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500206-29019%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b8aff3a0ad-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "apt"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Brest"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114235P01113344121450026333441214500206-29019%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3f58a61112-20270901
-    organisme: null
-    organisme_nom: "CMA Formation PAVIE"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Pavie"
-    departement: "32"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01111300279310045513002793100190-32307%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-db8a6b952e-20270901
-    organisme: null
-    organisme_nom: "CFPPA du Gers"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Mirande"
-    departement: "32"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111932055720001219320557200020-32256%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-4f9fa3580d-20270901
     organisme: null
     organisme_nom: "IRSS Bordeaux"
@@ -2003,66 +1203,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500230-33063%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-8af8e29c3f-20270901
-    organisme: null
-    organisme_nom: "IRSS Bordeaux"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Bordeaux"
-    departement: "33"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500230-33063%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9b1d5fe592-20270901
-    organisme: null
-    organisme_nom: "IRSS Bordeaux"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Bordeaux"
-    departement: "33"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500230-33063%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4b12596cc4-20270901
-    organisme: null
-    organisme_nom: "ENCP Rennes"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-11-26
-    ville: "Rennes"
-    departement: "35"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115142483010007951424830100079-35238%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -2086,46 +1226,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-84653af977-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-30
-    ville: "La Riche"
-    departement: "37"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500131-37195%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-46c80fc327-20270901
-    organisme: null
-    organisme_nom: "Association Format Metier Foot Saint Etienne Region"
-    diplome: "BPJEPS"
-    specialite: "aan"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "L'Étrat"
-    departement: "42"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/112352P01114099687160005340230528800019-42092%23L01/specialite-educateur-sportif-mention-activites-aquatiques-et-de-la-natation-bp-j"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-56fdce84d6-20270901
     organisme: null
     organisme_nom: "Institut Regional Sport et Sante"
@@ -2143,186 +1243,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500057-44109%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9b585b9ea6-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Nantes"
-    departement: "44"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500057-44109%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ce4facb9c4-20270901
-    organisme: null
-    organisme_nom: "Institut Regional Sport et Sante"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Nantes"
-    departement: "44"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500057-44109%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2b8cf40872-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "tennis-de-table"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-29
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/113918P01114087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-activites-du-tennis-de-table-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-516df53f95-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-21
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01214087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-5367efe137-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "gymnastique"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-29
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118816P01114087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-activites-gymniques-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7b9016937d-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-29
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9319b70860-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "volley-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-29
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118435P01114087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-activites-du-volley-ball-et-disciplines-ass"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ac4347f6f9-20270901
-    organisme: null
-    organisme_nom: "Formasat CFA"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-09-29
-    ville: "Saint-Jean-le-Blanc"
-    departement: "45"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114087508420004440875084200044-45286%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-183e832d95-20270901
-    organisme: null
-    organisme_nom: "IRSS Cholet"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Cholet"
-    departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500081-49099%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-29
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -2346,266 +1266,6 @@ sessions:
     releve_le: 2026-10-29
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-6f059f8112-20270901
-    organisme: null
-    organisme_nom: "IRSS Cholet"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Cholet"
-    departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500081-49099%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-dea2ac9687-20270901
-    organisme: null
-    organisme_nom: "IFCE Saumur"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "Saumur"
-    departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111300104400001913001044000019-49328%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-27e78433ce-20270901
-    organisme: null
-    organisme_nom: "IRSS Perpignan"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Perpignan"
-    departement: "66"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500289-66136%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-e9083731a4-20270901
-    organisme: null
-    organisme_nom: "SEAUS Bron"
-    diplome: "BPJEPS"
-    specialite: "aan"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-06-30
-    ville: "Bron"
-    departement: "69"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/112352P01114099687160005344537058800029-69029%23L01/specialite-educateur-sportif-mention-activites-aquatiques-et-de-la-natation-bp-j"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ae978cd0f0-20270901
-    organisme: null
-    organisme_nom: "IRSS Le Mans"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Le Mans"
-    departement: "72"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500214-72181%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-f8c5b102d2-20270901
-    organisme: null
-    organisme_nom: "IRSS Le Mans"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Le Mans"
-    departement: "72"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500214-72181%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-826a5f16c5-20270901
-    organisme: null
-    organisme_nom: "IRSS Poitiers"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Poitiers"
-    departement: "86"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500180-86194%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3ba80c17c7-20270901
-    organisme: null
-    organisme_nom: "IRSS Vincennes"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Vincennes"
-    departement: "94"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113344121450026333441214500297-94080%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-cd90d356fd-20270901
-    organisme: null
-    organisme_nom: "IRSS Vincennes"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-01
-    fin: 2028-08-31
-    ville: "Vincennes"
-    departement: "94"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113344121450026333441214500297-94080%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-d4f6bf15da-20270902
-    organisme: null
-    organisme_nom: "CFA de Seine-Maritime"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-02
-    fin: 2028-07-02
-    ville: "Auzebosc"
-    departement: "76"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111976131510001219761315100103-76043%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-f2b87eb93d-20270903
-    organisme: null
-    organisme_nom: "CRAF 2s"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-03
-    fin: 2028-09-29
-    ville: "Colombelles"
-    departement: "14"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115203745050004552037450500045-14167%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-27
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-284bf1e023-20270903
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-03
-    fin: 2028-07-02
-    ville: "Houtaud"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-25309%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-47f958252f-20270903
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-03
-    fin: 2028-06-25
-    ville: "Nevers"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-58194%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-1435d2882c-20270903
     organisme: null
     organisme_nom: "Formapi"
@@ -2624,226 +1284,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-71270%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-15a3391395-20270903
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-03
-    fin: 2028-07-02
-    ville: "Mâcon"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-71270%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-94915c8543-20270903
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-03
-    fin: 2028-06-18
-    ville: "Chalon-sur-Saône"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-71076%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4ae0497458-20270906
-    organisme: null
-    organisme_nom: "Centre Equestre d'Idoine (ce d'Idoine)"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-07-11
-    ville: "Les Croûtes"
-    departement: "10"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01118921511680001089215116800010-10118%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-8ac6cb9d14-20270906
-    organisme: null
-    organisme_nom: "CRAF 2s"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-09-29
-    ville: "Colombelles"
-    departement: "14"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115203745050004552037450500045-14167%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-27
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9013122e2e-20270906
-    organisme: null
-    organisme_nom: "Centre Departemental de Formation des Apprentis, Agricole de la Correz"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-09-29
-    ville: "Voutezac"
-    departement: "19"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01111919024440002219190244400022-19288%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2932db1e1c-20270906
-    organisme: null
-    organisme_nom: "Cours Biomedal"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-08-31
-    ville: "Saint-Apollinaire"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114328344970003943283449700039-21540%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-947b822d95-20270906
-    organisme: null
-    organisme_nom: "Cours Biomedal"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-08-31
-    ville: "Saint-Apollinaire"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114328344970003943283449700039-21540%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4a0b7cfd51-20270906
-    organisme: null
-    organisme_nom: "Cours Biomedal"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-08-31
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114328344970003943283449700039-25056%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ab1a0e4495-20270906
-    organisme: null
-    organisme_nom: "Cours Biomedal"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-08-31
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114328344970003943283449700039-25056%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-303300efd1-20270906
-    organisme: null
-    organisme_nom: "LEGTA LONS-le-Saunier MANCY"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-07-07
-    ville: "Lons-le-Saunier"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111939080920001119390809200011-39300%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-532b7808be-20270906
-    organisme: null
-    organisme_nom: "Forma' Institut de Formation de la FSCF"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-08-24
-    ville: "Les Ponts-de-Cé"
-    departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01117498398660001174983986600011-49246%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-30
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-cab7fb5df4-20270906
@@ -2866,226 +1306,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-ccb2d42f11-20270906
-    organisme: null
-    organisme_nom: "Sports & Etudes Concept"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-09-06
-    ville: "Puteaux"
-    departement: "92"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114396241560007143962415600071-92062%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2216508a22-20270906
-    organisme: null
-    organisme_nom: "Sport & Formation"
-    diplome: "DEJEPS"
-    specialite: "tennis"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-06-23
-    ville: "Aix-en-Provence"
-    departement: "13"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114572P01118175762750001781757627500017-13001%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-01ffa47189-20270906
-    organisme: null
-    organisme_nom: "LEGTA LONS-le-Saunier MANCY"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-07-07
-    ville: "Lons-le-Saunier"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01111939080920001119390809200011-39300%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-00c52bc9e5-20270906
-    organisme: null
-    organisme_nom: "Sport & Formation"
-    diplome: "DESJEPS"
-    specialite: "tennis"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-06
-    fin: 2028-06-23
-    ville: "Aix-en-Provence"
-    departement: "13"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114573P01118175762750001781757627500017-13001%23L01/diplome-d-etat-superieur-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-24a735eeaf-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3e4f9ad573-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7c425354ea-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "sports-de-contact"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118215P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-activites-des-sports-de-contact-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-a4cee17fad-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "golf"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118689P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-activite-golf-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-423b87c0e8-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Houtaud"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-25309%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-aca4d0e427-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01113999262600004939992626000049-25056%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-5c424ed5cd-20270907
-    organisme: null
-    organisme_nom: "CFAA du Gers"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-08-31
-    ville: "Pavie"
-    departement: "32"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01111932003910001219320039100053-32307%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-99bd67266f-20270907
     organisme: null
     organisme_nom: "CFAA du Gers"
@@ -3103,506 +1323,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01111932003910001219320039100053-32307%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4e94301e76-20270907
-    organisme: null
-    organisme_nom: "Association Sport ASPTT Grenoble- Gresivaudan"
-    diplome: "BPJEPS"
-    specialite: "apt"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-09-07
-    ville: "Montbonnot-Saint-Martin"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114235P01117897565250002632968112600044-38249%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-6b4521e6d6-20270907
-    organisme: null
-    organisme_nom: "Action Cheval Formation"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-03
-    ville: "Grenoble"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01119801476980001698014769800016-38185%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-04662d3c37-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Nevers"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01113999262600004939992626000049-58194%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2f75b98feb-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Nevers"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-58194%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7938e947e6-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Nevers"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01113999262600004939992626000049-58194%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-c19258e13b-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Vesoul"
-    departement: "70"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-70550%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-0f3f46963d-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-06-21
-    ville: "Chalon-sur-Saône"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01113999262600004939992626000049-71076%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2d236de6ac-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Mâcon"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01113999262600004939992626000049-71270%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-626c5db4f1-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Gueugnon"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-71230%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-f8ef74c5c9-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Mâcon"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-71270%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-0dc0178f90-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Monéteau"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-89263%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-cf972bc948-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-09
-    ville: "Thorigny-sur-Oreuse"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01113999262600004939992626000049-89414%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-55aa0fece3-20270907
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-07
-    fin: 2028-07-10
-    ville: "Belfort"
-    departement: "90"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004939992626000049-90010%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1bfe8b2869-20270908
-    organisme: null
-    organisme_nom: "ENCP Rennes"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-08
-    fin: 2028-11-26
-    ville: "Brest"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115142483010007951424830100079-29019%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ab5c2b7b67-20270908
-    organisme: null
-    organisme_nom: "ENCP Rennes"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-08
-    fin: 2028-11-26
-    ville: "Ploemeur"
-    departement: "56"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115142483010007951424830100079-56162%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-6fb72492f3-20270908
-    organisme: null
-    organisme_nom: "CFPPA Contamine-sur-Arve"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-08
-    fin: 2028-06-26
-    ville: "Contamine-sur-Arve"
-    departement: "74"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/093223P01211974027610001319740276100021-74087%23L01/specialite-educateur-sportif-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7a7c3a1e28-20270909
-    organisme: null
-    organisme_nom: "EMSAT Saleilles"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-09
-    fin: 2028-09-08
-    ville: "Elne"
-    departement: "66"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115322683230004753226832300047-66065%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-30
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1949b5f556-20270909
-    organisme: null
-    organisme_nom: "Sports & Etudes Concept"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-09
-    fin: 2028-09-08
-    ville: "Puteaux"
-    departement: "92"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114396241560007143962415600071-92062%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-821c22c872-20270910
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-10
-    fin: 2028-06-25
-    ville: "Chalon-sur-Saône"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-71076%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-88eaad4d9c-20270913
-    organisme: null
-    organisme_nom: "CAPA Sports"
-    diplome: "BPJEPS"
-    specialite: "velo"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-06-25
-    ville: "Antibes"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118399P01118034305780001080343057800010-06004%23L01/specialite-educateur-sportif-mention-activites-du-velo-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b028b7b6b1-20270913
-    organisme: null
-    organisme_nom: "CAPA Sports"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-06-25
-    ville: "Antibes"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118034305780001080343057800010-06004%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b0768a2a74-20270913
-    organisme: null
-    organisme_nom: "Horizon"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-06-30
-    ville: "Antibes"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113841541420003638415414200036-06004%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-27
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4d34cf5b62-20270913
-    organisme: null
-    organisme_nom: "Sport & Formation"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-06-23
-    ville: "Aix-en-Provence"
-    departement: "13"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118175762750001781757627500017-13001%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-12024d65f2-20270913
-    organisme: null
-    organisme_nom: "JSF Pontarlier"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Pontarlier"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115343462590003753434625900060-25462%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-27714ca46c-20270913
-    organisme: null
-    organisme_nom: "JSF Pontarlier"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Pontarlier"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115343462590003753434625900060-25462%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -3646,86 +1366,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-157591cb28-20270913
-    organisme: null
-    organisme_nom: "JSF Dole"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Dole"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115343462590003753434625900052-39198%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2504ab569d-20270913
-    organisme: null
-    organisme_nom: "JSF Dole"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Dole"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115343462590003753434625900052-39198%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2b70858d56-20270913
-    organisme: null
-    organisme_nom: "JSF Moirans-en-Montagne"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Moirans-en-Montagne"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115343462590003753434625900037-39333%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-4142f22ba4-20270913
-    organisme: null
-    organisme_nom: "JSF Lons-le-Saunier"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Lons-le-Saunier"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01115343462590003753434625900045-39300%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-69f575b464-20270913
     organisme: null
     organisme_nom: "JSF Lons-le-Saunier"
@@ -3743,166 +1383,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115343462590003753434625900045-39300%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-a2931c974f-20270913
-    organisme: null
-    organisme_nom: "JSF Moirans-en-Montagne"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Moirans-en-Montagne"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115343462590003753434625900037-39333%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-a82f108bd8-20270913
-    organisme: null
-    organisme_nom: "JSF Lons-le-Saunier"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-13
-    ville: "Lons-le-Saunier"
-    departement: "39"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01115343462590003753434625900045-39300%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-cf74f0e949-20270913
-    organisme: null
-    organisme_nom: "FRAFR Angers"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-08-25
-    ville: "Angers"
-    departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118124253790002932751175400043-49007%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-a87a279134-20270913
-    organisme: null
-    organisme_nom: "Lbfchb Besancon"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-02-07
-    ville: "Le Creusot"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113274371170003632743711700036-71153%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-14124d493b-20270913
-    organisme: null
-    organisme_nom: "FORMATION.S 89"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-07
-    ville: "Auxerre"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01117509003180002375090031800023-89024%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-938dbddc61-20270913
-    organisme: null
-    organisme_nom: "FORMATION.S 89"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-07
-    ville: "Auxerre"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01117509003180002375090031800023-89024%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-bcdb85308b-20270913
-    organisme: null
-    organisme_nom: "FORMATION.S 89"
-    diplome: "BPJEPS"
-    specialite: "basket-ball"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-07
-    ville: "Auxerre"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118464P01117509003180002375090031800023-89024%23L01/specialite-educateur-sportif-mention-activites-de-basket-ball-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-f4eae58db8-20270913
-    organisme: null
-    organisme_nom: "FORMATION.S 89"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2028-07-07
-    ville: "Auxerre"
-    departement: "89"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01117509003180002375090031800023-89024%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -3924,66 +1404,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117509003180002375090031800023-89024%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b23652aeba-20270913
-    organisme: null
-    organisme_nom: "CREPS Montpellier"
-    diplome: "DEJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-13
-    fin: 2029-05-25
-    ville: "Montpellier"
-    departement: "34"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/055130P01215081972740002219340099100017-34172%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1c846033e0-20270914
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-14
-    fin: 2028-06-30
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7588baafc5-20270914
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "gymnastique"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-14
-    fin: 2028-06-11
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118816P01113999262600004939992626000049-21231%23L01/specialite-educateur-sportif-mention-activites-gymniques-bp-jeps"
-    releve_le: 2026-10-28
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-53ce0c76a8-20270914
@@ -4026,26 +1446,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-4b38cab659-20270914
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-14
-    fin: 2028-06-30
-    ville: "Magny-Cours"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01113999262600004939992626000049-58152%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-a20a636ff4-20270914
     organisme: null
     organisme_nom: "Formapi"
@@ -4064,46 +1464,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-58194%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-c7a0633ba8-20270914
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-14
-    fin: 2028-07-02
-    ville: "Cluny"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01113999262600004939992626000049-71137%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-d68743f587-20270915
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-15
-    fin: 2028-07-10
-    ville: "Bourg-en-Bresse"
-    departement: "01"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01213999262600004939992626000049-01053%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-173ea75e2f-20270920
@@ -4126,26 +1486,6 @@ sessions:
     releve_le: 2026-10-30
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-ca7e200097-20270920
-    organisme: null
-    organisme_nom: "CDFAA Ahun"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-10-21
-    ville: "Ahun"
-    departement: "23"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01211923003090001519230030900072-23001%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-07b27ddabf-20270920
     organisme: null
     organisme_nom: "Leo Lagrange Formation"
@@ -4163,66 +1503,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113106567720026931065677200269-31555%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2729759dd3-20270920
-    organisme: null
-    organisme_nom: "IPSO Formations"
-    diplome: "BPJEPS"
-    specialite: "aan"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-06-09
-    ville: "Grenoble"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/112352P01117933727150004579337271500052-38185%23L01/specialite-educateur-sportif-mention-activites-aquatiques-et-de-la-natation-bp-j"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-dda1a0472d-20270920
-    organisme: null
-    organisme_nom: "Institut de Formation des Grands Lacs"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-08-31
-    ville: "Biscarrosse"
-    departement: "40"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01119314542500001693145425000016-40046%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-479e1a0898-20270920
-    organisme: null
-    organisme_nom: "CFPPA Adultes d'Yssingeaux"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-09-22
-    ville: "Yssingeaux"
-    departement: "43"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/093217P01111943011310001819430113100026-43268%23L01/specialite-educateur-sportif-bp-jeps"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -4244,86 +1524,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114222021190001839822063200036-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-31
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-c1cb1c302d-20270920
-    organisme: null
-    organisme_nom: "EMSAT Saleilles"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-09-19
-    ville: "Saleilles"
-    departement: "66"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01115322683230004753226832300047-66189%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-30
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-89b5a29b4a-20270920
-    organisme: null
-    organisme_nom: "IPSO Formations"
-    diplome: "BPJEPS"
-    specialite: "apt"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-07-07
-    ville: "Annecy"
-    departement: "74"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114235P01117933727150004579337271500060-74010%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-cbdc81f9d9-20270920
-    organisme: null
-    organisme_nom: "AIRO Monteux"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-07-18
-    ville: "Monteux"
-    departement: "84"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01119247898600002192478986000021-84080%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-abf219ca57-20270920
-    organisme: null
-    organisme_nom: "UCPA Formation"
-    diplome: "DEJEPS"
-    specialite: "cyclisme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-20
-    fin: 2028-10-06
-    ville: "La Salle-les-Alpes"
-    departement: "05"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117725P01118538665560003085386655600030-05161%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-9ebe87c0c9-20270920
@@ -4366,46 +1566,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-12f46bcca8-20270921
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-21
-    fin: 2028-07-02
-    ville: "Brazey-en-Plaine"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01113999262600004939992626000049-21103%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-77251b9bc0-20270921
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-21
-    fin: 2028-06-21
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004919210071700011-21231%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-9cfb105665-20270921
     organisme: null
     organisme_nom: "CEMEA BFC"
@@ -4446,66 +1606,6 @@ sessions:
     releve_le: 2026-10-28
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-d318b0830b-20270922
-    organisme: null
-    organisme_nom: "Formopost"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-22
-    fin: 2028-09-20
-    ville: "Cognac"
-    departement: "16"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01119040248900002590402489000025-16102%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-be79601aad-20270923
-    organisme: null
-    organisme_nom: "IPSO Formations"
-    diplome: "BPJEPS"
-    specialite: "apt"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-23
-    fin: 2028-07-11
-    ville: "Villeurbanne"
-    departement: "69"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114235P01117933727150004579337271500045-69266%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b0d3d00b92-20270924
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-24
-    fin: 2028-06-11
-    ville: "Gueugnon"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01113999262600004939992626000049-71230%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-c6b074d01b-20270927
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -4523,66 +1623,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002932751175400043-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-72934cee05-20270927
-    organisme: null
-    organisme_nom: "C.L.E.S."
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-27
-    fin: 2028-09-22
-    ville: "Maxéville"
-    departement: "54"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114524443000004345244430000043-54357%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-b0841677db-20270927
-    organisme: null
-    organisme_nom: "C.L.E.S."
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-27
-    fin: 2028-09-22
-    ville: "Basse-Ham"
-    departement: "57"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114524443000004345244430000043-57287%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-c95c77d789-20270927
-    organisme: null
-    organisme_nom: "C.L.E.S."
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-27
-    fin: 2028-09-22
-    ville: "Sarrebourg"
-    departement: "57"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114524443000004345244430000043-57630%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -4626,106 +1666,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-070bd078d7-20270928
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "BPJEPS"
-    specialite: "lutte"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-28
-    fin: 2028-07-01
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118436P01113999262600004919210071700011-21231%23L01/specialite-educateur-sportif-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-40cc5b8c8c-20270928
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-28
-    fin: 2028-06-17
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01113999262600004919210071700011-21231%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-aa1597b5bd-20270928
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-28
-    fin: 2028-08-27
-    ville: "Valentigney"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01113999262600004939992626000049-25580%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9d50df915d-20270928
-    organisme: null
-    organisme_nom: "Institut Nautique Bretagne"
-    diplome: "BPJEPS"
-    specialite: "voile"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-28
-    fin: 2028-12-15
-    ville: "Concarneau"
-    departement: "29"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118437P01113330051480001533300514800015-29039%23L01/specialite-educateur-sportif-mention-voile-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-2ccff30ec7-20270928
-    organisme: null
-    organisme_nom: "CFPPA Adultes d'Yssingeaux"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-28
-    fin: 2028-09-29
-    ville: "Yssingeaux"
-    departement: "43"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01111943011310001819430113100026-43268%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-6588fd3e7e-20270929
     organisme: null
     organisme_nom: "URFFC Quetigny"
@@ -4743,127 +1683,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01213999262600004977859925800036-21515%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-3061fb9a13-20270930
-    organisme: null
-    organisme_nom: "IPSO Formations"
-    diplome: "BPJEPS"
-    specialite: "apt"
-    type: "parcours"
-    theme: null
-    debut: 2027-09-30
-    fin: 2028-07-09
-    ville: "Grenoble"
-    departement: "38"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/114235P01117933727150004579337271500045-38185%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-31
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-da8a3879ab-20271001
-    organisme: null
-    organisme_nom: "Elite Forma Academy"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-01
-    fin: 2028-09-30
-    ville: "Antibes"
-    departement: "06"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118946947850002989469478500029-06004%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-676989e951-20271001
-    organisme: null
-    organisme_nom: "Cavaliers Club Hippique AIX-Marseiille"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-01
-    fin: 2028-09-30
-    ville: "Aix-en-Provence"
-    departement: "13"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01114042642360001340426423600013-13001%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-6f523f4d59-20271001
-    organisme: null
-    organisme_nom: "Elite Forma Academy"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-01
-    fin: 2028-09-30
-    ville: "La Valette-du-Var"
-    departement: "83"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01118946947850002989469478500029-83144%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-7fc58423d3-20271002
-    organisme: null
-    organisme_nom: "UCPA Formation"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-02
-    fin: 2028-10-12
-    ville: "Saint-Priest"
-    departement: "69"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01118538665560003085386655600030-69290%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-278a00689a-20271004
-    organisme: null
-    organisme_nom: "CRAF 2s"
-    diplome: "BPJEPS"
-    specialite: "rugby"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-04
-    fin: 2028-12-22
-    ville: "Colombelles"
-    departement: "14"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119577P01115203745050004552037450500045-14167%23L01/specialite-educateur-sportif-mention-activites-du-rugby-a-xv-bpjeps"
-    releve_le: 2026-10-27
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-bac2208e51-20271004
@@ -4883,26 +1703,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114219682490002742196824900027-54395%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-ac9a6c82d0-20271004
-    organisme: null
-    organisme_nom: "JABAL Academy"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-04
-    fin: 2028-10-09
-    ville: "Paris-16e-Arrondissement"
-    departement: "75"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01118907556970001289075569700012-75116%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -5126,66 +1926,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-59a98b61c2-20271012
-    organisme: null
-    organisme_nom: "IPSO Formations"
-    diplome: "BPJEPS"
-    specialite: "aan"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-12
-    fin: 2028-07-05
-    ville: "Villeurbanne"
-    departement: "69"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/112352P01117933727150004579337271500045-69266%23L01/specialite-educateur-sportif-mention-activites-aquatiques-et-de-la-natation-bp-j"
-    releve_le: 2026-10-29
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-bf7099d9ef-20271012
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "DEJEPS"
-    specialite: "lutte"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-12
-    fin: 2028-06-30
-    ville: "Dijon"
-    departement: "21"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117146P01113999262600004919210071700011-21231%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-9bff3f5a12-20271012
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "DEJEPS"
-    specialite: "cyclisme"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-12
-    fin: 2028-10-01
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117725P01113999262600004919210071700011-25056%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-ab65d55149-20271013
     organisme: null
     organisme_nom: "Association Departementale des Maisons de Jeunes et de la Culture de la Loire"
@@ -5203,26 +1943,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01214975844900003949758449000039-42149%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-bcc50b146b-20271018
-    organisme: null
-    organisme_nom: "JABAL Academy"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-18
-    fin: 2028-10-18
-    ville: "Paris-16e-Arrondissement"
-    departement: "75"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01118907556970001289075569700012-75116%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -5246,26 +1966,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
-  - id: app-1d51f9fa12-20271026
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2027-10-26
-    fin: 2028-09-19
-    ville: "Magny-Cours"
-    departement: "58"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01113999262600004939992626000049-58152%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
   - id: app-17767d74b0-20271101
     organisme: null
     organisme_nom: "NNON Saint-Flour"
@@ -5283,46 +1983,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217791054850001477910548500014-15187%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-8ecbad9883-20271101
-    organisme: null
-    organisme_nom: "NNON Saint-Flour"
-    diplome: "BPJEPS"
-    specialite: "equitation"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-01
-    fin: 2028-10-31
-    ville: "Saint-Flour"
-    departement: "15"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117965P01117791054850001477910548500014-15187%23L01/specialite-educateur-sportif-mention-equitation-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1949b5f556-20271101
-    organisme: null
-    organisme_nom: "Sports & Etudes Concept"
-    diplome: "BPJEPS"
-    specialite: "forme"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-01
-    fin: 2028-11-08
-    ville: "Puteaux"
-    departement: "92"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/119606P01114396241560007143962415600071-92062%23L01/specialite-educateur-sportif-mention-activites-physiques-et-sportives-de-la-form"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -5383,7 +2043,7 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01217857402910102078574029101020-94033%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-10-26
+    releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-705ff363ae-20271103
@@ -5403,26 +2063,6 @@ sessions:
     aides: []
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01213350908900001333509089000013-42147%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-23af348d28-20271112
-    organisme: null
-    organisme_nom: "Humanitaria"
-    diplome: "BPJEPS"
-    specialite: "maps"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-12
-    fin: 2028-09-29
-    ville: "Massy"
-    departement: "91"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117905P01114896243870001048962438700010-91377%23L01/specialite-educateur-sportif-mention-multi-activites-physiques-ou-sportives-pour"
     releve_le: 2026-10-26
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
@@ -5464,46 +2104,6 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117785724040002977857240400029-71133%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-1d9ce06210-20271116
-    organisme: null
-    organisme_nom: "CREPS Dijon"
-    diplome: "DEJEPS"
-    specialite: "cyclisme"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-16
-    fin: 2028-07-13
-    ville: "Besançon"
-    departement: "25"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117724P01113999262600004919210071700011-25056%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-28
-    verifie_le: 2026-11-01
-    source: "catalogue-apprentissage"
-  - id: app-488088b070-20271116
-    organisme: null
-    organisme_nom: "Formapi"
-    diplome: "DEJEPS"
-    specialite: "sports-equestres"
-    type: "parcours"
-    theme: null
-    debut: 2027-11-16
-    fin: 2028-09-17
-    ville: "Cluny"
-    departement: "71"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
-    aides: []
-    complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117329P01113999262600004939992626000049-71137%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-perfectio"
-    releve_le: 2026-10-28
     verifie_le: 2026-11-01
     source: "catalogue-apprentissage"
   - id: app-180a43fce6-20271129

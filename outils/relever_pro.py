@@ -23,6 +23,7 @@ import argparse
 import collections
 import datetime as dt
 import hashlib
+import html
 import json
 import os
 import re
@@ -175,7 +176,11 @@ def catalogue(aujourdhui):
                             or f.get("etablissement_gestionnaire_enseigne") or f.get("etablissement_gestionnaire_entreprise_raison_sociale"))
         if org and len(org) <= 6 and f.get("etablissement_formateur_localite"):
             org = f"{org} {commune(f['etablissement_formateur_localite'])}"  # « CREPS » seul ne dit rien
+        if re.search(r"EDUCATEUR SPORTIF|PERFECTIONNEMENT SPORTIF|PERFORMANCE SPORTIVE", sans_accents(f.get("intitule_long") or "").upper()):
+            continue  # le site ne présente que l'animation (pas les mentions sportives)
         sp = specialite_de(diplome, f.get("id_certifinfo"), f.get("intitule_long"), f.get("rncp_intitule"), f.get("intitule_court"))
+        if not sp:
+            continue
         duree = f.get("duree")
         for debut, fin in zip(f.get("date_debut") or [], f.get("date_fin") or []):
             debut, fin = dt.date.fromisoformat(debut[:10]), dt.date.fromisoformat(fin[:10])
@@ -230,6 +235,8 @@ def offre_info(aujourdhui, jeton):
         if not diplome or not o.get("date_debut"):
             continue
         sp = sp or specialite_de(diplome, None, o.get("intitule_formation"))
+        if not sp or re.search(r"educateur sportif|perfectionnement sportif|performance sportive", sans_accents(o.get("intitule_formation"))):
+            continue  # le site ne présente que l'animation
         lieu = o.get("lieu_formation") or {}
         formateurs = o.get("organisme_formateur") or []
         org = nom_organisme((formateurs[0].get("raison_sociale") if formateurs else None)
@@ -256,6 +263,74 @@ def offre_info(aujourdhui, jeton):
             "formule": "distance" if o.get("modalites_enseignement") == 2 else None, "prix": prix,
             "prix_note": " ; ".join(notes) or None, "aides": [], "complet": o.get("etat_recrutement") == 2,
             "url": url, "source": "offre-info"})
+    return sessions
+
+
+# ---------------------------------------------------------------- 3. pages des organismes
+
+_deps_villes = {}
+
+
+def dep_de_ville(ville):
+    """Département d'une commune nommée sans code postal (API Géo de l'État : la plus peuplée de ce nom)."""
+    cle = sans_accents(ville)
+    if cle not in _deps_villes:
+        try:
+            r = lire_json("https://geo.api.gouv.fr/communes?" + urllib.parse.urlencode(
+                {"nom": ville, "fields": "codeDepartement,population", "boost": "population", "limit": 1}))
+            _deps_villes[cle] = r[0]["codeDepartement"] if r else None
+        except SystemExit:
+            _deps_villes[cle] = None
+    return _deps_villes[cle]
+
+
+MOIS_FR = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"]
+
+
+def date_fr_texte(t):
+    m = re.search(r"(\d{1,2})(?:er)? (\w+) (\d{4})", sans_accents(t))
+    if not m or m.group(2) not in MOIS_FR:
+        return None
+    return dt.date(int(m.group(3)), MOIS_FR.index(m.group(2)) + 1, int(m.group(1)))
+
+
+LEO = {"bpjeps-mention-animation-socioeducative-et-culturelle-asec": ("BPJEPS", "asec"),
+       "cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle": ("CPJEPS", "aavq"),
+       "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets"),
+       "cqp-animateur-periscolaire": ("CQP-AP", None)}
+
+
+def leo_lagrange(aujourdhui):
+    """Léo Lagrange Formation : chaque page de formation donne ses sessions par centre (ville, dates)."""
+    from relever import autorise, lire_brut
+    sessions = []
+    for chemin, (diplome, sp) in LEO.items():
+        url = f"https://www.leolagrange-formation.fr/formation/animation/{chemin}/"
+        if not autorise(url):
+            raise SystemExit("Léo Lagrange : robots.txt interdit la page")
+        try:
+            brut = lire_brut(url)
+        except Exception as e:
+            print(f"  Léo Lagrange {chemin} : {e}", file=sys.stderr)
+            continue
+        for bloc in brut.split("class='training-session-center'")[1:]:
+            ville = re.search(r"training-session-center__title'>([^<]+)<", bloc)
+            if not ville:
+                continue
+            ville = " ".join(html.unescape(ville.group(1)).split())
+            for li in re.findall(r"<li class='training-session'>([^<]+)</li>", bloc):
+                morceaux = html.unescape(li).split(" - ")
+                debut = date_fr_texte(morceaux[0])
+                fin = date_fr_texte(morceaux[1]) if len(morceaux) > 1 else None
+                dep = dep_de_ville(ville) if not re.search(r"distance", ville, re.I) else None
+                if not debut or not dep:
+                    continue
+                sessions.append({
+                    "id": f"leo-{hashlib.sha1((chemin + ville + li).encode()).hexdigest()[:10]}", "organisme": None,
+                    "organisme_nom": "Léo Lagrange Formation", "diplome": diplome, "specialite": sp, "type": "parcours",
+                    "theme": None, "debut": debut, "fin": fin, "ville": ville, "departement": dep, "formule": "alternance",
+                    "prix": None, "prix_note": "dates prévisionnelles, ajustées selon le nombre d'inscrits", "aides": [],
+                    "complet": False, "url": url, "source": "page-organisme"})
     return sessions
 
 
@@ -303,7 +378,7 @@ def main():
         anciens = {s["id"]: s for s in (yaml.safe_load(chemin.read_text(encoding="utf-8")) or {}).get("sessions") or []}
 
     lues = []
-    sources = [("Catalogue de l'apprentissage", catalogue)]
+    sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange)]
     jeton = (os.environ.get("RCO_OFFREINFO_TOKEN") or "").strip()
     if jeton:
         sources.append(("API Offre Info", lambda j: offre_info(j, jeton)))
@@ -316,15 +391,16 @@ def main():
         except SystemExit as e:
             # une source en panne ne vide pas le site : ses sessions actuelles sont gardées telles quelles
             print(f"  {nom} : {e}", file=sys.stderr)
-            source = "catalogue-apprentissage" if "apprentissage" in nom else "offre-info"
-            liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source]
+            source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info"}.get(nom, "page-organisme")
+            liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source
+                     and (source != "page-organisme" or s.get("organisme_nom") == nom)]
         print(f"  {len(liste)} sessions lues", file=sys.stderr)
         lues += liste
 
     # filtres : France métropolitaine et Corse (comme le reste du site), début dans 3 jours à 14 mois ;
     # doublons (même école, même ville, même spécialité, même date) : le premier lu est gardé,
     # Offre Info (avec le prix) passant avant le catalogue.
-    lues.sort(key=lambda s: s["source"] != "offre-info")
+    lues.sort(key=lambda s: {"offre-info": 0, "page-organisme": 1}.get(s["source"], 2))
     vues, retenues = set(), []
     for s in lues:
         s["debut"] = s["debut"] if isinstance(s["debut"], dt.date) else dt.date.fromisoformat(str(s["debut"]))

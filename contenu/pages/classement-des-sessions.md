@@ -23,11 +23,13 @@ Vous pouvez filtrer la liste par diplôme, étape ou spécialité, département 
 
 ## Quelles sessions apparaissent
 
-- Les sessions **BAFA et BAFD** des organismes **habilités par l'État**, les sessions de **PSC1** et des **diplômes professionnels de l'animation** (CPJEPS, BPJEPS, DEJEPS, DESJEPS), publiées sur leurs pages publiques, **en France métropolitaine et en Corse**, qui commencent dans les **10 prochains mois**. Les départements d'outre-mer viendront ensuite.
-- **Une sélection, pas tout le catalogue** : pour chaque organisme, le site montre une session par département, par vacances scolaires (ou par mois en dehors des vacances), par diplôme et par étape. C'est la première qui a encore des places, par date puis par prix. Les autres sessions du même organisme sont sur son site : suivez le lien « Voir la session », puis sa liste de sessions.
-- **Diplômes professionnels en apprentissage** (CPJEPS, BPJEPS, DEJEPS, DESJEPS, toutes spécialités) : toutes les sessions du **catalogue national des formations en apprentissage** (Réseau des Carif-Oref), quelle que soit l'école, qui commencent dans les **14 prochains mois**. Ce catalogue rassemble l'offre déclarée par les écoles aux Carif-Oref de chaque région ; le lien « Voir » mène à la fiche de la formation sur La bonne alternance, le site public de l'alternance.
+- **BAFA et BAFD** : toutes les sessions à venir des organismes relevés sur leurs propres pages (AFOCAL, IFAC, UFCV, Ligue de l'enseignement d'Île-de-France), avec leur prix, et toutes les sessions déclarées par **les autres organismes habilités** (CEMEA, Léo Lagrange, Ligues de l'enseignement, Francas, EEDF, FSCF, Aroeven…) sur la **liste officielle du ministère** (bafa-bafd.jeunes.gouv.fr, Licence Ouverte). Une session y apparaît une fois déclarée par l'organisme, souvent quelques semaines avant son début, sans prix : le lien mène au site de l'organisme.
+- **PSC (premiers secours citoyen, ex-PSC1)** : toutes les sessions grand public de la Croix-Rouge française et de la Protection civile, avec leur prix.
+- **Diplômes professionnels de l'animation** (CQP animateur périscolaire, CPJEPS, BPJEPS, DEJEPS, DESJEPS) : les sessions des organismes relevés sur leurs pages (IFAC, Léo Lagrange Formation) et toutes celles du **catalogue national des formations en apprentissage** (Réseau des Carif-Oref), quelle que soit l'école. Ce catalogue rassemble l'offre déclarée par les écoles aux Carif-Oref de chaque région ; le lien « Voir » mène à la fiche de la formation sur La bonne alternance, le site public de l'alternance. Les mentions sportives (éducateur sportif…) ne sont pas présentées : le site est consacré à l'animation.
+- **En France métropolitaine et en Corse**, pour les sessions qui commencent dans les **10 prochains mois** (14 mois pour les diplômes professionnels). Les départements d'outre-mer viendront ensuite.
+- **Tout ce qui est relevé est montré** : il n'y a pas de sélection, ni de session mise en avant.
 - Une session disparaît automatiquement **une fois terminée**. Une session marquée « complet » par l'organisme reste visible avec cette mention.
-- Le relevé est fait organisme par organisme : **tous les organismes ne sont pas encore présents**. La liste à jour est sur la page [Organismes](/se-former/sessions/organismes/).
+- Certains organismes ne publient leurs sessions qu'au dernier moment, ou seulement sur leur propre site : **toutes les sessions de France ne sont pas encore présentes**. De nouvelles sources sont ajoutées régulièrement.
 
 ## Les dates de vérification
 

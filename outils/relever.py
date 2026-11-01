@@ -25,6 +25,7 @@ import json
 import re
 import sys
 import time
+import urllib.error
 import urllib.robotparser
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -51,8 +52,13 @@ def autorise(url):
     if hote not in _robots:
         # lu avec notre identité : certains sites refusent le lecteur par défaut de Python
         rp = urllib.robotparser.RobotFileParser(hote + "/robots.txt")
-        with urlopen(Request(hote + "/robots.txt", headers={"User-Agent": AGENT}), timeout=30) as r:
-            rp.parse(r.read().decode("utf-8", errors="ignore").splitlines())
+        try:
+            with urlopen(Request(hote + "/robots.txt", headers={"User-Agent": AGENT}), timeout=30) as r:
+                rp.parse(r.read().decode("utf-8", errors="ignore").splitlines())
+        except urllib.error.HTTPError as e:
+            if e.code != 404:
+                raise
+            rp.parse([])  # pas de robots.txt : rien n'est interdit
         _robots[hote] = rp
     # un site qui ferme sa porte aux robots d'IA (dont ceux d'Anthropic) n'est jamais lu
     return all(_robots[hote].can_fetch(a, url) for a in (AGENT, "ClaudeBot", "Claude-User", "anthropic-ai"))
@@ -403,6 +409,106 @@ def protection_civile():
     return sessions
 
 
+# ---------------------------------------------------------------- Croix-Rouge : PSC (ex-PSC1)
+
+def croix_rouge():
+    """Plateforme nationale d'inscription de la Croix-Rouge : toutes les sessions de ses unités locales, page par page."""
+    base = "https://inscription-formation.croix-rouge.fr/"
+    sessions = []
+    for n in range(1, 60):
+        brut = lire_brut(f"{base}?page={n}")
+        cartes = brut.split('<li class="formation-excerpt">')[1:]
+        if not cartes:
+            break
+        for c in cartes:
+            L = [" ".join(x.split()) for x in html.unescape(re.sub(r"<[^>]+>", "\n", c)).split("\n") if x.strip()]
+            ident = re.search(r'data-id="(\d+)"', c)
+            if not L or not L[0].startswith("Premiers Secours Citoyen") or not ident or "Date" not in L or "Lieu" not in L:
+                continue  # seulement le PSC (premiers secours citoyen, ex-PSC1), pas les autres formations
+            m = re.search(r"(\d{1,2}) (\w+) (\d{4})", L[L.index("Date") + 1])
+            mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
+                    "novembre", "décembre"]
+            if not m or m.group(2).lower() not in mois:
+                continue
+            jour = dt.date(int(m.group(3)), mois.index(m.group(2).lower()) + 1, int(m.group(1)))
+            k = L.index("Lieu")
+            cp = next((x for x in L[k + 1:k + 4] if re.fullmatch(r"\d{5}", x)), None)
+            if not cp:
+                continue
+            ville = L[L.index(cp, k) + 1] if L.index(cp, k) + 1 < len(L) else ""
+            dep = "2A" if cp.startswith("20") and int(cp) < 20200 else ("2B" if cp.startswith("20") else cp[:2])
+            if cp.startswith("75"):
+                ville = f"Paris {int(cp[3:])}{'er' if int(cp[3:]) == 1 else 'e'}"
+            prix = next((L[i - 1] for i, x in enumerate(L) if x == "€" and i and re.fullmatch(r"[\d,]+", L[i - 1])), None)
+            places = next((x for x in L if re.search(r"places? restantes?|complet", x, re.I)), "")
+            hybride = "Hybride" in L[0]
+            sessions.append({"id": "crf-" + ident.group(1), "organisme": "croix-rouge", "diplome": "PSC1", "type": "session",
+                             "theme": None, "debut": jour, "fin": jour, "ville": commune(ville) if not cp.startswith("75") else ville,
+                             "departement": dep, "formule": None,
+                             "prix": int(float(prix.replace(",", "."))) if prix else None,
+                             "prix_note": "hybride : 4 h en ligne avant la journée" if hybride else None, "aides": [],
+                             "complet": bool(re.search(r"complet|^0 place", places, re.I)), "url": base})
+    if len(sessions) < 50:
+        sys.exit(f"Croix-Rouge : seulement {len(sessions)} sessions lues, la page a peut-être changé de forme")
+    return sessions
+
+
+# ---------------------------------------------------------------- Ministère : toutes les sessions BAFA / BAFD déclarées
+
+TYPES_MINISTERE = {"Formation générale": "formation-generale", "Approfondissement": "approfondissement",
+                   "Perfectionnement": "perfectionnement", "Qualification": "qualification"}
+DEJA_LUS = re.compile(r"afocal|ifac|i\.f\.a\.c|ufcv|u\.f\.c\.v", re.I)  # organismes déjà relevés sur leurs propres pages
+
+
+def ministere():
+    """La liste publique des sessions déclarées par tous les organismes habilités (bafa-bafd.jeunes.gouv.fr, Licence Ouverte).
+    On n'en garde que les faits sur la session (diplôme, étape, thème, dates, commune, organisme), jamais les
+    coordonnées des personnes (e-mail du directeur…)."""
+    from relever_pro import nom_organisme  # ici pour éviter un import circulaire
+    import http.cookiejar
+    import urllib.request as ur
+    base = "https://bafa-bafd.jeunes.gouv.fr/baf-candidat"
+    if not autorise(base + "/app/liste-session"):
+        sys.exit("Ministère : robots.txt interdit la liste")
+    jar = http.cookiejar.CookieJar()
+    op = ur.build_opener(ur.HTTPCookieProcessor(jar))
+    ent = {"User-Agent": AGENT, "Accept": "application/json", "X-Requested-With": "XMLHttpRequest"}
+    op.open(ur.Request(base + "/api/candidat/public/v1/utilisateurs-connectes/courant", headers=ent), timeout=60).read()
+    jeton = next((c.value for c in jar if c.name == "XSRF-TOKEN"), "")
+    deps = {d["depId"]: d["code"] for d in json.load(op.open(ur.Request(
+        base + "/api/candidat/public/v1/referentiels/departements", headers=ent), timeout=60))}
+    corps = json.dumps({"pageNumber": 0, "pageSize": 2000, "pageOrderDTOs": [{"sortField": "dateDebut", "sortOrder": "ASC"}]})
+    req = ur.Request(base + "/api/candidat/public/v1/search-session-by-criteria", data=corps.encode(), method="POST",
+                     headers={**ent, "Content-Type": "application/json", "X-XSRF-TOKEN": jeton, "Referer": base + "/app/liste-session"})
+    d = json.load(op.open(req, timeout=120))
+    sessions = []
+    for x in d.get("content") or []:
+        nom = x.get("orfNom") or ""
+        if DEJA_LUS.search(nom + " " + (x.get("orfSigle") or "")) or x.get("etat") != "DECLARATION_COMPLETE":
+            continue
+        type_ = TYPES_MINISTERE.get(x.get("typeSessionLibelle"), "qualification" if "Qualif" in (x.get("typeSessionLibelle") or "") else None)
+        dep = deps.get(x.get("lieuDepId"))
+        if not type_ or not dep:
+            continue
+        ville = x.get("communeLibelle") or ""
+        m = re.match(r"PARIS (\d+)$", ville.upper())
+        ville = f"Paris {int(m.group(1))}{'er' if int(m.group(1)) == 1 else 'e'}" if m else commune(ville)
+        theme = " ".join((x.get("theme") or "").replace('"', " ").split()) or None
+        site = x.get("orfSiteInternet") or ""
+        if site and not site.startswith("http"):
+            site = "https://" + site
+        sigle = (x.get("orfSigle") or "").strip()
+        affiche = sigle.replace(".", "") if re.fullmatch(r"[A-Z][A-Z.]{2,9}", sigle) and len(nom) > 35 else nom_organisme(nom)
+        sessions.append({"id": f"min-{x['id']}", "organisme": None, "organisme_nom": affiche,
+                         "diplome": x["diplomeLibelle"].upper(), "type": type_, "theme": theme if type_ != "formation-generale" else None,
+                         "debut": dt.date.fromisoformat(x["dateDebut"]), "fin": dt.date.fromisoformat(x["dateFin"]),
+                         "ville": ville, "departement": dep, "formule": None, "prix": None, "prix_note": None, "aides": [],
+                         "complet": False, "url": site or base + "/app/liste-session", "source": "ministere"})
+    if len(sessions) < 30:
+        sys.exit(f"Ministère : seulement {len(sessions)} sessions lues, l'API a peut-être changé")
+    return sessions
+
+
 # ---------------------------------------------------------------- sélection et écriture
 
 def ecrire(chemin, sessions, entete):
@@ -422,12 +528,14 @@ def ecrire(chemin, sessions, entete):
         for k in ["organisme", "diplome", "type", "theme", "debut", "fin", "ville", "departement",
                   "formule", "prix", "prix_note"]:
             lignes.append(f"    {k}: {q(s[k])}")
+            if k == "organisme" and s.get("organisme_nom"):
+                lignes.append(f"    organisme_nom: {q(s['organisme_nom'])}")
             if k == "diplome" and s.get("specialite"):
                 lignes.append(f"    specialite: {q(s['specialite'])}")
         lignes.append(f"    aides: [{', '.join(q(a) for a in s['aides'])}]")
         for k in ["complet", "url", "releve_le", "verifie_le"]:
             lignes.append(f"    {k}: {q(s[k])}")
-        lignes.append("    source: page-organisme")
+        lignes.append(f"    source: {s.get('source') or 'page-organisme'}")
     Path(chemin).write_text("\n".join(lignes) + "\n", encoding="utf-8")
 
 
@@ -451,53 +559,72 @@ def main():
         return None
 
     candidates = []
-    for nom, fonction in [("AFOCAL", afocal), ("IFAC", ifac_liste), ("UFCV", ufcv),
-                          ("Ligue de l'enseignement Île-de-France", ligue), ("Protection civile (PSC1)", protection_civile)]:
+    sources = [("AFOCAL", afocal, "afocal"), ("IFAC", ifac_liste, "ifac"), ("UFCV", ufcv, "ufcv"),
+               ("Ligue de l'enseignement Île-de-France", ligue, "ligue-idf"),
+               ("Protection civile (PSC)", protection_civile, "protection-civile"), ("Croix-Rouge (PSC)", croix_rouge, "croix-rouge"),
+               ("Ministère (tous les organismes BAFA / BAFD)", ministere, "ministere")]
+    for nom, fonction, cle_org in sources:
         print(f"{nom}…", file=sys.stderr)
         try:
             lues = fonction()
-        except SystemExit as e:
+        except (SystemExit, Exception) as e:
             # un organisme dont la page a changé ne bloque pas les autres : ses sessions actuelles sont gardées
             print(f"  {nom} : {e}", file=sys.stderr)
-            lues = [dict(x, verifie=False) for x in anciens.values() if x["organisme"] == {
-                "AFOCAL": "afocal", "IFAC": "ifac", "UFCV": "ufcv", "Protection civile (PSC1)": "protection-civile"}.get(nom, "ligue-idf")]
+            lues = [dict(x, verifie=False) for x in anciens.values()
+                    if x["organisme"] == cle_org or (cle_org == "ministere" and x.get("source") == "ministere")]
         print(f"  {len(lues)} sessions lues", file=sys.stderr)
         candidates += lues
 
-    # sélection : par organisme, une session par département, par vacances (ou par mois hors vacances),
-    # par diplôme et par étape : la première non complète, par date puis par prix. Jamais l'essentiel de leur base.
-    groupes = {}
+    # Toutes les sessions à venir sont gardées (plus de sélection par organisme) : la fiche n'est relue que pour une
+    # session nouvelle ou dont la dernière lecture date de plus de 6 jours (prix et places), pour ménager les sites.
+    fiches = {"ifac": lambda s: ifac_pro_fiche(s) if s.get("pro") else ifac_fiche(s),
+              "ufcv": ufcv_fiche}
+    vues, ids, retenues = set(), set(), []
+    candidates.sort(key=lambda s: s.get("source") == "ministere")  # les pages des organismes passent avant
     for s in candidates:
         s["debut"] = dt.date.fromisoformat(str(s["debut"])) if not isinstance(s["debut"], dt.date) else s["debut"]
         s["fin"] = dt.date.fromisoformat(str(s["fin"])) if s.get("fin") and not isinstance(s["fin"], dt.date) else s.get("fin")
         if (s["departement"] not in DEPS or s["debut"] < aujourdhui + dt.timedelta(days=3)
                 or s["debut"] > aujourdhui + dt.timedelta(days=HORIZON)):
             continue
-        s["periode"] = periode(s["debut"], s["departement"])
-        quand = s["periode"] or s["debut"].strftime("%Y-%m")
-        cle = (s["organisme"], s["departement"], quand, s["diplome"], s["type"])
-        groupes.setdefault(cle, []).append(s)
-    fiches = {"ifac": lambda s: ifac_pro_fiche(s) if s.get("pro") else ifac_fiche(s),
-              "ufcv": ufcv_fiche}
-    retenues = []
-    for liste in groupes.values():
-        liste.sort(key=lambda s: (s["complet"], s["debut"], s["prix"] if s["prix"] is not None else 9999))
-        for s in liste[:4]:  # la fiche est relue pour les tarifs ; si elle ne concorde pas, on prend la suivante
-            lire_fiche = fiches.get(s["organisme"])
-            if s.get("verifie") is False or not lire_fiche or lire_fiche(s):
+        if s["id"] in ids:  # une liste qui bouge pendant la lecture peut montrer deux fois la même session
+            continue
+        ids.add(s["id"])
+        # une session déjà lue sur la page de l'organisme n'est pas reprise de la liste du ministère
+        # (AFOCAL, IFAC et UFCV y sont écartés d'office ; reste la Ligue de l'enseignement d'Île-de-France)
+        double = (s["diplome"], s["type"], s["debut"], s["departement"])
+        if s.get("source") == "ministere":
+            if double in vues and re.search(r"ligue", s.get("organisme_nom") or "", re.I):
+                continue
+        elif s["organisme"] == "ligue-idf":
+            vues.add(double)
+        ancien = anciens.get(s["id"])
+        lire_fiche = fiches.get(s["organisme"])
+        if s.get("verifie") is False or not lire_fiche:
+            retenues.append(s)
+        elif (ancien and ancien.get("verifie_le") and ancien["verifie_le"] >= aujourdhui - dt.timedelta(days=6)
+              and str(ancien["debut"]) == str(s["debut"])):
+            for k in ("formule", "prix", "prix_note", "complet"):  # relue il y a moins d'une semaine
+                s[k] = ancien.get(k, s.get(k))
+            s["verifie_reprise"] = True
+            if not s["complet"]:
                 retenues.append(s)
-                break
+        elif lire_fiche(s):
+            retenues.append(s)
     for s in retenues:
         s["releve_le"] = anciens.get(s["id"], {}).get("releve_le") or aujourdhui
-        s["verifie_le"] = anciens.get(s["id"], {}).get("verifie_le") if s.get("verifie") is False else aujourdhui
-    retenues.sort(key=lambda s: (s["debut"], s["organisme"], s["departement"], s["id"]))
+        if s.get("verifie") is False or s.get("verifie_reprise"):
+            s["verifie_le"] = anciens.get(s["id"], {}).get("verifie_le")
+        else:
+            s["verifie_le"] = aujourdhui
+    retenues.sort(key=lambda s: (s["debut"], s["organisme"] or "", s["departement"], s["id"]))
 
     nouveaux = {s["id"] for s in retenues}
     champs = ["debut", "fin", "ville", "formule", "prix", "complet", "theme"]
     modifies = [s["id"] for s in retenues if s["id"] in anciens
                 and any(str(anciens[s["id"]].get(c)) != str(s[c]) for c in champs)]
     print(f"\n{len(candidates)} sessions trouvées, {len(retenues)} retenues.")
-    print(f"Par organisme : {dict(sorted(__import__('collections').Counter(s['organisme'] for s in retenues).items()))}")
+    print(f"Par organisme : {dict(sorted(__import__('collections').Counter(s['organisme'] or 'ministère' for s in retenues).items()))}")
     print(f"Par diplôme : {dict(sorted(__import__('collections').Counter(s['diplome'] for s in retenues).items()))}")
     print(f"Départements couverts : {len({s['departement'] for s in retenues})}")
     print(f"Confirmées sans changement : {len([i for i in nouveaux & set(anciens) if i not in modifies])}")

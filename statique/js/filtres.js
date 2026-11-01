@@ -44,7 +44,7 @@
     a.appendChild(prix);
     var lien = el("a", "s-lien", "Voir");
     lien.href = x.u; lien.rel = "noopener nofollow"; lien.target = "_blank";
-    lien.appendChild(el("span", "sr", (x.lba ? " la formation sur La bonne alternance" : " la session chez " + x.o) + " (nouvel onglet)"));
+    lien.appendChild(el("span", "sr", (x.lba ? " la formation sur La bonne alternance" : x.site ? " le site de " + x.o : " la session chez " + x.o) + " (nouvel onglet)"));
     lien.appendChild(document.createTextNode(" →"));
     a.appendChild(lien);
     return a;

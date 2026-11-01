@@ -42,7 +42,8 @@ BUDGETS = {"BAFA": [300, 350, 400, 450, 500, 600, 700, 800, 1000], "BAFD": [400,
            "CPJEPS": [1000, 2000, 3000, 4000, 5000, 6000], "BPJEPS": [2000, 3000, 4000, 5000, 6000, 7000, 8000, 10000],
            "DEJEPS": [3000, 5000, 7000, 9000, 12000, 15000], "DESJEPS": [5000, 7000, 9000, 12000, 15000, 20000],
            "": [100, 300, 500, 800, 1000, 3000, 6000, 10000]}
-SOURCES = {"catalogue-apprentissage": "Catalogue national de l'apprentissage (Carif-Oref)", "offre-info": "Offre Info (Carif-Oref)"}
+SOURCES = {"catalogue-apprentissage": "Catalogue national de l'apprentissage (Carif-Oref)", "offre-info": "Offre Info (Carif-Oref)",
+           "ministere": "Liste officielle des sessions déclarées (bafa-bafd.jeunes.gouv.fr)"}
 
 
 # ---------------------------------------------------------------- lecture
@@ -775,7 +776,7 @@ class Site:
         donnees = []
         for s in self.sessions:
             if s["source_nom"]:
-                verif = f"{s['source_nom']}, relevé le {date_fr(s['verifie_le'] or s['releve_le'])}, à confirmer auprès de l'école"
+                verif = f"{s['source_nom']}, relevé le {date_fr(s['verifie_le'] or s['releve_le'])}, à confirmer auprès de l'organisme"
             else:
                 verif = (f"Vérifié le {date_fr(s['verifie_le'])}" if s["verifie_le"] else f"Relevé le {date_fr(s['releve_le'])}") + \
                     ", à confirmer chez l'organisme"
@@ -791,7 +792,8 @@ class Site:
                 "o": s["org"]["nom"], "oi": s["org"]["id"] if s["org"].get("en_ligne") else None,
                 "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"],
                 "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
-                "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage"})
+                "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
+                "site": s.get("source") == "ministere"})
         cible = SORTIE / "se-former" / "sessions" / "sessions.json"
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
