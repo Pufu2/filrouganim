@@ -40,11 +40,14 @@ jobs:
           else
             echo "Pas aujourd'hui (lundi et jeudi seulement)."
           fi
+      - name: Placer les villes sur la carte (API Géo de l'État)
+        continue-on-error: true
+        run: python3 outils/geocoder.py
       - name: Le site se fabrique-t-il toujours ?
         run: python3 build.py
       - name: Enregistrer les changements
         run: |
-          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml
+          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/geo-communes.yml
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0

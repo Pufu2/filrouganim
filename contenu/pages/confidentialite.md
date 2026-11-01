@@ -16,6 +16,7 @@ description: "Ce que Fil Roug'Anim garde, et ne garde pas : pas de cookie public
 ## Ce qui peut être enregistré en consultant le site
 
 - **L'hébergeur** ({{ site.hebergeur.nom }}) enregistre des journaux techniques, dont l'adresse IP, pour la sécurité et le bon fonctionnement du service. Voir sa [déclaration de confidentialité](https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement).
+- **La carte des sessions** affiche le plan de l'IGN (Institut national de l'information géographique et forestière, service public), chargé depuis sa Géoplateforme : votre navigateur lui demande les images de la carte, ce qui lui transmet votre adresse IP, comme pour tout site consulté. Aucun cookie n'est déposé.
 {% if site.goatcounter %}- **La mesure d'audience** utilise GoatCounter, un outil **sans cookie** qui compte les visites de façon agrégée, sans suivre les personnes d'un site à l'autre.
 {% endif %}- **Google Search Console** nous montre comment le site apparaît dans les résultats de Google (nombre de clics, recherches tapées), de façon agrégée. Ces données viennent de Google, pas du site.
 

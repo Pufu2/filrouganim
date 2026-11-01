@@ -222,6 +222,7 @@
     liste.limite = liste.par;
     var n = afficher(liste);
     afficherEcoles(dip, type, dep);
+    if (plan) { majCarte(); cadrer(); }
     compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
       ", de la plus proche à la plus lointaine.";
     aucune.hidden = n > 0;
@@ -268,6 +269,73 @@
     blocEcoles.hidden = false;
   }
 
+  // --- La carte : des bulles qui comptent les sessions, par département de loin et par ville de près
+  var carteEl = document.getElementById("carte"), plan = null, calque = null;
+  var FRANCE = [[42.3, -4.8], [51.1, 8.2]];
+  function initCarte() {
+    if (plan || !window.L || !carteEl || carteEl.offsetParent === null) return;
+    plan = L.map(carteEl, { scrollWheelZoom: true }).fitBounds(FRANCE);
+    L.tileLayer(carteEl.dataset.tuiles, { maxZoom: 18, minZoom: 4,
+      attribution: '&copy; <a href="https://www.ign.fr/">IGN</a> &ndash; G\u00e9oplateforme' }).addTo(plan);
+    calque = L.layerGroup().addTo(plan);
+    plan.on("moveend", majCarte);
+    majCarte();
+    cadrer();
+  }
+  function groupes() {
+    var deLoin = plan.getZoom() < 8, g = {};
+    liste.items.forEach(function (i) {
+      if (!i.ok || !i.x || !i.x.g) return;
+      var k = deLoin ? i.d.dep : i.d.dep + "|" + i.x.v;
+      var x = g[k] || (g[k] = { n: 0, la: 0, lo: 0, v: i.x.v, d: i.d.dep });
+      x.n++; x.la += i.x.g[0]; x.lo += i.x.g[1];
+    });
+    return { deLoin: deLoin, g: g };
+  }
+  function majCarte() {
+    if (!plan) return;
+    calque.clearLayers();
+    var r = groupes(), zone = plan.getBounds(), dans = 0;
+    Object.keys(r.g).forEach(function (k) {
+      var x = r.g[k], pos = [x.la / x.n, x.lo / x.n];
+      if (zone.contains(pos)) dans += x.n;
+      var texte = r.deLoin || x.v.length > 16 ? String(x.n) : x.v + " \u00b7 " + x.n;
+      var mk = L.marker(pos, { icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
+        html: '<span class="bulle' + (r.deLoin ? "" : " bulle-ville") + '"></span>' }),
+        title: (r.deLoin ? "D\u00e9partement " + x.d : x.v) + " : " + x.n + (x.n > 1 ? " sessions" : " session") }).addTo(calque);
+      mk.getElement().querySelector(".bulle").textContent = texte;
+      mk.on("click", function () {
+        if (r.deLoin) plan.flyTo(pos, 10, { duration: 0.6 });
+        else choisirVille(x.v, x.d);
+      });
+    });
+    document.getElementById("carte-zone").textContent = dans + (dans > 1 ? " sessions dans cette zone" : " session dans cette zone");
+  }
+  function cadrer() {
+    if (!plan) return;
+    var pts = [];
+    liste.items.forEach(function (i) { if (i.ok && i.x && i.x.g) pts.push(i.x.g); });
+    if (form.elements.dep.value && pts.length) plan.fitBounds(pts, { maxZoom: 11, padding: [40, 40] });
+    else if (!form.elements.dep.value) plan.fitBounds(FRANCE);
+  }
+  function choisirVille(v, d) {
+    form.elements.ou.value = v + " (" + d + ")";
+    form.elements.dep.value = "v:" + v;
+    appliquer(true);
+    document.getElementById("resultats").scrollIntoView({ behavior: "smooth" });
+  }
+  var boutonCarte = document.getElementById("bouton-carte"), blocCarte = document.getElementById("carte-bloc");
+  if (boutonCarte && blocCarte) {
+    boutonCarte.hidden = false;
+    boutonCarte.addEventListener("click", function () {
+      var ouvrir = !blocCarte.classList.contains("ouverte");
+      blocCarte.classList.toggle("ouverte", ouvrir);
+      boutonCarte.setAttribute("aria-expanded", ouvrir ? "true" : "false");
+      boutonCarte.querySelector("span").textContent = ouvrir ? "Masquer la carte" : "Voir la carte";
+      if (ouvrir) { initCarte(); if (plan) plan.invalidateSize(); }
+    });
+  }
+
   function f2dep() { return form.elements.dep.value; }
   function brancher() {
     form.addEventListener("change", function () { appliquer(true); });
@@ -298,5 +366,7 @@
     });
     compte.textContent = donnees.length + " sessions à venir";
     brancher();
+    initCarte();
+    window.addEventListener("resize", function () { initCarte(); if (plan) plan.invalidateSize(); });
   }).catch(function () { compte.textContent = liste.items.length + " sessions"; brancher(); });
 })();

@@ -217,6 +217,7 @@ class Site:
         # spécialités (mentions) des diplômes professionnels : {"BPJEPS": {"asec": {...}}}
         self.specialites = {di: {sp["id"]: sp for sp in liste} for di, liste in self.donnees.get("specialites", {}).items()}
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
+        self.geo = (self.donnees.get("geo-communes") or {}).get("communes") or {}
         self.sessions = self.charger_sessions()
         self.stats = self.calculer_stats()
         self.filtres = self.calculer_filtres()
@@ -815,7 +816,8 @@ class Site:
                 "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"],
                 "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
-                "site": s.get("source") == "ministere"})
+                "site": s.get("source") == "ministere",
+                "g": self.geo.get(f"{s['departement']}|{s['ville']}")})
         # les écoles qui ont ouvert un diplôme pro dans l'année (affichées sous les résultats, sans date à venir)
         ecoles = []
         for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:
@@ -826,7 +828,8 @@ class Site:
             rentree = en_date(e["derniere_rentree"])
             ecoles.append({"di": e["diplome"], "dn": self.diplomes[e["diplome"]]["nom"], "sp": e.get("specialite"),
                            "spn": sp["nom"] if sp else None, "o": e["organisme_nom"], "v": ville_propre(e["ville"]),
-                           "d": e["departement"], "r": dep["region"], "dr": f"{MOIS[rentree.month - 1]} {rentree.year}"})
+                           "d": e["departement"], "r": dep["region"], "dr": f"{MOIS[rentree.month - 1]} {rentree.year}",
+                           "g": self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")})
         (SORTIE / "se-former" / "sessions").mkdir(parents=True, exist_ok=True)
         (SORTIE / "se-former" / "sessions" / "ecoles.json").write_text(
             json.dumps(ecoles, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

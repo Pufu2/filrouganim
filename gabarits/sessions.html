@@ -7,7 +7,12 @@
 {% block contenu %}
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
   <div class="cadre">
-    <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions_total }} sessions à venir</span></h2>
+    <div class="resultats-tete">
+      <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions_total }} sessions à venir</span></h2>
+      <button class="bouton-contour bouton-carte" type="button" id="bouton-carte" aria-controls="carte-bloc" aria-expanded="false" hidden>{{ m.icone("lieu") }}<span>Voir la carte</span></button>
+    </div>
+    <div class="resultats-carte">
+    <div class="resultats-liste">
     <div class="sessions" data-par-page="10" data-source="{{ lien('/se-former/sessions/sessions.json') }}" data-organismes="{{ lien('/se-former/sessions/organismes/') }}">
       {% for s in page.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}
     </div>
@@ -20,6 +25,14 @@
       <ul class="ecoles-liste" id="ecoles-liste"></ul>
     </div>
     <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
+    </div>
+    <aside class="carte-bloc" id="carte-bloc" aria-label="Carte des sessions">
+      <div class="carte-sessions" id="carte" data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png">
+        <p class="carte-zone" id="carte-zone" aria-live="polite"></p>
+      </div>
+      <p class="petit carte-note">Cliquez une bulle pour zoomer, puis sur une ville pour voir ses sessions. Fond de carte : IGN.</p>
+    </aside>
+    </div>
   </div>
 </section>
 <section class="bande bande-sable" aria-label="Le parcours">
@@ -27,4 +40,4 @@
 </section>
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endblock %}
-{% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}

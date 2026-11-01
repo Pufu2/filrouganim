@@ -59,7 +59,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .logo-titre .fil { fill: var(--fil-clair); }
 @media (max-width: 380px) { .logo-chat { height: 34px; } .logo-titre { height: 24px; } }
 .menu { display: flex; gap: 6px; font-size: 1rem; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
-.menu a { flex: none; color: var(--creme); text-decoration: none; padding: 7px 12px; border-radius: 999px; }
+.menu a { flex: none; color: var(--creme); text-decoration: none; padding: 8px 14px; border-radius: 8px; }
 .menu a:hover { background: var(--nuit-2); color: #fff; }
 .menu a[aria-current] { background: var(--fil); color: #fff; }
 @media (max-width: 640px) {
@@ -100,11 +100,11 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .titre-ligne h2 { margin: 0; }
 
 /* ---------- Boutons */
-.bouton-r { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 700; color: #fff; background: var(--fil);
-  border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.bouton-r { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 600; color: #fff; background: var(--fil);
+  border: 1px solid var(--fil); border-radius: 10px; padding: 14px 24px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .15s, border-color .15s; }
 .bouton-r:hover { background: var(--fil-fonce); color: #fff; text-decoration: none; }
 .tete .bouton-r { color: #fff; }
-.bouton-blanc { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--fil-fonce); background: #fff; border-radius: 12px; padding: 13px 22px; text-decoration: none; white-space: nowrap; }
+.bouton-blanc { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--fil-fonce); background: #fff; border: 1px solid var(--fil); border-radius: 10px; padding: 14px 24px; text-decoration: none; white-space: nowrap; }
 .bouton-blanc:hover { color: var(--fil); text-decoration: none; }
 
 /* ---------- La carte de recherche : Où ? Quand ? Quelle étape ? Budget ? */
@@ -113,8 +113,8 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .recherche { display: flex; flex-direction: column; gap: 10px; }
 .recherche-cases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 @media (max-width: 860px) { .recherche-cases { grid-template-columns: 1fr 1fr; gap: 8px; } }
-.case-r { position: relative; display: flex; flex-direction: column; min-width: 0; background: var(--papier); border: 1.5px solid var(--trait); border-radius: 12px; padding: 9px 12px 9px 44px; cursor: pointer; }
-.case-r:hover { border-color: #cdb99b; }
+.case-r { position: relative; display: flex; flex-direction: column; min-width: 0; background: #fff; border: 1px solid var(--trait); border-radius: 10px; padding: 9px 12px 9px 44px; cursor: pointer; }
+.case-r:hover { border-color: #b9a78c; box-shadow: 0 1px 2px rgba(43, 35, 31, .06); }
 .case-r:focus-within { border-color: var(--fil); box-shadow: 0 0 0 3px rgba(196, 55, 45, .15); }
 .case-r .icone { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); }
 .case-titre { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--doux); }
@@ -153,7 +153,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .s-prix { grid-area: prix; margin: 0; font-family: var(--titres); font-size: 1.45rem; text-align: right; white-space: nowrap; }
 .s-prix span { font-family: var(--texte); font-size: .85rem; color: var(--doux); }
 .s-prix .s-prix-sous { display: block; font-size: .78rem; }
-.s-lien { grid-area: lien; justify-self: end; font-weight: 700; font-size: .95rem; color: #fff; background: var(--fil); border-radius: 999px; padding: 5px 14px; text-decoration: none; white-space: nowrap; }
+.s-lien { grid-area: lien; justify-self: end; font-weight: 600; font-size: .95rem; color: #fff; background: var(--fil); border-radius: 8px; padding: 7px 16px; text-decoration: none; white-space: nowrap; }
 .s-lien:hover { background: var(--fil-fonce); color: #fff; text-decoration: none; }
 @media (max-width: 560px) {
   .session { grid-template-columns: 54px 1fr auto; grid-template-areas: "date corps corps" "date prix lien"; padding: 12px; gap: 6px 12px; }
@@ -161,7 +161,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
   .s-date { align-self: start; padding: 10px 4px; }
 }
 .voir-plus-cadre { text-align: center; margin: 12px 0; }
-.voir-plus { font: inherit; font-weight: 700; color: var(--fil-fonce); background: var(--blanc); border: 2px dashed var(--fil); border-radius: 999px; padding: 11px 24px; cursor: pointer; }
+.voir-plus { font: inherit; font-weight: 600; color: var(--fil-fonce); background: var(--blanc); border: 1px solid var(--fil); border-radius: 10px; padding: 14px 24px; cursor: pointer; }
 .voir-plus:hover { border-style: solid; }
 .aucune { background: var(--blanc); border: 1px dashed var(--trait); border-radius: 10px; padding: 16px; }
 
@@ -551,3 +551,49 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .ecoles-liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 18px; }
 .ecoles-liste li { padding: 8px 0; border-top: 1px solid var(--trait); line-height: 1.4; }
 .ecoles-liste small { display: block; color: var(--doux); }
+
+/* ---------- Le bandeau du haut reste visible quand on défile */
+.entete { position: sticky; top: 0; z-index: 900; border-bottom: 2px solid var(--fil-clair); transition: box-shadow .2s; }
+.entete-cadre { transition: padding .2s; }
+.entete.defile { box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .55); }
+.entete.defile .entete-cadre { padding: 8px 0; }
+.entete.defile .logo-chat { height: 36px; }
+.entete.defile .logo-titre { height: 26px; }
+@media (max-width: 640px) {
+  .entete.defile .entete-cadre { flex-direction: row; align-items: center; flex-wrap: nowrap; padding: 6px 0; }
+  .entete.defile .logo-titre { display: none; }
+  .entete.defile .menu { margin-left: 0; }
+}
+html { scroll-padding-top: 90px; }
+
+/* ---------- Les contours (style des filtres) */
+.bouton-contour { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600; color: var(--encre); background: #fff;
+  border: 1px solid var(--trait); border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+.bouton-contour:hover { border-color: #b9a78c; }
+.bouton-contour .icone { width: 18px; height: 18px; }
+
+/* ---------- Résultats + carte */
+.resultats-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.resultats-carte { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.carte-bloc { display: none; }
+.carte-bloc.ouverte { display: block; }
+.carte-sessions { position: relative; height: 62vh; min-height: 340px; border-radius: 14px; overflow: hidden; border: 1px solid var(--trait); background: #eef0ea; z-index: 0; }
+.carte-note { margin: 6px 2px 0; }
+.carte-zone { position: absolute; z-index: 500; top: 12px; left: 50%; transform: translateX(-50%); margin: 0; background: #fff; color: var(--encre);
+  border-radius: 999px; padding: 7px 16px; font-size: .9rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 0, 0, .18); white-space: nowrap; pointer-events: none; }
+.carte-zone:empty { display: none; }
+.bulle { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; padding: 0 10px; box-sizing: border-box;
+  background: #fff; color: var(--encre); border-radius: 999px; font: 600 .88rem/1 var(--texte); box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+  border: 1px solid rgba(0, 0, 0, .08); cursor: pointer; transform: translate(-50%, -50%); white-space: nowrap; }
+.bulle:hover, .bulle.active { background: var(--fil); color: #fff; }
+.bulle-ville { height: 30px; font-size: .82rem; }
+.leaflet-div-icon.bulle-icone { background: none; border: 0; }
+.leaflet-control-zoom a { border-radius: 8px !important; }
+.leaflet-container { font-family: var(--texte); }
+@media (min-width: 1000px) {
+  .resultats-carte { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); }
+  .carte-bloc { display: block; }
+  .carte-sessions { position: sticky; top: 92px; height: calc(100vh - 130px); }
+  .carte-bloc { align-self: start; position: sticky; top: 92px; }
+  .bouton-carte { display: none; }
+}
