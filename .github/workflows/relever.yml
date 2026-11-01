@@ -44,7 +44,7 @@ jobs:
         run: python3 build.py
       - name: Enregistrer les changements
         run: |
-          git add donnees/sessions.yml donnees/sessions-pro.yml
+          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0
