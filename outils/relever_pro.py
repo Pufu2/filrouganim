@@ -294,6 +294,60 @@ def date_fr_texte(t):
     return dt.date(int(m.group(3)), MOIS_FR.index(m.group(2)) + 1, int(m.group(1)))
 
 
+# ---------------------------------------------------------------- 4. calendrier national (FOROMES, ministère)
+
+FOROMES = "https://foromes-prod-k8s.menjes.ate.info/api/Calendrier/Formation"
+FOROMES_PAGE = "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+FOROMES_TYPES = {25: "CPJEPS", 24: "BPJEPS", 20: "BPJEPS", 26: "DEJEPS", 13: "DEJEPS", 27: "DESJEPS", 16: "DESJEPS", 21: "CC-ACM"}
+
+
+def foromes(aujourdhui):
+    """Le calendrier national des formations du ministère (FOROMES, Licence Ouverte) : toutes les sessions habilitées
+    de toutes les régions, déclarées environ trois mois avant leur début. On n'en garde que les faits sur la session,
+    jamais les coordonnées des personnes."""
+    vus, sessions = set(), []
+    for type_id, diplome in FOROMES_TYPES.items():
+        for annee in (aujourdhui.year, aujourdhui.year + 1):
+            d = lire_json(f"{FOROMES}?DiplomeTypeId={type_id}&Annee={annee}")
+            for x in d.get("items") or []:
+                di, f, o = x.get("diplome") or {}, x.get("formation") or {}, x.get("organisme") or {}
+                if not f.get("numero") or f["numero"] in vus or not f.get("dateDebut"):
+                    continue
+                vus.add(f["numero"])
+                if diplome == "CC-ACM":
+                    if "accueil collectif de mineurs" not in (di.get("cc") or "").lower():
+                        continue
+                    sp = None
+                else:
+                    if re.search(r"sporti|performance|perfectionnement", sans_accents(di.get("specialite") or "")):
+                        continue  # le site ne présente que l'animation
+                    sp = specialite_de(diplome, None, di.get("mention"))
+                    if not sp:
+                        continue
+                lieu = re.search(r"(\d{5})\s+([^\d]+?)\s*$", f.get("lieu") or "") or re.search(r"(\d{5})\s+([^\d]+?)\s*$", o.get("adresse") or "")
+                if not lieu:
+                    continue
+                cp = lieu.group(1)
+                notes = []
+                limite = f.get("dateLimiteInscription")
+                if limite and limite >= aujourdhui.isoformat():
+                    notes.append(f"inscription avant le {dt.date.fromisoformat(limite[:10]):%d/%m/%Y}")
+                if f.get("ouvertApprentissage"):
+                    notes.append("possible en apprentissage (sans frais pour l'apprenti)")
+                sessions.append({
+                    "id": "for-" + re.sub(r"[^A-Za-z0-9]", "", f["numero"]), "organisme": None,
+                    "organisme_nom": nom_organisme(o.get("nom")), "diplome": diplome, "specialite": sp, "type": "parcours",
+                    "theme": None, "debut": dt.date.fromisoformat(f["dateDebut"][:10]),
+                    "fin": dt.date.fromisoformat(f["dateFin"][:10]) if f.get("dateFin") else None,
+                    "ville": ville_de(re.sub(r"\s+cedex.*$", "", lieu.group(2), flags=re.I)), "departement": departement_de(cp, None),
+                    "formule": None, "prix": None, "prix_note": " ; ".join(notes) or None, "aides": [], "complet": False,
+                    "url": FOROMES_PAGE, "source": "foromes"})
+            time.sleep(0.5)
+    if len(sessions) < 20:
+        raise SystemExit(f"FOROMES : seulement {len(sessions)} sessions, l'API a peut-être changé")
+    return sessions
+
+
 LEO = {"bpjeps-mention-animation-socioeducative-et-culturelle-asec": ("BPJEPS", "asec"),
        "cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle": ("CPJEPS", "aavq"),
        "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets"),
@@ -378,7 +432,8 @@ def main():
         anciens = {s["id"]: s for s in (yaml.safe_load(chemin.read_text(encoding="utf-8")) or {}).get("sessions") or []}
 
     lues = []
-    sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange)]
+    sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange),
+               ("Calendrier national FOROMES", foromes)]
     jeton = (os.environ.get("RCO_OFFREINFO_TOKEN") or "").strip()
     if jeton:
         sources.append(("API Offre Info", lambda j: offre_info(j, jeton)))
@@ -391,7 +446,8 @@ def main():
         except SystemExit as e:
             # une source en panne ne vide pas le site : ses sessions actuelles sont gardées telles quelles
             print(f"  {nom} : {e}", file=sys.stderr)
-            source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info"}.get(nom, "page-organisme")
+            source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info",
+                      "Calendrier national FOROMES": "foromes"}.get(nom, "page-organisme")
             liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source
                      and (source != "page-organisme" or s.get("organisme_nom") == nom)]
         print(f"  {len(liste)} sessions lues", file=sys.stderr)
@@ -400,7 +456,7 @@ def main():
     # filtres : France métropolitaine et Corse (comme le reste du site), début dans 3 jours à 14 mois ;
     # doublons (même école, même ville, même spécialité, même date) : le premier lu est gardé,
     # Offre Info (avec le prix) passant avant le catalogue.
-    lues.sort(key=lambda s: {"offre-info": 0, "page-organisme": 1}.get(s["source"], 2))
+    lues.sort(key=lambda s: {"offre-info": 0, "page-organisme": 1, "foromes": 2}.get(s["source"], 3))
     vues, retenues = set(), []
     for s in lues:
         s["debut"] = s["debut"] if isinstance(s["debut"], dt.date) else dt.date.fromisoformat(str(s["debut"]))
@@ -409,7 +465,7 @@ def main():
         if (s["departement"] not in DEPS or not s["ville"] or not s.get("organisme_nom")
                 or not aujourdhui + dt.timedelta(days=3) <= s["debut"] <= aujourdhui + dt.timedelta(days=HORIZON)):
             continue
-        cle = (sans_accents(s["organisme_nom"]), sans_accents(s["ville"]), s["diplome"], s["specialite"], s["debut"])
+        cle = (sans_accents(s["ville"]), s["diplome"], s["specialite"], s["debut"])  # même session vue dans deux sources
         if cle in vues:
             continue
         vues.add(cle)

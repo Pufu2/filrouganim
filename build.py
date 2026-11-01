@@ -39,11 +39,12 @@ FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": 
 # Budgets proposés dans la recherche, selon le diplôme : seuls ceux qui trient vraiment les sessions sont gardés
 BUDGETS = {"BAFA": [300, 350, 400, 450, 500, 600, 700, 800, 1000], "BAFD": [400, 500, 600, 700, 800, 1000, 1200],
            "PSC1": [40, 50, 60, 70, 80, 100], "CQP-AP": [1000, 1500, 2000, 3000, 4000],
-           "CPJEPS": [1000, 2000, 3000, 4000, 5000, 6000], "BPJEPS": [2000, 3000, 4000, 5000, 6000, 7000, 8000, 10000],
+           "CC-ACM": [500, 1000, 1500, 2000, 3000], "CPJEPS": [1000, 2000, 3000, 4000, 5000, 6000], "BPJEPS": [2000, 3000, 4000, 5000, 6000, 7000, 8000, 10000],
            "DEJEPS": [3000, 5000, 7000, 9000, 12000, 15000], "DESJEPS": [5000, 7000, 9000, 12000, 15000, 20000],
            "": [100, 300, 500, 800, 1000, 3000, 6000, 10000]}
 SOURCES = {"catalogue-apprentissage": "Catalogue national de l'apprentissage (Carif-Oref)", "offre-info": "Offre Info (Carif-Oref)",
-           "ministere": "Liste officielle des sessions déclarées (bafa-bafd.jeunes.gouv.fr)"}
+           "ministere": "Liste officielle des sessions déclarées (bafa-bafd.jeunes.gouv.fr)",
+           "foromes": "Calendrier national des formations (ministère, FOROMES)"}
 
 
 # ---------------------------------------------------------------- lecture
