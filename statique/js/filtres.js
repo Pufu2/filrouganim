@@ -282,15 +282,16 @@
     majCarte();
     cadrer();
   }
+  // de très loin : une bulle par région ; puis par département ; de près : par ville
   function groupes() {
-    var deLoin = plan.getZoom() < 8, g = {};
+    var z = plan.getZoom(), niveau = z < 7 ? "r" : z < 9 ? "d" : "v", g = {};
     liste.items.forEach(function (i) {
       if (!i.ok || !i.x || !i.x.g) return;
-      var k = deLoin ? i.d.dep : i.d.dep + "|" + i.x.v;
-      var x = g[k] || (g[k] = { n: 0, la: 0, lo: 0, v: i.x.v, d: i.d.dep });
+      var k = niveau === "r" ? i.d.region : niveau === "d" ? i.d.dep : i.d.dep + "|" + i.x.v;
+      var x = g[k] || (g[k] = { n: 0, la: 0, lo: 0, v: i.x.v, d: i.d.dep, r: i.x.r });
       x.n++; x.la += i.x.g[0]; x.lo += i.x.g[1];
     });
-    return { deLoin: deLoin, g: g };
+    return { niveau: niveau, g: g };
   }
   function majCarte() {
     if (!plan) return;
@@ -299,13 +300,15 @@
     Object.keys(r.g).forEach(function (k) {
       var x = r.g[k], pos = [x.la / x.n, x.lo / x.n];
       if (zone.contains(pos)) dans += x.n;
-      var texte = r.deLoin || x.v.length > 16 ? String(x.n) : x.v + " \u00b7 " + x.n;
-      var mk = L.marker(pos, { icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
-        html: '<span class="bulle' + (r.deLoin ? "" : " bulle-ville") + '"></span>' }),
-        title: (r.deLoin ? "D\u00e9partement " + x.d : x.v) + " : " + x.n + (x.n > 1 ? " sessions" : " session") }).addTo(calque);
+      var ville = r.niveau === "v";
+      var texte = !ville || x.v.length > 16 ? String(x.n) : x.v + " \u00b7 " + x.n;
+      var titre = (r.niveau === "r" ? "R\u00e9gion" : r.niveau === "d" ? "D\u00e9partement " + x.d : x.v) + " : " + x.n + (x.n > 1 ? " sessions" : " session");
+      var mk = L.marker(pos, { title: titre, icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
+        html: '<span class="bulle' + (ville ? " bulle-ville" : r.niveau === "r" ? " bulle-region" : "") + '"></span>' }) }).addTo(calque);
       mk.getElement().querySelector(".bulle").textContent = texte;
       mk.on("click", function () {
-        if (r.deLoin) plan.flyTo(pos, 10, { duration: 0.6 });
+        if (r.niveau === "r") plan.flyTo(pos, 8, { duration: 0.6 });
+        else if (r.niveau === "d") plan.flyTo(pos, 10, { duration: 0.6 });
         else choisirVille(x.v, x.d);
       });
     });

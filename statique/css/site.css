@@ -576,7 +576,7 @@ html { scroll-padding-top: 90px; }
 .resultats-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .resultats-carte { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .carte-bloc { display: none; }
-.carte-bloc.ouverte { display: block; }
+.carte-bloc.ouverte { display: block; order: -1; }
 .carte-sessions { position: relative; height: 62vh; min-height: 340px; border-radius: 14px; overflow: hidden; border: 1px solid var(--trait); background: #eef0ea; z-index: 0; }
 .carte-note { margin: 6px 2px 0; }
 .carte-zone { position: absolute; z-index: 500; top: 12px; left: 50%; transform: translateX(-50%); margin: 0; background: #fff; color: var(--encre);
@@ -587,6 +587,7 @@ html { scroll-padding-top: 90px; }
   border: 1px solid rgba(0, 0, 0, .08); cursor: pointer; transform: translate(-50%, -50%); white-space: nowrap; }
 .bulle:hover, .bulle.active { background: var(--fil); color: #fff; }
 .bulle-ville { height: 30px; font-size: .82rem; }
+.bulle-region { min-width: 44px; height: 44px; font-size: .95rem; }
 .leaflet-div-icon.bulle-icone { background: none; border: 0; }
 .leaflet-control-zoom a { border-radius: 8px !important; }
 .leaflet-container { font-family: var(--texte); }
