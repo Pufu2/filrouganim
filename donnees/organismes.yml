@@ -125,6 +125,19 @@ organismes:
       7 heures, en une journée) dans presque toute la France. Le PSC n'est pas une étape du
       BAFA, mais il est souvent demandé aux animateurs et il est obligatoire pour entrer en BPJEPS.
 
+  - id: cemea
+    nom: CEMEA
+    habilitation: nationale
+    site: https://cemea-formation.com/bafa
+    page_sessions: https://cemea-formation.com/bafa
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Centres d'entraînement aux méthodes d'éducation active, mouvement d'éducation nouvelle
+      présent dans toutes les régions. Ils organisent des formations générales, des approfondissements
+      BAFA et des sessions BAFD, ainsi que des CPJEPS, BPJEPS, DEJEPS et DESJEPS. Le prix affiché
+      comprend les frais pédagogiques et, selon la session, les repas ou l'hébergement.
+
   - id: croix-rouge
     nom: Croix-Rouge française
     habilitation: premiers secours

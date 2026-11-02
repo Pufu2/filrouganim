@@ -322,7 +322,7 @@ def foromes(aujourdhui):
                         continue
                     sp = None
                 else:
-                    if re.search(r"sporti|performance|perfectionnement", sans_accents(di.get("specialite") or "")):
+                    if re.search(r"educateur sportif|perfectionnement sportif|performance sportive", sans_accents(di.get("specialite") or "")):
                         continue  # le site ne présente que l'animation
                     sp = specialite_de(diplome, None, di.get("mention"))
                     if not sp:
@@ -462,8 +462,17 @@ def main():
         anciens = {s["id"]: s for s in (yaml.safe_load(chemin.read_text(encoding="utf-8")) or {}).get("sessions") or []}
 
     lues = []
+    from relever import TERRITOIRE, autorise, lire_brut
+    import cemea
+    import pages_ecoles
+
+    def cemea_pro(j):
+        return cemea.pro(lire_brut, TERRITOIRE["departements"], ville_de)
+
+    def ecoles(j):
+        return pages_ecoles.pages_ecoles(j, lire_brut, autorise, nom_organisme, ville_de)
     sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange),
-               ("Calendrier national FOROMES", foromes)]
+               ("Calendrier national FOROMES", foromes), ("CEMEA", cemea_pro), ("Pages des écoles", ecoles)]
     jeton = (os.environ.get("RCO_OFFREINFO_TOKEN") or "").strip()
     if jeton:
         sources.append(("API Offre Info", lambda j: offre_info(j, jeton)))
@@ -478,8 +487,9 @@ def main():
             print(f"  {nom} : {e}", file=sys.stderr)
             source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info",
                       "Calendrier national FOROMES": "foromes"}.get(nom, "page-organisme")
+            prefixe = {"CEMEA": "cemea-", "Pages des écoles": "eco-", "Léo Lagrange Formation": "leo-"}.get(nom)
             liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source
-                     and (source != "page-organisme" or s.get("organisme_nom") == nom)]
+                     and (source != "page-organisme" or (prefixe and s["id"].startswith(prefixe)))]
         print(f"  {len(liste)} sessions lues", file=sys.stderr)
         lues += liste
 

@@ -1,0 +1,46 @@
+# Pages de formation des écoles lues par outils/pages_ecoles.py (diplômes professionnels de l'animation).
+# Une entrée par page : l'école, le diplôme et sa spécialité (donnees/specialites.yml), la ville et le
+# département à prendre quand la page n'en écrit pas. Ajouter une école : vérifier d'abord que son robots.txt
+# l'autorise, et qu'au moins une session est trouvée (python3 outils/relever_pro.py --essai).
+# Les CEMEA, l'IFAC et Léo Lagrange ont leur propre lecture ; le calendrier national (FOROMES) et le catalogue
+# de l'apprentissage complètent pour toutes les autres écoles.
+
+pages:
+  - {organisme: "Trans-Faire", diplome: BPJEPS, specialite: asec, ville: Paris, departement: "75", formule: alternance,
+     url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-bpjeps-animation-socio-educative-culturelle/"}
+  - {organisme: "Trans-Faire", diplome: CPJEPS, specialite: aavq, ville: Paris, departement: "75", formule: alternance,
+     url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-cpjeps-animateur-activites-vie-quotidienne/"}
+  - {organisme: "Trans-Faire", diplome: DEJEPS, specialite: coordination-de-projets, ville: Paris, departement: "75", formule: alternance,
+     url: "https://www.trans-faire.fr/formations/diplome-socioculturel/dejeps-asec-mention-coordination-de-projets/"}
+  - {organisme: "Trans-Faire", diplome: DEJEPS, specialite: coordination-de-projets, ville: Paris, departement: "75", formule: alternance,
+     note: "avec une licence", url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-dejeps-asecs-coordination-projets-licence/"}
+  - {organisme: "Trans-Faire", diplome: DEJEPS, specialite: coordination-de-projets, ville: Paris, departement: "75", formule: alternance,
+     note: "structures sportives", url: "https://www.trans-faire.fr/formations/diplome-sportif/formation-dejeps-coordonnateur-de-structures-sportives/"}
+  - {organisme: "Trans-Faire", diplome: DESJEPS, specialite: direction, ville: Paris, departement: "75", formule: alternance,
+     note: "avec un mastère", url: "https://www.trans-faire.fr/formations/diplome-socioculturel/desjeps-asecs-mastere-manager-des-organisations/"}
+  - {organisme: "Trans-Faire", diplome: DESJEPS, specialite: direction, ville: Paris, departement: "75", formule: alternance,
+     url: "https://www.trans-faire.fr/formations/diplome-sportif/desjeps-asecs-directeur-de-structure-et-de-projet/"}
+  - {organisme: "Trans-Faire", diplome: DESJEPS, specialite: direction, ville: Paris, departement: "75", formule: alternance,
+     note: "avec un master 2", url: "https://www.trans-faire.fr/formations/diplome-sportif/formation-desjeps-asecs-direction-structure-projet-master-2/"}
+  - {organisme: "Trans-Faire", diplome: CC-ACM, ville: Paris, departement: "75",
+     url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-direction-accueil-collectif-mineurs/"}
+  - {organisme: "Familles Rurales Pays de la Loire", diplome: BPJEPS, specialite: asec, ville: Angers, departement: "49", formule: alternance,
+     url: "https://pays-de-la-loire.famillesrurales.org/20/bpjeps-asec"}
+  - {organisme: "Familles Rurales Pays de la Loire", diplome: CPJEPS, specialite: aavq, ville: Angers, departement: "49", formule: alternance,
+     url: "https://pays-de-la-loire.famillesrurales.org/19/cpjeps"}
+  - {organisme: "Askoria", diplome: BPJEPS, specialite: asec, ville: Rennes, departement: "35", formule: alternance,
+     url: "https://www.askoria.eu/formation/brevet-professionnel-animation-socio-educative-et-culturelle-bpjeps-asec/"}
+  - {organisme: "Profession Sport Loisirs 04", diplome: CPJEPS, specialite: aavq, ville: Digne-les-Bains, departement: "04", formule: alternance,
+     url: "https://alpes-haute-provence.profession-sport-loisirs.fr/cpjeps-animateur-dactivites-et-de-vie-quotidienne/"}
+  - {organisme: "Ligue de l'enseignement 44 (FAL 44)", diplome: BPJEPS, specialite: asec, ville: Nantes, departement: "44", formule: alternance,
+     url: "https://laligue44.org/index.php/formation-fal44-ligue-de-lenseignement-loire-atlantique-nantes/formations-aux-metiers-de-l-animation-fal44-ligue-de-lenseignement-loire-atlantique-nantes/bpjeps-ltp-animateur-socio-culturel-formation-fal44-ligue-de-lenseignement-loire-atlantique-nantes"}
+  - {organisme: "Profession Sport Loisirs 76", diplome: CPJEPS, specialite: aavq, ville: Rouen, departement: "76", formule: alternance,
+     url: "https://seine-maritime.profession-sport-loisirs.fr/cpjeps-aavq-2/"}
+  - {organisme: "IFIR", diplome: CPJEPS, specialite: aavq, ville: Lyon, departement: "69", formule: alternance,
+     url: "https://www.ifir.fr/formations/cp-jeps-animateur-activites-vie-quotidienne/"}
+  - {organisme: "Francas Occitanie", diplome: CPJEPS, specialite: aavq, ville: Toulouse, departement: "31", formule: alternance,
+     url: "https://www.francasoccitanie.org/formations/cpjeps-animateur-dactivites-et-de-vie-quotidienne-2/"}
+  - {organisme: "ARFA", diplome: BPJEPS, specialite: asec, ville: Paris, departement: "75", formule: apprentissage,
+     url: "https://arfa-idf.asso.fr/formations/bpjeps-asec/"}
+  - {organisme: "IRSS", diplome: BPJEPS, specialite: asec, ville: Angers, departement: "49", formule: alternance,
+     url: "https://www.irss.fr/sport/bpjeps/bpjeps-asec-animation-socio-educative-et-culturelle/"}

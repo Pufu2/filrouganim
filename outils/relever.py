@@ -456,7 +456,7 @@ def croix_rouge():
 
 TYPES_MINISTERE = {"Formation générale": "formation-generale", "Approfondissement": "approfondissement",
                    "Perfectionnement": "perfectionnement", "Qualification": "qualification"}
-DEJA_LUS = re.compile(r"afocal|ifac|i\.f\.a\.c|ufcv|u\.f\.c\.v", re.I)  # organismes déjà relevés sur leurs propres pages
+DEJA_LUS = re.compile(r"afocal|ifac|i\.f\.a\.c|ufcv|u\.f\.c\.v|cemea|c\.e\.m\.e\.a|entra[iî]nement aux m[ée]thodes", re.I)  # organismes déjà relevés sur leurs propres pages
 
 
 def ministere():
@@ -561,6 +561,7 @@ def main():
     sources = [("AFOCAL", afocal, "afocal"), ("IFAC", ifac_liste, "ifac"), ("UFCV", ufcv, "ufcv"),
                ("Ligue de l'enseignement Île-de-France", ligue, "ligue-idf"),
                ("Protection civile (PSC)", protection_civile, "protection-civile"), ("Croix-Rouge (PSC)", croix_rouge, "croix-rouge"),
+               ("CEMEA", lambda: __import__("cemea").bafx(lire_brut, TERRITOIRE["departements"], commune), "cemea"),
                ("Ministère (tous les organismes BAFA / BAFD)", ministere, "ministere")]
     for nom, fonction, cle_org in sources:
         print(f"{nom}…", file=sys.stderr)

@@ -176,7 +176,7 @@ ecoles:
   - {organisme_nom: "IFAC 92", diplome: BPJEPS, specialite: "asec", ville: "Asnières-sur-Seine", departement: "92", derniere_rentree: 2026-11-04}
   - {organisme_nom: "SPOR", diplome: BPJEPS, specialite: "asec", ville: "Courbevoie", departement: "92", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Institut Formation Animation", diplome: BPJEPS, specialite: "asec", ville: "Pantin", departement: "93", derniere_rentree: 2026-04-13}
-  - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-10-05}
+  - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-06-29}
   - {organisme_nom: "Association Promotion & Formation des Techniques", diplome: BPJEPS, specialite: "asec", ville: "Fontenay-sous-Bois", departement: "94", derniere_rentree: 2026-10-15}
   - {organisme_nom: "Centre Pedagogique pour Construire UNE Vie Active(cpvc)", diplome: BPJEPS, specialite: "asec", ville: "Enghien-les-Bains", departement: "95", derniere_rentree: 2026-11-02}
   - {organisme_nom: "INST Formation Animateurs Collectivites (ifac 95)", diplome: BPJEPS, specialite: "asec", ville: "Franconville", departement: "95", derniere_rentree: 2026-10-01}
@@ -393,3 +393,18 @@ ecoles:
   - {organisme_nom: "TRANS-FAIRE Formation", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Noisy-le-Grand", departement: "93", derniere_rentree: 2026-09-22}
   - {organisme_nom: "Institut Formation Animation", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Pantin", departement: "93", derniere_rentree: 2026-10-30}
   - {organisme_nom: "Centre Pedagogique pour Construire UNE Vie Active(cpvc)", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Villiers-le-Bel", departement: "95", derniere_rentree: 2026-09-21}
+  - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: DESJEPS, specialite: "direction", ville: "Nice", departement: "06", derniere_rentree: 2026-10-19}
+  - {organisme_nom: "Collège Coopératif Provence Alpes Méditerranée", diplome: DESJEPS, specialite: "direction", ville: "Martigues", departement: "13", derniere_rentree: 2026-09-22}
+  - {organisme_nom: "C.E.M.E.A_NA", diplome: DESJEPS, specialite: "direction", ville: "Bègles", departement: "33", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "CREPS des Pays de la Loire", diplome: DESJEPS, specialite: "direction", ville: "La Chapelle-sur-Erdre", departement: "44", derniere_rentree: 2026-02-02}
+  - {organisme_nom: "Familles Rurales", diplome: DESJEPS, specialite: "direction", ville: "Angers", departement: "49", derniere_rentree: 2026-10-12}
+  - {organisme_nom: "CREPS de Reims", diplome: DESJEPS, specialite: "direction", ville: "Reims", departement: "51", derniere_rentree: 2026-09-16}
+  - {organisme_nom: "EPLE FPA du Morvan", diplome: DESJEPS, specialite: "direction", ville: "Challuy", departement: "58", derniere_rentree: 2026-03-06}
+  - {organisme_nom: "BLUE UP Formation", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-03-09}
+  - {organisme_nom: "Challenges Academia", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-28}
+  - {organisme_nom: "Federation Francaise de Judo et Disciplines Associees", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-02}
+  - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-10-05}
+  - {organisme_nom: "CEMEA de Normandie", diplome: DESJEPS, specialite: "direction", ville: "Rouen", departement: "76", derniere_rentree: 2026-10-01}
+  - {organisme_nom: "IFAC 92", diplome: DESJEPS, specialite: "direction", ville: "Asnières-sur-Seine", departement: "92", derniere_rentree: 2026-03-02}
+  - {organisme_nom: "CREPS d'Ile-de-France", diplome: DESJEPS, specialite: "direction", ville: "Châtenay-Malabry", departement: "92", derniere_rentree: 2026-01-05}
+  - {organisme_nom: "INST NAT Format Applic CTRE Culture OUVR -INFA", diplome: DESJEPS, specialite: "direction", ville: "Fontenay-sous-Bois", departement: "94", derniere_rentree: 2026-03-09}

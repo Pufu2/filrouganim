@@ -26,6 +26,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT11-B4E26BP3N
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-05
+    fin: 2027-12-10
+    ville: "Cambrai"
+    departement: "59"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/CAMBRAI/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT11-B4E26BP3N"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26075BPBC0156
     organisme: null
     organisme_nom: "Pole Essonne Ressources Formations"
@@ -44,6 +64,26 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-02
+    source: "foromes"
+  - id: for-26NPPDESBC0001
+    organisme: null
+    organisme_nom: "CPIE"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-06
+    fin: 2028-11-17
+    ville: "Arras"
+    departement: "62"
+    formule: null
+    prix: null
+    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "foromes"
   - id: for-25013BPBC0067
@@ -206,6 +246,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT02-B4E26A01A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-09
+    fin: 2028-03-10
+    ville: "Amiens"
+    departement: "80"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/AMIENS/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT02-B4E26A01A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-25013BPBC0068
     organisme: null
     organisme_nom: "I.F.A.C. 92"
@@ -226,6 +286,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT05-B3E26002A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-09
+    fin: 2027-09-17
+    ville: "Bordeaux"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/BORDEAUX/CPJEPS+-+Animateur+d%E2%80%99Activit%C3%A9s+et+de+Vie+Quotidienne+dans+toute+structure+de+loisirs+et+d%E2%80%99animation+socioculturelle/AT05-B3E26002A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26075CPBC0002
     organisme: null
     organisme_nom: "Association Promotion & Formation des Techniques"
@@ -326,29 +406,29 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26ALPDEBC0003
+  - id: cemea-AT05-B5E26003A
     organisme: null
-    organisme_nom: "C.E.M.E.A_NA"
+    organisme_nom: "CEMEA"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-11-10
     fin: 2028-04-24
-    ville: "Bègles"
+    ville: "Begles"
     departement: "33"
     formule: null
     prix: null
-    prix_note: "inscription avant le 02/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/BEGLES/DEJEPS+ASEC+-+coordination+de+projets/AT05-B5E26003A"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
-  - id: for-26ALPDEBC0002
+    source: "page-organisme"
+  - id: cemea-AT05-B5E26004A
     organisme: null
-    organisme_nom: "C.E.M.E.A_NA"
+    organisme_nom: "CEMEA"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
@@ -359,13 +439,13 @@ sessions:
     departement: "64"
     formule: null
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/ANGLET/DEJEPS+ASEC+-+coordination+de+projets/AT05-B5E26004A"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26ARABPBC0111
     organisme: null
     organisme_nom: "URFOL"
@@ -426,6 +506,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT05-B3E26001L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-12
+    fin: 2027-12-07
+    ville: "Limoges"
+    departement: "87"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/LIMOGES/CPJEPS+-+Animateur+d%E2%80%99Activit%C3%A9s+et+de+Vie+Quotidienne+dans+toute+structure+de+loisirs+et+d%E2%80%99animation+socioculturelle/AT05-B3E26001L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26LMPDEBC0006
     organisme: null
     organisme_nom: "Le Merlet"
@@ -444,6 +544,26 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-02
+    source: "foromes"
+  - id: for-26ARADESBC0001
+    organisme: null
+    organisme_nom: "Arfatsema"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-12
+    fin: 2028-10-06
+    ville: "Lyon"
+    departement: "69"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0028
@@ -486,6 +606,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT05-B4E26011L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-16
+    fin: 2028-02-04
+    ville: "Brive-la-Gaillarde"
+    departement: "19"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/BRIVE-LA-GAILLARDE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT05-B4E26011L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-6c14609eaa-20261116
     organisme: null
     organisme_nom: "CMA des Pyrenees Orientales"
@@ -546,6 +686,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT05-B4E26008P
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-16
+    fin: 2028-02-14
+    ville: "Poitiers"
+    departement: "86"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/POITIERS/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT05-B4E26008P"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26ACLCC0016
     organisme: null
     organisme_nom: "CREPS de Reims"
@@ -686,9 +846,29 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: for-26013BPBC0093
+  - id: cemea-AT11-B6E26DIRN
     organisme: null
-    organisme_nom: "CEMEA PACA"
+    organisme_nom: "CEMEA"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-16
+    fin: 2028-06-30
+    ville: "Lille"
+    departement: "59"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/LILLE/DESJEPS+ASECS+-+direction+de+structure+et+de+projet/AT11-B6E26DIRN"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT01-B4E26NC02
+    organisme: null
+    organisme_nom: "CEMEA"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -699,16 +879,16 @@ sessions:
     departement: "06"
     formule: null
     prix: null
-    prix_note: "inscription avant le 02/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/NICE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT01-B4E26NC02"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
-  - id: for-26013BPBC0092
+    source: "page-organisme"
+  - id: cemea-AT01-B4E26MA02
     organisme: null
-    organisme_nom: "CEMEA PACA"
+    organisme_nom: "CEMEA"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -719,13 +899,13 @@ sessions:
     departement: "13"
     formule: null
     prix: null
-    prix_note: "inscription avant le 02/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/MARSEILLE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT01-B4E26MA02"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26NORBPBC0071
     organisme: null
     organisme_nom: "GRETA Portes Normandes"
@@ -766,6 +946,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT01-B4E26AW01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-17
+    fin: 2028-03-17
+    ville: "Avignon"
+    departement: "84"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/AVIGNON/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT01-B4E26AW01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26ARADEBC0002
     organisme: null
     organisme_nom: "CEMEA"
@@ -826,6 +1026,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: for-26075DESBC0012
+    organisme: null
+    organisme_nom: "BLUE UP Formation"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-19
+    fin: 2028-03-17
+    ville: "Paris"
+    departement: "75"
+    formule: null
+    prix: null
+    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "foromes"
   - id: app-28531088e3-20261120
     organisme: null
     organisme_nom: "TF Formation"
@@ -846,6 +1066,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: eco-3d127dc126d7
+    organisme: null
+    organisme_nom: "Trans-Faire"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-20
+    fin: 2027-11-15
+    ville: "Paris"
+    departement: "75"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-bpjeps-animation-socio-educative-culturelle/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26NORCC0008
     organisme: null
     organisme_nom: "Profession Sport et Loisirs 76"
@@ -966,9 +1206,9 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26ARABPBC0085
+  - id: cemea-AT07-B4E268002
     organisme: null
-    organisme_nom: "CEMEA 63"
+    organisme_nom: "CEMEA"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -979,13 +1219,13 @@ sessions:
     departement: "63"
     formule: null
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/CLERMONT-FERRAND/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT07-B4E268002"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26BFCBPBC0083
     organisme: null
     organisme_nom: "Maison Familiale et Rurale de LA CLAYETTE"
@@ -1026,9 +1266,9 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: for-26BFCCC0017
+  - id: cemea-AT04-B0E26CCD7
     organisme: null
-    organisme_nom: "CEMEA de Bourgogne Franche-Comté"
+    organisme_nom: "CEMEA"
     diplome: "CC-ACM"
     specialite: null
     type: "parcours"
@@ -1042,10 +1282,10 @@ sessions:
     prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/BESANÇON/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT04-B0E26CCD7"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26075CC0022
     organisme: null
     organisme_nom: "Animetcom Consultant"
@@ -1106,26 +1346,46 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: for-26075DEBC0020
+  - id: eco-43a3ad1b359a
     organisme: null
-    organisme_nom: "TRANS-FAIRE Formation"
+    organisme_nom: "Trans-Faire"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-11-23
-    fin: 2028-01-21
+    fin: 2028-01-14
     ville: "Paris"
     departement: "75"
+    formule: "alternance"
+    prix: null
+    prix_note: "structures sportives"
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-sportif/formation-dejeps-coordonnateur-de-structures-sportives/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT05-B5E26002L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-23
+    fin: 2028-05-19
+    ville: "Limoges"
+    departement: "87"
     formule: null
     prix: null
     prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/LIMOGES/DEJEPS+ASEC+-+coordination+de+projets/AT05-B5E26002L"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: app-be839f7ade-20261123
     organisme: null
     organisme_nom: "TF Formation"
@@ -1146,6 +1406,66 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: eco-abb4c69675ad
+    organisme: null
+    organisme_nom: "Trans-Faire"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-23
+    fin: 2028-04-28
+    ville: "Paris"
+    departement: "75"
+    formule: "alternance"
+    prix: null
+    prix_note: "avec un master 2"
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-sportif/formation-desjeps-asecs-direction-structure-projet-master-2/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT30-B4E26RT2R
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-24
+    fin: 2028-06-22
+    ville: "Le Pont-de-Claix"
+    departement: "38"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/LE PONT-DE-CLAIX/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT30-B4E26RT2R"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT30-B4E26RTGR
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-24
+    fin: 2028-06-22
+    ville: "Grenoble"
+    departement: "38"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/GRENOBLE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT30-B4E26RTGR"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26ARABPBC0086
     organisme: null
     organisme_nom: "CEMEA"
@@ -1156,26 +1476,6 @@ sessions:
     debut: 2026-11-24
     fin: 2028-06-22
     ville: "Saint-Martin-d'Hères"
-    departement: "38"
-    formule: null
-    prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
-    aides: []
-    complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-02
-    source: "foromes"
-  - id: for-26ARABPBC0087
-    organisme: null
-    organisme_nom: "CEMEA"
-    diplome: "BPJEPS"
-    specialite: "asec"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-24
-    fin: 2028-06-22
-    ville: "Le Pont-de-Claix"
     departement: "38"
     formule: null
     prix: null
@@ -1206,9 +1506,9 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: for-26ARADEBC0005
+  - id: cemea-AT07-B5E261100
     organisme: null
-    organisme_nom: "CEMEA 63"
+    organisme_nom: "CEMEA"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
@@ -1219,16 +1519,16 @@ sessions:
     departement: "63"
     formule: null
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/CLERMONT-FERRAND/DEJEPS+ASEC+-+coordination+de+projets/AT07-B5E261100"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
-  - id: for-26ACLBPBC0062
+    source: "page-organisme"
+  - id: cemea-AT25-B4E26BP5L
     organisme: null
-    organisme_nom: "Centres d'Entraînement aux Méthodes Educatives Actives Grand Est"
+    organisme_nom: "CEMEA"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -1239,13 +1539,33 @@ sessions:
     departement: "54"
     formule: null
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/NANCY/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT25-B4E26BP5L"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
+  - id: cemea-AT25-B4E26BP6A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-25
+    fin: 2028-01-13
+    ville: "Strasbourg"
+    departement: "67"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/STRASBOURG/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT25-B4E26BP6A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26013CC0019
     organisme: null
     organisme_nom: "I.F.A.C. 92"
@@ -1306,9 +1626,69 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26044BPBC0019
+  - id: for-26ACLBPBC0063
     organisme: null
-    organisme_nom: "Fédération des Amicales Laïques"
+    organisme_nom: "ALMEA Formations Interpro 08"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-30
+    fin: 2027-11-26
+    ville: "Charleville-Mézières"
+    departement: "08"
+    formule: null
+    prix: null
+    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "foromes"
+  - id: cemea-AT14-B4E26350S
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-30
+    fin: 2027-11-22
+    ville: "Narbonne"
+    departement: "11"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/NARBONNE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT14-B4E26350S"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT14-B4E26351O
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-30
+    fin: 2027-11-26
+    ville: "Toulouse"
+    departement: "31"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/novembre/TOULOUSE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT14-B4E26351O"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: eco-5a5b33f4de3e
+    organisme: null
+    organisme_nom: "Ligue de l'enseignement 44 (FAL 44)"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -1317,15 +1697,15 @@ sessions:
     fin: 2027-12-10
     ville: "Nantes"
     departement: "44"
-    formule: null
+    formule: "alternance"
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://laligue44.org/index.php/formation-fal44-ligue-de-lenseignement-loire-atlantique-nantes/formations-aux-metiers-de-l-animation-fal44-ligue-de-lenseignement-loire-atlantique-nantes/bpjeps-ltp-animateur-socio-culturel-formation-fal44-ligue-de-lenseignement-loire-atlantique-nantes"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26NORBPBC0045
     organisme: null
     organisme_nom: "Profession Sport et Loisirs 76"
@@ -1406,9 +1786,9 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26BFCCC0018
+  - id: cemea-AT04-B0E26CCD8
     organisme: null
-    organisme_nom: "CEMEA de Bourgogne Franche-Comté"
+    organisme_nom: "CEMEA"
     diplome: "CC-ACM"
     specialite: null
     type: "parcours"
@@ -1422,10 +1802,10 @@ sessions:
     prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/novembre/BESANÇON/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT04-B0E26CCD8"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26013CC0017
     organisme: null
     organisme_nom: "LES FRANCAS Union Régionale PACA"
@@ -1486,6 +1866,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT11-B4E26BP4N
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-01
+    fin: 2027-10-22
+    ville: "Lille"
+    departement: "59"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/LILLE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT11-B4E26BP4N"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-4bb9f8f916-20261201
     organisme: null
     organisme_nom: "CEMEA Le Pont-de-Claix"
@@ -1546,6 +1946,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT25-B5E26DE5A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-02
+    fin: 2028-07-06
+    ville: "Strasbourg"
+    departement: "67"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/STRASBOURG/DEJEPS+ASEC+-+coordination+de+projets/AT25-B5E26DE5A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26075BPBC0117
     organisme: null
     organisme_nom: "Union Francaise Centre Vacances Loisirs"
@@ -1566,26 +1986,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26ARACC0014
+  - id: cemea-AT07-B0E269200
     organisme: null
-    organisme_nom: "CEMEA 63"
+    organisme_nom: "CEMEA"
     diplome: "CC-ACM"
     specialite: null
     type: "parcours"
     theme: null
     debut: 2026-12-04
-    fin: 2027-12-21
+    fin: 2027-11-05
     ville: "Clermont-Ferrand"
     departement: "63"
     formule: null
     prix: null
-    prix_note: "inscription avant le 04/11/2026"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/décembre/CLERMONT-FERRAND/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT07-B0E269200"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26ALPBPBC0056
     organisme: null
     organisme_nom: "Association Francaise du Cirque Adapte"
@@ -1606,6 +2026,46 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT14-B4E26676S
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2027-11-29
+    ville: "Perpignan"
+    departement: "66"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/PERPIGNAN/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT14-B4E26676S"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT14-B4E26587O
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2027-11-09
+    ville: "Montauban"
+    departement: "82"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/MONTAUBAN/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT14-B4E26587O"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26075BPBC0146
     organisme: null
     organisme_nom: "Ligue de l'enseignement de la région Ile-de-France"
@@ -1646,6 +2106,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT14-B0M26CCR1
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2027-09-07
+    ville: "Babeau-Bouldoux"
+    departement: "34"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/BABEAU-BOULDOUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT14-B0M26CCR1"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26044CC0009
     organisme: null
     organisme_nom: "Familles Rurales"
@@ -1726,26 +2206,46 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26044DEBC0005
+  - id: cemea-AT16-B5E26DE5D
     organisme: null
-    organisme_nom: "Centre d'Entraînement aux Méthodes d'Education Active"
+    organisme_nom: "CEMEA"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-12-07
-    fin: 2029-01-12
+    fin: 2028-11-24
     ville: "Nantes"
     departement: "44"
     formule: null
     prix: null
-    prix_note: "inscription avant le 07/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2026/décembre/NANTES/DEJEPS+ASEC+-+coordination+de+projets/AT16-B5E26DE5D"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
+  - id: cemea-AT11-B5E26DE2N
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2028-03-07
+    ville: "Lille"
+    departement: "59"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/LILLE/DEJEPS+ASEC+-+coordination+de+projets/AT11-B5E26DE2N"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-680605811a-20261207
     organisme: null
     organisme_nom: "TF Formation"
@@ -1766,6 +2266,66 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: eco-e580fe407e7d
+    organisme: null
+    organisme_nom: "Trans-Faire"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2028-07-07
+    ville: "Paris"
+    departement: "75"
+    formule: "alternance"
+    prix: null
+    prix_note: "avec un mastère"
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-socioculturel/desjeps-asecs-mastere-manager-des-organisations/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: eco-5231b6baf9b4
+    organisme: null
+    organisme_nom: "Trans-Faire"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2028-02-29
+    ville: "Eaubonne"
+    departement: "95"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-sportif/desjeps-asecs-directeur-de-structure-et-de-projet/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT25-B4E26BP7L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-09
+    fin: 2028-02-23
+    ville: "Montigny-les-Metz"
+    departement: "57"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/MONTIGNY-LES-METZ/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT25-B4E26BP7L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26013DEBC0008
     organisme: null
     organisme_nom: "I.F.A.C. 92"
@@ -1786,6 +2346,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT05-B4E26007A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-14
+    fin: 2028-04-13
+    ville: "Bordeaux"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/BORDEAUX/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT05-B4E26007A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-ac8e9283d4-20261214
     organisme: null
     organisme_nom: "FOL Toulon"
@@ -1926,6 +2506,46 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT02-B4E26A04A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-16
+    fin: 2027-10-22
+    ville: "Saint-Quentin"
+    departement: "02"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/SAINT-QUENTIN/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT02-B4E26A04A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT11-B4E26BP5N
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-17
+    fin: 2027-10-22
+    ville: "Lille"
+    departement: "59"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/LILLE/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT11-B4E26BP5N"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26BFCDEBC0002
     organisme: null
     organisme_nom: "Union française des centres de vacances"
@@ -1986,6 +2606,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT02-B4E26A03A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-21
+    fin: 2027-10-22
+    ville: "Creil"
+    departement: "60"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2026/décembre/CREIL/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT02-B4E26A03A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-67cef1e25a-20270104
     organisme: null
     organisme_nom: "Association Enfants Pays Beleyme"
@@ -2024,6 +2664,26 @@ sessions:
     complet: false
     url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: eco-f8f15adfe900
+    organisme: null
+    organisme_nom: "Profession Sport Loisirs 04"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-04
+    fin: 2027-12-31
+    ville: "Digne-les-Bains"
+    departement: "04"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://alpes-haute-provence.profession-sport-loisirs.fr/cpjeps-animateur-dactivites-et-de-vie-quotidienne/"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
   - id: for-27013CPBC0001
@@ -2166,6 +2826,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: eco-1c7004ed1c5e
+    organisme: null
+    organisme_nom: "Askoria"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-11
+    fin: 2028-01-25
+    ville: "Rennes"
+    departement: "35"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://www.askoria.eu/formation/brevet-professionnel-animation-socio-educative-et-culturelle-bpjeps-asec/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-6a0418b307-20270111
     organisme: null
     organisme_nom: "Les Francas Auvergne Rhone-Alpes"
@@ -2204,6 +2884,26 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-02
+    source: "foromes"
+  - id: for-27013DESBC0001
+    organisme: null
+    organisme_nom: "CEMEA PACA"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-11
+    fin: 2028-11-30
+    ville: "Marseille"
+    departement: "13"
+    formule: null
+    prix: null
+    prix_note: "inscription avant le 11/12/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "foromes"
   - id: app-35976f67b8-20270112
@@ -2246,6 +2946,66 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT18-B4E27ASET
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-13
+    fin: 2028-06-16
+    ville: "Chambray-les-Tours"
+    departement: "37"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/CHAMBRAY-LES-TOURS/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT18-B4E27ASET"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT01-B3E27NC01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-14
+    fin: 2027-12-17
+    ville: "Nice"
+    departement: "06"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/NICE/CPJEPS+-+Animateur+d%E2%80%99Activit%C3%A9s+et+de+Vie+Quotidienne+dans+toute+structure+de+loisirs+et+d%E2%80%99animation+socioculturelle/AT01-B3E27NC01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT01-B3E27MA01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-14
+    fin: 2027-12-17
+    ville: "Marseille"
+    departement: "13"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/MARSEILLE/CPJEPS+-+Animateur+d%E2%80%99Activit%C3%A9s+et+de+Vie+Quotidienne+dans+toute+structure+de+loisirs+et+d%E2%80%99animation+socioculturelle/AT01-B3E27MA01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-990d1fccc9-20270118
     organisme: null
     organisme_nom: "Les Francas Auvergne Rhone-Alpes"
@@ -2266,6 +3026,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT05-B4E27001P
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-18
+    fin: 2028-05-30
+    ville: "Poitiers"
+    departement: "86"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/POITIERS/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT05-B4E27001P"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-51c5679847-20270118
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -2286,6 +3066,46 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: for-26BFCDESBC0002
+    organisme: null
+    organisme_nom: "FRANCAS de Bourgogne Franche-Comté"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-19
+    fin: 2028-12-08
+    ville: "Dijon"
+    departement: "21"
+    formule: null
+    prix: null
+    prix_note: "inscription avant le 19/12/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "foromes"
+  - id: cemea-AT01-B3E27AT01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-21
+    fin: 2027-09-07
+    ville: "Marseille"
+    departement: "13"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/MARSEILLE/CPJEPS+-+Animateur+d%E2%80%99Activit%C3%A9s+et+de+Vie+Quotidienne+dans+toute+structure+de+loisirs+et+d%E2%80%99animation+socioculturelle/AT01-B3E27AT01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-27013BPBC0005
     organisme: null
     organisme_nom: "LES FRANCAS Union Régionale PACA"
@@ -2326,6 +3146,66 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: cemea-AT14-B5E27SAPO
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-25
+    fin: 2028-05-30
+    ville: "Toulouse"
+    departement: "31"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/TOULOUSE/DEJEPS+ASEC+-+coordination+de+projets/AT14-B5E27SAPO"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT14-B5E27DAPM
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-25
+    fin: 2028-05-29
+    ville: "Montpellier"
+    departement: "34"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/MONTPELLIER/DEJEPS+ASEC+-+coordination+de+projets/AT14-B5E27DAPM"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: for-27075DESBC0001
+    organisme: null
+    organisme_nom: "Challenges Academia"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-25
+    fin: 2027-11-30
+    ville: "Paris"
+    departement: "75"
+    formule: null
+    prix: null
+    prix_note: "inscription avant le 11/01/2027"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "foromes"
   - id: app-030171fcbb-20270126
     organisme: null
     organisme_nom: "Ocellia"
@@ -2346,6 +3226,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT23-B4E27LORI
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-27
+    fin: 2028-06-02
+    ville: "Lorient"
+    departement: "56"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/janvier/LORIENT/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT23-B4E27LORI"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: leo-5432ab9c64
     organisme: null
     organisme_nom: "Léo Lagrange Formation"
@@ -2406,6 +3306,46 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT05-B0E27006P
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-02-03
+    fin: 2028-01-27
+    ville: "Poitiers"
+    departement: "86"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/février/POITIERS/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27006P"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT18-B0E27CC45
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-02-05
+    fin: 2027-11-09
+    ville: "Saint-Jean-de-Braye"
+    departement: "45"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/février/SAINT-JEAN-DE-BRAYE/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT18-B0E27CC45"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26ACLCC0013
     organisme: null
     organisme_nom: "Comité régional sports pour tous Grand Est"
@@ -2506,6 +3446,66 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT18-B0E27CC37
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-05
+    fin: 2027-11-23
+    ville: "Joue-les-Tours"
+    departement: "37"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/JOUE-LES-TOURS/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT18-B0E27CC37"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT05-B0E27005A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-12
+    fin: 2028-02-29
+    ville: "Bordeaux"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27005A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT06-B0E27BX3S
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-15
+    fin: 2027-12-11
+    ville: "Rouen"
+    departement: "76"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/ROUEN/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT06-B0E27BX3S"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-dfb4bf01da-20270315
     organisme: null
     organisme_nom: "TF Formation"
@@ -2526,6 +3526,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: eco-fa3a523b16a5
+    organisme: null
+    organisme_nom: "Trans-Faire"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-03-15
+    fin: 2028-07-07
+    ville: "Paris"
+    departement: "75"
+    formule: "alternance"
+    prix: null
+    prix_note: "avec une licence"
+    aides: []
+    complet: false
+    url: "https://www.trans-faire.fr/formations/diplome-socioculturel/formation-dejeps-asecs-coordination-projets-licence/"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-4ec3ebe4e6-20270318
     organisme: null
     organisme_nom: "Association Regionale des CEMEA du Centre"
@@ -2566,9 +3586,69 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "page-organisme"
-  - id: app-be95f1ca22-20270326
+  - id: cemea-AT25-B0E27CC7L
     organisme: null
-    organisme_nom: "Association Region des CEMEA des Pays de Loire"
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-25
+    fin: 2027-12-14
+    ville: "Nancy"
+    departement: "54"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/NANCY/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT25-B0E27CC7L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT25-B0E27CC8L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-25
+    fin: 2027-12-14
+    ville: "Villers-les-Nancy"
+    departement: "54"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/VILLERS-LES-NANCY/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT25-B0E27CC8L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT25-B0E27CC7A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-25
+    fin: 2027-12-14
+    ville: "Strasbourg"
+    departement: "67"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/STRASBOURG/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT25-B0E27CC7A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT16-B6E27DS5D
+    organisme: null
+    organisme_nom: "CEMEA"
     diplome: "DESJEPS"
     specialite: "direction"
     type: "parcours"
@@ -2577,15 +3657,35 @@ sessions:
     fin: 2029-03-16
     ville: "Nantes"
     departement: "44"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "2 ans en alternance"
+    formule: null
+    prix: null
+    prix_note: null
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01218124253790002933748609600049-44109%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
-    releve_le: 2026-11-01
+    url: "https://cemea-formation.com/promo/2027/mars/NANTES/DESJEPS+ASECS+-+direction+de+structure+et+de+projet/AT16-B6E27DS5D"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
+  - id: cemea-AT05-B0E27004L
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-03-30
+    fin: 2028-03-24
+    ville: "Limoges"
+    departement: "87"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mars/LIMOGES/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27004L"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-f564ad76cf-20270401
     organisme: null
     organisme_nom: "Association Region des CEMEA des Pays de Loire"
@@ -2646,6 +3746,86 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "page-organisme"
+  - id: cemea-AT16-B5E27DE6D
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-04-12
+    fin: 2029-02-09
+    ville: "Nantes"
+    departement: "44"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/avril/NANTES/DEJEPS+ASEC+-+coordination+de+projets/AT16-B5E27DE6D"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT02-B6E27A02A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-04-12
+    fin: 2029-04-13
+    ville: "Amiens"
+    departement: "80"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/avril/AMIENS/DESJEPS+ASECS+-+direction+de+structure+et+de+projet/AT02-B6E27A02A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT05-B0E27002A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-05-04
+    fin: 2028-01-21
+    ville: "Bordeaux"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mai/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27002A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT02-B5E27A01A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-05-04
+    fin: 2029-03-23
+    ville: "Amiens"
+    departement: "80"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/mai/AMIENS/DEJEPS+ASEC+-+coordination+de+projets/AT02-B5E27A01A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-e834d74648-20270524
     organisme: null
     organisme_nom: "FRAFR Angers"
@@ -2666,6 +3846,66 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT05-B0E27003A
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-06-11
+    fin: 2028-04-25
+    ville: "Bordeaux"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/juin/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27003A"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT01-B0E27NC01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-06-14
+    fin: 2027-11-29
+    ville: "Nice"
+    departement: "06"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/juin/NICE/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT01-B0E27NC01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: cemea-AT01-B0E27MA01
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-06-14
+    fin: 2027-11-29
+    ville: "Marseille"
+    departement: "13"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/juin/MARSEILLE/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT01-B0E27MA01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-e741d41f90-20270901
     organisme: null
     organisme_nom: "IRSS Caen"
@@ -3126,26 +4366,26 @@ sessions:
     releve_le: 2026-10-28
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: app-c6b074d01b-20270927
+  - id: eco-549dbd1de5d0
     organisme: null
-    organisme_nom: "FRAFR Angers"
+    organisme_nom: "Familles Rurales Pays de la Loire"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2027-09-27
-    fin: 2028-10-13
+    fin: 2028-10-31
     ville: "Angers"
     departement: "49"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
+    formule: "alternance"
+    prix: null
+    prix_note: null
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002932751175400043-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
+    url: "https://pays-de-la-loire.famillesrurales.org/20/bpjeps-asec"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
   - id: app-804934b06a-20270927
     organisme: null
     organisme_nom: "INFA Clermont-Ferrand"
@@ -3166,26 +4406,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
-  - id: app-00e87e9f9c-20270927
+  - id: eco-3d9e15c94ae9
     organisme: null
-    organisme_nom: "FRAFR Angers"
+    organisme_nom: "Familles Rurales Pays de la Loire"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2027-09-27
-    fin: 2028-10-13
+    fin: 2028-10-31
     ville: "La Roche-sur-Yon"
     departement: "85"
-    formule: "apprentissage"
-    prix: 0
-    prix_note: "1 an en alternance"
+    formule: "alternance"
+    prix: null
+    prix_note: null
     aides: []
     complet: false
-    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002932751175400043-85191%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
-    releve_le: 2026-10-26
+    url: "https://pays-de-la-loire.famillesrurales.org/20/bpjeps-asec"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "catalogue-apprentissage"
+    source: "page-organisme"
   - id: app-6588fd3e7e-20270929
     organisme: null
     organisme_nom: "URFFC Quetigny"
@@ -3606,6 +4846,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: cemea-AT30-B6E27R01R
+    organisme: null
+    organisme_nom: "CEMEA"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-11-16
+    fin: 2029-10-11
+    ville: "Le Pont-de-Claix"
+    departement: "38"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://cemea-formation.com/promo/2027/novembre/LE PONT-DE-CLAIX/DESJEPS+ASECS+-+direction+de+structure+et+de+projet/AT30-B6E27R01R"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-180a43fce6-20271129
     organisme: null
     organisme_nom: "AFOCAL Pays de la Loire"
