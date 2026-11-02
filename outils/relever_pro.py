@@ -356,6 +356,48 @@ def foromes(aujourdhui):
     return sessions
 
 
+UFCV_PRO = "https://formation-professionnelle.ufcv.fr/Nos-formations/"
+UFCV_PAGES = {"M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC": ("BPJEPS", "asec"),
+              "M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ": ("CPJEPS", "aavq"),
+              "M%C3%A9tiers-de-lanimation/DEJEPS/DEJEPS-ASEC/DEJEPS": ("DEJEPS", "coordination-de-projets"),
+              "Formations-%C3%A0-lanimation/DESJEPS": ("DESJEPS", "direction"),
+              "Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif": ("CC-ACM", None)}
+
+
+def ufcv_pro(aujourdhui):
+    """UFCV, formation professionnelle : chaque page de diplôme a un tableau des sessions (dates, ville, région)."""
+    from relever import autorise, lire_brut
+    sessions = []
+    for chemin, (diplome, sp) in UFCV_PAGES.items():
+        url = UFCV_PRO + chemin
+        if not autorise(url):
+            raise SystemExit("UFCV : robots.txt interdit la page")
+        try:
+            brut = lire_brut(url)
+        except Exception as e:
+            print(f"  UFCV {diplome} : {e}", file=sys.stderr)
+            continue
+        for ligne in re.findall(r"<tr>(.*?)</tr>", brut, re.S):
+            cases = {m.group(1).strip(): " ".join(html.unescape(re.sub(r"<[^>]+>", " ", m.group(2))).split())
+                     for m in re.finditer(r'<td data-title="([^":]+) ?:">(.*?)</td>', ligne, re.S)}
+            m = re.search(r"Du (\d\d/\d\d/\d{4}) au (\d\d/\d\d/\d{4})", cases.get("Dates", ""))
+            if not m or not cases.get("Ville"):
+                continue  # « Session débutée » : déjà commencée
+            debut = dt.datetime.strptime(m.group(1), "%d/%m/%Y").date()
+            fin = dt.datetime.strptime(m.group(2), "%d/%m/%Y").date()
+            ville = ville_de(cases["Ville"])
+            dep = dep_de_ville(ville)
+            if not dep:
+                continue
+            ident = re.search(r"idAction=(\d+)", ligne)
+            sessions.append({
+                "id": f"ufcvpro-{ident.group(1) if ident else hashlib.sha1((url + str(debut) + ville).encode()).hexdigest()[:10]}",
+                "organisme": None, "organisme_nom": "UFCV", "diplome": diplome, "specialite": sp, "type": "parcours",
+                "theme": None, "debut": debut, "fin": fin, "ville": ville, "departement": dep, "formule": "alternance",
+                "prix": None, "prix_note": None, "aides": [], "complet": False, "url": url, "source": "page-organisme"})
+    return sessions
+
+
 LEO = {"bpjeps-mention-animation-socioeducative-et-culturelle-asec": ("BPJEPS", "asec"),
        "cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle": ("CPJEPS", "aavq"),
        "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets")}
@@ -472,7 +514,7 @@ def main():
     def ecoles(j):
         return pages_ecoles.pages_ecoles(j, lire_brut, autorise, nom_organisme, ville_de)
     sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange),
-               ("Calendrier national FOROMES", foromes), ("CEMEA", cemea_pro), ("Pages des écoles", ecoles)]
+               ("Calendrier national FOROMES", foromes), ("CEMEA", cemea_pro), ("UFCV", ufcv_pro), ("Pages des écoles", ecoles)]
     jeton = (os.environ.get("RCO_OFFREINFO_TOKEN") or "").strip()
     if jeton:
         sources.append(("API Offre Info", lambda j: offre_info(j, jeton)))
@@ -487,7 +529,7 @@ def main():
             print(f"  {nom} : {e}", file=sys.stderr)
             source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info",
                       "Calendrier national FOROMES": "foromes"}.get(nom, "page-organisme")
-            prefixe = {"CEMEA": "cemea-", "Pages des écoles": "eco-", "Léo Lagrange Formation": "leo-"}.get(nom)
+            prefixe = {"CEMEA": "cemea-", "Pages des écoles": "eco-", "Léo Lagrange Formation": "leo-", "UFCV": "ufcvpro-"}.get(nom)
             liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source
                      and (source != "page-organisme" or (prefixe and s["id"].startswith(prefixe)))]
         print(f"  {len(liste)} sessions lues", file=sys.stderr)
