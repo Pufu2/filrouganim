@@ -133,7 +133,7 @@
     if (selEtape.selectedOptions[0] && selEtape.selectedOptions[0].disabled) selEtape.value = "";
     selEtape.disabled = visibles === 0;
     var pro = dip && ["BAFA", "BAFD"].indexOf(dip) === -1;
-    selEtape.options[0].textContent = visibles === 0 ? (dip === "PSC1" ? "Une journée" : "Formation complète") : (pro ? "Toutes les spécialités" : "Toutes");
+    selEtape.options[0].textContent = visibles === 0 ? (dip === "PSC1" ? "Une journée" : "Formation complète") : (pro ? "Toutes les spécialités" : "Toutes les étapes");
     var titre = f.querySelector("[data-titre-etape]");
     if (titre) titre.textContent = !dip ? "Étape ou spécialité ?" : pro ? "Quelle spécialité ?" : "Quelle étape ?";
   }
@@ -216,6 +216,8 @@
         : dep.slice(0, 2) === "v:" ? (ville === sansAccents(v) || ville.indexOf(sansAccents(v) + " ") === 0) : d.dep === dep);
       var okQuand = (!annee || d.mois.slice(0, 4) === annee) && (!mois || (mois.slice(0, 2) === "v:"
         ? d.periode.replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
+      i.okSansLieu = (!dip || d.diplome === dip) && okQuand && (!type || d.type === type) &&
+        mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
       i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
     });
@@ -274,58 +276,99 @@
   var FRANCE = [[42.3, -4.8], [51.1, 8.2]];
   function initCarte() {
     if (plan || !window.L || !carteEl || carteEl.offsetParent === null) return;
-    plan = L.map(carteEl, { scrollWheelZoom: true }).fitBounds(FRANCE);
+    plan = L.map(carteEl, { scrollWheelZoom: true, maxZoom: 14, minZoom: 5 }).fitBounds(FRANCE);
     L.tileLayer(carteEl.dataset.tuiles, { maxZoom: 18, minZoom: 4,
       attribution: '&copy; <a href="https://www.ign.fr/">IGN</a> &ndash; G\u00e9oplateforme' }).addTo(plan);
     calque = L.layerGroup().addTo(plan);
-    plan.on("moveend", majCarte);
+    ajouterBoutonFrance();
+    plan.on("zoomend moveend", majCarte);
     majCarte();
     cadrer();
   }
-  // de très loin : une bulle par région ; puis par département ; de près : par ville
-  function groupes() {
-    var z = plan.getZoom(), niveau = z < 7 ? "r" : z < 9 ? "d" : "v", g = {};
-    liste.items.forEach(function (i) {
-      if (!i.ok || !i.x || !i.x.g) return;
-      var k = niveau === "r" ? i.d.region : niveau === "d" ? i.d.dep : i.d.dep + "|" + i.x.v;
-      var x = g[k] || (g[k] = { n: 0, la: 0, lo: 0, v: i.x.v, d: i.d.dep, r: i.x.r });
-      x.n++; x.la += i.x.g[0]; x.lo += i.x.g[1];
-    });
-    return { niveau: niveau, g: g };
-  }
+  // Les bulles : les villes proches à l'écran sont réunies en une seule bulle (seulement un chiffre, comme les
+  // cartes de location) ; le nom des villes s'affiche au survol. Un clic zoome, ou choisit la ville s'il n'y en a qu'une.
   function majCarte() {
     if (!plan) return;
     calque.clearLayers();
-    var r = groupes(), zone = plan.getBounds(), dans = 0;
-    Object.keys(r.g).forEach(function (k) {
-      var x = r.g[k], pos = [x.la / x.n, x.lo / x.n];
-      if (zone.contains(pos)) dans += x.n;
-      var ville = r.niveau === "v";
-      var texte = !ville || x.v.length > 16 ? String(x.n) : x.v + " \u00b7 " + x.n;
-      var titre = (r.niveau === "r" ? "R\u00e9gion" : r.niveau === "d" ? "D\u00e9partement " + x.d : x.v) + " : " + x.n + (x.n > 1 ? " sessions" : " session");
-      var mk = L.marker(pos, { title: titre, icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
-        html: '<span class="bulle' + (ville ? " bulle-ville" : r.niveau === "r" ? " bulle-region" : "") + '"></span>' }) }).addTo(calque);
-      mk.getElement().querySelector(".bulle").textContent = texte;
+    var villes = {};
+    liste.items.forEach(function (i) {
+      if (!i.okSansLieu || !i.x || !i.x.g) return;
+      var k = i.d.dep + "|" + i.x.v;
+      var x = villes[k] || (villes[k] = { n: 0, g: i.x.g, v: i.x.v, d: i.d.dep });
+      x.n++;
+    });
+    var amas = [], zone = plan.getBounds(), dans = 0, choisie = form.elements.dep.value;
+    Object.keys(villes).forEach(function (k) {
+      var x = villes[k], p = plan.latLngToContainerPoint(x.g);
+      if (zone.contains(x.g)) dans += x.n;
+      var proche = null;
+      for (var j = 0; j < amas.length; j++) {
+        if (Math.abs(amas[j].p.x - p.x) < 46 && Math.abs(amas[j].p.y - p.y) < 34) { proche = amas[j]; break; }
+      }
+      if (proche) { proche.villes.push(x); proche.n += x.n; }
+      else amas.push({ p: p, n: x.n, villes: [x] });
+    });
+    amas.forEach(function (a) {
+      var la = 0, lo = 0;
+      a.villes.forEach(function (x) { la += x.g[0] * x.n; lo += x.g[1] * x.n; });
+      var pos = [la / a.n, lo / a.n], seule = a.villes.length === 1 ? a.villes[0] : null;
+      var active = seule && choisie === "v:" + seule.v;
+      var mk = L.marker(pos, { icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
+        html: '<span class="bulle' + (a.n >= 100 ? " bulle-grande" : "") + (active ? " active" : "") + '"></span>' }), riseOnHover: true }).addTo(calque);
+      mk.getElement().querySelector(".bulle").textContent = a.n;
+      a.villes.sort(function (u, w) { return w.n - u.n; });
+      var noms = a.villes.slice(0, 4).map(function (x) { return x.v; }).join(", ") + (a.villes.length > 4 ? "\u2026" : "");
+      mk.bindTooltip(noms + " : " + a.n + (a.n > 1 ? " sessions" : " session"), { direction: "top", offset: [0, -16], className: "bulle-info" });
       mk.on("click", function () {
-        if (r.niveau === "r") plan.flyTo(pos, 8, { duration: 0.6 });
-        else if (r.niveau === "d") plan.flyTo(pos, 10, { duration: 0.6 });
-        else choisirVille(x.v, x.d);
+        if (seule) { choisirVille(seule.v, seule.d); return; }
+        var b = L.latLngBounds(a.villes.map(function (x) { return x.g; }));
+        // des villes trop proches pour être séparées en zoomant : une petite liste à choisir
+        if (plan.getZoom() >= 11 || b.getNorthEast().distanceTo(b.getSouthWest()) < 1500) {
+          var div = L.DomUtil.create("div", "bulle-liste");
+          a.villes.forEach(function (x) {
+            var bt = L.DomUtil.create("button", "", div);
+            bt.type = "button"; bt.textContent = x.v + " \u00b7 " + x.n;
+            bt.addEventListener("click", function () { plan.closePopup(); choisirVille(x.v, x.d); });
+          });
+          L.popup({ closeButton: false, offset: [0, -14], className: "bulle-popup" }).setLatLng(pos).setContent(div).openOn(plan);
+        } else {
+          plan.fitBounds(b, { padding: [60, 60], maxZoom: Math.min(plan.getZoom() + 3, 12) });
+        }
       });
     });
     document.getElementById("carte-zone").textContent = dans + (dans > 1 ? " sessions dans cette zone" : " session dans cette zone");
+    if (boutonFrance) boutonFrance.hidden = !choisie;
   }
+  var depuisCarte = false;
   function cadrer() {
     if (!plan) return;
+    if (depuisCarte) { depuisCarte = false; return; }
     var pts = [];
     liste.items.forEach(function (i) { if (i.ok && i.x && i.x.g) pts.push(i.x.g); });
-    if (form.elements.dep.value && pts.length) plan.fitBounds(pts, { maxZoom: 11, padding: [40, 40] });
+    if (form.elements.dep.value && pts.length) plan.fitBounds(pts, { maxZoom: 10, padding: [40, 40] });
     else if (!form.elements.dep.value) plan.fitBounds(FRANCE);
   }
   function choisirVille(v, d) {
     form.elements.ou.value = v + " (" + d + ")";
     form.elements.dep.value = "v:" + v;
+    depuisCarte = true;
     appliquer(true);
-    document.getElementById("resultats").scrollIntoView({ behavior: "smooth" });
+  }
+  // « Toute la France » : enlève le lieu choisi et montre tout le pays
+  var boutonFrance = null;
+  function ajouterBoutonFrance() {
+    var Ctrl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
+      var b = L.DomUtil.create("button", "bouton-france");
+      b.type = "button"; b.textContent = "Toute la France"; b.hidden = true;
+      L.DomEvent.disableClickPropagation(b);
+      b.addEventListener("click", function () {
+        form.elements.ou.value = ""; form.elements.dep.value = "";
+        appliquer(true); plan.fitBounds(FRANCE);
+      });
+      boutonFrance = b;
+      return b;
+    } });
+    plan.addControl(new Ctrl());
   }
   var boutonCarte = document.getElementById("bouton-carte"), blocCarte = document.getElementById("carte-bloc");
   if (boutonCarte && blocCarte) {
@@ -362,7 +405,7 @@
   fetch(source).then(function (r) { return r.json(); }).then(function (donnees) {
     liste.items.forEach(function (i) { if (i.el) i.el.remove(); });
     liste.items = donnees.map(function (x) {
-      return { x: x, el: null, ok: true, d: {
+      return { x: x, el: null, ok: true, okSansLieu: true, d: {
         dep: x.d, ville: x.v, region: x.r, periode: x.p, mois: x.m, diplome: x.di, type: x.di + "-" + (x.sp || x.t),
         prix: x.px === null ? "" : x.px,
         texte: sansAccents([x.v, x.dn2, x.d, x.th || "", x.o, x.tn, x.dl, x.spn || "", x.spg || ""].join(" ")) } };

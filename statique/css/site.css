@@ -598,3 +598,51 @@ html { scroll-padding-top: 90px; }
   .carte-bloc { align-self: start; position: sticky; top: 92px; }
   .bouton-carte { display: none; }
 }
+
+/* ---------- Carte : fond adouci, bulles chiffrées, info au survol */
+.carte-sessions .leaflet-tile-pane { filter: saturate(.28) brightness(1.07) contrast(.9) sepia(.12); }
+.bulle-grande { min-width: 44px; height: 38px; font-size: .9rem; }
+.bulle.active { background: var(--fil); color: #fff; border-color: var(--fil); }
+.leaflet-tooltip.bulle-info { background: var(--nuit); color: var(--creme); border: 0; border-radius: 8px; padding: 6px 10px; font: 500 .85rem/1.3 var(--texte);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .25); }
+.leaflet-tooltip.bulle-info::before { border-top-color: var(--nuit); }
+.bouton-france { font: 600 .88rem var(--texte); color: var(--encre); background: #fff; border: 1px solid var(--trait); border-radius: 8px; padding: 8px 12px;
+  cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, .15); }
+.bouton-france:hover { border-color: var(--fil); color: var(--fil-fonce); }
+.bouton-france[hidden] { display: none; }
+
+/* ---------- La barre de filtres (page des sessions) : blanche, sur toute la largeur, collée sous le bandeau */
+.barre-filtres { position: sticky; top: var(--haut-entete, 60px); z-index: 850; background: #fff; border-bottom: 1px solid var(--trait);
+  box-shadow: 0 6px 14px -12px rgba(43, 35, 31, .35); }
+.barre-filtres .recherche { flex-direction: row; align-items: center; gap: 10px; padding: 12px 0; }
+.barre-filtres .recherche-cases { display: flex; flex-wrap: nowrap; gap: 10px; flex: none; }
+.barre-filtres .case-r { flex: none; flex-direction: row; align-items: center; height: 46px; padding: 0 12px 0 40px; border-radius: 8px;
+  background: #fff; border: 1px solid #e6ddcf; box-shadow: none; transition: border-color .15s, box-shadow .15s; }
+.barre-filtres .case-r:hover { border-color: #b9a78c; box-shadow: 0 1px 3px rgba(43, 35, 31, .08); }
+.barre-filtres .case-r .icone { left: 13px; width: 19px; height: 19px; }
+.barre-filtres .case-titre { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.barre-filtres .case-r select { font-weight: 500; font-size: .97rem; width: auto; max-width: 175px; padding-right: 24px; white-space: nowrap; overflow: hidden; }
+.barre-filtres .case-ou input[type="search"] { font-weight: 500; font-size: .97rem; width: 165px; }
+.barre-filtres .quand-choix select:first-child { max-width: 140px; }
+.barre-filtres .quand-choix select:last-child { max-width: 115px; }
+.barre-filtres .recherche-bas { flex: 1; min-width: 150px; }
+.barre-filtres .recherche-mot input { height: 46px; box-sizing: border-box; padding: 0 14px 0 42px; border: 1px solid #e6ddcf; border-radius: 8px; background: #fff; font-size: .97rem; }
+.barre-filtres .case-r select:disabled { opacity: .55; }
+@media (max-width: 1240px) {
+  .barre-filtres .recherche { overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 10px 16px; }
+  .barre-filtres .recherche::-webkit-scrollbar { display: none; }
+  .barre-filtres .recherche-bas { flex: none; width: 220px; }
+}
+@media (max-width: 640px) {
+  .barre-filtres .case-r { height: 42px; }
+  .barre-filtres .case-ou input[type="search"] { width: 150px; }
+}
+@media (min-width: 1000px) {
+  .carte-bloc, .carte-sessions { top: calc(var(--haut-entete, 60px) + 88px); }
+  .carte-sessions { height: calc(100vh - var(--haut-entete, 60px) - 120px); }
+}
+.bulle-popup .leaflet-popup-content-wrapper { border-radius: 10px; padding: 0; }
+.bulle-popup .leaflet-popup-content { margin: 6px; }
+.bulle-liste { display: flex; flex-direction: column; gap: 2px; max-height: 220px; overflow-y: auto; }
+.bulle-liste button { font: 500 .9rem var(--texte); text-align: left; background: none; border: 0; border-radius: 6px; padding: 7px 10px; cursor: pointer; color: var(--encre); }
+.bulle-liste button:hover { background: var(--papier); color: var(--fil-fonce); }
