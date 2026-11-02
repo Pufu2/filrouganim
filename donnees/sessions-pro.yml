@@ -386,9 +386,9 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26NPPBPBC0054
+  - id: ufcvpro-3788
     organisme: null
-    organisme_nom: "UFCV Hauts-de-France"
+    organisme_nom: "UFCV"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -397,15 +397,15 @@ sessions:
     fin: 2027-09-07
     ville: "Valenciennes"
     departement: "59"
-    formule: null
+    formule: "alternance"
     prix: null
     prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: cemea-AT05-B5E26003A
     organisme: null
     organisme_nom: "CEMEA"
@@ -506,6 +506,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: ufcvpro-3781
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-12
+    fin: 2027-07-02
+    ville: "Strasbourg"
+    departement: "67"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: cemea-AT05-B3E26001L
     organisme: null
     organisme_nom: "CEMEA"
@@ -566,9 +586,9 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26ARABPBC0028
+  - id: ufcvpro-3859
     organisme: null
-    organisme_nom: "UFCV -Union Française des Centres de Vacances"
+    organisme_nom: "UFCV"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
@@ -577,15 +597,15 @@ sessions:
     fin: 2028-05-19
     ville: "Clermont-Ferrand"
     departement: "63"
-    formule: null
+    formule: "alternance"
     prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26BFCDEBC0003
     organisme: null
     organisme_nom: "EPLE FPA du Morvan"
@@ -1966,26 +1986,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
-  - id: for-26075BPBC0117
+  - id: ufcvpro-4071
     organisme: null
-    organisme_nom: "Union Francaise Centre Vacances Loisirs"
+    organisme_nom: "UFCV"
     diplome: "BPJEPS"
     specialite: "asec"
     type: "parcours"
     theme: null
     debut: 2026-12-03
-    fin: 2028-01-24
+    fin: 2027-12-17
     ville: "Paris"
     departement: "75"
-    formule: null
+    formule: "alternance"
     prix: null
-    prix_note: "inscription avant le 03/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: cemea-AT07-B0E269200
     organisme: null
     organisme_nom: "CEMEA"
@@ -2166,9 +2186,9 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
-  - id: for-26ACLCC0021
+  - id: ufcvpro-3316
     organisme: null
-    organisme_nom: "Union Francaise des Centres de Vacances Lorraine"
+    organisme_nom: "UFCV"
     diplome: "CC-ACM"
     specialite: null
     type: "parcours"
@@ -2177,15 +2197,15 @@ sessions:
     fin: 2027-12-14
     ville: "Metz"
     departement: "57"
-    formule: null
+    formule: "alternance"
     prix: null
-    prix_note: "inscription avant le 06/11/2026"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26075CPBC0005
     organisme: null
     organisme_nom: "Animetcom Consultant"
@@ -2326,6 +2346,46 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
+  - id: ufcvpro-3833
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-09
+    fin: 2028-02-04
+    ville: "Amiens"
+    departement: "80"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-3317
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2026-12-09
+    fin: 2027-12-09
+    ville: "Belleville-sur-Meuse"
+    departement: "55"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-26013DEBC0008
     organisme: null
     organisme_nom: "I.F.A.C. 92"
@@ -2346,6 +2406,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: ufcvpro-3812
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2026-12-11
+    fin: 2027-09-21
+    ville: "Besancon"
+    departement: "25"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: cemea-AT05-B4E26007A
     organisme: null
     organisme_nom: "CEMEA"
@@ -2546,26 +2626,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
-  - id: for-26BFCDEBC0002
+  - id: ufcvpro-3810
     organisme: null
-    organisme_nom: "Union française des centres de vacances"
+    organisme_nom: "UFCV"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-12-17
     fin: 2027-12-20
-    ville: "Besançon"
+    ville: "Besancon"
     departement: "25"
-    formule: null
+    formule: "alternance"
     prix: null
-    prix_note: "inscription avant le 01/12/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    prix_note: null
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/DEJEPS/DEJEPS-ASEC/DEJEPS"
+    releve_le: 2026-11-02
     verifie_le: 2026-11-02
-    source: "foromes"
+    source: "page-organisme"
   - id: for-26075DEBC0019
     organisme: null
     organisme_nom: "GRETA Metehor-Paris"
@@ -2806,6 +2886,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: ufcvpro-3312
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-06
+    fin: 2027-11-04
+    ville: "Metz"
+    departement: "57"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-86bd21080b-20270111
     organisme: null
     organisme_nom: "Les Francas Auvergne Rhone-Alpes"
@@ -2886,6 +2986,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "foromes"
+  - id: ufcvpro-3923
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-11
+    fin: 2028-06-16
+    ville: "Bouvines"
+    departement: "59"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/DEJEPS/DEJEPS-ASEC/DEJEPS"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: for-27013DESBC0001
     organisme: null
     organisme_nom: "CEMEA PACA"
@@ -3043,6 +3163,26 @@ sessions:
     aides: []
     complet: false
     url: "https://cemea-formation.com/promo/2027/janvier/POITIERS/BPJEPS+ASEC+-+animation+socio-%C3%A9ducative+ou+culturelle/AT05-B4E27001P"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-4030
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "DEJEPS"
+    specialite: "coordination-de-projets"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-18
+    fin: 2027-12-01
+    ville: "Nice"
+    departement: "06"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/DEJEPS/DEJEPS-ASEC/DEJEPS"
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
@@ -3246,6 +3386,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
+  - id: ufcvpro-4032
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-02-01
+    fin: 2027-12-09
+    ville: "Saint-Raphael"
+    departement: "83"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: leo-5432ab9c64
     organisme: null
     organisme_nom: "Léo Lagrange Formation"
@@ -3343,6 +3503,46 @@ sessions:
     aides: []
     complet: false
     url: "https://cemea-formation.com/promo/2027/février/SAINT-JEAN-DE-BRAYE/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT18-B0E27CC45"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-4029
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-02-05
+    fin: 2027-10-29
+    ville: "Toulon"
+    departement: "83"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-4031
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-02-19
+    fin: 2027-12-22
+    ville: "Toulon"
+    departement: "83"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
@@ -3463,6 +3663,46 @@ sessions:
     aides: []
     complet: false
     url: "https://cemea-formation.com/promo/2027/mars/JOUE-LES-TOURS/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT18-B0E27CC37"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-3925
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-03-08
+    fin: 2028-04-07
+    ville: "Wattignies"
+    departement: "59"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-4035
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-03-08
+    fin: 2027-11-26
+    ville: "Marseille"
+    departement: "13"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ"
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
@@ -3686,6 +3926,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
+  - id: ufcvpro-4033
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-04-01
+    fin: 2028-02-18
+    ville: "Nice"
+    departement: "06"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-f564ad76cf-20270401
     organisme: null
     organisme_nom: "Association Region des CEMEA des Pays de Loire"
@@ -3846,6 +4106,26 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: ufcvpro-4070
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2027-06-07
+    fin: 2028-01-19
+    ville: "Saint-Raphael"
+    departement: "83"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: cemea-AT05-B0E27003A
     organisme: null
     organisme_nom: "CEMEA"
@@ -3903,6 +4183,26 @@ sessions:
     aides: []
     complet: false
     url: "https://cemea-formation.com/promo/2027/juin/MARSEILLE/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT01-B0E27MA01"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
+  - id: ufcvpro-3399
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "DESJEPS"
+    specialite: "direction"
+    type: "parcours"
+    theme: null
+    debut: 2027-06-15
+    fin: 2028-12-15
+    ville: "Nice"
+    departement: "06"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/Formations-%C3%A0-lanimation/DESJEPS"
     releve_le: 2026-11-02
     verifie_le: 2026-11-02
     source: "page-organisme"
@@ -4286,6 +4586,26 @@ sessions:
     releve_le: 2026-10-31
     verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
+  - id: ufcvpro-4036
+    organisme: null
+    organisme_nom: "UFCV"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2027-09-20
+    fin: 2028-06-07
+    ville: "Saint-Raphael"
+    departement: "83"
+    formule: "alternance"
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formation-professionnelle.ufcv.fr/Nos-formations/M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ"
+    releve_le: 2026-11-02
+    verifie_le: 2026-11-02
+    source: "page-organisme"
   - id: app-9ebe87c0c9-20270920
     organisme: null
     organisme_nom: "Leo Lagrange Formation"
