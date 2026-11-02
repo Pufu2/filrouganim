@@ -53,4 +53,9 @@ jobs:
             exit 0
           fi
           git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com commit -m "Sessions : relevé du $(date -u +%d/%m/%Y)"
-          git push
+          # du code a pu être publié pendant le relevé : on le récupère avant d'envoyer (seules les données changent ici)
+          for essai in 1 2 3; do
+            git pull --rebase -q origin main && git push && exit 0
+            sleep 10
+          done
+          exit 1
