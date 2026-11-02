@@ -155,6 +155,7 @@ ecoles:
   - {organisme_nom: "IFAC 92", diplome: BPJEPS, specialite: "asec", ville: "Voisins-le-Bretonneux", departement: "78", derniere_rentree: 2026-09-23}
   - {organisme_nom: "mfr sevreurope", diplome: BPJEPS, specialite: "asec", ville: "Bressuire", departement: "79", derniere_rentree: 2026-09-01}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Niort", departement: "79", derniere_rentree: 2026-09-14}
+  - {organisme_nom: "CEMEA de Picardie", diplome: BPJEPS, specialite: "asec", ville: "Abbeville", departement: "80", derniere_rentree: 2026-11-04}
   - {organisme_nom: "CEMEA de Picardie", diplome: BPJEPS, specialite: "asec", ville: "Amiens", departement: "80", derniere_rentree: 2026-11-02}
   - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Amiens", departement: "80", derniere_rentree: 2026-10-14}
   - {organisme_nom: "Union Régionale des Francas d'Occitanie", diplome: BPJEPS, specialite: "asec", ville: "Albi", departement: "81", derniere_rentree: 2026-09-07}
@@ -172,6 +173,7 @@ ecoles:
   - {organisme_nom: "Union régionale des Francas du Grand Est", diplome: BPJEPS, specialite: "asec", ville: "Épinal", departement: "88", derniere_rentree: 2026-10-05}
   - {organisme_nom: "FORMATION.S 89", diplome: BPJEPS, specialite: "asec", ville: "Auxerre", departement: "89", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Leo Lagrange Formation", diplome: BPJEPS, specialite: "asec", ville: "Juvisy-sur-Orge", departement: "91", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "IFAC 92", diplome: BPJEPS, specialite: "asec", ville: "Asnières-sur-Seine", departement: "92", derniere_rentree: 2026-11-04}
   - {organisme_nom: "SPOR", diplome: BPJEPS, specialite: "asec", ville: "Courbevoie", departement: "92", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Institut Formation Animation", diplome: BPJEPS, specialite: "asec", ville: "Pantin", departement: "93", derniere_rentree: 2026-04-13}
   - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-10-05}
@@ -271,6 +273,7 @@ ecoles:
   - {organisme_nom: "C.A.E.N. Training", diplome: CPJEPS, specialite: "aavq", ville: "Bretteville-sur-Odon", departement: "14", derniere_rentree: 2026-08-31}
   - {organisme_nom: "Centre Régional Actions Formations Sport et Santé", diplome: CPJEPS, specialite: "aavq", ville: "Colombelles", departement: "14", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Fédération Nationale Profession Sport Loisirs", diplome: CPJEPS, specialite: "aavq", ville: "La Rochelle", departement: "17", derniere_rentree: 2026-09-01}
+  - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: CPJEPS, specialite: "aavq", ville: "Rochefort", departement: "17", derniere_rentree: 2026-11-04}
   - {organisme_nom: "IRFA Bourgogne Franche-Comté", diplome: CPJEPS, specialite: "aavq", ville: "Chenôve", departement: "21", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Apsalc 21", diplome: CPJEPS, specialite: "aavq", ville: "Fontaine-lès-Dijon", departement: "21", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Askoria", diplome: CPJEPS, specialite: "aavq", ville: "Saint-Brieuc", departement: "22", derniere_rentree: 2026-09-07}

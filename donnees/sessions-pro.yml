@@ -6,66 +6,6 @@
 # de organismes.yml) et source (catalogue-apprentissage | offre-info).
 
 sessions:
-  - id: for-26NPPBPBC0043
-    organisme: null
-    organisme_nom: "CEMEA de Picardie"
-    diplome: "BPJEPS"
-    specialite: "asec"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-04
-    fin: 2027-11-14
-    ville: "Abbeville"
-    departement: "80"
-    formule: null
-    prix: null
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "foromes"
-  - id: for-26075BPBC0082
-    organisme: null
-    organisme_nom: "IFAC 92"
-    diplome: "BPJEPS"
-    specialite: "asec"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-04
-    fin: 2027-11-29
-    ville: "Asnières-sur-Seine"
-    departement: "92"
-    formule: null
-    prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
-    aides: []
-    complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "foromes"
-  - id: for-26ALPCPBC0005
-    organisme: null
-    organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine"
-    diplome: "CPJEPS"
-    specialite: "aavq"
-    type: "parcours"
-    theme: null
-    debut: 2026-11-04
-    fin: 2027-12-17
-    ville: "Rochefort"
-    departement: "17"
-    formule: null
-    prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
-    aides: []
-    complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: "foromes"
   - id: for-26ARABPBC0082
     organisme: null
     organisme_nom: "Maison Familiale Rurale Montbrison"
@@ -84,7 +24,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0156
     organisme: null
@@ -104,7 +44,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-25013BPBC0067
     organisme: null
@@ -124,7 +64,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26LMPBPBC0120
     organisme: null
@@ -144,7 +84,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0078
     organisme: null
@@ -164,7 +104,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26LMPBPBC0125
     organisme: null
@@ -184,7 +124,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-39bad34e21-20261109
     organisme: null
@@ -204,7 +144,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01213262997240003832629972400038-69387%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ARABPBC0083
     organisme: null
@@ -224,7 +164,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0104
     organisme: null
@@ -244,7 +184,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-70f12934ac-20261109
     organisme: null
@@ -264,7 +204,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01225030538780003231184406200035-76157%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-25013BPBC0068
     organisme: null
@@ -284,7 +224,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075CPBC0002
     organisme: null
@@ -304,7 +244,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075CPBC0007
     organisme: null
@@ -324,7 +264,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARADEBC0003
     organisme: null
@@ -344,7 +284,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ALPBPBC0115
     organisme: null
@@ -364,7 +304,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NPPBPBC0054
     organisme: null
@@ -384,7 +324,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ALPDEBC0003
     organisme: null
@@ -404,7 +344,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ALPDEBC0002
     organisme: null
@@ -424,7 +364,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0111
     organisme: null
@@ -444,7 +384,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0103
     organisme: null
@@ -464,7 +404,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCCC0014
     organisme: null
@@ -484,7 +424,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26LMPDEBC0006
     organisme: null
@@ -504,7 +444,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0028
     organisme: null
@@ -524,7 +464,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCDEBC0003
     organisme: null
@@ -544,7 +484,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-6c14609eaa-20261116
     organisme: null
@@ -564,7 +504,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01111300279310045513002793100315-66167%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-30
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ARABPBC0084
     organisme: null
@@ -584,7 +524,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0121
     organisme: null
@@ -604,7 +544,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ACLCC0016
     organisme: null
@@ -624,7 +564,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26013CC0013
     organisme: null
@@ -644,7 +584,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075CC0020
     organisme: null
@@ -664,7 +604,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26045DEBC0002
     organisme: null
@@ -684,7 +624,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARADEBC0006
     organisme: null
@@ -704,7 +644,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-98239f53e5-20261116
     organisme: null
@@ -724,7 +664,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01215030538780003231184406200035-76157%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6b6a57dff0-20261116
     organisme: null
@@ -744,7 +684,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01114920592410001777571367000039-83137%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26013BPBC0093
     organisme: null
@@ -764,7 +704,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26013BPBC0092
     organisme: null
@@ -784,7 +724,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORBPBC0071
     organisme: null
@@ -804,7 +744,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-cf72ffd41a-20261117
     organisme: null
@@ -824,7 +764,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01111876090940002919270016900027-76231%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ARADEBC0002
     organisme: null
@@ -844,7 +784,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26LMPCPBC0013
     organisme: null
@@ -864,7 +804,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCCC0019
     organisme: null
@@ -884,7 +824,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-28531088e3-20261120
     organisme: null
@@ -904,7 +844,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113900031270006039000312700060-75105%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26NORCC0008
     organisme: null
@@ -924,7 +864,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORCC0009
     organisme: null
@@ -944,7 +884,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-4bb9f8f916-20261121
     organisme: null
@@ -964,7 +904,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01214099687160005340416999700081-38317%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6902c084b6-20261121
     organisme: null
@@ -984,7 +924,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01214099687160005340416999700081-38317%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26044BPBC0080
     organisme: null
@@ -1004,7 +944,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ACLBPBC0036
     organisme: null
@@ -1024,7 +964,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0085
     organisme: null
@@ -1044,7 +984,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCBPBC0083
     organisme: null
@@ -1064,7 +1004,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-b6ec1b581f-20261123
     organisme: null
@@ -1084,7 +1024,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114920592410001777571367000039-83023%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26BFCCC0017
     organisme: null
@@ -1104,7 +1044,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075CC0022
     organisme: null
@@ -1124,7 +1064,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26035DEBC0002
     organisme: null
@@ -1144,7 +1084,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-dfb4bf01da-20261123
     organisme: null
@@ -1164,7 +1104,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01113900031270006039000312700060-75105%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26075DEBC0020
     organisme: null
@@ -1184,7 +1124,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-be839f7ade-20261123
     organisme: null
@@ -1204,7 +1144,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01213900031270006039000312700060-75105%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ARABPBC0086
     organisme: null
@@ -1224,7 +1164,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARABPBC0087
     organisme: null
@@ -1244,7 +1184,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-b852f48bc2-20261124
     organisme: null
@@ -1264,7 +1204,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117785724040002977857240400029-71133%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ARADEBC0005
     organisme: null
@@ -1284,7 +1224,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ACLBPBC0062
     organisme: null
@@ -1304,7 +1244,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26013CC0019
     organisme: null
@@ -1324,7 +1264,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26045CC0004
     organisme: null
@@ -1344,7 +1284,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26013CC0020
     organisme: null
@@ -1364,7 +1304,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26044BPBC0019
     organisme: null
@@ -1384,7 +1324,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORBPBC0045
     organisme: null
@@ -1404,7 +1344,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0145
     organisme: null
@@ -1424,7 +1364,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0087
     organisme: null
@@ -1444,7 +1384,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0050
     organisme: null
@@ -1464,7 +1404,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCCC0018
     organisme: null
@@ -1484,7 +1424,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26013CC0017
     organisme: null
@@ -1504,7 +1444,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075DEBC0025
     organisme: null
@@ -1524,7 +1464,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-07a88c250e-20261201
     organisme: null
@@ -1544,7 +1484,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01214099687160005340284601800024-26362%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-4bb9f8f916-20261201
     organisme: null
@@ -1564,7 +1504,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01214099687160005340416999700081-38317%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26075BPBC0161
     organisme: null
@@ -1584,7 +1524,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NPPDEBC0003
     organisme: null
@@ -1604,7 +1544,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0117
     organisme: null
@@ -1624,7 +1564,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ARACC0014
     organisme: null
@@ -1644,7 +1584,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ALPBPBC0056
     organisme: null
@@ -1664,7 +1604,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0146
     organisme: null
@@ -1684,7 +1624,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075BPBC0064
     organisme: null
@@ -1704,7 +1644,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26044CC0009
     organisme: null
@@ -1724,7 +1664,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ACLCC0020
     organisme: null
@@ -1744,7 +1684,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ACLCC0021
     organisme: null
@@ -1764,7 +1704,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075CPBC0005
     organisme: null
@@ -1784,7 +1724,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26044DEBC0005
     organisme: null
@@ -1804,7 +1744,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-680605811a-20261207
     organisme: null
@@ -1824,7 +1764,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01113900031270006039000312700060-75105%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26013DEBC0008
     organisme: null
@@ -1844,7 +1784,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-ac8e9283d4-20261214
     organisme: null
@@ -1864,7 +1804,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114920592410001777571367000039-83137%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26075BPBC0123
     organisme: null
@@ -1884,7 +1824,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORCC0010
     organisme: null
@@ -1904,7 +1844,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-27ACLCC0001
     organisme: null
@@ -1924,7 +1864,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26044CC0008
     organisme: null
@@ -1944,7 +1884,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORCC0012
     organisme: null
@@ -1964,7 +1904,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26NORCC0007
     organisme: null
@@ -1984,7 +1924,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26BFCDEBC0002
     organisme: null
@@ -2004,7 +1944,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26075DEBC0019
     organisme: null
@@ -2024,7 +1964,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-3be9767c5c-20261219
     organisme: null
@@ -2044,7 +1984,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01115343462590003777568562101208-25056%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-67cef1e25a-20270104
     organisme: null
@@ -2064,7 +2004,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01213995651830001539956518300015-24155%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: leo-7f0a38cbc7
     organisme: null
@@ -2084,7 +2024,7 @@ sessions:
     complet: false
     url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "page-organisme"
   - id: for-27013CPBC0001
     organisme: null
@@ -2104,7 +2044,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-51a0867661-20270104
     organisme: null
@@ -2124,7 +2064,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01118124253790002932751175400043-49007%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-bf3d118c7b-20270104
     organisme: null
@@ -2144,7 +2084,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01113327373940024433273739400608-85191%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-c2874b2206-20270104
     organisme: null
@@ -2164,7 +2104,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01111992161930003719921619300037-92019%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-27035BPBC0001
     organisme: null
@@ -2184,7 +2124,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-26ALPBPBC0043
     organisme: null
@@ -2204,7 +2144,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-86bd21080b-20270111
     organisme: null
@@ -2224,7 +2164,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-01053%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6a0418b307-20270111
     organisme: null
@@ -2244,7 +2184,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-43046%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-27075BPBC0001
     organisme: null
@@ -2264,7 +2204,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-35976f67b8-20270112
     organisme: null
@@ -2284,7 +2224,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114033256160007240332561600072-10081%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-61b6be3ac4-20270112
     organisme: null
@@ -2304,7 +2244,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01218136101850004981361018500049-69029%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-990d1fccc9-20270118
     organisme: null
@@ -2324,7 +2264,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-42279%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-51c5679847-20270118
     organisme: null
@@ -2344,7 +2284,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01218124253790002932751175400043-85191%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-27013BPBC0005
     organisme: null
@@ -2364,7 +2304,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: for-27013BPBC0004
     organisme: null
@@ -2384,7 +2324,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-030171fcbb-20270126
     organisme: null
@@ -2404,7 +2344,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01213029388320004530293883200045-69389%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: leo-5432ab9c64
     organisme: null
@@ -2424,7 +2364,7 @@ sessions:
     complet: false
     url: "https://www.leolagrange-formation.fr/formation/animation/cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "page-organisme"
   - id: for-27075DEBC0001
     organisme: null
@@ -2444,7 +2384,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-d29e3756f2-20270203
     organisme: null
@@ -2464,7 +2404,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002951836823800045-35236%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-26ACLCC0013
     organisme: null
@@ -2484,7 +2424,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: app-9b9a2b4ebb-20270301
     organisme: null
@@ -2504,7 +2444,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113841541420003638415414200036-06004%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-27
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-07b27ddabf-20270301
     organisme: null
@@ -2524,7 +2464,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113106567720026931065677200269-31555%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-caefb4f538-20270301
     organisme: null
@@ -2544,7 +2484,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113106567720026931065677200293-34172%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-32791c09c3-20270304
     organisme: null
@@ -2564,7 +2504,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01217929616170001879296161700018-35238%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-dfb4bf01da-20270315
     organisme: null
@@ -2584,7 +2524,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01113900031270006039000312700060-75105%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-4ec3ebe4e6-20270318
     organisme: null
@@ -2604,7 +2544,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01217515343220004333520212300048-37261%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: leo-329ba84c05
     organisme: null
@@ -2624,7 +2564,7 @@ sessions:
     complet: false
     url: "https://www.leolagrange-formation.fr/formation/animation/bpjeps-mention-animation-socioeducative-et-culturelle-asec/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "page-organisme"
   - id: app-be95f1ca22-20270326
     organisme: null
@@ -2644,7 +2584,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01218124253790002933748609600049-44109%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-f564ad76cf-20270401
     organisme: null
@@ -2664,7 +2604,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01218124253790002933748609600049-44109%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: for-27ACLCC0002
     organisme: null
@@ -2684,7 +2624,7 @@ sessions:
     complet: false
     url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "foromes"
   - id: leo-c9a459d406
     organisme: null
@@ -2704,7 +2644,7 @@ sessions:
     complet: false
     url: "https://www.leolagrange-formation.fr/formation/animation/dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "page-organisme"
   - id: app-e834d74648-20270524
     organisme: null
@@ -2724,7 +2664,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01218124253790002932751175400043-49007%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-e741d41f90-20270901
     organisme: null
@@ -2744,7 +2684,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500172-14118%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-357b6bab05-20270901
     organisme: null
@@ -2764,7 +2704,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117781635500001677816355000016-21043%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-4f9fa3580d-20270901
     organisme: null
@@ -2784,7 +2724,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500230-33063%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-40c7a8b2fc-20270901
     organisme: null
@@ -2804,7 +2744,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500131-37195%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-56fdce84d6-20270901
     organisme: null
@@ -2824,7 +2764,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500057-44109%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-29
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-3d13036688-20270901
     organisme: null
@@ -2844,7 +2784,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500081-49099%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-29
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-1435d2882c-20270903
     organisme: null
@@ -2864,7 +2804,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-71270%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-cab7fb5df4-20270906
     organisme: null
@@ -2884,7 +2824,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114918847300004652151363000017-56053%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-99bd67266f-20270907
     organisme: null
@@ -2904,7 +2844,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01111932003910001219320039100053-32307%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-5ec637be47-20270913
     organisme: null
@@ -2924,7 +2864,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115343462590003777568562101208-25056%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-ecc8da58b4-20270913
     organisme: null
@@ -2944,7 +2884,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115343462590003753434625900060-25462%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-69f575b464-20270913
     organisme: null
@@ -2964,7 +2904,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115343462590003753434625900045-39300%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-fccaa0616f-20270913
     organisme: null
@@ -2984,7 +2924,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117509003180002375090031800023-89024%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-53ce0c76a8-20270914
     organisme: null
@@ -3004,7 +2944,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-25309%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-29
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6c1813d42b-20270914
     organisme: null
@@ -3024,7 +2964,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117515343220004377510406000071-28218%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-a20a636ff4-20270914
     organisme: null
@@ -3044,7 +2984,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-58194%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-173ea75e2f-20270920
     organisme: null
@@ -3064,7 +3004,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115203745050004552037450500045-14167%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-30
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-07b27ddabf-20270920
     organisme: null
@@ -3084,7 +3024,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113106567720026931065677200269-31555%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-180a43fce6-20270920
     organisme: null
@@ -3104,7 +3044,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114222021190001839822063200036-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-31
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-9ebe87c0c9-20270920
     organisme: null
@@ -3124,7 +3064,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01113106567720026931065677200269-31555%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-ce200cbed8-20270920
     organisme: null
@@ -3144,7 +3084,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01214219682490002742196824900027-54395%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-9cfb105665-20270921
     organisme: null
@@ -3164,7 +3104,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004943354238800023-21231%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6b7e9860eb-20270921
     organisme: null
@@ -3184,7 +3124,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004943354238800023-25056%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-c6b074d01b-20270927
     organisme: null
@@ -3204,7 +3144,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002932751175400043-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-804934b06a-20270927
     organisme: null
@@ -3224,7 +3164,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217857402910039478574029100394-63113%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-00e87e9f9c-20270927
     organisme: null
@@ -3244,7 +3184,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118124253790002932751175400043-85191%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6588fd3e7e-20270929
     organisme: null
@@ -3264,7 +3204,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01213999262600004977859925800036-21515%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-bac2208e51-20271004
     organisme: null
@@ -3284,7 +3224,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114219682490002742196824900027-54395%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-990d1fccc9-20271005
     organisme: null
@@ -3304,7 +3244,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-42279%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-3a4676ca68-20271005
     organisme: null
@@ -3324,7 +3264,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-69266%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-c3f130ce0e-20271005
     organisme: null
@@ -3344,7 +3284,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01213999262600004977859925800036-21231%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-3d4d41b6f2-20271006
     organisme: null
@@ -3364,7 +3304,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004977859925800036-21515%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-6a0418b307-20271006
     organisme: null
@@ -3384,7 +3324,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-43046%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-61b6be3ac4-20271006
     organisme: null
@@ -3404,7 +3344,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01218136101850004981361018500049-69029%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-86bd21080b-20271007
     organisme: null
@@ -3424,7 +3364,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-01053%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-a576651f7e-20271007
     organisme: null
@@ -3444,7 +3384,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939851188100029-25388%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-61b6be3ac4-20271007
     organisme: null
@@ -3464,7 +3404,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01218136101850004981361018500049-69029%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-07b1dbca48-20271012
     organisme: null
@@ -3484,7 +3424,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01118938213970002189382139700021-36018%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-450f36ca95-20271012
     organisme: null
@@ -3504,7 +3444,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217798688010007677986880100076-63113%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-ab65d55149-20271013
     organisme: null
@@ -3524,7 +3464,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01214975844900003949758449000039-42149%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-766e5c428a-20271019
     organisme: null
@@ -3544,7 +3484,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117515343220004330282378600025-37261%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-17767d74b0-20271101
     organisme: null
@@ -3564,7 +3504,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01217791054850001477910548500014-15187%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-fdcaad801a-20271102
     organisme: null
@@ -3584,7 +3524,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01114918847300004652151363000017-56053%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-fb0cd02c48-20271102
     organisme: null
@@ -3604,7 +3544,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117949P01217857402910102078574029101020-94033%23L01/desjeps-spe-animation-socio-educative-culturelle-et-ou-sportive-mention-directio"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-705ff363ae-20271103
     organisme: null
@@ -3624,7 +3564,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01213350908900001333509089000013-42147%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-03321c2374-20271115
     organisme: null
@@ -3644,7 +3584,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01214523777990002178574029100394-63113%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-b852f48bc2-20271115
     organisme: null
@@ -3664,7 +3604,7 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117785724040002977857240400029-71133%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
   - id: app-180a43fce6-20271129
     organisme: null
@@ -3684,5 +3624,5 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114222021190001839822063200036-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-31
-    verifie_le: 2026-11-01
+    verifie_le: 2026-11-02
     source: "catalogue-apprentissage"
