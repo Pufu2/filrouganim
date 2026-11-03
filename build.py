@@ -648,10 +648,11 @@ class Site:
             self.ajouter(url, "structure.html", titre=f"{st['nom']} : {TYPES_STRUCTURE.get(st['type'], 'structure')} à {st['ville']}",
                          description=(st.get("accroche") or f"{st['nom']}, {TYPES_STRUCTURE.get(st['type'], 'structure d animation').lower()} à {st['ville']}") + " Ses offres de stages et de jobs d'animation.",
                          structure=st, fil=[TP, STR, (st["nom"], url)])
+        ex = self.donnees.get("exemples", {})
         self.ajouter("/trouver-un-poste/structures/", "structures.html", titre="Les structures d'animation qui recrutent",
                      description="Les centres de loisirs, organisateurs de séjours et associations d'animation inscrits et vérifiés : leur projet, leurs publics et leurs offres.",
-                     h1="Les structures qui recrutent", structures=structures, indexer=bool(structures), fil=[TP, STR])
-        ex = self.donnees.get("exemples", {})
+                     h1="Les structures qui recrutent", structures=structures, indexer=bool(structures), fil=[TP, STR],
+                     exemple=dict(ex["structure"], exemple=True) if ex.get("structure") else None)
         if ex.get("structure"):
             st = dict(ex["structure"], exemple=True)
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
@@ -830,6 +831,18 @@ class Site:
                            "spn": sp["nom"] if sp else None, "o": e["organisme_nom"], "v": ville_propre(e["ville"]),
                            "d": e["departement"], "r": dep["region"], "dr": f"{MOIS[rentree.month - 1]} {rentree.year}",
                            "g": self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")})
+        # les formations du catalogue Mon Compte Formation (école, département, durée, prix ; pas de dates)
+        for f in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []:
+            dep = self.departements.get(f["departement"])
+            if not dep or f["diplome"] not in self.diplomes:
+                continue
+            sp = self.specialites.get(f["diplome"], {}).get(f.get("specialite"))
+            ecoles.append({"di": f["diplome"], "dn": self.diplomes[f["diplome"]]["nom"], "sp": f.get("specialite"),
+                           "spn": sp["nom"] if sp else None, "o": f["organisme_nom"], "v": dep["nom"],
+                           "d": f["departement"], "r": dep["region"], "cpf": True,
+                           "px": f.get("prix_min"), "pxm": f.get("prix_max"), "h": f.get("heures"), "ns": f.get("sessions"),
+                           "dist": bool(f.get("distance")),
+                           "u": f"https://annuaire-entreprises.data.gouv.fr/etablissement/{f['siret']}" if f.get("siret") else None})
         (SORTIE / "se-former" / "sessions").mkdir(parents=True, exist_ok=True)
         (SORTIE / "se-former" / "sessions" / "ecoles.json").write_text(
             json.dumps(ecoles, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

@@ -18,16 +18,7 @@
 {% block contenu %}
 <div class="recherche-une">
   <div class="cadre">
-    <form class="recherche-simple" action="{{ lien('/se-former/sessions/') }}" method="get" role="search" aria-label="Chercher une formation">
-      <label class="champ-ou" for="ou-accueil">{{ m.icone("lieu") }}<span class="sr">Où voulez-vous vous former&nbsp;?</span>
-        <input id="ou-accueil" name="ou" type="search" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
-        <button class="bouton-r" type="submit">Rechercher</button>
-      </label>
-      <a class="bouton-filtres" href="{{ lien('/se-former/sessions/') }}?filtres=ouverts">{{ m.icone("reglages") }}Filtres</a>
-    </form>
-    <ul class="puces-diplomes" aria-label="Chercher par diplôme">
-      {% for d in diplomes %}<li><a href="{{ lien('/se-former/sessions/') }}?diplome={{ d.id }}">{{ d.nom }}</a></li>{% endfor %}
-    </ul>
+    {{ m.recherche_onglets(lien, departements) }}
     <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
   </div>
 </div>

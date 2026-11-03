@@ -35,7 +35,7 @@
     <label class="case-r">{{ icone("diplome") }}<span class="case-titre">Quel diplôme ?</span>
       <select name="diplome">
         <option value="">Tous les diplômes</option>
-        {% for d in diplomes %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
+        {% for d in diplomes if d.id != 'CC-ACM' %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
       </select></label>
     <label class="case-r">{{ icone("etape") }}<span class="case-titre" data-titre-etape>Étape ou spécialité ?</span>
       <select name="type">
@@ -69,7 +69,7 @@
     <label class="case-r">{{ icone("diplome") }}<span class="case-titre">Quel diplôme ?</span>
       <select name="diplome">
         <option value="">Tous les diplômes</option>
-        {% for d in diplomes %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
+        {% for d in diplomes if d.id != 'CC-ACM' %}<option value="{{ d.id }}">{{ d.long }}</option>{% endfor %}
       </select></label>
     <label class="case-r">{{ icone("etape") }}<span class="case-titre" data-titre-etape>Étape ou spécialité ?</span>
       <select name="type">
@@ -104,6 +104,79 @@
   </div>
 </form>
 {% endif %}
+{% endmacro %}
+
+{# La recherche à onglets (accueil) : se former, trouver un poste, recruter.
+   Avec onglets=False, seulement « Se former » (page Se former). #}
+{% macro recherche_onglets(lien, departements, onglets=True) %}
+<div class="ro{% if not onglets %} ro-seul{% endif %}">
+  {% if onglets %}<div class="ro-onglets" role="tablist" aria-label="Que cherchez-vous ?">
+    <button type="button" role="tab" id="ro-t1" aria-selected="true" aria-controls="ro-p1">{{ icone("diplome") }}Se former</button>
+    <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Trouver un poste</button>
+    <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je recrute</button>
+  </div>{% endif %}
+  <form class="ro-panneau" id="ro-p1" role="tabpanel" aria-labelledby="ro-t1" action="{{ lien('/se-former/sessions/') }}" method="get">
+    <fieldset class="ro-quoi">
+      <legend class="ro-titre">Quelle formation ?</legend>
+      <div class="ro-puces">
+        {% for d in diplomes if d.id in ["BAFA", "BAFD", "PSC1", "BPJEPS", "DEJEPS"] %}<label class="ro-puce"><input type="radio" name="diplome" value="{{ d.id }}"{% if loop.first %} checked{% endif %}><span>{{ d.nom }}</span></label>{% endfor %}
+      </div>
+    </fieldset>
+    <div class="ro-ou">
+      <label class="ro-titre" for="ro-ou">Où ?</label>
+      <div class="ro-ligne">
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-ou" name="ou" type="search" placeholder="Ville, département, code postal" autocomplete="off" enterkeyhint="search"></span>
+        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Rechercher</button>
+      </div>
+    </div>
+  </form>
+  {% if onglets %}
+  <form class="ro-panneau" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2" action="{{ lien('/trouver-un-poste/offres/') }}" method="get" hidden>
+    <fieldset class="ro-quoi">
+      <legend class="ro-titre">Quel poste ?</legend>
+      <div class="ro-puces">
+        {% for v, l in [("animateur", "Animateur"), ("animateur-stagiaire", "Stage pratique BAFA"), ("directeur-adjoint", "Directeur adjoint"), ("directeur", "Directeur")] %}<label class="ro-puce"><input type="radio" name="poste" value="{{ v }}"{% if loop.first %} checked{% endif %}><span>{{ l }}</span></label>{% endfor %}
+      </div>
+    </fieldset>
+    <div class="ro-ou">
+      <label class="ro-titre" for="ro-dep">Où ?</label>
+      <div class="ro-ligne">
+        <span class="ro-champ">{{ icone("lieu") }}<select id="ro-dep" name="dep"><option value="">Toute la France</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select></span>
+        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Rechercher</button>
+      </div>
+    </div>
+  </form>
+  <div class="ro-panneau ro-recruter" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
+    <div>
+      <p class="ro-titre">Vous recrutez des animateurs ?</p>
+      <p class="ro-texte">Publiez vos offres là où les jeunes cherchent leur BAFA, et recevez les profils des animateurs de votre secteur.</p>
+    </div>
+    <div class="ro-boutons">
+      <a class="bouton-blanc" href="{{ lien('/recruter/') }}">Voir l'offre fondateurs</a>
+      <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon espace structure <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+  <script>
+  (function () {
+    var onglets = document.querySelectorAll(".ro-onglets [role=tab]");
+    function choisir(o) {
+      Array.prototype.forEach.call(onglets, function (x) {
+        var oui = x === o;
+        x.setAttribute("aria-selected", oui ? "true" : "false"); x.tabIndex = oui ? 0 : -1;
+        document.getElementById(x.getAttribute("aria-controls")).hidden = !oui;
+      });
+    }
+    Array.prototype.forEach.call(onglets, function (o, i) {
+      o.addEventListener("click", function () { choisir(o); });
+      o.addEventListener("keydown", function (e) {
+        var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (d) { var n = onglets[(i + d + onglets.length) % onglets.length]; choisir(n); n.focus(); }
+      });
+    });
+  })();
+  </script>
+  {% endif %}
+</div>
 {% endmacro %}
 
 {# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}

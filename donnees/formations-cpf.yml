@@ -1,0 +1,4 @@
+# Formations CPJEPS, BPJEPS, DEJEPS et DESJEPS (mentions d'animation) du catalogue Mon Compte Formation.
+# Fichier écrit par outils/relever_cpf.py : ne pas modifier à la main (rempli au prochain relevé de nuit).
+
+formations: []

@@ -260,13 +260,29 @@
     });
     var ul = document.getElementById("ecoles-liste");
     ul.textContent = "";
+    // d'abord les écoles du catalogue Mon Compte Formation (avec prix), puis celles qui ont ouvert une session dans l'année
+    choix.sort(function (a, b) { return (b.cpf ? 1 : 0) - (a.cpf ? 1 : 0) || a.d.localeCompare(b.d) || a.o.localeCompare(b.o); });
+    var euros = function (n) { return n.toLocaleString("fr-FR") + " €"; };
     choix.forEach(function (e) {
       var li = el("li"); li.appendChild(el("b", null, e.o));
-      li.appendChild(el("small", null, e.v + " (" + e.d + ")" + (e.spn ? " · " + e.spn : "") + " · dernière rentrée : " + e.dr));
+      var infos = [e.v + " (" + e.d + ")"];
+      if (e.spn) infos.push(e.spn);
+      if (e.cpf) {
+        if (e.h) infos.push(e.h.toLocaleString("fr-FR") + " h");
+        if (e.px) infos.push(e.pxm && e.pxm !== e.px ? "de " + euros(e.px) + " à " + euros(e.pxm) : euros(e.px));
+        if (e.dist) infos.push("en partie à distance");
+        infos.push("éligible au CPF");
+      } else infos.push("dernière rentrée : " + e.dr);
+      li.appendChild(el("small", null, infos.join(" · ")));
+      if (e.u) {
+        var a = el("a", "ecole-lien", "Coordonnées de l'école");
+        a.href = e.u; a.target = "_blank"; a.rel = "noopener nofollow";
+        li.appendChild(a);
+      }
       ul.appendChild(li);
     });
     document.getElementById("ecoles-titre").textContent = choix.length
-      ? choix.length + (choix.length > 1 ? " écoles ont" : " école a") + " ouvert le " + choix[0].dn + " cette année" + (dep ? " dans ce secteur" : "")
+      ? choix.length + (choix.length > 1 ? " écoles forment" : " école forme") + " au " + choix[0].dn + (dep ? " dans ce secteur" : " en France")
       : "Aucune autre école connue pour ce diplôme dans ce secteur";
     blocEcoles.hidden = false;
   }

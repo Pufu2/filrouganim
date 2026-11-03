@@ -33,8 +33,11 @@
       <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
       <a href="{{ lien('/trouver-un-poste/') }}"{% if page.url.startswith('/trouver-un-poste/') %} aria-current="page"{% endif %}>Trouver un poste</a>
       <a href="{{ lien('/recruter/') }}"{% if page.url.startswith('/recruter/') %} aria-current="page"{% endif %}>Recruter</a>
-      {% if site.comptes_ouverts %}<a class="menu-compte" href="{{ lien('/compte/') }}"{% if page.url == '/compte/' %} aria-current="page"{% endif %}>Mon compte</a>{% endif %}
     </nav>
+    {% if site.comptes_ouverts %}<div class="entete-actions">
+      <a class="bouton-espace" href="{{ lien('/compte/') }}"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Mon espace</a>
+      <a class="bouton-commencer" href="{{ lien('/compte/') }}?inscription=1">Commencer <span aria-hidden="true">→</span></a>
+    </div>{% endif %}
   </div>
 </header>
 <main id="contenu">
@@ -63,7 +66,7 @@
     <div>
       <p class="pied-nom">{% include "svg/logo-titre.svg" %}</p>
       <p>{{ site.accroche }}. Se former, trouver un stage ou un job, recruter : l'animation, sur un seul fil. Gratuit pour les jeunes, sans publicité.</p>
-      <p class="petit">Les sessions viennent des pages publiques des organismes et du catalogue national de l'apprentissage (Réseau des Carif-Oref) : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
+      <p class="petit">Les sessions viennent des pages publiques des organismes, du calendrier national des formations (FOROMES), du catalogue national de l'apprentissage (Réseau des Carif-Oref) et du catalogue Mon Compte Formation (Caisse des Dépôts) : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
     </div>
     <nav aria-label="Se former">
       <p class="pied-titre">Se former</p>
