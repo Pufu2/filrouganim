@@ -7,16 +7,30 @@
 {% block tete %}
 <section class="tete tete-accueil">
   <div class="cadre tete-accueil-cadre">
-    <p class="note-main une-note">{{ site.accroche }}</p>
-    <h1 class="h1-accueil">Toute l'animation, sur un seul fil</h1>
+    <p class="surtitre">BAFA · BAFD · PSC1 · BPJEPS · DEJEPS · partout en France</p>
+    <h1 class="h1-accueil">Toute l'animation, sur un seul <span class="mot-fil">fil</span></h1>
     <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe : l'animation, au même endroit. Gratuit pour les jeunes.</p>
-    {{ m.mascotte("mascotte-accueil", "Bobine, le chat de Fil Roug'Anim, joue avec la pelote du fil rouge") }}
   </div>
   <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
 </section>
 {% endblock %}
 
 {% block contenu %}
+<div class="recherche-une">
+  <div class="cadre">
+    <form class="recherche-simple" action="{{ lien('/se-former/sessions/') }}" method="get" role="search" aria-label="Chercher une formation">
+      <label class="champ-ou" for="ou-accueil">{{ m.icone("lieu") }}<span class="sr">Où voulez-vous vous former&nbsp;?</span>
+        <input id="ou-accueil" name="ou" type="search" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
+        <button class="bouton-r" type="submit">Rechercher</button>
+      </label>
+      <a class="bouton-filtres" href="{{ lien('/se-former/sessions/') }}?filtres=ouverts">{{ m.icone("reglages") }}Filtres</a>
+    </form>
+    <ul class="puces-diplomes" aria-label="Chercher par diplôme">
+      {% for d in diplomes %}<li><a href="{{ lien('/se-former/sessions/') }}?diplome={{ d.id }}">{{ d.nom }}</a></li>{% endfor %}
+    </ul>
+    <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
+  </div>
+</div>
 <div class="parcours">
   <svg class="parcours-fil" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0 C 50 60, 20 90, 30 160 S 75 250, 68 340 S 25 450, 32 530 S 72 640, 66 720 S 40 840, 50 1000"/></svg>
 
