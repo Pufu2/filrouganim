@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block tete_note %}<p class="note-main">les structures</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Centres de loisirs, séjours, associations : les structures inscrites et vérifiées, leur projet et leurs offres.</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    {% if page.structures %}
+    <ul class="liste-structures">
+    {% for st in page.structures %}
+      <li class="theme-{{ st.couleur or 'rouge' }}"><a href="{{ lien('/trouver-un-poste/structures/' ~ st.slug ~ '/') }}">
+        <span class="ls-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>
+        <b>{{ st.nom }}</b>
+        <span>{{ st.ville }} ({{ st.departement }}){% if st.offres %} · {{ st.offres | length }} offre{{ 's' if st.offres | length > 1 }}{% endif %}{% if st.fondatrice %} · fondatrice{% endif %}</span>
+      </a></li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>Les premières structures arrivent. En attendant, voici <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">un exemple de page structure</a>.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

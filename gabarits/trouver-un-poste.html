@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block tete_note %}<p class="note-main">trouver un poste</p>{% endblock %}
+{% block h1 %}Trouver son stage pratique ou son job d'animateur{% endblock %}
+{% block tete_chapo %}<p class="chapo">Crée ton profil gratuitement : les structures d'animation de ton secteur te trouvent et t'écrivent. Et consulte les offres qu'elles publient.</p>{% endblock %}
+{% block tete_plus %}
+<div class="carte-recherche" id="inscription">
+  <h2 class="carte-recherche-titre">Ton profil, gratuit, en deux minutes</h2>
+  <ul class="liste-coches">
+    <li>Stagiaire BAFA, animateur, BAFD, CPJEPS, BPJEPS, DEJEPS : <b>tous les profils de l'animation</b>.</li>
+    <li>Visible <b>seulement par les structures vérifiées</b>. Jamais public, jamais sur Google.</li>
+    <li>Tu le caches ou tu le supprimes quand tu veux. Pas de mot de passe : un lien par e-mail.</li>
+  </ul>
+  {% if site.comptes_ouverts %}
+  <p><a class="bouton-r" href="{{ lien('/compte/') }}?role=candidat">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
+  {% else %}
+  <p class="inscription-bientot">Les profils ouvrent avec les premières offres, cet hiver. Ce sera gratuit, et ça le restera.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier" id="offres" aria-labelledby="t-offres">
+  <div class="cadre">
+    <h2 id="t-offres">{% if offres %}Les offres du moment{% else %}Les offres{% endif %}</h2>
+    {% if offres %}
+    <div class="sessions">
+    {% for o in offres[:6] %}{{ m.carte_offre(o, lien) }}{% endfor %}
+    </div>
+    <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>
+    {% else %}
+    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes depuis leur compte. Toujours gratuit pour les candidats.</p></div>
+    {% endif %}
+  </div>
+</section>
+<section class="bande bande-sable" aria-labelledby="t-conseils">
+  <div class="cadre">
+    <h2 id="t-conseils">Bien démarrer</h2>
+    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list, page.url, lien) }}
+    <p class="liens-exemples"><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir un exemple de profil</a> · <a href="{{ lien('/trouver-un-poste/structures/') }}">Les structures qui recrutent</a></p>
+    <h3>Outils gratuits</h3>
+    <ul class="liste-outils">{% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>{% endfor %}</ul>
+    {{ m.encart_jeuphorie(site) }}
+  </div>
+</section>
+{% endblock %}

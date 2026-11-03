@@ -1,0 +1,24 @@
+# Offres de stages pratiques BAFA et de jobs d'animation (étape 2). Voir docs/ETAPE-2-OFFRES.md.
+# Une offre est envoyée par la structure (formulaire type par e-mail), relue, puis ajoutée ici.
+# Une offre dont la date « expire_le » est passée disparaît toute seule du site.
+#
+# Champs :
+#   id              identifiant unique (structure-ville-AAAA-MM), devient l'adresse de la page
+#   intitule        ex. « Animateur·rice séjour de vacances (stagiaire BAFA accepté) »
+#   poste           animateur | animateur-stagiaire | directeur-adjoint | directeur | surveillant-baignade | autre
+#   contrat         cee | cdd | cdi | stage-pratique | benevole
+#   structure       nom de l'organisateur (personne morale), type (accueil de loisirs, séjour de vacances,
+#                   accueil de jeunes, accueil périscolaire), site (facultatif)
+#   ville, departement
+#   debut, fin      AAAA-MM-JJ (fin : null pour un poste à l'année)
+#   public          ex. « 6-11 ans »
+#   remuneration    {montant: 60, unite: jour | mois | heure, brut: true} ou null
+#   loge            true | false
+#   diplomes        ex. [BAFA, stagiaire BAFA, PSC1, surveillant de baignade]
+#   texte           description rédigée par la structure (en français, sans limite d'âge supérieure)
+#   candidater      adresse e-mail générique ou lien de candidature de la structure
+#   publiee_le      AAAA-MM-JJ
+#   expire_le       AAAA-MM-JJ (au plus tard la date de début)
+#   formule         saison | annee | lancement (suivi interne, jamais affiché)
+
+offres: []

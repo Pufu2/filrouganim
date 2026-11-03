@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Page publique d'une structure vérifiée, personnalisée par elle depuis Mon compte (ou exemple fictif). #}
+{% set st = page.structure %}
+{% block tete %}
+<section class="tete tete-structure theme-{{ st.couleur or 'rouge' }}">
+  <div class="cadre">
+    <nav class="fil-ariane" aria-label="Fil d'Ariane">
+      <a href="{{ lien('/') }}">Accueil</a>
+      {% for nom, url in page.fil %}<span aria-hidden="true">›</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+    </nav>
+    {% if st.exemple %}<p class="bandeau-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée personnalise la sienne depuis son compte.</p>{% endif %}
+    <p class="note-main">{{ TYPES_STRUCTURE.get(st.type, "structure d'animation") | lower }}</p>
+    <h1>{{ st.nom }}</h1>
+    {% if st.accroche %}<p class="chapo">{{ st.accroche }}</p>{% endif %}
+    <ul class="pastilles pastilles-tete">
+      <li>{{ st.ville }} ({{ st.departement }})</li>
+      {% if st.fondatrice %}<li class="pastille-fondatrice">Structure fondatrice</li>{% endif %}
+      <li>Vérifiée par Fil Roug'Anim</li>
+    </ul>
+  </div>
+  <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
+</section>
+{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier" aria-labelledby="t-offres-st">
+  <div class="cadre">
+    <h2 id="t-offres-st">{% if st.offres %}Ses offres en ce moment{% else %}Pas d'offre en ce moment{% endif %}</h2>
+    {% if st.offres %}
+    <div class="sessions">
+    {% for o in st.offres %}
+      <article class="session offre">
+        <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
+        <div class="s-corps">
+          <h3 class="s-titre">{% if st.exemple %}{{ o.intitule }}{% else %}<a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a>{% endif %}</h3>
+          <p class="s-infos">{{ o.ville }} ({{ o.departement }}) · à partir du {{ o.debut | date_fr }} · {{ CONTRATS.get(o.contrat, o.contrat) }}</p>
+        </div>
+        {% if not st.exemple %}<a class="s-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>{% endif %}
+      </article>
+    {% endfor %}
+    </div>
+    {% else %}
+    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, les structures vérifiées de ton secteur peuvent te trouver et t'écrire. <a href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil</a></p></div>
+    {% endif %}
+  </div>
+</section>
+<section class="bande bande-blanc">
+  <div class="cadre structure-cadre">
+    <article class="texte">
+      {% if st.presentation %}<h2>Qui sommes-nous ?</h2>{{ st.presentation | paragraphes | safe }}{% endif %}
+      {% if st.projet %}<h2>Notre projet</h2>{{ st.projet | paragraphes | safe }}{% endif %}
+      {% if st.avantages %}<h2>Ce que nous offrons à l'équipe</h2>{{ st.avantages | paragraphes | safe }}{% endif %}
+    </article>
+    <aside class="structure-fiche">
+      {% if st.publics %}<h3>Les publics</h3><ul class="pastilles">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
+      {% if st.activites %}<h3>Les activités</h3><ul class="pastilles pastilles-douces">{% for a in st.activites %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
+      {% if st.lieux %}<h3>Où</h3><p>{{ st.lieux }}</p>{% endif %}
+      {% if st.site %}<p><a href="{{ st.site }}" rel="noopener nofollow">Le site de la structure</a></p>{% endif %}
+      <p class="petit">Les informations de cette page sont écrites par la structure, sous sa responsabilité. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
+    </aside>
+  </div>
+</section>
+{% if st.exemple %}
+<section class="bande bande-rouge">
+  <div class="cadre bande-rouge-cadre">
+    <p>Votre structure peut avoir la même page : nom, accroche, couleur, projet, publics, activités et offres, mis à jour par vous.</p>
+    <a class="bouton-blanc" href="{{ lien('/recruter/') }}">Recruter avec Fil Roug'Anim <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

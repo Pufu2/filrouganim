@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block h1 %}Trouver une formation{% endblock %}
+{% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
+{% block contenu %}
+<div class="barre-filtres"><div class="cadre">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div></div>
+<section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
+  <div class="cadre">
+    <div class="resultats-tete">
+      <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions_total }} sessions à venir</span></h2>
+      <button class="bouton-contour bouton-carte" type="button" id="bouton-carte" aria-controls="carte-bloc" aria-expanded="false" hidden>{{ m.icone("lieu") }}<span>Voir la carte</span></button>
+    </div>
+    <div class="resultats-carte">
+    <div class="resultats-liste">
+    <div class="sessions" data-par-page="10" data-source="{{ lien('/se-former/sessions/sessions.json') }}" data-organismes="{{ lien('/se-former/sessions/organismes/') }}">
+      {% for s in page.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}
+    </div>
+    <p class="voir-plus-cadre"><button class="voir-plus" type="button" hidden>Voir plus de sessions</button></p>
+    <noscript><p>Les {{ page.sessions | length }} sessions les plus proches. Pour les autres, choisissez <a href="#titre-explorer">une région ou un diplôme</a>.</p></noscript>
+    <p class="aucune" id="aucune" hidden>Aucune session ne correspond. Essayez un département voisin, d'autres vacances ou un budget plus large : une session peut se suivre n'importe où.</p>
+    <div class="ecoles-pro" id="ecoles" data-source="{{ lien('/se-former/sessions/ecoles.json') }}" hidden>
+      <h3 id="ecoles-titre">Les écoles qui forment à ce diplôme</h3>
+      <p class="petit">Elles ont ouvert une session dans l'année (calendrier national des formations). Leur prochaine rentrée n'est pas encore déclarée : renseignez-vous directement auprès d'elles.</p>
+      <ul class="ecoles-liste" id="ecoles-liste"></ul>
+    </div>
+    <p class="petit">Classement par date puis par prix, jamais payant. <a href="{{ lien('/classement-des-sessions/') }}">Comment c'est classé</a></p>
+    </div>
+    <aside class="carte-bloc" id="carte-bloc" aria-label="Carte des sessions">
+      <div class="carte-sessions" id="carte" data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png">
+        <p class="carte-zone" id="carte-zone" aria-live="polite"></p>
+      </div>
+      <p class="petit carte-note">Cliquez une bulle pour zoomer, puis sur une ville pour voir ses sessions. Fond de carte : IGN.</p>
+    </aside>
+    </div>
+  </div>
+</section>
+<section class="bande bande-sable" aria-label="Le parcours">
+  <div class="cadre">{{ m.parcours(diplomes, lien) }}</div>
+</section>
+{{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
+{% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/filtres.js') }}" defer></script>{% endblock %}

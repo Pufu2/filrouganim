@@ -1,0 +1,574 @@
+#!/usr/bin/env python3
+"""Relève les sessions CPJEPS, BPJEPS, DEJEPS et DESJEPS de toute la France, puis écrit donnees/sessions-pro.yml.
+
+Usage :
+    python3 outils/relever_pro.py            # relevé du jour
+    python3 outils/relever_pro.py --essai    # n'écrit rien, affiche le résumé
+
+Deux sources publiques, toutes écoles confondues (organismes privés, associations, CREPS, CFA…) :
+
+1. Le catalogue national des formations en apprentissage (Réseau des Carif-Oref, API ouverte,
+   https://catalogue-apprentissage.intercariforef.org/api/docs/). C'est l'offre que reprennent
+   La bonne alternance, Parcoursup et les régions. Le lien « Voir » mène à la fiche de la formation
+   sur La bonne alternance (site public), qui donne le contact de l'école.
+2. L'API Offre Info du Réseau des Carif-Oref (toute l'offre de formation, avec les prix), si le
+   secret RCO_OFFREINFO_TOKEN existe : le jeton se demande à api-offreinfo@intercariforef.org
+   (gratuit). Conditions : citer la source avec le logo du RCO, ne pas vendre les données.
+
+Comme pour les autres sessions, on ne garde que des faits (diplôme, spécialité, dates, ville,
+organisme, prix) et jamais les textes des écoles.
+"""
+
+import argparse
+import collections
+import datetime as dt
+import hashlib
+import html
+import json
+import os
+import re
+import sys
+import time
+import unicodedata
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from relever import AGENT, DEPS, commune  # noqa: E402
+
+RACINE = Path(__file__).resolve().parent.parent
+HORIZON = 420  # jours : les formations professionnelles se choisissent un an à l'avance
+CATALOGUE = "https://catalogue-apprentissage.intercariforef.org/api/entity/formations"
+OFFREINFO = "https://api-offreinfo.intercariforef.org"
+LBA = "https://labonnealternance.apprentissage.beta.gouv.fr/formation/"
+SPECIALITES = yaml.safe_load((RACINE / "donnees" / "specialites.yml").read_text(encoding="utf-8"))
+SIGLES = {"CREPS", "UFCV", "IFAC", "CEMEA", "AFPA", "UCPA", "INFA", "IRFA", "CFA", "AFOCAL", "FFE", "FFF", "CNAM", "IUT",
+          "GRETA", "STAPS", "IFEP", "IRTS", "FAL", "UFOLEP", "USEP", "MJC", "MFR", "IRFSS", "ADPS", "URFOL", "CROS", "CDOS",
+          "DRAJES", "IPMS", "CAPS", "EPMS", "CFPPA", "LEPA", "PSL", "ASPTT", "FSCF", "IUFM", "ENSV", "FNMNS", "AFDAS", "IFPS"}
+PETITS = {"de", "du", "des", "la", "le", "les", "et", "en", "au", "aux", "a", "à", "sur", "pour", "d", "l"}
+# mots courts écrits en minuscules ; les autres mots de 5 lettres ou moins sont pris pour des sigles (IRSS, ENCP…)
+COMMUNS = {"sport", "sports", "sante", "santé", "club", "cours", "ecole", "école", "union", "ligue", "rural", "monde", "mer",
+           "nord", "sud", "est", "ouest", "ile", "île", "val", "haute", "haut", "basse", "bas", "grand", "terre", "ville",
+           "cheval", "nature", "plein", "air", "eau", "vie", "jeune", "jeux", "arts", "art", "paris", "lyon", "nice", "metz",
+           "caen", "brest", "tours", "dijon", "reims", "nancy", "nimes", "nîmes", "pau", "laval", "vichy", "agen", "albi",
+           "arles", "blois", "evry", "évry", "foix", "gap", "lens", "lille", "mende", "niort", "rodez", "sete", "sète",
+           "sedan", "sens", "tulle", "dax", "auch", "melun", "macon", "mâcon", "vannes", "lorient", "anger", "lorie",
+           "cergy", "creil", "sarre", "alpes", "loire", "rhone", "rhône", "seine", "marne", "somme", "oise", "aube",
+           "indre", "cher", "gers", "lot", "tarn", "var", "ain", "orne", "eure", "aisne", "corse", "savoie", "maine",
+           "anjou", "berry", "nantes", "rouen", "lille", "amiens", "troyes", "vienne", "isere", "isère", "doubs", "jura",
+           "centre", "pole", "pôle", "maison", "campus", "groupe", "espace", "formation", "pays", "cote", "côte", "azur", "voile",
+           "lac", "lacs", "potes", "foot", "saint", "drome", "drôme", "auto", "elite", "forma", "golf", "tennis", "rugby", "judo",
+           "leo", "basket", "surf", "kayak", "ski", "club", "plage", "port", "golfe", "baie", "mont", "ferme", "parc", "relai", "relais"}
+ABREGES = {"ASS": "Association", "ASSO": "Association", "ST": "Saint", "STE": "Sainte"}
+
+
+def sans_accents(t):
+    return unicodedata.normalize("NFD", t or "").encode("ascii", "ignore").decode().lower()
+
+
+def lire_json(url, entetes=None, essais=5):
+    for i in range(essais):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": AGENT, "Accept": "application/json", **(entetes or {})})
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429 or e.code >= 500:
+                time.sleep(2 + 3 * i)
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            time.sleep(2 + 3 * i)
+    raise SystemExit(f"illisible après {essais} essais : {url[:120]}")
+
+
+def nom_organisme(texte):
+    """« CENTRE DE FORMATION XYZ » → « Centre de formation XYZ » (sigles gardés en capitales)."""
+    texte = " ".join((texte or "").replace("’", "'").split())
+    if not texte:
+        return None
+    if texte != texte.upper():
+        return texte  # déjà écrit en minuscules et capitales : on ne touche à rien
+    mots = []
+    for i, mot in enumerate(re.split(r"(\s+|-|')", texte)):
+        bas = mot.lower()
+        if not mot.strip() or mot in "-'":
+            mots.append(mot)
+        elif mot in ABREGES:
+            mots.append(ABREGES[mot])
+        elif mot in SIGLES or "." in mot or (len(mot) <= 5 and bas not in COMMUNS and bas not in PETITS and mot.isalpha()):
+            mots.append(mot)
+        elif bas in PETITS and mots:
+            mots.append(bas)
+        else:
+            mots.append(bas[:1].upper() + bas[1:])
+    return "".join(mots)
+
+
+def lien_lba(cle, intitule):
+    lettres = re.sub(r"[^a-z0-9]+", "-", sans_accents(intitule)).strip("-")[:80] or "formation"
+    return LBA + urllib.parse.quote(cle, safe="") + "/" + lettres
+
+
+def diplome_de(texte, type_certif=None):
+    t = (type_certif or "") + " " + texte
+    t = sans_accents(t).replace(" ", "").replace("-", "")
+    for code, motif in [("DESJEPS", "desjeps|diplomedetatsuperieur"), ("DEJEPS", "dejeps|diplomedetat"),
+                        ("BPJEPS", "bpjeps|brevetprofessionnel"), ("CPJEPS", "cpjeps|certificatprofessionnel")]:
+        if re.search(motif, t):
+            return code
+    return None
+
+
+def specialite_de(diplome, certifinfo, *textes):
+    liste = SPECIALITES.get(diplome) or []
+    for sp in liste:
+        if certifinfo and int(certifinfo) in sp["certifinfo"]:
+            return sp["id"]
+    texte = sans_accents(" ".join(t or "" for t in textes))
+    for sp in liste:
+        if re.search(sp["mots"], texte):
+            return sp["id"]
+    return None
+
+
+def ville_de(nom):
+    """commune() de relever.py, plus la majuscule après l'apostrophe : « L'ETRAT » → « L'Étrat »."""
+    v = commune((nom or "").split(",")[0])
+    v = re.sub(r"^([LlDd]')(\w)", lambda m: m.group(1).upper() + m.group(2).upper(), v)  # en tête : L'Étrat
+    return re.sub(r"-([LlDd]')(\w)", lambda m: "-" + m.group(1).lower() + m.group(2).upper(), v)  # Saint-Martin-d'Hères
+
+
+def departement_de(code_postal, dep):
+    cp = (code_postal or "").strip()
+    if cp.startswith("20") and len(cp) == 5:
+        return "2A" if int(cp) < 20200 else "2B"
+    dep = (dep or cp[:2]).strip()
+    return dep.zfill(2) if dep.isdigit() and len(dep) < 2 else dep
+
+
+# ---------------------------------------------------------------- 1. catalogue de l'apprentissage
+
+def catalogue(aujourdhui):
+    requete = {"published": True, "$or": [{"rncp_intitule": {"$regex": "JEPS|jeunesse, de l", "$options": "i"}},
+                                          {"intitule_long": {"$regex": "JEPS", "$options": "i"}}]}
+    formations, page = [], 1
+    while True:
+        d = lire_json(f"{CATALOGUE}?limit=200&page={page}&query={urllib.parse.quote(json.dumps(requete))}")
+        formations += d["formations"]
+        if page >= int(d["pagination"]["nombre_de_page"]):
+            break
+        page += 1
+        time.sleep(0.5)
+    if len(formations) < 300:
+        raise SystemExit(f"catalogue : seulement {len(formations)} formations, l'API a peut-être changé")
+    sessions = []
+    for f in formations:
+        diplome = diplome_de(f.get("intitule_long") or "", (f.get("rncp_details") or {}).get("code_type_certif"))
+        if not diplome:
+            continue
+        dep = departement_de(f.get("code_postal"), f.get("num_departement"))
+        org = nom_organisme(f.get("etablissement_formateur_enseigne") or f.get("etablissement_formateur_entreprise_raison_sociale")
+                            or f.get("etablissement_gestionnaire_enseigne") or f.get("etablissement_gestionnaire_entreprise_raison_sociale"))
+        if org and len(org) <= 6 and f.get("etablissement_formateur_localite"):
+            org = f"{org} {commune(f['etablissement_formateur_localite'])}"  # « CREPS » seul ne dit rien
+        if re.search(r"EDUCATEUR SPORTIF|PERFECTIONNEMENT SPORTIF|PERFORMANCE SPORTIVE", sans_accents(f.get("intitule_long") or "").upper()):
+            continue  # le site ne présente que l'animation (pas les mentions sportives)
+        sp = specialite_de(diplome, f.get("id_certifinfo"), f.get("intitule_long"), f.get("rncp_intitule"), f.get("intitule_court"))
+        if not sp:
+            continue
+        duree = f.get("duree")
+        for debut, fin in zip(f.get("date_debut") or [], f.get("date_fin") or []):
+            debut, fin = dt.date.fromisoformat(debut[:10]), dt.date.fromisoformat(fin[:10])
+            if fin < debut:
+                continue
+            notes = []  # « gratuit en apprentissage » est déjà écrit à la place du prix
+            if duree and str(duree).isdigit():
+                notes.append(f"{duree} an{'s' if int(duree) > 1 else ''} en alternance")
+            cle = f["cle_ministere_educatif"]
+            sessions.append({
+                "id": f"app-{hashlib.sha1(cle.encode()).hexdigest()[:10]}-{debut:%Y%m%d}",
+                "organisme": None, "organisme_nom": org, "diplome": diplome, "specialite": sp, "type": "parcours", "theme": None,
+                "debut": debut, "fin": fin, "ville": ville_de(f.get("localite")), "departement": dep,
+                "formule": "apprentissage", "prix": 0, "prix_note": " ; ".join(notes), "aides": [], "complet": False,
+                "url": lien_lba(cle, f.get("intitule_long") or diplome), "source": "catalogue-apprentissage"})
+    return sessions
+
+
+# ---------------------------------------------------------------- 2. API Offre Info (avec jeton)
+
+def offre_info(aujourdhui, jeton):
+    entetes = {"Authorization": f"Bearer {jeton}"}
+    codes = ",".join(str(c) for liste in SPECIALITES.values() for sp in liste for c in sp["certifinfo"])
+    ids, page = [], 1
+    while True:
+        d = lire_json(f"{OFFREINFO}/recherche?certifinfo={codes}&date_debut={aujourdhui.isoformat()}&limit=1000&page={page}"
+                      f"&fields=id,date_debut,date_fin,certification,intitule_formation", entetes)
+        ids += d.get("results") or []
+        if not d.get("results") or page * int(d.get("limit") or 1000) >= int(d.get("total") or 0):
+            break
+        page += 1
+    champs = ("id,intitule_formation,date_debut,date_fin,certification,prix_total_TTC,lieu_formation,organisme_formateur,"
+              "organisme_responsable,url_session,url_action,url_formation,etat_recrutement,nombre_heures_total,"
+              "extra_contrat_apprentissage,modalites_enseignement")
+    sessions = []
+    for r in ids:
+        time.sleep(0.15)  # au plus 10 requêtes par seconde
+        try:
+            o = lire_json(f"{OFFREINFO}/offre/{urllib.parse.quote(r['id'], safe='')}?fields={champs}", entetes)
+        except Exception as e:  # une fiche illisible n'arrête pas les autres
+            print(f"  Offre Info {r['id']} : {e}", file=sys.stderr)
+            continue
+        o = o.get("data", o) if isinstance(o, dict) else o
+        certifs = o.get("certification") or []
+        certifinfo = next((c.get("code_certifinfo") for c in certifs if c.get("code_certifinfo")), None)
+        diplome = diplome_de(o.get("intitule_formation") or "")
+        sp = None
+        for nom_dipl, liste in SPECIALITES.items():
+            for spe in liste:
+                if certifinfo and int(certifinfo) in spe["certifinfo"]:
+                    diplome, sp = nom_dipl, spe["id"]
+        if not diplome or not o.get("date_debut"):
+            continue
+        sp = sp or specialite_de(diplome, None, o.get("intitule_formation"))
+        if not sp or re.search(r"educateur sportif|perfectionnement sportif|performance sportive", sans_accents(o.get("intitule_formation"))):
+            continue  # le site ne présente que l'animation
+        lieu = o.get("lieu_formation") or {}
+        formateurs = o.get("organisme_formateur") or []
+        org = nom_organisme((formateurs[0].get("raison_sociale") if formateurs else None)
+                            or (o.get("organisme_responsable") or {}).get("raison_sociale"))
+        prix = o.get("prix_total_TTC")
+        try:
+            prix = round(float(str(prix).replace(",", ".").replace(" ", ""))) if prix not in (None, "", "0", 0) else None
+        except ValueError:
+            prix = None
+        notes = []
+        if o.get("nombre_heures_total"):
+            notes.append(f"{o['nombre_heures_total']} heures de formation")
+        if o.get("extra_contrat_apprentissage"):
+            notes.append("possible en apprentissage (sans frais pour l'apprenti)")
+        url = o.get("url_session") or o.get("url_action") or o.get("url_formation") or (
+            "https://www.intercariforef.org/outils/recherche-offreinfo/formations/sessions/"
+            f"{o.get('numero_formation')}/{o.get('numero_action')}/{o.get('numero_session')}")
+        sessions.append({
+            "id": "rco-" + re.sub(r"[^A-Za-z0-9_]", "", o["id"])[-40:], "organisme": None, "organisme_nom": org,
+            "diplome": diplome, "specialite": sp, "type": "parcours", "theme": None,
+            "debut": dt.date.fromisoformat(o["date_debut"][:10]),
+            "fin": dt.date.fromisoformat(o["date_fin"][:10]) if o.get("date_fin") else None,
+            "ville": ville_de(lieu.get("ville")), "departement": departement_de(lieu.get("codepostal"), lieu.get("departement")),
+            "formule": "distance" if o.get("modalites_enseignement") == 2 else None, "prix": prix,
+            "prix_note": " ; ".join(notes) or None, "aides": [], "complet": o.get("etat_recrutement") == 2,
+            "url": url, "source": "offre-info"})
+    return sessions
+
+
+# ---------------------------------------------------------------- 3. pages des organismes
+
+_deps_villes = {}
+
+
+def dep_de_ville(ville):
+    """Département d'une commune nommée sans code postal (API Géo de l'État : la plus peuplée de ce nom)."""
+    cle = sans_accents(ville)
+    if cle not in _deps_villes:
+        try:
+            r = lire_json("https://geo.api.gouv.fr/communes?" + urllib.parse.urlencode(
+                {"nom": ville, "fields": "codeDepartement,population", "boost": "population", "limit": 1}))
+            _deps_villes[cle] = r[0]["codeDepartement"] if r else None
+        except SystemExit:
+            _deps_villes[cle] = None
+    return _deps_villes[cle]
+
+
+MOIS_FR = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"]
+
+
+def date_fr_texte(t):
+    m = re.search(r"(\d{1,2})(?:er)? (\w+) (\d{4})", sans_accents(t))
+    if not m or m.group(2) not in MOIS_FR:
+        return None
+    return dt.date(int(m.group(3)), MOIS_FR.index(m.group(2)) + 1, int(m.group(1)))
+
+
+# ---------------------------------------------------------------- 4. calendrier national (FOROMES, ministère)
+
+FOROMES = "https://foromes-prod-k8s.menjes.ate.info/api/Calendrier/Formation"
+FOROMES_PAGE = "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+FOROMES_TYPES = {25: "CPJEPS", 24: "BPJEPS", 20: "BPJEPS", 26: "DEJEPS", 13: "DEJEPS", 27: "DESJEPS", 16: "DESJEPS", 21: "CC-ACM"}
+
+
+RECENTES = []  # sessions FOROMES déjà commencées depuis moins d'un an : les écoles qui forment à ce diplôme
+
+
+def foromes(aujourdhui):
+    """Le calendrier national des formations du ministère (FOROMES, Licence Ouverte) : toutes les sessions habilitées
+    de toutes les régions, déclarées environ trois mois avant leur début. On n'en garde que les faits sur la session,
+    jamais les coordonnées des personnes."""
+    vus, sessions = set(), []
+    for type_id, diplome in FOROMES_TYPES.items():
+        for annee in (aujourdhui.year, aujourdhui.year + 1):
+            d = lire_json(f"{FOROMES}?DiplomeTypeId={type_id}&Annee={annee}")
+            for x in d.get("items") or []:
+                di, f, o = x.get("diplome") or {}, x.get("formation") or {}, x.get("organisme") or {}
+                if not f.get("numero") or f["numero"] in vus or not f.get("dateDebut"):
+                    continue
+                vus.add(f["numero"])
+                if diplome == "CC-ACM":
+                    if "accueil collectif de mineurs" not in (di.get("cc") or "").lower():
+                        continue
+                    sp = None
+                else:
+                    if re.search(r"educateur sportif|perfectionnement sportif|performance sportive", sans_accents(di.get("specialite") or "")):
+                        continue  # le site ne présente que l'animation
+                    sp = specialite_de(diplome, None, di.get("mention"))
+                    if not sp:
+                        continue
+                lieu = re.search(r"(\d{5})\s+([^\d]+?)\s*$", f.get("lieu") or "") or re.search(r"(\d{5})\s+([^\d]+?)\s*$", o.get("adresse") or "")
+                if not lieu:
+                    continue
+                cp = lieu.group(1)
+                notes = []
+                limite = f.get("dateLimiteInscription")
+                if limite and limite >= aujourdhui.isoformat():
+                    notes.append(f"inscription avant le {dt.date.fromisoformat(limite[:10]):%d/%m/%Y}")
+                if f.get("ouvertApprentissage"):
+                    notes.append("possible en apprentissage (sans frais pour l'apprenti)")
+                debut_f = dt.date.fromisoformat(f["dateDebut"][:10])
+                if aujourdhui - dt.timedelta(days=365) <= debut_f < aujourdhui + dt.timedelta(days=3):
+                    RECENTES.append({"organisme_nom": nom_organisme(o.get("nom")), "diplome": diplome, "specialite": sp,
+                                     "ville": ville_de(re.sub(r"\s+cedex.*$", "", lieu.group(2), flags=re.I)),
+                                     "departement": departement_de(cp, None), "debut": debut_f})
+                sessions.append({
+                    "id": "for-" + re.sub(r"[^A-Za-z0-9]", "", f["numero"]), "organisme": None,
+                    "organisme_nom": nom_organisme(o.get("nom")), "diplome": diplome, "specialite": sp, "type": "parcours",
+                    "theme": None, "debut": dt.date.fromisoformat(f["dateDebut"][:10]),
+                    "fin": dt.date.fromisoformat(f["dateFin"][:10]) if f.get("dateFin") else None,
+                    "ville": ville_de(re.sub(r"\s+cedex.*$", "", lieu.group(2), flags=re.I)), "departement": departement_de(cp, None),
+                    "formule": None, "prix": None, "prix_note": " ; ".join(notes) or None, "aides": [], "complet": False,
+                    "url": FOROMES_PAGE, "source": "foromes"})
+            time.sleep(0.5)
+    if len(sessions) < 20:
+        raise SystemExit(f"FOROMES : seulement {len(sessions)} sessions, l'API a peut-être changé")
+    return sessions
+
+
+UFCV_PRO = "https://formation-professionnelle.ufcv.fr/Nos-formations/"
+UFCV_PAGES = {"M%C3%A9tiers-de-lanimation-et-du-sport/BPJEPS/BPJEPS-ASEC": ("BPJEPS", "asec"),
+              "M%C3%A9tiers-de-lanimation/CPJEPS-AAVQ": ("CPJEPS", "aavq"),
+              "M%C3%A9tiers-de-lanimation/DEJEPS/DEJEPS-ASEC/DEJEPS": ("DEJEPS", "coordination-de-projets"),
+              "Formations-%C3%A0-lanimation/DESJEPS": ("DESJEPS", "direction"),
+              "Formations-%C3%A0-lanimation/UCC-direction-daccueil-collectif": ("CC-ACM", None)}
+
+
+def ufcv_pro(aujourdhui):
+    """UFCV, formation professionnelle : chaque page de diplôme a un tableau des sessions (dates, ville, région)."""
+    from relever import autorise, lire_brut
+    sessions = []
+    for chemin, (diplome, sp) in UFCV_PAGES.items():
+        url = UFCV_PRO + chemin
+        if not autorise(url):
+            raise SystemExit("UFCV : robots.txt interdit la page")
+        try:
+            brut = lire_brut(url)
+        except Exception as e:
+            print(f"  UFCV {diplome} : {e}", file=sys.stderr)
+            continue
+        for ligne in re.findall(r"<tr>(.*?)</tr>", brut, re.S):
+            cases = {m.group(1).strip(): " ".join(html.unescape(re.sub(r"<[^>]+>", " ", m.group(2))).split())
+                     for m in re.finditer(r'<td data-title="([^":]+) ?:">(.*?)</td>', ligne, re.S)}
+            m = re.search(r"Du (\d\d/\d\d/\d{4}) au (\d\d/\d\d/\d{4})", cases.get("Dates", ""))
+            if not m or not cases.get("Ville"):
+                continue  # « Session débutée » : déjà commencée
+            debut = dt.datetime.strptime(m.group(1), "%d/%m/%Y").date()
+            fin = dt.datetime.strptime(m.group(2), "%d/%m/%Y").date()
+            ville = ville_de(cases["Ville"])
+            dep = dep_de_ville(ville)
+            if not dep:
+                continue
+            ident = re.search(r"idAction=(\d+)", ligne)
+            sessions.append({
+                "id": f"ufcvpro-{ident.group(1) if ident else hashlib.sha1((url + str(debut) + ville).encode()).hexdigest()[:10]}",
+                "organisme": None, "organisme_nom": "UFCV", "diplome": diplome, "specialite": sp, "type": "parcours",
+                "theme": None, "debut": debut, "fin": fin, "ville": ville, "departement": dep, "formule": "alternance",
+                "prix": None, "prix_note": None, "aides": [], "complet": False, "url": url, "source": "page-organisme"})
+    return sessions
+
+
+LEO = {"bpjeps-mention-animation-socioeducative-et-culturelle-asec": ("BPJEPS", "asec"),
+       "cpjeps-mention-animateur-dactivites-et-de-vie-quotidienne-dans-toute-structure-de-loisirs-et-danimation-socioculturelle": ("CPJEPS", "aavq"),
+       "dejeps-specialite-animation-socioeducative-ou-culturelle-mention-coordination-de-projets": ("DEJEPS", "coordination-de-projets")}
+
+
+def leo_lagrange(aujourdhui):
+    """Léo Lagrange Formation : chaque page de formation donne ses sessions par centre (ville, dates)."""
+    from relever import autorise, lire_brut
+    sessions = []
+    for chemin, (diplome, sp) in LEO.items():
+        url = f"https://www.leolagrange-formation.fr/formation/animation/{chemin}/"
+        if not autorise(url):
+            raise SystemExit("Léo Lagrange : robots.txt interdit la page")
+        try:
+            brut = lire_brut(url)
+        except Exception as e:
+            print(f"  Léo Lagrange {chemin} : {e}", file=sys.stderr)
+            continue
+        for bloc in brut.split("class='training-session-center'")[1:]:
+            ville = re.search(r"training-session-center__title'>([^<]+)<", bloc)
+            if not ville:
+                continue
+            ville = " ".join(html.unescape(ville.group(1)).split())
+            for li in re.findall(r"<li class='training-session'>([^<]+)</li>", bloc):
+                morceaux = html.unescape(li).split(" - ")
+                debut = date_fr_texte(morceaux[0])
+                fin = date_fr_texte(morceaux[1]) if len(morceaux) > 1 else None
+                dep = dep_de_ville(ville) if not re.search(r"distance", ville, re.I) else None
+                if not debut or not dep:
+                    continue
+                sessions.append({
+                    "id": f"leo-{hashlib.sha1((chemin + ville + li).encode()).hexdigest()[:10]}", "organisme": None,
+                    "organisme_nom": "Léo Lagrange Formation", "diplome": diplome, "specialite": sp, "type": "parcours",
+                    "theme": None, "debut": debut, "fin": fin, "ville": ville, "departement": dep, "formule": "alternance",
+                    "prix": None, "prix_note": "dates prévisionnelles, ajustées selon le nombre d'inscrits", "aides": [],
+                    "complet": False, "url": url, "source": "page-organisme"})
+    return sessions
+
+
+# ---------------------------------------------------------------- écriture
+
+ENTETE = """# Sessions des diplômes professionnels (CPJEPS, BPJEPS, DEJEPS, DESJEPS) de toute la France.
+# Fichier écrit par outils/relever_pro.py (ne pas modifier à la main : il est réécrit à chaque relevé).
+# Sources : catalogue national des formations en apprentissage et, quand le jeton existe, API Offre
+# Info (Réseau des Carif-Oref). Faits seulement : diplôme, spécialité, dates, ville, organisme, prix.
+# Champs : ceux de sessions.yml, plus specialite (donnees/specialites.yml), organisme_nom (école absente
+# de organismes.yml) et source (catalogue-apprentissage | offre-info)."""
+
+
+def ecrire(chemin, sessions):
+    def q(v):
+        if v is None:
+            return "null"
+        if isinstance(v, bool):
+            return "true" if v else "false"
+        if isinstance(v, (int, float)):
+            return str(v)
+        if isinstance(v, dt.date):
+            return v.isoformat()
+        return json.dumps(v, ensure_ascii=False)
+    lignes = [ENTETE, "", "sessions:"]
+    for s in sessions:
+        lignes.append(f"  - id: {s['id']}")
+        for k in ["organisme", "organisme_nom", "diplome", "specialite", "type", "theme", "debut", "fin", "ville",
+                  "departement", "formule", "prix", "prix_note"]:
+            lignes.append(f"    {k}: {q(s[k])}")
+        lignes.append("    aides: []")
+        for k in ["complet", "url", "releve_le", "verifie_le", "source"]:
+            lignes.append(f"    {k}: {q(s[k])}")
+    Path(chemin).write_text("\n".join(lignes) + "\n", encoding="utf-8")
+
+
+def ecrire_ecoles(aujourdhui):
+    """donnees/ecoles-pro.yml : les écoles qui ont ouvert une session dans l'année (calendrier national), avec la date
+    de leur dernière rentrée. Utile tant que les sessions suivantes ne sont pas encore déclarées."""
+    chemin = RACINE / "donnees" / "ecoles-pro.yml"
+    if not RECENTES:
+        return  # source en panne : la liste actuelle est gardée
+    ecoles = {}
+    for e in RECENTES:
+        if e["departement"] not in DEPS or not e["organisme_nom"]:
+            continue
+        cle = (sans_accents(e["organisme_nom"]), sans_accents(e["ville"]), e["diplome"], e["specialite"])
+        if cle not in ecoles or e["debut"] > ecoles[cle]["debut"]:
+            ecoles[cle] = e
+    lignes = ["# Écoles qui ont ouvert une session dans les 12 derniers mois (calendrier national FOROMES).",
+              "# Fichier écrit par outils/relever_pro.py : ne pas modifier à la main.", "", "ecoles:"]
+    for e in sorted(ecoles.values(), key=lambda e: (e["diplome"], e["departement"], e["ville"], e["organisme_nom"])):
+        lignes.append(f"  - {{organisme_nom: {json.dumps(e['organisme_nom'], ensure_ascii=False)}, diplome: {e['diplome']}, "
+                      f"specialite: {json.dumps(e['specialite'])}, ville: {json.dumps(e['ville'], ensure_ascii=False)}, "
+                      f"departement: \"{e['departement']}\", derniere_rentree: {e['debut'].isoformat()}}}")
+    chemin.write_text("\n".join(lignes) + "\n", encoding="utf-8")
+    print(f"Écoles (dernière rentrée connue) : {len(ecoles)} ; écrit : {chemin}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--essai", action="store_true", help="n'écrit rien, affiche le résumé")
+    args = parser.parse_args()
+    aujourdhui = dt.date.today()
+    chemin = RACINE / "donnees" / "sessions-pro.yml"
+    anciens = {}
+    if chemin.exists():
+        anciens = {s["id"]: s for s in (yaml.safe_load(chemin.read_text(encoding="utf-8")) or {}).get("sessions") or []}
+
+    lues = []
+    from relever import TERRITOIRE, autorise, lire_brut
+    import cemea
+    import pages_ecoles
+
+    def cemea_pro(j):
+        return cemea.pro(lire_brut, TERRITOIRE["departements"], ville_de)
+
+    def ecoles(j):
+        return pages_ecoles.pages_ecoles(j, lire_brut, autorise, nom_organisme, ville_de)
+    sources = [("Catalogue de l'apprentissage", catalogue), ("Léo Lagrange Formation", leo_lagrange),
+               ("Calendrier national FOROMES", foromes), ("CEMEA", cemea_pro), ("UFCV", ufcv_pro), ("Pages des écoles", ecoles)]
+    jeton = (os.environ.get("RCO_OFFREINFO_TOKEN") or "").strip()
+    if jeton:
+        sources.append(("API Offre Info", lambda j: offre_info(j, jeton)))
+    else:
+        print("API Offre Info : pas de jeton (secret RCO_OFFREINFO_TOKEN), source ignorée.", file=sys.stderr)
+    for nom, fonction in sources:
+        print(f"{nom}…", file=sys.stderr)
+        try:
+            liste = fonction(aujourdhui)
+        except SystemExit as e:
+            # une source en panne ne vide pas le site : ses sessions actuelles sont gardées telles quelles
+            print(f"  {nom} : {e}", file=sys.stderr)
+            source = {"Catalogue de l'apprentissage": "catalogue-apprentissage", "API Offre Info": "offre-info",
+                      "Calendrier national FOROMES": "foromes"}.get(nom, "page-organisme")
+            prefixe = {"CEMEA": "cemea-", "Pages des écoles": "eco-", "Léo Lagrange Formation": "leo-", "UFCV": "ufcvpro-"}.get(nom)
+            liste = [dict(s, garder=True) for s in anciens.values() if s.get("source") == source
+                     and (source != "page-organisme" or (prefixe and s["id"].startswith(prefixe)))]
+        print(f"  {len(liste)} sessions lues", file=sys.stderr)
+        lues += liste
+
+    # filtres : France métropolitaine et Corse (comme le reste du site), début dans 3 jours à 14 mois ;
+    # doublons (même école, même ville, même spécialité, même date) : le premier lu est gardé,
+    # Offre Info (avec le prix) passant avant le catalogue.
+    lues.sort(key=lambda s: {"offre-info": 0, "page-organisme": 1, "foromes": 2}.get(s["source"], 3))
+    vues, retenues = set(), []
+    for s in lues:
+        s["debut"] = s["debut"] if isinstance(s["debut"], dt.date) else dt.date.fromisoformat(str(s["debut"]))
+        if s.get("fin") and not isinstance(s["fin"], dt.date):
+            s["fin"] = dt.date.fromisoformat(str(s["fin"]))
+        if (s["departement"] not in DEPS or not s["ville"] or not s.get("organisme_nom")
+                or not aujourdhui + dt.timedelta(days=3) <= s["debut"] <= aujourdhui + dt.timedelta(days=HORIZON)):
+            continue
+        cle = (sans_accents(s["ville"]), s["diplome"], s["specialite"], s["debut"])  # même session vue dans deux sources
+        if cle in vues:
+            continue
+        vues.add(cle)
+        ancien = anciens.get(s["id"], {})
+        s["releve_le"] = ancien.get("releve_le") or aujourdhui
+        s["verifie_le"] = ancien.get("verifie_le") if s.get("garder") else aujourdhui
+        retenues.append(s)
+    retenues.sort(key=lambda s: (s["debut"], s["diplome"], s["departement"], s["id"]))
+
+    compte = collections.Counter
+    print(f"\n{len(lues)} sessions lues, {len(retenues)} retenues.")
+    print(f"Par diplôme : {dict(sorted(compte(s['diplome'] for s in retenues).items()))}")
+    print(f"Par source : {dict(compte(s['source'] for s in retenues))}")
+    print(f"Sans spécialité reconnue : {len([s for s in retenues if not s['specialite']])}")
+    print(f"Écoles : {len({s['organisme_nom'] for s in retenues})} ; départements : {len({s['departement'] for s in retenues})}")
+    print(f"Ajoutées : {len({s['id'] for s in retenues} - set(anciens))} ; retirées : {len(set(anciens) - {s['id'] for s in retenues})}")
+    if not args.essai:
+        ecrire(chemin, retenues)
+        ecrire_ecoles(aujourdhui)
+        print(f"Écrit : {chemin}")
+
+
+if __name__ == "__main__":
+    main()

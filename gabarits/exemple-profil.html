@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% set p = page.profil %}
+{% block tete_note %}<p class="note-main">exemple fictif</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre espace-compte">
+    <p class="bandeau-exemple bandeau-exemple-clair">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui tu as postulé.</p>
+    <article class="ligne-compte profil-candidat profil-exemple">
+      <div>
+        <h3>{{ p.prenom }} · {{ p.ville }}, {{ departements | selectattr("code", "equalto", p.departement) | map(attribute="nom") | first }}</h3>
+        <p class="accroche-profil">{{ p.poste_recherche }}</p>
+        <ul class="pastilles">{% for d in p.diplomes %}<li>{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}{% if p.permis_b %}<li>Permis B</li>{% endif %}</ul>
+        <p class="petit">Cherche : {% for r in p.recherche %}{{ RECHERCHE.get(r, r) }}{{ ", " if not loop.last }}{% endfor %}</p>
+        <p class="petit">Expérience : {% for r in p.experiences %}{{ EXPERIENCES.get(r, r) }}{{ ", " if not loop.last }}{% endfor %}</p>
+        <p class="petit">Activités : {{ p.activites | join(", ") }}</p>
+        <p class="petit">Disponible : du {{ p.dispo_debut | date_fr }} au {{ p.dispo_fin | date_fr }} · {{ p.disponibilites }}</p>
+        <p class="petit">Peut aussi travailler : Paris, Seine-et-Marne, partout en France</p>
+        <p class="presentation">{{ p.presentation }}</p>
+        <p class="petit">Profil mis à jour le {{ p.maj_le | date_fr }}</p>
+      </div>
+      <div class="boutons boutons-colonne"><span class="bouton-r bouton-inerte">Écrire</span><span class="bouton-texte bouton-inerte">☆ Mettre en favori</span></div>
+    </article>
+    <div class="texte">
+      <h2>Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
+      <ul>
+        <li><b>Oui</b> : un prénom ou un pseudo, ta ville si tu veux, tes diplômes, ce que tu cherches, tes dates, tes expériences et tes talents, une présentation, l'e-mail où les structures t'écrivent.</li>
+        <li><b>Non</b> : ni photo, ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone. Les structures choisissent sur ce que tu sais faire.</li>
+        <li>Tu peux <b>cacher</b> ton profil ou le <b>supprimer</b> à tout moment.</li>
+      </ul>
+      <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block tete_note %}<p class="note-main">outils gratuits</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <ul class="liste-outils liste-outils-grande">
+    {% for u, t, d in OUTILS %}
+      <li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>
+    {% endfor %}
+    </ul>
+    <p class="petit">Chaque outil cite les textes officiels qu'il applique, avec la date à laquelle ils ont été lus. Il aide à préparer ; en cas de doute, l'administration (SDJES) ou votre organisme de formation font foi.</p>
+  </div>
+</section>
+{% endblock %}

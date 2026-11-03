@@ -1,0 +1,26 @@
+# Spécialités (mentions) des diplômes professionnels de l'animation.
+# BPJEPS, DEJEPS et DESJEPS : seulement la spécialité animation socio-éducative ou culturelle (ASEC).
+# Le site ne présente que l'animation : les mentions sportives (éducateur sportif, perfectionnement
+# et performance sportive) sont volontairement absentes, et leurs sessions ne sont pas relevées.
+# Noms officiels des certifications (Certif Info, Réseau des Carif-Oref, lu le 26/10/2026) ;
+# plusieurs codes Certif Info pour une même mention (ancienne et nouvelle fiche, options) sont réunis.
+# Champs :
+#   id         identifiant court (dans sessions.yml : specialite)
+#   nom        nom affiché (sigle courant entre parenthèses quand il existe)
+#   groupe     spécialité du diplôme (animateur, éducateur sportif…)
+#   certifinfo codes Certif Info rattachés à cette mention
+#   mots       mots cherchés dans l'intitulé quand le code est inconnu (expression régulière, sans accents, minuscules)
+
+CPJEPS:
+  - {id: aavq, nom: "Animateur d'activités et de vie quotidienne (AAVQ)", groupe: Animation, certifinfo: [106401, 117918], mots: "vie quotidienne|aavq"}
+
+BPJEPS:
+  - {id: asec, nom: "Animation socio-éducative ou culturelle (ASEC)", groupe: Animateur, certifinfo: [117943], mots: "socio.?educative|asec"}
+
+DEJEPS:
+  - {id: coordination-de-projets, nom: "Coordination de projets", groupe: Animation socio-éducative ou culturelle, certifinfo: [118019], mots: "coordination de projets"}
+  - {id: developpement-de-projets, nom: "Développement de projets, territoires et réseaux", groupe: Animation socio-éducative ou culturelle, certifinfo: [53982], mots: "territoires|developpement de projets"}
+  - {id: animation-sociale, nom: "Animation sociale", groupe: Animation socio-éducative ou culturelle, certifinfo: [57867], mots: "animation sociale"}
+
+DESJEPS:
+  - {id: direction, nom: "Direction de structure et de projet", groupe: Animation socio-éducative ou culturelle, certifinfo: [55876, 117949], mots: "direction de structure"}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block tete_chapo %}<p class="chapo">Seuls des organismes habilités par l'État peuvent organiser les sessions du BAFA et du BAFD (<a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054850965" rel="noopener" target="_blank">arrêté du 4 septembre 2026 ↗</a>).</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <ul class="organismes">
+      {% for o in page.organismes %}
+      {% set n = toutes_sessions | selectattr("organisme", "equalto", o.id) | list | length %}
+      <li class="{{ 'organisme-actif' if n else '' }}">
+        {% if o.en_ligne and n %}<a href="{{ lien('/se-former/sessions/organismes/' ~ o.id ~ '/') }}"><b>{{ o.nom }}</b></a>{% else %}<b>{{ o.nom }}</b>{% endif %}
+        <span>{% if n %}{{ n }} session{{ 's' if n > 1 }} sur le site{% else %}pas encore relevé{% endif %}</span>
+        <a class="petit" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site ↗</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="petit">Un organisme manque ou une information est fausse ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a> : la liste est revérifiée chaque semaine.</p>
+  </div>
+</section>
+{% endblock %}

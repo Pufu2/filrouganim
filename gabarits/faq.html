@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block tete_chapo %}<p class="chapo">Des réponses courtes. Chaque réponse renvoie vers le guide qui cite la source officielle.</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    {{ m.faq(page.faq, lien) }}
+    <p class="petit">Une question manque ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a>.</p>
+  </div>
+</section>
+{% endblock %}

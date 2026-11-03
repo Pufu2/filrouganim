@@ -1,0 +1,26 @@
+name: Alertes du lundi
+
+on:
+  # chaque lundi à 8 h 07 (heure de Paris en hiver) : les nouvelles offres de la semaine aux candidats inscrits
+  schedule:
+    - cron: "7 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  envoyer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      # sans les deux secrets (à ajouter par Pufu2), l'outil ne fait rien
+      - name: Envoyer les alertes
+        env:
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: python3 outils/alertes.py

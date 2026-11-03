@@ -1,0 +1,60 @@
+# Réglages du site Fil Roug'Anim
+
+nom: Fil Roug'Anim
+accroche: Ne perds pas le fil de ton anim
+description: >-
+  Comparez les sessions BAFA, BAFD et PSC1 partout en France : dates, ville, formule
+  et prix, avec le lien vers chaque organisme. Gratuit, sans inscription.
+
+url: https://filrouganim.fr
+# Domaine acheté chez OVHcloud le 24 octobre 2026. Le fichier CNAME est créé à la fabrication.
+nom_de_domaine: filrouganim.fr
+chemin_de_base: ""
+langue: fr
+
+# Google Search Console : la valeur « content » de la balise meta proposée (à remplir par Pufu2).
+google_site_verification: ""
+# Mesure d'audience sans cookie (GoatCounter) : code du compte, vide = aucune mesure.
+goatcounter: ""
+
+# Adresse de contact affichée sur le site. En attendant une adresse @filrouganim.fr : celle de Jeuphorie.
+email: contact@jeuphorie.fr
+
+# Lien vers Jeuphorie (encart discret sur les guides et les pages de sessions)
+jeuphorie:
+  url: https://jeuphorie.fr/jeux-gratuits/
+  texte: "Nouvel animateur ? Jeuphorie propose des grands jeux prêts à imprimer, dont 3 offerts, pour ton premier séjour ou ton stage pratique."
+
+# Informations légales (mentions légales). Une seule micro-entreprise pour tous les sites.
+editeur:
+  nom: "[[Prénom NOM]]"
+  statut: "[[Entrepreneur individuel (EI), micro-entreprise : après la déclaration]]"
+  adresse: "[[Adresse postale ou domiciliation]]"
+  siren: "[[Numéro SIREN : après la déclaration]]"
+
+hebergeur:
+  nom: GitHub, Inc.
+  adresse: 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis
+  telephone: "+1 877 448 4820"
+  site: https://github.com
+
+# Offre fondateurs (étape 2) : les premières structures paieront moitié prix, à vie, tant que le service existe.
+# « places » : le nombre total (à décider par Pufu2) ; « reservees » : à augmenter à chaque structure inscrite.
+fondateurs:
+  places: 30
+  reservees: 0
+
+# Comptes des candidats et des structures (Supabase, projet « filrouganim », région Paris).
+# L'URL et la clé « publishable » sont faites pour être publiques : la sécurité vient des règles
+# d'accès de la base (supabase/schema.sql). Ne jamais mettre ici la clé secrète.
+supabase:
+  url: https://abjimkhwbuhsfdnhweyy.supabase.co
+  cle: sb_publishable_AMVfIm318LnwSUxNfQcNzQ_ZsOKvsJb
+# Ouverts au public le 26/10/2026. false : la page /compte/ existe, mais le site n'y renvoie pas.
+# true : les boutons « Créer mon profil » et « Créer le compte de ma structure » apparaissent.
+# À passer à true après : l'envoi des e-mails par Brevo (SMTP), les mentions légales complètes.
+comptes_ouverts: true
+# Adresse d'envoi des alertes du lundi (outils/alertes.py) : une adresse du domaine, validée dans Brevo.
+email_alertes: alertes@filrouganim.fr
+# Adresse d'envoi des e-mails de connexion (outils/configurer_emails.py), sur le domaine authentifié dans Brevo.
+email_connexion: connexion@filrouganim.fr
