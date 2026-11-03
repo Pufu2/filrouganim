@@ -13,7 +13,7 @@
 <meta property="og:description" content="{{ page.description | resume }}">
 <meta property="og:url" content="{{ url_complete }}">
 <meta property="og:locale" content="fr_FR">
-<meta name="theme-color" content="#c8102e">
+<meta name="theme-color" content="#fbf8f2">
 {% if site.google_site_verification %}<meta name="google-site-verification" content="{{ site.google_site_verification }}">{% endif %}
 <link rel="icon" href="{{ statique('favicon.svg') }}" type="image/svg+xml">
 <link rel="preload" href="{{ statique('polices/atkinson-hyperlegible-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -27,7 +27,7 @@
 <header class="entete">
   <div class="cadre entete-cadre">
     <a class="logo" href="{{ lien('/') }}" aria-label="{{ site.nom }}, accueil">
-      {% include "svg/logo-tete.svg" %}{% include "svg/logo-titre.svg" %}
+      {% include "svg/logo-titre.svg" %}
     </a>
     <nav class="menu" aria-label="Menu principal">
       <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
