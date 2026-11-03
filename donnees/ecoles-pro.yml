@@ -11,6 +11,7 @@ ecoles:
   - {organisme_nom: "GRETA Alpes Provence", diplome: BPJEPS, specialite: "asec", ville: "Briançon", departement: "05", derniere_rentree: 2026-05-04}
   - {organisme_nom: "GRETA Alpes Provence", diplome: BPJEPS, specialite: "asec", ville: "Gap", departement: "05", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Horizon", diplome: BPJEPS, specialite: "asec", ville: "Antibes", departement: "06", derniere_rentree: 2026-03-02}
+  - {organisme_nom: "I.F.A.C. 92", diplome: BPJEPS, specialite: "asec", ville: "Grasse", departement: "06", derniere_rentree: 2026-10-29}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Nice", departement: "06", derniere_rentree: 2026-05-26}
   - {organisme_nom: "Poinfor", diplome: BPJEPS, specialite: "asec", ville: "La Chapelle-Saint-Luc", departement: "10", derniere_rentree: 2026-09-17}
   - {organisme_nom: "Union régionale des Francas du Grand Est", diplome: BPJEPS, specialite: "asec", ville: "Sainte-Savine", departement: "10", derniere_rentree: 2026-11-02}
@@ -83,6 +84,7 @@ ecoles:
   - {organisme_nom: "Jura Sport Formation", diplome: BPJEPS, specialite: "asec", ville: "Lons-le-Saunier", departement: "39", derniere_rentree: 2026-09-28}
   - {organisme_nom: "GRETA CFA Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Mont-de-Marsan", departement: "40", derniere_rentree: 2026-10-21}
   - {organisme_nom: "Respire", diplome: BPJEPS, specialite: "asec", ville: "Blois", departement: "41", derniere_rentree: 2026-10-05}
+  - {organisme_nom: "Maison Familiale Rurale Montbrison", diplome: BPJEPS, specialite: "asec", ville: "Montbrison", departement: "42", derniere_rentree: 2026-11-05}
   - {organisme_nom: "ADMJC 42", diplome: BPJEPS, specialite: "asec", ville: "Montrond-les-Bains", departement: "42", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Association ANIMAJE", diplome: BPJEPS, specialite: "asec", ville: "Clisson", departement: "44", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Francas", diplome: BPJEPS, specialite: "asec", ville: "Nantes", departement: "44", derniere_rentree: 2026-10-13}
@@ -173,6 +175,7 @@ ecoles:
   - {organisme_nom: "Union régionale des Francas du Grand Est", diplome: BPJEPS, specialite: "asec", ville: "Épinal", departement: "88", derniere_rentree: 2026-10-05}
   - {organisme_nom: "FORMATION.S 89", diplome: BPJEPS, specialite: "asec", ville: "Auxerre", departement: "89", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Leo Lagrange Formation", diplome: BPJEPS, specialite: "asec", ville: "Juvisy-sur-Orge", departement: "91", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "Pole Essonne Ressources Formations", diplome: BPJEPS, specialite: "asec", ville: "Paray-Vieille-Poste", departement: "91", derniere_rentree: 2026-11-05}
   - {organisme_nom: "IFAC 92", diplome: BPJEPS, specialite: "asec", ville: "Asnières-sur-Seine", departement: "92", derniere_rentree: 2026-11-04}
   - {organisme_nom: "SPOR", diplome: BPJEPS, specialite: "asec", ville: "Courbevoie", departement: "92", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Institut Formation Animation", diplome: BPJEPS, specialite: "asec", ville: "Pantin", departement: "93", derniere_rentree: 2026-04-13}
@@ -285,7 +288,6 @@ ecoles:
   - {organisme_nom: "FOL 28 Ligue de l'Enseignement", diplome: CPJEPS, specialite: "aavq", ville: "Lucé", departement: "28", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Centre de Formation d'Apprentis du Sport et de l'Animation", diplome: CPJEPS, specialite: "aavq", ville: "Ajaccio", departement: "2A", derniere_rentree: 2026-10-12}
   - {organisme_nom: "CEMEA Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Nîmes", departement: "30", derniere_rentree: 2026-09-14}
-  - {organisme_nom: "Le Merlet", diplome: CPJEPS, specialite: "aavq", ville: "Saint-Jean-du-Gard", departement: "30", derniere_rentree: 2026-03-16}
   - {organisme_nom: "Union Régionale des Francas d'Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Ramonville-Saint-Agne", departement: "31", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Loisirs Education et Citoyenneté - LEC", diplome: CPJEPS, specialite: "aavq", ville: "Toulouse", departement: "31", derniere_rentree: 2026-09-14}
   - {organisme_nom: "UFCV Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Toulouse", departement: "31", derniere_rentree: 2026-09-21}
