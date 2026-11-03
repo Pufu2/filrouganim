@@ -1,23 +1,52 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block tete_note %}<p class="note-main">les structures</p>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Centres de loisirs, séjours, associations : les structures inscrites et vérifiées, leur projet et leurs offres.</p>{% endblock %}
+{# L'annuaire des structures vérifiées : une recherche, puis des cartes (comme un annuaire de pros) #}
+{% macro carte(st, url, exemple=False) %}
+{% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
+<li class="ac theme-{{ st.couleur or 'rouge' }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
+  <a href="{{ url }}">
+    <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
+    <span class="ac-corps">
+      <b class="ac-nom">{{ st.nom }}</b>
+      <span class="ac-lieu">{{ st.ville }} · {{ departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first }}</span>
+      <span class="ac-details">{% if st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
+    </span>
+    <span class="ac-pied"><span>{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Pas d'offre en ce moment{% endif %}</span><span class="ac-voir">Voir la fiche <span aria-hidden="true">→</span></span></span>
+  </a>
+</li>
+{% endmacro %}
+{% block tete_note %}{% endblock %}
+{% block tete_chapo %}<p class="chapo">Centres de loisirs, séjours, associations : les structures inscrites et vérifiées, leur projet et leurs offres. Vous écrivez directement à la structure.</p>{% endblock %}
 {% block contenu %}
+<div class="recherche-une recherche-une-page"><div class="cadre">
+  <form class="annuaire-recherche" role="search" aria-label="Chercher une structure" onsubmit="return false">
+    <label class="champ-ou" for="q-structures">{{ m.icone("lieu") }}<span class="sr">Où cherchez-vous ?</span><input id="q-structures" type="search" placeholder="Où ? Ville, département : Lyon, 93, Gironde…" autocomplete="off"></label>
+    <a class="bouton-filtres" href="{{ lien('/trouver-un-poste/offres/') }}">{{ m.icone("reglages") }}Voir les offres</a>
+  </form>
+  <div class="encart-besoin">
+    <p><b>Pas le temps de chercher&nbsp;?</b> Créez votre profil gratuit : les structures de votre secteur vous trouvent et vous écrivent.</p>
+    <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil <span aria-hidden="true">→</span></a>
+  </div>
+</div></div>
 <section class="bande bande-papier">
   <div class="cadre">
-    {% if page.structures %}
-    <ul class="liste-structures">
-    {% for st in page.structures %}
-      <li class="theme-{{ st.couleur or 'rouge' }}"><a href="{{ lien('/trouver-un-poste/structures/' ~ st.slug ~ '/') }}">
-        <span class="ls-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>
-        <b>{{ st.nom }}</b>
-        <span>{{ st.ville }} ({{ st.departement }}){% if st.offres %} · {{ st.offres | length }} offre{{ 's' if st.offres | length > 1 }}{% endif %}{% if st.fondatrice %} · fondatrice{% endif %}</span>
-      </a></li>
-    {% endfor %}
+    <ul class="annuaire-cartes" id="annuaire">
+    {% for st in page.structures %}{{ carte(st, lien('/trouver-un-poste/structures/' ~ st.slug ~ '/')) }}{% endfor %}
+    {% if not page.structures and page.exemple %}{{ carte(page.exemple, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
     </ul>
-    {% else %}
-    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>Les premières structures arrivent. En attendant, voici <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">un exemple de page structure</a>.</p></div>
-    {% endif %}
+    {% if not page.structures %}<p class="petit annuaire-note">Les premières structures vérifiées arrivent : voici à quoi ressemblera leur fiche. <a href="{{ lien('/recruter/') }}">Vous recrutez&nbsp;? Inscrivez votre structure</a></p>{% endif %}
+    <p class="aucune" id="annuaire-vide" hidden>Aucune structure dans ce secteur pour l'instant. Créez votre profil : les nouvelles structures de votre secteur pourront vous écrire.</p>
   </div>
 </section>
+<script>
+(function () {
+  var q = document.getElementById("q-structures"), cartes = document.querySelectorAll("#annuaire .ac"), vide = document.getElementById("annuaire-vide");
+  var sa = function (t) { return t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); };
+  q.addEventListener("input", function () {
+    var mots = sa(q.value).split(/\s+/).filter(Boolean), n = 0;
+    Array.prototype.forEach.call(cartes, function (c) { var ok = mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; }); c.hidden = !ok; if (ok) n++; });
+    vide.hidden = n > 0;
+  });
+})();
+</script>
 {% endblock %}

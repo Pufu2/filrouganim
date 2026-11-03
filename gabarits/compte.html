@@ -34,15 +34,71 @@
 
   <div class="compte-vue" id="v-chargement"><p>Chargement…</p></div>
 
-  {# 1. Connexion #}
-  <div class="compte-vue carte-compte" id="v-connexion" hidden>
-    {{ m.mascotte("mascotte-petite mascotte-coin") }}
-    <h2>Se connecter ou créer son compte</h2>
-    <form id="f-connexion" class="formulaire">
-      <label class="champ"><span>Votre adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200"></label>
-      <button class="bouton-r" type="submit">Recevoir mon lien de connexion <span aria-hidden="true">→</span></button>
-    </form>
-    <p class="petit">Le lien est valable une heure. Pas de mot de passe à retenir. Si vous n'avez pas encore de compte, il est créé à la première connexion. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+  {# 1. Connexion et inscription : deux colonnes, la marque à gauche, le formulaire à droite #}
+  <div class="auth" id="auth" hidden>
+    <aside class="auth-cote">
+      <p class="auth-logo">{% include "svg/logo-titre.svg" %}</p>
+      <h2 class="auth-titre" id="auth-titre">Votre espace dans l'animation.</h2>
+      <ul class="auth-plus">
+        <li>Animateurs : un profil gratuit, jamais public, et les offres près de chez vous</li>
+        <li>Structures : vos offres là où les jeunes cherchent leur BAFA</li>
+        <li>Sans mot de passe : un lien de connexion par e-mail</li>
+      </ul>
+      <p class="auth-note">Données hébergées en Europe. Jamais revendues.</p>
+    </aside>
+
+    <div class="auth-corps">
+      <div class="compte-vue" id="v-connexion" hidden>
+        <h2>Bon retour</h2>
+        <p class="auth-sous">Connectez-vous à votre espace Fil Roug'Anim.</p>
+        <form id="f-connexion" class="formulaire">
+          <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
+          <button class="bouton-r bouton-large" type="submit">Recevoir mon lien de connexion <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-lien">Pas encore de compte&nbsp;? <a href="{{ lien('/compte/') }}?inscription=1">Créer un compte gratuit</a></p>
+        <p class="petit auth-rgpd">Le lien est valable une heure. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+      </div>
+
+      <div class="compte-vue" id="v-inscription" hidden>
+        <div class="auth-haut">
+          <ol class="etapes-auth" aria-label="Étapes de l'inscription">
+            <li id="ea-1" aria-current="step"><span>1</span>Profil</li>
+            <li id="ea-2"><span>2</span>Compte</li>
+            <li id="ea-3"><span>3</span>Confirmation</li>
+          </ol>
+          <p class="auth-lien">Déjà un compte&nbsp;? <a href="{{ lien('/compte/') }}">Se connecter</a></p>
+        </div>
+        <div id="ins-1">
+          <h2>Bienvenue. Vous êtes…</h2>
+          <p class="auth-sous">Choisissez votre profil : l'espace s'adapte à vous.</p>
+          <p class="auth-groupe">Je cherche un poste</p>
+          <div class="profils-choix" role="radiogroup" aria-label="Votre profil">
+            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg></span><span class="pc-texte"><b>Animateur ou animatrice</b><small>BAFA, stagiaire BAFA, BPJEPS… : stage pratique, colo, centre de loisirs</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
+            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span><span class="pc-texte"><b>Directeur ou adjoint</b><small>BAFD, stagiaire BAFD, DEJEPS : direction de séjour ou d'accueil</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
+          </div>
+          <p class="auth-groupe">Je recrute</p>
+          <div class="profils-choix" role="radiogroup" aria-label="Votre profil">
+            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="structure"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2"/></svg></span><span class="pc-texte"><b>Une structure</b><small>Accueil de loisirs, séjours, périscolaire, association, collectivité</small></span><span class="pc-badge pc-recrute">Offre fondateurs</span><span class="pc-rond" aria-hidden="true"></span></button>
+          </div>
+          <button class="bouton-r bouton-large" type="button" id="ins-continuer" disabled>Continuer <span aria-hidden="true">→</span></button>
+        </div>
+        <div id="ins-2" hidden>
+          <h2>Votre adresse e-mail</h2>
+          <p class="auth-sous">Pas de mot de passe : vous recevez un lien de connexion, valable une heure.</p>
+          <form id="f-inscription" class="formulaire">
+            <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
+            <button class="bouton-r bouton-large" type="submit">Créer mon compte <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="auth-lien"><button type="button" class="bouton-texte" id="ins-retour">← Changer de profil</button></p>
+          <p class="petit auth-rgpd">En créant un compte, vous acceptez les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+        </div>
+        <div id="ins-3" hidden>
+          <h2>Regardez votre boîte mail</h2>
+          <p class="auth-sous" id="ins-envoye"></p>
+          <p class="petit">Pas reçu&nbsp;? Regardez dans les indésirables, ou <button type="button" class="bouton-texte" id="ins-renvoyer">renvoyez le lien</button>.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   {# 2. Premier passage : candidat ou structure #}

@@ -1,34 +1,63 @@
 {% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Fiche d'un profil de candidat (exemple fictif) : ce que voit une structure vérifiée. #}
 {% set p = page.profil %}
-{% block tete_note %}<p class="note-main">exemple fictif</p>{% endblock %}
+{% set nom_dep = departements | selectattr("code", "equalto", p.departement) | map(attribute="nom") | first %}
+{% block tete %}{% endblock %}
 {% block contenu %}
-<section class="bande bande-papier">
-  <div class="cadre espace-compte">
-    <p class="bandeau-exemple bandeau-exemple-clair">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui tu as postulé.</p>
-    <article class="ligne-compte profil-candidat profil-exemple">
+<div class="fiche theme-sauge">
+  <div class="cadre">
+    <nav class="fil-ariane fil-clair" aria-label="Fil d'Ariane">
+      <a href="{{ lien('/') }}">Accueil</a>
+      {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+    </nav>
+    <p class="bandeau-exemple bandeau-exemple-clair">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui vous avez postulé.</p>
+    <div class="fiche-banniere" aria-hidden="true"><span>{{ p.poste_recherche }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
+    <div class="fiche-identite">
+      <span class="fiche-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
       <div>
-        <h3>{{ p.prenom }} · {{ p.ville }}, {{ departements | selectattr("code", "equalto", p.departement) | map(attribute="nom") | first }}</h3>
-        <p class="accroche-profil">{{ p.poste_recherche }}</p>
-        <ul class="pastilles">{% for d in p.diplomes %}<li>{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}{% if p.permis_b %}<li>Permis B</li>{% endif %}</ul>
-        <p class="petit">Cherche : {% for r in p.recherche %}{{ RECHERCHE.get(r, r) }}{{ ", " if not loop.last }}{% endfor %}</p>
-        <p class="petit">Expérience : {% for r in p.experiences %}{{ EXPERIENCES.get(r, r) }}{{ ", " if not loop.last }}{% endfor %}</p>
-        <p class="petit">Activités : {{ p.activites | join(", ") }}</p>
-        <p class="petit">Disponible : du {{ p.dispo_debut | date_fr }} au {{ p.dispo_fin | date_fr }} · {{ p.disponibilites }}</p>
-        <p class="petit">Peut aussi travailler : Paris, Seine-et-Marne, partout en France</p>
-        <p class="presentation">{{ p.presentation }}</p>
-        <p class="petit">Profil mis à jour le {{ p.maj_le | date_fr }}</p>
+        <h1>{{ p.prenom }}</h1>
+        <p class="fiche-sous">{{ p.poste_recherche }} · {{ p.ville }}</p>
+        <ul class="fiche-badges">
+          {% for d in p.diplomes %}<li>{{ m.icone("diplome") }}{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}
+          {% if p.permis_b %}<li>{{ m.icone("etape") }}Permis B</li>{% endif %}
+        </ul>
       </div>
-      <div class="boutons boutons-colonne"><span class="bouton-r bouton-inerte">Écrire</span><span class="bouton-texte bouton-inerte">☆ Mettre en favori</span></div>
-    </article>
-    <div class="texte">
-      <h2>Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
-      <ul>
-        <li><b>Oui</b> : un prénom ou un pseudo, ta ville si tu veux, tes diplômes, ce que tu cherches, tes dates, tes expériences et tes talents, une présentation, l'e-mail où les structures t'écrivent.</li>
-        <li><b>Non</b> : ni photo, ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone. Les structures choisissent sur ce que tu sais faire.</li>
-        <li>Tu peux <b>cacher</b> ton profil ou le <b>supprimer</b> à tout moment.</li>
-      </ul>
-      <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
     </div>
+    <div class="fiche-grille">
+      <div class="fiche-principal">
+        <ul class="fiche-chiffres">
+          <li><b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b><span>disponible jusqu'au {{ p.dispo_fin | date_fr }}</span></li>
+          <li><b>{{ p.departement }}</b><span>{{ nom_dep }}, et aussi Paris, Seine-et-Marne, partout en France</span></li>
+          <li><b>{{ p.experiences | length }}</b><span>expérience{{ 's' if p.experiences | length > 1 }} : {% for r in p.experiences %}{{ EXPERIENCES.get(r, r) | lower }}{{ ", " if not loop.last }}{% endfor %}</span></li>
+        </ul>
+        <section class="fiche-bloc texte"><h2>Présentation</h2><p>{{ p.presentation }}</p></section>
+        <section class="fiche-bloc">
+          <h2>Ce que {{ p.prenom }} cherche</h2>
+          <ul class="pastilles">{% for r in p.recherche %}<li>{{ RECHERCHE.get(r, r) }}</li>{% endfor %}</ul>
+          <p>{{ p.disponibilites }}</p>
+          <h2>Ses talents</h2>
+          <ul class="pastilles pastilles-douces">{% for a in p.activites %}<li>{{ a }}</li>{% endfor %}</ul>
+        </section>
+        <section class="fiche-bloc texte">
+          <h2>Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
+          <ul>
+            <li><b>Oui</b> : un prénom ou un pseudo, la ville si on veut, les diplômes, ce qu'on cherche, les dates, les expériences et les talents, une présentation, l'e-mail où les structures écrivent.</li>
+            <li><b>Non</b> : ni photo, ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone. Les structures choisissent sur ce que vous savez faire.</li>
+            <li>Vous pouvez <b>cacher</b> votre profil ou le <b>supprimer</b> à tout moment.</li>
+          </ul>
+        </section>
+        <p class="petit">Profil mis à jour le {{ p.maj_le | date_fr }}.</p>
+      </div>
+      <aside class="fiche-contact">
+        <div class="fiche-contact-tete"><span class="fiche-avatar fiche-avatar-petit" aria-hidden="true">{{ p.prenom[0] | upper }}</span><span><b>{{ p.prenom }}</b><small>{{ p.ville }} · {{ nom_dep }}</small></span></div>
+        <p class="fiche-contact-chiffre">Disponible du <b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b> au <b>{{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></p>
+        <span class="bouton-r bouton-large bouton-inerte">{{ m.icone("cherche") }}Écrire à {{ p.prenom }}</span>
+        <span class="bouton-blanc bouton-large bouton-inerte">☆ Mettre en favori</span>
+        <p class="petit">Réservé aux structures vérifiées. Dans l'exemple, les boutons ne font rien.</p>
+      </aside>
+    </div>
+    <p class="fiche-appel"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
   </div>
-</section>
+</div>
 {% endblock %}

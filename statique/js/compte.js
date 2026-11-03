@@ -28,10 +28,14 @@
   }
   function aujourdhui() { return new Date().toISOString().slice(0, 10); }
 
-  var VUES = ["v-chargement", "v-connexion", "v-choix", "v-candidat", "v-structure", "v-session"];
+  var VUES = ["v-chargement", "v-connexion", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-session"];
   function montrer() {
     var ids = Array.prototype.slice.call(arguments);
     VUES.forEach(function (v) { $(v).hidden = ids.indexOf(v) < 0; });
+    // connexion et inscription : la page passe en deux colonnes, sans le haut de page
+    var auth = ids.indexOf("v-connexion") >= 0 || ids.indexOf("v-inscription") >= 0;
+    $("auth").hidden = !auth;
+    document.body.classList.toggle("page-auth", auth);
   }
   function message(texte, erreur) {
     var m = $("message");
@@ -89,7 +93,7 @@
     }
     var r = await sb.auth.getSession();
     var session = r.data && r.data.session;
-    if (!session) { montrer("v-connexion"); return; }
+    if (!session) { montrer(params.get("inscription") ? "v-inscription" : "v-connexion"); return; }
     if (location.hash) history.replaceState(null, "", location.pathname + location.search);
     utilisateur = session.user;
     $("email-session").textContent = utilisateur.email;
@@ -118,6 +122,39 @@
     if (r.error) message(erreurLisible(r.error), true);
     else message("C'est envoyé. Ouvrez l'e-mail reçu à " + email + " et cliquez sur le lien (regardez aussi dans les indésirables).");
   });
+
+  /* -- inscription en trois étapes : profil, compte, confirmation -- */
+  var roleChoisi = null;
+  function etapeInscription(n) {
+    [1, 2, 3].forEach(function (i) {
+      $("ins-" + i).hidden = i !== n;
+      var li = $("ea-" + i);
+      if (i === n) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+      li.classList.toggle("fait", i < n);
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (x) { x.setAttribute("aria-checked", x === b ? "true" : "false"); });
+      roleChoisi = b.dataset.role;
+      $("ins-continuer").disabled = false;
+    });
+  });
+  $("ins-continuer").addEventListener("click", function () { if (roleChoisi) { etapeInscription(2); $("f-inscription").email.focus(); } });
+  $("ins-retour").addEventListener("click", function () { etapeInscription(1); });
+  async function envoyerInscription() {
+    var form = $("f-inscription"), email = form.email.value.trim();
+    occupe(form, true);
+    var retour = location.origin + location.pathname + "?role=" + encodeURIComponent(roleChoisi || "candidat");
+    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: retour } });
+    occupe(form, false);
+    if (r.error) { message(erreurLisible(r.error), true); return; }
+    message("");
+    $("ins-envoye").textContent = "Nous avons envoyé un lien de connexion à " + email + ". Cliquez dessus pour ouvrir votre espace.";
+    etapeInscription(3);
+  }
+  $("f-inscription").addEventListener("submit", function (e) { e.preventDefault(); envoyerInscription(); });
+  $("ins-renvoyer").addEventListener("click", envoyerInscription);
 
   Array.prototype.forEach.call(document.querySelectorAll(".role"), function (b) {
     b.addEventListener("click", function () {

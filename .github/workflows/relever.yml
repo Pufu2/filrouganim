@@ -31,6 +31,9 @@ jobs:
         env:
           RCO_OFFREINFO_TOKEN: ${{ secrets.RCO_OFFREINFO_TOKEN }}
         run: python3 outils/relever_pro.py
+      - name: Formations pros du catalogue Mon Compte Formation (Caisse des Dépôts)
+        continue-on-error: true
+        run: python3 outils/relever_cpf.py
       - name: BAFA, BAFD, PSC1 (lundi et jeudi)
         continue-on-error: true
         run: |
@@ -47,7 +50,7 @@ jobs:
         run: python3 build.py
       - name: Enregistrer les changements
         run: |
-          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/geo-communes.yml
+          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/formations-cpf.yml donnees/geo-communes.yml
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0

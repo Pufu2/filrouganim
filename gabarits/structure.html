@@ -1,69 +1,75 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Page publique d'une structure vérifiée, personnalisée par elle depuis Mon compte (ou exemple fictif). #}
+{# Fiche d'une structure vérifiée (ou exemple fictif) : bannière, nom, badges, trois chiffres, sections, et une carte de contact à droite. #}
 {% set st = page.structure %}
-{% block tete %}
-<section class="tete tete-structure theme-{{ st.couleur or 'rouge' }}">
-  <div class="cadre">
-    <nav class="fil-ariane" aria-label="Fil d'Ariane">
-      <a href="{{ lien('/') }}">Accueil</a>
-      {% for nom, url in page.fil %}<span aria-hidden="true">›</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
-    </nav>
-    {% if st.exemple %}<p class="bandeau-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée personnalise la sienne depuis son compte.</p>{% endif %}
-    <p class="note-main">{{ TYPES_STRUCTURE.get(st.type, "structure d'animation") | lower }}</p>
-    <h1>{{ st.nom }}</h1>
-    {% if st.accroche %}<p class="chapo">{{ st.accroche }}</p>{% endif %}
-    <ul class="pastilles pastilles-tete">
-      <li>{{ st.ville }} ({{ st.departement }})</li>
-      {% if st.fondatrice %}<li class="pastille-fondatrice">Structure fondatrice</li>{% endif %}
-      <li>Vérifiée par Fil Roug'Anim</li>
-    </ul>
-  </div>
-  <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
-</section>
-{% endblock %}
+{% set nom_dep = departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first %}
+{% set type_nom = TYPES_STRUCTURE.get(st.type, "Structure d'animation") %}
+{% set _m = st.nom.replace("L'", "").replace("’", " ").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et", "d", "l"]) | list %}{% set initiales = (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper %}
+{% block tete %}{% endblock %}
 {% block contenu %}
-<section class="bande bande-papier" aria-labelledby="t-offres-st">
+<div class="fiche theme-{{ st.couleur or 'rouge' }}">
   <div class="cadre">
-    <h2 id="t-offres-st">{% if st.offres %}Ses offres en ce moment{% else %}Pas d'offre en ce moment{% endif %}</h2>
-    {% if st.offres %}
-    <div class="sessions">
-    {% for o in st.offres %}
-      <article class="session offre">
-        <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
-        <div class="s-corps">
-          <h3 class="s-titre">{% if st.exemple %}{{ o.intitule }}{% else %}<a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a>{% endif %}</h3>
-          <p class="s-infos">{{ o.ville }} ({{ o.departement }}) · à partir du {{ o.debut | date_fr }} · {{ CONTRATS.get(o.contrat, o.contrat) }}</p>
-        </div>
-        {% if not st.exemple %}<a class="s-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>{% endif %}
-      </article>
-    {% endfor %}
+    <nav class="fil-ariane fil-clair" aria-label="Fil d'Ariane">
+      <a href="{{ lien('/') }}">Accueil</a>
+      {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+    </nav>
+    {% if st.exemple %}<p class="bandeau-exemple bandeau-exemple-clair">Exemple fictif : voici à quoi ressemble la fiche d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
+    <div class="fiche-banniere" aria-hidden="true"><span>{{ type_nom }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
+    <div class="fiche-identite">
+      <span class="fiche-avatar" aria-hidden="true">{{ initiales }}</span>
+      <div>
+        <h1>{{ st.nom }}</h1>
+        <p class="fiche-sous">{{ type_nom }} à {{ st.ville }}</p>
+        <ul class="fiche-badges">
+          <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>
+          {% if st.offres %}<li>{{ m.icone("date") }}Recrute en ce moment</li>{% endif %}
+          {% if st.fondatrice %}<li>{{ m.icone("etape") }}Structure fondatrice</li>{% endif %}
+        </ul>
+      </div>
     </div>
-    {% else %}
-    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, les structures vérifiées de ton secteur peuvent te trouver et t'écrire. <a href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil</a></p></div>
-    {% endif %}
+    <div class="fiche-grille">
+      <div class="fiche-principal">
+        <ul class="fiche-chiffres">
+          <li><b>{{ st.offres | length }}</b><span>offre{{ 's' if st.offres | length != 1 }} en ce moment</span></li>
+          <li><b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous âges{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span></li>
+          <li><b>{{ st.departement }}</b><span>{{ nom_dep }}</span></li>
+        </ul>
+        <section class="fiche-bloc" aria-labelledby="t-offres-st">
+          <h2 id="t-offres-st">{% if st.offres %}Ses offres en ce moment{% else %}Pas d'offre en ce moment{% endif %}</h2>
+          {% if st.offres %}
+          <ul class="fiche-offres">
+          {% for o in st.offres %}
+            <li><span class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></span>
+              <span><b>{% if st.exemple %}{{ o.intitule }}{% else %}<a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a>{% endif %}</b>
+              <small>{{ o.ville }} ({{ o.departement }}) · à partir du {{ o.debut | date_fr }} · {{ CONTRATS.get(o.contrat, o.contrat) }}</small></span></li>
+          {% endfor %}
+          </ul>
+          {% else %}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, elle peut vous trouver et vous écrire.</p>{% endif %}
+        </section>
+        {% if st.presentation %}<section class="fiche-bloc texte"><h2>Qui sommes-nous&nbsp;?</h2>{{ st.presentation | paragraphes | safe }}</section>{% endif %}
+        {% if st.projet %}<section class="fiche-bloc texte"><h2>Notre projet</h2>{{ st.projet | paragraphes | safe }}</section>{% endif %}
+        {% if st.avantages %}<section class="fiche-bloc texte"><h2>Ce que nous offrons à l'équipe</h2>{{ st.avantages | paragraphes | safe }}</section>{% endif %}
+        {% if st.publics or st.activites or st.lieux %}<section class="fiche-bloc">
+          {% if st.publics %}<h2>Les publics</h2><ul class="pastilles">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
+          {% if st.activites %}<h2>Les activités</h2><ul class="pastilles pastilles-douces">{% for a in st.activites %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
+          {% if st.lieux %}<h2>Où</h2><p>{{ st.lieux }}</p>{% endif %}
+        </section>{% endif %}
+        <p class="petit">Les informations de cette fiche sont écrites par la structure, sous sa responsabilité. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
+      </div>
+      <aside class="fiche-contact">
+        <div class="fiche-contact-tete"><span class="fiche-avatar fiche-avatar-petit" aria-hidden="true">{{ initiales }}</span><span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }}</small></span></div>
+        <p class="fiche-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
+        <a class="bouton-r bouton-large" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
+        {% if st.site %}<a class="bouton-blanc bouton-large" href="{{ st.site }}" rel="noopener nofollow">Le site de la structure</a>{% endif %}
+        <p class="petit">Profil gratuit, jamais public : la structure le voit quand vous postulez.</p>
+      </aside>
+    </div>
   </div>
-</section>
-<section class="bande bande-blanc">
-  <div class="cadre structure-cadre">
-    <article class="texte">
-      {% if st.presentation %}<h2>Qui sommes-nous ?</h2>{{ st.presentation | paragraphes | safe }}{% endif %}
-      {% if st.projet %}<h2>Notre projet</h2>{{ st.projet | paragraphes | safe }}{% endif %}
-      {% if st.avantages %}<h2>Ce que nous offrons à l'équipe</h2>{{ st.avantages | paragraphes | safe }}{% endif %}
-    </article>
-    <aside class="structure-fiche">
-      {% if st.publics %}<h3>Les publics</h3><ul class="pastilles">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
-      {% if st.activites %}<h3>Les activités</h3><ul class="pastilles pastilles-douces">{% for a in st.activites %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
-      {% if st.lieux %}<h3>Où</h3><p>{{ st.lieux }}</p>{% endif %}
-      {% if st.site %}<p><a href="{{ st.site }}" rel="noopener nofollow">Le site de la structure</a></p>{% endif %}
-      <p class="petit">Les informations de cette page sont écrites par la structure, sous sa responsabilité. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
-    </aside>
-  </div>
-</section>
+</div>
 {% if st.exemple %}
 <section class="bande bande-rouge">
   <div class="cadre bande-rouge-cadre">
-    <p>Votre structure peut avoir la même page : nom, accroche, couleur, projet, publics, activités et offres, mis à jour par vous.</p>
+    <p>Votre structure peut avoir la même fiche : nom, accroche, couleur, projet, publics, activités et offres, mis à jour par vous.</p>
     <a class="bouton-blanc" href="{{ lien('/recruter/') }}">Recruter avec Fil Roug'Anim <span aria-hidden="true">→</span></a>
   </div>
 </section>
