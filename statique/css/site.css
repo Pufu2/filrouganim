@@ -1154,3 +1154,9 @@ html { scroll-padding-top: 90px; }
   .mm-colonne small { font-size: .74rem; line-height: 1.3; }
 }
 .une-note { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 6px; }
+
+/* ---------- Bandeau : le menu au milieu, à la même distance du logo et des boutons de compte */
+@media (min-width: 1001px) {
+  .entete-cadre { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .entete-cadre > .mm, .entete-cadre > .entete-actions { margin: 0; }
+}
