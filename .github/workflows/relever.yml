@@ -46,11 +46,20 @@ jobs:
       - name: Placer les villes sur la carte (API Géo de l'État)
         continue-on-error: true
         run: python3 outils/geocoder.py
+      - name: Chiffres de visibilité (GoatCounter, Search Console, comptes)
+        continue-on-error: true
+        env:
+          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          pip install -q google-auth requests
+          python3 outils/audience.py
       - name: Le site se fabrique-t-il toujours ?
         run: python3 build.py
       - name: Enregistrer les changements
         run: |
-          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/formations-cpf.yml donnees/geo-communes.yml
+          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/formations-cpf.yml donnees/audience.yml donnees/geo-communes.yml
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0

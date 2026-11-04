@@ -58,5 +58,5 @@
     </span>
   </a>
 </div>
-<div class="cadre">{{ m.bloc_chiffres(stats.chiffres, lien) }}</div>
+{% if audience.nb_tuiles and audience.nb_tuiles >= 2 %}<div class="cadre">{{ m.bloc_chiffres(audience, lien) }}</div>{% endif %}
 {% endblock %}

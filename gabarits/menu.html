@@ -1,0 +1,99 @@
+{# Le menu du haut : une partie par grand menu. À gauche, l'action principale de la partie (en grand) ;
+   à droite, les pages annexes rangées par thème. Sur téléphone, un tiroir avec les mêmes contenus. #}
+{% macro lien_menu(url, titre, sous=None) %}<a href="{{ lien(url) }}"{% if page.url == url %} aria-current="page"{% endif %}><b>{{ titre }}</b>{% if sous %}<small>{{ sous }}</small>{% endif %}</a>{% endmacro %}
+{% set vacances = periodes | selectattr("fin", "ge", aujourdhui) | list %}
+<nav class="mm" id="menu-principal" aria-label="Menu principal">
+  <div class="mm-item">
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-former"{% if page.url.startswith('/se-former/') %} data-actif{% endif %}>Se former<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <div class="mm-panneau" id="mm-former" hidden>
+      <div class="cadre mm-grille">
+        <a class="mm-une" href="{{ lien('/se-former/sessions/') }}">
+          <span class="mm-une-sur">L'essentiel</span>
+          <b>Trouver une formation</b>
+          <span>BAFA, BAFD, PSC et diplômes pros : {{ stats.nb }} sessions comparées, avec leurs dates et leurs prix.</span>
+          <span class="mm-une-aller">Chercher une session <span aria-hidden="true">→</span></span>
+        </a>
+        <div class="mm-colonne">
+          <p class="mm-titre">Les formations</p>
+          {{ lien_menu('/se-former/bafa/', 'BAFA', 'Animateur, dès 16 ans') }}
+          {{ lien_menu('/se-former/bafd/', 'BAFD', 'Directeur, dès 21 ans') }}
+          {{ lien_menu('/se-former/psc1/', 'PSC', 'Premiers secours, une journée') }}
+          {{ lien_menu('/se-former/surveillant-de-baignade/', 'Surveillant de baignade', 'Qualification du BAFA') }}
+        </div>
+        <div class="mm-colonne">
+          <p class="mm-titre">En faire son métier</p>
+          {{ lien_menu('/se-former/cpjeps/', 'CPJEPS', 'Niveau 3') }}
+          {{ lien_menu('/se-former/bpjeps/', 'BPJEPS', 'Niveau 4') }}
+          {{ lien_menu('/se-former/dejeps/', 'DEJEPS', 'Niveau 5') }}
+          {{ lien_menu('/se-former/desjeps/', 'DESJEPS', 'Niveau 6') }}
+        </div>
+        <div class="mm-colonne">
+          <p class="mm-titre">Bien s'y prendre</p>
+          {{ lien_menu('/se-former/etapes-du-bafa/', 'Les étapes du BAFA') }}
+          {{ lien_menu('/se-former/financer-son-bafa/', 'Financer son BAFA') }}
+          {{ lien_menu('/se-former/questions-frequentes/', 'Questions fréquentes') }}
+          <p class="mm-titre mm-titre-2">Chercher autrement</p>
+          {% for p in vacances[:2] %}{{ lien_menu('/se-former/sessions/' ~ p.slug ~ '/', 'Vacances : ' ~ p.court) }}{% endfor %}
+          {{ lien_menu('/se-former/sessions/organismes/', 'Les organismes') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mm-item">
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-poste"{% if page.url.startswith('/trouver-un-poste/') %} data-actif{% endif %}>Trouver un poste<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <div class="mm-panneau" id="mm-poste" hidden>
+      <div class="cadre mm-grille">
+        <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}">
+          <span class="mm-une-sur">L'essentiel</span>
+          <b>Les offres de stages et de jobs</b>
+          <span>Stage pratique BAFA, colo l'été, centre de loisirs, poste à l'année : les offres des structures vérifiées.</span>
+          <span class="mm-une-aller">Voir les offres <span aria-hidden="true">→</span></span>
+        </a>
+        <div class="mm-colonne">
+          <p class="mm-titre">Être trouvé</p>
+          {{ lien_menu('/trouver-un-poste/', 'Créer mon profil gratuit', 'Les structures vous écrivent') }}
+          {{ lien_menu('/trouver-un-poste/exemple-de-profil/', 'Un exemple de profil', 'Ce que voit une structure') }}
+          {{ lien_menu('/trouver-un-poste/structures/', 'Les structures qui recrutent') }}
+        </div>
+        <div class="mm-colonne">
+          <p class="mm-titre">Décrocher le poste</p>
+          {{ lien_menu('/trouver-un-poste/trouver-son-stage-pratique/', 'Trouver son stage pratique') }}
+          {{ lien_menu('/trouver-un-poste/preparer-son-entretien/', 'Préparer son entretien') }}
+          {{ lien_menu('/trouver-un-poste/le-projet-pedagogique/', 'Le projet pédagogique') }}
+        </div>
+        <div class="mm-colonne">
+          <p class="mm-titre">Partir serein</p>
+          {{ lien_menu('/trouver-un-poste/contrat-d-engagement-educatif/', "Le contrat d'engagement éducatif") }}
+          {{ lien_menu('/outils/salaire-cee/', 'Calculer son salaire en CEE') }}
+          {{ lien_menu('/outils/mon-parcours-bafa/', 'Mon parcours BAFA', 'Les dates limites') }}
+          {{ lien_menu('/trouver-un-poste/preparer-sa-valise-de-colo/', 'La valise de colo') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mm-item">
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-recruter"{% if page.url.startswith('/recruter/') or page.url.startswith('/outils/') or page.url == '/chiffres/' %} data-actif{% endif %}>Recruter<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <div class="mm-panneau" id="mm-recruter" hidden>
+      <div class="cadre mm-grille">
+        <a class="mm-une" href="{{ lien('/recruter/') }}">
+          <span class="mm-une-sur">L'essentiel</span>
+          <b>Publier une offre</b>
+          <span>Vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs de votre secteur. Offre fondateurs : moitié prix, à vie.</span>
+          <span class="mm-une-aller">Voir l'offre fondateurs <span aria-hidden="true">→</span></span>
+        </a>
+        <div class="mm-colonne">
+          <p class="mm-titre">Votre structure</p>
+          {{ lien_menu('/compte/?inscription=1', 'Créer mon espace structure') }}
+          {{ lien_menu('/recruter/exemple-de-page-structure/', 'Un exemple de fiche structure') }}
+          {{ lien_menu('/chiffres/', 'Les chiffres du site', 'Qui vous verra') }}
+        </div>
+        <div class="mm-colonne">
+          <p class="mm-titre">Outils gratuits</p>
+          {{ lien_menu('/outils/taux-d-encadrement/', "Taux d'encadrement", 'Combien d’animateurs pour votre accueil') }}
+          {{ lien_menu('/outils/salaire-cee/', 'Rémunération en CEE', 'Le minimum et les 80 jours') }}
+          {{ lien_menu('/outils/', 'Tous les outils') }}
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

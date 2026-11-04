@@ -179,46 +179,50 @@
 </div>
 {% endmacro %}
 
-{# Les chiffres publics (accueil) : quatre tuiles, les sessions des six prochains mois, les dernières sessions ajoutées #}
-{% macro bloc_chiffres(c, lien) %}
+{# Les chiffres publics de visibilité (accueil, /chiffres/) : visiteurs, Google, comptes créés.
+   Chaque tuile n'apparaît que si sa source est branchée (donnees/audience.yml, outils/audience.py). #}
+{% macro evolution(x) %}{% if x is not none %}<small class="{{ 'hausse' if x >= 0 else 'baisse' }}">{{ '+' if x >= 0 }}{{ x }} % sur la période d'avant</small>{% endif %}{% endmacro %}
+{% macro bloc_chiffres(a, lien, lien_page=True) %}
 <section class="chiffres-bloc" aria-labelledby="t-chiffres">
   <div class="chiffres-tete">
     <div>
       <p class="surtitre-clair">Transparence totale</p>
       <h2 id="t-chiffres">Tous les chiffres du site sont publics.</h2>
-      <p>Les sessions, les prix et les dates : les vrais chiffres, recalculés chaque jour à partir des sessions en ligne. Pas de vitrine gonflée.</p>
+      <p>Visites, recherches Google, inscriptions : les vrais chiffres, mis à jour chaque jour, consultables par tout le monde. Pas de vitrine gonflée.</p>
     </div>
-    <a class="bouton-r" href="{{ lien('/chiffres/') }}">Voir tous les chiffres <span aria-hidden="true">→</span></a>
+    {% if lien_page %}<a class="bouton-r" href="{{ lien('/chiffres/') }}">Voir tous les chiffres <span aria-hidden="true">→</span></a>{% endif %}
   </div>
   <ul class="chiffres-tuiles">
-    <li><b>{{ "{:,}".format(c.nb).replace(",", " ") }}</b><span>sessions à venir</span><small>BAFA, BAFD, PSC, diplômes pros</small></li>
-    <li><b>{{ c.organismes }}</b><span>organismes comparés</span><small>dans {{ c.deps }} départements</small></li>
-    <li><b>{% if c.bafa_fg %}{{ c.bafa_fg.mediane }} €{% else %}–{% endif %}</b><span>prix médian du BAFA</span><small>{% if c.bafa_fg %}formation générale, de {{ c.bafa_fg.min }} à {{ c.bafa_fg.max }} €{% endif %}</small></li>
-    <li><b>{{ c.ecoles_pro }}</b><span>écoles pour les diplômes pros</span><small>CPJEPS, BPJEPS, DEJEPS, DESJEPS</small></li>
+    {% if a.visiteurs_30j is not none and a.visiteurs_30j is defined %}<li><b>{{ "{:,}".format(a.visiteurs_30j).replace(",", " ") }}</b><span>visiteurs sur 30 jours</span>{{ evolution(a.visiteurs_evolution) }}</li>{% endif %}
+    {% if a.impressions_28j is defined %}<li><b>{{ "{:,}".format(a.impressions_28j).replace(",", " ") }}</b><span>apparitions dans Google</span>{{ evolution(a.impressions_evolution) }}</li>{% endif %}
+    {% if a.clics_28j is defined %}<li><b>{{ "{:,}".format(a.clics_28j).replace(",", " ") }}</b><span>clics depuis Google</span>{{ evolution(a.clics_evolution) }}</li>{% endif %}
+    {% if a.animateurs is defined %}<li><b>{{ a.comptes }}</b><span>comptes créés</span><small class="neutre">{{ a.animateurs }} animateur{{ 's' if a.animateurs > 1 }} · {{ a.structures }} structure{{ 's' if a.structures > 1 }}</small></li>{% endif %}
   </ul>
+  {% if a.impressions_par_mois or a.dernieres_inscriptions %}
   <div class="chiffres-deux">
-    <div class="chiffres-carte">
-      <p class="surtitre-clair">Sessions des six prochains mois</p>
-      <ol class="barres" aria-label="Nombre de sessions par mois">
-        {% for x in c.mois %}<li><span class="barre-n">{{ x.n }}</span><span class="barre-piste"><span class="barre" style="height: {{ [x.h, 4] | max }}%" title="{{ x.n }} sessions en {{ x.long }}"></span></span><span class="barre-mois">{{ x.nom }}</span></li>{% endfor %}
+    {% if a.impressions_par_mois %}<div class="chiffres-carte">
+      <p class="surtitre-clair">Apparitions dans Google, mois par mois</p>
+      <ol class="barres" aria-label="Apparitions dans Google par mois">
+        {% for x in a.impressions_par_mois %}<li><span class="barre-n">{{ "{:,}".format(x.n).replace(",", " ") }}</span><span class="barre-piste"><span class="barre" style="height: {{ [x.h, 4] | max }}%"></span></span><span class="barre-mois">{{ x.nom }}</span></li>{% endfor %}
       </ol>
-    </div>
-    <div class="chiffres-carte">
-      <p class="surtitre-clair">Les dernières sessions ajoutées</p>
+    </div>{% endif %}
+    {% if a.dernieres_inscriptions %}<div class="chiffres-carte">
+      <p class="surtitre-clair">Les dernières inscriptions</p>
       <ul class="recentes">
-        {% for r in c.recentes %}<li><span class="etiquette">{{ r.diplome }}</span><b>{{ r.ville }}</b><span class="recentes-date">{{ r.debut }}</span></li>{% endfor %}
+        {% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="recentes-date">{{ r.quand }}</span></li>{% endfor %}
       </ul>
-      <p class="petit">Le diplôme, la ville et le mois de début : le détail est dans la recherche.</p>
-    </div>
+      <p class="petit">Le profil, le département et le mois, jamais rien sur la personne.</p>
+    </div>{% endif %}
   </div>
+  {% endif %}
 </section>
 {% endmacro %}
 
 {# Le bandeau « Où ? » + le bouton Filtres, qui ouvre une fenêtre de boutons (formation, étape, quand, formule, budget, mot-clé).
    Sur /se-former/sessions/ (en_direct) la liste se filtre en direct ; ailleurs, le formulaire mène à cette page. #}
-{% macro recherche_ville(lien, departements, en_direct=False) %}
+{% macro recherche_ville(lien, departements, en_direct=False, preset="") %}
 {% set k = 'f' if en_direct else 'a' %}
-<form class="recherche rv" action="{{ lien('/se-former/sessions/') }}" method="get"{% if en_direct %} id="filtres"{% endif %} role="search" aria-label="Chercher une formation" data-fenetre-filtres>
+<form class="recherche rv" action="{{ lien('/se-former/sessions/') }}" method="get"{% if en_direct %} id="filtres"{% endif %} role="search" aria-label="Chercher une formation" data-fenetre-filtres{% if preset %} data-preset="{{ preset }}"{% endif %}>
   <div class="rv-ligne">
     <div class="rv-champ case-ou">{{ icone("lieu") }}<label class="sr" for="ou-{{ k }}">Où ?</label>
       <input id="ou-{{ k }}" name="ou" type="search" list="lieux-{{ k }}" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>

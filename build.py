@@ -224,7 +224,6 @@ class Site:
         self.stats["villes"] = self.villes_populaires()
         self.faq = self.donnees.get("faq", {}).get("questions", [])
         self.offres = self.charger_offres()
-        self.stats["chiffres"] = self.calculer_chiffres()
         self.env = Environment(loader=FileSystemLoader(RACINE / "gabarits"),
                                autoescape=select_autoescape(["html", "xml"]),
                                trim_blocks=True, lstrip_blocks=True)
@@ -410,6 +409,25 @@ class Site:
                 "nb_deps": len({s["departement"] for s in self.sessions}),
                 "verifie_le": max(verif) if verif else None}
 
+    def audience(self):
+        """Les chiffres de visibilité (donnees/audience.yml), prêts pour l'affichage ; vide tant qu'aucune source n'est branchée."""
+        a = self.donnees.get("audience") or {}
+        c = dict(a.get("chiffres") or {})
+        if not c:
+            return {}
+        if c.get("impressions_par_mois"):
+            maxi = max(x["n"] for x in c["impressions_par_mois"]) or 1
+            c["impressions_par_mois"] = [dict(x, nom=MOIS_COURTS[int(x["mois"][5:7]) - 1], h=round(100 * x["n"] / maxi))
+                                         for x in c["impressions_par_mois"]]
+        for x in c.get("dernieres_inscriptions") or []:
+            dep = self.departements.get(x.get("departement") or "")
+            x["lieu"] = dep["nom"] if dep else "France"
+            x["quand"] = f"{MOIS_COURTS[int(x['mois'][5:7]) - 1]} {x['mois'][:4]}" if x.get("mois") else ""
+        c["comptes"] = (c.get("animateurs") or 0) + (c.get("structures") or 0)
+        c["mis_a_jour"] = en_date(a.get("mis_a_jour"))
+        c["nb_tuiles"] = sum(1 for k in ("visiteurs_30j", "impressions_28j", "clics_28j") if c.get(k) is not None) + (1 if "animateurs" in c else 0)
+        return c
+
     def villes_populaires(self, n=8):
         """Les grandes villes qui ont le plus de sessions (proposées quand on clique dans une case « Où ? »)."""
         compte = collections.Counter()
@@ -419,55 +437,6 @@ class Site:
         villes = [{"nom": v["nom"], "dep": v["dep"], "n": compte[(v["nom"], v["dep"])], "texte": f"{v['nom']} ({v['dep']})"}
                   for v in self.donnees["territoire"].get("grandes_villes", [])]
         return sorted([v for v in villes if v["n"]], key=lambda v: -v["n"])[:n]
-
-    def calculer_chiffres(self):
-        """Les chiffres publics du site (accueil et page /chiffres/), recalculés à chaque fabrication."""
-        S = self.sessions
-        def mediane(xs):
-            xs = sorted(xs)
-            return xs[len(xs) // 2] if xs else None
-        def prix(di, type_=None):
-            xs = [s["prix"] for s in S if s["diplome"] == di and (type_ is None or s["type"] == type_) and s["prix"]]
-            return {"min": min(xs), "mediane": mediane(xs), "max": max(xs), "n": len(xs)} if xs else None
-        # les six prochains mois
-        mois = []
-        a, m = self.aujourdhui.year, self.aujourdhui.month
-        for _ in range(6):
-            n = sum(1 for s in S if s["debut"].year == a and s["debut"].month == m)
-            mois.append({"nom": MOIS_COURTS[m - 1], "long": f"{MOIS[m - 1]} {a}", "n": n})
-            a, m = (a + 1, 1) if m == 12 else (a, m + 1)
-        maxi = max([x["n"] for x in mois] or [1]) or 1
-        for x in mois:
-            x["h"] = round(100 * x["n"] / maxi)
-        # les dernières relevées ; à égalité, celles qui commencent le plus tôt, un seul exemple par ville et par diplôme
-        tri = sorted((x for x in S if x["ville"]), key=lambda s: (-(s["releve_le"] or self.aujourdhui).toordinal(), s["debut"]))
-        recentes, vus = [], set()
-        for x in tri:  # d'abord un exemple par diplôme, puis les suivantes
-            if x["diplome"] not in vus and x["diplome"] != "CC-ACM":
-                vus.add(x["diplome"]); recentes.append(x)
-        recentes = sorted(recentes[:5], key=lambda s: s["debut"])
-        ecoles = {(e["organisme_nom"], e["diplome"]) for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []}
-        ecoles |= {(f["organisme_nom"], f["diplome"]) for f in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []}
-        par_diplome = collections.Counter(s["diplome"] for s in S)
-        par_region = collections.Counter(s["dep"]["region"] for s in S)
-        sources = collections.Counter(s["org"]["nom"] for s in S)
-        vacances = None
-        for p in self.periodes:
-            if p["fin"] >= self.aujourdhui:
-                vacances = {"nom": p["court"], "n": sum(1 for s in S if s["periode"] and s["periode"]["id"] == p["id"])}
-                break
-        return {
-            "nb": len(S), "organismes": len(sources), "deps": len({s["departement"] for s in S}), "ecoles_pro": len(ecoles),
-            "offres": len(self.offres), "vacances": vacances,
-            "bafa_fg": prix("BAFA", "formation-generale"), "bafa_ap": prix("BAFA", "approfondissement"),
-            "bafd_fg": prix("BAFD", "formation-generale"), "psc": prix("PSC1"),
-            "mois": mois,
-            "recentes": [{"diplome": s["dipl"]["nom"], "quoi": s["type_nom"] if s["type"] not in ("session", "parcours") else (s["sp"]["nom"] if s["sp"] else ""),
-                          "ville": s["ville"], "debut": f"{MOIS[s['debut'].month - 1]} {s['debut'].year}"} for s in recentes],
-            "par_diplome": [(self.diplomes[d]["nom"], n) for d, n in par_diplome.most_common() if d in self.diplomes and d != "CC-ACM"],
-            "par_region": [(self.regions[r]["nom"], n) for r, n in par_region.most_common() if r in self.regions],
-            "organismes_top": sources.most_common(12),
-        }
 
     def calculer_filtres(self):
         """Les choix de la barre de recherche, d'après les sessions en ligne (spécialités présentes, budgets utiles)."""
@@ -557,10 +526,10 @@ class Site:
                      schema=None)
 
         self.ajouter("/chiffres/", "chiffres.html", titre="Les chiffres de Fil Roug'Anim",
-                     description="Combien de sessions BAFA, BAFD et PSC1, à quel prix, où et quand : les chiffres du site, recalculés chaque jour à partir des sessions en ligne.",
+                     description="Visiteurs, apparitions dans Google, comptes créés : les vrais chiffres de Fil Roug'Anim, mis à jour chaque jour.",
                      h1="Tous les chiffres, en clair",
-                     intro="Les chiffres viennent des sessions en ligne sur le site et sont recalculés chaque jour : pas de vitrine gonflée.",
-                     fil=[("Les chiffres", "/chiffres/")])
+                     intro="Visites, recherches Google, inscriptions : les vrais chiffres du site, mis à jour chaque jour et consultables par tout le monde.",
+                     indexer=bool(self.audience()), fil=[("Les chiffres", "/chiffres/")])
 
         # ---- rubrique Sessions (France métropolitaine et Corse)
         self.ajouter("/se-former/sessions/", "sessions.html",
@@ -828,7 +797,7 @@ class Site:
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
             "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
-            "stats": self.stats, "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
+            "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
