@@ -179,7 +179,7 @@ ecoles:
   - {organisme_nom: "IFAC 92", diplome: BPJEPS, specialite: "asec", ville: "Asnières-sur-Seine", departement: "92", derniere_rentree: 2026-11-04}
   - {organisme_nom: "SPOR", diplome: BPJEPS, specialite: "asec", ville: "Courbevoie", departement: "92", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Institut Formation Animation", diplome: BPJEPS, specialite: "asec", ville: "Pantin", departement: "93", derniere_rentree: 2026-04-13}
-  - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-06-29}
+  - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Association Promotion & Formation des Techniques", diplome: BPJEPS, specialite: "asec", ville: "Fontenay-sous-Bois", departement: "94", derniere_rentree: 2026-10-15}
   - {organisme_nom: "Centre Pedagogique pour Construire UNE Vie Active(cpvc)", diplome: BPJEPS, specialite: "asec", ville: "Enghien-les-Bains", departement: "95", derniere_rentree: 2026-11-02}
   - {organisme_nom: "INST Formation Animateurs Collectivites (ifac 95)", diplome: BPJEPS, specialite: "asec", ville: "Franconville", departement: "95", derniere_rentree: 2026-10-01}

@@ -120,6 +120,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-13202611039
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-07
+    fin: 2026-11-07
+    ville: "Arles"
+    departement: "13"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-17202611012
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -154,24 +172,6 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-02
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-35202611016
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-07
-    fin: 2026-11-07
-    ville: "Vitré"
-    departement: "35"
-    formule: null
-    prix: 60
-    prix_note: "hybride : 4 h en ligne avant la journée"
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-38202611002
@@ -264,6 +264,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-94202611037
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-07
+    fin: 2026-11-07
+    ville: "Villiers-sur-Marne"
+    departement: "94"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: pc-157359
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -298,42 +316,6 @@ sessions:
     complet: false
     url: "https://formations.protection-civile.org/formation-psc/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-158212
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-07
-    fin: 2026-11-07
-    ville: "Cesson-Sevigne"
-    departement: "35"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-158340
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-07
-    fin: 2026-11-07
-    ville: "Chateauroux"
-    departement: "36"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-10-25
     verifie_le: 2026-11-04
     source: page-organisme
   - id: pc-161608
@@ -1080,6 +1062,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: ufcv-150304
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Création d'un imaginaire"
+    debut: 2026-11-09
+    fin: 2026-11-14
+    ville: "Paris"
+    departement: "75"
+    formule: "externat"
+    prix: 363
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150304"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: ufcv-157119
     organisme: "ufcv"
     diplome: "BAFA"
@@ -1458,24 +1458,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-94202611044
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-11
-    fin: 2026-11-11
-    ville: "Maisons-Alfort"
-    departement: "94"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: pc-149226
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -1492,24 +1474,6 @@ sessions:
     complet: false
     url: "https://formations.protection-civile.org/formation-psc/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-153879
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-11
-    fin: 2026-11-11
-    ville: "Paris"
-    departement: "75"
-    formule: null
-    prix: 65
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: pc-158609
@@ -1546,24 +1510,6 @@ sessions:
     complet: false
     url: "https://formations.protection-civile.org/formation-psc/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: afocal-2226022
-    organisme: "afocal"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2026-11-12
-    fin: 2026-11-22
-    ville: "Paris"
-    departement: "75"
-    formule: "internat"
-    prix: 110
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://www.afocal.fr/bafa/stage-bafa-2226022.html"
-    releve_le: 2026-10-25
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-62202611008
@@ -1654,6 +1600,24 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-02
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-75202611109
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-12
+    fin: 2026-11-12
+    ville: "Paris 16e"
+    departement: "75"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-84202611019
@@ -2450,6 +2414,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-38202611008
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-14
+    fin: 2026-11-14
+    ville: "Saint-Quentin-Fallavier"
+    departement: "38"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-38202611022
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -2486,22 +2468,22 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-47202611011
+  - id: crf-52202611003
     organisme: "croix-rouge"
     diplome: "PSC1"
     type: "session"
     theme: null
     debut: 2026-11-14
     fin: 2026-11-14
-    ville: "Villeneuve-sur-Lot"
-    departement: "47"
+    ville: "Joinville"
+    departement: "52"
     formule: null
     prix: 60
-    prix_note: null
+    prix_note: "hybride : 4 h en ligne avant la journée"
     aides: []
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-53202611003
@@ -2513,24 +2495,6 @@ sessions:
     fin: 2026-11-14
     ville: "Château-Gontier-sur-Mayenne"
     departement: "53"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-56202611011
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-14
-    fin: 2026-11-14
-    ville: "Pleucadeuc"
-    departement: "56"
     formule: null
     prix: 60
     prix_note: null
@@ -2556,42 +2520,6 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-75202611080
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-14
-    fin: 2026-11-14
-    ville: "Paris 13e"
-    departement: "75"
-    formule: null
-    prix: 60
-    prix_note: "hybride : 4 h en ligne avant la journée"
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-77202611016
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-14
-    fin: 2026-11-14
-    ville: "Savigny-le-Temple"
-    departement: "77"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-02
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-82202611014
@@ -2628,6 +2556,24 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-87202611003
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-14
+    fin: 2026-11-14
+    ville: "Isle"
+    departement: "87"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-95202611002
@@ -2882,24 +2828,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: pc-156357
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-14
-    fin: 2026-11-14
-    ville: "Les Sables-D-Olonne"
-    departement: "85"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: pc-157114
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -3042,6 +2970,24 @@ sessions:
     complet: false
     url: "https://formations.protection-civile.org/formation-psc/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: ufcv-153738
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: "Formation générale BAFA"
+    debut: 2026-11-14
+    fin: 2026-11-21
+    ville: "Nice"
+    departement: "06"
+    formule: "externat"
+    prix: 405
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=153738"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: ufcv-150158
@@ -4227,6 +4173,25 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: min-290057
+    organisme: null
+    organisme_nom: "Ligue de l'Enseignement Bretagne 56"
+    diplome: "BAFD"
+    type: "perfectionnement"
+    theme: null
+    debut: 2026-11-18
+    fin: 2026-11-27
+    ville: "Lorient"
+    departement: "56"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://www.laligue-morbihan.org"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: ministere
   - id: min-290697
     organisme: null
     organisme_nom: "Ligue de l'Enseignement Bretagne 56"
@@ -5565,6 +5530,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-17202611011
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "La Rochelle"
+    departement: "17"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-22202611015
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -5583,6 +5566,60 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-25202611008
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "Valdahon"
+    departement: "25"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-26202611008
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "Tain-L'hermitage"
+    departement: "26"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-26202611011
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "Montélimar"
+    departement: "26"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-30202611020
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -5592,24 +5629,6 @@ sessions:
     fin: 2026-11-21
     ville: "Vergèze"
     departement: "30"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-32202611001
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-21
-    fin: 2026-11-21
-    ville: "Eauze"
-    departement: "32"
     formule: null
     prix: 60
     prix_note: null
@@ -5653,6 +5672,24 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-35202611002
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "Saint-Malo"
+    departement: "35"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-38202611039
@@ -5709,24 +5746,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-47202611008
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-21
-    fin: 2026-11-21
-    ville: "Marmande"
-    departement: "47"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: crf-54202611004
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -5763,22 +5782,22 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-63202611007
+  - id: crf-71202611025
     organisme: "croix-rouge"
     diplome: "PSC1"
     type: "session"
     theme: null
     debut: 2026-11-21
     fin: 2026-11-21
-    ville: "Issoire"
-    departement: "63"
+    ville: "Autun"
+    departement: "71"
     formule: null
     prix: 60
-    prix_note: null
+    prix_note: "hybride : 4 h en ligne avant la journée"
     aides: []
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-75202611081
@@ -5833,6 +5852,24 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-95202611017
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-21
+    fin: 2026-11-21
+    ville: "Fosses"
+    departement: "95"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: ligue-4498
@@ -6627,25 +6664,6 @@ sessions:
     aides: []
     complet: false
     url: "https://www.aroeven-grenoble.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: ministere
-  - id: min-264397
-    organisme: null
-    organisme_nom: "Familles rurales fédération régionales Centre Val de Loire"
-    diplome: "BAFD"
-    type: "formation-generale"
-    theme: null
-    debut: 2026-11-23
-    fin: 2026-12-04
-    ville: "Orleans"
-    departement: "45"
-    formule: null
-    prix: null
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://www.ma-formation-bafa.fr"
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: ministere
@@ -7529,24 +7547,6 @@ sessions:
     fin: 2026-11-24
     ville: "Bordeaux"
     departement: "33"
-    formule: null
-    prix: 70
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-135045
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-24
-    fin: 2026-11-24
-    ville: "Nancy"
-    departement: "54"
     formule: null
     prix: 70
     prix_note: null
@@ -8854,24 +8854,6 @@ sessions:
     releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: ministere
-  - id: crf-01202611010
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-28
-    fin: 2026-11-28
-    ville: "Montrevel-en-Bresse"
-    departement: "01"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: crf-03202611010
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -8890,90 +8872,36 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-26202611007
+  - id: crf-50202611007
     organisme: "croix-rouge"
     diplome: "PSC1"
     type: "session"
     theme: null
     debut: 2026-11-28
     fin: 2026-11-28
-    ville: "Romans-sur-Isère"
-    departement: "26"
+    ville: "Saint-Lô"
+    departement: "50"
     formule: null
     prix: 60
     prix_note: null
     aides: []
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-34202611039
+  - id: crf-52202611006
     organisme: "croix-rouge"
     diplome: "PSC1"
     type: "session"
     theme: null
     debut: 2026-11-28
     fin: 2026-11-28
-    ville: "Sète"
-    departement: "34"
+    ville: "Langres"
+    departement: "52"
     formule: null
     prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-34202611995
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-28
-    fin: 2026-11-28
-    ville: "Pézenas"
-    departement: "34"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-38202611012
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-28
-    fin: 2026-11-28
-    ville: "Vienne"
-    departement: "38"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-41202611002
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-28
-    fin: 2026-11-28
-    ville: "Saint-Ouen"
-    departement: "41"
-    formule: null
-    prix: 60
-    prix_note: null
+    prix_note: "hybride : 4 h en ligne avant la journée"
     aides: []
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
@@ -8998,6 +8926,42 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-66202611005
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-28
+    fin: 2026-11-28
+    ville: "Perpignan"
+    departement: "66"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-73202611004
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-28
+    fin: 2026-11-28
+    ville: "Saint-Jean-de-Maurienne"
+    departement: "73"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-74202611022
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -9007,6 +8971,24 @@ sessions:
     fin: 2026-11-28
     ville: "Annecy"
     departement: "74"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-78202611036
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-28
+    fin: 2026-11-28
+    ville: "Versailles"
+    departement: "78"
     formule: null
     prix: 60
     prix_note: "hybride : 4 h en ligne avant la journée"
@@ -9034,6 +9016,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-84202611003
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-28
+    fin: 2026-11-28
+    ville: "Orange"
+    departement: "84"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-85202611005
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -9042,24 +9042,6 @@ sessions:
     debut: 2026-11-28
     fin: 2026-11-28
     ville: "La Roche-sur-Yon"
-    departement: "85"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: crf-85202611006
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-11-28
-    fin: 2026-11-28
-    ville: "Challans"
     departement: "85"
     formule: null
     prix: 60
@@ -9591,6 +9573,24 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-62202611015
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-29
+    fin: 2026-11-29
+    ville: "Bruay-la-Buissière"
+    departement: "62"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: crf-71202611033
@@ -10244,6 +10244,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: pc-140040
+    organisme: "protection-civile"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-11-30
+    fin: 2026-11-30
+    ville: "Sainte-Gemmes-sur-Loire"
+    departement: "49"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://formations.protection-civile.org/formation-psc/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: pc-153574
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -10441,24 +10459,6 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-138667
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-12-01
-    fin: 2026-12-01
-    ville: "Montpellier"
-    departement: "34"
-    formule: null
-    prix: 57
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-10-25
     verifie_le: 2026-11-04
     source: page-organisme
   - id: pc-159502
@@ -11975,24 +11975,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: pc-156680
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-12-06
-    fin: 2026-12-06
-    ville: "Le Mans"
-    departement: "72"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-10-25
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: pc-160643
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -12120,6 +12102,25 @@ sessions:
     complet: false
     url: "https://www.atc-cdf.fr"
     releve_le: 2026-11-01
+    verifie_le: 2026-11-04
+    source: ministere
+  - id: min-291509
+    organisme: null
+    organisme_nom: "LFEEP"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "HANDICAP"
+    debut: 2026-12-07
+    fin: 2026-12-12
+    ville: "Saint-Denis"
+    departement: "93"
+    formule: null
+    prix: null
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://ww.ligue95.com"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: ministere
   - id: afocal-0626044
@@ -16220,6 +16221,42 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-01202612003
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Montmerle-sur-Saône"
+    departement: "01"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-07202612003
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Tournon-sur-Rhône"
+    departement: "07"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-12202612002
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -16364,6 +16401,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-47202612004
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Marmande"
+    departement: "47"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-54202612008
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -16391,6 +16446,42 @@ sessions:
     fin: 2026-12-19
     ville: "Lille"
     departement: "59"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-63202612002
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Riom"
+    departement: "63"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
+  - id: crf-69202612008
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Lyon"
+    departement: "69"
     formule: null
     prix: 60
     prix_note: "hybride : 4 h en ligne avant la journée"
@@ -16472,6 +16563,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: crf-86202612002
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
+    theme: null
+    debut: 2026-12-19
+    fin: 2026-12-19
+    ville: "Châtellerault"
+    departement: "86"
+    formule: null
+    prix: 60
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: crf-92202612015
     organisme: "croix-rouge"
     diplome: "PSC1"
@@ -16508,39 +16617,21 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: ifac-11640
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
+  - id: crf-95202612003
+    organisme: "croix-rouge"
+    diplome: "PSC1"
+    type: "session"
     theme: null
     debut: 2026-12-19
-    fin: 2026-12-27
-    ville: "Cannes"
-    departement: "06"
-    formule: "externat"
-    prix: 400
-    prix_note: null
+    fin: 2026-12-19
+    ville: "Épiais-Rhus"
+    departement: "95"
+    formule: null
+    prix: 60
+    prix_note: "hybride : 4 h en ligne avant la journée"
     aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11640"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: ifac-12629
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2026-12-19
-    fin: 2026-12-27
-    ville: "Nice"
-    departement: "06"
-    formule: "externat"
-    prix: 420
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12629"
+    complet: false
+    url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
@@ -16615,42 +16706,6 @@ sessions:
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11641"
     releve_le: 2026-10-25
     verifie_le: 2026-10-29
-    source: page-organisme
-  - id: ifac-11651
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Sports et jeux collectifs, activités physiques"
-    debut: 2026-12-19
-    fin: 2026-12-24
-    ville: "Marseille"
-    departement: "13"
-    formule: "externat"
-    prix: 360
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11651"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: ifac-11652
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Veillées, spectacles et fêtes"
-    debut: 2026-12-19
-    fin: 2026-12-24
-    ville: "Marseille"
-    departement: "13"
-    formule: "externat"
-    prix: 360
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11652"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
     source: page-organisme
   - id: ifac-12343
     organisme: "ifac"
@@ -16994,24 +17049,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ifac-11645
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2026-12-19
-    fin: 2026-12-27
-    ville: "Argelès-sur-Mer"
-    departement: "66"
-    formule: "externat"
-    prix: 400
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11645"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: ifac-12643
     organisme: "ifac"
     diplome: "BAFA"
@@ -17137,24 +17174,6 @@ sessions:
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11973"
     releve_le: 2026-10-29
     verifie_le: 2026-10-29
-    source: page-organisme
-  - id: ifac-11974
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Accueil d’enfant en situation de handicap"
-    debut: 2026-12-19
-    fin: 2026-12-24
-    ville: "Paris 12e"
-    departement: "75"
-    formule: "externat"
-    prix: 350
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11974"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
     source: page-organisme
   - id: ifac-11977
     organisme: "ifac"
@@ -17425,24 +17444,6 @@ sessions:
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11600"
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: page-organisme
-  - id: ifac-11642
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2026-12-19
-    fin: 2026-12-27
-    ville: "Avignon"
-    departement: "84"
-    formule: "externat"
-    prix: 400
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11642"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
     source: page-organisme
   - id: ifac-11779
     organisme: "ifac"
@@ -17727,7 +17728,7 @@ sessions:
     prix: 440
     prix_note: null
     aides: []
-    complet: true
+    complet: false
     url: "https://formation-bafa-bafd.org/stages/bafa-formation-generale/session-de-formation-generale-bafa-a-nanterre-92-le-19-decembre-2026/"
     releve_le: 2026-10-25
     verifie_le: 2026-11-04
@@ -19300,24 +19301,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ifac-12000
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Animer la petite enfance"
-    debut: 2026-12-21
-    fin: 2026-12-27
-    ville: "Sartrouville"
-    departement: "78"
-    formule: "externat"
-    prix: 350
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12000"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: ifac-12001
     organisme: "ifac"
     diplome: "BAFA"
@@ -19372,42 +19355,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ifac-12006
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Grands jeux et journées exceptionnelles"
-    debut: 2026-12-21
-    fin: 2026-12-27
-    ville: "Chennevières-sur-Marne"
-    departement: "94"
-    formule: "externat"
-    prix: 350
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12006"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: ifac-12007
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Accueil de loisirs et temps périscolaires"
-    debut: 2026-12-21
-    fin: 2026-12-27
-    ville: "Chennevières-sur-Marne"
-    departement: "94"
-    formule: "externat"
-    prix: 350
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12007"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: ligue-4093
     organisme: "ligue-idf"
     diplome: "BAFA"
@@ -19437,24 +19384,6 @@ sessions:
     departement: "31"
     formule: null
     prix: 65
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://formations.protection-civile.org/formation-psc/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: pc-145676
-    organisme: "protection-civile"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2026-12-21
-    fin: 2026-12-21
-    ville: "Saint-Herblain"
-    departement: "44"
-    formule: null
-    prix: 60
     prix_note: null
     aides: []
     complet: false
@@ -22094,24 +22023,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ufcv-150132
-    organisme: "ufcv"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Jeux et grandes animations"
-    debut: 2026-12-26
-    fin: 2026-12-31
-    ville: "Dunkerque"
-    departement: "59"
-    formule: "externat"
-    prix: 346
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=150132"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: page-organisme
   - id: ufcv-150134
     organisme: "ufcv"
     diplome: "BAFA"
@@ -22959,24 +22870,6 @@ sessions:
     complet: false
     url: "https://inscription-formation.croix-rouge.fr/"
     releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
-  - id: ifac-11647
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Animer les accueils et séjours 6-12 ans"
-    debut: 2026-12-28
-    fin: 2027-01-03
-    ville: "Nice"
-    departement: "06"
-    formule: "externat"
-    prix: 370
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/11647"
-    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: page-organisme
   - id: ifac-11657
@@ -27790,24 +27683,6 @@ sessions:
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12072"
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: page-organisme
-  - id: ifac-12094
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2027-02-06
-    fin: 2027-02-13
-    ville: "Chennevières-sur-Marne"
-    departement: "94"
-    formule: "externat"
-    prix: 400
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12094"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
     source: page-organisme
   - id: ifac-12145
     organisme: "ifac"
@@ -32628,24 +32503,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ifac-12247
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Accueil de loisirs et temps périscolaires"
-    debut: 2027-02-15
-    fin: 2027-02-20
-    ville: "Herblay-sur-Seine"
-    departement: "95"
-    formule: "externat"
-    prix: 350
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12247"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: pc-157746
     organisme: "protection-civile"
     diplome: "PSC1"
@@ -36551,24 +36408,6 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-04
     source: page-organisme
-  - id: crf-92202702002
-    organisme: "croix-rouge"
-    diplome: "PSC1"
-    type: "session"
-    theme: null
-    debut: 2027-02-21
-    fin: 2027-02-21
-    ville: "Rueil-Malmaison"
-    departement: "92"
-    formule: null
-    prix: 60
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://inscription-formation.croix-rouge.fr/"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: ifac-12324
     organisme: "ifac"
     diplome: "BAFA"
@@ -36784,6 +36623,24 @@ sessions:
     url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=155451"
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
+    source: page-organisme
+  - id: ufcv-158032
+    organisme: "ufcv"
+    diplome: "BAFA"
+    type: "formation-generale"
+    theme: null
+    debut: 2027-02-21
+    fin: 2027-02-28
+    ville: "Ambarès-et-Lagrave"
+    departement: "33"
+    formule: "externat"
+    prix: 405
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=158032"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
     source: page-organisme
   - id: ufcv-156226
     organisme: "ufcv"
@@ -49600,24 +49457,6 @@ sessions:
     url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12253"
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
-    source: page-organisme
-  - id: ifac-12254
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2027-04-11
-    fin: 2027-04-18
-    ville: "Herblay-sur-Seine"
-    departement: "95"
-    formule: "externat"
-    prix: 400
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12254"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
     source: page-organisme
   - id: ufcv-156336
     organisme: "ufcv"
@@ -76063,24 +75902,6 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
-  - id: ifac-12258
-    organisme: "ifac"
-    diplome: "BAFA"
-    type: "formation-generale"
-    theme: null
-    debut: 2027-07-11
-    fin: 2027-07-18
-    ville: "Herblay-sur-Seine"
-    departement: "95"
-    formule: "externat"
-    prix: 400
-    prix_note: null
-    aides: []
-    complet: true
-    url: "https://ifac-formation.fr/formations/sessions/bafa-bafd/12258"
-    releve_le: 2026-11-04
-    verifie_le: 2026-11-04
-    source: page-organisme
   - id: ufcv-156489
     organisme: "ufcv"
     diplome: "BAFA"
@@ -83407,6 +83228,24 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-04
     source: page-organisme
+  - id: afocal-0527213a
+    organisme: "afocal"
+    diplome: "BAFA"
+    type: "approfondissement"
+    theme: "Grands jeux et journées à thème et Animer en mini-camp et en séjour de vacances"
+    debut: 2027-08-09
+    fin: 2027-08-14
+    ville: "Plan-D’aups-Ste-Baume"
+    departement: "83"
+    formule: "internat"
+    prix: 293
+    prix_note: null
+    aides: []
+    complet: false
+    url: "https://www.afocal.fr/bafa/stage-bafa-0527213a.html"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: page-organisme
   - id: cemea-AT16-A3M27H04D
     organisme: "cemea"
     diplome: "BAFA"
@@ -86213,24 +86052,6 @@ sessions:
     aides: []
     complet: false
     url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156293"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-01
-    source: page-organisme
-  - id: ufcv-156294
-    organisme: "ufcv"
-    diplome: "BAFA"
-    type: "approfondissement"
-    theme: "Accueil inclusif des enfants en situation de handicap en ACM"
-    debut: 2027-08-16
-    fin: 2027-08-21
-    ville: "Clermont-Ferrand"
-    departement: "63"
-    formule: "externat"
-    prix: 346
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://bafa.ufcv.fr/D%C3%A9tail-de-la-session?idPeriode=156294"
     releve_le: 2026-11-01
     verifie_le: 2026-11-01
     source: page-organisme
