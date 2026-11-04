@@ -243,7 +243,7 @@
     <select name="type" data-titre="Votre étape ou spécialité"><option value="">Toutes</option>{% for g in filtres.etapes %}<optgroup label="{{ g.titre }}" data-diplome="{{ g.diplome }}">{% for v, nom in g.options %}<option value="{{ v }}" data-diplome="{{ g.diplome }}">{{ nom }}</option>{% endfor %}</optgroup>{% endfor %}</select>
     <select name="mois" data-titre="Quand ?"><option value="">Toutes les dates</option><optgroup label="Mois">{% for mo in ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"] %}<option value="m:{{ '%02d' % loop.index }}">{{ mo | majuscule }}</option>{% endfor %}</optgroup><optgroup label="Vacances scolaires">{% for v, nom in filtres.vacances %}<option value="v:{{ v }}">{{ nom }}</option>{% endfor %}</optgroup></select>
     <select name="annee" data-titre="Quelle année ?"><option value="">Toutes</option>{% for a in filtres.annees %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
-    <select name="formule" data-titre="Formule"><option value="">Toutes</option>{% for v, nom in filtres.formules %}<option value="{{ v }}">{{ nom }}</option>{% endfor %}</select>
+    <script type="application/json" data-quand>{{ filtres.quand | tojson }}</script>
     <select name="budget" data-titre="Budget"><option value="">Tous</option>{% for di, b, nom in filtres.budgets %}<option value="{{ b }}" data-diplome="{{ di or '' }}">{{ nom }}</option>{% endfor %}</select>
   </div>
   <div class="ff-voile" data-voile hidden>
