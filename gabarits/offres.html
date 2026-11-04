@@ -19,7 +19,7 @@
     {% if offres %}
     <div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>
     {% endif %}
-    <div class="aucune aucune-mascotte" id="aucune-offre"{% if offres %} hidden{% endif %}>{{ m.mascotte("mascotte-vide") }}<p>Aucune offre ne correspond pour l'instant. Avec un <a href="{{ lien('/trouver-un-poste/') }}#inscription">profil gratuit</a>, les structures de ton secteur peuvent te trouver même sans offre publiée.</p></div>
+    <div class="aucune aucune-mascotte" id="aucune-offre"{% if offres %} hidden{% endif %}>{{ m.mascotte("mascotte-vide") }}<p>Aucune offre ne correspond pour l'instant. Avec un <a href="{{ lien('/trouver-un-poste/') }}#inscription">profil gratuit</a>, les structures de votre secteur peuvent vous trouver même sans offre publiée.</p></div>
   </div>
 </section>
 {% endblock %}

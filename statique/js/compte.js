@@ -168,14 +168,14 @@
                        "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans", "alertes"];
   function voirCandidat() {
     montrer("v-candidat", "v-session");
-    $("chapo-compte").textContent = profil ? "Ton espace : tes candidatures, les offres pour toi et ton profil." : "Crée ton profil en deux minutes. C'est gratuit, et ça le restera.";
+    $("chapo-compte").textContent = profil ? "Votre espace : vos candidatures, les offres pour vous et votre profil." : "Créez votre profil en deux minutes. C'est gratuit, et ça le restera.";
     remplir($("f-profil"), profil || { email_contact: utilisateur.email, publie: true });
     montrerMobilite();
     $("bloc-profil").open = !profil;
     $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = !profil;
     $("tuiles-candidat").hidden = !profil;
     if (!profil) {
-      if (params.get("postuler")) message("Crée d'abord ton profil : ta candidature partira juste après.");
+      if (params.get("postuler")) message("Créez d'abord votre profil : votre candidature partira juste après.");
       $("bloc-profil").open = true;
       return;
     }
@@ -196,7 +196,7 @@
     e.preventDefault();
     var form = this, d = lire(form, CHAMPS_PROFIL);
     d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 10);
-    if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de tes disponibilités est avant le début.", true); return; }
+    if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de vos disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
       ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single()
@@ -205,8 +205,8 @@
     if (r.error) { message(erreurLisible(r.error), true); return; }
     var nouveau = !profil;
     profil = r.data;
-    message(nouveau ? "Ton profil est créé. Les structures vérifiées de ton secteur peuvent maintenant t'écrire."
-                    : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus (sauf celles à qui tu as postulé)."));
+    message(nouveau ? "Votre profil est créé. Les structures vérifiées de votre secteur peuvent maintenant vous écrire."
+                    : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus (sauf celles à qui vous avez postulé)."));
     voirCandidat();
   });
 
@@ -486,23 +486,23 @@
     var t = $("tuiles-candidat");
     t.textContent = "";
     tuile(t, mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature", "bloc-mes-candidatures");
-    tuile(t, offres.length, offres.length > 1 ? "offres pour toi" : "offre pour toi", "bloc-offres-pour-toi");
+    tuile(t, offres.length, offres.length > 1 ? "offres pour vous" : "offre pour vous", "bloc-offres-pour-toi");
     var vis = el("a", "tuile");
     vis.href = "#bloc-profil";
     vis.appendChild(el("b", null, profil.publie ? "Visible" : "Caché"));
-    vis.appendChild(el("span", null, profil.publie ? "ton profil, pour les structures vérifiées" : "ton profil : les structures ne le voient pas"));
+    vis.appendChild(el("span", null, profil.publie ? "votre profil, pour les structures vérifiées" : "votre profil : les structures ne le voient pas"));
     t.appendChild(vis);
 
     var l1 = $("liste-mes-candidatures");
     l1.textContent = "";
-    if (!mesCandidatures.length) l1.appendChild(el("p", "aucune", "Pas encore de candidature. Choisis une offre ci-dessous et postule avec ton profil."));
+    if (!mesCandidatures.length) l1.appendChild(el("p", "aucune", "Pas encore de candidature. Choisissez une offre ci-dessous et postulez avec votre profil."));
     mesCandidatures.forEach(function (c) {
       var o = c.offres || {};
       var item = el("article", "ligne-compte");
       var corps = el("div");
       corps.appendChild(el("h3", null, o.intitule || "Offre retirée"));
       corps.appendChild(el("p", "petit", ((o.structures && o.structures.nom) || "") + (o.ville ? " · " + o.ville : "") + " · envoyée le " + dateFr(c.cree_le)));
-      var etats = { envoyee: ["Envoyée", "etat etat-attente"], vue: ["Vue par la structure", "etat etat-attente"], retenue: ["Retenue : la structure va te contacter", "etat etat-ok"], "non-retenue": ["Non retenue", "etat etat-off"] };
+      var etats = { envoyee: ["Envoyée", "etat etat-attente"], vue: ["Vue par la structure", "etat etat-attente"], retenue: ["Retenue : la structure va vous contacter", "etat etat-ok"], "non-retenue": ["Non retenue", "etat etat-off"] };
       corps.appendChild(el("p", etats[c.statut][1], etats[c.statut][0]));
       item.appendChild(corps);
       var b = el("button", "bouton-texte", "Retirer");
@@ -518,7 +518,7 @@
 
     var l2 = $("liste-offres-pour-toi");
     l2.textContent = "";
-    if (!offres.length) l2.appendChild(el("p", "aucune", "Pas d'offre en ligne dans ton secteur pour l'instant. Les structures recrutent souvent dès l'hiver pour l'été : reviens bientôt."));
+    if (!offres.length) l2.appendChild(el("p", "aucune", "Pas d'offre en ligne dans votre secteur pour l'instant. Les structures recrutent souvent dès l'hiver pour l'été : revenez bientôt."));
     offres.forEach(function (o) {
       var deja = mesCandidatures.some(function (c) { return c.offre_id === o.id; });
       var item = el("article", "ligne-compte");
@@ -545,7 +545,7 @@
   async function ouvrirPostuler(id) {
     var r = await sb.from("offres").select("id,intitule,ville,departement,debut,contrat,structures(nom)").eq("id", id).maybeSingle();
     if (r.error || !r.data) { message("Cette offre n'est plus en ligne.", true); return; }
-    if (mesCandidatures.some(function (c) { return c.offre_id === r.data.id; })) { message("Tu as déjà postulé à cette offre : tu suis la réponse dans « Mes candidatures »."); return; }
+    if (mesCandidatures.some(function (c) { return c.offre_id === r.data.id; })) { message("Vous avez déjà postulé à cette offre : vous suivez la réponse dans « Mes candidatures »."); return; }
     offreVisee = r.data;
     $("postuler-titre").textContent = offreVisee.intitule;
     $("postuler-infos").textContent = ((offreVisee.structures && offreVisee.structures.nom) || "") + " · " + offreVisee.ville + " (" + offreVisee.departement + ") · à partir du " + dateFr(offreVisee.debut);
@@ -560,13 +560,13 @@
     occupe(form, true);
     var r = await sb.from("candidatures").insert({ offre_id: offreVisee.id, message: form.message.value.trim() || null });
     occupe(form, false);
-    if (r.error) { message(/duplicate|unique/i.test(r.error.message) ? "Tu as déjà postulé à cette offre." : erreurLisible(r.error), true); return; }
+    if (r.error) { message(/duplicate|unique/i.test(r.error.message) ? "Vous avez déjà postulé à cette offre." : erreurLisible(r.error), true); return; }
     form.reset();
     $("bloc-postuler").hidden = true;
     offreVisee = null;
     if (params.get("postuler")) history.replaceState(null, "", location.pathname);
     params.delete("postuler");
-    message("Candidature envoyée. La structure voit ton profil et ton message ; tu suis sa réponse dans « Mes candidatures ».");
+    message("Candidature envoyée. La structure voit votre profil et votre message ; vous suivez sa réponse dans « Mes candidatures ».");
     tableauCandidat();
   });
 
