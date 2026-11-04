@@ -476,9 +476,16 @@ class Site:
             maxi = {"Paris": 20, "Lyon": 9, "Marseille": 16}.get(v["nom"])
             for n in range(1, (maxi or 0) + 1):
                 lieux.append((f"{v['nom']} {n}{'er' if n == 1 else 'e'}", f"v:{v['nom']} {n}{'er' if n == 1 else 'e'}"))
+        quand_mois, a, m = [], self.aujourdhui.year, self.aujourdhui.month
+        for _ in range(12):
+            quand_mois.append((f"{MOIS[m - 1].capitalize()} {a}", f"m:{m:02d}", str(a)))
+            a, m = (a + 1, 1) if m == 12 else (a, m + 1)
+        quand_vacances = [(p["court"], "v:" + p["id"].rsplit("-", 1)[0], p["id"].rsplit("-", 1)[1])
+                          for p in self.periodes if p["fin"] >= self.aujourdhui]
         presentes = collections.Counter(s["formule"] for s in S if s.get("formule"))
         formules = [(k, v) for k, v in FORMULES.items() if presentes[k]]
         return {"etapes": etapes, "budgets": budgets, "vacances": vacances, "villes": lieux, "formules": formules,
+                "quand": {"mois": quand_mois, "vacances": quand_vacances},
                 "annees": [self.aujourdhui.year, self.aujourdhui.year + 1]}
 
     def schema_faq(self, questions):

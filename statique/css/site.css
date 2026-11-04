@@ -1130,3 +1130,27 @@ html { scroll-padding-top: 90px; }
 .liste-carte { margin: 4px 0 0; text-align: center; }
 .liste-carte a { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none; color: var(--fil-fonce); }
 .liste-carte .icone { width: 18px; height: 18px; }
+
+/* ---------- Grands menus, version compacte : un bloc posé sous son bouton, aux couleurs du site */
+@media (min-width: 1001px) {
+  .mm-item { position: relative; }
+  .mm-panneau { left: 50%; right: auto; top: calc(100% + 12px); transform: translateX(-50%); width: min(760px, calc(100vw - 32px));
+    border: 1px solid var(--trait); border-top: 3px solid var(--fil); border-radius: 18px; box-shadow: 0 26px 50px -24px rgba(35, 31, 32, .45); }
+  .mm-panneau::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }  /* la souris passe du bouton au bloc */
+  .mm-item:last-child .mm-panneau { left: auto; right: 0; transform: none; width: min(600px, calc(100vw - 32px)); }
+  .mm-panneau .cadre { width: auto; max-width: none; padding: 0; margin: 0; }
+  .mm-grille { grid-template-columns: 200px repeat(3, minmax(0, 1fr)); gap: 18px; padding: 16px; }
+  #mm-recruter .mm-grille { grid-template-columns: 200px repeat(2, minmax(0, 1fr)); }
+  .mm-une { padding: 16px; border-radius: 14px; gap: 6px; border-bottom-width: 3px; }
+  .mm-une b { font-size: 1.15rem; }
+  .mm-une span:not(.mm-une-sur):not(.mm-une-aller) { font-size: .84rem; line-height: 1.45; }
+  .mm-une-sur { font-size: .66rem; }
+  .mm-une-aller { font-size: .84rem; padding: 8px 12px; border-radius: 9px; white-space: normal; }
+  .mm-colonne { padding-top: 4px; }
+  .mm-titre { font-size: .66rem; margin-bottom: 4px; }
+  .mm-titre-2 { margin-top: 10px; }
+  .mm-colonne a { padding: 5px 8px; margin: 0 -8px; border-radius: 8px; }
+  .mm-colonne b { font-size: .86rem; font-weight: 700; }
+  .mm-colonne small { font-size: .74rem; line-height: 1.3; }
+}
+.une-note { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 6px; }

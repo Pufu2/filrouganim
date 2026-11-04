@@ -1,4 +1,4 @@
-// La fenêtre « Filtres » : chaque liste du formulaire (formation, étape, quand, année, formule, budget) devient
+// La fenêtre « Filtres » : chaque liste du formulaire (formation, étape, budget) devient
 // un groupe de boutons. Un bouton règle la liste correspondante et prévient le formulaire (événement « change ») :
 // sur la page des sessions, filtres.js filtre alors en direct et renvoie le nombre de sessions (« sessions:compte »).
 (function () {
@@ -11,6 +11,10 @@
     var afficherBtn = form.querySelector("[data-afficher]");
     var selects = Array.prototype.slice.call(form.querySelectorAll(".rv-champs select"));
     var dernierFocus = null;
+    // « Quand ? » : les douze prochains mois et les vacances scolaires, chacun avec son année (mois + année d'un coup)
+    var quand = { mois: [], vacances: [] };
+    try { quand = JSON.parse(form.querySelector("[data-quand]").textContent); } catch (e) {}
+    var AVEC_VACANCES = ["", "BAFA", "BAFD", "PSC1"];  // les formations courtes, qui se font pendant les vacances
 
     function el(tag, classe, texte) {
       var e = document.createElement(tag);
@@ -45,9 +49,46 @@
       });
       return b;
     }
+    function boutonQuand(x) {
+      var mois = form.elements.mois, annee = form.elements.annee;
+      var b = el("button", "ff-puce", x[0]);
+      b.type = "button";
+      var choisi = mois.value === x[1] && annee.value === x[2];
+      b.setAttribute("aria-pressed", choisi ? "true" : "false");
+      b.addEventListener("click", function () {
+        mois.value = choisi ? "" : x[1];
+        annee.value = choisi ? "" : x[2];
+        prevenir(mois); prevenir(annee);
+        rendre();
+      });
+      return b;
+    }
+    function groupeQuand() {
+      var g = el("div", "ff-groupe");
+      g.appendChild(el("h3", null, "Quand ?"));
+      var vacances = AVEC_VACANCES.indexOf(form.elements.diplome.value) !== -1 && quand.vacances.length;
+      if (vacances) {
+        g.appendChild(el("p", "ff-sous", "Vacances scolaires"));
+        var l1 = el("div", "ff-puces");
+        quand.vacances.forEach(function (x) { l1.appendChild(boutonQuand(x)); });
+        g.appendChild(l1);
+        g.appendChild(el("p", "ff-sous", "Mois"));
+      }
+      var l2 = el("div", "ff-puces");
+      quand.mois.forEach(function (x) { l2.appendChild(boutonQuand(x)); });
+      g.appendChild(l2);
+      return g;
+    }
     function rendre() {
       groupes.textContent = "";
+      // des vacances choisies n'ont plus de sens pour un diplôme pro : on les retire
+      if (AVEC_VACANCES.indexOf(form.elements.diplome.value) === -1 && /^v:/.test(form.elements.mois.value)) {
+        form.elements.mois.value = ""; form.elements.annee.value = "";
+        prevenir(form.elements.mois); prevenir(form.elements.annee);
+      }
       selects.forEach(function (select) {
+        if (select.name === "mois") { groupes.appendChild(groupeQuand()); return; }
+        if (select.name === "annee") return;  // l'année est dans « Quand ? »
         if (select.name === "type" && !form.elements.diplome.value) return;  // l'étape vient après la formation
         var options = Array.prototype.filter.call(select.options, function (o) { return proposee(select, o); });
         if (!options.length) return;
@@ -78,7 +119,8 @@
       compter();
     }
     function compter() {
-      var n = selects.filter(function (s) { return s.value; }).length + (form.elements.q.value.trim() ? 1 : 0);
+      var n = selects.filter(function (s) { return s.value && s.name !== "annee"; }).length + (form.elements.q.value.trim() ? 1 : 0);
+      if (!form.elements.mois.value && form.elements.annee.value) n++;
       pastille.textContent = n;
       pastille.hidden = n === 0;
     }
