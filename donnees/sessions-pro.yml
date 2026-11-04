@@ -3006,6 +3006,26 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-04
     source: "catalogue-apprentissage"
+  - id: app-e49410b53b-20270112
+    organisme: null
+    organisme_nom: "Askoria"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-01-12
+    fin: 2027-12-31
+    ville: "Rennes"
+    departement: "35"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "1 an en alternance"
+    aides: []
+    complet: false
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117929616170001879296161700018-35238%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: "catalogue-apprentissage"
   - id: app-61b6be3ac4-20270112
     organisme: null
     organisme_nom: "Innovaformation"
@@ -4246,6 +4266,26 @@ sessions:
     releve_le: 2026-10-29
     verifie_le: 2026-11-04
     source: "catalogue-apprentissage"
+  - id: app-2ef26340ba-20270901
+    organisme: null
+    organisme_nom: "IRSS Angers"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-09-01
+    fin: 2028-08-31
+    ville: "Angers"
+    departement: "49"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "1 an en alternance"
+    aides: []
+    complet: false
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500271-49007%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
+    releve_le: 2026-11-04
+    verifie_le: 2026-11-04
+    source: "catalogue-apprentissage"
   - id: app-3d13036688-20270901
     organisme: null
     organisme_nom: "IRSS Cholet"
@@ -4264,6 +4304,26 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113344121450026333441214500081-49099%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-29
+    verifie_le: 2026-11-04
+    source: "catalogue-apprentissage"
+  - id: app-ef27463cbd-20270902
+    organisme: null
+    organisme_nom: "EMSAT Saleilles"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-09-02
+    fin: 2028-08-31
+    ville: "Saleilles"
+    departement: "66"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "1 an en alternance"
+    aides: []
+    complet: false
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01115322683230004753226832300047-66189%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: "catalogue-apprentissage"
   - id: app-1435d2882c-20270903
@@ -4464,6 +4524,26 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01113999262600004939992626000049-58194%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-28
+    verifie_le: 2026-11-04
+    source: "catalogue-apprentissage"
+  - id: app-988ccaa483-20270915
+    organisme: null
+    organisme_nom: "INFA Pau"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-09-15
+    fin: 2028-11-10
+    ville: "Pau"
+    departement: "64"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "1 an en alternance"
+    aides: []
+    complet: false
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117857402910104678574029101046-64445%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: "catalogue-apprentissage"
   - id: app-173ea75e2f-20270920
@@ -4724,6 +4804,26 @@ sessions:
     complet: false
     url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01114219682490002742196824900027-54395%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
     releve_le: 2026-10-26
+    verifie_le: 2026-11-04
+    source: "catalogue-apprentissage"
+  - id: app-6426d1d5a3-20271005
+    organisme: null
+    organisme_nom: "Askoria"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2027-10-05
+    fin: 2028-10-11
+    ville: "Saint-Brieuc"
+    departement: "22"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "1 an en alternance"
+    aides: []
+    complet: false
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/117943P01117929616170001879296161700034-22278%23L01/specialite-animateur-mention-animation-socio-educative-ou-culturelle-bp-jeps"
+    releve_le: 2026-11-04
     verifie_le: 2026-11-04
     source: "catalogue-apprentissage"
   - id: app-990d1fccc9-20271005
