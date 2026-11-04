@@ -5,7 +5,7 @@
 {% block tete_chapo %}<p class="chapo">Les sessions de BAFA, de BAFD, de PSC1 et des diplômes professionnels partout en France, et toutes les formations pour aller plus loin.</p>{% endblock %}
 {% block tete_plus %}<ul class="chiffres"><li><b>{{ stats.nb }}</b> sessions à venir</li><li><b>{{ stats.nb_organismes }}</b> organismes</li>{% if stats.verifie_le %}<li>vérifiées le <b>{{ stats.verifie_le | date_fr(False) }}</b></li>{% endif %}</ul>{% endblock %}
 {% block contenu %}
-<div class="recherche-une recherche-une-page"><div class="cadre">{{ m.recherche_onglets(lien, departements, onglets=False) }}</div></div>
+<div class="recherche-une recherche-une-page"><div class="cadre">{{ m.recherche_ville(lien, departements) }}</div></div>
 <section class="bande bande-papier" aria-labelledby="t-formations">
   <div class="cadre">
     <h2 id="t-formations">Les formations, du premier job d'été au métier</h2>
@@ -20,4 +20,4 @@
 </section>
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endblock %}
-
+{% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script><script src="{{ statique('js/fenetre-filtres.js') }}" defer></script>{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% set c = stats.chiffres %}
+{% block tete_note %}<p class="surtitre">Transparence totale</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre chiffres-page">
+    {{ m.bloc_chiffres(c, lien) }}
+
+    <div class="chiffres-deux">
+      <section class="chiffres-carte">
+        <h2>Combien coûte une formation&nbsp;?</h2>
+        <table class="tableau-chiffres">
+          <thead><tr><th>Formation</th><th>Le moins cher</th><th>Prix médian</th><th>Le plus cher</th></tr></thead>
+          <tbody>
+            {% for nom, x in [("BAFA, formation générale", c.bafa_fg), ("BAFA, approfondissement", c.bafa_ap), ("BAFD, formation générale", c.bafd_fg), ("PSC (premiers secours)", c.psc)] if x %}
+            <tr><th>{{ nom }}</th><td>{{ x.min }} €</td><td><b>{{ x.mediane }} €</b></td><td>{{ x.max }} €</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="petit">Prix affichés par les organismes, toutes formules confondues (externat, demi-pension, internat). Des aides existent : <a href="{{ lien('/se-former/financer-son-bafa/') }}">financer son BAFA</a>.</p>
+      </section>
+      <section class="chiffres-carte">
+        <h2>Les sessions par formation</h2>
+        <ul class="lignes-chiffres">
+          {% for nom, n in c.par_diplome %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
+        </ul>
+        {% if c.vacances %}<p class="petit"><b>{{ c.vacances.n }}</b> sessions pendant les prochaines vacances ({{ c.vacances.nom }}).</p>{% endif %}
+      </section>
+    </div>
+
+    <div class="chiffres-deux">
+      <section class="chiffres-carte">
+        <h2>Les sessions par région</h2>
+        <ul class="lignes-chiffres">
+          {% for nom, n in c.par_region %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
+        </ul>
+      </section>
+      <section class="chiffres-carte">
+        <h2>Les organismes qui ont le plus de sessions</h2>
+        <ul class="lignes-chiffres">
+          {% for nom, n in c.organismes_top %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
+        </ul>
+        <p class="petit">Aucun organisme ne paie pour apparaître ou être mieux placé. <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a></p>
+      </section>
+    </div>
+
+    <section class="chiffres-carte">
+      <h2>D'où viennent ces chiffres&nbsp;?</h2>
+      <p>Des pages publiques des organismes (UFCV, CEMEA, AFOCAL, IFAC, Ligue de l'enseignement, Croix-Rouge, Léo Lagrange, Protection civile…), de la liste officielle du ministère, du calendrier national des formations (FOROMES), du catalogue national de l'apprentissage (Réseau des Carif-Oref) et du catalogue Mon Compte Formation (Caisse des Dépôts). Le relevé tourne chaque nuit ; les sessions terminées disparaissent d'elles-mêmes.</p>
+      {% if stats.verifie_le %}<p class="petit">Dernière vérification : {{ stats.verifie_le | date_fr }}.</p>{% endif %}
+    </section>
+  </div>
+</section>
+{% endblock %}

@@ -4,7 +4,7 @@
 {% block h1 %}Trouver une formation{% endblock %}
 {% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
 {% block contenu %}
-<div class="barre-filtres"><div class="cadre">{{ m.recherche(lien, departements, periodes, aujourdhui, stats, en_direct=True) }}</div></div>
+<div class="recherche-une recherche-une-page"><div class="cadre">{{ m.recherche_ville(lien, departements, en_direct=True) }}</div></div>
 <section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
   <div class="cadre">
     <div class="resultats-tete">
@@ -40,4 +40,4 @@
 </section>
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endblock %}
-{% block scripts %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/filtres.js') }}" defer></script><script src="{{ statique('js/panneau.js') }}" defer></script>{% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/filtres.js') }}" defer></script><script src="{{ statique('js/fenetre-filtres.js') }}" defer></script>{% endblock %}

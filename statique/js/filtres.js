@@ -54,7 +54,7 @@
   function depuisCarte(c) {
     var d = c.dataset;
     return { el: c, d: { dep: d.dep, ville: d.ville, region: d.region, periode: d.periode, mois: d.mois, diplome: d.diplome, type: d.type,
-                         prix: d.prix, texte: sansAccents(d.texte) }, ok: true };
+                         prix: d.prix, formule: d.formule || "", texte: sansAccents(d.texte) }, ok: true };
   }
   var listes = Array.prototype.map.call(document.querySelectorAll(".sessions[data-par-page]"), function (conteneur) {
     var bouton = conteneur.nextElementSibling && conteneur.nextElementSibling.querySelector(".voir-plus");
@@ -208,6 +208,8 @@
     var f = form.elements;
     adapterChoix(form); adapterParcours();
     var dip = f.diplome.value, dep = f.dep.value, mois = f.mois.value, annee = f.annee.value, type = f.type.value;
+    var formule = f.formule ? f.formule.value : "", budget = f.budget ? f.budget.value : "";
+    var okPlus = function (d) { return (!formule || d.formule === formule) && (!budget || (d.prix !== "" && +d.prix <= +budget)); };
     var mots = sansAccents(f.q.value).split(/\s+/).filter(Boolean);
     liste.items.forEach(function (i) {
       var d = i.d;
@@ -216,13 +218,14 @@
         : dep.slice(0, 2) === "v:" ? (ville === sansAccents(v) || ville.indexOf(sansAccents(v) + " ") === 0) : d.dep === dep);
       var okQuand = (!annee || d.mois.slice(0, 4) === annee) && (!mois || (mois.slice(0, 2) === "v:"
         ? d.periode.replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
-      i.okSansLieu = (!dip || d.diplome === dip) && okQuand && (!type || d.type === type) &&
+      i.okSansLieu = (!dip || d.diplome === dip) && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
-      i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) &&
+      i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
     });
     liste.limite = liste.par;
     var n = afficher(liste);
+    document.dispatchEvent(new CustomEvent("sessions:compte", { detail: n }));
     afficherEcoles(dip, type, dep);
     if (plan) { majCarte(); cadrer(); }
     compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
@@ -411,7 +414,8 @@
       appliquer(true);
       document.getElementById("resultats").scrollIntoView({ behavior: "smooth" });
     });
-    if (params.toString()) appliquer(false); else { adapterChoix(form); adapterParcours(); afficher(liste); }
+    if (params.toString()) appliquer(false);
+    else { adapterChoix(form); adapterParcours(); document.dispatchEvent(new CustomEvent("sessions:compte", { detail: afficher(liste) })); }
   }
 
   // toutes les sessions de France : chargées une fois, puis filtrées sur place
@@ -423,7 +427,7 @@
     liste.items = donnees.map(function (x) {
       return { x: x, el: null, ok: true, okSansLieu: true, d: {
         dep: x.d, ville: x.v, region: x.r, periode: x.p, mois: x.m, diplome: x.di, type: x.di + "-" + (x.sp || x.t),
-        prix: x.px === null ? "" : x.px,
+        prix: x.px === null ? "" : x.px, formule: x.fo || "",
         texte: sansAccents([x.v, x.dn2, x.d, x.th || "", x.o, x.tn, x.dl, x.spn || "", x.spg || ""].join(" ")) } };
     });
     compte.textContent = donnees.length + " sessions à venir";
