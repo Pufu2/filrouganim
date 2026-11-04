@@ -103,11 +103,11 @@ def main():
                          f'à partir du {debut}, {html.escape(CONTRATS.get(o["contrat"], o["contrat"]))}</li>')
         stop = f"{site}/alertes/desabonnement/?j={p['jeton_alertes']}"
         n = len(pour)
-        sujet = f"{n} nouvelle{'s' if n > 1 else ''} offre{'s' if n > 1 else ''} d'animation près de chez toi"
+        sujet = f"{n} nouvelle{'s' if n > 1 else ''} offre{'s' if n > 1 else ''} d'animation près de chez vous"
         texte = (f"Bonjour {p['prenom']},\n\nCette semaine sur {config['nom']} :\n\n" + "\n".join(lignes) +
-                 f"\n\nTu postules avec ton profil, en un clic.\n\nNe plus recevoir ces e-mails : {stop}\n")
+                 f"\n\nVous postulez avec votre profil, en un clic.\n\nNe plus recevoir ces e-mails : {stop}\n")
         corps = (f"<p>Bonjour {html.escape(p['prenom'])},</p><p>Cette semaine sur {html.escape(config['nom'])} :</p>"
-                 f"<ul>{''.join(items)}</ul><p>Tu postules avec ton profil, en un clic.</p>"
+                 f"<ul>{''.join(items)}</ul><p>Vous postulez avec votre profil, en un clic.</p>"
                  f'<p style="font-size:13px;color:#6e655d"><a href="{html.escape(stop)}">Ne plus recevoir ces e-mails</a></p>')
         if args.essai:
             print(f"(essai) {n} offre(s) pour un candidat du {p['departement']}")

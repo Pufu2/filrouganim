@@ -131,8 +131,8 @@
     </div>
 
     <div class="carte-compte" id="bloc-offres-pour-toi" hidden>
-      <h2>Les offres pour toi</h2>
-      <p class="petit">Les offres en ligne dans ton département et là où tu peux travailler. Tu postules en un clic, avec ton profil.</p>
+      <h2>Les offres pour vous</h2>
+      <p class="petit">Les offres en ligne dans votre département et là où vous pouvez travailler. Vous postulez en un clic, avec votre profil.</p>
       <div id="liste-offres-pour-toi" class="liste-compte"></div>
     </div>
 
@@ -156,7 +156,7 @@
       <label class="champ"><span>Mes activités et talents (séparés par des virgules, 10 au plus)</span><input name="activites" maxlength="320" placeholder="Ex. : grands jeux, guitare, théâtre, cuisine, anglais"></label>
       <label class="case-accord"><input type="checkbox" name="permis_b"> J'ai le permis B</label>
       <fieldset><legend>Je peux aussi travailler…</legend>
-        <p class="petit">Les départements de ta région (choisis d'abord ton département plus haut).</p>
+        <p class="petit">Les départements de votre région (choisissez d'abord votre département plus haut).</p>
         <div class="cases" id="cases-mobilite">{% for d in departements %}<label data-region="{{ d.region }}" hidden><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label data-region="toutes"><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
       </fieldset>
       <label class="champ"><span>Quelques mots sur vous (expériences, envies, activités préférées)</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>

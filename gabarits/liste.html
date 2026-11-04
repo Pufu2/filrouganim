@@ -50,12 +50,12 @@
 <section class="bande bande-blanc" aria-labelledby="t-recrutent">
   <div class="cadre">
     <p class="note-main">après la formation</p>
-    <h2 id="t-recrutent">{% if offres_dep %}Les structures {{ page.departement.de | default("de " ~ page.departement.nom) }} recrutent{% else %}Ton stage pratique, ensuite{% endif %}</h2>
+    <h2 id="t-recrutent">{% if offres_dep %}Les structures {{ page.departement.de | default("de " ~ page.departement.nom) }} recrutent{% else %}Votre stage pratique, ensuite{% endif %}</h2>
     {% if offres_dep %}
     <div class="sessions">{% for o in offres_dep[:4] %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>
     <p><a href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ page.departement.code }}">{{ offres_dep | length }} offre{{ 's' if offres_dep | length > 1 }} dans ce département</a></p>
     {% else %}
-    <p>Après la formation générale, il faut un stage pratique de 14 jours. Crée ton profil gratuit : les structures vérifiées {{ page.departement.de | default("de " ~ page.departement.nom) }} peuvent te trouver et t'écrire.</p>
+    <p>Après la formation générale, il faut un stage pratique de 14 jours. Créez votre profil gratuit : les structures vérifiées {{ page.departement.de | default("de " ~ page.departement.nom) }} peuvent vous trouver et vous écrire.</p>
     <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
     {% endif %}
   </div>
