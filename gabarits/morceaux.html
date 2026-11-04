@@ -119,13 +119,13 @@
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Quelle formation ?</legend>
       <div class="ro-puces">
-        {% for d in diplomes if d.id in ["BAFA", "BAFD", "PSC1", "BPJEPS", "DEJEPS"] %}<label class="ro-puce"><input type="radio" name="diplome" value="{{ d.id }}"{% if loop.first %} checked{% endif %}><span>{{ d.nom }}</span></label>{% endfor %}
+        {% for d in diplomes if d.id != "CC-ACM" %}<label class="ro-puce"><input type="radio" name="diplome" value="{{ d.id }}"{% if loop.first %} checked{% endif %}><span>{{ d.nom }}</span></label>{% endfor %}
       </div>
     </fieldset>
     <div class="ro-ou">
       <label class="ro-titre" for="ro-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-ou" name="ou" type="search" placeholder="Ville, département, code postal" autocomplete="off" enterkeyhint="search"></span>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-ou" name="ou" type="search" placeholder="Ville, département, code postal" autocomplete="off" enterkeyhint="search" data-villes></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Rechercher</button>
       </div>
     </div>
@@ -177,6 +177,86 @@
   </script>
   {% endif %}
 </div>
+{% endmacro %}
+
+{# Les chiffres publics (accueil) : quatre tuiles, les sessions des six prochains mois, les dernières sessions ajoutées #}
+{% macro bloc_chiffres(c, lien) %}
+<section class="chiffres-bloc" aria-labelledby="t-chiffres">
+  <div class="chiffres-tete">
+    <div>
+      <p class="surtitre-clair">Transparence totale</p>
+      <h2 id="t-chiffres">Tous les chiffres du site sont publics.</h2>
+      <p>Les sessions, les prix et les dates : les vrais chiffres, recalculés chaque jour à partir des sessions en ligne. Pas de vitrine gonflée.</p>
+    </div>
+    <a class="bouton-r" href="{{ lien('/chiffres/') }}">Voir tous les chiffres <span aria-hidden="true">→</span></a>
+  </div>
+  <ul class="chiffres-tuiles">
+    <li><b>{{ "{:,}".format(c.nb).replace(",", " ") }}</b><span>sessions à venir</span><small>BAFA, BAFD, PSC, diplômes pros</small></li>
+    <li><b>{{ c.organismes }}</b><span>organismes comparés</span><small>dans {{ c.deps }} départements</small></li>
+    <li><b>{% if c.bafa_fg %}{{ c.bafa_fg.mediane }} €{% else %}–{% endif %}</b><span>prix médian du BAFA</span><small>{% if c.bafa_fg %}formation générale, de {{ c.bafa_fg.min }} à {{ c.bafa_fg.max }} €{% endif %}</small></li>
+    <li><b>{{ c.ecoles_pro }}</b><span>écoles pour les diplômes pros</span><small>CPJEPS, BPJEPS, DEJEPS, DESJEPS</small></li>
+  </ul>
+  <div class="chiffres-deux">
+    <div class="chiffres-carte">
+      <p class="surtitre-clair">Sessions des six prochains mois</p>
+      <ol class="barres" aria-label="Nombre de sessions par mois">
+        {% for x in c.mois %}<li><span class="barre-n">{{ x.n }}</span><span class="barre-piste"><span class="barre" style="height: {{ [x.h, 4] | max }}%" title="{{ x.n }} sessions en {{ x.long }}"></span></span><span class="barre-mois">{{ x.nom }}</span></li>{% endfor %}
+      </ol>
+    </div>
+    <div class="chiffres-carte">
+      <p class="surtitre-clair">Les dernières sessions ajoutées</p>
+      <ul class="recentes">
+        {% for r in c.recentes %}<li><span class="etiquette">{{ r.diplome }}</span><b>{{ r.ville }}</b><span class="recentes-date">{{ r.debut }}</span></li>{% endfor %}
+      </ul>
+      <p class="petit">Le diplôme, la ville et le mois de début : le détail est dans la recherche.</p>
+    </div>
+  </div>
+</section>
+{% endmacro %}
+
+{# Le bandeau « Où ? » + le bouton Filtres, qui ouvre une fenêtre de boutons (formation, étape, quand, formule, budget, mot-clé).
+   Sur /se-former/sessions/ (en_direct) la liste se filtre en direct ; ailleurs, le formulaire mène à cette page. #}
+{% macro recherche_ville(lien, departements, en_direct=False) %}
+{% set k = 'f' if en_direct else 'a' %}
+<form class="recherche rv" action="{{ lien('/se-former/sessions/') }}" method="get"{% if en_direct %} id="filtres"{% endif %} role="search" aria-label="Chercher une formation" data-fenetre-filtres>
+  <div class="rv-ligne">
+    <div class="rv-champ case-ou">{{ icone("lieu") }}<label class="sr" for="ou-{{ k }}">Où ?</label>
+      <input id="ou-{{ k }}" name="ou" type="search" list="lieux-{{ k }}" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>
+      <input type="hidden" name="dep" value="">
+      <datalist id="lieux-{{ k }}">
+        {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
+        {% for r in regions | sort(attribute="nom") %}<option value="{{ r.nom }} (région)" data-dep="r:{{ r.id }}"></option>{% endfor %}
+        {% for nom, v in filtres.villes %}<option value="{{ nom }}" data-dep="{{ v }}"></option>{% endfor %}
+      </datalist>
+      {% if not en_direct %}<button class="bouton-r rv-aller" type="submit">{{ icone("cherche") }}Rechercher</button>{% endif %}
+    </div>
+    <button class="bouton-filtres" type="button" data-ouvrir aria-haspopup="dialog">{{ icone("reglages") }}Filtres <span class="pastille-n" data-nb hidden></span></button>
+  </div>
+  {# les vrais champs du formulaire : la fenêtre les règle avec des boutons #}
+  <div class="rv-champs" hidden>
+    <select name="diplome" data-titre="Votre formation"><option value="">Toutes</option>{% for d in diplomes if d.id != 'CC-ACM' %}<option value="{{ d.id }}">{{ d.nom }}</option>{% endfor %}</select>
+    <span data-titre-etape hidden></span>
+    <select name="type" data-titre="Votre étape ou spécialité"><option value="">Toutes</option>{% for g in filtres.etapes %}<optgroup label="{{ g.titre }}" data-diplome="{{ g.diplome }}">{% for v, nom in g.options %}<option value="{{ v }}" data-diplome="{{ g.diplome }}">{{ nom }}</option>{% endfor %}</optgroup>{% endfor %}</select>
+    <select name="mois" data-titre="Quand ?"><option value="">Toutes les dates</option><optgroup label="Mois">{% for mo in ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"] %}<option value="m:{{ '%02d' % loop.index }}">{{ mo | majuscule }}</option>{% endfor %}</optgroup><optgroup label="Vacances scolaires">{% for v, nom in filtres.vacances %}<option value="v:{{ v }}">{{ nom }}</option>{% endfor %}</optgroup></select>
+    <select name="annee" data-titre="Quelle année ?"><option value="">Toutes</option>{% for a in filtres.annees %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
+    <select name="formule" data-titre="Formule"><option value="">Toutes</option>{% for v, nom in filtres.formules %}<option value="{{ v }}">{{ nom }}</option>{% endfor %}</select>
+    <select name="budget" data-titre="Budget"><option value="">Tous</option>{% for di, b, nom in filtres.budgets %}<option value="{{ b }}" data-diplome="{{ di or '' }}">{{ nom }}</option>{% endfor %}</select>
+  </div>
+  <div class="ff-voile" data-voile hidden>
+    <div class="ff" role="dialog" aria-modal="true" aria-labelledby="ff-titre-{{ k }}">
+      <div class="ff-tete"><h2 id="ff-titre-{{ k }}">Filtres</h2><button class="ff-fermer" type="button" data-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="ff-corps">
+        <div data-groupes></div>
+        <div class="ff-groupe"><h3><label for="q-{{ k }}">Mot-clé</label></h3>
+          <span class="ff-mot">{{ icone("cherche") }}<input id="q-{{ k }}" name="q" type="search" placeholder="Organisme, thème, ville…" autocomplete="off"></span></div>
+      </div>
+      <div class="ff-pied">
+        <button class="lien-effacer" type="button" data-effacer>Tout effacer</button>
+        {% if en_direct %}<button class="bouton-r" type="button" data-afficher>Afficher les sessions</button>{% else %}<button class="bouton-r" type="submit">Voir les sessions <span aria-hidden="true">→</span></button>{% endif %}
+      </div>
+    </div>
+  </div>
+</form>
 {% endmacro %}
 
 {# Une session = une ligne compacte : la date, l'essentiel, le prix, le lien #}

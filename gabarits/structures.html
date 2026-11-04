@@ -20,7 +20,7 @@
 {% block contenu %}
 <div class="recherche-une recherche-une-page"><div class="cadre">
   <form class="annuaire-recherche" role="search" aria-label="Chercher une structure" onsubmit="return false">
-    <label class="champ-ou" for="q-structures">{{ m.icone("lieu") }}<span class="sr">Où cherchez-vous ?</span><input id="q-structures" type="search" placeholder="Où ? Ville, département : Lyon, 93, Gironde…" autocomplete="off"></label>
+    <label class="champ-ou" for="q-structures">{{ m.icone("lieu") }}<span class="sr">Où cherchez-vous ?</span><input id="q-structures" type="search" placeholder="Où ? Ville, département : Lyon, 93, Gironde…" autocomplete="off" data-villes data-villes-valeur="nom"></label>
     <a class="bouton-filtres" href="{{ lien('/trouver-un-poste/offres/') }}">{{ m.icone("reglages") }}Voir les offres</a>
   </form>
   <div class="encart-besoin">
