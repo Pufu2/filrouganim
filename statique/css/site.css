@@ -1160,3 +1160,13 @@ html { scroll-padding-top: 90px; }
   .entete-cadre { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
   .entete-cadre > .mm, .entete-cadre > .entete-actions { margin: 0; }
 }
+
+/* ---------- Bandeau plus large (le logo et les boutons de compte s'écartent), menus mieux dessinés */
+.entete .cadre.entete-cadre { width: min(1280px, 100% - 48px); }
+@media (min-width: 1001px) {
+  .mm-panneau { border: 1.5px solid #ddd0bf; border-top: 4px solid var(--fil); overflow: hidden; }
+  .mm-une { transition: background .15s; }
+  .mm-une:hover { transform: none; background: #2e2829; }
+  .mm-une:hover .mm-une-aller { background: var(--fil-fonce); }
+}
+@media (min-width: 1001px) { .mm-panneau .cadre.mm-grille { padding: 16px; } }
