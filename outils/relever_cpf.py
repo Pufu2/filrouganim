@@ -11,7 +11,7 @@ moncompteformation_catalogueformation, Licence Ouverte Etalab), mis à jour chaq
 https://opendata.caissedesdepots.fr/explore/dataset/moncompteformation_catalogueformation/
 
 Ce catalogue donne, pour chaque école, le diplôme préparé, le département, la durée et le prix, mais pas les
-dates des rentrées. Sur le site, ces formations complètent les sessions datées (FOROMES, catalogue de
+dates des rentrées. On garde toutes les écoles, même sans session ouverte ce jour-là. Sur le site, ces formations complètent les sessions datées (FOROMES, catalogue de
 l'apprentissage) dans le bloc « Les écoles qui forment à ce diplôme ». Comme pour les sessions, on ne garde
 que des faits (école, diplôme, département, durée, prix) et jamais les textes des écoles.
 """
@@ -104,8 +104,7 @@ def releve():
             dep = "0" + dep
         if not sp or dep not in DEPS or not x.get("nom_of"):
             continue
-        if not (x.get("nb_session_active") or 0):
-            continue  # formation sans session ouverte : rien à proposer
+        # toutes les écoles du catalogue, même sans session ouverte aujourd'hui : elles forment au diplôme
         cle = (x.get("siret") or sans_accents(x["nom_of"]), diplome, sp, dep)
         prix_min, prix_max = x.get("frais_ttc_tot_min"), x.get("frais_ttc_tot_max")
         f = formations.setdefault(cle, {"organisme_nom": nom_organisme(x["nom_of"]), "siret": x.get("siret"),

@@ -225,12 +225,23 @@
     });
     liste.limite = liste.par;
     var n = afficher(liste);
-    document.dispatchEvent(new CustomEvent("sessions:compte", { detail: n }));
-    afficherEcoles(dip, type, dep);
+    var nEcoles = afficherEcoles(dip, type, dep);
+    var modeEcoles = PRO.indexOf(dip) !== -1;
+    document.getElementById("resultats").classList.toggle("mode-ecoles", modeEcoles);
+    if (modeEcoles) {
+      document.dispatchEvent(new CustomEvent("sessions:compte", { detail: nEcoles === null ? null : nEcoles }));
+    } else {
+      document.dispatchEvent(new CustomEvent("sessions:compte", { detail: n }));
+    }
     if (plan) { majCarte(); cadrer(); }
-    compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
-      ", de la plus proche à la plus lointaine.";
-    aucune.hidden = n > 0;
+    if (modeEcoles) {
+      compte.textContent = nEcoles === null ? "Chargement des écoles…" : nEcoles + (nEcoles > 1 ? " écoles forment au " : " école forme au ") + dip;
+      aucune.hidden = true;
+    } else {
+      compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
+        ", de la plus proche à la plus lointaine.";
+      aucune.hidden = n > 0;
+    }
     if (majAdresse) {
       var p = new URLSearchParams();
       Array.prototype.forEach.call(form.elements, function (e) {
@@ -244,51 +255,63 @@
   }
 
   // Les écoles qui forment à un diplôme pro (leur prochaine rentrée n'est souvent pas encore déclarée)
+  // Diplômes pros (CPJEPS, BPJEPS, DEJEPS, DESJEPS) : la liste des écoles qui forment remplace les sessions.
+  // Renvoie le nombre d'écoles, ou null tant que la liste n'est pas chargée.
+  var PRO = ["CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"];
   var blocEcoles = document.getElementById("ecoles"), ecoles = null;
   function afficherEcoles(dip, type, dep) {
-    if (!blocEcoles) return;
-    if (!dip || ["BAFA", "BAFD", "PSC1"].indexOf(dip) !== -1) { blocEcoles.hidden = true; return; }
+    if (!blocEcoles) return null;
+    if (PRO.indexOf(dip) === -1) { blocEcoles.hidden = true; return null; }
     if (!ecoles) {
-      ecoles = [];
+      ecoles = "chargement";
       fetch(blocEcoles.dataset.source).then(function (r) { return r.json(); }).then(function (d) {
-        ecoles = d; afficherEcoles(form.elements.diplome.value, form.elements.type.value, form.elements.dep.value);
-      }).catch(function () {});
-      return;
+        ecoles = d; appliquer(false);
+      }).catch(function () { ecoles = []; appliquer(false); });
+      return null;
     }
+    if (ecoles === "chargement") return null;
     var v = sansAccents(dep.slice(2));
+    var mots = sansAccents(form.elements.q.value).split(/\s+/).filter(Boolean);
     var choix = ecoles.filter(function (e) {
-      var ville = sansAccents(e.v);
+      var ville = sansAccents(e.v), texte = sansAccents(e.o + " " + e.v + " " + (e.spn || ""));
       return e.di === dip && (!type || type === e.di + "-" + e.sp) && (!dep ||
-        (dep.slice(0, 2) === "r:" ? e.r === dep.slice(2) : dep.slice(0, 2) === "v:" ? (ville === v || ville.indexOf(v + " ") === 0) : e.d === dep));
+        (dep.slice(0, 2) === "r:" ? e.r === dep.slice(2) : dep.slice(0, 2) === "v:" ? (ville === v || ville.indexOf(v + " ") === 0) : e.d === dep)) &&
+        mots.every(function (m) { return texte.indexOf(m) !== -1; });
     });
     var ul = document.getElementById("ecoles-liste");
     ul.textContent = "";
-    // d'abord les écoles du catalogue Mon Compte Formation (avec prix), puis celles qui ont ouvert une session dans l'année
-    choix.sort(function (a, b) { return (b.cpf ? 1 : 0) - (a.cpf ? 1 : 0) || a.d.localeCompare(b.d) || a.o.localeCompare(b.o); });
+    // d'abord celles qui ont une rentrée datée, puis par département
+    choix.sort(function (a, b) { return (b.pr_t ? 1 : 0) - (a.pr_t ? 1 : 0) || a.d.localeCompare(b.d) || a.o.localeCompare(b.o); });
     var euros = function (n) { return n.toLocaleString("fr-FR") + " €"; };
     choix.forEach(function (e) {
-      var li = el("li"); li.appendChild(el("b", null, e.o));
-      var infos = [e.v + " (" + e.d + ")"];
-      if (e.spn) infos.push(e.spn);
-      if (e.cpf) {
-        if (e.h) infos.push(e.h.toLocaleString("fr-FR") + " h");
-        if (e.px) infos.push(e.pxm && e.pxm !== e.px ? "de " + euros(e.px) + " à " + euros(e.pxm) : euros(e.px));
-        if (e.dist) infos.push("en partie à distance");
-        infos.push("éligible au CPF");
-      } else infos.push("dernière rentrée : " + e.dr);
-      li.appendChild(el("small", null, infos.join(" · ")));
-      if (e.u) {
-        var a = el("a", "ecole-lien", "Coordonnées de l'école");
-        a.href = e.u; a.target = "_blank"; a.rel = "noopener nofollow";
-        li.appendChild(a);
-      }
+      var li = el("li", "ecole");
+      var corps = el("div", "ecole-corps");
+      corps.appendChild(el("b", "ecole-nom", e.o));
+      corps.appendChild(el("span", "ecole-lieu", e.v + " (" + e.d + ")" + (e.spn ? " · " + e.spn : "")));
+      var puces = el("span", "ecole-puces");
+      if (e.pr_t) puces.appendChild(el("span", "ecole-puce ecole-rentree", "Prochaine rentrée : " + e.pr_t));
+      else if (e.dr) puces.appendChild(el("span", "ecole-puce", "Dernière rentrée : " + e.dr));
+      if (e.px) puces.appendChild(el("span", "ecole-puce", e.pxm && e.pxm !== e.px ? "de " + euros(e.px) + " à " + euros(e.pxm) : "dès " + euros(e.px)));
+      if (e.h) puces.appendChild(el("span", "ecole-puce", e.h.toLocaleString("fr-FR") + " h"));
+      if (e.cpf) puces.appendChild(el("span", "ecole-puce", "Éligible au CPF"));
+      if (e.dist) puces.appendChild(el("span", "ecole-puce", "En partie à distance"));
+      if (puces.childNodes.length) corps.appendChild(puces);
+      li.appendChild(corps);
+      var a = el("a", "ecole-lien", e.recherche ? "Chercher l'école" : /annuaire-entreprises/.test(e.u) ? "Coordonnées" : "Voir la formation");
+      a.href = e.u; a.target = "_blank"; a.rel = "noopener nofollow";
+      a.appendChild(el("span", "sr", " : " + e.o + " (nouvel onglet)"));
+      a.appendChild(document.createTextNode(" →"));
+      li.appendChild(a);
       ul.appendChild(li);
     });
+    var nom = (choix[0] || ecoles.filter(function (e) { return e.di === dip; })[0] || { dn: dip }).dn;
     document.getElementById("ecoles-titre").textContent = choix.length
-      ? choix.length + (choix.length > 1 ? " écoles forment" : " école forme") + " au " + choix[0].dn + (dep ? " dans ce secteur" : " en France")
-      : "Aucune autre école connue pour ce diplôme dans ce secteur";
+      ? choix.length + (choix.length > 1 ? " écoles forment" : " école forme") + " au " + nom + (dep ? " dans ce secteur" : " en France")
+      : "Aucune école connue pour le " + nom + " dans ce secteur : essayez la région ou toute la France.";
     blocEcoles.hidden = false;
+    return choix.length;
   }
+
 
   // --- La carte : des bulles qui comptent les sessions, par département de loin et par ville de près
   var carteEl = document.getElementById("carte"), plan = null, calque = null;
