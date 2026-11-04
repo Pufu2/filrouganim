@@ -29,15 +29,12 @@
     <a class="logo" href="{{ lien('/') }}" aria-label="{{ site.nom }}, accueil">
       {% include "svg/logo-titre.svg" %}
     </a>
-    <nav class="menu" aria-label="Menu principal">
-      <a href="{{ lien('/se-former/') }}"{% if page.url.startswith('/se-former/') %} aria-current="page"{% endif %}>Se former</a>
-      <a href="{{ lien('/trouver-un-poste/') }}"{% if page.url.startswith('/trouver-un-poste/') %} aria-current="page"{% endif %}>Trouver un poste</a>
-      <a href="{{ lien('/recruter/') }}"{% if page.url.startswith('/recruter/') %} aria-current="page"{% endif %}>Recruter</a>
-    </nav>
+    {% include "menu.html" %}
     {% if site.comptes_ouverts %}<div class="entete-actions">
       <a class="bouton-espace" href="{{ lien('/compte/') }}"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Mon espace</a>
       <a class="bouton-commencer" href="{{ lien('/compte/') }}?inscription=1">Commencer <span aria-hidden="true">→</span></a>
     </div>{% endif %}
+    <button class="mm-tiroir" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 <main id="contenu">
@@ -100,6 +97,7 @@
 {% block scripts %}{% endblock %}
 <script type="application/json" id="villes-populaires">{{ stats.villes | tojson }}</script>
 <script src="{{ statique('js/villes.js') }}" defer></script>
+<script src="{{ statique('js/menu.js') }}" defer></script>
 <script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>24);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
 </body>
 </html>

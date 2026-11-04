@@ -127,6 +127,20 @@
     }
     form.elements.q.addEventListener("input", compter);
     form.addEventListener("change", compter);
+    // une page de liste (région, département…) remplit d'avance le lieu et les critères de sa liste
+    if (form.dataset.preset) {
+      var pre = new URLSearchParams(form.dataset.preset);
+      ["diplome", "type", "mois", "annee", "dep"].forEach(function (nom) {
+        if (pre.get(nom) && form.elements[nom]) {
+          form.elements[nom].value = pre.get(nom);
+          if (form.elements[nom].tagName === "SELECT") prevenir(form.elements[nom]);
+        }
+      });
+      if (pre.get("dep")) {
+        var opt = form.querySelector('datalist option[data-dep="' + pre.get("dep") + '"]');
+        if (opt) form.elements.ou.value = opt.value;
+      }
+    }
     // les valeurs reçues dans l'adresse (?diplome=BAFA…) sont posées par filtres.js : on recompte ensuite
     setTimeout(compter, 0);
     if (/[?&]filtres=ouverts/.test(location.search)) montrer(true);

@@ -16,6 +16,8 @@ langue: fr
 google_site_verification: ""
 # Mesure d'audience sans cookie (GoatCounter) : code du compte, vide = aucune mesure.
 goatcounter: ""
+# propriété Search Console lue par outils/audience.py (chiffres publics, voir docs/CHIFFRES.md)
+search_console: "sc-domain:filrouganim.fr"
 
 # Adresse de contact affichée sur le site. En attendant une adresse @filrouganim.fr : celle de Jeuphorie.
 email: contact@jeuphorie.fr

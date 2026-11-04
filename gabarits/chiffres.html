@@ -1,55 +1,40 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% set c = stats.chiffres %}
+{% set a = audience %}
 {% block tete_note %}<p class="surtitre">Transparence totale</p>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
   <div class="cadre chiffres-page">
-    {{ m.bloc_chiffres(c, lien) }}
-
+    {% if a %}
+    {{ m.bloc_chiffres(a, lien, lien_page=False) }}
     <div class="chiffres-deux">
       <section class="chiffres-carte">
-        <h2>Combien coûte une formation&nbsp;?</h2>
-        <table class="tableau-chiffres">
-          <thead><tr><th>Formation</th><th>Le moins cher</th><th>Prix médian</th><th>Le plus cher</th></tr></thead>
-          <tbody>
-            {% for nom, x in [("BAFA, formation générale", c.bafa_fg), ("BAFA, approfondissement", c.bafa_ap), ("BAFD, formation générale", c.bafd_fg), ("PSC (premiers secours)", c.psc)] if x %}
-            <tr><th>{{ nom }}</th><td>{{ x.min }} €</td><td><b>{{ x.mediane }} €</b></td><td>{{ x.max }} €</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <p class="petit">Prix affichés par les organismes, toutes formules confondues (externat, demi-pension, internat). Des aides existent : <a href="{{ lien('/se-former/financer-son-bafa/') }}">financer son BAFA</a>.</p>
+        <h2>Ce que ces chiffres veulent dire</h2>
+        <ul class="lignes-chiffres">
+          {% if a.visiteurs_30j is defined %}<li><span>Personnes venues sur le site ces 30 derniers jours</span><b>{{ "{:,}".format(a.visiteurs_30j).replace(",", " ") }}</b></li>{% endif %}
+          {% if a.impressions_28j is defined %}<li><span>Fois où le site est apparu dans une recherche Google (28 jours)</span><b>{{ "{:,}".format(a.impressions_28j).replace(",", " ") }}</b></li>{% endif %}
+          {% if a.clics_28j is defined %}<li><span>Clics depuis Google vers le site (28 jours)</span><b>{{ "{:,}".format(a.clics_28j).replace(",", " ") }}</b></li>{% endif %}
+          {% if a.animateurs is defined %}<li><span>Animateurs inscrits avec un profil</span><b>{{ a.animateurs }}</b></li>
+          <li><span>Structures inscrites</span><b>{{ a.structures }}</b></li>
+          <li><span>Offres en ligne</span><b>{{ a.offres }}</b></li>
+          <li><span>Candidatures envoyées</span><b>{{ a.candidatures }}</b></li>{% endif %}
+        </ul>
       </section>
       <section class="chiffres-carte">
-        <h2>Les sessions par formation</h2>
-        <ul class="lignes-chiffres">
-          {% for nom, n in c.par_diplome %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
-        </ul>
-        {% if c.vacances %}<p class="petit"><b>{{ c.vacances.n }}</b> sessions pendant les prochaines vacances ({{ c.vacances.nom }}).</p>{% endif %}
+        <h2>Pourquoi les montrer&nbsp;?</h2>
+        <p>Une structure qui publie une offre veut savoir qui la verra. Un animateur qui crée son profil veut savoir si des structures passent par ici. Alors on montre tout, même quand c'est encore petit.</p>
+        <p class="petit">Visites comptées sans cookie (GoatCounter), recherches Google lues dans Google Search Console, comptes comptés dans notre base. {% if a.mis_a_jour %}Mis à jour le {{ a.mis_a_jour | date_fr }}.{% endif %}</p>
+        <p><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte <span aria-hidden="true">→</span></a></p>
       </section>
     </div>
-
-    <div class="chiffres-deux">
-      <section class="chiffres-carte">
-        <h2>Les sessions par région</h2>
-        <ul class="lignes-chiffres">
-          {% for nom, n in c.par_region %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
-        </ul>
-      </section>
-      <section class="chiffres-carte">
-        <h2>Les organismes qui ont le plus de sessions</h2>
-        <ul class="lignes-chiffres">
-          {% for nom, n in c.organismes_top %}<li><span>{{ nom }}</span><b>{{ n }}</b></li>{% endfor %}
-        </ul>
-        <p class="petit">Aucun organisme ne paie pour apparaître ou être mieux placé. <a href="{{ lien('/classement-des-sessions/') }}">Comment les sessions sont classées</a></p>
-      </section>
+    {% else %}
+    <div class="chiffres-bloc">
+      <p class="surtitre-clair">Bientôt ici</p>
+      <h2>Les premiers chiffres arrivent.</h2>
+      <p>Le site est en ligne depuis la fin octobre 2026. Dès que le compteur de visites et Google Search Console sont branchés, cette page montre chaque jour les visiteurs, les apparitions dans Google, les clics et les inscriptions : les vrais chiffres, même quand ils sont encore petits.</p>
+      <p><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte <span aria-hidden="true">→</span></a></p>
     </div>
-
-    <section class="chiffres-carte">
-      <h2>D'où viennent ces chiffres&nbsp;?</h2>
-      <p>Des pages publiques des organismes (UFCV, CEMEA, AFOCAL, IFAC, Ligue de l'enseignement, Croix-Rouge, Léo Lagrange, Protection civile…), de la liste officielle du ministère, du calendrier national des formations (FOROMES), du catalogue national de l'apprentissage (Réseau des Carif-Oref) et du catalogue Mon Compte Formation (Caisse des Dépôts). Le relevé tourne chaque nuit ; les sessions terminées disparaissent d'elles-mêmes.</p>
-      {% if stats.verifie_le %}<p class="petit">Dernière vérification : {{ stats.verifie_le | date_fr }}.</p>{% endif %}
-    </section>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
