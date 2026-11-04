@@ -402,6 +402,7 @@ ecoles:
   - {organisme_nom: "Familles Rurales", diplome: DESJEPS, specialite: "direction", ville: "Angers", departement: "49", derniere_rentree: 2026-10-12}
   - {organisme_nom: "CREPS de Reims", diplome: DESJEPS, specialite: "direction", ville: "Reims", departement: "51", derniere_rentree: 2026-09-16}
   - {organisme_nom: "EPLE FPA du Morvan", diplome: DESJEPS, specialite: "direction", ville: "Challuy", departement: "58", derniere_rentree: 2026-03-06}
+  - {organisme_nom: "CPIE", diplome: DESJEPS, specialite: "direction", ville: "Arras", departement: "62", derniere_rentree: 2026-11-06}
   - {organisme_nom: "BLUE UP Formation", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-03-09}
   - {organisme_nom: "Challenges Academia", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Federation Francaise de Judo et Disciplines Associees", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-02}
