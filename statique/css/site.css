@@ -1170,3 +1170,22 @@ html { scroll-padding-top: 90px; }
   .mm-une:hover .mm-une-aller { background: var(--fil-fonce); }
 }
 @media (min-width: 1001px) { .mm-panneau .cadre.mm-grille { padding: 16px; } }
+
+/* ---------- Diplômes pros : les écoles qui forment remplacent la liste des sessions */
+.mode-ecoles .sessions, .mode-ecoles .voir-plus-cadre, .mode-ecoles #aucune, .mode-ecoles .carte-bloc, .mode-ecoles .bouton-carte { display: none !important; }
+.mode-ecoles .resultats-carte { grid-template-columns: minmax(0, 1fr) !important; }
+.mode-ecoles .ecoles-pro { margin-top: 0; background: transparent; border: 0; padding: 0; }
+.mode-ecoles .ecoles-pro h3 { font-size: 1.35rem; }
+.ecoles-liste { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; margin-top: 16px; }
+.ecoles-liste li.ecole { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; padding: 16px 18px; border: 1px solid var(--trait); border-top: 1px solid var(--trait);
+  border-radius: 16px; background: var(--blanc); line-height: 1.4; }
+.ecole-corps { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ecole-nom { font-family: var(--titres); font-weight: 600; font-size: 1.12rem; }
+.ecole-lieu { color: var(--doux); font-size: .92rem; }
+.ecole-puces { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.ecole-puce { font-size: .8rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--papier); border: 1px solid var(--trait); }
+.ecole-rentree { background: #fbe8ea; border-color: #f4c9cf; color: var(--fil-fonce); }
+.ecoles-liste .ecole-lien { align-self: flex-start; margin: 0; font-weight: 700; font-size: .92rem; color: #fff; background: var(--fil); border-radius: 10px; padding: 8px 14px; text-decoration: none; }
+.ecoles-liste .ecole-lien:hover { background: var(--fil-fonce); color: #fff; text-decoration: none; }
+.mode-ecoles #ecoles-titre { display: none; }
+.villes-liste.villes-une-colonne { grid-template-columns: minmax(0, 1fr); }

@@ -162,8 +162,10 @@
         if (r) r.scrollIntoView({ behavior: "smooth" });
       });
       document.addEventListener("sessions:compte", function (e) {
-        var n = e.detail || 0;
-        afficherBtn.textContent = n === 0 ? "Aucune session" : "Afficher " + n.toLocaleString("fr-FR") + (n > 1 ? " sessions" : " session");
+        var n = e.detail, ecoles = ["CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"].indexOf(form.elements.diplome.value) !== -1;
+        var unite = ecoles ? ["école", "écoles"] : ["session", "sessions"];
+        if (n === null || n === undefined) afficherBtn.textContent = "Afficher les " + unite[1];
+        else afficherBtn.textContent = n === 0 ? (ecoles ? "Aucune école" : "Aucune session") : "Afficher " + n.toLocaleString("fr-FR") + " " + (n > 1 ? unite[1] : unite[0]);
         compter();
       });
     }

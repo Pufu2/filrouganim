@@ -20,6 +20,8 @@ import re
 import shutil
 import sys
 import urllib.error
+import unicodedata
+import urllib.parse
 import urllib.request
 from urllib.parse import quote
 from pathlib import Path
@@ -865,30 +867,65 @@ class Site:
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
                 "site": s.get("source") == "ministere",
                 "g": self.geo.get(f"{s['departement']}|{s['ville']}")})
-        # les écoles qui ont ouvert un diplôme pro dans l'année (affichées sous les résultats, sans date à venir)
+        # Diplômes pros : la liste des écoles qui forment, toutes sources réunies (une école par diplôme et par
+        # département) : les sessions datées, le calendrier national (FOROMES), le catalogue Mon Compte Formation.
+        PRO = {"CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"}
+        def cle_nom(t):
+            t = unicodedata.normalize("NFKD", t or "").encode("ascii", "ignore").decode().lower()
+            return re.sub(r"[^a-z0-9]+", "", re.sub(r"\b(association|formation|formations|organisme|l|la|le|les|de|des|du|d)\b", " ", t))
+        fiches = {}
+        def fiche(diplome, sp, dep, nom, ville=None):
+            k = (cle_nom(nom), diplome, dep)
+            f = fiches.get(k)
+            if not f:
+                d = self.departements[dep]
+                spec = self.specialites.get(diplome, {}).get(sp)
+                f = fiches[k] = {"di": diplome, "dn": self.diplomes[diplome]["nom"], "sp": sp, "spn": spec["nom"] if spec else None,
+                                 "o": nom, "v": ville or d["nom"], "d": dep, "r": d["region"], "g": None,
+                                 "pr": None, "pr_t": None, "dr": None, "px": None, "pxm": None, "h": None, "dist": False, "u": None, "cpf": False}
+            if ville and f["v"] == self.departements[dep]["nom"]:
+                f["v"] = ville
+            if not f["sp"] and sp:
+                f["sp"] = sp
+            return f
+        for x in self.sessions:  # les rentrées datées
+            if x["diplome"] not in PRO or x["departement"] not in self.departements:
+                continue
+            f = fiche(x["diplome"], x.get("specialite"), x["departement"], x["org"]["nom"], ville_propre(x["ville"]))
+            if not f["pr"] or x["debut"] < f["pr"]:
+                f["pr"], f["pr_t"] = x["debut"], f"{MOIS[x['debut'].month - 1]} {x['debut'].year}"
+                if x.get("url") and "foromes" not in x["url"]:
+                    f["u"] = x["url"]
+            if x.get("prix"):
+                f["px"] = min(f["px"] or x["prix"], x["prix"])
+            f["g"] = f["g"] or self.geo.get(f"{x['departement']}|{x['ville']}")
+        for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:  # le calendrier national, l'année passée
+            if e["diplome"] not in PRO or e["departement"] not in self.departements:
+                continue
+            f = fiche(e["diplome"], e.get("specialite"), e["departement"], e["organisme_nom"], ville_propre(e["ville"]))
+            r = en_date(e["derniere_rentree"])
+            f["dr"] = f"{MOIS[r.month - 1]} {r.year}"
+            f["g"] = f["g"] or self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")
+        for c in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []:  # Mon Compte Formation
+            if c["diplome"] not in PRO or c["departement"] not in self.departements:
+                continue
+            f = fiche(c["diplome"], c.get("specialite"), c["departement"], c["organisme_nom"])
+            f["cpf"] = True
+            if c.get("prix_min"):
+                f["px"] = min(f["px"] or c["prix_min"], c["prix_min"])
+                f["pxm"] = max(f["pxm"] or 0, c.get("prix_max") or c["prix_min"])
+            f["h"] = f["h"] or c.get("heures")
+            f["dist"] = f["dist"] or bool(c.get("distance"))
+            if not f["u"] and c.get("siret"):
+                f["u"] = f"https://annuaire-entreprises.data.gouv.fr/etablissement/{c['siret']}"
         ecoles = []
-        for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:
-            dep = self.departements.get(e["departement"])
-            if not dep or e["diplome"] not in self.diplomes:
-                continue
-            sp = self.specialites.get(e["diplome"], {}).get(e.get("specialite"))
-            rentree = en_date(e["derniere_rentree"])
-            ecoles.append({"di": e["diplome"], "dn": self.diplomes[e["diplome"]]["nom"], "sp": e.get("specialite"),
-                           "spn": sp["nom"] if sp else None, "o": e["organisme_nom"], "v": ville_propre(e["ville"]),
-                           "d": e["departement"], "r": dep["region"], "dr": f"{MOIS[rentree.month - 1]} {rentree.year}",
-                           "g": self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")})
-        # les formations du catalogue Mon Compte Formation (école, département, durée, prix ; pas de dates)
-        for f in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []:
-            dep = self.departements.get(f["departement"])
-            if not dep or f["diplome"] not in self.diplomes:
-                continue
-            sp = self.specialites.get(f["diplome"], {}).get(f.get("specialite"))
-            ecoles.append({"di": f["diplome"], "dn": self.diplomes[f["diplome"]]["nom"], "sp": f.get("specialite"),
-                           "spn": sp["nom"] if sp else None, "o": f["organisme_nom"], "v": dep["nom"],
-                           "d": f["departement"], "r": dep["region"], "cpf": True,
-                           "px": f.get("prix_min"), "pxm": f.get("prix_max"), "h": f.get("heures"), "ns": f.get("sessions"),
-                           "dist": bool(f.get("distance")),
-                           "u": f"https://annuaire-entreprises.data.gouv.fr/etablissement/{f['siret']}" if f.get("siret") else None})
+        for f in fiches.values():
+            if not f["u"]:  # sans page connue : la recherche du nom de l'école
+                f["u"] = "https://duckduckgo.com/?q=" + urllib.parse.quote(f"{f['o']} {f['dn']} {f['v']}")
+                f["recherche"] = True
+            f.pop("pr", None)
+            ecoles.append(f)
+        ecoles.sort(key=lambda f: (f["di"], f["d"], f["o"].lower()))
         (SORTIE / "se-former" / "sessions").mkdir(parents=True, exist_ok=True)
         (SORTIE / "se-former" / "sessions" / "ecoles.json").write_text(
             json.dumps(ecoles, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

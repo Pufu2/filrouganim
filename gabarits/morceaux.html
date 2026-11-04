@@ -21,7 +21,7 @@
 <form class="recherche recherche-panneau" action="{{ lien('/se-former/sessions/') }}" method="get" id="filtres" role="search" aria-label="Chercher une formation">
   <div class="recherche-ligne">
     <div class="case-r case-ou case-ou-grande">{{ icone("lieu") }}<label class="case-titre" for="ou-{{ 'f' if en_direct else 'a' }}">Où ?</label>
-      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" list="lieux-{{ 'f' if en_direct else 'a' }}" placeholder="Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
+      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" placeholder="Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
       <input type="hidden" name="dep" value="">
       <datalist id="lieux-{{ 'f' if en_direct else 'a' }}">
         {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
@@ -77,7 +77,7 @@
         {% for g in filtres.etapes %}<optgroup label="{{ g.titre }}" data-diplome="{{ g.diplome }}">{% for v, nom in g.options %}<option value="{{ v }}" data-diplome="{{ g.diplome }}">{{ nom }}</option>{% endfor %}</optgroup>{% endfor %}
       </select></label>
     <div class="case-r case-ou">{{ icone("lieu") }}<label class="case-titre" for="ou-{{ 'f' if en_direct else 'a' }}">Où ?</label>
-      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" list="lieux-{{ 'f' if en_direct else 'a' }}" placeholder="Ex. : 93, Gironde, Lyon 3e" autocomplete="off" enterkeyhint="search">
+      <input id="ou-{{ 'f' if en_direct else 'a' }}" name="ou" type="search" placeholder="Ex. : 93, Gironde, Lyon 3e" autocomplete="off" enterkeyhint="search">
       <input type="hidden" name="dep" value="">
       <datalist id="lieux-{{ 'f' if en_direct else 'a' }}">
         {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
@@ -125,7 +125,12 @@
     <div class="ro-ou">
       <label class="ro-titre" for="ro-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-ou" name="ou" type="search" placeholder="Ville, département, code postal" autocomplete="off" enterkeyhint="search" data-villes></span>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-ou" name="ou" type="search" placeholder="Ville, département, code postal" autocomplete="off" enterkeyhint="search" data-villes>
+          <datalist id="lieux-ro">
+            {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
+            {% for r in regions | sort(attribute="nom") %}<option value="{{ r.nom }} (région)" data-dep="r:{{ r.id }}"></option>{% endfor %}
+            {% for nom, v in filtres.villes %}<option value="{{ nom }}" data-dep="{{ v }}"></option>{% endfor %}
+          </datalist></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Rechercher</button>
       </div>
     </div>
@@ -225,7 +230,7 @@
 <form class="recherche rv" action="{{ lien('/se-former/sessions/') }}" method="get"{% if en_direct %} id="filtres"{% endif %} role="search" aria-label="Chercher une formation" data-fenetre-filtres{% if preset %} data-preset="{{ preset }}"{% endif %}>
   <div class="rv-ligne">
     <div class="rv-champ case-ou">{{ icone("lieu") }}<label class="sr" for="ou-{{ k }}">Où ?</label>
-      <input id="ou-{{ k }}" name="ou" type="search" list="lieux-{{ k }}" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>
+      <input id="ou-{{ k }}" name="ou" type="search" placeholder="Où ? Ville, département ou code postal : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>
       <input type="hidden" name="dep" value="">
       <datalist id="lieux-{{ k }}">
         {% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}
