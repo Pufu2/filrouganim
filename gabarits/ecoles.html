@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema_faq %}<script type="application/ld+json">{{ page.schema_faq | safe }}</script>{% endif %}{% endblock %}
+{% block tete_plus %}{% if page.ecoles %}<ul class="chiffres"><li><b>{{ page.ecoles_total or page.ecoles | length }}</b> école{{ 's' if (page.ecoles_total or page.ecoles | length) > 1 }}</li>{% if page.bref and page.bref.px_min %}<li>dès <b>{{ page.bref.px_min | euros }}</b></li>{% endif %}</ul>{% endif %}{% endblock %}
+{% macro carte(e) %}<li class="ecole">
+  <div class="ecole-corps">
+    <b class="ecole-nom">{{ e.o }}</b>
+    <span class="ecole-lieu">{{ e.v }} ({{ e.d }}){% if e.spn %} · {{ e.spn }}{% endif %}</span>
+    <span class="ecole-puces">{% if e.pr_t %}<span class="ecole-puce ecole-rentree">Prochaine rentrée : {{ e.pr_t }}</span>{% elif e.dr %}<span class="ecole-puce">Dernière rentrée : {{ e.dr }}</span>{% endif %}{% if e.px %}<span class="ecole-puce">{% if e.pxm and e.pxm != e.px %}de {{ e.px | euros }} à {{ e.pxm | euros }}{% else %}dès {{ e.px | euros }}{% endif %}</span>{% endif %}{% if e.h %}<span class="ecole-puce">{{ e.h }} h</span>{% endif %}{% if e.cpf %}<span class="ecole-puce">Éligible au CPF</span>{% endif %}{% if e.dist %}<span class="ecole-puce">En partie à distance</span>{% endif %}</span>
+  </div>
+  <a class="ecole-lien" href="{{ e.u }}" rel="noopener nofollow" target="_blank">{{ "Chercher l'école" if e.recherche else ("Coordonnées" if "annuaire-entreprises" in e.u else "Voir la formation") }}<span class="sr"> : {{ e.o }} (nouvel onglet)</span> →</a>
+</li>{% endmacro %}
+{% block contenu %}
+<div class="recherche-une recherche-une-page"><div class="cadre">
+  {{ m.recherche_ville(lien, departements, preset=page.preset) }}
+</div></div>
+<section class="bande bande-papier">
+  <div class="cadre">
+    {% if page.groupes %}
+      {% for titre, url, liste in page.groupes %}
+      <h2 class="ecoles-groupe">{% if url %}<a href="{{ lien(url) }}">{{ titre }}</a>{% else %}{{ titre }}{% endif %} <small>{{ liste | length }} école{{ 's' if liste | length > 1 }}</small></h2>
+      <ul class="ecoles-liste">{% for e in liste[:page.par_groupe or 999] %}{{ carte(e) }}{% endfor %}</ul>
+      {% if page.par_groupe and liste | length > page.par_groupe and url %}<p class="liste-suite"><a href="{{ lien(url) }}">Les {{ liste | length }} écoles {{ titre }} <span aria-hidden="true">→</span></a></p>{% endif %}
+      {% endfor %}
+    {% else %}
+    <ul class="ecoles-liste">{% for e in page.ecoles %}{{ carte(e) }}{% endfor %}</ul>
+    {% endif %}
+    <p class="petit">Écoles relevées dans le catalogue Mon Compte Formation (Caisse des Dépôts), le catalogue de l'apprentissage et les pages des organismes. Vérifiez toujours les dates et les prix auprès de l'école.</p>
+  </div>
+</section>
+{% if page.faq_page %}
+<section class="bande bande-blanc">
+  <div class="cadre">
+    <p class="note-main">en bref</p>
+    <h2>{{ page.h1 }} : vos questions</h2>
+    <div class="faq">{% for q in page.faq_page %}<details{% if loop.first %} open{% endif %}><summary>{{ q.q }}</summary><p>{{ q.r }}</p></details>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+<section class="bande bande-sable">
+  <div class="cadre explorer">
+    {% for titre, liens in page.explorer %}<div{% if liens | length > 14 %} class="explorer-large"{% endif %}><h3>{{ titre }}</h3><ul{% if liens | length > 14 %} class="colonnes"{% endif %}>{% for t, u, n in liens if u != page.url %}<li><a href="{{ lien(u) }}">{{ t }}</a>{% if n %} <small>{{ n }}</small>{% endif %}</li>{% endfor %}</ul></div>{% endfor %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ statique('js/fenetre-filtres.js') }}" defer></script>{% endblock %}

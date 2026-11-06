@@ -725,6 +725,7 @@ class Site:
                      sujet=("le BAFD", "BAFD", "en France"), mois_cle="BAFD",
                      fil=[SF, RUB, ("BAFD", "/se-former/sessions/bafd/")])
         self.declarer_declinaisons(SF, RUB)
+        self.declarer_ecoles(SF)
         en_ligne = [o for o in self.organismes.values() if o.get("en_ligne")]
         self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD et PSC1",
                      description="Les organismes de formation au BAFA, au BAFD, au PSC1 et aux diplômes professionnels de l'animation présents sur le site, avec leurs prochaines sessions et le lien vers leur site.",
@@ -879,6 +880,106 @@ class Site:
         for ancienne, nouvelle in sorted(anciennes.items()):
             if ancienne not in existantes:
                 self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=nouvelle)
+
+    def declarer_ecoles(self, SF):
+        """Les écoles des diplômes pros (CPJEPS, BPJEPS, DEJEPS, DESJEPS) : une page par diplôme, par région et par
+        département, avec les cartes des écoles dans la page (lisibles par Google, sans JavaScript)."""
+        ecoles = self.ecoles_pro()
+        BASE = "/se-former/ecoles"
+        EC = ("Écoles", f"{BASE}/")
+        INTRO = {
+            "CPJEPS": "Le premier diplôme professionnel de l'animation (niveau 3, CAP) : animateur d'activités et de vie quotidienne, souvent en alternance.",
+            "BPJEPS": "Le diplôme d'animateur professionnel (niveau 4, bac) : concevoir et animer des projets, souvent en alternance ou en apprentissage.",
+            "DEJEPS": "Le diplôme de coordinateur (niveau 5, bac+2) : piloter des projets d'animation et une équipe.",
+            "DESJEPS": "Le diplôme de directeur (niveau 6, bac+3) : diriger une structure ou un service d'animation.",
+        }
+
+        def faq_ecoles(liste, d, lieu):
+            px = sorted(e["px"] for e in liste if e.get("px"))
+            cpf = sum(1 for e in liste if e.get("cpf"))
+            rentrees = [e for e in liste if e.get("pr_t")]
+            faq = [{"q": f"Où passer le {d} {lieu} ?",
+                    "r": f"{len(liste)} école{'s' if len(liste) > 1 else ''} {'forment' if len(liste) > 1 else 'forme'} au {d} {lieu}"
+                         + (", notamment " + ", ".join(sorted({e['o'] for e in liste})[:4]) if len(liste) > 1 else f" : {liste[0]['o']}") + "."}]
+            if len(px) >= 2:
+                faq.append({"q": f"Combien coûte le {d} {lieu} ?",
+                            "r": f"Pour les {len(px)} écoles qui affichent un prix, il va de {euros(px[0])} à {euros(px[-1])}. "
+                                 "En apprentissage, la formation est payée par l'employeur et son opérateur de compétences : elle ne coûte rien à l'apprenti."})
+            faq.append({"q": f"Peut-on financer le {d} avec le CPF {lieu} ?",
+                        "r": (f"Oui : {cpf} des {len(liste)} écoles sont inscrites au catalogue Mon Compte Formation." if cpf
+                              else "Aucune de ces écoles n'est inscrite au catalogue Mon Compte Formation pour l'instant : pensez à l'apprentissage, à la Région ou à France Travail.")})
+            if rentrees:
+                faq.append({"q": f"Quand sont les prochaines rentrées du {d} {lieu} ?",
+                            "r": "Rentrées annoncées : " + ", ".join(f"{e['o']} ({e['pr_t']})" for e in rentrees[:4]) + "."})
+            for q in faq:
+                q["r_rendu"] = q["r"]
+            return faq, {"px_min": px[0] if px else None}
+
+        index = []
+        for di in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"):
+            d = self.diplomes[di]
+            du_d = [e for e in ecoles if e["di"] == di]
+            if not du_d:
+                continue
+            url_d = f"{BASE}/{d['slug']}/"
+            index.append((f"{d['nom']} ({d['long'].split('(')[-1].rstrip(')')})", url_d, len(du_d)))
+            DI = (d["nom"], url_d)
+            par_reg = collections.defaultdict(list)
+            par_dep = collections.defaultdict(list)
+            for e in du_d:
+                par_reg[e["r"]].append(e)
+                par_dep[e["d"]].append(e)
+            liens_reg = [(r["nom"], f"{url_d}{r['slug']}/", len(par_reg[r["id"]])) for r in self.regions.values() if par_reg[r["id"]]]
+            liens_dep = [(f"{dep['nom']} ({dep['code']})", f"{url_d}{dep['slug']}/", len(par_dep[dep["code"]]))
+                         for dep in self.departements.values() if len(par_dep[dep["code"]]) >= 2]
+            autres = [(f"Le {x} en France", f"{BASE}/{self.diplomes[x]['slug']}/", None) for x in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS") if x != di]
+            faq, bref = faq_ecoles(du_d, d["nom"], "en France")
+            self.ajouter(url_d, "ecoles.html", titre=f"{d['nom']} : les {len(du_d)} écoles qui forment en France",
+                         h1=f"Les écoles du {d['nom']}",
+                         description=f"Où passer le {d['long']} : les {len(du_d)} écoles et centres de formation en France, région par région, avec la prochaine rentrée, le prix et l'éligibilité au CPF.",
+                         intro=INTRO[di], ecoles_total=len(du_d), ecoles=du_d, par_groupe=6, bref=bref,
+                         groupes=[(r["nom"], f"{url_d}{r['slug']}/", par_reg[r["id"]]) for r in self.regions.values() if par_reg[r["id"]]],
+                         faq_page=faq, schema_faq=self.schema_faq(faq), preset=f"diplome={di}",
+                         explorer=[(f"Le {d['nom']}, par région", liens_reg), (f"Le {d['nom']}, par département", liens_dep), ("Les autres diplômes", autres + [(f"Tout savoir sur le {d['nom']}", d["fiche"], None)])],
+                         fil=[SF, EC, DI])
+            for r in self.regions.values():
+                liste = par_reg[r["id"]]
+                if not liste:
+                    continue
+                url = f"{url_d}{r['slug']}/"
+                deps_r = [dep for dep in r["deps"] if par_dep[dep["code"]]]
+                faq, bref = faq_ecoles(liste, d["nom"], r["a"])
+                self.ajouter(url, "ecoles.html", titre=f"{d['nom']} {r['nom']} : {len(liste)} école{'s' if len(liste) > 1 else ''}, rentrées et prix",
+                             h1=f"Passer le {d['nom']} {r['a']}",
+                             description=f"Les écoles qui préparent au {d['long']} {r['a']} : ville, prochaine rentrée, prix, CPF, département par département.",
+                             intro=INTRO[di], ecoles=liste, bref=bref, preset=f"diplome={di}&dep=r:{r['id']}",
+                             groupes=[(dep["nom"], f"{url_d}{dep['slug']}/" if len(par_dep[dep["code"]]) >= 2 else None, par_dep[dep["code"]]) for dep in sorted(deps_r, key=lambda x: x["code"])],
+                             faq_page=faq, schema_faq=self.schema_faq(faq), indexer=len(liste) >= 2,
+                             explorer=[(f"Le {d['nom']}, les autres régions", liens_reg), ("Les autres diplômes " + r["a"],
+                                        [(f"Le {x} {r['a']}", f"{BASE}/{self.diplomes[x]['slug']}/{r['slug']}/", None) for x in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS")
+                                         if x != di and any(e["di"] == x and e["r"] == r["id"] for e in ecoles)])],
+                             fil=[SF, EC, DI, (r["nom"], url)])
+            for dep in self.departements.values():
+                liste = par_dep[dep["code"]]
+                if len(liste) < 2:
+                    continue
+                url = f"{url_d}{dep['slug']}/"
+                r = dep["reg"]
+                faq, bref = faq_ecoles(liste, d["nom"], dep["a"])
+                self.ajouter(url, "ecoles.html", titre=f"{d['nom']} {dep['nom']} ({dep['code']}) : écoles, rentrées et prix",
+                             h1=f"Passer le {d['nom']} {dep['a']}",
+                             description=f"Les {len(liste)} écoles qui préparent au {d['long']} {dep['a']} ({dep['code']}) : ville, prochaine rentrée, prix et CPF.",
+                             intro=INTRO[di], ecoles=liste, bref=bref, preset=f"diplome={di}&dep={dep['code']}",
+                             faq_page=faq, schema_faq=self.schema_faq(faq),
+                             explorer=[(f"Le {d['nom']} {r['a']}", [(f"Toute la région", f"{url_d}{r['slug']}/", len(par_reg[r["id"]]))]
+                                        + [x for x in liens_dep if x[1].split("/")[-2] in {dd["slug"] for dd in r["deps"]}]),
+                                       ("Se former " + dep["a"], [(f"Le BAFA {dep['a']}", f"/se-former/sessions/{dep['slug']}/", None)] + list(dep.get("sous") or []))],
+                             fil=[SF, EC, DI, (r["nom"], f"{url_d}{r['slug']}/"), (dep["nom"], url)])
+        self.ajouter(f"{BASE}/", "ecoles.html", titre="Écoles CPJEPS, BPJEPS, DEJEPS et DESJEPS en France",
+                     h1="Les écoles des métiers de l'animation",
+                     description="Toutes les écoles qui préparent aux diplômes professionnels de l'animation (CPJEPS, BPJEPS, DEJEPS, DESJEPS), par diplôme, région et département.",
+                     intro="Faire de l'animation son métier : les écoles qui préparent aux diplômes professionnels, avec les rentrées, les prix et le CPF.",
+                     ecoles=[], preset="", explorer=[("Par diplôme", index)], fil=[SF, EC])
 
     def declarer_declinaisons(self, SF, RUB):
         """Les pages qui répondent aux recherches précises : chaque formation (BAFD, PSC) et chaque étape du BAFA
