@@ -456,7 +456,8 @@ def croix_rouge():
 
 TYPES_MINISTERE = {"Formation générale": "formation-generale", "Approfondissement": "approfondissement",
                    "Perfectionnement": "perfectionnement", "Qualification": "qualification"}
-DEJA_LUS = re.compile(r"afocal|ifac|i\.f\.a\.c|ufcv|u\.f\.c\.v|cemea|c\.e\.m\.e\.a|entra[iî]nement aux m[ée]thodes", re.I)  # organismes déjà relevés sur leurs propres pages
+DEJA_LUS = re.compile(r"afocal|ifac|i\.f\.a\.c|ufcv|u\.f\.c\.v|cemea|c\.e\.m\.e\.a|entra[iî]nement aux m[ée]thodes|"
+                      r"familles?\s*rurales?|\bfafr\b|francas|fscf|f\.s\.c\.f|f[ée]d[ée]ration sportive et culturelle", re.I)  # organismes déjà relevés sur leurs propres pages
 
 
 def ministere():
@@ -562,6 +563,9 @@ def main():
                ("Ligue de l'enseignement Île-de-France", ligue, "ligue-idf"),
                ("Protection civile (PSC)", protection_civile, "protection-civile"), ("Croix-Rouge (PSC)", croix_rouge, "croix-rouge"),
                ("CEMEA", lambda: __import__("cemea").bafx(lire_brut, TERRITOIRE["departements"], commune), "cemea"),
+               ("Familles Rurales (et FACEL)", lambda: __import__("reseaux").familles_rurales(lire_brut, commune), "familles-rurales"),
+               ("Francas", lambda: __import__("reseaux").francas(lire_brut, commune, TERRITOIRE), "francas"),
+               ("FSCF", lambda: __import__("reseaux").fscf(lire_brut, commune), "fscf"),
                ("Ministère (tous les organismes BAFA / BAFD)", ministere, "ministere")]
     for nom, fonction, cle_org in sources:
         print(f"{nom}…", file=sys.stderr)

@@ -40,7 +40,7 @@ FORMULES = {"internat": "Internat", "demi-pension": "Demi-pension", "externat": 
             "apprentissage": "En apprentissage", "distance": "À distance"}
 # Budgets proposés dans la recherche, selon le diplôme : seuls ceux qui trient vraiment les sessions sont gardés
 BUDGETS = {"BAFA": [300, 350, 400, 450, 500, 600, 700, 800, 1000], "BAFD": [400, 500, 600, 700, 800, 1000, 1200],
-           "PSC1": [40, 50, 60, 70, 80, 100], "CQP-AP": [1000, 1500, 2000, 3000, 4000],
+           "PSC1": [40, 50, 60, 70, 80, 100], "BSB": [300, 400, 500, 600, 700], "CQP-AP": [1000, 1500, 2000, 3000, 4000],
            "CC-ACM": [500, 1000, 1500, 2000, 3000], "CPJEPS": [1000, 2000, 3000, 4000, 5000, 6000], "BPJEPS": [2000, 3000, 4000, 5000, 6000, 7000, 8000, 10000],
            "DEJEPS": [3000, 5000, 7000, 9000, 12000, 15000], "DESJEPS": [5000, 7000, 9000, 12000, 15000, 20000],
            "": [100, 300, 500, 800, 1000, 3000, 6000, 10000]}
@@ -318,6 +318,8 @@ class Site:
             s["type_nom"] = {"formation-generale": "Formation générale", "approfondissement": "Approfondissement",
                              "qualification": "Qualification", "perfectionnement": "Perfectionnement",
                              "parcours": "Formation complète", "session": "Session"}[s["type"]]
+            if s["diplome"] == "BAFA" and s["type"] == "qualification":
+                s["diplome"] = "BSB"  # la qualification surveillant de baignade : une formation à part sur le site
             s["dipl"] = self.diplomes[s["diplome"]]
             s["mois"] = s["debut"].strftime("%Y-%m")
             sessions.append(s)
@@ -701,6 +703,10 @@ class Site:
                              sujet=("le BAFA", "BAFA", f"à {v['nom']}"),
                              fil=[SF, RUB, RG, (dep["nom"], f"/se-former/sessions/{dep['slug']}/"), (v["nom"], f"/se-former/sessions/{dep['slug']}/{v['slug']}/")])
         for t in self.types:
+            if t["id"] == "qualification":  # devenue le BSB, une formation à part
+                self.ajouter(f"/se-former/sessions/{t['slug']}/", "redirection.html", titre="Cette page a changé d'adresse",
+                             indexer=False, vers="/se-former/sessions/bsb/")
+                continue
             liste = [s for s in bafa if s["type"] == t["id"]]
             self.ajouter(f"/se-former/sessions/{t['slug']}/", "liste.html",
                          titre=f"BAFA {t['nom'].lower()} : sessions et prix partout en France",
@@ -897,7 +903,7 @@ class Site:
         c = {"total": len(S),
              "fg": med([s for s in bafa if s["type"] == "formation-generale"]),
              "appro": med([s for s in bafa if s["type"] == "approfondissement"]),
-             "qualif": med([s for s in bafa if s["type"] == "qualification"]),
+             "qualif": med([s for s in S if s["diplome"] == "BSB"]),
              "bafd": med([s for s in S if s["diplome"] == "BAFD"]),
              "psc": med([s for s in S if s["diplome"] == "PSC1"]),
              "organismes": len({s["org"]["nom"] for s in S})}
@@ -1019,6 +1025,65 @@ class Site:
         """Le bloc « Recherches fréquentes » au-dessus du pied de page : les pages les plus fournies de chaque famille."""
         if getattr(self, "_recherches", None) is not None:
             return self._recherches
+        pages = {p["url"]: p for p in self.pages if p.get("indexer") and p["gabarit"] in ("liste.html", "ecoles.html")}
+        def n(p):
+            return p.get("sessions_total") or len(p.get("sessions") or p.get("ecoles") or [])
+        def top(filtre, nom, k=10):
+            vus, r = set(), []
+            for p in sorted((p for u, p in pages.items() if filtre(u)), key=n, reverse=True):
+                t = nom(p)
+                if t not in vus and len(r) < k:
+                    vus.add(t)
+                    r.append((t, p["url"]))
+            return r
+        B = "/se-former/sessions/"
+        deps = {d["slug"] for d in self.departements.values()}
+        regs = {r["slug"] for r in self.regions.values()}
+        def parts(u):
+            return u[len(B):].strip("/").split("/") if u.startswith(B) else []
+        def dep_nom(p):
+            return p["departement"]["nom"]
+
+        def reg_nom(p):
+            return (p.get("region") or p.get("region_famille"))["nom"]
+
+        def famille(cle):
+            """villes, départements et régions d'une famille de pages (bafd, psc1, bsb)"""
+            return [("Par ville", top(lambda u: len(parts(u)) == 3 and parts(u)[1] == cle and parts(u)[0] in deps,
+                                      lambda p: p["fil"][-1][0], 18)),
+                    ("Par département", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in deps, dep_nom, 18)),
+                    ("Par région", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in regs, reg_nom, 13))]
+
+        sections = [
+            {"cle": "bafa", "titre": "BAFA", "aide": "Formation générale et approfondissement : les sessions BAFA près de chez vous.",
+             "groupes": [("Par ville", top(lambda u: len(parts(u)) == 2 and parts(u)[0] in deps and pages[u].get("ville"),
+                                           lambda p: p["ville"]["nom"], 18)),
+                         ("Par département", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, dep_nom, 18)),
+                         ("Par région", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in regs, lambda p: p["region"]["nom"], 13))],
+             "tout": ("Toutes les sessions BAFA", "/se-former/sessions/bafa/")},
+            {"cle": "bafd", "titre": "BAFD", "aide": "Devenir directeur d'accueil collectif de mineurs : formation générale et perfectionnement.",
+             "groupes": famille("bafd"), "tout": ("Toutes les sessions BAFD", "/se-former/sessions/bafd/")},
+            {"cle": "bsb", "titre": "BSB", "aide": "La qualification surveillant de baignade, 8 jours, très demandée pour les colos d'été.",
+             "groupes": famille("bsb"), "tout": ("Toutes les sessions BSB", "/se-former/sessions/bsb/")},
+            {"cle": "psc", "titre": "PSC", "aide": "Une journée pour apprendre les gestes de premiers secours, souvent demandée aux animateurs.",
+             "groupes": famille("psc1"), "tout": ("Toutes les formations PSC", "/se-former/sessions/psc1/")},
+        ]
+        E = "/se-former/ecoles/"
+        for di in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"):
+            sl = self.diplomes[di]["slug"]
+            sections.append({
+                "cle": sl, "titre": di, "aide": f"Les écoles qui préparent au {di}, avec la prochaine rentrée, le prix et le CPF.",
+                "groupes": [("Par département", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in deps,
+                                                    lambda p: p["fil"][-1][0], 18)),
+                            ("Par région", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in regs,
+                                               lambda p: p["fil"][-1][0], 13))],
+                "tout": (f"Toutes les écoles du {di}", f"{E}{sl}/")})
+        self._recherches = []
+        for x in sections:
+            x["groupes"] = [g for g in x["groupes"] if g[1]]
+            if x["groupes"]:
+                self._recherches.append(x)
+        return self._recherches
         pages = {p["url"]: p for p in self.pages if p.get("indexer") and p["gabarit"] in ("liste.html", "ecoles.html")}
         def n(p):
             return p.get("sessions_total") or len(p.get("sessions") or p.get("ecoles") or [])
@@ -1204,6 +1269,7 @@ class Site:
                  [s for s in bafa if s["type"] == "approfondissement"], "diplome=BAFA&type=BAFA-approfondissement"),
                 ("bafd", "le BAFD", "BAFD", "BAFD", [s for s in liste if s["diplome"] == "BAFD"], "diplome=BAFD"),
                 ("psc1", "le PSC", "PSC", "PSC (premiers secours)", [s for s in liste if s["diplome"] == "PSC1"], "diplome=PSC1"),
+                ("bsb", "le BSB", "BSB", "BSB (surveillant de baignade)", [s for s in liste if s["diplome"] == "BSB"], "diplome=BSB"),
             ]
 
         def titres(cle, nom, code, a):
@@ -1218,6 +1284,8 @@ class Site:
                                       f"Les sessions d'approfondissement du BAFA {a}{c}, la dernière étape : thèmes, dates, ville, formule et prix."),
                 "bafd": (f"BAFD {nom}{c} : sessions, dates et prix", f"Passer le BAFD {a}",
                          f"Les sessions BAFD {a}{c} : formation générale et perfectionnement, dates, lieu, formule et prix, organisme par organisme."),
+                "bsb": (f"BSB surveillant de baignade {nom}{c} : dates et prix", f"Le BSB, surveillant de baignade, {a}",
+                        f"Les sessions de qualification surveillant de baignade (BSB) du BAFA {a}{c} : 8 jours, dates, lieu, formule et prix."),
                 "psc1": (f"PSC (ex-PSC1) {nom}{c} : formation premiers secours, dates et prix", f"Se former au PSC {a}",
                          f"Les formations PSC aux premiers secours (ex-PSC1) {a}{c} : une journée, dates, ville, prix et organisme. Utile pour le BAFA."),
             }[cle]
@@ -1227,6 +1295,7 @@ class Site:
             "approfondissement": "La dernière étape du BAFA : 6 jours sur un thème, après le stage pratique. C'est après cette session qu'on demande l'aide de la CAF.",
             "bafd": "Le brevet pour diriger un accueil collectif de mineurs, dès 18 ans avec le BAFA : formation générale, stage pratique, perfectionnement, puis second stage.",
             "psc1": "Une journée pour apprendre les gestes de premiers secours, reconnue partout et souvent demandée aux animateurs.",
+            "bsb": "La qualification surveillant de baignade du BAFA : 8 jours pour surveiller la baignade d'un groupe en accueil collectif de mineurs.",
         }
 
         def ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, lieu, nom, code, a, fil, **extra):
@@ -1250,16 +1319,14 @@ class Site:
                     continue
                 url = f"{BASE}/{dep['slug']}/{cle}/"
                 dep["sous"].append((nom_aff, url, len(liste)))
-                villes = self.villes(liste, minimum=3) if cle == "psc1" else []
+                villes = self.villes(liste, minimum={"psc1": 3, "bafd": 2, "bsb": 2}.get(cle, 99)) if cle in ("psc1", "bafd", "bsb") else []
                 ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, dep["code"], dep["nom"], dep["code"], dep["a"],
                                 [SF, RUB, RG, DP, (nom_aff, url)], departement=dep, villes_famille=villes)
                 for v in villes:
                     uv = f"{url}{v['slug']}/"
-                    self.ajouter(uv, "liste.html",
-                                 titre=f"PSC1 {v['nom']} ({dep['code']}) : formation premiers secours, dates et prix",
-                                 h1=f"Se former au PSC à {v['nom']}",
-                                 description=f"Les formations PSC aux premiers secours (ex-PSC1) à {v['nom']} ({dep['code']}) : dates, prix et organisme, avec le lien pour s'inscrire.",
-                                 intro=INTROS["psc1"], sessions=v["sessions"], sujet=(sujet, court, f"à {v['nom']}"), famille=cle,
+                    titre_v, h1_v, desc_v = titres(cle, v["nom"], dep["code"], f"à {v['nom']}")
+                    self.ajouter(uv, "liste.html", titre=titre_v, h1=h1_v, description=desc_v,
+                                 intro=INTROS[cle], sessions=v["sessions"], sujet=(sujet, court, f"à {v['nom']}"), famille=cle,
                                  departement=dep, villes_famille=villes, lien_tout=f"{BASE}/?{critere}&dep={dep['code']}",
                                  fil=[SF, RUB, RG, DP, (nom_aff, url), (v["nom"], uv)])
 

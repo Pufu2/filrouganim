@@ -12,9 +12,7 @@
     var selects = Array.prototype.slice.call(form.querySelectorAll(".rv-champs select"));
     var dernierFocus = null;
     // « Quand ? » : les douze prochains mois et les vacances scolaires, chacun avec son année (mois + année d'un coup)
-    var quand = { mois: [], vacances: [] };
-    try { quand = JSON.parse(form.querySelector("[data-quand]").textContent); } catch (e) {}
-    var AVEC_VACANCES = ["", "BAFA", "BAFD", "PSC1"];  // les formations courtes, qui se font pendant les vacances
+    var AVEC_VACANCES = ["", "BAFA", "BAFD", "BSB", "PSC1"];  // les formations courtes, qui se font pendant les vacances
 
     function el(tag, classe, texte) {
       var e = document.createElement(tag);
@@ -49,34 +47,51 @@
       });
       return b;
     }
-    function boutonQuand(x) {
-      var mois = form.elements.mois, annee = form.elements.annee;
-      var b = el("button", "ff-puce", x[0]);
+    // « Quand ? » : les vacances par leur nom (sans année), puis une case Mois et une case Année, indépendantes
+    function choixQuand(select, valeur) {
+      select.value = valeur;
+      prevenir(select);
+      rendre();
+    }
+    function boutonVacances(o) {
+      var mois = form.elements.mois;
+      var b = el("button", "ff-puce", o.textContent);
       b.type = "button";
-      var choisi = mois.value === x[1] && annee.value === x[2];
+      var choisi = mois.value === o.value;
       b.setAttribute("aria-pressed", choisi ? "true" : "false");
-      b.addEventListener("click", function () {
-        mois.value = choisi ? "" : x[1];
-        annee.value = choisi ? "" : x[2];
-        prevenir(mois); prevenir(annee);
-        rendre();
-      });
+      b.addEventListener("click", function () { choixQuand(mois, choisi ? "" : o.value); });
       return b;
+    }
+    function caseQuand(id, titre, select, options, vide) {
+      var c = el("label", "ff-case");
+      c.setAttribute("for", id);
+      c.appendChild(el("span", "ff-case-titre", titre));
+      var s = el("select");
+      s.id = id;
+      s.appendChild(new Option(vide, ""));
+      options.forEach(function (o) { s.appendChild(new Option(o.textContent, o.value)); });
+      s.value = options.some(function (o) { return o.value === select.value; }) ? select.value : "";
+      s.addEventListener("change", function () { choixQuand(select, s.value); });
+      c.appendChild(s);
+      return c;
     }
     function groupeQuand() {
       var g = el("div", "ff-groupe");
       g.appendChild(el("h3", null, "Quand ?"));
-      var vacances = AVEC_VACANCES.indexOf(form.elements.diplome.value) !== -1 && quand.vacances.length;
-      if (vacances) {
+      var mois = form.elements.mois, annee = form.elements.annee;
+      var vacs = Array.prototype.filter.call(mois.options, function (o) { return /^v:/.test(o.value); });
+      var moisOpts = Array.prototype.filter.call(mois.options, function (o) { return /^m:/.test(o.value); });
+      if (AVEC_VACANCES.indexOf(form.elements.diplome.value) !== -1 && vacs.length) {
         g.appendChild(el("p", "ff-sous", "Vacances scolaires"));
         var l1 = el("div", "ff-puces");
-        quand.vacances.forEach(function (x) { l1.appendChild(boutonQuand(x)); });
+        vacs.forEach(function (o) { l1.appendChild(boutonVacances(o)); });
         g.appendChild(l1);
-        g.appendChild(el("p", "ff-sous", "Mois"));
       }
-      var l2 = el("div", "ff-puces");
-      quand.mois.forEach(function (x) { l2.appendChild(boutonQuand(x)); });
-      g.appendChild(l2);
+      var cases = el("div", "ff-cases");
+      cases.appendChild(caseQuand(form.id + "-ff-mois-" + Math.random().toString(36).slice(2, 7), "Mois", mois, moisOpts, "Tous les mois"));
+      cases.appendChild(caseQuand(form.id + "-ff-annee-" + Math.random().toString(36).slice(2, 7), "Année", annee,
+        Array.prototype.filter.call(annee.options, function (o) { return o.value; }), "Toutes les années"));
+      g.appendChild(cases);
       return g;
     }
     function rendre() {
@@ -119,8 +134,7 @@
       compter();
     }
     function compter() {
-      var n = selects.filter(function (s) { return s.value && s.name !== "annee"; }).length + (form.elements.q.value.trim() ? 1 : 0);
-      if (!form.elements.mois.value && form.elements.annee.value) n++;
+      var n = selects.filter(function (s) { return s.value; }).length + (form.elements.q.value.trim() ? 1 : 0);
       pastille.textContent = n;
       pastille.hidden = n === 0;
     }
