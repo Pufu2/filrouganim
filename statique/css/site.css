@@ -1227,3 +1227,52 @@ html { scroll-padding-top: 90px; }
 .article-carte p { margin: 0; }
 .article-sur { font-size: .82rem; font-weight: 700; color: var(--fil-fonce); text-transform: uppercase; letter-spacing: .04em; }
 .articles-petits { margin-bottom: 16px; }
+
+/* ---- pied de page, sur le modèle de jasonmarinho.com : colonnes, « Explorer par ville » en onglets, ligne légale */
+.recherches { display: none; }
+.ft { padding: clamp(48px, 6vw, 72px) 0 32px; font-size: 1rem; }
+.ft-in { position: relative; }
+.ft-hero { display: grid; grid-template-columns: 1fr 3.2fr; gap: clamp(36px, 5vw, 64px); padding-bottom: clamp(36px, 4vw, 48px); border-bottom: 1px solid rgba(255,255,255,.08); }
+.ft-brand { display: flex; flex-direction: column; gap: 18px; }
+.ft-brand-logo { display: inline-flex; color: var(--creme); width: fit-content; }
+.ft .ft-brand-logo .logo-titre { height: 30px; color: var(--creme); }
+.ft-brand-desc { font-size: 14.5px; color: rgba(255,255,255,.66); line-height: 1.7; margin: 0; max-width: 340px; }
+.ft-brand-note { font-size: 12.5px; color: rgba(255,255,255,.45); line-height: 1.6; margin: 0; max-width: 340px; }
+.ft-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(24px, 3vw, 40px); }
+.ft-cat { display: flex; flex-direction: column; gap: 13px; }
+.ft .ft-cat-t { font: 700 11px/1.3 var(--texte); letter-spacing: 1.6px; text-transform: uppercase; color: var(--fil-clair); margin: 0 0 4px; }
+.ft .ft-cat a { color: rgba(255,255,255,.78); text-decoration: none; font-size: 14.5px; line-height: 1.55; width: fit-content; position: relative; transition: color .2s; }
+.ft .ft-cat a::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 0; height: 1px; background: var(--fil-clair); transition: width .22s; }
+.ft .ft-cat a:hover { color: #fff; }
+.ft .ft-cat a:hover::after { width: 100%; }
+.ft .ft-cat a.ft-cat-more { margin-top: 6px; font-size: 13px; color: var(--fil-clair); font-weight: 600; }
+.ft-explore { padding: clamp(28px, 3.5vw, 40px) 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.ft-explore-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+.ft .ft-explore-h { display: flex; align-items: center; gap: 12px; font-family: var(--titres); font-size: 19px; font-weight: 500; color: #fff; margin: 0; }
+.ft-explore-h svg { width: 20px; height: 20px; fill: none; stroke: var(--fil-clair); stroke-width: 1.8; stroke-linejoin: round; }
+.ft-explore-h em { color: var(--fil-clair); font-style: italic; font-weight: 400; }
+.ft-explore-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.ft-tab { font: 500 12.5px/1.2 var(--texte); padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); color: rgba(255,255,255,.78); cursor: pointer; transition: .2s; }
+.ft-tab:hover { background: rgba(255,255,255,.09); color: #fff; }
+.ft-tab.on { background: rgba(255,125,138,.14); border-color: rgba(255,125,138,.4); color: var(--fil-clair); font-weight: 700; }
+.ft-tab:focus-visible { outline: 2px solid var(--fil-clair); outline-offset: 2px; }
+.ft-panel { display: none; flex-direction: column; gap: 10px; }
+.ft-panel.on { display: flex; }
+.ft .ft-panel-hint { font-size: 12.5px; color: rgba(255,255,255,.58); line-height: 1.5; margin: 0; max-width: 720px; }
+.ft-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.ft .ft-chips a { font-size: 12.5px; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,.045); color: rgba(255,255,255,.7); text-decoration: none; border: 1px solid transparent; transition: .18s; line-height: 1.3; white-space: nowrap; }
+.ft .ft-chips a:hover { color: var(--fil-clair); border-color: rgba(255,125,138,.3); background: rgba(255,125,138,.08); }
+.ft .ft-see-all { margin: 2px 4px 0; font-size: 12.5px; font-weight: 700; color: var(--fil-clair); text-decoration: none; align-self: flex-start; }
+.ft .ft-see-all:hover { color: #fff; }
+.ft-baseline { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-top: 28px; font-size: 12.5px; }
+.ft-cp { color: rgba(255,255,255,.45); }
+.ft-legal { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.ft .ft-legal a { font-size: 12.5px; color: rgba(255,255,255,.58); text-decoration: none; }
+.ft .ft-legal a:hover { color: #fff; }
+@media (max-width: 1100px) { .ft-cols { grid-template-columns: repeat(2, 1fr); gap: 32px; } }
+@media (max-width: 960px) { .ft-hero { grid-template-columns: 1fr; gap: 36px; } .ft-brand-desc, .ft-brand-note { max-width: none; } }
+@media (max-width: 640px) { .ft-explore-head { flex-direction: column; align-items: flex-start; } .ft-baseline { flex-direction: column; align-items: flex-start; } .ft .ft-chips a { font-size: 12px; padding: 5px 10px; } }
+@media (max-width: 480px) { .ft-cols { grid-template-columns: 1fr; gap: 22px; } }
+.ft nav.ft-legal { flex-direction: row; gap: 0 16px; }
+.ft nav.ft-cat { gap: 13px; }
+.ft p.ft-brand-desc, .ft p.ft-brand-note { max-width: 340px; }

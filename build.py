@@ -1035,6 +1035,45 @@ class Site:
         regs = {r["slug"] for r in self.regions.values()}
         def parts(u):
             return u[len(B):].strip("/").split("/") if u.startswith(B) else []
+        villes_bafa = top(lambda u: len(parts(u)) == 2 and parts(u)[0] in deps and pages[u].get("ville"), lambda p: p["ville"]["nom"], 24)
+        deps_bafa = top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, lambda p: p["departement"]["nom"], 24)
+        psc = top(lambda u: len(parts(u)) == 3 and parts(u)[1] == "psc1" and parts(u)[0] in deps,
+                  lambda p: p["h1"].split(" à ", 1)[1], 24)
+        bafd = top(lambda u: len(parts(u)) == 2 and parts(u)[1] == "bafd" and parts(u)[0] in deps, lambda p: p["fil"][-2][0], 24)
+        ecoles = top(lambda u: u.startswith("/se-former/ecoles/bpjeps/") and u.count("/") == 5 and u.split("/")[4] not in regs,
+                     lambda p: p["fil"][-1][0], 24)
+        themes = [(t, u) for t, u, _ in getattr(self, "themes_appro", [])]
+        self._recherches = [x for x in [
+            {"cle": "bafa-villes", "titre": "BAFA par ville", "aide": "Les villes où les sessions BAFA sont les plus nombreuses : dates, prix et organismes.",
+             "liens": villes_bafa, "tout": ("Toutes les sessions BAFA", "/se-former/sessions/bafa/")},
+            {"cle": "bafa-deps", "titre": "BAFA par département", "aide": "Formation générale et approfondissement, département par département.",
+             "liens": deps_bafa, "tout": ("Toutes les régions", "/se-former/sessions/")},
+            {"cle": "psc", "titre": "PSC premiers secours", "aide": "Une journée pour apprendre les gestes qui sauvent, souvent demandée aux animateurs.",
+             "liens": psc, "tout": ("Toutes les formations PSC", "/se-former/sessions/psc1/")},
+            {"cle": "bafd", "titre": "BAFD", "aide": "Devenir directeur d'accueil collectif de mineurs : les sessions près de chez vous.",
+             "liens": bafd, "tout": ("Toutes les sessions BAFD", "/se-former/sessions/bafd/")},
+            {"cle": "appro", "titre": "Approfondissements", "aide": "La dernière étape du BAFA, thème par thème.",
+             "liens": themes, "tout": ("Tous les approfondissements", "/se-former/sessions/approfondissement/")},
+            {"cle": "ecoles", "titre": "Écoles BPJEPS", "aide": "Faire de l'animation son métier : les écoles du BPJEPS, département par département.",
+             "liens": ecoles, "tout": ("Toutes les écoles", "/se-former/ecoles/")},
+        ] if x["liens"]]
+        return self._recherches
+        pages = {p["url"]: p for p in self.pages if p.get("indexer") and p["gabarit"] in ("liste.html", "ecoles.html")}
+        def n(p):
+            return p.get("sessions_total") or len(p.get("sessions") or p.get("ecoles") or [])
+        def top(filtre, nom, k=10):
+            vus, r = set(), []
+            for p in sorted((p for u, p in pages.items() if filtre(u)), key=n, reverse=True):
+                t = nom(p)
+                if t not in vus and len(r) < k:
+                    vus.add(t)
+                    r.append((t, p["url"]))
+            return r
+        B = "/se-former/sessions/"
+        deps = {d["slug"] for d in self.departements.values()}
+        regs = {r["slug"] for r in self.regions.values()}
+        def parts(u):
+            return u[len(B):].strip("/").split("/") if u.startswith(B) else []
         villes_bafa = top(lambda u: len(parts(u)) == 2 and parts(u)[0] in deps and pages[u].get("ville"), lambda p: f"BAFA {p['ville']['nom']}")
         deps_bafa = top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, lambda p: f"BAFA {p['departement']['nom']}")
         psc = top(lambda u: len(parts(u)) == 3 and parts(u)[1] == "psc1" and parts(u)[0] in deps,
