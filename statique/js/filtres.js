@@ -216,8 +216,10 @@
       var v = dep.slice(2), ville = sansAccents(d.ville);
       var okDep = !dep || (dep.slice(0, 2) === "r:" ? d.region === v
         : dep.slice(0, 2) === "v:" ? (ville === sansAccents(v) || ville.indexOf(sansAccents(v) + " ") === 0) : d.dep === dep);
-      var okQuand = (!annee || d.mois.slice(0, 4) === annee) && (!mois || (mois.slice(0, 2) === "v:"
-        ? d.periode.replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
+      // les vacances gardent l'année de leur période (Noël 2026 va jusqu'en janvier 2027)
+      var vac = mois.slice(0, 2) === "v:";
+      var okQuand = (!annee || (vac ? (d.periode || "").slice(-4) === annee : d.mois.slice(0, 4) === annee)) &&
+        (!mois || (vac ? (d.periode || "").replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
       i.okSansLieu = (!dip || d.diplome === dip) && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
       i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) && okPlus(d) &&
