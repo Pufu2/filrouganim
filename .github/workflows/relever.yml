@@ -55,11 +55,13 @@ jobs:
         run: |
           pip install -q google-auth requests
           python3 outils/audience.py
+      - name: Le bilan du mois (un article du blog, une fois par mois)
+        run: python3 build.py --bilan
       - name: Le site se fabrique-t-il toujours ?
         run: python3 build.py
       - name: Enregistrer les changements
         run: |
-          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/formations-cpf.yml donnees/audience.yml donnees/geo-communes.yml
+          git add donnees/sessions.yml donnees/sessions-pro.yml donnees/ecoles-pro.yml donnees/formations-cpf.yml donnees/audience.yml donnees/geo-communes.yml donnees/bilans
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0

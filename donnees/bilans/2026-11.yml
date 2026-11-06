@@ -1,0 +1,91 @@
+# Bilan du mois, écrit par build.py --bilan (relevé de nuit) : ne pas modifier à la main.
+date: '2026-11-06'
+total: 5205
+organismes: 161
+fg:
+  n: 1300
+  med: 405
+  min: 300
+  max: 623
+appro:
+  n: 1878
+  med: 352
+  min: 170
+  max: 770
+qualif:
+  n: 100
+  med: 495
+  min: 50
+  max: 785
+bafd:
+  n: 293
+  med: 520
+  min: 380
+  max: 787
+psc:
+  n: 1364
+  med: 60
+  min: 40
+  max: 650
+deps_plus_fournis:
+- nom: Paris
+  slug: paris
+  n: 101
+- nom: Nord
+  slug: nord
+  n: 94
+- nom: Gironde
+  slug: gironde
+  n: 58
+- nom: Seine-Maritime
+  slug: seine-maritime
+  n: 50
+- nom: Haute-Garonne
+  slug: haute-garonne
+  n: 44
+themes:
+- nom: Jeux et grands jeux
+  id: jeux
+  n: 461
+- nom: Activités manuelles et créativité
+  id: activites-manuelles
+  n: 199
+- nom: Handicap et accueil inclusif
+  id: handicap
+  n: 193
+- nom: Petite enfance
+  id: petite-enfance
+  n: 175
+- nom: Séjours de vacances
+  id: sejours
+  n: 159
+- nom: Accueil de loisirs et périscolaire
+  id: accueil-de-loisirs
+  n: 140
+- nom: Spectacle, expression et musique
+  id: expression-spectacle
+  n: 139
+- nom: Sport et activités physiques
+  id: sport
+  n: 127
+- nom: Nature, mer et plein air
+  id: nature-plein-air
+  n: 119
+- nom: Multi activités
+  id: multi-activites
+  n: 89
+- nom: Assistant sanitaire
+  id: assistant-sanitaire
+  n: 89
+- nom: Les 6-12 ans
+  id: 6-12-ans
+  n: 87
+- nom: Préados et ados
+  id: ados
+  n: 58
+- nom: Gestion des conflits
+  id: conflits
+  n: 36
+- nom: Numérique, médias et sciences
+  id: numerique
+  n: 22

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block tete_plus %}<p class="tete-petit"><a href="{{ lien('/blog/rss.xml') }}">S'abonner au flux RSS</a></p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <ul class="articles">
+      {% for a in page.articles %}
+      <li class="article-carte">
+        <p class="article-sur">{{ a.categorie or "Conseils" }} · <time datetime="{{ a.date }}">{{ a.date | date_fr }}</time></p>
+        <h2><a href="{{ lien(a.url) }}">{{ a.titre }}</a></h2>
+        <p>{{ a.resume or a.description }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

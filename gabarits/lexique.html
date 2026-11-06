@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block tete_chapo %}{% if page.intro %}<p class="chapo">{{ page.intro }}</p>{% endif %}{% endblock %}
+{% block contenu %}
+{% if page.terme %}{% set t = page.terme %}
+<section class="bande bande-papier">
+  <article class="cadre texte">
+    <p class="definition">{{ t.definition }}</p>
+    {% if t.liens %}<ul class="lexique-liens">{% for titre, u in t.liens %}<li><a href="{{ lien(u) }}">{{ titre }} <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>{% endif %}
+    {% if page.voir %}<h2>Voir aussi</h2>
+    <dl class="lexique-voir">{% for v in page.voir %}<dt><a href="{{ lien(v.url) }}">{{ v.terme }}</a></dt><dd>{{ v.definition | resume(150) }}</dd>{% endfor %}</dl>{% endif %}
+  </article>
+</section>
+{% endif %}
+<section class="bande bande-sable">
+  <div class="cadre explorer">
+    <div class="explorer-large"><h3>{{ "Tout le lexique" if page.terme else "Les mots, de A à Z" }}</h3>
+      <ul class="colonnes">{% for x in page.termes | sort(attribute="court") %}{% if x.url != page.url %}<li><a href="{{ lien(x.url) }}">{{ x.terme }}</a></li>{% endif %}{% endfor %}</ul>
+    </div>
+  </div>
+</section>
+{% endblock %}
