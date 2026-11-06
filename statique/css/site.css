@@ -1213,3 +1213,17 @@ html { scroll-padding-top: 90px; }
 .recherches li { padding: 3px 0; font-size: .9rem; line-height: 1.35; }
 .recherches a { color: var(--encre); text-decoration: none; }
 .recherches a:hover { color: var(--fil-fonce); text-decoration: underline; }
+/* ---- lexique et blog */
+.definition { font-size: 1.2rem; line-height: 1.6; }
+.lexique-liens { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.lexique-liens a { display: inline-block; padding: 8px 14px; border-radius: 10px; background: var(--blanc); border: 1px solid var(--trait); font-weight: 700; text-decoration: none; }
+.lexique-voir dt { font-weight: 700; margin-top: 14px; }
+.lexique-voir dd { margin: 2px 0 0; color: var(--doux); }
+.articles { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.article-carte { background: var(--blanc); border: 1px solid var(--trait); border-radius: 16px; padding: 20px 22px; }
+.article-carte h2, .article-carte h3 { margin: 4px 0 8px; font-size: 1.25rem; }
+.article-carte h2 a, .article-carte h3 a { color: var(--encre); text-decoration: none; }
+.article-carte h2 a:hover, .article-carte h3 a:hover { color: var(--fil-fonce); text-decoration: underline; }
+.article-carte p { margin: 0; }
+.article-sur { font-size: .82rem; font-weight: 700; color: var(--fil-fonce); text-transform: uppercase; letter-spacing: .04em; }
+.articles-petits { margin-bottom: 16px; }

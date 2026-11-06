@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block tete_chapo %}<p class="chapo">{{ page.description }}</p><p class="tete-petit">{{ page.article.categorie or "Conseils" }} · publié le {{ page.article.date | date_fr }}{% if page.article.mis_a_jour %} · mis à jour le {{ page.article.mis_a_jour | date_fr }}{% endif %} · les chiffres sont recalculés chaque nuit</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <article class="cadre texte">
+    {% if contenu %}{{ contenu | safe }}{% else %}{% set b = page.article.bilan %}
+    <p>Chaque mois, Fil Roug'Anim fait le point sur les sessions relevées chez les organismes de formation. Voici la photo prise le {{ b.date | date_fr }}.</p>
+    <h2>{{ b.total }} sessions à venir</h2>
+    <p>Ce jour-là, le site comptait <strong>{{ b.total }} sessions</strong> à venir chez {{ b.organismes }} organismes : {{ b.fg.n }} formations générales du BAFA, {{ b.appro.n }} approfondissements, {{ b.qualif.n }} qualifications, {{ b.bafd.n }} sessions BAFD et {{ b.psc.n }} formations PSC.</p>
+    <h2>Les prix médians</h2>
+    <table><thead><tr><th>Formation</th><th>Prix médian</th><th>Du moins cher au plus cher</th></tr></thead><tbody>
+    {% for nom, x in [("Formation générale BAFA", b.fg), ("Approfondissement BAFA", b.appro), ("Qualification BAFA", b.qualif), ("BAFD", b.bafd), ("PSC", b.psc)] if x.med %}<tr><td>{{ nom }}</td><td>{{ x.med | euros }}</td><td>{{ x.min | euros }} à {{ x.max | euros }}</td></tr>{% endfor %}
+    </tbody></table>
+    <p>Le prix médian coupe les sessions en deux : la moitié coûte moins, l'autre moitié plus.</p>
+    {% if b.deps_plus_fournis %}<h2>Les départements où le choix est le plus grand</h2>
+    <p>Pour la formation générale du BAFA : {% for d in b.deps_plus_fournis %}{{ d.nom }} ({{ d.n }} sessions){{ ", " if not loop.last else "." }}{% endfor %}</p>{% endif %}
+    {% if b.themes %}<h2>Les thèmes d'approfondissement les plus proposés</h2>
+    <ol>{% for t in b.themes[:6] %}<li><a href="/se-former/sessions/approfondissement/{{ t.id }}/">{{ t.nom }}</a> : {{ t.n }} sessions</li>{% endfor %}</ol>{% endif %}
+    <p><a href="/se-former/sessions/">Voir les sessions d'aujourd'hui</a> · <a href="/se-former/financer-son-bafa/">Financer son BAFA</a></p>
+    {% endif %}
+  </article>
+</section>
+<section class="bande bande-sable">
+  <div class="cadre">
+    <h2>À lire aussi</h2>
+    <ul class="articles articles-petits">{% for a in articles if a.url != page.url %}{% if loop.index <= 3 %}<li class="article-carte"><p class="article-sur">{{ a.categorie or "Conseils" }}</p><h3><a href="{{ lien(a.url) }}">{{ a.titre }}</a></h3></li>{% endif %}{% endfor %}</ul>
+    <p><a href="{{ lien('/blog/') }}">Tous les articles <span aria-hidden="true">→</span></a></p>
+    {{ m.encart_jeuphorie(site) }}
+  </div>
+</section>
+{% endblock %}

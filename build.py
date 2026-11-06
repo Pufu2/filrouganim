@@ -852,6 +852,7 @@ class Site:
 
     def ajouter_redirections(self):
         """Les adresses des versions précédentes du site renvoient vers les nouvelles."""
+        self.declarer_lexique_blog()
         fixes = {"/se-former/": ["/formations/", "/guides/", "/bafa/", "/se-former/cqp-animateur-periscolaire/",
                                  "/se-former/sessions/cqp-animateur-periscolaire/"],
                  "/se-former/sessions/bafd/": ["/bafd/", "/sessions/bafd/"],
@@ -884,6 +885,135 @@ class Site:
         for ancienne, nouvelle in sorted(anciennes.items()):
             if ancienne not in existantes:
                 self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=nouvelle)
+
+    def chiffres_sessions(self, sessions=None):
+        """Les chiffres repris dans le blog et les bilans du mois : prix médians, nombre de sessions, départements."""
+        S = self.sessions if sessions is None else sessions
+        def med(liste):
+            prix = sorted(s["prix"] for s in liste if s["prix"])
+            return {"n": len(liste), "med": prix[len(prix) // 2] if prix else None,
+                    "min": prix[0] if prix else None, "max": prix[-1] if prix else None}
+        bafa = [s for s in S if s["diplome"] == "BAFA"]
+        c = {"total": len(S),
+             "fg": med([s for s in bafa if s["type"] == "formation-generale"]),
+             "appro": med([s for s in bafa if s["type"] == "approfondissement"]),
+             "qualif": med([s for s in bafa if s["type"] == "qualification"]),
+             "bafd": med([s for s in S if s["diplome"] == "BAFD"]),
+             "psc": med([s for s in S if s["diplome"] == "PSC1"]),
+             "organismes": len({s["org"]["nom"] for s in S})}
+        formules = {}
+        for f in ("internat", "demi-pension", "externat"):
+            formules[f] = med([s for s in bafa if s["type"] == "formation-generale" and s.get("formule") == f])
+        c["formules"] = formules
+        par_dep = collections.defaultdict(list)
+        for s in bafa:
+            if s["type"] == "formation-generale":
+                par_dep[s["dep"]["code"]].append(s)
+        deps = [(self.departements[k], med(v)) for k, v in par_dep.items() if len([x for x in v if x["prix"]]) >= 5]
+        c["deps_moins_chers"] = sorted(deps, key=lambda x: x[1]["med"])[:5]
+        c["deps_plus_fournis"] = sorted(((self.departements[k], len(v)) for k, v in par_dep.items()), key=lambda x: -x[1])[:5]
+        par_periode = collections.Counter(s["periode"]["nom"] for s in bafa if s.get("periode"))
+        c["periodes"] = par_periode.most_common()
+        themes = collections.Counter(k for s in bafa if s["type"] == "approfondissement" for k in themes_de(s["theme"]))
+        noms = {k: n for k, n, _ in THEMES_APPRO}
+        c["themes"] = [(noms[k], k, n) for k, n in themes.most_common()]
+        return c
+
+    def chiffres_blog(self):
+        if getattr(self, "_chiffres", None) is None:
+            self._chiffres = self.chiffres_sessions()
+        return self._chiffres
+
+    def declarer_lexique_blog(self):
+        """Le lexique (une page par mot) et le blog (articles écrits + bilans du mois calculés sur les sessions)."""
+        urls = {p["url"] for p in self.pages}
+        LX = ("Lexique", "/lexique/")
+        termes = (self.donnees.get("lexique") or {}).get("termes") or []
+        par_id = {t["id"]: t for t in termes}
+        for t in termes:
+            t["url"] = f"/lexique/{t['id']}/"
+            t["liens"] = [l for l in t.get("liens") or [] if l[1] in urls]
+        for t in termes:
+            voir = [par_id[v] for v in t.get("voir") or [] if v in par_id]
+            schema = json_ld({"@context": "https://schema.org", "@type": "DefinedTerm", "name": t["terme"],
+                              "description": " ".join(t["definition"].split()),
+                              "inDefinedTermSet": self.config["url"].rstrip("/") + "/lexique/"})
+            self.ajouter(t["url"], "lexique.html", titre=f"{t['terme']} : définition simple",
+                         description=resume(f"{t['terme']} : " + " ".join(t["definition"].split())),
+                         h1=t["terme"], terme=t, voir=voir, termes=termes, schema=schema, fil=[LX, (t["court"], t["url"])])
+        if termes:
+            self.ajouter("/lexique/", "lexique.html", titre="Lexique de l'animation : BAFA, ACM, CEE, BPJEPS…",
+                         description="Les mots de l'animation expliqués simplement : ACM, formation générale, stage pratique, approfondissement, CEE, taux d'encadrement, BPJEPS, PSC…",
+                         h1="Le lexique de l'animation",
+                         intro="ACM, CEE, appro, UCC : les mots qu'on entend en formation et en colo, expliqués en quelques lignes.",
+                         termes=sorted(termes, key=lambda t: sans_accents(t["terme"])), fil=[LX])
+
+        # -- le blog
+        BL = ("Blog", "/blog/")
+        articles = []
+        for f in sorted((RACINE / "contenu" / "blog").glob("*.md")):
+            entete, corps = lire_markdown(f)
+            date = en_date(entete["date"])
+            if date > self.aujourdhui:  # un article programmé attend son jour
+                continue
+            articles.append({**entete, "date": date, "url": f"/blog/{f.stem}/", "corps": corps})
+        for f in sorted((RACINE / "donnees" / "bilans").glob("*.yml")):
+            b = yaml.safe_load(f.read_text(encoding="utf-8"))
+            nom = f"{MOIS[int(f.stem[5:7]) - 1]} {f.stem[:4]}"
+            articles.append({"titre": f"Les formations BAFA en {nom} : prix, villes et tendances",
+                             "description": f"Le bilan de {nom} : {b['total']} sessions BAFA, BAFD et PSC relevées, les prix médians, les départements les plus fournis et les thèmes d'approfondissement.",
+                             "resume": f"{b['total']} sessions relevées, les prix médians et ce qui change ce mois-ci.",
+                             "categorie": "Bilan du mois", "date": en_date(b["date"]), "url": f"/blog/bilan-{f.stem}/",
+                             "bilan": b, "nom_mois": nom, "corps": None})
+        articles.sort(key=lambda a: a["date"], reverse=True)
+        self.articles = articles
+        for a in articles:
+            schema = json_ld({"@context": "https://schema.org", "@type": "BlogPosting", "headline": a["titre"],
+                              "description": a["description"], "datePublished": a["date"].isoformat(),
+                              "dateModified": en_date(a.get("mis_a_jour") or a["date"]).isoformat(),
+                              "author": {"@type": "Organization", "name": self.config["nom"]},
+                              "publisher": {"@type": "Organization", "name": self.config["nom"]},
+                              "mainEntityOfPage": self.config["url"].rstrip("/") + a["url"]})
+            extra = {"corps_md": a["corps"]} if a["corps"] else {}
+            self.ajouter(a["url"], "article.html", titre=a["titre"], description=a["description"], h1=a["titre"],
+                         article=a, schema=schema, fil=[BL, (a.get("court") or a["titre"], a["url"])], **extra)
+        if articles:
+            self.ajouter("/blog/", "blog.html", titre="Le blog de l'animation : BAFA, colo, métiers",
+                         description="Conseils, chiffres et bilans du mois sur le BAFA, le BAFD, les colos et les métiers de l'animation, tirés des sessions comparées sur Fil Roug'Anim.",
+                         h1="Le blog", intro="Des conseils concrets et des chiffres tirés des sessions relevées chaque nuit, pour bien choisir sa formation et réussir ses premières colos.",
+                         articles=articles, fil=[BL])
+
+    def ecrire_bilan(self):
+        """Le bilan du mois (donnees/bilans/AAAA-MM.yml) : une photo des sessions, écrite une fois par mois par le relevé
+        de nuit. Chaque bilan devient un article du blog, qui ne change plus ensuite."""
+        cible = RACINE / "donnees" / "bilans" / f"{self.aujourdhui:%Y-%m}.yml"
+        if cible.exists():
+            print(f"Bilan déjà écrit : {cible.name}")
+            return
+        c = self.chiffres_sessions()
+        b = {"date": self.aujourdhui.isoformat(), "total": c["total"], "organismes": c["organismes"],
+             **{k: c[k] for k in ("fg", "appro", "qualif", "bafd", "psc")},
+             "deps_plus_fournis": [{"nom": d["nom"], "slug": d["slug"], "n": n} for d, n in c["deps_plus_fournis"]],
+             "themes": [{"nom": nom, "id": k, "n": n} for nom, k, n in c["themes"]]}
+        cible.parent.mkdir(exist_ok=True)
+        cible.write_text("# Bilan du mois, écrit par build.py --bilan (relevé de nuit) : ne pas modifier à la main.\n"
+                         + yaml.safe_dump(b, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        print(f"Bilan écrit : {cible.name}")
+
+    def ecrire_rss(self):
+        base = self.config["url"].rstrip("/")
+        items = []
+        for a in getattr(self, "articles", [])[:30]:
+            jour = dt.datetime.combine(a["date"], dt.time(8, 0)).strftime("%a, %d %b %Y %H:%M:%S +0000")
+            items.append(f"<item><title>{html.escape(a['titre'])}</title><link>{base}{a['url']}</link>"
+                         f"<guid>{base}{a['url']}</guid><pubDate>{jour}</pubDate>"
+                         f"<description>{html.escape(a['description'])}</description></item>")
+        (SORTIE / "blog").mkdir(parents=True, exist_ok=True)
+        (SORTIE / "blog" / "rss.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+            f"<title>{html.escape(self.config['nom'])} : le blog</title><link>{base}/blog/</link>"
+            f"<description>Conseils et chiffres sur le BAFA et l'animation</description><language>fr</language>"
+            + "".join(items) + "</channel></rss>\n", encoding="utf-8")
 
     def recherches_frequentes(self):
         """Le bloc « Recherches fréquentes » au-dessus du pied de page : les pages les plus fournies de chaque famille."""
@@ -1056,7 +1186,7 @@ class Site:
         INTROS = {
             "formation-generale": "La première étape du BAFA : 8 jours pour apprendre les bases, dès 16 ans. Ensuite viennent le stage pratique puis l'approfondissement.",
             "approfondissement": "La dernière étape du BAFA : 6 jours sur un thème, après le stage pratique. C'est après cette session qu'on demande l'aide de la CAF.",
-            "bafd": "Le brevet pour diriger un accueil collectif de mineurs, dès 21 ans (ou 18 ans avec le BAFA) : formation générale, puis stage pratique et perfectionnement.",
+            "bafd": "Le brevet pour diriger un accueil collectif de mineurs, dès 18 ans avec le BAFA : formation générale, stage pratique, perfectionnement, puis second stage.",
             "psc1": "Une journée pour apprendre les gestes de premiers secours, reconnue partout et souvent demandée aux animateurs.",
         }
 
@@ -1256,7 +1386,8 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
-            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "mois_pages": getattr(self, "mois_pages", {}),
+            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(),
+            "c": self.chiffres_blog(), "articles": getattr(self, "articles", []), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),
             "fil_jsonld": json_ld({"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -1284,6 +1415,7 @@ class Site:
         self.ecrire_donnees_recherche()
         if not self.apercu:
             self.ecrire_fichiers_seo()
+            self.ecrire_rss()
             if self.config.get("nom_de_domaine"):
                 (SORTIE / "CNAME").write_text(self.config["nom_de_domaine"] + "\n", encoding="utf-8")
         (SORTIE / ".nojekyll").write_text("", encoding="utf-8")
@@ -1342,8 +1474,12 @@ def main():
     parser.add_argument("--apercu", action="store_true",
                         help="liens relatifs, pour regarder le site sans serveur")
     parser.add_argument("--date", help="fabriquer le site comme si on était ce jour-là (AAAA-MM-JJ)")
+    parser.add_argument("--bilan", action="store_true", help="écrire le bilan du mois (donnees/bilans/), s'il manque")
     args = parser.parse_args()
-    Site(apercu=args.apercu, aujourdhui=en_date(args.date) if args.date else None).construire()
+    site = Site(apercu=args.apercu, aujourdhui=en_date(args.date) if args.date else None)
+    if args.bilan:
+        return site.ecrire_bilan()
+    site.construire()
 
 
 if __name__ == "__main__":

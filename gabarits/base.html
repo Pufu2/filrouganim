@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="{{ statique('css/site.css') }}">
 {% if fil_jsonld %}<script type="application/ld+json">{{ fil_jsonld | safe }}</script>{% endif %}
 {% block schema %}{% endblock %}
+<link rel="alternate" type="application/rss+xml" title="Fil Roug'Anim : le blog" href="{{ lien('/blog/rss.xml') }}">
 </head>
 <body>
 <a class="evitement" href="#contenu">Aller au contenu</a>
@@ -81,6 +82,9 @@
       <a href="{{ lien('/se-former/') }}">Les formations</a>
       <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
       <a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a>
+      <a href="{{ lien('/se-former/ecoles/') }}">Les écoles des métiers</a>
+      <a href="{{ lien('/blog/') }}">Le blog</a>
+      <a href="{{ lien('/lexique/') }}">Le lexique de l'animation</a>
     </nav>
     <nav aria-label="Trouver un poste et recruter">
       <p class="pied-titre">Trouver un poste</p>

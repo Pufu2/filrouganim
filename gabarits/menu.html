@@ -16,7 +16,7 @@
         <div class="mm-colonne">
           <p class="mm-titre">Les formations</p>
           {{ lien_menu('/se-former/bafa/', 'BAFA', 'Animateur, dès 16 ans') }}
-          {{ lien_menu('/se-former/bafd/', 'BAFD', 'Directeur, dès 21 ans') }}
+          {{ lien_menu('/se-former/bafd/', 'BAFD', 'Directeur, dès 18 ans') }}
           {{ lien_menu('/se-former/psc1/', 'PSC', 'Premiers secours, une journée') }}
           {{ lien_menu('/se-former/surveillant-de-baignade/', 'Surveillant de baignade', 'Qualification du BAFA') }}
         </div>
@@ -33,6 +33,8 @@
           {{ lien_menu('/se-former/etapes-du-bafa/', 'Les étapes du BAFA') }}
           {{ lien_menu('/se-former/financer-son-bafa/', 'Financer son BAFA') }}
           {{ lien_menu('/se-former/questions-frequentes/', 'Questions fréquentes') }}
+          {{ lien_menu('/blog/', 'Le blog', 'Conseils et chiffres') }}
+          {{ lien_menu('/lexique/', 'Le lexique') }}
           <p class="mm-titre mm-titre-2">Chercher autrement</p>
           {% for p in vacances[:2] %}{{ lien_menu('/se-former/sessions/' ~ p.slug ~ '/', 'Vacances : ' ~ p.court) }}{% endfor %}
           {{ lien_menu('/se-former/sessions/organismes/', 'Les organismes') }}

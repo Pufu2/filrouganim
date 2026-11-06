@@ -1,0 +1,314 @@
+# Le lexique de l'animation : un mot, une définition courte et juste, des liens vers les pages du site.
+# « voir » : d'autres mots du lexique (leurs id). « liens » : des pages du site [titre, adresse].
+termes:
+  - id: acm
+    terme: "ACM (accueil collectif de mineurs)"
+    court: ACM
+    definition: >-
+      Un accueil collectif de mineurs, c'est tout accueil d'enfants ou d'ados, hors de chez eux, organisé pendant
+      leur temps libre et déclaré à l'État : centre de loisirs, colo, séjour court, accueil de jeunes, scoutisme.
+      C'est le cadre du BAFA et du BAFD : les règles d'encadrement (taux, diplômes, sécurité) s'appliquent dès
+      qu'un accueil est déclaré. On dit aussi « accueil collectif à caractère éducatif de mineurs ».
+    voir: [accueil-de-loisirs, sejour-de-vacances, taux-d-encadrement, declaration-acm]
+    liens: [["Calculer le taux d'encadrement", /outils/taux-d-encadrement/]]
+  - id: accueil-de-loisirs
+    terme: "Accueil de loisirs (centre de loisirs, ALSH)"
+    court: Accueil de loisirs
+    definition: >-
+      L'accueil de loisirs, longtemps appelé centre de loisirs ou ALSH (accueil de loisirs sans hébergement),
+      reçoit les enfants à la journée : le mercredi, pendant les vacances, et parfois avant et après l'école
+      (on parle alors de périscolaire). C'est le premier employeur des animateurs, et un lieu très courant pour
+      le stage pratique du BAFA.
+    voir: [acm, periscolaire, stage-pratique]
+    liens: [["Trouver son stage pratique", /trouver-un-poste/trouver-son-stage-pratique/]]
+  - id: periscolaire
+    terme: "Périscolaire"
+    court: Périscolaire
+    definition: >-
+      Le périscolaire, ce sont les temps autour de l'école : l'accueil du matin, la pause méridienne, le soir
+      après la classe et parfois le mercredi. Ces temps sont souvent organisés par la mairie et encadrés par des
+      animateurs. Pour le stage pratique du BAFD, les journées en périscolaire comptent pour 6 jours au plus.
+    voir: [accueil-de-loisirs, acm]
+    liens: []
+  - id: sejour-de-vacances
+    terme: "Séjour de vacances (colo)"
+    court: Colo
+    definition: >-
+      Le séjour de vacances, la « colo », accueille au moins sept mineurs avec hébergement pendant plus de trois
+      nuits. Les animateurs y vivent avec le groupe jour et nuit : c'est souvent là qu'on signe un contrat
+      d'engagement éducatif. Une colo l'été est aussi une façon classique de faire son stage pratique.
+    voir: [acm, cee, sejour-court]
+    liens: [["La valise de colo", /trouver-un-poste/preparer-sa-valise-de-colo/]]
+  - id: sejour-court
+    terme: "Séjour court et mini-camp"
+    court: Mini-camp
+    definition: >-
+      Un séjour court dure d'une à trois nuits. Il est souvent rattaché à un accueil de loisirs : on parle alors
+      de mini-camp ou de séjour accessoire. Les règles d'encadrement restent celles d'un accueil collectif de
+      mineurs.
+    voir: [sejour-de-vacances, accueil-de-loisirs]
+    liens: []
+  - id: bafa
+    terme: "BAFA"
+    court: BAFA
+    definition: >-
+      Le brevet d'aptitude aux fonctions d'animateur permet d'encadrer des enfants et des ados de façon
+      occasionnelle en accueil collectif de mineurs. Il se passe dès 16 ans, en trois étapes et en 30 mois au
+      plus : formation générale (8 jours), stage pratique (14 jours) et approfondissement (6 jours) ou
+      qualification (8 jours).
+    voir: [formation-generale, stage-pratique, approfondissement, qualification, jury-bafa]
+    liens: [["Les étapes du BAFA", /se-former/etapes-du-bafa/], ["Les sessions BAFA", /se-former/sessions/bafa/]]
+  - id: bafd
+    terme: "BAFD"
+    court: BAFD
+    definition: >-
+      Le brevet d'aptitude aux fonctions de directeur permet de diriger, de façon occasionnelle, un accueil
+      collectif de mineurs. Il se prépare dès 18 ans avec le BAFA : formation générale, stage pratique de
+      direction, perfectionnement, puis second stage. Il est valable 5 ans.
+    voir: [bafa, perfectionnement, projet-pedagogique]
+    liens: [["Le BAFD", /se-former/bafd/], ["Les sessions BAFD", /se-former/sessions/bafd/]]
+  - id: formation-generale
+    terme: "Formation générale"
+    court: Formation générale
+    definition: >-
+      La première étape du BAFA : 8 jours chez un organisme habilité pour apprendre les bases (sécurité, besoins
+      de l'enfant, jeux, vie collective, rôle de l'animateur). Il faut avoir 16 ans le premier jour et s'être
+      inscrit sur le site du ministère. Le BAFD commence lui aussi par une formation générale, de 9 jours au moins.
+    voir: [bafa, stage-pratique]
+    liens: [["Les sessions de formation générale", /se-former/sessions/formation-generale/]]
+  - id: stage-pratique
+    terme: "Stage pratique"
+    court: Stage pratique
+    definition: >-
+      La deuxième étape du BAFA : au moins 14 jours effectifs comme animateur dans un accueil collectif de
+      mineurs déclaré, au plus tard 18 mois après la formation générale. Il se fait en centre de loisirs, en colo
+      ou en accueil de jeunes, et il est souvent payé. Le directeur donne ensuite un avis sur le stage.
+    voir: [formation-generale, approfondissement, cee]
+    liens: [["Trouver son stage pratique", /trouver-un-poste/trouver-son-stage-pratique/], ["Les offres de stages", /trouver-un-poste/offres/]]
+  - id: approfondissement
+    terme: "Approfondissement"
+    court: Approfondissement
+    definition: >-
+      La dernière étape du BAFA : 6 jours sur un thème choisi (petite enfance, jeux, handicap, ados, plein air,
+      spectacle…), après le stage pratique. C'est après cette session qu'on peut demander l'aide de 200 € de la CAF.
+    voir: [qualification, stage-pratique, aide-caf]
+    liens: [["Les approfondissements", /se-former/sessions/approfondissement/]]
+  - id: qualification
+    terme: "Qualification"
+    court: Qualification
+    definition: >-
+      Une session de 8 jours qui remplace l'approfondissement et donne une compétence reconnue. La plus connue
+      est la qualification surveillant de baignade, qui permet de surveiller la baignade d'un groupe en accueil
+      collectif de mineurs.
+    voir: [approfondissement, surveillant-de-baignade]
+    liens: [["Surveillant de baignade", /se-former/surveillant-de-baignade/]]
+  - id: surveillant-de-baignade
+    terme: "Surveillant de baignade"
+    court: Surveillant de baignade
+    definition: >-
+      Une qualification du BAFA (8 jours) qui permet de surveiller une baignade en accueil collectif de mineurs,
+      dans des lieux et conditions précis. Les organismes demandent souvent le PSC avant l'entrée en formation.
+      Très recherchée pour les colos d'été.
+    voir: [qualification, psc]
+    liens: [["Surveillant de baignade", /se-former/surveillant-de-baignade/]]
+  - id: perfectionnement
+    terme: "Perfectionnement (BAFD)"
+    court: Perfectionnement
+    definition: >-
+      La troisième étape du BAFD : au moins 6 jours effectifs de formation, entre le premier et le second stage
+      pratique de direction. On y approfondit la gestion d'équipe, le budget, la sécurité et le projet pédagogique.
+    voir: [bafd]
+    liens: [["Les sessions BAFD", /se-former/sessions/bafd/]]
+  - id: jury-bafa
+    terme: "Jury BAFA"
+    court: Jury
+    definition: >-
+      Une fois les trois étapes terminées, un jury départemental examine le parcours (avis des formateurs et du
+      directeur de stage) et décide de délivrer le brevet. Le résultat s'affiche sur le site du ministère.
+    voir: [bafa]
+    liens: [["Les étapes du BAFA", /se-former/etapes-du-bafa/]]
+  - id: organisme-habilite
+    terme: "Organisme de formation habilité"
+    court: Organisme habilité
+    definition: >-
+      Seuls des organismes habilités par l'État peuvent organiser les sessions du BAFA et du BAFD (formation
+      générale, approfondissement, qualification, perfectionnement). Ils fixent librement leurs prix et leurs
+      formules.
+    voir: [bafa, bafd]
+    liens: [["Les organismes", /se-former/sessions/organismes/]]
+  - id: internat
+    terme: "Internat, demi-pension, externat"
+    court: Formule
+    definition: >-
+      La formule d'une session : en internat, on dort et mange sur place (le plus immersif, souvent le plus cher) ;
+      en demi-pension, on déjeune sur place et on rentre le soir ; en externat, on vient seulement pour la
+      journée. Le prix d'une session change surtout avec la formule.
+    voir: [formation-generale, approfondissement]
+    liens: [["Comparer les sessions", /se-former/sessions/]]
+  - id: aide-caf
+    terme: "Aide de la CAF au BAFA"
+    court: Aide CAF
+    definition: >-
+      La CAF verse une aide nationale de 200 € pour le BAFA, sans condition de ressources. Elle se demande en
+      ligne après la dernière session (approfondissement ou qualification), dans les 3 mois qui suivent sa fin.
+      Des aides locales peuvent s'y ajouter.
+    voir: [approfondissement, financement]
+    liens: [["Financer son BAFA", /se-former/financer-son-bafa/]]
+  - id: financement
+    terme: "Financer sa formation"
+    court: Financement
+    definition: >-
+      Pour le BAFA : aide de la CAF, aides des mairies, des départements, des employeurs. Pour les diplômes
+      professionnels (BPJEPS, DEJEPS…) : apprentissage, CPF, Région, France Travail ou employeur.
+    voir: [aide-caf, cpf, apprentissage]
+    liens: [["Financer son BAFA", /se-former/financer-son-bafa/]]
+  - id: cee
+    terme: "CEE (contrat d'engagement éducatif)"
+    court: CEE
+    definition: >-
+      Le contrat de travail de l'animation occasionnelle en accueil collectif de mineurs. Il prévoit une
+      rémunération minimale par jour, au plus 80 jours sur 12 mois, et des règles de repos adaptées aux séjours.
+    voir: [stage-pratique, sejour-de-vacances]
+    liens: [["Le contrat d'engagement éducatif", /trouver-un-poste/contrat-d-engagement-educatif/], ["Calculer son salaire en CEE", /outils/salaire-cee/]]
+  - id: taux-d-encadrement
+    terme: "Taux d'encadrement"
+    court: Taux d'encadrement
+    definition: >-
+      Le nombre minimum d'animateurs pour un nombre d'enfants donné, fixé par la réglementation selon le type
+      d'accueil et l'âge des enfants. Il fixe aussi la part d'animateurs diplômés, stagiaires et non diplômés.
+    voir: [acm, animateur-stagiaire]
+    liens: [["Calculer le taux d'encadrement", /outils/taux-d-encadrement/]]
+  - id: animateur-stagiaire
+    terme: "Animateur stagiaire"
+    court: Stagiaire
+    definition: >-
+      Un animateur qui a fait la formation générale du BAFA et qui effectue son stage pratique. Il compte dans
+      l'équipe d'encadrement, dans les proportions prévues par la réglementation.
+    voir: [stage-pratique, taux-d-encadrement]
+    liens: []
+  - id: projet-pedagogique
+    terme: "Projet pédagogique"
+    court: Projet pédagogique
+    definition: >-
+      Le document écrit par le directeur et son équipe pour dire comment l'accueil va fonctionner : objectifs,
+      vie quotidienne, activités, rôle de chacun. Il découle du projet éducatif de l'organisateur. Le lire avant
+      un entretien fait toujours bonne impression.
+    voir: [projet-educatif, bafd]
+    liens: [["Le projet pédagogique", /trouver-un-poste/le-projet-pedagogique/]]
+  - id: projet-educatif
+    terme: "Projet éducatif"
+    court: Projet éducatif
+    definition: >-
+      Le texte de l'organisateur (mairie, association, entreprise) qui dit ses valeurs et ses intentions
+      éducatives. Chaque directeur en tire le projet pédagogique de son accueil.
+    voir: [projet-pedagogique]
+    liens: []
+  - id: declaration-acm
+    terme: "Déclaration d'un accueil"
+    court: Déclaration
+    definition: >-
+      L'organisateur d'un accueil collectif de mineurs le déclare aux services de l'État avant son ouverture.
+      Un stage pratique BAFA ne compte que s'il se fait dans un accueil déclaré : demandez-le à la structure.
+    voir: [acm, stage-pratique]
+    liens: []
+  - id: assistant-sanitaire
+    terme: "Assistant sanitaire"
+    court: Assistant sanitaire
+    definition: >-
+      La personne de l'équipe chargée du suivi sanitaire : traitements, petits soins, trousse de secours, lien
+      avec les familles et les médecins. Plusieurs organismes proposent un approfondissement BAFA sur ce rôle.
+    voir: [psc, approfondissement]
+    liens: [["Approfondissements « assistant sanitaire »", /se-former/sessions/approfondissement/assistant-sanitaire/]]
+  - id: psc
+    terme: "PSC (ex-PSC1)"
+    court: PSC
+    definition: >-
+      Premiers secours citoyen, le nouveau nom du PSC1 : au moins 7 heures, dès 10 ans, pour apprendre à protéger,
+      alerter et agir (étouffement, saignement, inconscience, arrêt cardiaque). Exigé à l'entrée du BPJEPS et
+      souvent demandé aux animateurs.
+    voir: [surveillant-de-baignade, assistant-sanitaire]
+    liens: [["Le PSC", /se-former/psc1/], ["Les sessions PSC", /se-former/sessions/psc1/]]
+  - id: cpjeps
+    terme: "CPJEPS"
+    court: CPJEPS
+    definition: >-
+      Le certificat professionnel de la jeunesse, de l'éducation populaire et du sport, mention animateur
+      d'activités et de vie quotidienne : le premier diplôme pour faire de l'animation un métier (niveau 3).
+    voir: [bpjeps, apprentissage]
+    liens: [["Le CPJEPS", /se-former/cpjeps/], ["Les écoles du CPJEPS", /se-former/ecoles/cpjeps/]]
+  - id: bpjeps
+    terme: "BPJEPS"
+    court: BPJEPS
+    definition: >-
+      Le brevet professionnel de la jeunesse, de l'éducation populaire et du sport (niveau 4, comme le bac). En
+      animation, la mention la plus courante est « animation socio-éducative ou culturelle ». Il permet de
+      travailler à l'année et de diriger certains accueils.
+    voir: [cpjeps, dejeps, ucc]
+    liens: [["Le BPJEPS", /se-former/bpjeps/], ["Les écoles du BPJEPS", /se-former/ecoles/bpjeps/]]
+  - id: dejeps
+    terme: "DEJEPS"
+    court: DEJEPS
+    definition: >-
+      Le diplôme d'État de la jeunesse, de l'éducation populaire et du sport (niveau 5, bac+2) : coordonner des
+      projets d'animation et encadrer une équipe.
+    voir: [bpjeps, desjeps]
+    liens: [["Le DEJEPS", /se-former/dejeps/], ["Les écoles du DEJEPS", /se-former/ecoles/dejeps/]]
+  - id: desjeps
+    terme: "DESJEPS"
+    court: DESJEPS
+    definition: >-
+      Le diplôme d'État supérieur de la jeunesse, de l'éducation populaire et du sport (niveau 6, bac+3) : diriger
+      une structure ou un service d'animation.
+    voir: [dejeps]
+    liens: [["Le DESJEPS", /se-former/desjeps/], ["Les écoles du DESJEPS", /se-former/ecoles/desjeps/]]
+  - id: ucc
+    terme: "UC complémentaire (UCC)"
+    court: UCC
+    definition: >-
+      Une unité capitalisable complémentaire s'ajoute à un BPJEPS pour élargir ce qu'il permet de faire. En
+      animation, l'UC « direction d'accueil collectif de mineurs » est la plus demandée.
+    voir: [bpjeps]
+    liens: []
+  - id: apprentissage
+    terme: "Apprentissage"
+    court: Apprentissage
+    definition: >-
+      Se former en alternant école et employeur, avec un contrat et un salaire. Pour les diplômes professionnels
+      de l'animation, la formation est alors payée par l'employeur et son opérateur de compétences : elle ne coûte
+      rien à l'apprenti.
+    voir: [cpf, bpjeps, cpjeps]
+    liens: [["Les écoles des métiers de l'animation", /se-former/ecoles/]]
+  - id: cpf
+    terme: "CPF (compte personnel de formation)"
+    court: CPF
+    definition: >-
+      Le compte qui permet à chaque actif de financer une formation certifiante inscrite au catalogue Mon Compte
+      Formation. Beaucoup d'écoles du BPJEPS, du DEJEPS et du DESJEPS y sont inscrites ; le BAFA, lui, n'est pas
+      un diplôme professionnel.
+    voir: [apprentissage, financement]
+    liens: [["Les écoles des métiers de l'animation", /se-former/ecoles/]]
+  - id: education-populaire
+    terme: "Éducation populaire"
+    court: Éducation populaire
+    definition: >-
+      Un mouvement et une façon de faire : apprendre ensemble, hors de l'école, par l'expérience et la vie
+      collective. Beaucoup d'organismes de formation au BAFA et de structures d'animation en sont issus.
+    voir: [organisme-habilite]
+    liens: []
+  - id: grand-jeu
+    terme: "Grand jeu"
+    court: Grand jeu
+    definition: >-
+      Un jeu qui réunit tout le groupe pendant une demi-journée ou une journée, autour d'un imaginaire (une
+      enquête, une quête, un monde à sauver) avec des épreuves et des personnages. Un classique de la colo et du
+      centre de loisirs, souvent au programme des approfondissements « jeux ».
+    voir: [veillee, approfondissement]
+    liens: [["Approfondissements « jeux »", /se-former/sessions/approfondissement/jeux/]]
+  - id: veillee
+    terme: "Veillée"
+    court: Veillée
+    definition: >-
+      Le temps d'animation du soir, après le dîner, en colo : jeux calmes, spectacle, contes, boum. Elle se
+      termine en douceur pour préparer le coucher.
+    voir: [grand-jeu, sejour-de-vacances]
+    liens: []
