@@ -106,8 +106,11 @@ def familles_rurales(lire_brut, commune):
             if type_ in ("approfondissement", "qualification"):
                 theme = type_txt if not re.search(r"(?i)approfondissement|qualification", type_txt) else None
             ville = re.sub(r"(?i)\s+cedex.*$", "", m.group(2)).strip()
+            arr = re.match(r"(?i)paris\s*(\d{1,2})", ville)
+            if arr:  # « Paris 18ème » -> « Paris 18e »
+                ville = f"Paris {int(arr.group(1))}{'er' if arr.group(1) in ('1', '01') else 'e'}"
             sessions.append(session(f"fr-{nid}", "familles-rurales", diplome, type_, theme, date_fr(dates.group(1)),
-                                    date_fr(dates.group(2)), commune(ville), dep_de_cp(m.group(1)), formule, prix, url, note))
+                                    date_fr(dates.group(2)), ville if arr else commune(ville), dep_de_cp(m.group(1)), formule, prix, url, note))
         if not blocs or not nouveaux:
             break
     if len(sessions) < 20:
@@ -192,7 +195,7 @@ def francas(lire_brut, commune, territoire):
             lieu = (re.search(r"À : (.+?) Région :", geo) or [None, ""])[1]
             region = (re.search(r"Région : (.+)$", geo) or [None, ""])[1]
             m = re.search(r"([A-Za-zÀ-ÿ' -]+?)\s*\(?\s*(\d{2}|2A|2B)\s*\)?$", lieu)
-            if cp:
+            if cp and len(cp.group(2)) <= 35:
                 ville, dep = cp.group(2), dep_de_cp(cp.group(1))
             elif m:
                 ville, dep = re.split(r"\s+-\s+|\(", m.group(1))[-1].strip(), m.group(2)
@@ -236,7 +239,7 @@ def fscf(lire_brut, commune):
             if not type_ or len(dates) < 2:
                 continue
             fiche = texte(lire_brut(lien.group(1)))
-            lieu = re.search(r"Lieu : (.+?) \((\d[\dAB]|\d{3})\)", fiche)
+            lieu = re.search(r"Lieu : ([^():€]{2,60}?) \((\d[\dAB]|\d{3})\)", fiche)
             cp = re.search(r"\b(\d{5})\s+([A-ZÀ-Üa-zà-ü' -]+)", texte((re.search(r'forma-item-infos-lieu">(.*?)</div>', c, re.S) or [None, ""])[1]))
             if lieu:
                 ville, dep = lieu.group(1), lieu.group(2)
