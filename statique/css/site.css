@@ -1199,3 +1199,7 @@ html { scroll-padding-top: 90px; }
 .explorer-large { grid-column: 1 / -1; }
 .explorer ul.colonnes { columns: 3 220px; column-gap: 32px; }
 .explorer ul.colonnes li { break-inside: avoid; }
+.ecoles-groupe { margin: 32px 0 0; font-size: 1.35rem; }
+.ecoles-groupe:first-child { margin-top: 0; }
+.ecoles-groupe a { color: var(--encre); }
+.ecoles-groupe small { font-family: var(--texte); font-size: .9rem; font-weight: 400; color: var(--doux); }
