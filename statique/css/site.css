@@ -1189,3 +1189,13 @@ html { scroll-padding-top: 90px; }
 .ecoles-liste .ecole-lien:hover { background: var(--fil-fonce); color: #fff; text-decoration: none; }
 .mode-ecoles #ecoles-titre { display: none; }
 .villes-liste.villes-une-colonne { grid-template-columns: minmax(0, 1fr); }
+
+/* ---- pages de recherche : l'essentiel en chiffres, les questions, les listes en colonnes */
+.bref { list-style: none; padding: 0; margin: 0 0 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.bref li { background: var(--papier); border: 1px solid var(--trait); border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 2px; }
+.bref b { font-family: var(--titres); font-size: 1.6rem; line-height: 1.1; color: var(--fil-fonce); }
+.bref span { color: var(--doux); font-size: .95rem; }
+.bref-titre { margin: 0 0 12px; font-size: 1.3rem; }
+.explorer-large { grid-column: 1 / -1; }
+.explorer ul.colonnes { columns: 3 220px; column-gap: 32px; }
+.explorer ul.colonnes li { break-inside: avoid; }

@@ -123,6 +123,35 @@ CONTRATS = {"cee": "Contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI",
 
 LIMITE_LISTE = 60  # au-delà, une page de liste renvoie vers la recherche pour le reste
 
+# Thèmes des approfondissements du BAFA : chaque organisme écrit le sien, on les range en grandes familles
+THEMES_APPRO = [
+    ("jeux", "Jeux et grands jeux", r"\bjeux?\b|veillee|escape|enigme"),
+    ("petite-enfance", "Petite enfance", r"petite enfance|jeunes enfants|tout.petits|maternel|3.6 ans|moins de 6"),
+    ("handicap", "Handicap et accueil inclusif", r"handicap|inclusi"),
+    ("activites-manuelles", "Activités manuelles et créativité", r"manuel|creati|bricol|recup|\barts?\b|cuisine|mains"),
+    ("sejours", "Séjours de vacances", r"sejour|colo"),
+    ("accueil-de-loisirs", "Accueil de loisirs et périscolaire", r"accueils? de loisirs|periscol|alsh|en ville|sa ville"),
+    ("expression-spectacle", "Spectacle, expression et musique", r"spectacle|expression|theatre|musique|musical|danse|chant|cirque|conte|clown|culturel|talent"),
+    ("sport", "Sport et activités physiques", r"sport|physique|\bvtt\b|velo|escalade|glisse|\bski\b|equestre"),
+    ("nature-plein-air", "Nature, mer et plein air", r"\bmer\b|nature|plein air|environnement|\bcamps?\b|montagne|ferme|neige|\bski\b|dehors|nautique|terre"),
+    ("multi-activites", "Multi activités", r"multi"),
+    ("assistant-sanitaire", "Assistant sanitaire", r"sanitaire"),
+    ("6-12-ans", "Les 6-12 ans", r"6.12|6 a 12"),
+    ("ados", "Préados et ados", r"\bados?\b|adolescen|preado"),
+    ("conflits", "Gestion des conflits", r"conflit|non violente|difficult"),
+    ("numerique", "Numérique, médias et sciences", r"numeri|media|video|photo|scien|vlog"),
+]
+
+
+def sans_accents(t):
+    return unicodedata.normalize("NFKD", t or "").encode("ascii", "ignore").decode().lower()
+
+
+def themes_de(theme):
+    t = sans_accents(theme)
+    return [k for k, _, motif in THEMES_APPRO if re.search(motif, t)]
+
+
 OUTILS = [("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires pour votre accueil."),
           ("/outils/salaire-cee/", "Contrat d'engagement éducatif", "La rémunération minimale et les 80 jours sur 12 mois."),
           ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement.")]
@@ -430,6 +459,72 @@ class Site:
         c["nb_tuiles"] = sum(1 for k in ("visiteurs_30j", "impressions_28j", "clics_28j") if c.get(k) is not None) + (1 if "animateurs" in c else 0)
         return c
 
+    def ecoles_pro(self):
+        """Diplômes pros : une fiche par école, par diplôme et par département (calculée une fois)."""
+        if getattr(self, "_ecoles_pro", None) is not None:
+            return self._ecoles_pro
+        # Diplômes pros : la liste des écoles qui forment, toutes sources réunies (une école par diplôme et par
+        # département) : les sessions datées, le calendrier national (FOROMES), le catalogue Mon Compte Formation.
+        PRO = {"CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"}
+        def cle_nom(t):
+            t = unicodedata.normalize("NFKD", t or "").encode("ascii", "ignore").decode().lower()
+            return re.sub(r"[^a-z0-9]+", "", re.sub(r"\b(association|formation|formations|organisme|l|la|le|les|de|des|du|d)\b", " ", t))
+        fiches = {}
+        def fiche(diplome, sp, dep, nom, ville=None):
+            k = (cle_nom(nom), diplome, dep)
+            f = fiches.get(k)
+            if not f:
+                d = self.departements[dep]
+                spec = self.specialites.get(diplome, {}).get(sp)
+                f = fiches[k] = {"di": diplome, "dn": self.diplomes[diplome]["nom"], "sp": sp, "spn": spec["nom"] if spec else None,
+                                 "o": nom, "v": ville or d["nom"], "d": dep, "r": d["region"], "g": None,
+                                 "pr": None, "pr_t": None, "dr": None, "px": None, "pxm": None, "h": None, "dist": False, "u": None, "cpf": False}
+            if ville and f["v"] == self.departements[dep]["nom"]:
+                f["v"] = ville
+            if not f["sp"] and sp:
+                f["sp"] = sp
+            return f
+        for x in self.sessions:  # les rentrées datées
+            if x["diplome"] not in PRO or x["departement"] not in self.departements:
+                continue
+            f = fiche(x["diplome"], x.get("specialite"), x["departement"], x["org"]["nom"], ville_propre(x["ville"]))
+            if not f["pr"] or x["debut"] < f["pr"]:
+                f["pr"], f["pr_t"] = x["debut"], f"{MOIS[x['debut'].month - 1]} {x['debut'].year}"
+                if x.get("url") and "foromes" not in x["url"]:
+                    f["u"] = x["url"]
+            if x.get("prix"):
+                f["px"] = min(f["px"] or x["prix"], x["prix"])
+            f["g"] = f["g"] or self.geo.get(f"{x['departement']}|{x['ville']}")
+        for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:  # le calendrier national, l'année passée
+            if e["diplome"] not in PRO or e["departement"] not in self.departements:
+                continue
+            f = fiche(e["diplome"], e.get("specialite"), e["departement"], e["organisme_nom"], ville_propre(e["ville"]))
+            r = en_date(e["derniere_rentree"])
+            f["dr"] = f"{MOIS[r.month - 1]} {r.year}"
+            f["g"] = f["g"] or self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")
+        for c in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []:  # Mon Compte Formation
+            if c["diplome"] not in PRO or c["departement"] not in self.departements:
+                continue
+            f = fiche(c["diplome"], c.get("specialite"), c["departement"], c["organisme_nom"])
+            f["cpf"] = True
+            if c.get("prix_min"):
+                f["px"] = min(f["px"] or c["prix_min"], c["prix_min"])
+                f["pxm"] = max(f["pxm"] or 0, c.get("prix_max") or c["prix_min"])
+            f["h"] = f["h"] or c.get("heures")
+            f["dist"] = f["dist"] or bool(c.get("distance"))
+            if not f["u"] and c.get("siret"):
+                f["u"] = f"https://annuaire-entreprises.data.gouv.fr/etablissement/{c['siret']}"
+        ecoles = []
+        for f in fiches.values():
+            if not f["u"]:  # sans page connue : la recherche du nom de l'école
+                f["u"] = "https://duckduckgo.com/?q=" + urllib.parse.quote(f"{f['o']} {f['dn']} {f['v']}")
+                f["recherche"] = True
+            f.pop("pr", None)
+            ecoles.append(f)
+        ecoles.sort(key=lambda f: (f["di"], f["d"], f["o"].lower()))
+        self._ecoles_pro = ecoles
+        return ecoles
+
     def villes_populaires(self, n=8):
         """Les grandes villes qui ont le plus de sessions (proposées quand on clique dans une case « Où ? »)."""
         compte = collections.Counter()
@@ -553,6 +648,7 @@ class Site:
                              h1=f"BAFA pendant les {p['nom']}",
                              description=f"Les sessions BAFA des {p['nom']} partout en France : formation générale et approfondissement, ville, formule et prix.",
                              intro=f"Les dates des {p['nom']} dépendent de la zone : {self.dates_vacances(p)}. Chaque session est rattachée aux vacances de la zone où elle a lieu.",
+                             sujet=("le BAFA", "BAFA", f"pendant les {p['nom']}"),
                              sessions=liste, periode=p, lien_tout=f"/se-former/sessions/?diplome=BAFA&mois=v:{p['id'].rsplit('-', 1)[0]}&annee={p['id'].rsplit('-', 1)[1]}",
                              fil=[SF, RUB, (p["court"], f"/se-former/sessions/{p['slug']}/")])
         for r in self.regions.values():
@@ -563,7 +659,7 @@ class Site:
                          h1=f"Passer le BAFA {r['a']}",
                          description=f"Les sessions BAFA {r['a']} : formation générale, approfondissement, dates, ville, formule et prix, département par département.",
                          intro=f"Les sessions dont le lieu est {r['a']}. Choisissez votre département plus bas, ou cherchez avec les filtres.",
-                         region=r, sessions=de_la_region, indexer=bool(de_la_region),
+                         region=r, sessions=de_la_region, indexer=bool(de_la_region), sujet=("le BAFA", "BAFA", r["a"]),
                          lien_tout=f"/se-former/sessions/?diplome=BAFA&dep=r:{r['id']}",
                          fil=[SF, RUB, (r["nom"], f"/se-former/sessions/{r['slug']}/")])
         for dep in self.departements.values():
@@ -578,6 +674,7 @@ class Site:
                          description=f"Les sessions BAFA {dep['a']} ({dep['code']}) : formation générale, approfondissement, dates, formule et prix par organisme.",
                          intro=f"Les sessions dont le lieu est {dep['a']}. Une session peut se suivre dans n'importe quel département : regardez aussi les départements voisins.",
                          departement=dep, sessions=du_dep, indexer=bool(du_dep), periodes_dep=per_dep, villes=villes,
+                         sujet=("le BAFA", "BAFA", dep["a"]),
                          lien_tout=f"/se-former/sessions/?diplome=BAFA&dep={dep['code']}",
                          fil=[SF, RUB, RG, (dep["nom"], f"/se-former/sessions/{dep['slug']}/")])
             for p in per_dep:
@@ -588,6 +685,7 @@ class Site:
                              description=f"Sessions BAFA {dep['a']} ({dep['code']}) pendant les {p['nom']} : dates, ville, formule, prix et lien vers l'organisme.",
                              intro=f"Les {p['nom']} vont {self.dates_vacances(p, dep)} {dep['a']}.",
                              departement=dep, periode=p, sessions=liste, periodes_dep=per_dep, villes=villes,
+                             sujet=("le BAFA", "BAFA", f"{dep['a']} pendant les {p['nom']}"),
                              fil=[SF, RUB, RG, (dep["nom"], f"/se-former/sessions/{dep['slug']}/"), (p["court"], f"/se-former/sessions/{dep['slug']}/{p['slug']}/")])
             for v in villes:
                 self.ajouter(f"/se-former/sessions/{dep['slug']}/{v['slug']}/", "liste.html",
@@ -596,6 +694,7 @@ class Site:
                              description=f"Les sessions BAFA à {v['nom']} ({dep['code']}) : formation générale, approfondissement, dates, formule et prix, avec le lien vers l'organisme.",
                              intro=f"Les sessions qui ont lieu à {v['nom']}. D'autres sessions ont lieu tout près, {dep['a']}.",
                              departement=dep, ville=v, sessions=v["sessions"], periodes_dep=per_dep, villes=villes,
+                             sujet=("le BAFA", "BAFA", f"à {v['nom']}"),
                              fil=[SF, RUB, RG, (dep["nom"], f"/se-former/sessions/{dep['slug']}/"), (v["nom"], f"/se-former/sessions/{dep['slug']}/{v['slug']}/")])
         for t in self.types:
             liste = [s for s in bafa if s["type"] == t["id"]]
@@ -604,6 +703,7 @@ class Site:
                          h1=f"BAFA : {t['nom'].lower()}",
                          description=f"Les sessions de {t['nom'].lower()} du BAFA partout en France : dates, villes, formules et prix, avec le lien vers chaque organisme.",
                          type_session=t, sessions=liste, indexer=bool(liste), lien_tout=f"/se-former/sessions/?type=BAFA-{t['id']}",
+                         sujet=(f"la {t['nom'].lower()} du BAFA", f"{t['nom'].lower()} du BAFA", "en France"),
                          fil=[SF, RUB, (t["nom"], f"/se-former/sessions/{t['slug']}/")])
         for d in self.diplomes.values():
             if d["id"] == "BAFD":
@@ -614,6 +714,7 @@ class Site:
                          h1=f"Les sessions {d['long']}",
                          description=f"Les prochaines sessions {d['long']} partout en France : dates, lieu, durée et prix, organisme par organisme, avec le lien vers chaque organisme.",
                          intro=None, diplome_page=d, sessions=liste, indexer=bool(liste), lien_tout=f"/se-former/sessions/?diplome={d['id']}",
+                         sujet=(f"le {d['nom']}", d["nom"], "en France"), mois_cle=d["id"],
                          fil=[SF, RUB, (d["nom"], f"/se-former/sessions/{d['slug']}/")])
         bafd = [s for s in S if s["diplome"] == "BAFD"]
         self.ajouter("/se-former/sessions/bafd/", "liste.html", titre="BAFD : sessions, dates et prix partout en France",
@@ -621,7 +722,9 @@ class Site:
                      description="Les sessions de formation BAFD (directeur d'accueil collectif de mineurs) partout en France : formation générale et perfectionnement, dates, lieu, formule et prix.",
                      intro="Formation générale et perfectionnement du BAFD, dès 18 ans avec le BAFA.",
                      sessions=bafd, diplome="BAFD", indexer=bool(bafd), lien_tout="/se-former/sessions/?diplome=BAFD",
+                     sujet=("le BAFD", "BAFD", "en France"), mois_cle="BAFD",
                      fil=[SF, RUB, ("BAFD", "/se-former/sessions/bafd/")])
+        self.declarer_declinaisons(SF, RUB)
         en_ligne = [o for o in self.organismes.values() if o.get("en_ligne")]
         self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD et PSC1",
                      description="Les organismes de formation au BAFA, au BAFD, au PSC1 et aux diplômes professionnels de l'animation présents sur le site, avec leurs prochaines sessions et le lien vers leur site.",
@@ -777,14 +880,221 @@ class Site:
             if ancienne not in existantes:
                 self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=nouvelle)
 
+    def declarer_declinaisons(self, SF, RUB):
+        """Les pages qui répondent aux recherches précises : chaque formation (BAFD, PSC) et chaque étape du BAFA
+        par région et par département, le PSC par ville, les vacances par région, les thèmes d'approfondissement
+        et les mois. Une page n'est créée que si elle a des sessions : jamais de page vide."""
+        S = self.sessions
+        BASE = "/se-former/sessions"
+        fg, appro = (next(t for t in self.types if t["id"] == i) for i in ("formation-generale", "approfondissement"))
+
+        def familles(liste):
+            """(slug, sujet, court, nom affiché, sessions, critères de la recherche) pour un lieu donné"""
+            bafa = [s for s in liste if s["diplome"] == "BAFA"]
+            return [
+                ("formation-generale", "la formation générale du BAFA", "formation générale du BAFA", "Formation générale du BAFA",
+                 [s for s in bafa if s["type"] == "formation-generale"], "diplome=BAFA&type=BAFA-formation-generale"),
+                ("approfondissement", "l'approfondissement du BAFA", "approfondissement du BAFA", "Approfondissement du BAFA",
+                 [s for s in bafa if s["type"] == "approfondissement"], "diplome=BAFA&type=BAFA-approfondissement"),
+                ("bafd", "le BAFD", "BAFD", "BAFD", [s for s in liste if s["diplome"] == "BAFD"], "diplome=BAFD"),
+                ("psc1", "le PSC", "PSC", "PSC (premiers secours)", [s for s in liste if s["diplome"] == "PSC1"], "diplome=PSC1"),
+            ]
+
+        def titres(cle, nom, code, a):
+            """titre, h1 et description pour une famille dans un lieu (a : « dans le Rhône », « en Bretagne »)"""
+            c = f" ({code})" if code else ""
+            return {
+                "formation-generale": (f"Formation générale BAFA {nom}{c} : dates et prix",
+                                       f"La formation générale du BAFA {a}",
+                                       f"Les sessions de formation générale du BAFA {a}{c}, la première étape : dates, ville, internat ou externat, prix et organisme."),
+                "approfondissement": (f"Approfondissement BAFA {nom}{c} : thèmes, dates et prix",
+                                      f"L'approfondissement du BAFA {a}",
+                                      f"Les sessions d'approfondissement du BAFA {a}{c}, la dernière étape : thèmes, dates, ville, formule et prix."),
+                "bafd": (f"BAFD {nom}{c} : sessions, dates et prix", f"Passer le BAFD {a}",
+                         f"Les sessions BAFD {a}{c} : formation générale et perfectionnement, dates, lieu, formule et prix, organisme par organisme."),
+                "psc1": (f"PSC (ex-PSC1) {nom}{c} : formation premiers secours, dates et prix", f"Se former au PSC {a}",
+                         f"Les formations PSC aux premiers secours (ex-PSC1) {a}{c} : une journée, dates, ville, prix et organisme. Utile pour le BAFA."),
+            }[cle]
+
+        INTROS = {
+            "formation-generale": "La première étape du BAFA : 8 jours pour apprendre les bases, dès 16 ans. Ensuite viennent le stage pratique puis l'approfondissement.",
+            "approfondissement": "La dernière étape du BAFA : 6 jours sur un thème, après le stage pratique. C'est après cette session qu'on demande l'aide de la CAF.",
+            "bafd": "Le brevet pour diriger un accueil collectif de mineurs, dès 21 ans (ou 18 ans avec le BAFA) : formation générale, puis stage pratique et perfectionnement.",
+            "psc1": "Une journée pour apprendre les gestes de premiers secours, reconnue partout et souvent demandée aux animateurs.",
+        }
+
+        def ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, lieu, nom, code, a, fil, **extra):
+            titre, h1, desc = titres(cle, nom, code, a)
+            self.ajouter(url, "liste.html", titre=titre, h1=h1, description=desc, intro=INTROS[cle],
+                         sessions=liste, sujet=(sujet, court, a), famille=cle,
+                         lien_tout=f"{BASE}/?{critere}" + (f"&dep={lieu}" if lieu else ""), fil=fil, **extra)
+
+        par_dep, par_region = collections.defaultdict(list), collections.defaultdict(list)
+        for s in S:
+            par_dep[s["dep"]["code"]].append(s)
+            par_region[s["dep"]["reg"]["id"]].append(s)
+
+        # -- par département
+        for dep in self.departements.values():
+            RG = (dep["reg"]["nom"], f"{BASE}/{dep['reg']['slug']}/")
+            DP = (dep["nom"], f"{BASE}/{dep['slug']}/")
+            dep["sous"] = []
+            for cle, sujet, court, nom_aff, liste, critere in familles(par_dep[dep["code"]]):
+                if len(liste) < 2:
+                    continue
+                url = f"{BASE}/{dep['slug']}/{cle}/"
+                dep["sous"].append((nom_aff, url, len(liste)))
+                villes = self.villes(liste, minimum=3) if cle == "psc1" else []
+                ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, dep["code"], dep["nom"], dep["code"], dep["a"],
+                                [SF, RUB, RG, DP, (nom_aff, url)], departement=dep, villes_famille=villes)
+                for v in villes:
+                    uv = f"{url}{v['slug']}/"
+                    self.ajouter(uv, "liste.html",
+                                 titre=f"PSC1 {v['nom']} ({dep['code']}) : formation premiers secours, dates et prix",
+                                 h1=f"Se former au PSC à {v['nom']}",
+                                 description=f"Les formations PSC aux premiers secours (ex-PSC1) à {v['nom']} ({dep['code']}) : dates, prix et organisme, avec le lien pour s'inscrire.",
+                                 intro=INTROS["psc1"], sessions=v["sessions"], sujet=(sujet, court, f"à {v['nom']}"), famille=cle,
+                                 departement=dep, villes_famille=villes, lien_tout=f"{BASE}/?{critere}&dep={dep['code']}",
+                                 fil=[SF, RUB, RG, DP, (nom_aff, url), (v["nom"], uv)])
+
+        # -- par région
+        bafa_th = collections.defaultdict(list)
+        for r in self.regions.values():
+            RG = (r["nom"], f"{BASE}/{r['slug']}/")
+            r["sous"] = []
+            de_r = par_region[r["id"]]
+            for cle, sujet, court, nom_aff, liste, critere in familles(de_r):
+                if len(liste) < 2:
+                    continue
+                url = f"{BASE}/{r['slug']}/{cle}/"
+                r["sous"].append((nom_aff, url, len(liste)))
+                ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, f"r:{r['id']}", r["nom"], None, r["a"],
+                                [SF, RUB, RG, (nom_aff, url)], region_famille=r)
+                if cle == "approfondissement":  # les thèmes, dans la région
+                    for k, nom_th, _ in THEMES_APPRO:
+                        du_theme = [s for s in liste if k in themes_de(s["theme"])]
+                        if len(du_theme) >= 3:
+                            ut = f"{url}{k}/"
+                            r["sous"].append((f"Approfondissement : {nom_th.lower()}", ut, len(du_theme)))
+                            self.ajouter(ut, "liste.html",
+                                         titre=f"Approfondissement BAFA {nom_th.lower()} {r['a']} : dates et prix",
+                                         h1=f"Approfondissement « {nom_th.lower()} » {r['a']}",
+                                         description=f"Les sessions d'approfondissement du BAFA sur le thème {nom_th.lower()} {r['a']} : dates, ville, formule et prix, organisme par organisme.",
+                                         intro=INTROS["approfondissement"], sessions=du_theme, famille=cle, region_famille=r,
+                                         sujet=(f"l'approfondissement « {nom_th.lower()} »", f"approfondissement « {nom_th.lower()} »", r["a"]),
+                                         lien_tout=f"{BASE}/?{critere}&dep=r:{r['id']}",
+                                         fil=[SF, RUB, RG, (nom_aff, url), (nom_th, ut)])
+            bafa_r = [s for s in de_r if s["diplome"] == "BAFA"]
+            for p in self.periodes:
+                liste = [s for s in bafa_r if s["periode"] is p]
+                if len(liste) < 2:
+                    continue
+                url = f"{BASE}/{r['slug']}/{p['slug']}/"
+                r["sous"].append((f"BAFA pendant les {p['nom']}", url, len(liste)))
+                self.ajouter(url, "liste.html", titre=f"BAFA {r['nom']} {p['nom']} : dates et prix",
+                             h1=f"BAFA {r['a']} pendant les {p['nom']}",
+                             description=f"Les sessions BAFA {r['a']} pendant les {p['nom']} : formation générale et approfondissement, dates, ville, formule et prix.",
+                             intro=f"Les dates des {p['nom']} dépendent de la zone : {self.dates_vacances(p)}.",
+                             sessions=liste, periode=p, region_famille=r, sujet=("le BAFA", "BAFA", f"{r['a']} pendant les {p['nom']}"),
+                             lien_tout=f"{BASE}/?diplome=BAFA&mois=v:{p['id'].rsplit('-', 1)[0]}&annee={p['id'].rsplit('-', 1)[1]}&dep=r:{r['id']}",
+                             fil=[SF, RUB, RG, (p["court"], url)])
+
+        # -- les thèmes d'approfondissement, partout en France
+        self.themes_appro = []
+        appro_fr = [s for s in S if s["diplome"] == "BAFA" and s["type"] == "approfondissement"]
+        for k, nom_th, _ in THEMES_APPRO:
+            liste = [s for s in appro_fr if k in themes_de(s["theme"])]
+            if len(liste) < 3:
+                continue
+            url = f"{BASE}/{appro['slug']}/{k}/"
+            self.themes_appro.append((nom_th, url, len(liste)))
+            self.ajouter(url, "liste.html", titre=f"Approfondissement BAFA {nom_th.lower()} : sessions, dates et prix",
+                         h1=f"Approfondissement du BAFA : {nom_th.lower()}",
+                         description=f"Toutes les sessions d'approfondissement du BAFA sur le thème {nom_th.lower()} en France : dates, villes, formules et prix.",
+                         intro=INTROS["approfondissement"], sessions=liste, famille="approfondissement",
+                         sujet=(f"l'approfondissement « {nom_th.lower()} »", f"approfondissement « {nom_th.lower()} »", "en France"),
+                         lien_tout=f"{BASE}/?diplome=BAFA&type=BAFA-approfondissement",
+                         fil=[SF, RUB, (appro["nom"], f"{BASE}/{appro['slug']}/"), (nom_th, url)])
+
+        # -- mois par mois, pour le BAFA, le BAFD et le PSC
+        self.mois_pages = collections.defaultdict(list)
+        for d in (self.diplomes["BAFA"], self.diplomes["BAFD"], self.diplomes["PSC1"]):
+            par_mois = collections.defaultdict(list)
+            for s in S:
+                if s["diplome"] == d["id"]:
+                    par_mois[s["mois"]].append(s)
+            for m, liste in sorted(par_mois.items()):
+                if len(liste) < 3:
+                    continue
+                nom_m = f"{MOIS[int(m[5:7]) - 1]} {m[:4]}"
+                url = f"{BASE}/{d['slug']}/{slug(nom_m)}/"
+                self.mois_pages[d["id"]].append((nom_m, url, len(liste)))
+                self.ajouter(url, "liste.html", titre=f"{d['nom']} {nom_m} : sessions, dates et prix",
+                             h1=f"Les sessions {d['nom']} en {nom_m}",
+                             description=f"Les sessions {d['long']} qui commencent en {nom_m}, partout en France : dates, ville, formule et prix, organisme par organisme.",
+                             sessions=liste, sujet=(f"le {d['nom']}", d["nom"], f"en {nom_m}"), mois_cle=d["id"],
+                             lien_tout=f"{BASE}/?diplome={d['id']}&mois=m:{m[5:7]}&annee={m[:4]}",
+                             fil=[SF, RUB, (d["nom"], f"{BASE}/{d['slug']}/"), (nom_m, url)])
+
+    def synthese(self, liste, sujet, court, lieu):
+        """Le résumé chiffré d'une page de liste et ses questions fréquentes, calculés sur toutes ses sessions :
+        chaque page dit quelque chose de propre (prix, dates, organismes, villes), et pas un texte copié."""
+        if len(liste) < 3:
+            return None, []
+        prix = sorted(s["prix"] for s in liste if s["prix"])
+        orgs = collections.Counter(s["org"]["nom"] for s in liste)
+        villes = collections.Counter(s["ville"] for s in liste)
+        formules = collections.Counter(s["formule"] for s in liste if s.get("formule"))
+        prochaine = min(liste, key=lambda s: s["debut"])
+        r = {"nb": len(liste), "nb_org": len(orgs), "nb_villes": len(villes), "prochaine": prochaine,
+             "organismes": orgs.most_common(3), "villes": villes.most_common(3), "prix_n": len(prix),
+             "prix_min": prix[0] if prix else None, "prix_max": prix[-1] if prix else None,
+             "prix_med": prix[len(prix) // 2] if prix else None}
+        faq = []
+        if len(prix) >= 2 and prix[0] == prix[-1]:
+            faq.append({"q": f"Combien coûte {sujet} {lieu} ?",
+                        "r": f"Les {len(prix)} sessions dont le prix est connu coûtent toutes {euros(prix[0])}."})
+        elif len(prix) >= 2:
+            faq.append({"q": f"Combien coûte {sujet} {lieu} ?",
+                        "r": f"Sur les {len(prix)} sessions dont le prix est connu, il va de {euros(prix[0])} à {euros(prix[-1])} ; "
+                             f"la moitié des sessions coûtent moins de {euros(r['prix_med'])}. Le prix change surtout avec la formule "
+                             "(internat, demi-pension ou externat) et l'organisme."})
+        faq.append({"q": f"Quand commence la prochaine session de {court} {lieu} ?",
+                    "r": f"La prochaine session relevée commence le {date_fr(prochaine['debut'])} à {prochaine['ville']}, "
+                         f"avec {prochaine['org']['nom']}. Il y en a {len(liste)} à venir en tout."})
+        noms = ", ".join(f"{n} ({k} session{'s' if k > 1 else ''})" for n, k in orgs.most_common(3))
+        faq.append({"q": f"Quels organismes proposent {sujet} {lieu} ?",
+                    "r": (f"{len(orgs)} organismes ont des sessions à venir. Ceux qui en proposent le plus : {noms}."
+                          if len(orgs) > 1 else f"Pour l'instant, seulement {noms}.")})
+        if len(villes) > 1:
+            faq.append({"q": f"Dans quelles villes se passe {sujet} {lieu} ?",
+                        "r": f"Les sessions ont lieu dans {len(villes)} communes, surtout "
+                             + ", ".join(f"{v} ({k})" for v, k in villes.most_common(3)) + "."})
+        if formules:
+            faq.append({"q": "Internat, demi-pension ou externat ?",
+                        "r": "Parmi les sessions dont la formule est indiquée : "
+                             + ", ".join(f"{k} en {FORMULES[f].lower()}" for f, k in formules.most_common()) + "."})
+        for q in faq:
+            q["r_rendu"] = q["r"]
+        return r, faq
+
     def villes(self, sessions, minimum=2):
         """Les communes qui ont assez de sessions pour mériter leur page."""
         par_ville = {}
-        for s in sessions:
-            par_ville.setdefault(s["ville"], []).append(s)
-        return [{"nom": v, "slug": slug(v), "sessions": l} for v, l in sorted(par_ville.items()) if len(l) >= minimum]
+        for s in sessions:  # « Évreux » et « Evreux » : une seule page
+            par_ville.setdefault(slug(s["ville"]), []).append(s)
+        villes = []
+        for sl, l in par_ville.items():
+            if len(l) >= minimum:
+                nom = collections.Counter(s["ville"] for s in l).most_common(1)[0][0]
+                villes.append({"nom": nom, "slug": sl, "sessions": l})
+        return sorted(villes, key=lambda v: sans_accents(v["nom"]))
 
     def ajouter(self, url, gabarit, titre, description=None, indexer=True, **extra):
+        if extra.get("sujet") and extra.get("sessions"):
+            extra["bref"], extra["faq_page"] = self.synthese(extra["sessions"], *extra.pop("sujet"))
+            if extra["faq_page"]:
+                extra["schema_faq"] = self.schema_faq(extra["faq_page"])
         if gabarit == "liste.html" and len(extra.get("sessions") or []) > LIMITE_LISTE:
             # une liste très longue : les plus proches ici, toutes les autres dans la recherche avec filtres
             extra["sessions_total"] = len(extra["sessions"])
@@ -809,6 +1119,7 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
+            "themes_appro": getattr(self, "themes_appro", []), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),
             "fil_jsonld": json_ld({"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -867,65 +1178,7 @@ class Site:
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
                 "site": s.get("source") == "ministere",
                 "g": self.geo.get(f"{s['departement']}|{s['ville']}")})
-        # Diplômes pros : la liste des écoles qui forment, toutes sources réunies (une école par diplôme et par
-        # département) : les sessions datées, le calendrier national (FOROMES), le catalogue Mon Compte Formation.
-        PRO = {"CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"}
-        def cle_nom(t):
-            t = unicodedata.normalize("NFKD", t or "").encode("ascii", "ignore").decode().lower()
-            return re.sub(r"[^a-z0-9]+", "", re.sub(r"\b(association|formation|formations|organisme|l|la|le|les|de|des|du|d)\b", " ", t))
-        fiches = {}
-        def fiche(diplome, sp, dep, nom, ville=None):
-            k = (cle_nom(nom), diplome, dep)
-            f = fiches.get(k)
-            if not f:
-                d = self.departements[dep]
-                spec = self.specialites.get(diplome, {}).get(sp)
-                f = fiches[k] = {"di": diplome, "dn": self.diplomes[diplome]["nom"], "sp": sp, "spn": spec["nom"] if spec else None,
-                                 "o": nom, "v": ville or d["nom"], "d": dep, "r": d["region"], "g": None,
-                                 "pr": None, "pr_t": None, "dr": None, "px": None, "pxm": None, "h": None, "dist": False, "u": None, "cpf": False}
-            if ville and f["v"] == self.departements[dep]["nom"]:
-                f["v"] = ville
-            if not f["sp"] and sp:
-                f["sp"] = sp
-            return f
-        for x in self.sessions:  # les rentrées datées
-            if x["diplome"] not in PRO or x["departement"] not in self.departements:
-                continue
-            f = fiche(x["diplome"], x.get("specialite"), x["departement"], x["org"]["nom"], ville_propre(x["ville"]))
-            if not f["pr"] or x["debut"] < f["pr"]:
-                f["pr"], f["pr_t"] = x["debut"], f"{MOIS[x['debut'].month - 1]} {x['debut'].year}"
-                if x.get("url") and "foromes" not in x["url"]:
-                    f["u"] = x["url"]
-            if x.get("prix"):
-                f["px"] = min(f["px"] or x["prix"], x["prix"])
-            f["g"] = f["g"] or self.geo.get(f"{x['departement']}|{x['ville']}")
-        for e in (self.donnees.get("ecoles-pro", {}) or {}).get("ecoles") or []:  # le calendrier national, l'année passée
-            if e["diplome"] not in PRO or e["departement"] not in self.departements:
-                continue
-            f = fiche(e["diplome"], e.get("specialite"), e["departement"], e["organisme_nom"], ville_propre(e["ville"]))
-            r = en_date(e["derniere_rentree"])
-            f["dr"] = f"{MOIS[r.month - 1]} {r.year}"
-            f["g"] = f["g"] or self.geo.get(f"{e['departement']}|{ville_propre(e['ville'])}")
-        for c in (self.donnees.get("formations-cpf", {}) or {}).get("formations") or []:  # Mon Compte Formation
-            if c["diplome"] not in PRO or c["departement"] not in self.departements:
-                continue
-            f = fiche(c["diplome"], c.get("specialite"), c["departement"], c["organisme_nom"])
-            f["cpf"] = True
-            if c.get("prix_min"):
-                f["px"] = min(f["px"] or c["prix_min"], c["prix_min"])
-                f["pxm"] = max(f["pxm"] or 0, c.get("prix_max") or c["prix_min"])
-            f["h"] = f["h"] or c.get("heures")
-            f["dist"] = f["dist"] or bool(c.get("distance"))
-            if not f["u"] and c.get("siret"):
-                f["u"] = f"https://annuaire-entreprises.data.gouv.fr/etablissement/{c['siret']}"
-        ecoles = []
-        for f in fiches.values():
-            if not f["u"]:  # sans page connue : la recherche du nom de l'école
-                f["u"] = "https://duckduckgo.com/?q=" + urllib.parse.quote(f"{f['o']} {f['dn']} {f['v']}")
-                f["recherche"] = True
-            f.pop("pr", None)
-            ecoles.append(f)
-        ecoles.sort(key=lambda f: (f["di"], f["d"], f["o"].lower()))
+        ecoles = self.ecoles_pro()
         (SORTIE / "se-former" / "sessions").mkdir(parents=True, exist_ok=True)
         (SORTIE / "se-former" / "sessions" / "ecoles.json").write_text(
             json.dumps(ecoles, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
