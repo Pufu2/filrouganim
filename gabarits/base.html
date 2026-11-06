@@ -59,54 +59,83 @@
 {% endblock %}
 {% block contenu %}{% endblock %}
 </main>
-{% if recherches and page.url != '/compte/' %}
-<section class="recherches" aria-labelledby="t-recherches">
-  <div class="cadre">
-    <h2 id="t-recherches">Recherches fréquentes</h2>
-    <div class="recherches-grille">
-      {% for titre, liens in recherches %}<div><h3>{{ titre }}</h3><ul>{% for t, u in liens %}<li><a href="{{ lien(u) }}">{{ t }}</a></li>{% endfor %}</ul></div>{% endfor %}
+<footer class="pied ft">
+  <div class="cadre ft-in">
+    <div class="ft-hero">
+      <div class="ft-brand">
+        <a class="ft-brand-logo" href="{{ lien('/') }}" aria-label="Fil Roug'Anim, accueil">{% include "svg/logo-titre.svg" %}</a>
+        <p class="ft-brand-desc">{{ site.accroche }}. Se former, trouver un stage ou un job, recruter : l'animation, sur un seul fil. Gratuit pour les jeunes, sans publicité.</p>
+        <p class="ft-brand-note">Les sessions viennent des pages publiques des organismes, du calendrier national des formations (FOROMES), du catalogue de l'apprentissage et du catalogue Mon Compte Formation : vérifiez-les toujours auprès de l'organisme. Aucun organisme ne paie pour apparaître.</p>
+      </div>
+      <div class="ft-cols">
+        <nav class="ft-cat" aria-label="Se former">
+          <h2 class="ft-cat-t">Se former</h2>
+          <a href="{{ lien('/se-former/sessions/bafa/') }}">Sessions BAFA</a>
+          <a href="{{ lien('/se-former/sessions/bafd/') }}">Sessions BAFD</a>
+          <a href="{{ lien('/se-former/sessions/psc1/') }}">Formations PSC</a>
+          <a href="{{ lien('/se-former/ecoles/') }}">Écoles BPJEPS, DEJEPS…</a>
+          <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Les étapes du BAFA</a>
+          <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
+          <a class="ft-cat-more" href="{{ lien('/se-former/sessions/') }}">Toutes les sessions →</a>
+        </nav>
+        <nav class="ft-cat" aria-label="Trouver un poste">
+          <h2 class="ft-cat-t">Trouver un poste</h2>
+          <a href="{{ lien('/trouver-un-poste/offres/') }}">Offres de stages et de jobs</a>
+          <a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
+          <a href="{{ lien('/trouver-un-poste/preparer-son-entretien/') }}">Préparer son entretien</a>
+          <a href="{{ lien('/trouver-un-poste/contrat-d-engagement-educatif/') }}">Le contrat d'engagement éducatif</a>
+          <a href="{{ lien('/outils/salaire-cee/') }}">Calculer son salaire</a>
+          <a class="ft-cat-more" href="{{ lien('/trouver-un-poste/') }}">Créer mon profil gratuit →</a>
+        </nav>
+        <nav class="ft-cat" aria-label="Ressources">
+          <h2 class="ft-cat-t">Ressources</h2>
+          <a href="{{ lien('/blog/') }}">Le blog</a>
+          <a href="{{ lien('/lexique/') }}">Le lexique de l'animation</a>
+          <a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a>
+          <a href="{{ lien('/outils/') }}">Outils gratuits</a>
+          <a href="{{ lien('/chiffres/') }}">Les chiffres du site</a>
+          <a href="{{ lien('/se-former/sessions/organismes/') }}">Les organismes</a>
+        </nav>
+        <nav class="ft-cat" aria-label="Fil Roug'Anim">
+          <h2 class="ft-cat-t">Fil Roug'Anim</h2>
+          <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
+          <a href="{{ lien('/recruter/') }}">Recruter, publier une offre</a>
+          <a href="{{ lien('/contact/') }}">Contact</a>
+          <a href="{{ lien('/classement-des-sessions/') }}">Classement des sessions</a>
+          {% if site.comptes_ouverts %}<a href="{{ lien('/compte/') }}">Mon espace</a>{% endif %}
+        </nav>
+      </div>
     </div>
-  </div>
-</section>
-{% endif %}
-<footer class="pied">
-  <div class="cadre pied-cadre">
-    <div>
-      <p class="pied-nom">{% include "svg/logo-titre.svg" %}</p>
-      <p>{{ site.accroche }}. Se former, trouver un stage ou un job, recruter : l'animation, sur un seul fil. Gratuit pour les jeunes, sans publicité.</p>
-      <p class="petit">Les sessions viennent des pages publiques des organismes, du calendrier national des formations (FOROMES), du catalogue national de l'apprentissage (Réseau des Carif-Oref) et du catalogue Mon Compte Formation (Caisse des Dépôts) : vérifiez-les toujours auprès de l'organisme avant de vous inscrire. Aucun organisme ne paie pour apparaître ou être mieux placé.</p>
+    {% if recherches %}
+    <div class="ft-explore">
+      <div class="ft-explore-head">
+        <h2 class="ft-explore-h"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Explorer par <em>ville</em></span></h2>
+        <div class="ft-explore-tabs" role="tablist" aria-label="Explorer par">
+          {% for x in recherches %}<button class="ft-tab{{ ' on' if loop.first }}" type="button" role="tab" id="ft-tab-{{ x.cle }}" aria-controls="ft-panel-{{ x.cle }}" aria-selected="{{ 'true' if loop.first else 'false' }}"{% if not loop.first %} tabindex="-1"{% endif %}>{{ x.titre }}</button>{% endfor %}
+        </div>
+      </div>
+      <div class="ft-panels">
+        {% for x in recherches %}
+        <div class="ft-panel{{ ' on' if loop.first }}" id="ft-panel-{{ x.cle }}" role="tabpanel" aria-labelledby="ft-tab-{{ x.cle }}">
+          <p class="ft-panel-hint">{{ x.aide }}</p>
+          <div class="ft-chips">{% for t, u in x.liens %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div>
+          <a class="ft-see-all" href="{{ lien(x.tout[1]) }}">{{ x.tout[0] }} <span aria-hidden="true">→</span></a>
+        </div>
+        {% endfor %}
+      </div>
     </div>
-    <nav aria-label="Se former">
-      <p class="pied-titre">Se former</p>
-      <a href="{{ lien('/se-former/sessions/') }}">Les sessions BAFA et BAFD</a>
-      <a href="{{ lien('/se-former/') }}">Les formations</a>
-      <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
-      <a href="{{ lien('/se-former/questions-frequentes/') }}">Questions fréquentes</a>
-      <a href="{{ lien('/se-former/ecoles/') }}">Les écoles des métiers</a>
-      <a href="{{ lien('/blog/') }}">Le blog</a>
-      <a href="{{ lien('/lexique/') }}">Le lexique de l'animation</a>
-    </nav>
-    <nav aria-label="Trouver un poste et recruter">
-      <p class="pied-titre">Trouver un poste</p>
-      <a href="{{ lien('/trouver-un-poste/') }}">Profil gratuit et offres</a>
-      <a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
-      <p class="pied-titre pied-titre-2">Recruter</p>
-      <a href="{{ lien('/recruter/') }}">Publier une offre</a>
-      <a href="{{ lien('/outils/') }}">Outils gratuits</a>
-      {% if site.comptes_ouverts %}<a href="{{ lien('/compte/') }}">Mon compte</a>{% endif %}
-    </nav>
-    <nav aria-label="Le site">
-      <p class="pied-titre">Le site</p>
-      <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
-      <a href="{{ lien('/contact/') }}">Contact</a>
-      <a href="{{ lien('/chiffres/') }}">Les chiffres du site</a>
-      <a href="{{ lien('/classement-des-sessions/') }}">Classement des sessions</a>
-      <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>
-      <a href="{{ lien('/confidentialite/') }}">Confidentialité</a>
-      <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a>
-    </nav>
+    {% endif %}
+    <div class="ft-baseline">
+      <span class="ft-cp">© {{ annee }} Fil Roug'Anim · {{ site.accroche }}</span>
+      <nav class="ft-legal" aria-label="Informations légales">
+        <a href="{{ lien('/mentions-legales/') }}">Mentions légales</a>
+        <a href="{{ lien('/confidentialite/') }}">Confidentialité</a>
+        <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a>
+      </nav>
+    </div>
   </div>
 </footer>
+<script>(function(){var t=document.querySelectorAll(".ft-tab");function ch(b){t.forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on?"true":"false");x.tabIndex=on?0:-1;document.getElementById(x.getAttribute("aria-controls")).classList.toggle("on",on)})}t.forEach(function(b,i){b.addEventListener("click",function(){ch(b)});b.addEventListener("keydown",function(e){var j=e.key==="ArrowRight"?i+1:e.key==="ArrowLeft"?i-1:null;if(j===null)return;e.preventDefault();var n=t[(j+t.length)%t.length];ch(n);n.focus()})})})();</script>
 {% if site.goatcounter and not apercu %}<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
 {% block scripts %}{% endblock %}
 <script type="application/json" id="villes-populaires">{{ stats.villes | tojson }}</script>
