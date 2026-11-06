@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% if page.schema_faq %}<script type="application/ld+json">{{ page.schema_faq | safe }}</script>{% endif %}{% endblock %}
 {% block tete_plus %}
 {% if page.sessions %}<ul class="chiffres"><li><b>{{ page.sessions | length }}</b> session{{ 's' if page.sessions|length > 1 }} à venir</li>
 {% set prix = page.sessions | selectattr("prix") | map(attribute="prix") | list %}{% if prix %}<li>de <b>{{ prix | min | euros }}</b> à <b>{{ prix | max | euros }}</b></li>{% endif %}</ul>{% endif %}
@@ -44,16 +44,40 @@
   </div>
 </section>
 
+{% if page.bref %}{% set b = page.bref %}
+<section class="bande bande-blanc" aria-labelledby="t-bref">
+  <div class="cadre">
+    <p class="note-main">en bref</p>
+    <h2 id="t-bref">{{ page.h1 }} : l'essentiel</h2>
+    <ul class="bref">
+      <li><b>{{ b.nb }}</b><span>session{{ 's' if b.nb > 1 }} à venir</span></li>
+      {% if b.prix_med %}<li><b>{{ b.prix_med | euros }}</b><span>{% if b.prix_min == b.prix_max %}pour toutes les sessions{% else %}prix médian{% endif %}{% if b.prix_n > 1 and b.prix_min != b.prix_max %}, de {{ b.prix_min | euros }} à {{ b.prix_max | euros }}{% endif %}</span></li>{% endif %}
+      <li><b>{{ b.prochaine.debut | date_fr(False) }}</b><span>prochain départ, à {{ b.prochaine.ville }}</span></li>
+      <li><b>{{ b.nb_org }}</b><span>organisme{{ 's' if b.nb_org > 1 }}, dans {{ b.nb_villes }} commune{{ 's' if b.nb_villes > 1 }}</span></li>
+    </ul>
+    {% if page.faq_page %}
+    <h3 class="bref-titre">Vos questions</h3>
+    <div class="faq">{% for q in page.faq_page %}
+      <details{% if loop.first %} open{% endif %}><summary>{{ q.q }}</summary><p>{{ q.r }}</p></details>{% endfor %}
+    </div>
+    {% endif %}
+    <p class="petit">Chiffres calculés sur les sessions relevées chez les organismes, mis à jour chaque nuit.</p>
+  </div>
+</section>
+{% endif %}
+
 {% if page.region %}
 <section class="bande bande-sable">
   <div class="cadre explorer">
     <div><h3>{{ page.region.nom }}, par département</h3><ul>{% for d in page.region.deps | sort(attribute="code") %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.nb or 0 }}</small></li>{% endfor %}</ul></div>
+    {% if page.region.sous %}<div><h3>{{ page.region.nom }}, par recherche</h3><ul>{% for t, u, n in page.region.sous %}<li><a href="{{ lien(u) }}">{{ t }}</a> <small>{{ n }}</small></li>{% endfor %}</ul></div>{% endif %}
     <div><h3>Les autres régions</h3><ul>{% for r in regions if r.id != page.region.id %}<li><a href="{{ lien('/se-former/sessions/' ~ r.slug ~ '/') }}">{{ r.nom }}</a> <small>{{ r.nb or 0 }}</small></li>{% endfor %}</ul></div>
   </div>
 </section>
 {% endif %}
 {% if page.departement %}
 {% set offres_dep = offres | selectattr("departement", "equalto", page.departement.code) | list %}
+{% if offres_dep or page.famille not in ('bafd', 'psc1') %}
 <section class="bande bande-blanc" aria-labelledby="t-recrutent">
   <div class="cadre">
     <p class="note-main">après la formation</p>
@@ -67,18 +91,32 @@
     {% endif %}
   </div>
 </section>
+{% endif %}
 <section class="bande bande-sable">
   <div class="cadre explorer">
-    {% if page.periodes_dep %}<div><h3>{{ page.departement.nom }}, par vacances</h3><ul>{% for p in page.periodes_dep %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endfor %}</ul></div>{% endif %}
-    {% if page.villes %}<div><h3>{{ page.departement.nom }}, par ville</h3><ul>{% for v in page.villes %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ v.slug ~ '/') }}">{{ v.nom }}</a> <small>{{ v.sessions | length }}</small></li>{% endfor %}</ul></div>{% endif %}
+    {% if page.departement.sous %}<div><h3>{{ page.departement.nom }}, par formation</h3><ul>{% if page.url != '/se-former/sessions/' ~ page.departement.slug ~ '/' %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/') }}">Le BAFA {{ page.departement.a }}</a></li>{% endif %}{% for t, u, n in page.departement.sous if u != page.url %}<li><a href="{{ lien(u) }}">{{ t }}</a> <small>{{ n }}</small></li>{% endfor %}</ul></div>{% endif %}
+    {% if page.villes_famille %}<div><h3>Le PSC, par ville</h3><ul>{% for v in page.villes_famille %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/psc1/' ~ v.slug ~ '/') }}">{{ v.nom }}</a> <small>{{ v.sessions | length }}</small></li>{% endfor %}</ul></div>{% endif %}
+    {% if page.periodes_dep and not page.famille %}<div><h3>{{ page.departement.nom }}, par vacances</h3><ul>{% for p in page.periodes_dep %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ p.slug ~ '/') }}">{{ p.nom | majuscule }}</a></li>{% endfor %}</ul></div>{% endif %}
+    {% if page.villes and not page.famille %}<div><h3>{{ page.departement.nom }}, par ville</h3><ul>{% for v in page.villes %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.slug ~ '/' ~ v.slug ~ '/') }}">{{ v.nom }}</a> <small>{{ v.sessions | length }}</small></li>{% endfor %}</ul></div>{% endif %}
     <div><h3>{{ page.departement.reg.nom }}, les autres départements</h3><ul>{% for d in page.departement.reg.deps | sort(attribute="code") if d.code != page.departement.code %}<li><a href="{{ lien('/se-former/sessions/' ~ d.slug ~ '/') }}">{{ d.nom }}</a> <small>{{ d.code }}</small></li>{% endfor %}<li><a href="{{ lien('/se-former/sessions/' ~ page.departement.reg.slug ~ '/') }}">Toute la région</a></li></ul></div>
   </div>
 </section>
+{% elif page.region_famille %}{% set r = page.region_famille %}
+<section class="bande bande-sable">
+  <div class="cadre explorer">
+    <div><h3>{{ r.nom }}, par recherche</h3><ul><li><a href="{{ lien('/se-former/sessions/' ~ r.slug ~ '/') }}">Le BAFA {{ r.a }}</a></li>{% for t, u, n in r.sous if u != page.url %}<li><a href="{{ lien(u) }}">{{ t }}</a> <small>{{ n }}</small></li>{% endfor %}</ul></div>
+    {% if page.famille %}<div><h3>{{ r.nom }}, par département</h3><ul>{% for d in r.deps | sort(attribute="code") %}{% for t, u, n in d.sous or [] if u.endswith('/' ~ page.famille ~ '/') %}<li><a href="{{ lien(u) }}">{{ d.nom }}</a> <small>{{ n }}</small></li>{% endfor %}{% endfor %}</ul></div>{% endif %}
+  </div>
+</section>
 {% elif not page.region %}
+{% if page.famille == 'approfondissement' or (page.type_session and page.type_session.id == 'approfondissement') %}<section class="bande bande-sable"><div class="cadre explorer"><div class="explorer-large"><h3>L'approfondissement, par thème</h3><ul class="colonnes">{% for t, u, n in themes_appro if u != page.url %}<li><a href="{{ lien(u) }}">{{ t }}</a> <small>{{ n }}</small></li>{% endfor %}</ul></div></div></section>{% endif %}
+{% if page.mois_cle and mois_pages[page.mois_cle] %}<section class="bande bande-sable"><div class="cadre explorer"><div class="explorer-large"><h3>Mois par mois</h3><ul class="colonnes">{% for t, u, n in mois_pages[page.mois_cle] if u != page.url %}<li><a href="{{ lien(u) }}">{{ t | majuscule }}</a> <small>{{ n }}</small></li>{% endfor %}</ul></div></div></section>{% endif %}
 {% if page.diplome_page %}<section class="bande bande-sable"><div class="cadre">{{ m.parcours(diplomes, lien, seul=page.diplome_page.id) }}</div></section>{% endif %}
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endif %}
 
+{% set est_psc = page.famille == 'psc1' or page.url.startswith('/se-former/sessions/psc1/') %}
+{% if not est_psc %}
 <section class="bande bande-blanc">
   <div class="cadre">
     <h2>Avant de vous inscrire</h2>
@@ -90,5 +128,6 @@
     {{ m.encart_jeuphorie(site) }}
   </div>
 </section>
+{% endif %}
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/filtres.js') }}" defer></script><script src="{{ statique('js/fenetre-filtres.js') }}" defer></script>{% endblock %}
