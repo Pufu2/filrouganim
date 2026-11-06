@@ -150,3 +150,40 @@ organismes:
       secours citoyen, ex-PSC1) partout en France, en une journée ou en version hybride (une
       partie en ligne avant la journée). Les sessions, leur prix et les places restantes sont
       sur sa plateforme nationale d'inscription.
+
+  - id: familles-rurales
+    nom: Familles Rurales
+    habilitation: nationale
+    site: https://www.ma-formation-bafa.fr/
+    page_sessions: https://www.ma-formation-bafa.fr/sessions/toutes/toutes/toutes/toutes/tous
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Mouvement familial présent surtout dans les territoires ruraux et périurbains. Il organise des formations
+      BAFA et BAFD dans de nombreuses régions, en internat, en demi-pension ou en externat ; à Paris, ses sessions
+      sont proposées avec la FACEL. Les prix de chaque formule sont affichés sur sa liste de sessions.
+
+  - id: francas
+    nom: Les Francas
+    habilitation: nationale
+    site: https://www.bafa-lesfrancas.fr/
+    page_sessions: https://www.bafa-lesfrancas.fr/recherche-de-stage
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Mouvement d'éducation populaire tourné vers les loisirs des enfants et les centres de loisirs. Ses
+      associations départementales organisent des formations générales, des approfondissements et des sessions
+      BAFD ; une petite adhésion s'ajoute souvent au prix du stage.
+
+  - id: fscf
+    nom: FSCF
+    habilitation: nationale
+    site: https://fscf.asso.fr/bafa/
+    page_sessions: https://fscf.asso.fr/calendrier-des-formations/?type=bafa-bafd
+    prix_en_ligne: true
+    en_ligne: true
+    presentation: >-
+      Fédération sportive et culturelle de France : ses comités régionaux et départementaux organisent des
+      sessions BAFA et BAFD, souvent tournées vers le sport et les activités de plein air. Le prix est plus bas
+      pour les licenciés de la fédération.
+
