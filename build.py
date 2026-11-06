@@ -147,6 +147,10 @@ def sans_accents(t):
     return unicodedata.normalize("NFKD", t or "").encode("ascii", "ignore").decode().lower()
 
 
+def sans_cedex(ville):
+    return re.sub(r"[\s-]+cedex.*$", "", ville or "", flags=re.I).strip()
+
+
 def themes_de(theme):
     t = sans_accents(theme)
     return [k for k, _, motif in THEMES_APPRO if re.search(motif, t)]
@@ -881,6 +885,38 @@ class Site:
             if ancienne not in existantes:
                 self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=nouvelle)
 
+    def recherches_frequentes(self):
+        """Le bloc « Recherches fréquentes » au-dessus du pied de page : les pages les plus fournies de chaque famille."""
+        if getattr(self, "_recherches", None) is not None:
+            return self._recherches
+        pages = {p["url"]: p for p in self.pages if p.get("indexer") and p["gabarit"] in ("liste.html", "ecoles.html")}
+        def n(p):
+            return p.get("sessions_total") or len(p.get("sessions") or p.get("ecoles") or [])
+        def top(filtre, nom, k=10):
+            vus, r = set(), []
+            for p in sorted((p for u, p in pages.items() if filtre(u)), key=n, reverse=True):
+                t = nom(p)
+                if t not in vus and len(r) < k:
+                    vus.add(t)
+                    r.append((t, p["url"]))
+            return r
+        B = "/se-former/sessions/"
+        deps = {d["slug"] for d in self.departements.values()}
+        regs = {r["slug"] for r in self.regions.values()}
+        def parts(u):
+            return u[len(B):].strip("/").split("/") if u.startswith(B) else []
+        villes_bafa = top(lambda u: len(parts(u)) == 2 and parts(u)[0] in deps and pages[u].get("ville"), lambda p: f"BAFA {p['ville']['nom']}")
+        deps_bafa = top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, lambda p: f"BAFA {p['departement']['nom']}")
+        psc = top(lambda u: len(parts(u)) == 3 and parts(u)[1] == "psc1" and parts(u)[0] in deps,
+                  lambda p: "PSC " + p["h1"].split(" à ", 1)[1])
+        bafd = top(lambda u: len(parts(u)) == 2 and parts(u)[1] == "bafd", lambda p: "BAFD " + p["fil"][-2][0])
+        ecoles = top(lambda u: u.startswith("/se-former/ecoles/") and u.count("/") == 5 and u.split("/")[4] not in regs,
+                     lambda p: f"{p['fil'][2][0]} {p['fil'][-1][0]}")
+        themes = [(t, u) for t, u, _ in getattr(self, "themes_appro", [])[:10]]
+        self._recherches = [x for x in [("BAFA par ville", villes_bafa), ("BAFA par département", deps_bafa), ("PSC premiers secours", psc),
+                                        ("BAFD", bafd), ("Approfondissement BAFA", themes), ("Écoles pros", ecoles)] if x[1]]
+        return self._recherches
+
     def declarer_ecoles(self, SF):
         """Les écoles des diplômes pros (CPJEPS, BPJEPS, DEJEPS, DESJEPS) : une page par diplôme, par région et par
         département, avec les cartes des écoles dans la page (lisibles par Google, sans JavaScript)."""
@@ -1183,11 +1219,11 @@ class Site:
         """Les communes qui ont assez de sessions pour mériter leur page."""
         par_ville = {}
         for s in sessions:  # « Évreux » et « Evreux » : une seule page
-            par_ville.setdefault(slug(s["ville"]), []).append(s)
+            par_ville.setdefault(slug(sans_cedex(s["ville"])), []).append(s)
         villes = []
         for sl, l in par_ville.items():
             if len(l) >= minimum:
-                nom = collections.Counter(s["ville"] for s in l).most_common(1)[0][0]
+                nom = collections.Counter(sans_cedex(s["ville"]) for s in l).most_common(1)[0][0]
                 villes.append({"nom": nom, "slug": sl, "sessions": l})
         return sorted(villes, key=lambda v: sans_accents(v["nom"]))
 
@@ -1220,7 +1256,7 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
-            "themes_appro": getattr(self, "themes_appro", []), "mois_pages": getattr(self, "mois_pages", {}),
+            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),
             "fil_jsonld": json_ld({"@context": "https://schema.org", "@type": "BreadcrumbList",
