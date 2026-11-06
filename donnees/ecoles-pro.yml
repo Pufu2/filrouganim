@@ -150,6 +150,7 @@ ecoles:
   - {organisme_nom: "TRANS-FAIRE Formation", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-10-09}
   - {organisme_nom: "UNION REGIONALE DES FRANCAS D'ILE DE France", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-05-04}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-10-08}
+  - {organisme_nom: "IRTS-IDS Normandie (ADSCI)", diplome: BPJEPS, specialite: "asec", ville: "Canteleu", departement: "76", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Profession Sport et Loisirs 76", diplome: BPJEPS, specialite: "asec", ville: "Le Havre", departement: "76", derniere_rentree: 2026-10-19}
   - {organisme_nom: "CEMEA de Normandie", diplome: BPJEPS, specialite: "asec", ville: "Rouen", departement: "76", derniere_rentree: 2026-10-01}
   - {organisme_nom: "Profession Sport et Loisirs 76", diplome: BPJEPS, specialite: "asec", ville: "Rouen", departement: "76", derniere_rentree: 2026-10-12}
@@ -180,7 +181,7 @@ ecoles:
   - {organisme_nom: "SPOR", diplome: BPJEPS, specialite: "asec", ville: "Courbevoie", departement: "92", derniere_rentree: 2026-10-12}
   - {organisme_nom: "Institut Formation Animation", diplome: BPJEPS, specialite: "asec", ville: "Pantin", departement: "93", derniere_rentree: 2026-04-13}
   - {organisme_nom: "Educaterra", diplome: BPJEPS, specialite: "asec", ville: "Saint-Denis", departement: "93", derniere_rentree: 2026-11-02}
-  - {organisme_nom: "Association Promotion & Formation des Techniques", diplome: BPJEPS, specialite: "asec", ville: "Fontenay-sous-Bois", departement: "94", derniere_rentree: 2026-10-15}
+  - {organisme_nom: "Association Promotion & Formation des Techniques", diplome: BPJEPS, specialite: "asec", ville: "Fontenay-sous-Bois", departement: "94", derniere_rentree: 2026-04-16}
   - {organisme_nom: "Centre Pedagogique pour Construire UNE Vie Active(cpvc)", diplome: BPJEPS, specialite: "asec", ville: "Enghien-les-Bains", departement: "95", derniere_rentree: 2026-11-02}
   - {organisme_nom: "INST Formation Animateurs Collectivites (ifac 95)", diplome: BPJEPS, specialite: "asec", ville: "Franconville", departement: "95", derniere_rentree: 2026-10-01}
   - {organisme_nom: "L'ADAPT Val d'Oise", diplome: BPJEPS, specialite: "asec", ville: "Sarcelles", departement: "95", derniere_rentree: 2026-01-05}
