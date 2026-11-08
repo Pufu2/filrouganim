@@ -68,7 +68,7 @@ ecoles:
   - {organisme_nom: "IRSS Bordeaux", diplome: BPJEPS, specialite: "asec", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Theatre en Miettes", diplome: BPJEPS, specialite: "asec", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-09-15}
-  - {organisme_nom: "C.E.M.E.A_NA", diplome: BPJEPS, specialite: "asec", ville: "Bègles", departement: "33", derniere_rentree: 2026-09-14}
+  - {organisme_nom: "C.E.M.E.A_NA", diplome: BPJEPS, specialite: "asec", ville: "Bègles", departement: "33", derniere_rentree: 2026-11-10}
   - {organisme_nom: "Lycée professionnel privé AGIR", diplome: BPJEPS, specialite: "asec", ville: "Langon", departement: "33", derniere_rentree: 2026-10-01}
   - {organisme_nom: "Apafase GARD IFME", diplome: BPJEPS, specialite: "asec", ville: "Ganges", departement: "34", derniere_rentree: 2026-09-28}
   - {organisme_nom: "CEMEA Occitanie", diplome: BPJEPS, specialite: "asec", ville: "Montpellier", departement: "34", derniere_rentree: 2026-09-28}
@@ -122,6 +122,7 @@ ecoles:
   - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Hazebrouck", departement: "59", derniere_rentree: 2026-10-05}
   - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Lille", departement: "59", derniere_rentree: 2026-10-08}
   - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Loon-Plage", departement: "59", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Valenciennes", departement: "59", derniere_rentree: 2026-11-10}
   - {organisme_nom: "CREPS de Wattignies - CFA MSA", diplome: BPJEPS, specialite: "asec", ville: "Wattignies", departement: "59", derniere_rentree: 2026-09-10}
   - {organisme_nom: "Association FORME", diplome: BPJEPS, specialite: "asec", ville: "Agnetz", departement: "60", derniere_rentree: 2026-01-15}
   - {organisme_nom: "EPLEFPA Alençon-Sées", diplome: BPJEPS, specialite: "asec", ville: "Sées", departement: "61", derniere_rentree: 2026-09-07}
@@ -373,6 +374,7 @@ ecoles:
   - {organisme_nom: "Campus la SALLE Toulouse", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Toulouse", departement: "31", derniere_rentree: 2026-10-05}
   - {organisme_nom: "Loisirs Education et Citoyenneté - LEC", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Toulouse", departement: "31", derniere_rentree: 2026-04-01}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-09-22}
+  - {organisme_nom: "C.E.M.E.A_NA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Bègles", departement: "33", derniere_rentree: 2026-11-10}
   - {organisme_nom: "Askoria", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Rennes", departement: "35", derniere_rentree: 2026-04-27}
   - {organisme_nom: "CEMEA région Centre", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Tours", departement: "37", derniere_rentree: 2026-05-11}
   - {organisme_nom: "Centre d'Entraînement aux Méthodes d'Education Active", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Nantes", departement: "44", derniere_rentree: 2026-04-27}
@@ -384,6 +386,7 @@ ecoles:
   - {organisme_nom: "Union Francaise des Centres de Vacances Lorraine", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Metz", departement: "57", derniere_rentree: 2026-10-12}
   - {organisme_nom: "CEMEA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lille", departement: "59", derniere_rentree: 2026-10-01}
   - {organisme_nom: "CREPS de Wattignies - CFA MSA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Wattignies", departement: "59", derniere_rentree: 2026-09-07}
+  - {organisme_nom: "C.E.M.E.A_NA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Anglet", departement: "64", derniere_rentree: 2026-11-10}
   - {organisme_nom: "Arfatsema", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lyon", departement: "69", derniere_rentree: 2026-11-09}
   - {organisme_nom: "Ocellia", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lyon", departement: "69", derniere_rentree: 2026-01-26}
   - {organisme_nom: "BLUE UP Formation", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Paris", departement: "75", derniere_rentree: 2026-09-16}
