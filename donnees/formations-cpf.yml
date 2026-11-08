@@ -2,7 +2,7 @@
 # Source : Caisse des Dépôts, catalogue des formations éligibles au CPF (Licence Ouverte Etalab).
 # Fichier écrit par outils/relever_cpf.py : ne pas modifier à la main. Faits seulement : école, diplôme,
 # département, durée moyenne en heures, prix TTC (le plus bas et le plus haut), nombre de sessions ouvertes.
-# Relevé du 2026-11-07.
+# Relevé du 2026-11-08.
 
 formations:
   - {"organisme_nom": "Les Francas Auvergne Rhone Alpes", "siret": "77986880100076", "diplome": "BPJEPS", "specialite": "asec", "departement": "01", "prix_min": 9030, "prix_max": 9030, "heures": null, "sessions": 1, "distance": false}
