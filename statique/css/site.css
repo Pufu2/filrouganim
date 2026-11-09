@@ -1483,3 +1483,12 @@ header.jm-entete .bouton-commencer:hover span { color: #fff; }
 .mm-panneau .mm-colonne a:hover b, .mm-panneau .mm-colonne a[aria-current] b { color: var(--fil-fonce); }
 @media (max-width: 1000px) { .mm-panneau .mm-titre { margin-top: 6px; } }
 .mm-panneau .mm-titre { font-size: 16px; white-space: nowrap; }
+/* le grand cadre de gauche : un peu plus large, et son bouton sur une seule ligne */
+@media (min-width: 1001px) {
+  header.jm-entete .mm-panneau { width: min(900px, calc(100vw - 32px)); }
+  header.jm-entete .mm-item:last-child .mm-panneau { width: min(740px, calc(100vw - 32px)); }
+  header.jm-entete .mm-grille { grid-template-columns: 240px repeat(3, minmax(0, 1fr)); }
+  header.jm-entete #mm-recruter .mm-grille { grid-template-columns: 240px repeat(2, minmax(0, 1fr)); }
+  header.jm-entete .mm-une { padding: 20px; }
+}
+.mm-une-aller { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
