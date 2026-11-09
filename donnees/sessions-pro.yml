@@ -886,26 +886,46 @@ sessions:
     releve_le: 2026-11-01
     verifie_le: 2026-11-09
     source: "foromes"
-  - id: for-26035DEBC0002
+  - id: for-26ARACPBC0009
     organisme: null
-    organisme_nom: "FRMJC Bretagne"
+    organisme_nom: "Les Francas"
+    diplome: "CPJEPS"
+    specialite: "aavq"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-23
+    fin: 2027-11-19
+    ville: "Clermont-Ferrand"
+    departement: "63"
+    formule: null
+    prix: null
+    prix_note: "inscription avant le 09/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-09
+    verifie_le: 2026-11-09
+    source: "foromes"
+  - id: app-0ee0c88a19-20261123
+    organisme: null
+    organisme_nom: "FRMJC Bretagne - PDL"
     diplome: "DEJEPS"
     specialite: "coordination-de-projets"
     type: "parcours"
     theme: null
     debut: 2026-11-23
-    fin: 2028-12-08
+    fin: 2028-10-10
     ville: "Rennes"
     departement: "35"
-    formule: null
-    prix: null
-    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    formule: "apprentissage"
+    prix: 0
+    prix_note: "2 ans en alternance"
     aides: []
     complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
+    url: "https://labonnealternance.apprentissage.beta.gouv.fr/formation/118019P01217777500680005177775006800051-35238%23L01/diplome-d-etat-de-la-jeunesse-de-l-education-populaire-et-du-sport-spe-animation"
+    releve_le: 2026-11-09
     verifie_le: 2026-11-09
-    source: "foromes"
+    source: "catalogue-apprentissage"
   - id: app-dfb4bf01da-20261123
     organisme: null
     organisme_nom: "TF Formation"
@@ -1266,6 +1286,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"
+  - id: for-26ALPBPBC0134
+    organisme: null
+    organisme_nom: "CESAM Formation"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-11-30
+    fin: 2028-02-18
+    ville: "Ambares-et-Lagrave"
+    departement: "33"
+    formule: null
+    prix: null
+    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-09
+    verifie_le: 2026-11-09
+    source: "foromes"
   - id: eco-5a5b33f4de3e
     organisme: null
     organisme_nom: "Ligue de l'enseignement 44 (FAL 44)"
@@ -1586,6 +1626,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"
+  - id: for-26ACLBPBC0046
+    organisme: null
+    organisme_nom: "Union régionale des Francas du Grand Est"
+    diplome: "BPJEPS"
+    specialite: "asec"
+    type: "parcours"
+    theme: null
+    debut: 2026-12-07
+    fin: 2028-04-28
+    ville: "Sainte-Savine"
+    departement: "10"
+    formule: null
+    prix: null
+    prix_note: "possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-09
+    verifie_le: 2026-11-09
+    source: "foromes"
   - id: for-26ALPBPBC0056
     organisme: null
     organisme_nom: "Association Francaise du Cirque Adapte"
@@ -2266,6 +2326,26 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"
+  - id: for-27ACLCC0002
+    organisme: null
+    organisme_nom: "Union régionale des Francas du Grand Est"
+    diplome: "CC-ACM"
+    specialite: null
+    type: "parcours"
+    theme: null
+    debut: 2026-12-18
+    fin: 2028-01-04
+    ville: "Sainte-Savine"
+    departement: "10"
+    formule: null
+    prix: null
+    prix_note: "inscription avant le 18/11/2026 ; possible en apprentissage (sans frais pour l'apprenti)"
+    aides: []
+    complet: false
+    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
+    releve_le: 2026-11-01
+    verifie_le: 2026-11-09
+    source: "foromes"
   - id: for-26075DEBC0019
     organisme: null
     organisme_nom: "GRETA Metehor-Paris"
@@ -3326,7 +3406,7 @@ sessions:
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"
-  - id: cemea-AT05-B0E27005A
+  - id: cemea-AT05-B0E27002A
     organisme: null
     organisme_nom: "CEMEA"
     diplome: "CC-ACM"
@@ -3334,7 +3414,7 @@ sessions:
     type: "parcours"
     theme: null
     debut: 2027-03-12
-    fin: 2028-02-29
+    fin: 2028-01-18
     ville: "Bordeaux"
     departement: "33"
     formule: null
@@ -3342,7 +3422,7 @@ sessions:
     prix_note: null
     aides: []
     complet: false
-    url: "https://cemea-formation.com/promo/2027/mars/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27005A"
+    url: "https://cemea-formation.com/promo/2027/mars/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27002A"
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"
@@ -3566,26 +3646,6 @@ sessions:
     releve_le: 2026-10-26
     verifie_le: 2026-11-09
     source: "catalogue-apprentissage"
-  - id: for-27ACLCC0002
-    organisme: null
-    organisme_nom: "Union régionale des Francas du Grand Est"
-    diplome: "CC-ACM"
-    specialite: null
-    type: "parcours"
-    theme: null
-    debut: 2027-04-02
-    fin: 2027-11-03
-    ville: "Sainte-Savine"
-    departement: "10"
-    formule: null
-    prix: null
-    prix_note: "inscription avant le 02/03/2027 ; possible en apprentissage (sans frais pour l'apprenti)"
-    aides: []
-    complet: false
-    url: "https://foromes.jeunesse-sports.gouv.fr/calendrierPublic/formations"
-    releve_le: 2026-11-01
-    verifie_le: 2026-11-09
-    source: "foromes"
   - id: leo-c9a459d406
     organisme: null
     organisme_nom: "Léo Lagrange Formation"
@@ -3643,26 +3703,6 @@ sessions:
     aides: []
     complet: false
     url: "https://cemea-formation.com/promo/2027/avril/AMIENS/DESJEPS+ASECS+-+direction+de+structure+et+de+projet/AT02-B6E27A02A"
-    releve_le: 2026-11-02
-    verifie_le: 2026-11-09
-    source: "page-organisme"
-  - id: cemea-AT05-B0E27002A
-    organisme: null
-    organisme_nom: "CEMEA"
-    diplome: "CC-ACM"
-    specialite: null
-    type: "parcours"
-    theme: null
-    debut: 2027-05-04
-    fin: 2028-01-21
-    ville: "Bordeaux"
-    departement: "33"
-    formule: null
-    prix: null
-    prix_note: null
-    aides: []
-    complet: false
-    url: "https://cemea-formation.com/promo/2027/mai/BORDEAUX/Certificat+compl%C3%A9mentaire+-+direction+d%27un+accueil+collectif+de+mineurs/AT05-B0E27002A"
     releve_le: 2026-11-02
     verifie_le: 2026-11-09
     source: "page-organisme"

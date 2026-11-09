@@ -14,7 +14,6 @@ ecoles:
   - {organisme_nom: "I.F.A.C. 92", diplome: BPJEPS, specialite: "asec", ville: "Grasse", departement: "06", derniere_rentree: 2026-10-29}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Nice", departement: "06", derniere_rentree: 2026-05-26}
   - {organisme_nom: "Poinfor", diplome: BPJEPS, specialite: "asec", ville: "La Chapelle-Saint-Luc", departement: "10", derniere_rentree: 2026-09-17}
-  - {organisme_nom: "Union régionale des Francas du Grand Est", diplome: BPJEPS, specialite: "asec", ville: "Sainte-Savine", departement: "10", derniere_rentree: 2026-11-02}
   - {organisme_nom: "LEAP Emilie de RODAT", diplome: BPJEPS, specialite: "asec", ville: "Pezens", departement: "11", derniere_rentree: 2026-10-05}
   - {organisme_nom: "Montpellier Université Club Omnisport (MUC)", diplome: BPJEPS, specialite: "asec", ville: "Millau", departement: "12", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Maison Familiale Rurale de Naucelle", diplome: BPJEPS, specialite: "asec", ville: "Naucelle", departement: "12", derniere_rentree: 2026-09-10}
