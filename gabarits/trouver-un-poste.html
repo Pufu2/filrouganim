@@ -1,45 +1,174 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block tete_note %}<p class="note-main">trouver un poste</p>{% endblock %}
-{% block h1 %}Trouver son stage pratique ou son job d'animateur{% endblock %}
-{% block tete_chapo %}<p class="chapo">Créez votre profil gratuitement : les structures d'animation de votre secteur vous trouvent et vous écrivent. Et consultez les offres qu'elles publient.</p>{% endblock %}
-{% block tete_plus %}
-<div class="carte-recherche" id="inscription">
-  <h2 class="carte-recherche-titre">Votre profil, gratuit, en deux minutes</h2>
-  <ul class="liste-coches">
-    <li>Stagiaire BAFA, animateur, BAFD, CPJEPS, BPJEPS, DEJEPS : <b>tous les profils de l'animation</b>.</li>
-    <li>Visible <b>seulement par les structures vérifiées</b>. Jamais public, jamais sur Google.</li>
-    <li>Vous le cachez ou le supprimez quand vous voulez. Pas de mot de passe : un lien par e-mail.</li>
-  </ul>
-  {% if site.comptes_ouverts %}
-  <p><a class="bouton-r" href="{{ lien('/compte/') }}?role=candidat">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
-  {% else %}
-  <p class="inscription-bientot">Les profils ouvrent avec les premières offres, cet hiver. Ce sera gratuit, et ça le restera.</p>
-  {% endif %}
-</div>
-{% endblock %}
+{# Trouver un poste, sur le modèle de la page annuaire de jasonmarinho.com : le haut foncé, une barre « Où ? » + Filtres,
+   la bande « Pas le temps de chercher ? », les cartes (offres et exemple de profil), puis les questions et les guides. #}
+{% set p = EXEMPLES.profil %}
+{% block schema %}<script type="application/ld+json">{{ page.schema_faq | safe }}</script>{% endblock %}
+{% block tete_note %}<p class="tp-sur">Offres et profils · candidature directe, sans frais</p>{% endblock %}
+{% block h1 %}Votre stage pratique ou votre job <em>d'animateur</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Des centres de loisirs et des organisateurs de séjours qui recrutent : regardez leurs offres, créez votre profil, et ce sont eux qui vous écrivent. Gratuit, sans intermédiaire.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
-<section class="bande bande-papier" id="offres" aria-labelledby="t-offres">
-  <div class="cadre">
-    <h2 id="t-offres">{% if offres %}Les offres du moment{% else %}Les offres{% endif %}</h2>
-    {% if offres %}
-    <div class="sessions">
-    {% for o in offres[:6] %}{{ m.carte_offre(o, lien) }}{% endfor %}
+<div class="tp-recherche"><div class="cadre">
+  <form class="tp-barre" action="{{ lien('/trouver-un-poste/offres/') }}" method="get" role="search" aria-label="Chercher une offre" id="tp-form">
+    <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="tp-ou">Où cherchez-vous ?</label>
+      <input id="tp-ou" type="search" placeholder="Où cherchez-vous un poste ? Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>
+      <input type="hidden" name="dep" value="">
+      <datalist id="tp-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}</datalist>
+      <input type="hidden" name="poste" value=""><input type="hidden" name="contrat" value="">
+      <button class="sr" type="submit">Rechercher</button>
     </div>
-    <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>
-    {% else %}
-    <div class="aucune aucune-mascotte">{{ m.mascotte("mascotte-vide") }}<p>Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes depuis leur compte. Toujours gratuit pour les candidats.</p></div>
-    {% endif %}
+    <button class="tp-filtres" type="button" aria-haspopup="dialog" aria-controls="tp-ff">{{ m.icone("reglages") }}Filtres <span class="pastille-n" data-tp-nb hidden></span></button>
+  </form>
+  <div class="tp-voile" id="tp-ff" hidden>
+    <div class="ff" role="dialog" aria-modal="true" aria-labelledby="tp-ff-t">
+      <div class="ff-tete"><h2 id="tp-ff-t">Filtres</h2><button class="ff-fermer" type="button" data-tp-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="ff-corps">
+        <div class="ff-groupe"><h3>Le poste</h3><div class="ff-puces" data-tp-champ="poste">{% for v, l in [("animateur-stagiaire", "Stage pratique BAFA"), ("animateur", "Animateur"), ("directeur-adjoint", "Directeur adjoint"), ("directeur", "Directeur"), ("surveillant-baignade", "Surveillant de baignade"), ("coordinateur", "Coordinateur")] %}<button class="ff-puce" type="button" data-v="{{ v }}" aria-pressed="false">{{ l }}</button>{% endfor %}</div></div>
+        <div class="ff-groupe"><h3>Le contrat</h3><div class="ff-puces" data-tp-champ="contrat">{% for v, l in CONTRATS.items() %}<button class="ff-puce" type="button" data-v="{{ v }}" aria-pressed="false">{{ l }}</button>{% endfor %}</div></div>
+      </div>
+      <div class="ff-pied"><button class="lien-effacer" type="button" data-tp-effacer>Tout effacer</button><button class="bouton-r" type="submit" form="tp-form">Voir les offres <span aria-hidden="true">→</span></button></div>
+    </div>
   </div>
-</section>
-<section class="bande bande-sable" aria-labelledby="t-conseils">
+  <div class="tp-bande">
+    <p><b>Pas le temps de chercher ?</b> Créez votre profil : les structures de votre secteur le voient et vous écrivent directement.</p>
+    <a class="tp-bande-bouton" href="{{ lien('/compte/') }}?inscription=1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer mon profil gratuit</a>
+  </div>
+</div></div>
+
+<section class="bande bande-papier tp-cartes-bande" aria-label="Offres et profils">
   <div class="cadre">
-    <h2 id="t-conseils">Bien démarrer</h2>
-    {{ m.cartes_liens(site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list, page.url, lien) }}
-    <p class="liens-exemples"><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir un exemple de profil</a> · <a href="{{ lien('/trouver-un-poste/structures/') }}">Les structures qui recrutent</a></p>
-    <h3>Outils gratuits</h3>
-    <ul class="liste-outils">{% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b><span>{{ d }}</span></a></li>{% endfor %}</ul>
-    {{ m.encart_jeuphorie(site) }}
+    <ul class="tp-cartes">
+      {% for o in offres[:5] %}
+      <li class="tp-carte">
+        <a class="tp-carte-haut tp-carte-offre" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}" tabindex="-1" aria-hidden="true"><span>{{ CONTRATS.get(o.contrat, o.contrat) }}</span></a>
+        <div class="tp-carte-corps">
+          <h2><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h2>
+          <p class="tp-carte-lieu">{{ o.structure.nom }} · {{ o.ville }} ({{ o.departement }})</p>
+          <p class="tp-carte-detail">À partir du {{ o.debut | date_fr }}</p>
+        </div>
+        <div class="tp-carte-pied"><span></span><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir l'offre <span aria-hidden="true">→</span></a></div>
+      </li>
+      {% endfor %}
+      {% if p %}
+      <li class="tp-carte tp-carte-exemple">
+        <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
+          <span class="tp-avatar">{{ p.prenom[:1] }}</span>
+          <span class="tp-badge-exemple">Exemple de profil</span>
+        </a>
+        <div class="tp-carte-corps">
+          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a> <span class="tp-fictif">profil fictif</span></h2>
+          <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
+          <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}{% if p.dispo_debut %} · disponible du {{ p.dispo_debut | date_fr(False) }} au {{ p.dispo_fin | date_fr }}{% endif %}</p>
+        </div>
+        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
+      </li>
+      {% endif %}
+      <li class="tp-carte tp-carte-vide">
+        <div class="tp-carte-vide-corps">
+          <span class="tp-avatar tp-avatar-vide" aria-hidden="true">+</span>
+          <h2>Votre profil ici</h2>
+          <p>En deux minutes, gratuit. Visible seulement par les structures vérifiées : jamais public, jamais sur Google.</p>
+          <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+    </ul>
+    {% if not offres %}<p class="tp-sans-offre">Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes. <a href="{{ lien('/trouver-un-poste/offres/') }}">Voir la page des offres</a></p>{% else %}<p class="tp-sans-offre"><a href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>{% endif %}
+
+    <div class="tp-appel">
+      <div>
+        <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Vous cherchez votre stage pratique ?</p>
+        <h2>Votre profil, vu par les structures <em>de votre secteur</em></h2>
+        <p>Stagiaire BAFA, animateur, BAFD, CPJEPS, BPJEPS, DEJEPS : tous les profils de l'animation. Vous le cachez ou le supprimez quand vous voulez. Pas de mot de passe : un lien par e-mail.</p>
+      </div>
+      <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
+
+<section class="bande bande-papier tp-infos">
+  <div class="cadre tp-deux">
+    <div class="tp-boite">
+      <h2>Les 5 questions à poser <em>avant d'accepter</em></h2>
+      <ol class="tp-questions">
+        <li><b>L'accueil est-il bien déclaré ?</b><span>Un stage pratique BAFA ne compte que dans un accueil collectif de mineurs déclaré : demandez-le simplement.</span></li>
+        <li><b>Qui m'accompagne pendant le stage ?</b><span>Un directeur ou un animateur référent qui vous fait des retours : c'est lui qui donnera son avis à la fin.</span></li>
+        <li><b>Quel contrat, et quelle rémunération ?</b><span>En colo ou en centre de loisirs, c'est souvent un contrat d'engagement éducatif, avec un minimum par jour. <a href="{{ lien('/outils/salaire-cee/') }}">Le calculer</a></span></li>
+        <li><b>Combien de jours, et lesquels ?</b><span>Le stage pratique compte au moins 14 jours effectifs : vérifiez que les dates prévues suffisent.</span></li>
+        <li><b>Repas, logement et repos ?</b><span>En séjour, demandez où vous dormez, qui paie les repas et quand tombent vos temps de repos.</span></li>
+      </ol>
+    </div>
+    <div class="tp-col">
+      <div class="tp-boite">
+        <h2>Ce qui rassure <em>une structure</em></h2>
+        <ul class="tp-coches">
+          <li>Le PSC (premiers secours), même fait en une journée</li>
+          <li>Des dates de disponibilité claires, noir sur blanc</li>
+          <li>Ce que vous avez déjà fait avec des enfants : baby-sitting, club, aide aux devoirs</li>
+          <li>Deux ou trois activités que vous savez mener</li>
+          <li>Un message court et personnel, pas un copier-coller</li>
+        </ul>
+      </div>
+      <div class="tp-boite">
+        <h2>À lire <em>pour bien démarrer</em></h2>
+        <ul class="tp-lectures">{% for g in site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list %}<li><a href="{{ lien(g.url) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg><span>{{ g.court }}</span><span aria-hidden="true">→</span></a></li>{% endfor %}
+        {% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 7.5h8M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span>{{ t }}</span><span aria-hidden="true">→</span></a></li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bande bande-papier tp-faq-bande" aria-labelledby="t-faq">
+  <div class="cadre">
+    <h2 id="t-faq" class="tp-faq-titre">Questions <em>fréquentes</em></h2>
+    <div class="faq tp-faq">{% for q in page.faq_tp %}<details><summary>{{ q.q }}</summary><p>{{ q.r }}</p></details>{% endfor %}</div>
+    <p class="tp-comment"><b>Comment ça marche.</b> Vous créez votre profil ou vous regardez les offres. Les structures vérifiées vous écrivent, ou vous leur écrivez depuis leur offre. Aucun frais, aucun intermédiaire : le contrat se signe directement entre vous.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var form = document.getElementById("tp-form"), voile = document.getElementById("tp-ff");
+  if (!form || !voile) return;
+  var ou = document.getElementById("tp-ou"), dep = form.elements.dep, nb = form.querySelector("[data-tp-nb]");
+  if (window.matchMedia("(max-width: 560px)").matches) ou.placeholder = "Où cherchez-vous ?";
+  var opts = Array.prototype.slice.call(document.querySelectorAll("#tp-lieux option"));
+  function sans(t) { return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+  // « Lyon », « 93 », « Gironde (33) » : on retrouve le département
+  form.addEventListener("submit", function () {
+    var v = sans(ou.value), code = "";
+    var m = v.match(/\(?(\d{2}|2a|2b|\d{3})\)?\s*$/);
+    if (m) code = m[1].toUpperCase();
+    else if (v) { var o = opts.filter(function (x) { return sans(x.value).indexOf(v) === 0; })[0]; if (o) code = o.dataset.dep; }
+    dep.value = code;
+    if (!code) dep.disabled = true;
+    ["poste", "contrat"].forEach(function (n) { if (!form.elements[n].value) form.elements[n].disabled = true; });
+  });
+  // une ville choisie dans la liste lance la recherche (comme sur jasonmarinho.com)
+  ou.addEventListener("change", function () { if (ou.value.trim()) form.requestSubmit ? form.requestSubmit() : form.submit(); });
+  function compter() { var n = ["poste", "contrat"].filter(function (k) { return form.elements[k].value; }).length; nb.textContent = n; nb.hidden = !n; }
+  voile.querySelectorAll("[data-tp-champ]").forEach(function (g) {
+    var champ = form.elements[g.dataset.tpChamp];
+    g.querySelectorAll(".ff-puce").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var oui = champ.value !== b.dataset.v;
+        champ.value = oui ? b.dataset.v : "";
+        g.querySelectorAll(".ff-puce").forEach(function (x) { x.setAttribute("aria-pressed", x === b && oui ? "true" : "false"); });
+        compter();
+      });
+    });
+  });
+  function montrer(oui) { voile.hidden = !oui; document.documentElement.classList.toggle("ff-ouverte", oui); if (oui) voile.querySelector("[data-tp-fermer]").focus(); }
+  form.querySelector(".tp-filtres").addEventListener("click", function () { montrer(true); });
+  voile.querySelector("[data-tp-fermer]").addEventListener("click", function () { montrer(false); });
+  voile.addEventListener("click", function (e) { if (e.target === voile) montrer(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !voile.hidden) montrer(false); });
+  voile.querySelector("[data-tp-effacer]").addEventListener("click", function () {
+    form.elements.poste.value = ""; form.elements.contrat.value = "";
+    voile.querySelectorAll(".ff-puce").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+    compter();
+  });
+})();
+</script>
 {% endblock %}

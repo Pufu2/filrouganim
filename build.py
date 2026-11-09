@@ -266,7 +266,7 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
-        self.env.globals.update(dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
+        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
                                 PUBLICS=PUBLICS, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
@@ -806,6 +806,19 @@ class Site:
             self.ajouter(entete["url"], entete.get("gabarit", "page.html"), titre=entete["titre"],
                          description=entete.get("description", ""), indexer=entete.get("indexer", True),
                          corps_md=corps, entete=entete, fil=fil)
+        # Trouver un poste : les questions fréquentes de la page (et leurs données structurées)
+        faq_tp = [
+            {"q": "Mon profil est-il public ?", "r": "Non. Il n'est visible que par les structures vérifiées, jamais sur Google ni par les visiteurs du site. Vous pouvez le cacher ou le supprimer quand vous voulez."},
+            {"q": "Combien ça coûte ?", "r": "Rien. Créer son profil, lire les offres et écrire aux structures est gratuit pour les candidats, et ça le restera."},
+            {"q": "Je n'ai que la formation générale du BAFA, puis-je m'inscrire ?", "r": "Oui : c'est justement le bon moment pour trouver votre stage pratique. Indiquez « stagiaire BAFA » dans vos diplômes."},
+            {"q": "Comment une structure me contacte-t-elle ?", "r": "Une structure vérifiée qui trouve votre profil vous écrit ; vous choisissez de répondre ou non. Le contrat se signe ensuite directement avec elle."},
+            {"q": "Il n'y a pas encore d'offre près de chez moi, que faire ?", "r": "Créez votre profil : les structures de votre secteur peuvent vous trouver avant même de publier une offre. Pensez aussi au centre de loisirs de votre ville."},
+        ]
+        for q in faq_tp:
+            q["r_rendu"] = q["r"]
+        for pg in self.pages:
+            if pg["url"] == "/trouver-un-poste/":
+                pg["faq_tp"], pg["schema_faq"] = faq_tp, self.schema_faq(faq_tp)
         for o in self.offres:
             self.ajouter(f"/trouver-un-poste/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
