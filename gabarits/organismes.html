@@ -1,19 +1,51 @@
 {% extends "base.html" %}
-{% block tete_chapo %}<p class="chapo">Seuls des organismes habilités par l'État peuvent organiser les sessions du BAFA et du BAFD (<a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054850965" rel="noopener" target="_blank">arrêté du 4 septembre 2026 ↗</a>).</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Ceux qui organisent les sessions que vous trouvez ici. Seuls des organismes habilités par l'État peuvent organiser le BAFA et le BAFD (<a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054850965" rel="noopener" target="_blank">arrêté du 4 septembre 2026 ↗</a>). Aucun ne paie pour apparaître.</p>{% endblock %}
+{% block tete_plus %}{% set actifs = page.organismes | selectattr("n") | list %}<ul class="chiffres"><li><b>{{ actifs | length + page.autres | length }}</b> organismes</li><li><b>{{ toutes_sessions | length }}</b> sessions à venir</li></ul>{% endblock %}
+{% macro carte(o) %}
+<li class="org-carte{% if not o.n %} org-carte-bientot{% endif %}">
+  <div class="org-tete">
+    <span class="org-logo">{% if o.logo %}<img src="{{ statique(o.logo) }}" alt="" loading="lazy">{% else %}<span class="org-initiales" aria-hidden="true">{{ o.initiales }}</span>{% endif %}</span>
+    <div class="org-nom">
+      <h2>{{ o.nom }}</h2>
+      <span class="org-hab">{% if o.habilitation == 'premiers secours' %}Premiers secours{% elif o.habilitation in ('nationale', 'régionale') %}Habilitation {{ o.habilitation }}{% else %}Formation BAFA{% endif %}</span>
+    </div>
+  </div>
+  {% if o.n %}
+  <ul class="org-chiffres">
+    <li><b>{{ o.n }}</b> session{{ 's' if o.n > 1 }}</li>
+    <li><b>{{ o.villes_n }}</b> ville{{ 's' if o.villes_n > 1 }}</li>
+    {% if o.prix_min %}<li>dès <b>{{ o.prix_min | euros }}</b></li>{% endif %}
+  </ul>
+  <p class="org-dipl">{% for d in o.diplomes %}<span>{{ d }}</span>{% endfor %}</p>
+  {% else %}
+  <p class="org-bientot">Ses sessions ne sont pas encore relevées : elles arrivent bientôt.</p>
+  {% endif %}
+  <p class="org-texte">{{ o.presentation | resume(170) }}</p>
+  <div class="org-liens">
+    {% if o.en_ligne and o.n %}<a class="bouton-r" href="{{ lien('/se-former/sessions/organismes/' ~ o.id ~ '/') }}">Ses sessions <span aria-hidden="true">→</span></a>{% endif %}
+    <a class="org-site" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site <span aria-hidden="true">↗</span><span class="sr"> (nouvel onglet)</span></a>
+  </div>
+</li>
+{% endmacro %}
 {% block contenu %}
 <section class="bande bande-papier">
   <div class="cadre">
-    <ul class="organismes">
-      {% for o in page.organismes %}
-      {% set n = toutes_sessions | selectattr("organisme", "equalto", o.id) | list | length %}
-      <li class="{{ 'organisme-actif' if n else '' }}">
-        {% if o.en_ligne and n %}<a href="{{ lien('/se-former/sessions/organismes/' ~ o.id ~ '/') }}"><b>{{ o.nom }}</b></a>{% else %}<b>{{ o.nom }}</b>{% endif %}
-        <span>{% if n %}{{ n }} session{{ 's' if n > 1 }} sur le site{% else %}pas encore relevé{% endif %}</span>
-        <a class="petit" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site ↗</a>
-      </li>
-      {% endfor %}
-    </ul>
-    <p class="petit">Un organisme manque ou une information est fausse ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a> : la liste est revérifiée chaque semaine.</p>
+    <ul class="org-grille">{% for o in page.organismes %}{{ carte(o) }}{% endfor %}</ul>
+  </div>
+</section>
+{% if page.autres %}
+<section class="bande bande-blanc" aria-labelledby="t-autres">
+  <div class="cadre">
+    <p class="note-main">et aussi</p>
+    <h2 id="t-autres">Les autres organismes du calendrier officiel</h2>
+    <p>Leurs sessions viennent de la liste publique des sessions déclarées au ministère (bafa-bafd.jeunes.gouv.fr). Elles sont dans la recherche, avec le lien vers chaque organisme.</p>
+    <ul class="org-autres">{% for nom, n in page.autres %}<li><a href="{{ lien('/se-former/sessions/') }}?q={{ nom | urlencode }}">{{ nom }}</a> <small>{{ n }}</small></li>{% endfor %}</ul>
+  </div>
+</section>
+{% endif %}
+<section class="bande bande-sable">
+  <div class="cadre texte">
+    <p class="petit">Un organisme manque ou une information est fausse ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a> : la liste est revérifiée chaque semaine. Les logos servent seulement à reconnaître chaque organisme ; ils restent la propriété de chacun.</p>
   </div>
 </section>
 {% endblock %}

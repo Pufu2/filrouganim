@@ -1332,8 +1332,10 @@ header.jm-entete .mm-bouton[aria-expanded="true"] .jm-chevron { transform: rotat
 
 /* la carte d'un menu ouvert */
 @media (min-width: 1001px) {
-  header.jm-entete .mm-panneau { position: absolute; top: calc(100% + 10px); left: 50%; right: auto; transform: translateX(-50%);
-    width: min(820px, 100vw - 48px); background: #fff; border: 1px solid #ebe3d8; border-radius: 18px; box-shadow: 0 24px 64px rgba(0, 0, 0, .28); z-index: 950; }
+  /* le volet d'un menu : le même contenu qu'avant (grand cadre à gauche, colonnes), dans une carte de la largeur de la barre */
+  header.jm-entete .mm-panneau { position: absolute; top: calc(100% + 10px); left: -1px; right: -1px; transform: none; width: auto;
+    background: #fff; border: 1px solid #ebe3d8; border-radius: 18px; box-shadow: 0 24px 64px rgba(0, 0, 0, .28); z-index: 950; overflow: hidden; }
+  header.jm-entete .mm-panneau .cadre { width: auto; max-width: none; margin: 0; padding-inline: 24px; }
   header.jm-entete .mm-panneau::before { content: ""; position: absolute; left: 0; right: 0; top: -14px; height: 14px; }
 }
 .jm-mega { padding: 24px 24px 0; }
@@ -1423,8 +1425,40 @@ header.jm-entete .bouton-commencer:hover span { color: #fff; }
 }
 @media (max-width: 380px) { header.jm-entete .logo .logo-titre { height: 24px; } }
 @media (min-width: 1001px) { header.jm-entete .mm, header.jm-entete .mm-item { position: static; } }
+@media (max-width: 1000px) { header.jm-entete .mm-panneau .cadre { width: auto; padding-inline: 18px; } }
 @media (max-width: 1000px) {
   header.jm-entete .mm-item { display: block; }
   header.jm-entete .mm-bouton { width: 100%; justify-content: space-between; }
   header.jm-entete .mm-panneau { position: static; transform: none; width: auto; border: 0; box-shadow: none; }
 }
+
+/* ---- page « Les organismes » : une carte par organisme, avec son logo */
+.org-grille { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.org-carte { display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--blanc); border: 1px solid var(--trait); border-radius: 20px;
+  box-shadow: 0 14px 30px -26px rgba(35, 31, 32, .5); transition: transform .15s, box-shadow .15s; }
+.org-carte:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -26px rgba(35, 31, 32, .55); }
+.org-carte-bientot { background: #fdfbf8; }
+.org-tete { display: flex; align-items: center; gap: 14px; }
+.org-logo { flex: none; width: 112px; height: 76px; border-radius: 16px; border: 1px solid var(--trait); background: #fff; display: grid; place-items: center; overflow: hidden; padding: 8px; }
+.org-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.org-initiales { font: 600 1.3rem/1 var(--titres); color: #fff; background: var(--fil); width: 100%; height: 100%; display: grid; place-items: center; border-radius: 10px; letter-spacing: .02em; }
+.org-nom h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; }
+.org-hab { display: inline-block; margin-top: 6px; font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--sauge); background: #e9f1ea; border-radius: 99px; padding: 3px 10px; }
+.org-chiffres { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .93rem; color: var(--doux); }
+.org-chiffres b { font-family: var(--titres); font-size: 1.25rem; font-weight: 600; color: var(--fil-fonce); }
+.org-dipl { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.org-dipl span { font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--papier); border: 1px solid var(--trait); }
+.org-bientot { margin: 0; font-size: .92rem; color: var(--doux); font-style: italic; }
+.org-texte { margin: 0; font-size: .93rem; line-height: 1.55; color: #4a4142; }
+.org-liens { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 4px; }
+.org-liens .bouton-r { padding: 10px 16px; font-size: .92rem; }
+.org-site { font-weight: 700; font-size: .92rem; }
+.org-autres { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.org-autres li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 10px; background: var(--papier); border: 1px solid var(--trait); font-size: .9rem; }
+.org-autres a { color: var(--encre); text-decoration: none; font-weight: 600; }
+.org-autres a:hover { color: var(--fil-fonce); text-decoration: underline; }
+.org-autres small { color: var(--doux); }
+.org-logo { display: flex; align-items: center; justify-content: center; }
+.org-logo img { width: auto; height: auto; max-width: 96px; max-height: 58px; }
+.org-hab { white-space: nowrap; }
+.org-nom { min-width: 0; }
