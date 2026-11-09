@@ -52,7 +52,7 @@ def evolution(maintenant, avant):
 
 
 def goatcounter(aujourdhui):
-    code, jeton = CONFIG.get("goatcounter"), os.environ.get("GOATCOUNTER_TOKEN")
+    code, jeton = CONFIG.get("goatcounter"), (os.environ.get("GOATCOUNTER_TOKEN") or "").strip()
     if not code or not jeton:
         print("GoatCounter : pas de code ou pas de jeton, sauté")
         return None
@@ -68,7 +68,7 @@ def goatcounter(aujourdhui):
 
 
 def search_console(aujourdhui):
-    cle = os.environ.get("GSC_SERVICE_ACCOUNT")
+    cle = (os.environ.get("GSC_SERVICE_ACCOUNT") or "").strip()
     if not cle:
         print("Search Console : pas de clé, sauté")
         return None
@@ -101,7 +101,7 @@ def search_console(aujourdhui):
 
 
 def supabase():
-    cle = os.environ.get("SUPABASE_SECRET_KEY")
+    cle = (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()  # un retour à la ligne collé avec la clé ne gêne plus
     url = (CONFIG.get("supabase") or {}).get("url")
     if not cle or not url:
         print("Supabase : pas de clé, sauté")
