@@ -76,6 +76,7 @@
           <a href="{{ lien('/se-former/ecoles/') }}">Écoles BPJEPS, DEJEPS…</a>
           <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Les étapes du BAFA</a>
           <a href="{{ lien('/se-former/financer-son-bafa/') }}">Financer son BAFA</a>
+          <a href="{{ lien('/se-former/villes/') }}">Toutes les villes</a>
           <a class="ft-cat-more" href="{{ lien('/se-former/sessions/') }}">Toutes les sessions →</a>
         </nav>
         <nav class="ft-cat" aria-label="Trouver un poste">
@@ -121,10 +122,13 @@
           {% for nom, liens in x.groupes %}
           <div class="ft-groupe">
             <h3 class="ft-groupe-t">{{ nom }}</h3>
-            <div class="ft-chips">{% for t, u in liens %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div>
+            <div class="ft-chips">{% for t, u in liens[:24] %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div>
+            {% if liens | length > 24 %}<details class="ft-plus"><summary>Voir {{ liens | length - 24 }} autre{{ 's' if liens | length > 25 }} {{ nom[4:] | lower }}{{ 's' if liens | length > 25 and not nom.endswith('s') else '' }}</summary>
+              <div class="ft-chips">{% for t, u in liens[24:] %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div></details>{% endif %}
           </div>
           {% endfor %}
           <a class="ft-see-all" href="{{ lien(x.tout[1]) }}">{{ x.tout[0] }} <span aria-hidden="true">→</span></a>
+          <a class="ft-see-all" href="{{ lien('/se-former/villes/') }}#v-{{ x.titre | lower }}">Toutes les villes, de A à Z <span aria-hidden="true">→</span></a>
         </div>
         {% endfor %}
       </div>

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block tete_plus %}<ul class="chiffres"><li><b>{{ page.total }}</b> villes</li></ul>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <nav class="villes-sommaire" aria-label="Formations">{% for k, l in page.listes %}<a href="#v-{{ k | lower }}">{{ k }} <small>{{ l | length }}</small></a>{% endfor %}</nav>
+    {% for k, l in page.listes %}
+    <section class="villes-bloc" id="v-{{ k | lower }}" aria-labelledby="t-v-{{ k | lower }}">
+      <h2 id="t-v-{{ k | lower }}">{{ k }}, par ville <small>{{ l | length }} villes</small></h2>
+      <ul class="villes-az">{% for n, c, u in l %}<li><a href="{{ lien(u) }}">{{ n }}</a> <small>{{ c }}</small></li>{% endfor %}</ul>
+    </section>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
