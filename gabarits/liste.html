@@ -87,7 +87,7 @@
     <p><a href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ page.departement.code }}">{{ offres_dep | length }} offre{{ 's' if offres_dep | length > 1 }} dans ce département</a></p>
     {% else %}
     <p>Après la formation générale, il faut un stage pratique de 14 jours. Créez votre profil gratuit : les structures vérifiées {{ page.departement.de | default("de " ~ page.departement.nom) }} peuvent vous trouver et vous écrire.</p>
-    <p><a class="bouton-r" href="{{ lien('/trouver-un-poste/') }}#inscription">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
+    <p><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
     {% endif %}
   </div>
 </section>
