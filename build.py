@@ -955,6 +955,7 @@ class Site:
             if l:
                 listes.append((k, l))
         total = sum(len(l) for _, l in listes)
+        self.total_villes = total
         self.ajouter("/se-former/villes/", "villes.html", titre="BAFA, BAFD, BSB, PSC, BPJEPS : toutes les villes",
                      h1="Se former près de chez soi : toutes les villes",
                      description=f"Les {total} pages de ville de Fil Roug'Anim : les sessions BAFA, BAFD, BSB et PSC et les écoles des diplômes pros, commune par commune, de A à Z.",
@@ -1051,6 +1052,46 @@ class Site:
             f"<title>{html.escape(self.config['nom'])} : le blog</title><link>{base}/blog/</link>"
             f"<description>Conseils et chiffres sur le BAFA et l'animation</description><language>fr</language>"
             + "".join(items) + "</channel></rss>\n", encoding="utf-8")
+
+    def panneau_chiffres(self):
+        """La petite fenêtre « Le site en chiffres » du bouton statistiques (comme sur jasonmarinho.com) : les chiffres de
+        Google et des visites dès qu'ils existent, sinon les chiffres du site lui-même (sessions, organismes, villes)."""
+        if getattr(self, "_panneau", None) is not None:
+            return self._panneau
+        a = self.audience()
+        fr = lambda n: f"{n:,}".replace(",", " ")
+        evo = lambda x: (f"{'+' if x >= 0 else ''}{x} %" if x is not None else None)
+        cartes, barres = [], []
+        if a.get("visiteurs_30j") is not None:
+            cartes.append(("Visiteurs", fr(a["visiteurs_30j"]), evo(a.get("visiteurs_evolution")) or "sur 30 jours"))
+        if a.get("impressions_28j") is not None:
+            cartes.append(("Vus dans Google", fr(a["impressions_28j"]), evo(a.get("impressions_evolution")) or "sur 28 jours"))
+        if a.get("clics_28j") is not None:
+            cartes.append(("Clics depuis Google", fr(a["clics_28j"]), evo(a.get("clics_evolution")) or "sur 28 jours"))
+        if a.get("comptes"):
+            cartes.append(("Comptes créés", fr(a["comptes"]), "animateurs et structures"))
+        titre_barres = "Affichages Google par mois"
+        if a.get("impressions_par_mois"):
+            barres = [(x["nom"], x["h"], fr(x["n"])) for x in a["impressions_par_mois"]]
+        S = self.sessions
+        complement = [("Sessions à venir", fr(len(S)), "relevées chaque nuit"),
+                      ("Organismes", fr(len({s["org"]["nom"] for s in S})), "comparés, aucun ne paie"),
+                      ("Villes", fr(getattr(self, "total_villes", 0) or len({(s["departement"], s["ville"]) for s in S})), "avec leur page"),
+                      ("Pages du site", fr(sum(1 for p in self.pages if p.get("indexer"))), "dans le plan du site")]
+        for c in complement:
+            if len(cartes) >= 4:
+                break
+            cartes.append(c)
+        if not barres:
+            titre_barres = "Sessions par mois de départ"
+            par_mois = collections.Counter(s["mois"] for s in S)
+            mois = sorted(par_mois)[:6]
+            maxi = max((par_mois[m] for m in mois), default=1) or 1
+            barres = [(MOIS_COURTS[int(m[5:7]) - 1], round(100 * par_mois[m] / maxi), fr(par_mois[m])) for m in mois]
+        self._panneau = {"cartes": cartes[:4], "barres": barres, "titre_barres": titre_barres,
+                         "badge": "28 derniers jours" if a.get("impressions_28j") is not None else "Données réelles",
+                         "source": "Google Search Console et mesures du site" if a else "Relevé chaque nuit sur les pages des organismes"}
+        return self._panneau
 
     def recherches_frequentes(self):
         """Le bloc « Recherches fréquentes » au-dessus du pied de page : les pages les plus fournies de chaque famille."""
@@ -1540,7 +1581,7 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
-            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(),
+            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(),
             "c": self.chiffres_blog(), "articles": getattr(self, "articles", []), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

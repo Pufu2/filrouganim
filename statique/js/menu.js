@@ -47,3 +47,14 @@
     if (tiroir) { tiroir.setAttribute("aria-expanded", "false"); nav.classList.remove("mm-visible"); document.documentElement.classList.remove("mm-tiroir-ouvert"); }
   });
 })();
+
+// Le bouton « statistiques » : ouvre et ferme la petite fenêtre « Le site en chiffres »
+(function () {
+  var b = document.querySelector(".jm-st"), p = document.getElementById("jm-st-panneau");
+  if (!b || !p) return;
+  function montrer(oui) { b.setAttribute("aria-expanded", oui ? "true" : "false"); p.hidden = !oui; }
+  b.addEventListener("click", function (e) { e.stopPropagation(); montrer(p.hidden); });
+  document.addEventListener("click", function (e) { if (!p.hidden && !p.contains(e.target)) montrer(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !p.hidden) { montrer(false); b.focus(); } });
+})();
+

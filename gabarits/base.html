@@ -25,16 +25,27 @@
 </head>
 <body>
 <a class="evitement" href="#contenu">Aller au contenu</a>
-<header class="entete">
-  <div class="cadre entete-cadre">
+<header class="entete jm-entete">
+  <div class="cadre entete-cadre jm-barre">
     <a class="logo" href="{{ lien('/') }}" aria-label="{{ site.nom }}, accueil">
       {% include "svg/logo-titre.svg" %}
     </a>
     {% include "menu.html" %}
-    {% if site.comptes_ouverts %}<div class="entete-actions">
-      <a class="bouton-espace" href="{{ lien('/compte/') }}"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Mon espace</a>
-      <a class="bouton-commencer" href="{{ lien('/compte/') }}?inscription=1">Commencer <span aria-hidden="true">→</span></a>
-    </div>{% endif %}
+    <div class="entete-actions">
+      <div class="jm-st-boite">
+        <button class="jm-st" type="button" aria-expanded="false" aria-controls="jm-st-panneau" aria-label="Le site en chiffres" title="Le site en chiffres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19v-5M10 19V9M14 19v-7M18 19V6M4 20.5h16"/></svg><span class="jm-st-point" aria-hidden="true"></span></button>
+        <div class="jm-st-panneau" id="jm-st-panneau" role="dialog" aria-label="Le site en chiffres" hidden>
+          <div class="jm-st-h"><div><p class="jm-st-t">Le site en chiffres</p><p class="jm-st-s">Mis à jour chaque jour</p></div><span class="jm-st-b">{{ pc.badge }}</span></div>
+          <div class="jm-st-g">{% for nom, val, note in pc.cartes %}<div class="jm-st-c"><span>{{ nom }}</span><b>{{ val }}</b><em>{{ note }}</em></div>{% endfor %}</div>
+          {% if pc.barres %}<div class="jm-st-ch"><div class="jm-st-ch-h"><span>{{ pc.titre_barres }}</span></div>
+            <div class="jm-st-barres">{% for m, h, n in pc.barres %}<i style="height:{{ [h, 4] | max }}%" title="{{ n }}"></i>{% endfor %}</div>
+            <div class="jm-st-m">{% for m, h, n in pc.barres %}<span>{{ m }}</span>{% endfor %}</div></div>{% endif %}
+          <div class="jm-st-f"><small>{{ pc.source }}</small><a href="{{ lien('/chiffres/') }}">Voir tous les chiffres <span aria-hidden="true">→</span></a></div>
+        </div>
+      </div>
+      {% if site.comptes_ouverts %}<a class="bouton-espace" href="{{ lien('/compte/') }}"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Mon espace</a>
+      <a class="bouton-commencer" href="{{ lien('/compte/') }}?inscription=1">Commencer <span aria-hidden="true">→</span></a>{% endif %}
+    </div>
     <button class="mm-tiroir" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
   </div>
 </header>
