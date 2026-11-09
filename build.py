@@ -737,9 +737,26 @@ class Site:
         self.declarer_declinaisons(SF, RUB)
         self.declarer_ecoles(SF)
         en_ligne = [o for o in self.organismes.values() if o.get("en_ligne")]
-        self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD et PSC1",
-                     description="Les organismes de formation au BAFA, au BAFD, au PSC1 et aux diplômes professionnels de l'animation présents sur le site, avec leurs prochaines sessions et le lien vers leur site.",
-                     organismes=list(self.organismes.values()), fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/")])
+        # la page des organismes : une carte par organisme (logo, sessions, diplômes, prix), les plus fournis d'abord
+        ORDRE_DIPL = ["BAFA", "BAFD", "BSB", "PSC1", "CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"]
+        cartes = []
+        for o in self.organismes.values():
+            liste = [s for s in S if s["organisme"] == o["id"]]
+            logo = next(iter(sorted((RACINE / "statique" / "logos").glob(o["id"] + ".*"))), None)
+            prix = [s["prix"] for s in liste if s["prix"]]
+            dipl = {s["diplome"] for s in liste}
+            mots = [m for m in re.split(r"[\s'-]+", o["nom"]) if m and m[0].isupper()]
+            cartes.append({**o, "n": len(liste), "prix_min": min(prix) if prix else None,
+                           "diplomes": [self.diplomes[d]["nom"] for d in ORDRE_DIPL if d in dipl],
+                           "villes_n": len({(s["departement"], s["ville"]) for s in liste}),
+                           "logo": f"logos/{logo.name}" if logo else None,
+                           "initiales": ("".join(m[0] for m in mots[:3]) if len(mots) > 1 else o["nom"][:3]).upper()})
+        cartes.sort(key=lambda c: (-c["n"], c["nom"]))
+        autres = collections.Counter(s["org"]["nom"] for s in S if not s["organisme"] and s["diplome"] in ("BAFA", "BAFD", "BSB"))
+        self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD, BSB et PSC : la liste",
+                     h1="Les organismes de formation",
+                     description="Les organismes de formation au BAFA, au BAFD, au BSB et au PSC présents sur le site : leurs prochaines sessions, leurs diplômes, leurs prix et le lien vers leur site.",
+                     organismes=cartes, autres=autres.most_common(), fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/")])
         for o in en_ligne:
             liste = [s for s in S if s["organisme"] == o["id"]]
             self.ajouter(f"/se-former/sessions/organismes/{o['id']}/", "liste.html",
