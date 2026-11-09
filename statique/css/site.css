@@ -1459,3 +1459,19 @@ header.jm-entete .bouton-commencer:hover span { color: #fff; }
 .org-logo img { width: auto; height: auto; max-width: 96px; max-height: 58px; }
 .org-hab { white-space: nowrap; }
 .org-nom { min-width: 0; }
+
+/* volets du menu : la disposition d'avant, avec le style de jasonmarinho.com (icônes, titres à empattements, survol doux) */
+.mm-panneau .mm-titre { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 500 15px/1.2 var(--titres); letter-spacing: 0; text-transform: none; color: var(--encre); }
+.mm-panneau .mm-titre .jm-ico { width: 16px; height: 16px; color: var(--fil); }
+.mm-panneau .mm-titre-2 { margin-top: 14px; }
+.mm-panneau .mm-colonne a { flex-direction: row; align-items: flex-start; gap: 9px; padding: 7px 8px; margin: 0 -8px; border-radius: 8px; transition: background .15s, color .15s; }
+.mm-panneau .mm-colonne a .jm-ico { margin-top: 2px; color: #b9818a; transition: color .15s; }
+.mm-panneau .mm-colonne a:hover, .mm-panneau .mm-colonne a[aria-current] { background: #fbf1ee; color: var(--fil-fonce); }
+.mm-panneau .mm-colonne a:hover .jm-ico, .mm-panneau .mm-colonne a[aria-current] .jm-ico { color: var(--fil); }
+.mm-lien-texte { display: flex; flex-direction: column; min-width: 0; }
+.mm-panneau .mm-colonne b { font-weight: 600; font-size: 13.5px; line-height: 1.3; }
+.mm-panneau .mm-colonne small { font-size: 12px; line-height: 1.35; color: var(--doux); }
+@media (min-width: 1001px) {
+  header.jm-entete .mm-panneau { width: min(840px, calc(100vw - 32px)); }
+  header.jm-entete .mm-item:last-child .mm-panneau { width: min(680px, calc(100vw - 32px)); }
+}

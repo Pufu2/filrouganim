@@ -1,6 +1,18 @@
 {# Le menu du haut : une partie par grand menu. À gauche, l'action principale de la partie (en grand) ;
    à droite, les pages annexes rangées par thème. Sur téléphone, un tiroir avec les mêmes contenus. #}
-{% macro lien_menu(url, titre, sous=None) %}<a href="{{ lien(url) }}"{% if page.url == url %} aria-current="page"{% endif %}><b>{{ titre }}</b>{% if sous %}<small>{{ sous }}</small>{% endif %}</a>{% endmacro %}
+{% macro ico(nom) %}<svg class="jm-ico" viewBox="0 0 24 24" aria-hidden="true">{% if nom == "loupe" %}<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>{% elif nom == "diplome" %}<path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/>{% elif nom == "calendrier" %}<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>{% elif nom == "carte" %}<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>{% elif nom == "eau" %}<path d="M3 15c2 0 2-1.5 4.5-1.5S10 15 12 15s2-1.5 4.5-1.5S19 15 21 15M3 19c2 0 2-1.5 4.5-1.5S10 19 12 19s2-1.5 4.5-1.5S19 19 21 19"/><circle cx="12" cy="7" r="2.5"/>{% elif nom == "croix" %}<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/>{% elif nom == "etoile" %}<path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4L12 16.3 7.2 18.9l1-5.4-4-3.8 5.4-.7z"/>{% elif nom == "livre" %}<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/>{% elif nom == "euro" %}<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>{% elif nom == "question" %}<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .9-1 1.6M12 16.8v.2"/>{% elif nom == "etapes" %}<path d="M4 18c4 0 3-8 8-8s4 8 8 8"/><circle cx="4" cy="18" r="1.6"/><circle cx="12" cy="10" r="1.6"/><circle cx="20" cy="18" r="1.6"/>{% elif nom == "ecole" %}<path d="M4 10l8-5 8 5M6 10v8h12v-8M10 18v-4h4v4"/>{% elif nom == "villes" %}<path d="M4 20V9l5-3v14M9 20V4l6 3v13M15 20v-9l5 2v7M3 20h18"/>{% elif nom == "valise" %}<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5.5h6v2M3.5 12.5h17"/>{% elif nom == "profil" %}<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>{% elif nom == "structure" %}<path d="M4 20V8l8-4 8 4v12M9 20v-6h6v6M3 20h18"/>{% elif nom == "contrat" %}<path d="M6 3.5h9l3 3v14H6z"/><path d="M9 10h6M9 13.5h6M9 17h3"/>{% elif nom == "calcul" %}<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 7.5h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>{% elif nom == "bulle" %}<path d="M4 5.5h16v10H9l-5 4z"/>{% elif nom == "cible" %}<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/>{% elif nom == "chiffres" %}<path d="M5 20V12M10 20V6M15 20v-9M20 20V9M3 20.5h18"/>{% elif nom == "outil" %}<path d="M14.5 6.5a4 4 0 0 0-5.3 5.2L4 17l3 3 5.3-5.2a4 4 0 0 0 5.2-5.3l-2.6 2.6-2.4-.4-.4-2.4z"/>{% elif nom == "annonce" %}<path d="M4 10v4h3l7 4V6L7 10z"/><path d="M17 9.5a3.5 3.5 0 0 1 0 5"/>{% elif nom == "fleche" %}<path d="M5 12h13M13 7l5 5-5 5"/>{% elif nom == "etiquette" %}<path d="M3.5 12V4.5h7.5l9.5 9.5-7.5 7.5z"/><circle cx="8" cy="8.5" r="1.3"/>{% endif %}</svg>{% endmacro %}
+{# l'icône de chaque lien et de chaque titre de colonne, à la façon de jasonmarinho.com #}
+{% set ICONES = {"/se-former/bafa/": "diplome", "/se-former/bafd/": "etoile", "/se-former/psc1/": "croix", "/se-former/surveillant-de-baignade/": "eau",
+  "/se-former/cpjeps/": "diplome", "/se-former/bpjeps/": "diplome", "/se-former/dejeps/": "diplome", "/se-former/desjeps/": "diplome", "/se-former/ecoles/": "ecole",
+  "/se-former/etapes-du-bafa/": "etapes", "/se-former/financer-son-bafa/": "euro", "/se-former/questions-frequentes/": "question", "/blog/": "bulle", "/lexique/": "livre",
+  "/se-former/sessions/organismes/": "structure", "/trouver-un-poste/": "profil", "/trouver-un-poste/exemple-de-profil/": "etoile", "/trouver-un-poste/structures/": "structure",
+  "/trouver-un-poste/trouver-son-stage-pratique/": "cible", "/trouver-un-poste/preparer-son-entretien/": "bulle", "/trouver-un-poste/le-projet-pedagogique/": "livre",
+  "/trouver-un-poste/contrat-d-engagement-educatif/": "contrat", "/outils/salaire-cee/": "calcul", "/outils/mon-parcours-bafa/": "calendrier",
+  "/trouver-un-poste/preparer-sa-valise-de-colo/": "valise", "/compte/?inscription=1": "structure", "/recruter/exemple-de-page-structure/": "etoile",
+  "/chiffres/": "chiffres", "/outils/taux-d-encadrement/": "calcul", "/outils/": "outil"} %}
+{% set ICONES_TITRES = {"Les formations": "diplome", "En faire son métier": "ecole", "Bien s'y prendre": "livre", "Chercher autrement": "loupe",
+  "Être trouvé": "profil", "Décrocher le poste": "cible", "Partir serein": "valise", "Votre structure": "structure", "Outils gratuits": "outil"} %}
+{% macro lien_menu(url, titre, sous=None) %}<a href="{{ lien(url) }}"{% if page.url == url %} aria-current="page"{% endif %}>{{ ico(ICONES.get(url, "fleche")) }}<span class="mm-lien-texte"><b>{{ titre }}</b>{% if sous %}<small>{{ sous }}</small>{% endif %}</span></a>{% endmacro %}
 {% set vacances = periodes | selectattr("fin", "ge", aujourdhui) | list %}
 <nav class="mm" id="menu-principal" aria-label="Menu principal">
   <div class="mm-item">
@@ -14,14 +26,14 @@
           <span class="mm-une-aller">Chercher une session <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">Les formations</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Les formations", "fleche")) }}Les formations</p>
           {{ lien_menu('/se-former/bafa/', 'BAFA', 'Animateur, dès 16 ans') }}
           {{ lien_menu('/se-former/bafd/', 'BAFD', 'Directeur, dès 18 ans') }}
           {{ lien_menu('/se-former/psc1/', 'PSC', 'Premiers secours, une journée') }}
           {{ lien_menu('/se-former/surveillant-de-baignade/', 'BSB', 'Surveillant de baignade, 8 jours') }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">En faire son métier</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("En faire son métier", "fleche")) }}En faire son métier</p>
           {{ lien_menu('/se-former/cpjeps/', 'CPJEPS', 'Niveau 3') }}
           {{ lien_menu('/se-former/bpjeps/', 'BPJEPS', 'Niveau 4') }}
           {{ lien_menu('/se-former/dejeps/', 'DEJEPS', 'Niveau 5') }}
@@ -29,13 +41,13 @@
           {{ lien_menu('/se-former/ecoles/', 'Les écoles', 'Par diplôme et par ville') }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">Bien s'y prendre</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Bien s'y prendre", "fleche")) }}Bien s'y prendre</p>
           {{ lien_menu('/se-former/etapes-du-bafa/', 'Les étapes du BAFA') }}
           {{ lien_menu('/se-former/financer-son-bafa/', 'Financer son BAFA') }}
           {{ lien_menu('/se-former/questions-frequentes/', 'Questions fréquentes') }}
           {{ lien_menu('/blog/', 'Le blog', 'Conseils et chiffres') }}
           {{ lien_menu('/lexique/', 'Le lexique') }}
-          <p class="mm-titre mm-titre-2">Chercher autrement</p>
+          <p class="mm-titre mm-titre-2">{{ ico(ICONES_TITRES.get("Chercher autrement", "fleche")) }}Chercher autrement</p>
           {{ lien_menu('/se-former/sessions/organismes/', 'Les organismes') }}
         </div>
       </div>
@@ -52,19 +64,19 @@
           <span class="mm-une-aller">Voir les offres <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">Être trouvé</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Être trouvé", "fleche")) }}Être trouvé</p>
           {{ lien_menu('/trouver-un-poste/', 'Créer mon profil gratuit', 'Les structures vous écrivent') }}
           {{ lien_menu('/trouver-un-poste/exemple-de-profil/', 'Un exemple de profil', 'Ce que voit une structure') }}
           {{ lien_menu('/trouver-un-poste/structures/', 'Les structures qui recrutent') }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">Décrocher le poste</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Décrocher le poste", "fleche")) }}Décrocher le poste</p>
           {{ lien_menu('/trouver-un-poste/trouver-son-stage-pratique/', 'Trouver son stage pratique') }}
           {{ lien_menu('/trouver-un-poste/preparer-son-entretien/', 'Préparer son entretien') }}
           {{ lien_menu('/trouver-un-poste/le-projet-pedagogique/', 'Le projet pédagogique') }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">Partir serein</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Partir serein", "fleche")) }}Partir serein</p>
           {{ lien_menu('/trouver-un-poste/contrat-d-engagement-educatif/', "Le contrat d'engagement éducatif") }}
           {{ lien_menu('/outils/salaire-cee/', 'Calculer son salaire en CEE') }}
           {{ lien_menu('/outils/mon-parcours-bafa/', 'Mon parcours BAFA', 'Les dates limites') }}
@@ -84,13 +96,13 @@
           <span class="mm-une-aller">Voir l'offre fondateurs <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">Votre structure</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Votre structure", "fleche")) }}Votre structure</p>
           {{ lien_menu('/compte/?inscription=1', 'Créer mon espace structure') }}
           {{ lien_menu('/recruter/exemple-de-page-structure/', 'Un exemple de fiche structure') }}
           {{ lien_menu('/chiffres/', 'Les chiffres du site', 'Qui vous verra') }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">Outils gratuits</p>
+          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Outils gratuits", "fleche")) }}Outils gratuits</p>
           {{ lien_menu('/outils/taux-d-encadrement/', "Taux d'encadrement", 'Combien d’animateurs pour votre accueil') }}
           {{ lien_menu('/outils/salaire-cee/', 'Rémunération en CEE', 'Le minimum et les 80 jours') }}
           {{ lien_menu('/outils/', 'Tous les outils') }}
