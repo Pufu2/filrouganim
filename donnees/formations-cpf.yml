@@ -2,7 +2,7 @@
 # Source : Caisse des Dépôts, catalogue des formations éligibles au CPF (Licence Ouverte Etalab).
 # Fichier écrit par outils/relever_cpf.py : ne pas modifier à la main. Faits seulement : école, diplôme,
 # département, durée moyenne en heures, prix TTC (le plus bas et le plus haut), nombre de sessions ouvertes.
-# Relevé du 2026-11-08.
+# Relevé du 2026-11-09.
 
 formations:
   - {"organisme_nom": "Les Francas Auvergne Rhone Alpes", "siret": "77986880100076", "diplome": "BPJEPS", "specialite": "asec", "departement": "01", "prix_min": 9030, "prix_max": 9030, "heures": null, "sessions": 1, "distance": false}
@@ -184,7 +184,7 @@ formations:
   - {"organisme_nom": "Etablissement Public Enseignement et Formation Professionnelle Agricole du Morvan", "siret": "19580101400034", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "58", "prix_min": 11284, "prix_max": 11284, "heures": 2576, "sessions": 1, "distance": false}
   - {"organisme_nom": "Centre de Ressources d'Expertise et de Performance Sportive", "siret": "19590302600019", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "59", "prix_min": 11500, "prix_max": 11500, "heures": 1832, "sessions": 1, "distance": false}
   - {"organisme_nom": "Union Francaise Centre Vacances Loisirs", "siret": "77568562100804", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "59", "prix_min": 9100, "prix_max": 11200, "heures": 1200, "sessions": 2, "distance": false}
-  - {"organisme_nom": "Union Francaise Centre Vacances Loisirs", "siret": "77568562100499", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "63", "prix_min": 1730, "prix_max": 8534, "heures": 864, "sessions": 5, "distance": false}
+  - {"organisme_nom": "Union Francaise Centre Vacances Loisirs", "siret": "77568562100499", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "63", "prix_min": 1730, "prix_max": 8534, "heures": 2716, "sessions": 5, "distance": false}
   - {"organisme_nom": "Centre d'Entrainement aux Methodes d'Education Active Nouvelle-Aquitaine", "siret": "48276900700022", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "64", "prix_min": 2339, "prix_max": 10300, "heures": 1431, "sessions": 2, "distance": false}
   - {"organisme_nom": "Ocellia", "siret": "30293883200045", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "69", "prix_min": 9401, "prix_max": 9401, "heures": 1750, "sessions": 1, "distance": false}
   - {"organisme_nom": "Association Region des CEMEA des Pays de Loire", "siret": "33748609600049", "diplome": "DEJEPS", "specialite": "coordination-de-projets", "departement": "72", "prix_min": 1225, "prix_max": 10500, "heures": 2200, "sessions": 16, "distance": false}
