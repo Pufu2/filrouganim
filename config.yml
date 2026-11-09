@@ -15,7 +15,7 @@ langue: fr
 # Google Search Console : la valeur « content » de la balise meta proposée (à remplir par Pufu2).
 google_site_verification: ""
 # Mesure d'audience sans cookie (GoatCounter) : code du compte, vide = aucune mesure.
-goatcounter: ""
+goatcounter: "filrouganim"
 # propriété Search Console lue par outils/audience.py (chiffres publics, voir docs/CHIFFRES.md)
 search_console: "sc-domain:filrouganim.fr"
 
