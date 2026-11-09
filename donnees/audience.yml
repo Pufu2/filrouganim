@@ -1,4 +1,13 @@
 # Chiffres publics de visibilité du site (visiteurs, Google, comptes créés).
 # Fichier écrit chaque nuit par outils/audience.py : ne pas modifier à la main. Voir docs/CHIFFRES.md.
 mis_a_jour: '2026-11-09'
-chiffres: {}
+chiffres:
+  impressions_28j: 21
+  impressions_evolution: null
+  clics_28j: 3
+  clics_evolution: null
+  impressions_par_mois:
+  - mois: 2026-10
+    n: 0
+  - mois: 2026-11
+    n: 21
