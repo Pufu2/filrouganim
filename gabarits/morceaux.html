@@ -115,7 +115,8 @@
     <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Trouver un poste</button>
     <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je recrute</button>
   </div>{% endif %}
-  <form class="ro-panneau" id="ro-p1" role="tabpanel" aria-labelledby="ro-t1" action="{{ lien('/se-former/sessions/') }}" method="get">
+  <div class="ro-p" id="ro-p1"{% if onglets %} role="tabpanel" aria-labelledby="ro-t1"{% endif %}>
+  <form class="ro-panneau" action="{{ lien('/se-former/sessions/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Quelle formation ?</legend>
       <div class="ro-puces">
@@ -135,8 +136,10 @@
       </div>
     </div>
   </form>
+  </div>
   {% if onglets %}
-  <form class="ro-panneau" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2" action="{{ lien('/trouver-un-poste/offres/') }}" method="get" hidden>
+  <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2" hidden>
+  <form class="ro-panneau" action="{{ lien('/trouver-un-poste/offres/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Quel poste ?</legend>
       <div class="ro-puces">
@@ -151,6 +154,7 @@
       </div>
     </div>
   </form>
+  </div>
   <div class="ro-panneau ro-recruter" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
     <div>
       <p class="ro-titre">Vous recrutez des animateurs ?</p>

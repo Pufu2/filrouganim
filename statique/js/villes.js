@@ -19,6 +19,7 @@
     liste.hidden = true;
     liste.setAttribute("role", "listbox");
     boite.appendChild(liste);
+    champ.setAttribute("role", "combobox");  // aria-expanded et aria-autocomplete ne vont qu'avec ce rôle
     champ.setAttribute("aria-controls", liste.id);
     champ.setAttribute("aria-expanded", "false");
     champ.setAttribute("aria-autocomplete", "list");

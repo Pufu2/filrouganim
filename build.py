@@ -672,7 +672,7 @@ class Site:
             du_dep = [s for s in bafa if s["dep"] is dep]
             dep["nb"] = len(du_dep)
             RG = (dep["reg"]["nom"], f"/se-former/sessions/{dep['reg']['slug']}/")
-            villes = self.villes(du_dep) if dep["code"] != "75" else []
+            villes = self.villes(du_dep, minimum=1)  # une page par commune dès qu'une session y a lieu
             per_dep = [p for p in self.periodes if any(s["periode"] is p for s in du_dep)]
             self.ajouter(f"/se-former/sessions/{dep['slug']}/", "liste.html",
                          titre=f"BAFA {dep['nom']} ({dep['code']}) : sessions, dates et prix",
@@ -859,6 +859,7 @@ class Site:
     def ajouter_redirections(self):
         """Les adresses des versions précédentes du site renvoient vers les nouvelles."""
         self.declarer_lexique_blog()
+        self.declarer_index_villes()
         fixes = {"/se-former/": ["/formations/", "/guides/", "/bafa/", "/se-former/cqp-animateur-periscolaire/",
                                  "/se-former/sessions/cqp-animateur-periscolaire/"],
                  "/se-former/sessions/bafd/": ["/bafd/", "/sessions/bafd/"],
@@ -929,6 +930,36 @@ class Site:
         if getattr(self, "_chiffres", None) is None:
             self._chiffres = self.chiffres_sessions()
         return self._chiffres
+
+    def declarer_index_villes(self):
+        """/se-former/villes/ : toutes les pages de ville, formation par formation et de A à Z (Google les trouve toutes)."""
+        B = "/se-former/sessions/"
+        deps = {d["slug"] for d in self.departements.values()}
+        groupes = collections.OrderedDict((k, []) for k in ("BAFA", "BAFD", "BSB", "PSC", "CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS"))
+        noms = {"bafd": "BAFD", "bsb": "BSB", "psc1": "PSC"}
+        for p in self.pages:
+            u = p["url"]
+            if not p.get("indexer"):
+                continue
+            parts = u[len(B):].strip("/").split("/") if u.startswith(B) else []
+            if len(parts) == 2 and parts[0] in deps and p.get("ville"):
+                groupes["BAFA"].append((p["ville"]["nom"], p["departement"]["code"], u))
+            elif len(parts) == 3 and parts[0] in deps and parts[1] in noms:
+                groupes[noms[parts[1]]].append((p["fil"][-1][0], p["departement"]["code"], u))
+            elif u.startswith("/se-former/ecoles/") and u.count("/") == 6:
+                groupes[p["fil"][2][0]].append((p["fil"][-1][0], u.split("/")[4], u))
+        code = {d["slug"]: d["code"] for d in self.departements.values()}
+        listes = []
+        for k, l in groupes.items():
+            l = sorted({(n, code.get(c, c), u) for n, c, u in l}, key=lambda x: (sans_accents(x[0]), x[1]))
+            if l:
+                listes.append((k, l))
+        total = sum(len(l) for _, l in listes)
+        self.ajouter("/se-former/villes/", "villes.html", titre="BAFA, BAFD, BSB, PSC, BPJEPS : toutes les villes",
+                     h1="Se former près de chez soi : toutes les villes",
+                     description=f"Les {total} pages de ville de Fil Roug'Anim : les sessions BAFA, BAFD, BSB et PSC et les écoles des diplômes pros, commune par commune, de A à Z.",
+                     intro="Chaque ville où une formation est prévue a sa page, avec les dates, les prix et les organismes. Choisissez votre formation, puis votre ville.",
+                     listes=listes, total=total, fil=[("Se former", "/se-former/"), ("Toutes les villes", "/se-former/villes/")])
 
     def declarer_lexique_blog(self):
         """Le lexique (une page par mot) et le blog (articles écrits + bilans du mois calculés sur les sessions)."""
@@ -1032,7 +1063,7 @@ class Site:
             vus, r = set(), []
             for p in sorted((p for u, p in pages.items() if filtre(u)), key=n, reverse=True):
                 t = nom(p)
-                if t not in vus and len(r) < k:
+                if t not in vus and (k is None or len(r) < k):
                     vus.add(t)
                     r.append((t, p["url"]))
             return r
@@ -1050,16 +1081,16 @@ class Site:
         def famille(cle):
             """villes, départements et régions d'une famille de pages (bafd, psc1, bsb)"""
             return [("Par ville", top(lambda u: len(parts(u)) == 3 and parts(u)[1] == cle and parts(u)[0] in deps,
-                                      lambda p: p["fil"][-1][0], 18)),
-                    ("Par département", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in deps, dep_nom, 18)),
-                    ("Par région", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in regs, reg_nom, 13))]
+                                      lambda p: p["fil"][-1][0], None)),
+                    ("Par département", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in deps, dep_nom, None)),
+                    ("Par région", top(lambda u: len(parts(u)) == 2 and parts(u)[1] == cle and parts(u)[0] in regs, reg_nom, None))]
 
         sections = [
             {"cle": "bafa", "titre": "BAFA", "aide": "Formation générale et approfondissement : les sessions BAFA près de chez vous.",
              "groupes": [("Par ville", top(lambda u: len(parts(u)) == 2 and parts(u)[0] in deps and pages[u].get("ville"),
-                                           lambda p: p["ville"]["nom"], 18)),
-                         ("Par département", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, dep_nom, 18)),
-                         ("Par région", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in regs, lambda p: p["region"]["nom"], 13))],
+                                           lambda p: p["ville"]["nom"], None)),
+                         ("Par département", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in deps, dep_nom, None)),
+                         ("Par région", top(lambda u: len(parts(u)) == 1 and parts(u)[0] in regs, lambda p: p["region"]["nom"], None))],
              "tout": ("Toutes les sessions BAFA", "/se-former/sessions/bafa/")},
             {"cle": "bafd", "titre": "BAFD", "aide": "Devenir directeur d'accueil collectif de mineurs : formation générale et perfectionnement.",
              "groupes": famille("bafd"), "tout": ("Toutes les sessions BAFD", "/se-former/sessions/bafd/")},
@@ -1073,10 +1104,12 @@ class Site:
             sl = self.diplomes[di]["slug"]
             sections.append({
                 "cle": sl, "titre": di, "aide": f"Les écoles qui préparent au {di}, avec la prochaine rentrée, le prix et le CPF.",
-                "groupes": [("Par département", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in deps,
-                                                    lambda p: p["fil"][-1][0], 18)),
+                "groupes": [("Par ville", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 6,
+                                              lambda p: p["fil"][-1][0], None)),
+                            ("Par département", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in deps,
+                                                    lambda p: p["fil"][-1][0], None)),
                             ("Par région", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in regs,
-                                               lambda p: p["fil"][-1][0], 13))],
+                                               lambda p: p["fil"][-1][0], None))],
                 "tout": (f"Toutes les écoles du {di}", f"{E}{sl}/")})
         self._recherches = []
         for x in sections:
@@ -1201,7 +1234,7 @@ class Site:
                 par_dep[e["d"]].append(e)
             liens_reg = [(r["nom"], f"{url_d}{r['slug']}/", len(par_reg[r["id"]])) for r in self.regions.values() if par_reg[r["id"]]]
             liens_dep = [(f"{dep['nom']} ({dep['code']})", f"{url_d}{dep['slug']}/", len(par_dep[dep["code"]]))
-                         for dep in self.departements.values() if len(par_dep[dep["code"]]) >= 2]
+                         for dep in self.departements.values() if par_dep[dep["code"]]]
             autres = [(f"Le {x} en France", f"{BASE}/{self.diplomes[x]['slug']}/", None) for x in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS") if x != di]
             faq, bref = faq_ecoles(du_d, d["nom"], "en France")
             self.ajouter(url_d, "ecoles.html", titre=f"{d['nom']} : les {len(du_d)} écoles qui forment en France",
@@ -1223,7 +1256,7 @@ class Site:
                              h1=f"Passer le {d['nom']} {r['a']}",
                              description=f"Les écoles qui préparent au {d['long']} {r['a']} : ville, prochaine rentrée, prix, CPF, département par département.",
                              intro=INTRO[di], ecoles=liste, bref=bref, preset=f"diplome={di}&dep=r:{r['id']}",
-                             groupes=[(dep["nom"], f"{url_d}{dep['slug']}/" if len(par_dep[dep["code"]]) >= 2 else None, par_dep[dep["code"]]) for dep in sorted(deps_r, key=lambda x: x["code"])],
+                             groupes=[(dep["nom"], f"{url_d}{dep['slug']}/", par_dep[dep["code"]]) for dep in sorted(deps_r, key=lambda x: x["code"])],
                              faq_page=faq, schema_faq=self.schema_faq(faq), indexer=len(liste) >= 2,
                              explorer=[(f"Le {d['nom']}, les autres régions", liens_reg), ("Les autres diplômes " + r["a"],
                                         [(f"Le {x} {r['a']}", f"{BASE}/{self.diplomes[x]['slug']}/{r['slug']}/", None) for x in ("CPJEPS", "BPJEPS", "DEJEPS", "DESJEPS")
@@ -1231,17 +1264,32 @@ class Site:
                              fil=[SF, EC, DI, (r["nom"], url)])
             for dep in self.departements.values():
                 liste = par_dep[dep["code"]]
-                if len(liste) < 2:
+                if not liste:
                     continue
                 url = f"{url_d}{dep['slug']}/"
                 r = dep["reg"]
+                par_ville = collections.defaultdict(list)
+                for e in liste:
+                    par_ville[slug(sans_cedex(e["v"]))].append(e)
+                liens_villes = sorted(((x[0]["v"], f"{url}{sv}/", len(x)) for sv, x in par_ville.items() if sv),
+                                      key=lambda t: sans_accents(t[0]))
+                for nom_v, uv, _ in liens_villes:
+                    lv = par_ville[uv.rstrip("/").rsplit("/", 1)[-1]]
+                    faq_v, bref_v = faq_ecoles(lv, d["nom"], f"à {nom_v}")
+                    self.ajouter(uv, "ecoles.html", titre=f"{d['nom']} {nom_v} ({dep['code']}) : écoles, rentrées et prix",
+                                 h1=f"Passer le {d['nom']} à {nom_v}",
+                                 description=f"{'Les ' + str(len(lv)) + ' écoles' if len(lv) > 1 else 'L’école'} qui {'préparent' if len(lv) > 1 else 'prépare'} au {d['long']} à {nom_v} ({dep['code']}) : prochaine rentrée, prix et CPF.",
+                                 intro=INTRO[di], ecoles=lv, bref=bref_v, preset=f"diplome={di}&dep={dep['code']}",
+                                 faq_page=faq_v, schema_faq=self.schema_faq(faq_v),
+                                 explorer=[(f"Le {d['nom']} {dep['a']}", [("Tout le département", url, len(liste))] + liens_villes)],
+                                 fil=[SF, EC, DI, (r["nom"], f"{url_d}{r['slug']}/"), (dep["nom"], url), (nom_v, uv)])
                 faq, bref = faq_ecoles(liste, d["nom"], dep["a"])
                 self.ajouter(url, "ecoles.html", titre=f"{d['nom']} {dep['nom']} ({dep['code']}) : écoles, rentrées et prix",
                              h1=f"Passer le {d['nom']} {dep['a']}",
                              description=f"Les {len(liste)} écoles qui préparent au {d['long']} {dep['a']} ({dep['code']}) : ville, prochaine rentrée, prix et CPF.",
                              intro=INTRO[di], ecoles=liste, bref=bref, preset=f"diplome={di}&dep={dep['code']}",
                              faq_page=faq, schema_faq=self.schema_faq(faq),
-                             explorer=[(f"Le {d['nom']} {r['a']}", [(f"Toute la région", f"{url_d}{r['slug']}/", len(par_reg[r["id"]]))]
+                             explorer=[(f"Le {d['nom']}, par ville", liens_villes), (f"Le {d['nom']} {r['a']}", [(f"Toute la région", f"{url_d}{r['slug']}/", len(par_reg[r["id"]]))]
                                         + [x for x in liens_dep if x[1].split("/")[-2] in {dd["slug"] for dd in r["deps"]}]),
                                        ("Se former " + dep["a"], [(f"Le BAFA {dep['a']}", f"/se-former/sessions/{dep['slug']}/", None)] + list(dep.get("sous") or []))],
                              fil=[SF, EC, DI, (r["nom"], f"{url_d}{r['slug']}/"), (dep["nom"], url)])
@@ -1319,7 +1367,7 @@ class Site:
                     continue
                 url = f"{BASE}/{dep['slug']}/{cle}/"
                 dep["sous"].append((nom_aff, url, len(liste)))
-                villes = self.villes(liste, minimum={"psc1": 3, "bafd": 2, "bsb": 2}.get(cle, 99)) if cle in ("psc1", "bafd", "bsb") else []
+                villes = self.villes(liste, minimum=1) if cle in ("psc1", "bafd", "bsb") else []
                 ajouter_famille(url, cle, sujet, court, nom_aff, liste, critere, dep["code"], dep["nom"], dep["code"], dep["a"],
                                 [SF, RUB, RG, DP, (nom_aff, url)], departement=dep, villes_famille=villes)
                 for v in villes:
