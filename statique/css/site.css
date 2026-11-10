@@ -1738,3 +1738,73 @@ header.jm-entete, header.jm-entete.defile { transition: none; }
   .cb-tuiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cb-deux { grid-template-columns: 1fr; }
 }
+/* page des chiffres : votre ville, les pages, les inscriptions, bien lire */
+.ch-cherche { display: flex; gap: 10px; max-width: 720px; margin: 0 auto; }
+.ch-cherche-champ { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 54px; background: #fff; border: 1px solid #e4d8cb; border-radius: 12px; }
+.ch-cherche-champ .icone { width: 18px; height: 18px; color: var(--doux); }
+.ch-cherche-champ input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; font-size: 15px; }
+.ch-cherche-champ:focus-within { border-color: var(--fil); }
+.ch-cherche-bouton { display: inline-flex; align-items: center; gap: 8px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--nuit); color: #fff; font: 700 15px/1 var(--texte); cursor: pointer; }
+.ch-cherche-bouton svg { width: 17px; height: 17px; fill: none; stroke: var(--fil-clair); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ch-cherche-aide { max-width: 720px; margin: 12px auto 0; text-align: center; font-size: 13px; color: #4a4142; }
+.ch-puces { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 14px 0 0; }
+.ch-puce { padding: 7px 14px; border-radius: 99px; border: 1px solid #e4d8cb; background: #fff; font: 600 13px/1 var(--texte); cursor: pointer; }
+.ch-puce:hover { border-color: var(--fil); color: var(--fil-fonce); }
+.ch-resultat { max-width: 860px; margin: 24px auto 0; display: grid; gap: 14px; }
+.ch-lieu { background: #fff; border: 1px solid var(--trait); border-radius: 16px; padding: 18px 20px; }
+.ch-lieu h3 { margin: 0 0 4px; font-size: 1.25rem; }
+.ch-lieu-total { margin: 0 0 10px; font-size: 13.5px; font-weight: 700; color: var(--fil-fonce); }
+.ch-lieu ul { list-style: none; margin: 0; padding: 0; }
+.ch-lieu li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #f1e9df; font-size: 14px; }
+.ch-lieu li a { font-weight: 600; color: var(--encre); }
+.ch-lieu li span { color: var(--doux); white-space: nowrap; font-size: 13px; }
+.ch-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ch-pages li { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; padding: 16px 18px; background: #fff; border: 1px solid var(--trait); border-radius: 16px; }
+.ch-pages li[hidden] { display: none; }
+.ch-pages-ico { width: 36px; height: 36px; border-radius: 9px; background: var(--papier); display: grid; place-items: center; grid-row: 1 / 3; }
+.ch-pages-ico .icone { width: 17px; height: 17px; color: var(--fil-fonce); }
+.ch-pages a { display: block; font: 500 1.08rem/1.25 var(--titres); color: var(--encre); text-decoration: none; }
+.ch-pages a:hover { color: var(--fil-fonce); text-decoration: underline; }
+.ch-pages small { font-size: 12px; color: var(--doux); }
+.ch-pages p { grid-column: 1 / -1; margin: 6px 0 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a4142; }
+.ch-pastille-top { background: var(--nuit); color: var(--fil-clair); }
+.ch-pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 18px; }
+.ch-pagination button { min-width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--trait); background: #fff; font: 700 14px/1 var(--texte); cursor: pointer; }
+.ch-pagination button[aria-current] { background: var(--nuit); color: #fff; border-color: var(--nuit); }
+.ch-pagination span { margin-left: 8px; font-size: 13px; color: var(--doux); }
+.ch-insc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 14px; }
+.ch-insc-total { padding: 26px; border-radius: 18px; background: var(--nuit); color: #fff; display: flex; flex-direction: column; gap: 8px; }
+.ch-garanties-sombre { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 6px; }
+.ch-garanties-sombre span { font-size: 12px; color: rgba(255,255,255,.7); }
+.ch-garanties-sombre span::before { content: "●"; color: #2bb673; margin-right: 6px; font-size: 9px; vertical-align: 2px; }
+.ch-insc-t { margin: 0; font-size: 14px; color: rgba(255,255,255,.8); }
+.ch-insc-n { font: 500 64px/1 var(--titres); color: #fff; }
+.ch-insc-detail { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: rgba(255,255,255,.85); }
+.ch-insc-detail b { font-family: var(--titres); font-size: 18px; color: var(--fil-clair); margin-right: 4px; }
+.ch-insc-cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ch-carte-blanche { padding: 20px 22px; background: #fff; border: 1px solid var(--trait); border-radius: 18px; }
+.ch-carte-t { margin: 0 0 14px; font: 700 12px/1.3 var(--texte); letter-spacing: 1.3px; text-transform: uppercase; color: var(--fil-fonce); }
+.ch-mini-barres { list-style: none; margin: 0; padding: 0; height: 120px; display: flex; align-items: flex-end; gap: 10px; }
+.ch-mini-barres li { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+.ch-mini-barre { width: 70%; border-radius: 5px 5px 2px 2px; background: var(--fil); }
+.ch-mini-n { font-size: 12px; font-weight: 700; }
+.ch-mini-mois { font-size: 11.5px; color: var(--doux); }
+.ch-par-dep { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ch-par-dep li { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid #f1e9df; }
+.ch-par-dep span { font-size: 13px; color: #4a4142; }
+.ch-par-dep em { font-size: 12.5px; font-style: normal; color: var(--sauge); font-weight: 600; }
+.ch-vide-petit { margin: 0; font-size: 13.5px; color: var(--doux); font-style: italic; }
+.ch-fil { margin-top: 14px; }
+.ch-citation { max-width: 760px; margin: 22px auto 0; text-align: center; font: italic 400 1.1rem/1.5 var(--titres); color: #4a4142; }
+.ch-lire { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ch-lire > div { padding: 22px 24px; background: #fff; border: 1px solid var(--trait); border-radius: 16px; }
+.ch-lire h3 { margin: 0 0 8px; font-size: 1.2rem; }
+.ch-lire p { margin: 0; font-size: 14.5px; line-height: 1.6; color: #4a4142; }
+.ch-final-boutons { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 18px; margin: 0; }
+.ch-bouton-contour { border: 1.5px solid var(--nuit); }
+.ch-lien { font-weight: 700; }
+@media (max-width: 900px) {
+  .ch-pages, .ch-insc, .ch-insc-cartes, .ch-lire { grid-template-columns: 1fr; }
+  .ch-cherche { flex-direction: column; }
+  .ch-cherche-bouton { height: 50px; justify-content: center; }
+}
