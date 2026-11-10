@@ -112,7 +112,7 @@
 <div class="ro{% if not onglets %} ro-seul{% endif %}">
   {% if onglets %}<div class="ro-onglets" role="tablist" aria-label="Que cherchez-vous ?">
     <button type="button" role="tab" id="ro-t1" aria-selected="true" aria-controls="ro-p1">{{ icone("diplome") }}Se former</button>
-    <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Trouver un poste</button>
+    <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Je cherche un poste</button>
     <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je recrute</button>
   </div>{% endif %}
   <div class="ro-p" id="ro-p1"{% if onglets %} role="tabpanel" aria-labelledby="ro-t1"{% endif %}>
@@ -191,39 +191,59 @@
 {# Les chiffres publics de visibilité (accueil, /chiffres/) : visiteurs, Google, comptes créés.
    Chaque tuile n'apparaît que si sa source est branchée (donnees/audience.yml, outils/audience.py). #}
 {% macro evolution(x) %}{% if x is not none %}<small class="{{ 'hausse' if x >= 0 else 'baisse' }}">{{ '+' if x >= 0 }}{{ x }} % sur la période d'avant</small>{% endif %}{% endmacro %}
+{% macro fr(x) %}{{ "{:,}".format(x or 0).replace(",", " ") }}{% endmacro %}
 {% macro bloc_chiffres(a, lien, lien_page=True) %}
-<section class="chiffres-bloc" aria-labelledby="t-chiffres">
-  <div class="chiffres-tete">
+{# L'encadré des chiffres de l'accueil, sur le modèle de jasonmarinho.com : quatre chiffres, les affichages Google
+   mois par mois et les recherches qui mènent au site (ou les dernières inscriptions). #}
+<section class="cb" aria-labelledby="t-chiffres">
+  <div class="cb-tete">
     <div>
-      <p class="surtitre-clair">Transparence totale</p>
+      <p class="cb-sur">Transparence totale</p>
       <h2 id="t-chiffres">Tous les chiffres du site sont publics.</h2>
       <p>Visites, recherches Google, inscriptions : les vrais chiffres, mis à jour chaque jour, consultables par tout le monde. Pas de vitrine gonflée.</p>
     </div>
-    {% if lien_page %}<a class="bouton-r" href="{{ lien('/chiffres/') }}">Voir tous les chiffres <span aria-hidden="true">→</span></a>{% endif %}
+    {% if lien_page %}<a class="cb-bouton" href="{{ lien('/chiffres/') }}">Voir tous les chiffres</a>{% endif %}
   </div>
-  <ul class="chiffres-tuiles">
-    {% if a.visiteurs_30j is not none and a.visiteurs_30j is defined %}<li><b>{{ "{:,}".format(a.visiteurs_30j).replace(",", " ") }}</b><span>visiteurs sur 30 jours</span>{{ evolution(a.visiteurs_evolution) }}</li>{% endif %}
-    {% if a.impressions_28j is defined %}<li><b>{{ "{:,}".format(a.impressions_28j).replace(",", " ") }}</b><span>apparitions dans Google</span>{{ evolution(a.impressions_evolution) }}</li>{% endif %}
-    {% if a.clics_28j is defined %}<li><b>{{ "{:,}".format(a.clics_28j).replace(",", " ") }}</b><span>clics depuis Google</span>{{ evolution(a.clics_evolution) }}</li>{% endif %}
-    {% if a.animateurs is defined %}<li><b>{{ a.comptes }}</b><span>comptes créés</span><small class="neutre">{{ a.animateurs }} animateur{{ 's' if a.animateurs > 1 }} · {{ a.structures }} structure{{ 's' if a.structures > 1 }}</small></li>{% endif %}
+  <ul class="cb-tuiles">
+    {% set tuiles = [] %}
+    {% if a.visiteurs_30j is defined %}{% set _ = tuiles.append((a.visiteurs_30j, "visiteurs sur 30 jours", a.visiteurs_evolution, None)) %}{% endif %}
+    {% if a.impressions_28j is defined %}{% set _ = tuiles.append((a.impressions_28j, "apparitions dans Google", a.impressions_evolution, None)) %}{% endif %}
+    {% if a.clics_28j is defined %}{% set _ = tuiles.append((a.clics_28j, "clics depuis Google", a.clics_evolution, None)) %}{% endif %}
+    {% if a.recherches_premiere_page %}{% set _ = tuiles.append((a.recherches_premiere_page, "recherches où le site sort en 1re page", None, "sur 28 jours")) %}{% endif %}
+    {% if a.animateurs is defined %}{% set _ = tuiles.append((a.comptes, "comptes créés", None, a.animateurs ~ " animateur" ~ ("s" if a.animateurs > 1 else "") ~ " · " ~ a.structures ~ " structure" ~ ("s" if a.structures > 1 else ""))) %}{% endif %}
+    {% set _ = tuiles.append((cd.site.sessions, "sessions de formation à venir", None, "relevées chaque nuit")) %}
+    {% set _ = tuiles.append((cd.site.villes, "villes avec leur page", None, "BAFA, BAFD, BSB, PSC, écoles")) %}
+    {% for v, nom, ev, note in tuiles[:4] %}<li><b>{{ fr(v) }}</b><span>{{ nom }}</span>{% if ev is not none %}<small class="{{ 'hausse' if ev >= 0 else 'baisse' }}">{{ '+' if ev >= 0 }}{{ ev }} % sur la période d'avant</small>{% elif note %}<small>{{ note }}</small>{% endif %}</li>{% endfor %}
   </ul>
-  {% if a.impressions_par_mois or a.dernieres_inscriptions %}
-  <div class="chiffres-deux">
-    {% if a.impressions_par_mois %}<div class="chiffres-carte">
-      <p class="surtitre-clair">Apparitions dans Google, mois par mois</p>
-      <ol class="barres" aria-label="Apparitions dans Google par mois">
-        {% for x in a.impressions_par_mois %}<li><span class="barre-n">{{ "{:,}".format(x.n).replace(",", " ") }}</span><span class="barre-piste"><span class="barre" style="height: {{ [x.h, 4] | max }}%"></span></span><span class="barre-mois">{{ x.nom }}</span></li>{% endfor %}
+  <div class="cb-deux">
+    {% if a.impressions_par_mois %}
+    {% set maxi = a.impressions_par_mois | map(attribute="n") | max %}
+    <div class="cb-carte">
+      <p class="cb-carte-t">Apparitions dans Google, mois par mois</p>
+      <ol class="cb-barres" aria-label="Apparitions dans Google par mois">
+        {% for x in a.impressions_par_mois %}<li{% if x.en_cours %} class="cb-en-cours"{% endif %}><span class="cb-barre" style="height: {{ [((x.n / (maxi or 1)) * 100) | round, 3] | max }}%" title="{{ fr(x.n) }}"></span><span class="cb-mois">{{ x.nom }}</span></li>{% endfor %}
       </ol>
-    </div>{% endif %}
-    {% if a.dernieres_inscriptions %}<div class="chiffres-carte">
-      <p class="surtitre-clair">Les dernières inscriptions</p>
-      <ul class="recentes">
-        {% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="recentes-date">{{ r.quand }}</span></li>{% endfor %}
+    </div>
+    {% endif %}
+    <div class="cb-carte">
+      {% if cd.recherches %}
+      <p class="cb-carte-t">Ce qu'on tape dans Google pour arriver ici</p>
+      <ul class="cb-liste">{% for r in cd.recherches[:5] %}<li><span class="cb-pastille">{{ ("%.1f" % r.place).replace(".", ",") }}<i>place</i></span><b>« {{ r.recherche }} »</b><span class="cb-date">{{ r.impressions }} aff.</span></li>{% endfor %}</ul>
+      <p class="cb-note">La place moyenne dans Google sur 28 jours.</p>
+      {% elif a.dernieres_inscriptions %}
+      <p class="cb-carte-t">Les dernières inscriptions</p>
+      <ul class="cb-liste">{% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="cb-date">{{ r.quand }}</span></li>{% endfor %}</ul>
+      <p class="cb-note">Le profil, le département et le mois, jamais rien sur la personne.</p>
+      {% else %}
+      <p class="cb-carte-t">Le site, cette nuit</p>
+      <ul class="cb-liste">
+        <li><b>{{ fr(cd.site.organismes) }}</b><span>organismes de formation comparés</span></li>
+        <li><b>{{ fr(cd.site.ecoles) }}</b><span>écoles des diplômes pros</span></li>
+        <li><b>{{ fr(cd.site.pages) }}</b><span>pages proposées à Google</span></li>
       </ul>
-      <p class="petit">Le profil, le département et le mois, jamais rien sur la personne.</p>
-    </div>{% endif %}
+      {% endif %}
+    </div>
   </div>
-  {% endif %}
 </section>
 {% endmacro %}
 

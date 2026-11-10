@@ -460,6 +460,10 @@ class Site:
             dep = self.departements.get(x.get("departement") or "")
             x["lieu"] = dep["nom"] if dep else "France"
             x["quand"] = f"{MOIS_COURTS[int(x['mois'][5:7]) - 1]} {x['mois'][:4]}" if x.get("mois") else ""
+        if c.get("impressions_par_mois") and c["impressions_par_mois"][-1]["mois"] == self.aujourdhui.strftime("%Y-%m"):
+            c["impressions_par_mois"][-1]["en_cours"] = True  # le mois en cours n'est pas terminé
+        if c.get("impressions_28j"):
+            c["taux_clic"] = round(100 * (c.get("clics_28j") or 0) / c["impressions_28j"], 1)
         c["comptes"] = (c.get("animateurs") or 0) + (c.get("structures") or 0)
         c["mis_a_jour"] = en_date(a.get("mis_a_jour"))
         c["nb_tuiles"] = sum(1 for k in ("visiteurs_30j", "impressions_28j", "clics_28j") if c.get(k) is not None) + (1 if "animateurs" in c else 0)
@@ -639,7 +643,7 @@ class Site:
                      description="Visiteurs, apparitions dans Google, comptes créés : les vrais chiffres de Fil Roug'Anim, mis à jour chaque jour.",
                      h1="Tous les chiffres, en clair",
                      intro="Visites, recherches Google, inscriptions : les vrais chiffres du site, mis à jour chaque jour et consultables par tout le monde.",
-                     indexer=bool(self.audience()), fil=[("Les chiffres", "/chiffres/")])
+                     indexer=bool(self.audience().get("impressions_28j") is not None), fil=[("Les chiffres", "/chiffres/")])
 
         # ---- rubrique Sessions (France métropolitaine et Corse)
         self.ajouter("/se-former/sessions/", "sessions.html",
@@ -782,7 +786,7 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Trouver un poste", "/trouver-un-poste/")}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Je cherche un poste", "/trouver-un-poste/")}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -823,14 +827,14 @@ class Site:
             self.ajouter(f"/trouver-un-poste/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
-                         fil=[("Trouver un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+                         fil=[("Je cherche un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
         self.ajouter("/trouver-un-poste/offres/", "offres.html", titre="Offres de stages pratiques BAFA et de jobs d'animation",
                      description="Les offres de stages pratiques BAFA, de jobs d'été et de postes d'animation publiées par les structures vérifiées, avec des filtres par département, contrat, poste et date.",
                      h1="Les offres d'animation", indexer=bool(self.offres),
                      mois=sorted({o["debut"].strftime("%Y-%m") for o in self.offres}),
-                     fil=[("Trouver un poste", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
+                     fil=[("Je cherche un poste", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
-        TP = ("Trouver un poste", "/trouver-un-poste/")
+        TP = ("Je cherche un poste", "/trouver-un-poste/")
         STR = ("Les structures", "/trouver-un-poste/structures/")
         structures = self.structures_en_ligne()
         for st in structures:
@@ -849,7 +853,7 @@ class Site:
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
-                         indexer=False, structure=st, fil=[("Recruter", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+                         indexer=False, structure=st, fil=[("Je recrute", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
                       maj_le=en_date(ex["profil"].get("maj_le")))
@@ -1082,6 +1086,42 @@ class Site:
             f"<title>{html.escape(self.config['nom'])} : le blog</title><link>{base}/blog/</link>"
             f"<description>Conseils et chiffres sur le BAFA et l'animation</description><language>fr</language>"
             + "".join(items) + "</channel></rss>\n", encoding="utf-8")
+
+    FAMILLES_GOOGLE = [("bafa", "BAFA"), ("bafd", "BAFD"), ("bsb", "BSB"), ("psc", "PSC"), ("ecoles", "Écoles pros"), ("conseils", "Guides et blog")]
+
+    def famille_page(self, url):
+        """La famille d'une page, pour ranger les pages vues dans Google par formation."""
+        if url.startswith("/se-former/ecoles/"):
+            return "ecoles"
+        if url.startswith("/se-former/sessions/"):
+            for cle, mot in (("psc", "/psc1/"), ("bsb", "/bsb/"), ("bafd", "/bafd/")):
+                if mot in url or url.endswith(mot.rstrip("/") + "/"):
+                    return cle
+            return "bafa"
+        if url.startswith(("/blog/", "/lexique/", "/se-former/", "/trouver-un-poste/")):
+            return "conseils"
+        return None
+
+    def chiffres_detail(self):
+        """Les chiffres de Google, page par page et recherche par recherche, avec le titre des pages du site."""
+        if getattr(self, "_detail", None) is not None:
+            return self._detail
+        a = self.audience()
+        titres = {p["url"]: p.get("h1") or p["titre"] for p in self.pages}
+        pages = []
+        for x in a.get("pages_premiere_page") or []:
+            u = x["url"].split("?")[0].split("#")[0]
+            u = u if u.endswith("/") else u + "/"
+            if u in titres:
+                pages.append(dict(x, url=u, titre=titres[u], famille=self.famille_page(u)))
+        familles = [(cle, nom, [p for p in pages if p["famille"] == cle]) for cle, nom in self.FAMILLES_GOOGLE]
+        self._detail = {"pages": pages, "familles": [f for f in familles if f[2]],
+                        "recherches": a.get("recherches") or [],
+                        "site": {"sessions": len(self.sessions), "organismes": len({s["org"]["nom"] for s in self.sessions}),
+                                 "villes": getattr(self, "total_villes", 0),
+                                 "pages": sum(1 for p in self.pages if p.get("indexer")),
+                                 "ecoles": len(self.ecoles_pro()), "articles": len(getattr(self, "articles", []))}}
+        return self._detail
 
     def panneau_chiffres(self):
         """La petite fenêtre « Le site en chiffres » du bouton statistiques (comme sur jasonmarinho.com) : les chiffres de
@@ -1611,7 +1651,7 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
-            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(),
+            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(), "cd": self.chiffres_detail(),
             "c": self.chiffres_blog(), "articles": getattr(self, "articles", []), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

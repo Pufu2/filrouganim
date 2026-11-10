@@ -1,5 +1,5 @@
 ---
-court: Recruter
+court: Je recrute
 gabarit: recruter.html
 titre: "Recruter des animateurs et des stagiaires BAFA"
 url: /recruter/

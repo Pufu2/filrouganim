@@ -70,6 +70,7 @@
 {% endblock %}
 {% block contenu %}{% endblock %}
 </main>
+{% if page.url != '/compte/' %}
 <footer class="pied ft">
   <div class="cadre ft-in">
     <div class="ft-hero">
@@ -90,8 +91,8 @@
           <a href="{{ lien('/se-former/villes/') }}">Toutes les villes</a>
           <a class="ft-cat-more" href="{{ lien('/se-former/sessions/') }}">Toutes les sessions →</a>
         </nav>
-        <nav class="ft-cat" aria-label="Trouver un poste">
-          <h2 class="ft-cat-t">Trouver un poste</h2>
+        <nav class="ft-cat" aria-label="Je cherche un poste">
+          <h2 class="ft-cat-t">Je cherche un poste</h2>
           <a href="{{ lien('/trouver-un-poste/offres/') }}">Offres de stages et de jobs</a>
           <a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Trouver son stage pratique</a>
           <a href="{{ lien('/trouver-un-poste/preparer-son-entretien/') }}">Préparer son entretien</a>
@@ -111,7 +112,7 @@
         <nav class="ft-cat" aria-label="Fil Roug'Anim">
           <h2 class="ft-cat-t">Fil Roug'Anim</h2>
           <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
-          <a href="{{ lien('/recruter/') }}">Recruter, publier une offre</a>
+          <a href="{{ lien('/recruter/') }}">Je recrute : publier une offre</a>
           <a href="{{ lien('/contact/') }}">Contact</a>
           <a href="{{ lien('/classement-des-sessions/') }}">Classement des sessions</a>
           {% if site.comptes_ouverts %}<a href="{{ lien('/compte/') }}">Mon espace</a>{% endif %}
@@ -156,11 +157,12 @@
   </div>
 </footer>
 <script>(function(){var t=document.querySelectorAll(".ft-tab");function ch(b){t.forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on?"true":"false");x.tabIndex=on?0:-1;document.getElementById(x.getAttribute("aria-controls")).classList.toggle("on",on)})}t.forEach(function(b,i){b.addEventListener("click",function(){ch(b)});b.addEventListener("keydown",function(e){var j=e.key==="ArrowRight"?i+1:e.key==="ArrowLeft"?i-1:null;if(j===null)return;e.preventDefault();var n=t[(j+t.length)%t.length];ch(n);n.focus()})})})();</script>
+{% endif %}
 {% if site.goatcounter and not apercu %}<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
 {% block scripts %}{% endblock %}
 <script type="application/json" id="villes-populaires">{{ stats.villes | tojson }}</script>
 <script src="{{ statique('js/villes.js') }}" defer></script>
 <script src="{{ statique('js/menu.js') }}" defer></script>
-<script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>24);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
+<script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>=e.offsetHeight);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
 </body>
 </html>

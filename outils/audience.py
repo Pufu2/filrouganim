@@ -95,10 +95,27 @@ def search_console(aujourdhui):
     par_mois = {}
     for l in d.get("rows") or []:
         par_mois[l["keys"][0][:7]] = par_mois.get(l["keys"][0][:7], 0) + int(l.get("impressions") or 0)
-    print(f"Search Console : {imp} apparitions et {clics} clics sur 28 jours")
+    # le détail des 28 derniers jours : les recherches tapées dans Google et les pages du site affichées
+    def detail(dimension):
+        d, _ = lire_json(url, entetes, {"startDate": (fin - dt.timedelta(days=27)).isoformat(), "endDate": fin.isoformat(),
+                                        "dimensions": [dimension], "rowLimit": 1000})
+        return [{"cle": l["keys"][0], "impressions": int(l.get("impressions") or 0), "clics": int(l.get("clicks") or 0),
+                 "place": round(float(l.get("position") or 0), 1)} for l in d.get("rows") or []]
+    requetes, pages = detail("query"), detail("page")
+    base = (CONFIG.get("url") or "https://filrouganim.fr").rstrip("/")
+    for x in pages:
+        x["cle"] = x["cle"].replace(base, "").replace("http://filrouganim.fr", "") or "/"
+    premiere = lambda l: sorted((x for x in l if 0 < x["place"] <= 10), key=lambda x: (x["place"], -x["impressions"]))
+    print(f"Search Console : {imp} apparitions et {clics} clics sur 28 jours, {len(requetes)} recherches, {len(pages)} pages")
     return {"impressions_28j": imp, "impressions_evolution": evolution(imp, imp_avant),
             "clics_28j": clics, "clics_evolution": evolution(clics, clics_avant),
-            "impressions_par_mois": [{"mois": m, "n": n} for m, n in sorted(par_mois.items())][-6:]}
+            "impressions_par_mois": [{"mois": m, "n": n} for m, n in sorted(par_mois.items())][-7:],
+            "gsc_du": (fin - dt.timedelta(days=27)).isoformat(), "gsc_au": fin.isoformat(),
+            "recherches_total": len(requetes), "recherches_premiere_page": len(premiere(requetes)),
+            "pages_vues_google": len(pages), "pages_premiere_page_n": len(premiere(pages)),
+            # seulement des recherches et des adresses de pages : rien sur les personnes qui les tapent
+            "recherches": [dict(x, recherche=x.pop("cle")) for x in premiere(requetes)[:40]],
+            "pages_premiere_page": [dict(x, url=x.pop("cle")) for x in premiere(pages)[:200]]}
 
 
 def supabase():

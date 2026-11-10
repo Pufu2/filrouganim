@@ -1,40 +1,131 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
+{# La page des chiffres, sur le modèle de jasonmarinho.com/chiffres : le haut foncé avec les trois grands chiffres,
+   une bande de quatre chiffres, les affichages mois par mois, puis le détail page par page et recherche par recherche. #}
 {% set a = audience %}
-{% block tete_note %}<p class="surtitre">Transparence totale</p>{% endblock %}
-{% block contenu %}
-<section class="bande bande-papier">
-  <div class="cadre chiffres-page">
-    {% if a %}
-    {{ m.bloc_chiffres(a, lien, lien_page=False) }}
-    <div class="chiffres-deux">
-      <section class="chiffres-carte">
-        <h2>Ce que ces chiffres veulent dire</h2>
-        <ul class="lignes-chiffres">
-          {% if a.visiteurs_30j is defined %}<li><span>Personnes venues sur le site ces 30 derniers jours</span><b>{{ "{:,}".format(a.visiteurs_30j).replace(",", " ") }}</b></li>{% endif %}
-          {% if a.impressions_28j is defined %}<li><span>Fois où le site est apparu dans une recherche Google (28 jours)</span><b>{{ "{:,}".format(a.impressions_28j).replace(",", " ") }}</b></li>{% endif %}
-          {% if a.clics_28j is defined %}<li><span>Clics depuis Google vers le site (28 jours)</span><b>{{ "{:,}".format(a.clics_28j).replace(",", " ") }}</b></li>{% endif %}
-          {% if a.animateurs is defined %}<li><span>Animateurs inscrits avec un profil</span><b>{{ a.animateurs }}</b></li>
-          <li><span>Structures inscrites</span><b>{{ a.structures }}</b></li>
-          <li><span>Offres en ligne</span><b>{{ a.offres }}</b></li>
-          {% if a.candidatures is defined %}<li><span>Candidatures envoyées</span><b>{{ a.candidatures }}</b></li>{% endif %}{% endif %}
-        </ul>
-      </section>
-      <section class="chiffres-carte">
-        <h2>Pourquoi les montrer&nbsp;?</h2>
-        <p>Une structure qui publie une offre veut savoir qui la verra. Un animateur qui crée son profil veut savoir si des structures passent par ici. Alors on montre tout, même quand c'est encore petit.</p>
-        <p class="petit">Visites comptées sans cookie (GoatCounter), recherches Google lues dans Google Search Console, comptes comptés dans notre base. {% if a.mis_a_jour %}Mis à jour le {{ a.mis_a_jour | date_fr }}.{% endif %}</p>
-        <p><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte <span aria-hidden="true">→</span></a></p>
-      </section>
+{% set s = cd.site %}
+{% macro n(x) %}{{ "{:,}".format(x or 0).replace(",", " ") }}{% endmacro %}
+{% macro evo(x, periode) %}{% if x is not none and x is defined %}<span class="ch-evo{{ ' ch-evo-bas' if x < 0 }}">{{ '+' if x >= 0 }}{{ x }} % vs {{ periode }} d'avant</span>{% else %}<span class="ch-evo ch-evo-neutre">Nouveau</span>{% endif %}{% endmacro %}
+{% block tete %}
+<section class="tete ch-tete">
+  <div class="cadre ch-tete-grille">
+    <div>
+      <nav class="fil-ariane" aria-label="Fil d'Ariane"><a href="{{ lien('/') }}">Accueil</a><span aria-hidden="true">›</span><span aria-current="page">Les chiffres</span></nav>
+      <p class="tp-sur">Transparence</p>
+      <h1>La visibilité du site, <em>en chiffres réels</em></h1>
+      <p class="chapo">Vous hésitez à publier une offre ou à créer votre profil ? Voici ce que Fil Roug'Anim reçoit vraiment de Google et ce que voient les visiteurs, mis à jour chaque jour. Pas de chiffre arrondi pour faire joli.</p>
+      <ul class="ch-garanties"><li>Google Search Console</li><li>Mis à jour chaque jour</li><li>Aucune donnée personnelle</li></ul>
     </div>
-    {% else %}
-    <div class="chiffres-bloc">
-      <p class="surtitre-clair">Bientôt ici</p>
-      <h2>Les premiers chiffres arrivent.</h2>
-      <p>Le site est en ligne depuis la fin octobre 2026. Dès que le compteur de visites et Google Search Console sont branchés, cette page montre chaque jour les visiteurs, les apparitions dans Google, les clics et les inscriptions : les vrais chiffres, même quand ils sont encore petits.</p>
-      <p><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte <span aria-hidden="true">→</span></a></p>
+    <div class="ch-grand">
+      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><div><b>{{ n(a.impressions_28j) if a.impressions_28j is defined else '—' }}</b><span>affichages dans Google sur 28 jours</span></div>{% if a.impressions_28j is defined %}{{ evo(a.impressions_evolution, "28 j") }}{% endif %}</div>
+      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 9l12 4-5 2-2 5z"/><path d="M5 3v3M3 5h3M5.5 9.5l-2 2M9.5 5.5l2-2"/></svg></span><div><b>{{ n(a.clics_28j) if a.clics_28j is defined else '—' }}</b><span>clics depuis Google sur 28 jours</span></div>{% if a.clics_28j is defined %}{{ evo(a.clics_evolution, "28 j") }}{% endif %}</div>
+      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .7 3.2 2.5 3.5 5.2"/></svg></span><div><b>{{ n(a.visiteurs_30j) if a.visiteurs_30j is defined else '—' }}</b><span>{% if a.visiteurs_30j is defined %}visiteurs du site sur 30 jours{% else %}visiteurs : le compteur vient d'être installé{% endif %}</span></div>{% if a.visiteurs_30j is defined %}{{ evo(a.visiteurs_evolution, "30 j") }}{% endif %}</div>
+      {% if a.gsc_du %}<p class="ch-periode">Google : du {{ a.gsc_du | date_fr(False) }} au {{ a.gsc_au | date_fr(False) }} (Google a deux à trois jours de retard)</p>{% endif %}
     </div>
-    {% endif %}
   </div>
 </section>
 {% endblock %}
+{% block contenu %}
+<section class="ch-bande" aria-label="Chiffres clés">
+  <ul class="ch-quatre">
+    <li><b>{{ n(a.recherches_premiere_page) if a.recherches_premiere_page is defined else n(s.sessions) }}</b><span>{{ "recherches différentes où le site sort en première page" if a.recherches_premiere_page is defined else "sessions à venir, comparées" }}</span></li>
+    <li><b>{{ n(a.pages_vues_google) if a.pages_vues_google is defined else n(s.organismes) }}</b><span>{{ "pages du site vues dans Google sur 28 jours" if a.pages_vues_google is defined else "organismes de formation" }}</span></li>
+    <li><b>{{ n(s.villes) }}</b><span>pages de ville pour le BAFA, le BAFD, le BSB, le PSC et les écoles</span></li>
+    <li><b>{% if a.taux_clic is defined %}{{ ("%.1f" % a.taux_clic).replace(".", ",") }} %{% else %}{{ n(s.pages) }}{% endif %}</b><span>{{ "des affichages se transforment en clic (taux de clic)" if a.taux_clic is defined else "pages proposées à Google" }}</span></li>
+  </ul>
+</section>
+
+{% if a.impressions_par_mois %}
+{% set maxi = a.impressions_par_mois | map(attribute="n") | max %}
+<section class="bande ch-section ch-blanc" aria-labelledby="t-mois">
+  <div class="cadre">
+    <p class="ch-sur">Sur Google, mois par mois</p>
+    <h2 id="t-mois" class="ch-titre">Les affichages <em>dans Google</em></h2>
+    <p class="ch-intro">Nombre de fois où une page du site est apparue dans les résultats de Google, chaque mois. Le site est en ligne depuis fin octobre 2026 : tout commence ici.</p>
+    <div class="ch-graphe">
+      <ol class="ch-barres" aria-label="Affichages dans Google par mois">
+        {% for x in a.impressions_par_mois %}<li{% if x.en_cours %} class="ch-en-cours"{% endif %}><span class="ch-barre-n">{{ n(x.n) }}</span><span class="ch-barre" style="height: {{ [((x.n / (maxi or 1)) * 100) | round, 2] | max }}%"></span><span class="ch-barre-mois">{{ x.nom }}</span></li>{% endfor %}
+      </ol>
+      <p class="ch-legende"><span class="ch-leg-plein"></span>Affichages dans Google {% if a.impressions_par_mois[-1].en_cours %}<span class="ch-leg-raye"></span>Mois en cours (pas terminé){% endif %}{% if a.clics_28j is defined %} · {{ n(a.clics_28j) }} clic{{ 's' if a.clics_28j > 1 }} depuis Google sur 28 jours{% endif %}</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="bande ch-section ch-creme" aria-labelledby="t-premiere">
+  <div class="cadre">
+    <p class="ch-sur">Les recherches</p>
+    <h2 id="t-premiere" class="ch-titre">Où le site sort <em>en première page</em></h2>
+    <p class="ch-intro">Les pages et les recherches tapées dans Google pour lesquelles le site apparaît dans les 10 premiers résultats, en moyenne sur 28 jours. La place est celle mesurée par Google : sur votre téléphone, elle peut être un peu différente.</p>
+    {% if cd.familles %}
+    <div class="ch-onglets" role="tablist" aria-label="Formations">
+      {% for cle, nom, pages in cd.familles %}<button class="ch-onglet{{ ' on' if loop.first }}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="ch-p-{{ cle }}" id="ch-t-{{ cle }}">{{ nom }} <small>{{ pages | length }}</small></button>{% endfor %}
+    </div>
+    {% for cle, nom, pages in cd.familles %}
+    <div class="ch-panneau" id="ch-p-{{ cle }}" role="tabpanel" aria-labelledby="ch-t-{{ cle }}"{% if not loop.first %} hidden{% endif %}>
+      <p class="ch-panneau-t">{{ pages | length }} page{{ 's' if pages | length > 1 }} en première page</p>
+      <ul class="ch-places">{% for p in pages[:24] %}<li><span class="ch-place{{ ' ch-place-top' if p.place <= 3 }}"><b>{{ ("%.1f" % p.place).replace(".", ",") }}</b>place</span><a href="{{ lien(p.url) }}">{{ p.titre }}</a><small>{{ p.impressions }} affichage{{ 's' if p.impressions > 1 }}{% if p.clics %} · {{ p.clics }} clic{{ 's' if p.clics > 1 }}{% endif %}</small></li>{% endfor %}</ul>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="ch-vide">Le détail page par page arrive avec le prochain relevé de nuit.</p>
+    {% endif %}
+    {% if cd.recherches %}
+    <div class="ch-tableau">
+      <p class="ch-tableau-aide">Copiez une recherche et collez-la dans Google pour vérifier vous-même. Google adapte ses résultats à la personne, au lieu et à l'appareil : la place affichée est une moyenne sur 28 jours.</p>
+      <table>
+        <thead><tr><th>Recherche dans Google</th><th>Place moyenne</th><th>Affichages</th><th>Clics</th></tr></thead>
+        <tbody>{% for r in cd.recherches[:15] %}<tr><td><b>« {{ r.recherche }} »</b> <button class="ch-copier" type="button" data-copier="{{ r.recherche }}">Copier</button></td><td><span class="ch-place-pastille">{{ ("%.1f" % r.place).replace(".", ",") }}</span></td><td>{{ r.impressions }}</td><td>{{ r.clics }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <p class="ch-note">Pourquoi une page peut être en première page sans recherche listée ? Google ne donne pas le texte des recherches trop rares, pour protéger la vie privée de ceux qui les tapent.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="bande ch-section ch-blanc" aria-labelledby="t-site">
+  <div class="cadre">
+    <p class="ch-sur">Le site</p>
+    <h2 id="t-site" class="ch-titre">Ce que vous trouvez <em>ici</em></h2>
+    <p class="ch-intro">Relevé chaque nuit sur les pages des organismes, le calendrier national et les catalogues publics.</p>
+    <ul class="ch-site">
+      <li><b>{{ n(s.sessions) }}</b><span>sessions à venir</span><a href="{{ lien('/se-former/sessions/') }}">Les sessions →</a></li>
+      <li><b>{{ n(s.organismes) }}</b><span>organismes de formation</span><a href="{{ lien('/se-former/sessions/organismes/') }}">Les organismes →</a></li>
+      <li><b>{{ n(s.villes) }}</b><span>villes avec leur page</span><a href="{{ lien('/se-former/villes/') }}">Toutes les villes →</a></li>
+      <li><b>{{ n(s.ecoles) }}</b><span>écoles des diplômes pros</span><a href="{{ lien('/se-former/ecoles/') }}">Les écoles →</a></li>
+      <li><b>{{ n(s.pages) }}</b><span>pages proposées à Google</span><a href="{{ lien('/se-former/villes/') }}">Parcourir →</a></li>
+      <li><b>{{ n(s.articles) }}</b><span>articles de blog</span><a href="{{ lien('/blog/') }}">Le blog →</a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="bande ch-section ch-creme" aria-labelledby="t-comptes">
+  <div class="cadre">
+    <p class="ch-sur">Les comptes · en toute transparence</p>
+    <h2 id="t-comptes" class="ch-titre">Chaque inscription compte, <em>même la première</em></h2>
+    <p class="ch-intro">Le service est jeune : on préfère vous montrer les vrais chiffres, petits ou grands. Seulement le profil, le département et le mois, jamais rien sur la personne.</p>
+    {% if a.animateurs is defined %}
+    <ul class="ch-site ch-site-3">
+      <li><b>{{ a.animateurs }}</b><span>animateur{{ 's' if a.animateurs > 1 }} avec un profil</span></li>
+      <li><b>{{ a.structures }}</b><span>structure{{ 's' if a.structures > 1 }} inscrite{{ 's' if a.structures > 1 }}</span></li>
+      <li><b>{{ a.offres or 0 }}</b><span>offre{{ 's' if (a.offres or 0) > 1 }} en ligne</span></li>
+    </ul>
+    {% if a.dernieres_inscriptions %}<ul class="recentes ch-recentes">{% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="recentes-date">{{ r.quand }}</span></li>{% endfor %}</ul>{% endif %}
+    {% else %}
+    <p class="ch-vide">Les chiffres des comptes arrivent avec le prochain relevé de nuit.</p>
+    {% endif %}
+    <p class="ch-appel"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte gratuit <span aria-hidden="true">→</span></a></p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>
+(function () {
+  var t = document.querySelectorAll(".ch-onglet");
+  t.forEach(function (b) { b.addEventListener("click", function () {
+    t.forEach(function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-selected", on ? "true" : "false"); document.getElementById(x.getAttribute("aria-controls")).hidden = !on; });
+  }); });
+  document.querySelectorAll("[data-copier]").forEach(function (b) { b.addEventListener("click", function () {
+    if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.copier).then(function () { b.textContent = "Copié"; setTimeout(function () { b.textContent = "Copier"; }, 1500); });
+  }); });
+})();
+</script>{% endblock %}
