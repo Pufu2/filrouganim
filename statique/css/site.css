@@ -2072,3 +2072,27 @@ html.fiche-ouverte { overflow: hidden; }
 .as-carte .tp-carte-pied .bouton-texte { border: 0; padding: 0; white-space: nowrap; font-size: 14px; }
 .as-pied .as-retour { border: 0; padding-left: 0; }
 .formulaire .etape-q { padding-inline: 0; margin-inline: 0; float: none; width: 100%; }
+/* Structures : ce que la page apporte, les 3 étapes, les engagements (plus léger que des gros blocs) */
+.rc-infos { padding-top: 20px; }
+.rc-atouts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.rc-atouts li { display: flex; flex-direction: column; gap: 6px; padding: 18px; background: #fff; border: 1px solid #eee4d9; border-radius: 14px; }
+.rc-atout-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: #fbecee; color: var(--fil-fonce); margin-bottom: 4px; }
+.rc-atout-ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.rc-atouts b { font-size: 15px; }
+.rc-atouts span:not(.rc-atout-ic) { font-size: 13.5px; line-height: 1.5; color: #5a5052; }
+.rc-titre-etapes { margin-top: 44px; }
+.rc-etapes { list-style: none; counter-reset: e; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; position: relative; }
+.rc-etapes li { counter-increment: e; position: relative; display: flex; flex-direction: column; gap: 4px; padding: 0 22px 0 0; }
+.rc-etapes li::before { content: counter(e); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--fil); color: #fff; font: 600 15px/1 var(--titres); margin-bottom: 8px; position: relative; z-index: 1; }
+.rc-etapes li:not(:last-child)::after { content: ""; position: absolute; top: 17px; left: 34px; right: 0; height: 2px; background: repeating-linear-gradient(90deg, #f0c9cd 0 6px, transparent 6px 11px); }
+.rc-etapes b { font-size: 15px; }
+.rc-etapes span { font-size: 13.5px; line-height: 1.5; color: #5a5052; max-width: 30ch; }
+.rc-engagements { list-style: none; margin: 34px 0 0; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 8px 26px; border-top: 1px solid #eee4d9; border-bottom: 1px solid #eee4d9; }
+.rc-engagements li { position: relative; padding-left: 24px; font-size: 14px; font-weight: 600; color: #3a3132; }
+.rc-engagements li::before { content: ""; position: absolute; left: 2px; top: 4px; width: 11px; height: 6px; border-left: 2px solid var(--fil); border-bottom: 2px solid var(--fil); transform: rotate(-45deg); }
+@media (max-width: 900px) { .rc-atouts { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 620px) {
+  .rc-atouts { grid-template-columns: 1fr; }
+  .rc-etapes { grid-template-columns: 1fr; gap: 18px; }
+  .rc-etapes li:not(:last-child)::after { display: none; }
+}
