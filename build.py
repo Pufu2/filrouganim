@@ -1072,6 +1072,44 @@ class Site:
                          + yaml.safe_dump(b, allow_unicode=True, sort_keys=False), encoding="utf-8")
         print(f"Bilan écrit : {cible.name}")
 
+    def ecrire_lieux_google(self):
+        """/chiffres/lieux.json : pour chaque ville, département et région, ses pages et ce que Google en montre
+        (affichages, clics, place moyenne sur 28 jours). Sert à « Les chiffres de ta ville »."""
+        g = {}
+        for u, imp, clics, place in self.audience().get("pages_google") or []:
+            u = u.split("?")[0].split("#")[0]
+            g[u if u.endswith("/") else u + "/"] = (imp, clics, place)
+        lieux = {}
+        for p in self.pages:
+            if not p.get("indexer") or p["gabarit"] not in ("liste.html", "ecoles.html"):
+                continue
+            u = p["url"]
+            dep = p.get("departement")
+            if p.get("ville"):
+                nom, genre = p["ville"]["nom"], "ville"
+            elif dep and len(p.get("fil") or []) >= 2 and p["fil"][-1][0] not in (dep["nom"],) and p.get("villes_famille") is not None \
+                    and any(v["slug"] == u.rstrip("/").rsplit("/", 1)[-1] for v in p.get("villes_famille") or []):
+                nom, genre = p["fil"][-1][0], "ville"
+            elif u.startswith("/se-former/ecoles/") and u.count("/") == 6:
+                nom, genre = p["fil"][-1][0], "ville"
+                dep = next((d for d in self.departements.values() if d["slug"] == u.split("/")[4]), None)
+            elif dep:
+                nom, genre = dep["nom"], "departement"
+            elif p.get("region") or p.get("region_famille"):
+                r = p.get("region") or p.get("region_famille")
+                nom, genre, dep = r["nom"], "region", None
+            else:
+                continue
+            cle = f"{genre}|{nom}|{dep['code'] if dep and genre == 'ville' else ''}"
+            e = lieux.setdefault(cle, {"n": nom, "g": genre, "d": dep["code"] if dep and genre != "region" else "", "p": []})
+            imp, clics, place = g.get(u, (0, 0, None))
+            e["p"].append([p.get("h1") or p["titre"], u, imp, clics, place])
+        sortie = sorted(lieux.values(), key=lambda e: (-sum(x[2] for x in e["p"]), e["n"]))
+        for e in sortie:
+            e["p"].sort(key=lambda x: -x[2])
+        (SORTIE / "chiffres").mkdir(parents=True, exist_ok=True)
+        (SORTIE / "chiffres" / "lieux.json").write_text(json.dumps(sortie, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
     def ecrire_rss(self):
         base = self.config["url"].rstrip("/")
         items = []
@@ -1115,7 +1153,15 @@ class Site:
             if u in titres:
                 pages.append(dict(x, url=u, titre=titres[u], famille=self.famille_page(u)))
         familles = [(cle, nom, [p for p in pages if p["famille"] == cle]) for cle, nom in self.FAMILLES_GOOGLE]
-        self._detail = {"pages": pages, "familles": [f for f in familles if f[2]],
+        # les inscriptions, département par département (avec le nom du département)
+        par_dep = [dict(x, nom=self.departements[x["departement"]]["nom"]) for x in a.get("inscriptions_par_departement") or []
+                   if x.get("departement") in self.departements]
+        maxi = max((x["animateurs"] + x["structures"] for x in a.get("inscriptions_par_mois") or []), default=0) or 1
+        par_mois = [dict(x, nom=MOIS_COURTS[int(x["mois"][5:7]) - 1], h=round(100 * (x["animateurs"] + x["structures"]) / maxi))
+                    for x in a.get("inscriptions_par_mois") or []]
+        self._detail = {"pages": pages, "familles": [f for f in familles if f[2]], "inscriptions_dep": par_dep,
+                        "inscriptions_mois": par_mois,
+                        "premiere_inscription": a.get("premiere_inscription"),
                         "recherches": a.get("recherches") or [],
                         "site": {"sessions": len(self.sessions), "organismes": len({s["org"]["nom"] for s in self.sessions}),
                                  "villes": getattr(self, "total_villes", 0),
@@ -1678,6 +1724,7 @@ class Site:
             cible.parent.mkdir(parents=True, exist_ok=True)
             cible.write_text(self.rendre_page(page), encoding="utf-8")
         self.ecrire_donnees_recherche()
+        self.ecrire_lieux_google()
         if not self.apercu:
             self.ecrire_fichiers_seo()
             self.ecrire_rss()

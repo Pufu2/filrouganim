@@ -115,7 +115,9 @@ def search_console(aujourdhui):
             "pages_vues_google": len(pages), "pages_premiere_page_n": len(premiere(pages)),
             # seulement des recherches et des adresses de pages : rien sur les personnes qui les tapent
             "recherches": [dict(x, recherche=x.pop("cle")) for x in premiere(requetes)[:40]],
-            "pages_premiere_page": [dict(x, url=x.pop("cle")) for x in premiere(pages)[:200]]}
+            "pages_premiere_page": [dict(x, url=x.pop("cle")) for x in premiere(pages)[:200]],
+            # toutes les pages vues dans Google (pour « Les chiffres de ta ville ») : [adresse, affichages, clics, place]
+            "pages_google": [[x["cle"], x["impressions"], x["clics"], x["place"]] for x in sorted(pages, key=lambda x: -x["impressions"])]}
 
 
 def supabase():
@@ -145,6 +147,24 @@ def supabase():
     r = {k: v for k, v in r.items() if v is not None}
     inscrits = sorted(dernieres("profils", "animateur") + dernieres("structures", "structure"), key=lambda x: x["mois"], reverse=True)
     r["dernieres_inscriptions"] = inscrits[:5]
+    def toutes(table, role):
+        try:
+            d, _ = lire_json(f"{url}/rest/v1/{table}?select=departement,cree_le&limit=10000",
+                             {"apikey": cle, "Authorization": f"Bearer {cle}"})
+        except urllib.error.HTTPError as e:
+            print(f"Supabase : {table} non lue en détail ({e.code})")
+            return []
+        return [(role, x.get("departement") or "", (x.get("cree_le") or "")[:7]) for x in d]
+    tous = toutes("profils", "animateur") + toutes("structures", "structure")
+    par_mois, par_dep = {}, {}
+    for role, dep, mois in tous:
+        if mois:
+            par_mois.setdefault(mois, {"animateurs": 0, "structures": 0})[role + "s"] += 1
+        if dep:
+            par_dep.setdefault(dep, {"animateurs": 0, "structures": 0})[role + "s"] += 1
+    r["inscriptions_par_mois"] = [{"mois": m, **v} for m, v in sorted(par_mois.items())][-6:]
+    r["inscriptions_par_departement"] = [{"departement": d, **v} for d, v in sorted(par_dep.items(), key=lambda x: -(x[1]["animateurs"] + x[1]["structures"]))][:30]
+    r["premiere_inscription"] = min((m for _, _, m in tous if m), default=None)
     print(f"Supabase : {r.get('animateurs')} animateurs, {r.get('structures')} structures, {r.get('offres')} offres")
     return r
 
