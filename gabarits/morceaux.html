@@ -112,8 +112,8 @@
 <div class="ro{% if not onglets %} ro-seul{% endif %}">
   {% if onglets %}<div class="ro-onglets" role="tablist" aria-label="Que cherchez-vous ?">
     <button type="button" role="tab" id="ro-t1" aria-selected="true" aria-controls="ro-p1">{{ icone("diplome") }}Se former</button>
-    <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Je cherche un poste</button>
-    <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je recrute</button>
+    <button type="button" role="tab" id="ro-t2" aria-selected="false" aria-controls="ro-p2" tabindex="-1">{{ icone("cherche") }}Animateurs &amp; directeurs</button>
+    <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Structures</button>
   </div>{% endif %}
   <div class="ro-p" id="ro-p1"{% if onglets %} role="tabpanel" aria-labelledby="ro-t1"{% endif %}>
   <form class="ro-panneau" action="{{ lien('/se-former/sessions/') }}" method="get">
@@ -157,12 +157,12 @@
   </div>
   <div class="ro-panneau ro-recruter" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
     <div>
-      <p class="ro-titre">Vous recrutez des animateurs ?</p>
-      <p class="ro-texte">Publiez vos offres là où les jeunes cherchent leur BAFA, et recevez les profils des animateurs de votre secteur.</p>
+      <p class="ro-titre">Recruter et se faire connaître</p>
+      <p class="ro-texte">Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs et directeurs de votre secteur.</p>
     </div>
     <div class="ro-boutons">
       <a class="bouton-blanc" href="{{ lien('/recruter/') }}">Voir l'offre fondateurs</a>
-      <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon espace structure <span aria-hidden="true">→</span></a>
+      <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Créer l'espace de ma structure <span aria-hidden="true">→</span></a>
     </div>
   </div>
   <script>

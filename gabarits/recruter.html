@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Je recrute, dans le même style que « Je cherche un poste » (modèle : page annuaire de jasonmarinho.com) :
+{# Structures, dans le même style que « Animateurs & directeurs » (modèle : page annuaire de jasonmarinho.com) :
    le haut foncé, la bande de l'offre fondateurs, les cartes d'exemple (page structure et profil de candidat), puis le détail. #}
 {% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
 {% set st = EXEMPLES.structure %}
-{% set p = EXEMPLES.profil %}
 {% set creer = lien('/compte/') ~ '?inscription=1&role=structure' %}
-{% block tete_note %}<p class="tp-sur">Offres et candidats · sans commission, sans intermédiaire</p>{% endblock %}
-{% block h1 %}Je recrute des <em>animateurs</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Publiez vous-même vos offres de stages pratiques, de jobs et de postes, là où les jeunes cherchent leur BAFA. Et trouvez des candidats parmi les profils des animateurs et directeurs de votre secteur.</p>{% endblock %}
+{% block tete_note %}<p class="tp-sur">Structures · votre page, vos offres, les candidats</p>{% endblock %}
+{% block h1 %}Recrutez et faites-vous <em>connaître</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Accueils de loisirs, séjours, périscolaire : présentez votre structure sur sa propre page, publiez vos offres là où les jeunes cherchent leur BAFA, et trouvez vos animateurs et directeurs parmi les profils de votre secteur.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
 <div class="tp-recherche"><div class="cadre">
@@ -40,22 +39,8 @@
         <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voient les candidats</span><a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir la page <span aria-hidden="true">→</span></a></div>
       </li>
       {% endif %}
-      {% if p %}
-      <li class="tp-carte tp-carte-exemple">
-        <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
-          <span class="tp-avatar">{{ p.prenom[:1] }}</span>
-          <span class="tp-badge-exemple">Exemple de profil</span>
-        </a>
-        <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
-          <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
-          <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}{% if p.dispo_debut %} · disponible du {{ p.dispo_debut | date_fr(False) }} au {{ p.dispo_fin | date_fr }}{% endif %}</p>
-        </div>
-        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que vous voyez des candidats</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
-      </li>
-      {% endif %}
     </ul>
-    <p class="tp-sans-offre">Les exemples sont fictifs. Chaque structure vérifiée remplit sa page depuis son espace, et chaque candidat son profil.</p>
+    <p class="tp-sans-offre">Exemple fictif. Chaque structure vérifiée remplit sa page depuis son espace : présentation, photos, publics, activités et offres.</p>
   </div>
 </section>
 

@@ -261,7 +261,7 @@
   Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (b) {
     b.addEventListener("click", function () { choisir(b); });
   });
-  // arrivée depuis « Je recrute » (?role=structure) : le profil est déjà choisi
+  // arrivée depuis la page Structures (?role=structure) : le profil est déjà choisi
   function preparerInscription() {
     var role = params.get("role");
     var b = role && document.querySelector('.profil-choix[data-role="' + role + '"]');

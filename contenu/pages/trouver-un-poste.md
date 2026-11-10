@@ -1,5 +1,5 @@
 ---
-court: Je cherche un poste
+court: Animateurs & directeurs
 gabarit: trouver-un-poste.html
 titre: "Trouver un poste dans l'animation : stages BAFA et jobs"
 url: /trouver-un-poste/
