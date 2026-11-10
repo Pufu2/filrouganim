@@ -170,7 +170,7 @@ l'e-mail et le mot de passe marchent déjà.
 ## Version 5 (10/11/2026) : l'abonnement des structures et les centres
 
 - **Prix** : 79 €/an, chaque centre en plus 39,50 € ; fondateurs (10 premières) 39,50 € et 19,75 €, à vie.
-  Un tarif dégressif par formule dans Stripe (compte de l'entreprise de Jeuphorie), produit « Fil Roug'Anim · Espace
+  Un tarif dégressif par formule dans Stripe (compte « Fil Roug'Anim », séparé de Jeuphorie), produit « Fil Roug'Anim · Espace
   structure » ; la quantité payée = le nombre de centres. Liens de paiement dans `config.yml` (`abonnement`) ;
   le lien fondateur se ferme tout seul après 10 paiements.
 - **En ligne** = structure vérifiée ET abonnement en cours (`abonnement_fin`). Les fonctions `est_verifiee`,
@@ -180,7 +180,7 @@ l'e-mail et le mot de passe marchent déjà.
 
 ### À faire une fois (Pufu2)
 
-1. Stripe → Développeurs → Clés API → **Créer une clé restreinte** « Fil Roug'Anim abonnements » :
+1. Dans le compte Stripe **Fil Roug'Anim** : Développeurs → Clés API → **Créer une clé restreinte** « Fil Roug'Anim abonnements » :
    *Checkout Sessions* en lecture, *Subscriptions* en lecture, rien d'autre. La coller directement dans GitHub →
    dépôt filrouganim → Settings → Secrets → Actions → `STRIPE_ABONNEMENTS_KEY`.
 2. Stripe → Paramètres → Facturation → **Portail client** : autoriser « Mettre à jour les quantités » et
