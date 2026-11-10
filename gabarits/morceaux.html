@@ -188,7 +188,7 @@
 </div>
 {% endmacro %}
 
-{# Les chiffres publics de visibilité (accueil, /chiffres/) : visiteurs, Google, comptes créés.
+{# Les chiffres publics de visibilité (accueil, /chiffres/) : visiteurs, Google, comptes créés (masqués tant qu’ils sont à 0).
    Chaque tuile n'apparaît que si sa source est branchée (donnees/audience.yml, outils/audience.py). #}
 {% macro evolution(x) %}{% if x is not none %}<small class="{{ 'hausse' if x >= 0 else 'baisse' }}">{{ '+' if x >= 0 }}{{ x }} % sur la période d'avant</small>{% endif %}{% endmacro %}
 {% macro fr(x) %}{{ "{:,}".format(x or 0).replace(",", " ") }}{% endmacro %}
@@ -206,13 +206,14 @@
   </div>
   <ul class="cb-tuiles">
     {% set tuiles = [] %}
-    {% if a.visiteurs_30j is defined %}{% set _ = tuiles.append((a.visiteurs_30j, "visiteurs sur 30 jours", a.visiteurs_evolution, None)) %}{% endif %}
+    {% if a.visiteurs_30j %}{% set _ = tuiles.append((a.visiteurs_30j, "visiteurs sur 30 jours", a.visiteurs_evolution, None)) %}{% endif %}
     {% if a.impressions_28j is defined %}{% set _ = tuiles.append((a.impressions_28j, "apparitions dans Google", a.impressions_evolution, None)) %}{% endif %}
     {% if a.clics_28j is defined %}{% set _ = tuiles.append((a.clics_28j, "clics depuis Google", a.clics_evolution, None)) %}{% endif %}
     {% if a.recherches_premiere_page %}{% set _ = tuiles.append((a.recherches_premiere_page, "recherches où le site sort en 1re page", None, "sur 28 jours")) %}{% endif %}
-    {% if a.animateurs is defined %}{% set _ = tuiles.append((a.comptes, "comptes créés", None, a.animateurs ~ " animateur" ~ ("s" if a.animateurs > 1 else "") ~ " · " ~ a.structures ~ " structure" ~ ("s" if a.structures > 1 else ""))) %}{% endif %}
+    {% if a.comptes %}{% set _ = tuiles.append((a.comptes, "comptes créés", None, a.animateurs ~ " animateur" ~ ("s" if a.animateurs > 1 else "") ~ " · " ~ a.structures ~ " structure" ~ ("s" if a.structures > 1 else ""))) %}{% endif %}
     {% set _ = tuiles.append((cd.site.sessions, "sessions de formation à venir", None, "relevées chaque nuit")) %}
     {% set _ = tuiles.append((cd.site.villes, "villes avec leur page", None, "BAFA, BAFD, BSB, PSC, écoles")) %}
+    {% set _ = tuiles.append((cd.site.organismes, "organismes de formation comparés", None, "sans publicité")) %}
     {% for v, nom, ev, note in tuiles[:4] %}<li><b>{{ fr(v) }}</b><span>{{ nom }}</span>{% if ev is not none %}<small class="{{ 'hausse' if ev >= 0 else 'baisse' }}">{{ '+' if ev >= 0 }}{{ ev }} % sur la période d'avant</small>{% elif note %}<small>{{ note }}</small>{% endif %}</li>{% endfor %}
   </ul>
   <div class="cb-deux">
