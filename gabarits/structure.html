@@ -1,77 +1,135 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Fiche d'une structure vérifiée (ou exemple fictif) : bannière, nom, badges, trois chiffres, sections, et une carte de contact à droite. #}
+{# Fiche d'une structure vérifiée (ou exemple fictif), sur le modèle des fiches de l'annuaire de jasonmarinho.com :
+   les photos, le nom et les badges, trois chiffres, les offres en cartes, la présentation, ce que la structure propose,
+   où elle accueille (carte), et une carte de contact qui suit à droite. #}
 {% set st = page.structure %}
 {% set nom_dep = departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first %}
 {% set type_nom = TYPES_STRUCTURE.get(st.type, "Structure d'animation") %}
 {% set _m = st.nom.replace("L'", "").replace("’", " ").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et", "d", "l"]) | list %}{% set initiales = (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper %}
+{% set photos = st.photos or [] %}
+{% set base_photos = site.supabase.url ~ "/storage/v1/object/public/structures/" %}
+{% set point = page.point %}
+{% macro avatar(classe="") %}<span class="fp-avatar {{ classe }}" aria-hidden="true">{% if st.logo %}<img src="{{ base_photos ~ st.logo }}" alt="" loading="lazy">{% else %}{{ initiales }}{% endif %}</span>{% endmacro %}
 {% block tete %}{% endblock %}
 {% block contenu %}
-<div class="fiche theme-{{ st.couleur or 'rouge' }}">
+<div class="fp theme-{{ st.couleur or 'rouge' }}">
   <div class="cadre">
-    <nav class="fil-ariane fil-clair" aria-label="Fil d'Ariane">
+    <nav class="fil-ariane fp-ariane" aria-label="Fil d'Ariane">
       <a href="{{ lien('/') }}">Accueil</a>
       {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
     </nav>
-    {% if st.exemple %}<p class="bandeau-exemple bandeau-exemple-clair">Exemple fictif : voici à quoi ressemble la fiche d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
-    <div class="fiche-banniere" aria-hidden="true"><span>{{ type_nom }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
-    <div class="fiche-identite">
-      <span class="fiche-avatar" aria-hidden="true">{{ initiales }}</span>
+    {% if st.exemple %}<p class="fp-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
+
+    {% if photos %}
+    <div class="fp-galerie fp-galerie-{{ [photos | length, 5] | min }}">
+      {% for ph in photos[:5] %}<a href="{{ base_photos ~ ph }}" class="fp-photo" target="_blank" rel="noopener"><img src="{{ base_photos ~ ph }}" alt="Photo {{ loop.index }} de {{ st.nom }}" loading="{{ 'eager' if loop.first else 'lazy' }}"></a>{% endfor %}
+      {% if photos | length > 1 %}<span class="fp-nb-photos">{{ m.icone("cherche") }}{{ photos | length }} photos</span>{% endif %}
+    </div>
+    {% else %}
+    <div class="fp-banniere" aria-hidden="true"><span>{{ type_nom }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
+    {% endif %}
+
+    <div class="fp-identite">
+      {{ avatar() }}
       <div>
         <h1>{{ st.nom }}</h1>
-        <p class="fiche-sous">{{ type_nom }} à {{ st.ville }}</p>
-        <ul class="fiche-badges">
+        <p class="fp-sous">{{ type_nom }} à {{ st.ville }}</p>
+        <ul class="fp-badges">
           <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>
           {% if st.offres %}<li>{{ m.icone("date") }}Recrute en ce moment</li>{% endif %}
           {% if st.fondatrice %}<li>{{ m.icone("etape") }}Structure fondatrice</li>{% endif %}
+          <li>{{ m.icone("lieu") }}Sans commission</li>
         </ul>
       </div>
     </div>
-    <div class="fiche-grille">
-      <div class="fiche-principal">
-        <ul class="fiche-chiffres">
+
+    <div class="fp-grille">
+      <div class="fp-principal">
+        <ul class="fp-chiffres">
           <li><b>{{ st.offres | length }}</b><span>offre{{ 's' if st.offres | length != 1 }} en ce moment</span></li>
-          <li><b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous âges{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span></li>
+          <li><b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span></li>
           <li><b>{{ st.departement }}</b><span>{{ nom_dep }}</span></li>
         </ul>
-        <section class="fiche-bloc" aria-labelledby="t-offres-st">
-          <h2 id="t-offres-st">{% if st.offres %}Ses offres en ce moment{% else %}Pas d'offre en ce moment{% endif %}</h2>
+
+        <section class="fp-bloc" aria-labelledby="t-offres-st">
+          <h2 id="t-offres-st">{% if st.offres %}Ses offres{% else %}Pas d'offre en ce moment{% endif %}</h2>
           {% if st.offres %}
-          <ul class="fiche-offres">
-          {% for o in st.offres %}
-            <li><span class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></span>
-              <span><b>{% if st.exemple %}{{ o.intitule }}{% else %}<a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a>{% endif %}</b>
-              <small>{{ o.ville }} ({{ o.departement }}) · à partir du {{ o.debut | date_fr }} · {{ CONTRATS.get(o.contrat, o.contrat) }}</small></span></li>
+          <div class="fp-formules">
+          {% for o in st.offres[:6] %}
+            <article class="fp-formule{% if loop.first and st.offres | length > 1 %} fp-formule-une{% endif %}">
+              {% if loop.first and st.offres | length > 1 %}<span class="fp-formule-badge">La plus proche</span>{% endif %}
+              <p class="fp-formule-sur">{{ CONTRATS.get(o.contrat, o.contrat) }}</p>
+              <p class="fp-formule-date"><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b> {{ o.debut.year }}</p>
+              <h3>{{ o.intitule }}</h3>
+              <p class="fp-formule-lieu">{{ o.ville }} ({{ o.departement }})</p>
+              {% if st.exemple %}<span class="fp-formule-lien">Voir l'offre <span aria-hidden="true">→</span></span>{% else %}<a class="fp-formule-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir l'offre <span aria-hidden="true">→</span></a>{% endif %}
+            </article>
           {% endfor %}
-          </ul>
+          </div>
+          <p class="fp-note">Candidature directe auprès de la structure, sans frais ni intermédiaire.</p>
           {% else %}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, elle peut vous trouver et vous écrire.</p>{% endif %}
         </section>
-        {% if st.presentation %}<section class="fiche-bloc texte"><h2>Qui sommes-nous&nbsp;?</h2>{{ st.presentation | paragraphes | safe }}</section>{% endif %}
-        {% if st.projet %}<section class="fiche-bloc texte"><h2>Notre projet</h2>{{ st.projet | paragraphes | safe }}</section>{% endif %}
-        {% if st.avantages %}<section class="fiche-bloc texte"><h2>Ce que nous offrons à l'équipe</h2>{{ st.avantages | paragraphes | safe }}</section>{% endif %}
-        {% if st.publics or st.activites or st.lieux %}<section class="fiche-bloc">
-          {% if st.publics %}<h2>Les publics</h2><ul class="pastilles">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
-          {% if st.activites %}<h2>Les activités</h2><ul class="pastilles pastilles-douces">{% for a in st.activites %}<li>{{ a }}</li>{% endfor %}</ul>{% endif %}
-          {% if st.lieux %}<h2>Où</h2><p>{{ st.lieux }}</p>{% endif %}
-        </section>{% endif %}
-        <p class="petit">Les informations de cette fiche sont écrites par la structure, sous sa responsabilité. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
+
+        {% if st.presentation or st.projet %}
+        <section class="fp-bloc" aria-labelledby="t-pres">
+          <h2 id="t-pres">Présentation</h2>
+          <div class="fp-texte" data-replie>
+            {% if st.accroche %}<p class="fp-accroche">{{ st.accroche }}</p>{% endif %}
+            {% if st.presentation %}{{ st.presentation | paragraphes | safe }}{% endif %}
+            {% if st.projet %}<h3>Notre projet</h3>{{ st.projet | paragraphes | safe }}{% endif %}
+          </div>
+          <button type="button" class="fp-lire" hidden>Lire la suite</button>
+        </section>
+        {% endif %}
+
+        {% if st.avantages or st.activites or st.publics %}
+        <section class="fp-bloc" aria-labelledby="t-propose">
+          <h2 id="t-propose">Ce que la structure propose</h2>
+          {% if st.avantages %}<p class="fp-sous-titre">À l'équipe</p><ul class="fp-coches">{% for a in st.avantages.split("\n") if a.strip() %}<li>{{ a.strip().rstrip(".") }}</li>{% endfor %}</ul>{% endif %}
+          {% if st.publics %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
+          {% if st.activites %}<p class="fp-sous-titre">Les activités</p><ul class="fp-coches fp-coches-douces">{% for a in st.activites %}<li>{{ a | majuscule }}</li>{% endfor %}</ul>{% endif %}
+        </section>
+        {% endif %}
+
+        <section class="fp-bloc" aria-labelledby="t-ou">
+          <h2 id="t-ou">Où elle accueille</h2>
+          <ul class="fp-ou">
+            <li><b>{{ st.ville }}</b><span>{{ type_nom | lower }}</span></li>
+            <li><b>{{ nom_dep }}</b><span>département ({{ st.departement }})</span></li>
+          </ul>
+          {% if point %}<div class="fp-carte" data-fp-carte='{{ {"points": [[point[0], point[1], st.ville, 1]], "rayon": 0} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png" role="img" aria-label="Carte : {{ st.ville }}, {{ nom_dep }}"></div>{% endif %}
+          {% if st.lieux %}<p class="fp-lieux">{{ st.lieux }}</p>{% endif %}
+          <p class="fp-note">Fond de carte IGN (Géoplateforme).</p>
+        </section>
+
+        <p class="fp-liens">
+          <a class="fp-lien-bouton" href="{{ lien('/trouver-un-poste/structures/') }}">← Toutes les structures</a>
+          <a class="fp-lien-bouton" href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ st.departement }}">{{ m.icone("lieu") }}Les offres du {{ st.departement }}</a>
+        </p>
+        <p class="fp-bon"><b>Bon à savoir.</b> Les informations de cette page sont écrites par la structure, sous sa responsabilité. La candidature, le contrat et la rémunération se font directement entre vous et {{ st.nom }}, sans commission ni intermédiaire. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
       </div>
-      <aside class="fiche-contact">
-        <div class="fiche-contact-tete"><span class="fiche-avatar fiche-avatar-petit" aria-hidden="true">{{ initiales }}</span><span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }}</small></span></div>
-        <p class="fiche-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
-        <a class="bouton-r bouton-large" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
-        {% if st.site %}<a class="bouton-blanc bouton-large" href="{{ st.site }}" rel="noopener nofollow">Le site de la structure</a>{% endif %}
-        <p class="petit">Profil gratuit, jamais public : la structure le voit quand vous postulez.</p>
+
+      <aside class="fp-contact">
+        <div class="fp-contact-tete">{{ avatar("fp-avatar-petit") }}<span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }}</small></span></div>
+        <p class="fp-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
+        {% if st.offres %}<ul class="fp-contact-liste">{% for o in st.offres[:3] %}<li><span>{{ o.intitule }}</span><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b></li>{% endfor %}</ul>{% endif %}
+        <a class="fp-bouton-principal" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
+        {% if st.site %}<a class="fp-bouton-second" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
+        <p class="fp-contact-note">Profil gratuit, jamais public : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
       </aside>
     </div>
   </div>
 </div>
 {% if st.exemple %}
-<section class="bande bande-rouge">
-  <div class="cadre bande-rouge-cadre">
-    <p>Votre structure peut avoir la même fiche : nom, accroche, couleur, projet, publics, activités et offres, mis à jour par vous.</p>
-    <a class="bouton-blanc" href="{{ lien('/recruter/') }}">Recruter avec Fil Roug'Anim <span aria-hidden="true">→</span></a>
+<section class="bande bande-papier">
+  <div class="cadre">
+    <div class="tp-appel">
+      <div><h2>Votre structure, <em>avec la même page</em></h2><p>Photos, projet, publics, activités et offres, mis à jour par vous depuis votre espace.</p></div>
+      <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Créer le compte de ma structure <span aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 {% endif %}
 {% endblock %}
+{% block scripts %}{% if point %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script>{% endif %}<script src="{{ statique('js/fiche.js') }}" defer></script>{% endblock %}

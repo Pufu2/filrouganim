@@ -1,7 +1,7 @@
 # Les comptes (candidats et structures) avec Supabase
 
 Choix du 25/10/2026 : chacun crée son compte et publie lui-même son annonce ou son profil.
-Connexion par **lien magique** (un lien reçu par e-mail, pas de mot de passe).
+Connexion avec **Google**, avec un **e-mail et un mot de passe**, ou par **lien magique** (depuis la version 4).
 
 ## Ce qui est prévu
 
@@ -134,3 +134,35 @@ Restent à faire par Pufu2 : les points 4 et 5. Pour refermer : `comptes_ouverts
 - Compte supprimé après 2 ans sans connexion (fonction `purger_comptes_inactifs`, chaque mois).
 - Pas de photo, pas de date de naissance complète (une case « j'ai 16 ans ou plus »),
   pas de numéro de téléphone dans les profils ; pas de données de santé.
+
+## Version 4 (10/11/2026) : Google, mot de passe, CV, photos
+
+La création de compte se fait sur le site, comme sur jasonmarinho.com : on choisit son profil
+(animateur, directeur, structure), puis **« Continuer avec Google »** ou une adresse e-mail et un
+**mot de passe**. Le lien de connexion par e-mail reste possible (« Recevoir plutôt un lien »).
+Ensuite, le profil ou la fiche se remplit **étape par étape**, avec l'aperçu de la carte à droite.
+
+Nouveau dans la base (fin de `supabase/schema.sql`, « version 4 ») : la colonne `cv_nom` des
+profils, `logo` et `photos` des structures, et deux espaces de stockage :
+- `cv` (privé) : `<identifiant>/cv.pdf`, 2 Mo au plus, lisible par le candidat, par les structures
+  vérifiées (si le profil est visible) et par celles à qui il a postulé ;
+- `structures` (public) : logo et 5 photos au plus, en JPEG (réduits dans le navigateur).
+
+### Activer « Continuer avec Google » (Pufu2, 10 minutes)
+
+1. https://console.cloud.google.com, le projet déjà utilisé pour la Search Console.
+2. « API et services » → « Écran de consentement OAuth » : type **Externe**, nom
+   « Fil Roug'Anim », e-mail d'assistance, logo facultatif, domaine autorisé `filrouganim.fr`
+   (et `supabase.co`). Champs d'application : seulement `email`, `profile`, `openid`.
+   Puis « Publier l'application » (sinon seuls les comptes de test peuvent se connecter).
+3. « Identifiants » → « Créer des identifiants » → « ID client OAuth » → « Application Web » :
+   - Origines JavaScript autorisées : `https://filrouganim.fr`
+   - URI de redirection autorisés : `https://abjimkhwbuhsfdnhweyy.supabase.co/auth/v1/callback`
+4. Copier l'**ID client** et le **code secret** **directement** dans Supabase → Authentication →
+   Sign In / Providers → **Google** → activer, coller, enregistrer. (Ne jamais les envoyer par
+   message.)
+5. Supabase → Authentication → Emails → modèle « Reset Password » : objet
+   « Votre nouveau mot de passe Fil Roug'Anim », contenu = `supabase/emails/nouveau-mot-de-passe.html`.
+
+Tant que Google n'est pas activé, le bouton affiche « La connexion avec Google arrive bientôt » :
+l'e-mail et le mot de passe marchent déjà.

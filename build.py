@@ -253,6 +253,13 @@ class Site:
         self.specialites = {di: {sp["id"]: sp for sp in liste} for di, liste in self.donnees.get("specialites", {}).items()}
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
         self.geo = (self.donnees.get("geo-communes") or {}).get("communes") or {}
+        # centre de chaque département (moyenne de ses communes connues) : cartes des fiches, jamais une adresse
+        _somme = {}
+        for _cle, _g in self.geo.items():
+            if _g:
+                _t = _somme.setdefault(_cle.split("|")[0], [0.0, 0.0, 0])
+                _t[0] += _g[0]; _t[1] += _g[1]; _t[2] += 1
+        self.centres_dep = {d: [round(t[0] / t[2], 4), round(t[1] / t[2], 4)] for d, t in _somme.items()}
         self.sessions = self.charger_sessions()
         self.stats = self.calculer_stats()
         self.filtres = self.calculer_filtres()
@@ -266,7 +273,7 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
-        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
+        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
                                 PUBLICS=PUBLICS, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
@@ -406,11 +413,27 @@ class Site:
                 "publiee_le": en_date(l["cree_le"][:10]), "expire_le": en_date(l["expire_le"])})
         return offres
 
+    def point_structure(self, st):
+        """Où placer la structure sur la carte de sa fiche : sa ville si on la connaît, sinon le centre du département."""
+        return self.geo.get(f"{st['departement']}|{st['ville']}") or self.centres_dep.get(st["departement"])
+
+    def points_profil(self, p):
+        """Les départements d'un profil (le sien en premier), au centre du département : jamais une adresse."""
+        pts = []
+        for i, d in enumerate([p["departement"]] + [x for x in p.get("mobilite") or [] if x != "france"]):
+            c = self.centres_dep.get(d)
+            nom = self.departements[d]["nom"] if d in self.departements else d
+            if c:
+                pts.append([c[0], c[1], nom, 1 if i == 0 else 0])
+        return pts
+
     def structures_en_ligne(self):
         """Pages publiques des structures vérifiées (les règles d'accès ne montrent que celles-là)."""
         champs = "nom,type,ville,departement,site,presentation,fondatrice,slug,accroche,couleur,publics,activites,lieux,projet,avantages"
-        lignes = self.lire_supabase(f"structures?select={champs}&page_publique=is.true&slug=not.is.null&order=nom",
-                                    "pages des structures")
+        filtre = "&page_publique=is.true&slug=not.is.null&order=nom"
+        # le logo et les photos (version 4 du schéma) ; sans eux si la base n'a pas encore ces colonnes
+        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
+                  or self.lire_supabase(f"structures?select={champs}{filtre}", "pages des structures"))
         return [dict(l, exemple=False) for l in lignes if l.get("departement") in self.departements]
 
     def schema_offre(self, o):
@@ -842,7 +865,7 @@ class Site:
             url = f"/trouver-un-poste/structures/{st['slug']}/"
             self.ajouter(url, "structure.html", titre=f"{st['nom']} : {TYPES_STRUCTURE.get(st['type'], 'structure')} à {st['ville']}",
                          description=(st.get("accroche") or f"{st['nom']}, {TYPES_STRUCTURE.get(st['type'], 'structure d animation').lower()} à {st['ville']}") + " Ses offres de stages et de jobs d'animation.",
-                         structure=st, fil=[TP, STR, (st["nom"], url)])
+                         structure=st, point=self.point_structure(st), fil=[TP, STR, (st["nom"], url)])
         ex = self.donnees.get("exemples", {})
         self.ajouter("/trouver-un-poste/structures/", "structures.html", titre="Les structures d'animation qui recrutent",
                      description="Les centres de loisirs, organisateurs de séjours et associations d'animation inscrits et vérifiés : leur projet, leurs publics et leurs offres.",
@@ -853,13 +876,13 @@ class Site:
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
-                         indexer=False, structure=st, fil=[("Je recrute", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+                         indexer=False, structure=st, point=self.point_structure(st), fil=[("Je recrute", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
                       maj_le=en_date(ex["profil"].get("maj_le")))
             self.ajouter("/trouver-un-poste/exemple-de-profil/", "exemple-profil.html", titre="Exemple de profil de candidat",
                          description="À quoi ressemble un profil de candidat sur Fil Roug'Anim, et qui peut le voir : un exemple fictif.",
-                         h1="Un exemple de profil", indexer=False, profil=pr,
+                         h1="Un exemple de profil", indexer=False, profil=pr, points=self.points_profil(pr),
                          intro="Voici ce que voit une structure vérifiée quand elle consulte un profil. Ce profil est fictif.",
                          fil=[TP, ("Exemple de profil", "/trouver-un-poste/exemple-de-profil/")])
         # outils gratuits (calculs dans le navigateur)
