@@ -62,8 +62,8 @@ abonnement:
   centre_en_plus_fondateur: "19,75 €"
   paiement: https://buy.stripe.com/eVq28s8Yy40011rfJEe7m00
   # le lien fondateur se ferme tout seul après 10 paiements
-  paiement_fondateur: https://buy.stripe.com/fZu14ogr01RSbG5btoe7m01
-  liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMsmKIAmufAQXGGvVHNEuh]
+  paiement_fondateur: https://buy.stripe.com/dRmdRafmW6886lL7d8e7m02
+  liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMzrKIAmufAQXGhXgOnrPD]
   # espace des abonnés Stripe (factures, carte, nombre de centres, arrêt) : lien de connexion du portail client
   # (Stripe → Paramètres → Facturation → Portail client → « Lien de connexion »)
   portail: ""
