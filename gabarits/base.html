@@ -136,7 +136,7 @@
             <h3 class="ft-groupe-t">{{ nom }}</h3>
             <div class="ft-chips">{% for t, u in liens[:24] %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div>
             {% if liens | length > 24 %}<details class="ft-plus"><summary>Voir {{ liens | length - 24 }} autre{{ 's' if liens | length > 25 }} {{ nom[4:] | lower }}{{ 's' if liens | length > 25 and not nom.endswith('s') else '' }}</summary>
-              <div class="ft-chips">{% for t, u in liens[24:] %}<a href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</div></details>{% endif %}
+              <div class="ft-chips" data-ft-plus="{{ x.cle }}-{{ loop.index0 }}"></div></details>{% endif %}
           </div>
           {% endfor %}
           <a class="ft-see-all" href="{{ lien(x.tout[1]) }}">{{ x.tout[0] }} <span aria-hidden="true">→</span></a>
@@ -156,6 +156,8 @@
     </div>
   </div>
 </footer>
+<script>/* les listes « Voir N autres » du pied de page : chargées au clic (pied-liens.json), pour garder les pages légères */
+(function(){var r="{{ lien('/') }}",d=null;document.querySelectorAll(".ft-plus").forEach(function(x){x.addEventListener("toggle",function(){var c=x.querySelector("[data-ft-plus]");if(!x.open||!c||c.childElementCount)return;(d||(d=fetch(r+"pied-liens.json").then(function(y){return y.json()}))).then(function(j){(j[c.dataset.ftPlus]||[]).forEach(function(l){var a=document.createElement("a");a.href=r+l[1].replace(/^\//,"");a.textContent=l[0];c.appendChild(a)})})})})})();</script>
 <script>(function(){var t=document.querySelectorAll(".ft-tab");function ch(b){t.forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-selected",on?"true":"false");x.tabIndex=on?0:-1;document.getElementById(x.getAttribute("aria-controls")).classList.toggle("on",on)})}t.forEach(function(b,i){b.addEventListener("click",function(){ch(b)});b.addEventListener("keydown",function(e){var j=e.key==="ArrowRight"?i+1:e.key==="ArrowLeft"?i-1:null;if(j===null)return;e.preventDefault();var n=t[(j+t.length)%t.length];ch(n);n.focus()})})})();</script>
 {% endif %}
 {% if site.goatcounter and not apercu %}<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
