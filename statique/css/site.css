@@ -1602,3 +1602,7 @@ header.jm-entete .bouton-commencer:hover span { color: #fff; }
   .tp-filtres { height: 58px; padding: 0 16px; gap: 7px; }
 }
 .tp-champ { padding-right: 22px; }
+/* page des offres, dans le style de « Trouver un poste » */
+.of-compte { margin: 0 0 16px; font: 500 1.35rem/1.2 var(--titres); }
+.of-mascotte { width: 92px; height: auto; color: var(--fil); }
+.of-mascotte svg { width: 92px; height: auto; }

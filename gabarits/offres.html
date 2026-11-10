@@ -1,47 +1,139 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{% block tete_note %}<p class="note-main">les offres</p>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Stages pratiques BAFA, jobs d'été, postes à l'année : les offres publiées par les structures vérifiées. La candidature est toujours gratuite.</p>{% endblock %}
-{% block tete_plus %}
-<form class="carte-recherche" id="filtres-offres" role="search" aria-label="Filtrer les offres">
-  <div class="recherche-cases recherche-cases-offres">
-    <label class="case-r case-r-texte"><span class="case-titre">Où ?</span><select name="dep"><option value="">Partout</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select></label>
-    <label class="case-r case-r-texte"><span class="case-titre">Contrat</span><select name="contrat"><option value="">Tous</option>{% for c, l in CONTRATS.items() %}<option value="{{ c }}">{{ l }}</option>{% endfor %}</select></label>
-    <label class="case-r case-r-texte"><span class="case-titre">Poste</span><select name="poste"><option value="">Tous</option><option value="animateur">Animateur</option><option value="animateur-stagiaire">Stagiaire BAFA</option><option value="directeur-adjoint">Directeur adjoint</option><option value="directeur">Directeur</option><option value="surveillant-baignade">Surveillant de baignade</option><option value="coordinateur">Coordinateur</option></select></label>
-    <label class="case-r case-r-texte"><span class="case-titre">Quand ?</span><select name="mois"><option value="">Toutes les dates</option>{% for mo in page.mois %}<option value="{{ mo }}">{{ mois_nom(mo) | majuscule }}</option>{% endfor %}</select></label>
-  </div>
-</form>
-{% endblock %}
+{# Les offres, dans le même style que « Trouver un poste » (modèle : page annuaire de jasonmarinho.com) :
+   la barre « Où ? » + Filtres filtre la liste en direct, sans recharger la page. #}
+{% set p = EXEMPLES.profil %}
+{% block tete_note %}<p class="tp-sur">Les offres · candidature directe, sans frais</p>{% endblock %}
+{% block h1 %}Les offres <em>d'animation</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Stages pratiques BAFA, jobs d'été, postes à l'année : les offres publiées par les structures vérifiées. Vous leur écrivez directement, c'est toujours gratuit.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
-<section class="bande bande-papier">
+<div class="tp-recherche"><div class="cadre">
+  <form class="tp-barre" id="filtres-offres" role="search" aria-label="Filtrer les offres" onsubmit="return false">
+    <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="of-ou">Où cherchez-vous ?</label>
+      <input id="of-ou" type="search" placeholder="Où cherchez-vous un poste ? Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes>
+      <datalist id="of-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}</datalist>
+      <input type="hidden" name="dep" value=""><input type="hidden" name="poste" value=""><input type="hidden" name="contrat" value=""><input type="hidden" name="mois" value="">
+    </div>
+    <button class="tp-filtres" type="button" aria-haspopup="dialog" aria-controls="of-ff">{{ m.icone("reglages") }}Filtres <span class="pastille-n" data-of-nb hidden></span></button>
+  </form>
+  <div class="tp-voile" id="of-ff" hidden>
+    <div class="ff" role="dialog" aria-modal="true" aria-labelledby="of-ff-t">
+      <div class="ff-tete"><h2 id="of-ff-t">Filtres</h2><button class="ff-fermer" type="button" data-of-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="ff-corps">
+        <div class="ff-groupe"><h3>Le poste</h3><div class="ff-puces" data-of-champ="poste">{% for v, l in [("animateur-stagiaire", "Stage pratique BAFA"), ("animateur", "Animateur"), ("directeur-adjoint", "Directeur adjoint"), ("directeur", "Directeur"), ("surveillant-baignade", "Surveillant de baignade"), ("coordinateur", "Coordinateur")] %}<button class="ff-puce" type="button" data-v="{{ v }}" aria-pressed="false">{{ l }}</button>{% endfor %}</div></div>
+        <div class="ff-groupe"><h3>Le contrat</h3><div class="ff-puces" data-of-champ="contrat">{% for v, l in CONTRATS.items() %}<button class="ff-puce" type="button" data-v="{{ v }}" aria-pressed="false">{{ l }}</button>{% endfor %}</div></div>
+        {% if page.mois %}<div class="ff-groupe"><h3>Quand ?</h3><div class="ff-puces" data-of-champ="mois">{% for mo in page.mois %}<button class="ff-puce" type="button" data-v="{{ mo }}" aria-pressed="false">{{ mois_nom(mo) | majuscule }}</button>{% endfor %}</div></div>{% endif %}
+      </div>
+      <div class="ff-pied"><button class="lien-effacer" type="button" data-of-effacer>Tout effacer</button><button class="bouton-r" type="button" data-of-voir>Voir les offres</button></div>
+    </div>
+  </div>
+  <div class="tp-bande">
+    <p><b>Pas le temps de chercher ?</b> Créez votre profil : les structures de votre secteur le voient et vous écrivent directement, même sans offre publiée.</p>
+    <a class="tp-bande-bouton" href="{{ lien('/compte/') }}?inscription=1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer mon profil gratuit</a>
+  </div>
+</div></div>
+
+<section class="bande bande-papier tp-cartes-bande">
   <div class="cadre">
-    <p class="compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
-    {% if offres %}
-    <div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>
-    {% endif %}
-    <div class="aucune aucune-mascotte" id="aucune-offre"{% if offres %} hidden{% endif %}>{{ m.mascotte("mascotte-vide") }}<p>Aucune offre ne correspond pour l'instant. Avec un <a href="{{ lien('/trouver-un-poste/') }}#inscription">profil gratuit</a>, les structures de votre secteur peuvent vous trouver même sans offre publiée.</p></div>
+    <p class="compte of-compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
+    {% if offres %}<div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
+    <ul class="tp-cartes" id="aucune-offre"{% if offres %} hidden{% endif %}>
+      <li class="tp-carte tp-carte-vide">
+        <div class="tp-carte-vide-corps">
+          {{ m.mascotte("of-mascotte") }}
+          <h2>Pas encore d'offre ici</h2>
+          <p>Les centres de loisirs et les organisateurs de séjours publient leurs offres eux-mêmes. Essayez un département voisin, ou laissez-les venir à vous.</p>
+        </div>
+      </li>
+      {% if p %}
+      <li class="tp-carte tp-carte-exemple">
+        <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
+          <span class="tp-avatar">{{ p.prenom[:1] }}</span>
+          <span class="tp-badge-exemple">Exemple de profil</span>
+        </a>
+        <div class="tp-carte-corps">
+          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a> <span class="tp-fictif">profil fictif</span></h2>
+          <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
+          <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}</p>
+        </div>
+        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
+      </li>
+      {% endif %}
+      <li class="tp-carte tp-carte-vide">
+        <div class="tp-carte-vide-corps">
+          <span class="tp-avatar tp-avatar-vide" aria-hidden="true">+</span>
+          <h2>Votre profil ici</h2>
+          <p>En deux minutes, gratuit. Visible seulement par les structures vérifiées : jamais public, jamais sur Google.</p>
+          <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+    </ul>
+    <p class="tp-comment"><b>Comment ça marche.</b> Chaque offre est publiée par une structure vérifiée, sous sa responsabilité. Vous candidatez directement auprès d'elle : aucun frais, aucun intermédiaire. <a href="{{ lien('/trouver-un-poste/') }}">Préparer sa recherche</a></p>
   </div>
 </section>
 {% endblock %}
 {% block scripts %}<script>
 (function () {
-  var f = document.getElementById("filtres-offres"), cartes = document.querySelectorAll("#liste-offres-publiques .offre");
-  if (!f) return;
-  var p = new URLSearchParams(location.search);
-  ["dep", "contrat", "poste", "mois"].forEach(function (k) { if (p.get(k)) f[k].value = p.get(k); });
+  var f = document.getElementById("filtres-offres"), voile = document.getElementById("of-ff");
+  if (!f || !voile) return;
+  var ou = document.getElementById("of-ou"), nb = f.querySelector("[data-of-nb]");
+  var cartes = document.querySelectorAll("#liste-offres-publiques .offre");
+  var opts = Array.prototype.slice.call(document.querySelectorAll("#of-lieux option"));
+  var CHAMPS = ["poste", "contrat", "mois"];
+  if (window.matchMedia("(max-width: 560px)").matches) ou.placeholder = "Où cherchez-vous ?";
+  function sans(t) { return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+  // « Lyon (69) », « 93 », « Gironde » : le département
+  function depDe(v) {
+    v = sans(v);
+    if (!v) return "";
+    var m = v.match(/\(?(\d{2}|2a|2b|\d{3})\)?\s*$/);
+    if (m) return m[1].toUpperCase();
+    var o = opts.filter(function (x) { return sans(x.value).indexOf(v) === 0; })[0];
+    return o ? o.dataset.dep : "";
+  }
+  function marquer() {
+    voile.querySelectorAll("[data-of-champ]").forEach(function (g) {
+      var val = f.elements[g.dataset.ofChamp].value;
+      g.querySelectorAll(".ff-puce").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.v === val ? "true" : "false"); });
+    });
+    var n = CHAMPS.filter(function (k) { return f.elements[k].value; }).length;
+    nb.textContent = n; nb.hidden = !n;
+  }
   function filtrer() {
+    f.elements.dep.value = depDe(ou.value);
     var n = 0, q = new URLSearchParams();
-    ["dep", "contrat", "poste", "mois"].forEach(function (k) { if (f[k].value) q.set(k, f[k].value); });
+    ["dep"].concat(CHAMPS).forEach(function (k) { if (f.elements[k].value) q.set(k, f.elements[k].value); });
     Array.prototype.forEach.call(cartes, function (c) {
-      var ok = (!f.dep.value || c.dataset.dep === f.dep.value) && (!f.contrat.value || c.dataset.contrat === f.contrat.value) &&
-               (!f.poste.value || c.dataset.poste === f.poste.value) && (!f.mois.value || c.dataset.mois === f.mois.value);
+      var ok = (!f.elements.dep.value || c.dataset.dep === f.elements.dep.value) && (!f.elements.contrat.value || c.dataset.contrat === f.elements.contrat.value) &&
+               (!f.elements.poste.value || c.dataset.poste === f.elements.poste.value) && (!f.elements.mois.value || c.dataset.mois === f.elements.mois.value);
       c.hidden = !ok; if (ok) n++;
     });
-    document.getElementById("compte-offres").textContent = n + " offre" + (n > 1 ? "s" : "");
+    document.getElementById("compte-offres").textContent = n + " offre" + (n > 1 ? "s" : "") + (f.elements.dep.value && ou.value ? " · " + ou.value : "");
     document.getElementById("aucune-offre").hidden = n > 0;
     history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
+    marquer();
   }
-  f.addEventListener("change", filtrer);
+  // les choix reçus dans l'adresse (depuis « Trouver un poste » ou l'accueil)
+  var p = new URLSearchParams(location.search);
+  CHAMPS.forEach(function (k) { if (p.get(k)) f.elements[k].value = p.get(k); });
+  if (p.get("dep")) { var o = opts.filter(function (x) { return x.dataset.dep === p.get("dep"); })[0]; ou.value = o ? o.value : p.get("dep"); }
+  ou.addEventListener("change", filtrer);
+  ou.addEventListener("input", function () { if (!ou.value.trim()) filtrer(); });
+  ou.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); filtrer(); } });
+  voile.querySelectorAll("[data-of-champ]").forEach(function (g) {
+    var champ = f.elements[g.dataset.ofChamp];
+    g.querySelectorAll(".ff-puce").forEach(function (b) {
+      b.addEventListener("click", function () { champ.value = champ.value === b.dataset.v ? "" : b.dataset.v; filtrer(); });
+    });
+  });
+  function montrer(oui) { voile.hidden = !oui; document.documentElement.classList.toggle("ff-ouverte", oui); if (oui) voile.querySelector("[data-of-fermer]").focus(); }
+  f.querySelector(".tp-filtres").addEventListener("click", function () { montrer(true); });
+  voile.querySelector("[data-of-fermer]").addEventListener("click", function () { montrer(false); });
+  voile.querySelector("[data-of-voir]").addEventListener("click", function () { montrer(false); });
+  voile.addEventListener("click", function (e) { if (e.target === voile) montrer(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !voile.hidden) montrer(false); });
+  voile.querySelector("[data-of-effacer]").addEventListener("click", function () { CHAMPS.forEach(function (k) { f.elements[k].value = ""; }); filtrer(); });
   filtrer();
 })();
 </script>{% endblock %}
