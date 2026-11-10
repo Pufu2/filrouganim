@@ -28,19 +28,19 @@
   <a class="station station-lien" href="{{ lien('/se-former/') }}">
     <span class="station-noeud" aria-hidden="true">1</span>
     <span class="station-carte">
-      <span class="note-main">se former</span>
-      <span class="station-titre">Trouver sa formation</span>
+      <span class="note-main">trouver sa formation</span>
+      <span class="station-titre">Se former</span>
       <span class="station-texte">BAFA, BAFD, PSC1, BPJEPS, DEJEPS : les sessions avec leurs dates et leurs prix, et les guides pour s'y retrouver.</span>
       <span class="station-chiffre"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes</span>
-      <span class="station-aller">Se former <span aria-hidden="true">→</span></span>
+      <span class="station-aller">Voir les sessions <span aria-hidden="true">→</span></span>
     </span>
   </a>
 
   <a class="station station-droite station-lien" href="{{ lien('/trouver-un-poste/') }}">
     <span class="station-noeud" aria-hidden="true">2</span>
     <span class="station-carte">
-      <span class="note-main">animateurs &amp; directeurs</span>
-      <span class="station-titre">Trouver un stage ou un job</span>
+      <span class="note-main">trouver un stage ou un job</span>
+      <span class="station-titre">Animateurs &amp; directeurs</span>
       <span class="station-texte">Stage pratique BAFA, job d'été, poste à l'année, direction : les offres, et un profil gratuit que les structures consultent.</span>
       <span class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</span>
       <span class="station-aller">Voir les offres <span aria-hidden="true">→</span></span>
@@ -50,8 +50,8 @@
   <a class="station station-lien station-lien-rouge" href="{{ lien('/recruter/') }}">
     <span class="station-noeud station-noeud-plein" aria-hidden="true">3</span>
     <span class="station-carte station-carte-rouge">
-      <span class="note-main">structures</span>
-      <span class="station-titre">Recruter et se faire connaître</span>
+      <span class="note-main">recruter et se faire connaître</span>
+      <span class="station-titre">Structures</span>
       <span class="station-texte">Une page pour votre structure, vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs et directeurs de votre secteur.</span>
       <span class="station-chiffre">{% if restantes > 0 %}<b>Offre fondateurs</b> : {{ site.abonnement.prix_fondateur }} par an à vie · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% else %}<b>{{ site.abonnement.prix }}</b> par an, sans commission{% endif %}</span>
       <span class="station-aller">Voir l'espace structures <span aria-hidden="true">→</span></span>
