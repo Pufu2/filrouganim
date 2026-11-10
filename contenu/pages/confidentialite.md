@@ -40,6 +40,8 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 
 **Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les CV, logos et photos sont rangés dans le stockage de Supabase, au même endroit. Les e-mails de connexion (confirmation de l'adresse, lien de connexion, nouveau mot de passe) sont envoyés par **Brevo** (Sendinblue SAS, France), qui reçoit seulement votre adresse et le contenu de l'e-mail.
 
+**Le paiement des structures** : l'abonnement est réglé par carte sur la page sécurisée de **Stripe** (Stripe Payments Europe, Irlande), qui traite les données de paiement ; Fil Roug'Anim ne voit jamais les numéros de carte. Nous gardons la date de fin de l'abonnement, le nombre de centres payés, et les factures (10 ans, comme la loi le demande).
+
 **Les alertes du lundi** (si vous les demandez dans votre profil) : chaque lundi, un e-mail avec les nouvelles offres de votre secteur. Il est envoyé par **Brevo** (Sendinblue SAS, France), notre sous-traitant pour l'envoi d'e-mails, qui reçoit seulement votre prénom, votre adresse et le contenu de l'e-mail. Chaque e-mail contient un lien pour arrêter, en un clic.
 
 **Combien de temps** : tant que le compte existe. Un compte sans connexion depuis 2 ans est supprimé automatiquement, avec toutes ses données. Une candidature disparaît quand le candidat la retire ou quand l'offre est supprimée.

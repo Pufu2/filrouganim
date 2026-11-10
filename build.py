@@ -389,7 +389,8 @@ class Site:
         champs = ("id,intitule,poste,contrat,ville,departement,debut,fin,public,remuneration_montant,"
                   "remuneration_unite,loge,diplomes,texte,candidater,expire_le,cree_le,nb_postes,type_accueil,age_min,age_max,"
                   "structures(nom,type,site,slug,fondatrice,page_publique)")
-        lignes = self.lire_supabase(f"offres?select={champs}&order=debut", "offres des comptes")
+        lignes = self.lire_supabase(f"offres?select={champs},centre_id&order=debut", "centres des offres") \
+            or self.lire_supabase(f"offres?select={champs}&order=debut", "offres des comptes")
         if lignes == [] and self.config.get("supabase"):
             # base pas encore en version 3 : lecture avec les colonnes de la version 1
             ancien = champs.split(",nb_postes")[0] + ",structures(nom,type,site)"
@@ -398,7 +399,7 @@ class Site:
         for l in lignes:
             st = l.get("structures") or {}
             offres.append({
-                "id": str(l["id"]), "intitule": l["intitule"], "poste": l["poste"], "contrat": l["contrat"],
+                "id": str(l["id"]), "intitule": l["intitule"], "poste": l["poste"], "contrat": l["contrat"], "centre_id": l.get("centre_id"),
                 "structure": {"nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site"),
                               "fondatrice": st.get("fondatrice"),
                               "slug": st.get("slug") if st.get("page_publique") else None},
@@ -429,7 +430,7 @@ class Site:
 
     def structures_en_ligne(self):
         """Pages publiques des structures vérifiées (les règles d'accès ne montrent que celles-là)."""
-        champs = "nom,type,ville,departement,site,presentation,fondatrice,slug,accroche,couleur,publics,activites,lieux,projet,avantages"
+        champs = "id,nom,type,ville,departement,site,presentation,fondatrice,slug,accroche,couleur,publics,activites,lieux,projet,avantages"
         filtre = "&page_publique=is.true&slug=not.is.null&order=nom"
         # le logo et les photos (version 4 du schéma) ; sans eux si la base n'a pas encore ces colonnes
         lignes = (self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
@@ -860,12 +861,31 @@ class Site:
         TP = ("Animateurs & directeurs", "/trouver-un-poste/")
         STR = ("Les structures", "/trouver-un-poste/structures/")
         structures = self.structures_en_ligne()
+        # les places fondatrices qui restent : comptées dans la base (structures qui ont payé au tarif fondateur)
+        places = self.lire_supabase("rpc/places_fondatrices", "places fondatrices")
+        if isinstance(places, int):
+            self.config["fondateurs"]["reservees"] = self.config["fondateurs"]["places"] - places
+        # les centres en ligne (version 5) : une page chacun, rattachée à celle de la structure
+        champs_c = "id,structure_id,nom,type,ville,departement,slug,accroche,presentation,publics,activites,photos"
+        centres = self.lire_supabase(f"centres?select={champs_c}&order=cree_le", "centres des structures") if structures else []
         for st in structures:
             st["offres"] = [o for o in self.offres if o["structure"].get("slug") == st["slug"]]
+            st["centres"] = [c for c in centres if c.get("structure_id") == st.get("id") and c.get("departement") in self.departements]
             url = f"/trouver-un-poste/structures/{st['slug']}/"
+            for c in st["centres"]:
+                c["url"] = f"{url}{c['slug']}/"
+                c["offres"] = [o for o in st["offres"] if o.get("centre_id") == c["id"]]
             self.ajouter(url, "structure.html", titre=f"{st['nom']} : {TYPES_STRUCTURE.get(st['type'], 'structure')} à {st['ville']}",
                          description=(st.get("accroche") or f"{st['nom']}, {TYPES_STRUCTURE.get(st['type'], 'structure d animation').lower()} à {st['ville']}") + " Ses offres de stages et de jobs d'animation.",
                          structure=st, point=self.point_structure(st), fil=[TP, STR, (st["nom"], url)])
+            for c in st["centres"]:
+                # la page d'un centre : ses informations, et pour le reste (projet, couleur, logo, ce qu'on offre à l'équipe) celles de la structure
+                cst = dict(st, **{k: v for k, v in c.items() if v not in (None, [], "")}, offres=c["offres"], centres=[],
+                           parent={"nom": st["nom"], "url": url, "nb_centres": len(st["centres"])}, photos=c.get("photos") or st.get("photos") or [])
+                cst["type"] = c.get("type") or st["type"]
+                self.ajouter(c["url"], "structure.html", titre=f"{c['nom']} ({st['nom']}) : {TYPES_STRUCTURE.get(cst['type'], 'structure')} à {c['ville']}",
+                             description=(c.get("accroche") or f"{c['nom']}, un centre de {st['nom']} à {c['ville']}.") + " Ses offres de stages et de jobs d'animation.",
+                             structure=cst, point=self.point_structure(cst), fil=[TP, STR, (st["nom"], url), (c["nom"], c["url"])])
         ex = self.donnees.get("exemples", {})
         self.ajouter("/trouver-un-poste/structures/", "structures.html", titre="Les structures d'animation qui recrutent",
                      description="Les centres de loisirs, organisateurs de séjours et associations d'animation inscrits et vérifiés : leur projet, leurs publics et leurs offres.",

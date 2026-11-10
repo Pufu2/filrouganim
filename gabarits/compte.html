@@ -288,6 +288,21 @@
   {# 4. Structure #}
   <div class="compte-vue" id="v-structure" hidden>
     <p class="statut" id="statut-structure" hidden></p>
+    <div class="carte-compte abo" id="bloc-abonnement" hidden>
+      <div class="abo-texte">
+        <p class="abo-sur" id="abo-sur">Mettre votre structure en ligne</p>
+        <h2 id="abo-titre"></h2>
+        <p class="abo-detail" id="abo-detail"></p>
+      </div>
+      <div class="abo-actions" id="abo-actions">
+        <label class="abo-nb" id="abo-nb-champ"><span>Nombre de centres, le vôtre compris</span><input type="number" id="abo-nb" min="1" max="30" value="1"></label>
+        <p class="abo-total" id="abo-total"></p>
+        <a class="bouton-r" id="abo-payer" href="#">Payer par carte <span aria-hidden="true">→</span></a>
+        <a class="abo-facture" id="abo-facture" href="#">Payer sur facture (virement, mandat administratif, Chorus Pro)</a>
+        <a class="abo-cgv" href="{{ lien('/conditions-de-vente/') }}" target="_blank" rel="noopener">Conditions de vente</a>
+        <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail }}" target="_blank" rel="noopener" hidden>Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
     <div class="tuiles" id="tuiles-structure"></div>
 
     <div class="carte-compte" id="bloc-candidatures-recues" hidden>
@@ -404,6 +419,27 @@
       </aside>
     </div>
 
+    <div class="carte-compte" id="bloc-centres" hidden>
+      <div class="titre-et-bouton"><h2>Mes centres</h2><button type="button" class="bouton-r" id="nouveau-centre">Ajouter un centre</button></div>
+      <p class="petit">Vous gérez plusieurs accueils de loisirs, séjours ou accueils de jeunes ? Chaque centre a sa page et ses offres, et la page de votre structure les regroupe. Chaque centre en plus coûte moitié prix.</p>
+      <div id="liste-centres" class="liste-compte"></div>
+      <form id="f-centre" class="formulaire formulaire-offre" hidden novalidate>
+        <h3 id="titre-f-centre">Nouveau centre</h3>
+        <div class="champs-2">
+          <label class="champ"><span>Nom du centre</span><input name="nom" required maxlength="120" placeholder="Ex. : Accueil de loisirs Jean-Moulin"></label>
+          <label class="champ"><span>Type</span>{{ choix("type", TYPES, "Comme la structure") }}</label>
+          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
+          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
+          <label class="champ champ-large"><span>Accroche (une phrase)</span><input name="accroche" maxlength="140"></label>
+        </div>
+        <label class="champ"><span>Présentation du centre</span><textarea name="presentation" rows="4" maxlength="1500"></textarea></label>
+        <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
+        <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400"></label>
+        <p class="petit">Le projet, la couleur, le logo, les photos et ce que vous offrez à l'équipe sont repris de la page de votre structure.</p>
+        <div class="boutons"><button class="bouton-r" type="submit">Enregistrer le centre</button><button type="button" class="bouton-texte" id="annuler-centre">Annuler</button></div>
+      </form>
+    </div>
+
     <div class="carte-compte" id="bloc-offres" hidden>
       <div class="titre-et-bouton"><h2>Mes offres</h2><button type="button" class="bouton-r" id="nouvelle-offre">Nouvelle offre</button></div>
       <div id="liste-offres" class="liste-compte"></div>
@@ -411,6 +447,7 @@
         <h3 id="titre-f-offre">Nouvelle offre</h3>
         <div class="champs-2">
           <label class="champ champ-large"><span>Intitulé du poste</span><input name="intitule" required minlength="5" maxlength="120" placeholder="Ex. : Animateur·rice séjour d'été, stagiaire BAFA accepté"></label>
+          <label class="champ champ-large" id="champ-centre-offre" hidden><span>Le centre</span><select name="centre_id"><option value="">La structure (tous les centres)</option></select></label>
           <label class="champ"><span>Poste</span>{{ choix("poste", POSTES) }}</label>
           <label class="champ"><span>Contrat</span>{{ choix("contrat", CONTRATS) }}</label>
           <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
@@ -471,7 +508,7 @@
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
   "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
   "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list,
-  "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
+  "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "abonnement": site.abonnement, "email_site": site.email, "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
   "tuiles": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"} | tojson }}</script>
 {% endblock %}
 {% block scripts %}

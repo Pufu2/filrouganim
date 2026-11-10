@@ -53,7 +53,7 @@
       <span class="note-main">structures</span>
       <span class="station-titre">Recruter et se faire connaître</span>
       <span class="station-texte">Une page pour votre structure, vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs et directeurs de votre secteur.</span>
-      <span class="station-chiffre"><b>Offre fondateurs</b> : moitié prix à vie{% if restantes > 0 %} · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% endif %}</span>
+      <span class="station-chiffre">{% if restantes > 0 %}<b>Offre fondateurs</b> : {{ site.abonnement.prix_fondateur }} par an à vie · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% else %}<b>{{ site.abonnement.prix }}</b> par an, sans commission{% endif %}</span>
       <span class="station-aller">Voir l'espace structures <span aria-hidden="true">→</span></span>
     </span>
   </a>

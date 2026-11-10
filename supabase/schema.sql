@@ -4,6 +4,7 @@
 -- Version 2 du 25/10/2026 : candidatures, favoris, profils et offres plus complets, purge des comptes inactifs.
 -- Version 3 du 26/10/2026 : pages publiques des structures, alertes e-mail des candidats.
 -- Version 4 du 10/11/2026 : CV des candidats, logo et photos des structures (stockage), connexion Google et mot de passe.
+-- Version 5 du 10/11/2026 : abonnement des structures (Stripe), centres d'une même structure.
 --
 -- Qui voit quoi :
 --   - les offres publiées des structures vérifiées : tout le monde (le site, Google) ;
@@ -416,3 +417,108 @@ create policy "photos : les siennes, supprimer" on storage.objects for delete to
   using (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);
 create policy "photos : les siennes, lister" on storage.objects for select to authenticated
   using (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+-- ------------------------------------------------------------------ version 5 (10/11/2026)
+-- L'abonnement des structures (Stripe, compte de l'entreprise de Jeuphorie) et les centres.
+--   - Une structure est en ligne (page, offres, accès aux profils) quand elle est vérifiée ET que son abonnement court.
+--   - abonnement_fin, abonnement_id, centres_payes et fondatrice sont écrits par le relevé des paiements
+--     (outils/abonnements.py, GitHub Actions, rôle serveur) : la structure ne peut pas les modifier elle-même.
+--   - Une structure qui gère plusieurs centres : un compte, la page « réseau » de la structure, et une page par centre.
+--     centres_payes = nombre de centres payés, la structure comprise (1 = la structure seule).
+
+alter table public.structures add column if not exists abonnement_fin date;
+alter table public.structures add column if not exists abonnement_id text check (char_length(abonnement_id) <= 80);
+alter table public.structures add column if not exists centres_payes smallint not null default 1 check (centres_payes between 0 and 50);
+grant update (abonnement_fin, abonnement_id, centres_payes, fondatrice) on public.structures to service_role;
+
+-- vérifiée ET abonnement en cours
+create or replace function public.est_verifiee(sid uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.structures where id = sid and verifiee and abonnement_fin >= current_date) $$;
+create or replace function public.structure_verifiee() returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.structures where id = auth.uid() and verifiee and abonnement_fin >= current_date) $$;
+create or replace function public.offre_en_ligne(oid bigint) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.offres o join public.structures s on s.id = o.structure_id
+                 where o.id = oid and o.publiee and o.expire_le >= current_date and s.verifiee and s.abonnement_fin >= current_date) $$;
+drop policy if exists "structures vérifiées visibles" on public.structures;
+create policy "structures vérifiées visibles" on public.structures for select to anon, authenticated
+  using (verifiee and abonnement_fin >= current_date);
+
+-- les places fondatrices qui restent (affichées sur le site)
+create or replace function public.places_fondatrices() returns integer
+language sql stable security definer set search_path = '' as $$
+  select greatest(0, 10 - count(*))::integer from public.structures where fondatrice $$;
+revoke all on function public.places_fondatrices() from public;
+grant execute on function public.places_fondatrices() to anon, authenticated;
+
+-- les centres d'une structure
+create table if not exists public.centres (
+  id            uuid primary key default gen_random_uuid(),
+  structure_id  uuid not null default auth.uid() references public.structures (id) on delete cascade,
+  nom           text not null check (char_length(nom) between 2 and 120),
+  type          text check (type in ('accueil-de-loisirs', 'sejours', 'accueil-de-jeunes', 'periscolaire', 'association', 'collectivite', 'autre')),
+  ville         text not null check (char_length(ville) between 2 and 80),
+  departement   text not null check (departement ~ '^(0[1-9]|1[0-9]|2[1-9AB]|[3-8][0-9]|9[0-5])$'),
+  slug          text not null check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$' and char_length(slug) between 2 and 60),
+  accroche      text check (char_length(accroche) <= 140),
+  presentation  text check (char_length(presentation) <= 1500),
+  publics       text[] not null default '{}' check (publics <@ array['3-5', '6-11', '12-14', '15-17', 'handicap', 'familles']),
+  activites     text[] not null default '{}' check (cardinality(activites) <= 12 and char_length(array_to_string(activites, ',')) <= 400),
+  photos        text[] not null default '{}'
+                check (cardinality(photos) <= 5 and array_to_string(photos, ',') ~ '^([0-9a-f-]{36}/[a-z0-9-]{1,40}\.jpg(,|$))*$'),
+  cree_le       timestamptz not null default now(),
+  maj_le        timestamptz not null default now(),
+  unique (structure_id, slug)
+);
+create index if not exists centres_structure on public.centres (structure_id);
+alter table public.centres enable row level security;
+drop trigger if exists toucher on public.centres;
+create trigger toucher before update on public.centres for each row execute function public.toucher();
+
+-- un centre est en ligne si sa structure l'est, que sa page est publique, et qu'il fait partie des centres payés
+-- (la structure compte pour un : avec centres_payes = 3, les 2 premiers centres créés sont en ligne)
+create or replace function public.centre_en_ligne(cid uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.centres c join public.structures s on s.id = c.structure_id
+    where c.id = cid and s.verifiee and s.abonnement_fin >= current_date and s.page_publique
+      and (select count(*) from public.centres c2 where c2.structure_id = c.structure_id
+             and (c2.cree_le, c2.id) <= (c.cree_le, c.id)) < s.centres_payes) $$;
+revoke all on function public.centre_en_ligne(uuid) from public;
+grant execute on function public.centre_en_ligne(uuid) to anon, authenticated;
+
+revoke all on public.centres from anon, authenticated;
+grant select (id, structure_id, nom, type, ville, departement, slug, accroche, presentation, publics, activites, photos)
+  on public.centres to anon;
+grant select on public.centres to authenticated;
+grant insert (nom, type, ville, departement, slug, accroche, presentation, publics, activites, photos),
+      update (nom, type, ville, departement, slug, accroche, presentation, publics, activites, photos) on public.centres to authenticated;
+grant delete on public.centres to authenticated;
+grant select on public.centres to service_role;
+
+drop policy if exists "centres en ligne visibles" on public.centres;
+drop policy if exists "ses centres : lire"       on public.centres;
+drop policy if exists "ses centres : créer"      on public.centres;
+drop policy if exists "ses centres : modifier"   on public.centres;
+drop policy if exists "ses centres : supprimer"  on public.centres;
+create policy "centres en ligne visibles" on public.centres for select to anon, authenticated using (public.centre_en_ligne(id));
+create policy "ses centres : lire"      on public.centres for select to authenticated using (structure_id = (select auth.uid()));
+create policy "ses centres : créer"     on public.centres for insert to authenticated with check (structure_id = (select auth.uid()));
+create policy "ses centres : modifier"  on public.centres for update to authenticated
+  using (structure_id = (select auth.uid())) with check (structure_id = (select auth.uid()));
+create policy "ses centres : supprimer" on public.centres for delete to authenticated using (structure_id = (select auth.uid()));
+
+-- une offre peut être rattachée à l'un des centres de la structure
+alter table public.offres add column if not exists centre_id uuid references public.centres (id) on delete set null;
+grant insert (centre_id), update (centre_id) on public.offres to authenticated;
+drop policy if exists "ses offres : créer"    on public.offres;
+drop policy if exists "ses offres : modifier" on public.offres;
+create policy "ses offres : créer" on public.offres for insert to authenticated
+  with check (structure_id = (select auth.uid())
+              and (centre_id is null or exists (select 1 from public.centres c where c.id = centre_id and c.structure_id = (select auth.uid()))));
+create policy "ses offres : modifier" on public.offres for update to authenticated
+  using (structure_id = (select auth.uid()))
+  with check (structure_id = (select auth.uid())
+              and (centre_id is null or exists (select 1 from public.centres c where c.id = centre_id and c.structure_id = (select auth.uid()))));

@@ -29,10 +29,16 @@ jeuphorie:
 
 # Informations légales (mentions légales). Une seule micro-entreprise pour tous les sites.
 editeur:
-  nom: "[[Prénom NOM]]"
-  statut: "[[Entrepreneur individuel (EI), micro-entreprise : après la déclaration]]"
-  adresse: "[[Adresse postale ou domiciliation]]"
-  siren: "[[Numéro SIREN : après la déclaration]]"
+  nom: "Rafael Marinho"
+  statut: "Entrepreneur individuel (EI), micro-entreprise, noms commerciaux Jeuphorie et Fil Roug'Anim"
+  adresse: "62 rue Vasco de Gama, 75015 Paris"
+  siren: "843 506 015"
+  tva: "TVA non applicable, article 293 B du CGI"
+editeur_ok: true
+
+mediateur:
+  nom: "CM2C (Centre de la Médiation de la Consommation de Conciliateurs de Justice)"
+  site: "https://www.cm2c.net/declarer-un-litige.php"
 
 hebergeur:
   nom: GitHub, Inc.
@@ -40,11 +46,25 @@ hebergeur:
   telephone: "+1 877 448 4820"
   site: https://github.com
 
-# Offre fondateurs (étape 2) : les premières structures paieront moitié prix, à vie, tant que le service existe.
-# « places » : le nombre total (à décider par Pufu2) ; « reservees » : à augmenter à chaque structure inscrite.
+# Offre fondateurs : les 10 premières structures paient moitié prix, à vie, tant que leur abonnement court.
+# « reservees » est recalculé à chaque fabrication (structures fondatrices dans la base, fonction places_fondatrices).
 fondateurs:
   places: 10
   reservees: 0
+
+# Abonnement des structures : Stripe, compte de l'entreprise de Jeuphorie (même micro-entreprise).
+# Un seul tarif dégressif par formule : la quantité payée est le nombre de centres (la structure comprise).
+# Les paiements sont relevés par outils/abonnements.py (GitHub Actions, toutes les 15 minutes).
+abonnement:
+  prix: "79 €"
+  prix_fondateur: "39,50 €"
+  centre_en_plus: "39,50 €"
+  centre_en_plus_fondateur: "19,75 €"
+  paiement: https://buy.stripe.com/14A28rb4pdjFaPC0NVbMQ0z
+  paiement_fondateur: https://buy.stripe.com/6oU5kD0pL3J5bTGaovbMQ0A
+  liens_stripe: [plink_1UaHzLFdbcbZnFAtKMJtErn1, plink_1UaHzPFdbcbZnFAtpbM7JWwX]
+  # espace des abonnés Stripe (factures, carte, arrêt) : le même que Jeuphorie, c'est le même compte
+  portail: https://billing.stripe.com/p/login/4gMcN55K57Zlf5SgMTbMQ00
 
 # Comptes des candidats et des structures (Supabase, projet « filrouganim », région Paris).
 # L'URL et la clé « publishable » sont faites pour être publiques : la sécurité vient des règles
