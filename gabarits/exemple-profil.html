@@ -1,63 +1,111 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Fiche d'un profil de candidat (exemple fictif) : ce que voit une structure vérifiée. #}
+{# Fiche d'un profil d'animateur ou de directeur (exemple fictif) : ce que voit une structure vérifiée.
+   Même mise en page que les fiches des structures ; les vrais profils sont affichés par statique/js/compte.js (mêmes classes). #}
 {% set p = page.profil %}
 {% set nom_dep = departements | selectattr("code", "equalto", p.departement) | map(attribute="nom") | first %}
+{% set deps = departements | map(attribute="code") | list %}
+{% set noms = departements | map(attribute="nom") | list %}
+{% set RECH_DETAIL = {"stage-pratique": "Les 14 jours de stage pratique du BAFA, dans un accueil déclaré.", "ete": "En séjour ou en centre de loisirs, juillet et août.",
+   "petites-vacances": "Toussaint, Noël, hiver, printemps.", "mercredis": "Les mercredis, hors vacances scolaires.", "periscolaire": "Matins, midis et soirs des jours d'école.",
+   "annee": "Un poste toute l'année.", "direction": "Direction ou direction adjointe.", "alternance": "BPJEPS ou DEJEPS en alternance."} %}
 {% block tete %}{% endblock %}
 {% block contenu %}
-<div class="fiche theme-sauge">
+<div class="fp theme-sauge">
   <div class="cadre">
-    <nav class="fil-ariane fil-clair" aria-label="Fil d'Ariane">
+    <nav class="fil-ariane fp-ariane" aria-label="Fil d'Ariane">
       <a href="{{ lien('/') }}">Accueil</a>
       {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
     </nav>
-    <p class="bandeau-exemple bandeau-exemple-clair">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui vous avez postulé.</p>
-    <div class="fiche-banniere" aria-hidden="true"><span>{{ p.poste_recherche }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
-    <div class="fiche-identite">
-      <span class="fiche-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
+    <p class="fp-exemple">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui vous avez postulé.</p>
+    <div class="fp-banniere" aria-hidden="true"><span>{{ p.poste_recherche }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
+    <div class="fp-identite">
+      <span class="fp-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
       <div>
         <h1>{{ p.prenom }}</h1>
-        <p class="fiche-sous">{{ p.poste_recherche }} · {{ p.ville }}</p>
-        <ul class="fiche-badges">
+        <p class="fp-sous">{{ p.poste_recherche }} · {{ p.ville }}</p>
+        <ul class="fp-badges">
           {% for d in p.diplomes %}<li>{{ m.icone("diplome") }}{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}
           {% if p.permis_b %}<li>{{ m.icone("etape") }}Permis B</li>{% endif %}
+          {% if p.cv_nom %}<li>{{ m.icone("etape") }}CV joint</li>{% endif %}
         </ul>
       </div>
     </div>
-    <div class="fiche-grille">
-      <div class="fiche-principal">
-        <ul class="fiche-chiffres">
+    <div class="fp-grille">
+      <div class="fp-principal">
+        <ul class="fp-chiffres">
           <li><b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b><span>disponible jusqu'au {{ p.dispo_fin | date_fr }}</span></li>
-          <li><b>{{ p.departement }}</b><span>{{ nom_dep }}, et aussi Paris, Seine-et-Marne, partout en France</span></li>
-          <li><b>{{ p.experiences | length }}</b><span>expérience{{ 's' if p.experiences | length > 1 }} : {% for r in p.experiences %}{{ EXPERIENCES.get(r, r) | lower }}{{ ", " if not loop.last }}{% endfor %}</span></li>
+          <li><b>{{ p.mobilite | length + 1 }}</b><span>zone{{ 's' if p.mobilite }} où travailler</span></li>
+          <li><b>{{ p.experiences | length }}</b><span>type{{ 's' if p.experiences | length > 1 }} d'expérience</span></li>
         </ul>
-        <section class="fiche-bloc texte"><h2>Présentation</h2><p>{{ p.presentation }}</p></section>
-        <section class="fiche-bloc">
-          <h2>Ce que {{ p.prenom }} cherche</h2>
-          <ul class="pastilles">{% for r in p.recherche %}<li>{{ RECHERCHE.get(r, r) }}</li>{% endfor %}</ul>
-          <p>{{ p.disponibilites }}</p>
-          <h2>Ses talents</h2>
-          <ul class="pastilles pastilles-douces">{% for a in p.activites %}<li>{{ a }}</li>{% endfor %}</ul>
+
+        <section class="fp-bloc" aria-labelledby="t-cherche">
+          <h2 id="t-cherche">Ce que {{ p.prenom }} cherche</h2>
+          <div class="fp-formules">
+            {% for r in p.recherche %}
+            <article class="fp-formule{% if loop.first %} fp-formule-une{% endif %}">
+              {% if loop.first %}<span class="fp-formule-badge">En priorité</span>{% endif %}
+              <h3>{{ RECHERCHE.get(r, r) }}</h3>
+              <p class="fp-formule-lieu">{{ RECH_DETAIL.get(r, "") }}</p>
+            </article>
+            {% endfor %}
+          </div>
+          {% if p.disponibilites %}<p class="fp-note">Disponibilités : {{ p.disponibilites }}</p>{% endif %}
         </section>
-        <section class="fiche-bloc texte">
-          <h2>Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
-          <ul>
-            <li><b>Oui</b> : un prénom ou un pseudo, la ville si on veut, les diplômes, ce qu'on cherche, les dates, les expériences et les talents, une présentation, l'e-mail où les structures écrivent.</li>
-            <li><b>Non</b> : ni photo, ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone. Les structures choisissent sur ce que vous savez faire.</li>
-            <li>Vous pouvez <b>cacher</b> votre profil ou le <b>supprimer</b> à tout moment.</li>
+
+        <section class="fp-bloc" aria-labelledby="t-pres">
+          <h2 id="t-pres">Présentation</h2>
+          <div class="fp-texte" data-replie><p>{{ p.presentation }}</p></div>
+          <button type="button" class="fp-lire" hidden>Lire la suite</button>
+          {% if p.cv_nom %}<div class="fp-cv"><span class="fichier-icone" aria-hidden="true">PDF</span><span><b>Le CV de {{ p.prenom }}</b><small>{{ p.cv_nom }}</small></span><span class="fp-cv-bouton fp-inerte">Ouvrir le CV</span></div>{% endif %}
+        </section>
+
+        <section class="fp-bloc" aria-labelledby="t-sait">
+          <h2 id="t-sait">Ce que {{ p.prenom }} sait faire</h2>
+          <p class="fp-sous-titre">Ses expériences</p>
+          <ul class="fp-coches">{% for r in p.experiences %}<li>{{ EXPERIENCES.get(r, r) }}</li>{% endfor %}</ul>
+          <p class="fp-sous-titre">Ses activités et talents</p>
+          <ul class="fp-coches fp-coches-douces">{% for a in p.activites %}<li>{{ a | majuscule }}</li>{% endfor %}{% if p.permis_b %}<li>Permis B</li>{% endif %}</ul>
+        </section>
+
+        <section class="fp-bloc" aria-labelledby="t-ou">
+          <h2 id="t-ou">Où {{ p.prenom }} peut travailler</h2>
+          <ul class="fp-ou">
+            <li><b>{{ p.ville }}</b><span>{{ nom_dep }} ({{ p.departement }})</span></li>
+            {% for d in p.mobilite %}<li><b>{% if d == "france" %}Partout en France{% else %}{{ noms[deps.index(d)] if d in deps else d }}{% endif %}</b><span>{% if d == "france" %}pour les séjours{% else %}département ({{ d }}){% endif %}</span></li>{% endfor %}
+          </ul>
+          {% if page.points %}<div class="fp-carte" data-fp-carte='{{ {"points": page.points} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png" role="img" aria-label="Carte des départements où {{ p.prenom }} peut travailler"></div>{% endif %}
+          <p class="fp-note">Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme).</p>
+        </section>
+
+        <section class="fp-bloc fp-bloc-doux" aria-labelledby="t-contient">
+          <h2 id="t-contient">Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
+          <ul class="fp-coches">
+            <li>Un prénom ou un pseudo, la ville si on veut, les diplômes, les dates, les expériences et les talents, le CV si on veut</li>
+            <li>Ni photo, ni nom de famille, ni date de naissance, ni adresse, ni téléphone : les structures choisissent sur ce que vous savez faire</li>
+            <li>Vous pouvez cacher votre profil, retirer votre CV ou tout supprimer à tout moment</li>
           </ul>
         </section>
-        <p class="petit">Profil mis à jour le {{ p.maj_le | date_fr }}.</p>
+        <p class="fp-bon"><b>Bon à savoir.</b> Profil mis à jour le {{ p.maj_le | date_fr }}. Les structures écrivent directement aux candidats ; le contrat se signe entre eux, sans commission ni intermédiaire.</p>
       </div>
-      <aside class="fiche-contact">
-        <div class="fiche-contact-tete"><span class="fiche-avatar fiche-avatar-petit" aria-hidden="true">{{ p.prenom[0] | upper }}</span><span><b>{{ p.prenom }}</b><small>{{ p.ville }} · {{ nom_dep }}</small></span></div>
-        <p class="fiche-contact-chiffre">Disponible du <b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b> au <b>{{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></p>
-        <span class="bouton-r bouton-large bouton-inerte">{{ m.icone("cherche") }}Écrire à {{ p.prenom }}</span>
-        <span class="bouton-blanc bouton-large bouton-inerte">☆ Mettre en favori</span>
-        <p class="petit">Réservé aux structures vérifiées. Dans l'exemple, les boutons ne font rien.</p>
+      <aside class="fp-contact">
+        <div class="fp-contact-tete"><span class="fp-avatar fp-avatar-petit" aria-hidden="true">{{ p.prenom[0] | upper }}</span><span><b>{{ p.prenom }}</b><small>{{ p.ville }} · {{ nom_dep }}</small></span></div>
+        <p class="fp-contact-chiffre">Disponible du <b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b> au <b>{{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></p>
+        <ul class="fp-contact-liste">{% for d in p.diplomes %}<li><span>{{ DIPLOMES_PROFIL.get(d, d) }}</span><b>✓</b></li>{% endfor %}</ul>
+        <span class="fp-bouton-principal fp-inerte">{{ m.icone("cherche") }}Écrire à {{ p.prenom }}</span>
+        <span class="fp-bouton-second fp-inerte">☆ Mettre en favori</span>
+        <p class="fp-contact-note">Réservé aux structures vérifiées. Dans l'exemple, les boutons ne font rien.</p>
       </aside>
     </div>
-    <p class="fiche-appel"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a></p>
   </div>
 </div>
+<section class="bande bande-papier">
+  <div class="cadre">
+    <div class="tp-appel">
+      <div><h2>Votre profil, <em>en quelques minutes</em></h2><p>Gratuit, jamais public. Les structures vérifiées de votre secteur vous écrivent directement.</p></div>
+      <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
 {% endblock %}
+{% block scripts %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/fiche.js') }}" defer></script>{% endblock %}

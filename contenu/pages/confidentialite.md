@@ -26,19 +26,19 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 
 **Ce que nous gardons**
 
-- Pour tous : l'adresse e-mail de connexion et les dates de connexion.
-- **Candidats** : le profil que vous remplissez (prénom ou pseudo, département et ville si vous le souhaitez, diplômes, permis B, expériences, activités, ce que vous cherchez, disponibilités, présentation, e-mail de contact), la case « 16 ans ou plus », et vos candidatures (l'offre, votre message, la réponse de la structure). Nous ne demandons ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone, ni photo.
-- **Structures** : la fiche de la structure (nom, type, ville, e-mail de recrutement, site, SIRET, RNA ou n° de déclaration), ses offres et ses profils favoris.
+- Pour tous : l'adresse e-mail de connexion, les dates de connexion, et votre mot de passe sous forme chiffrée (nous ne pouvons pas le lire). Si vous vous connectez **avec Google**, Google nous transmet seulement votre adresse e-mail, votre nom et votre photo de profil Google ; nous n'utilisons que l'adresse (et le prénom pour pré-remplir votre profil, que vous pouvez changer), et Google ne voit rien de ce que vous faites sur le site.
+- **Candidats** : le profil que vous remplissez (prénom ou pseudo, département et ville si vous le souhaitez, diplômes, permis B, expériences, activités, ce que vous cherchez, disponibilités, présentation, e-mail de contact), votre **CV si vous choisissez d'en ajouter un** (un PDF), la case « 16 ans ou plus », et vos candidatures (l'offre, votre message, la réponse de la structure). Nous ne demandons ni nom de famille, ni date de naissance, ni sexe, ni adresse, ni téléphone, ni photo.
+- **Structures** : la fiche de la structure (nom, type, ville, e-mail de recrutement, site, SIRET, RNA ou n° de déclaration, présentation, logo et photos si vous en ajoutez), ses offres et ses profils favoris. Les photos sont réduites et réenregistrées dans votre navigateur avant l'envoi, ce qui retire les informations de l'appareil photo (dont le lieu de prise de vue).
 
 **Pourquoi** : mettre en relation les candidats et les structures d'animation, et vérifier que les structures sont réelles. Le traitement repose sur votre **consentement** (vous créez le compte et choisissez de montrer votre profil) ; vous pouvez le retirer à tout moment.
 
 **Qui voit quoi**
 
-- Votre profil de candidat n'est **jamais public** et n'apparaît pas sur Google. Seules les **structures inscrites et vérifiées** le voient, tant que vous le laissez visible. Quand vous postulez à une offre, la structure qui l'a publiée voit votre profil et votre message, même si votre profil est caché.
-- Les offres et le nom, la ville et le site des structures vérifiées sont publics.
+- Votre profil de candidat n'est **jamais public** et n'apparaît pas sur Google. Seules les **structures inscrites et vérifiées** le voient, tant que vous le laissez visible. Quand vous postulez à une offre, la structure qui l'a publiée voit votre profil, votre CV et votre message, même si votre profil est caché. Votre CV suit les mêmes règles que votre profil : il n'est jamais public, et chaque ouverture passe par un lien valable deux minutes.
+- Les offres et la page des structures vérifiées (nom, ville, site, présentation, logo et photos) sont publiques.
 - Les structures s'engagent à n'utiliser les profils que pour recruter, sans les copier ni les transmettre.
 
-**Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les e-mails de connexion (le lien pour se connecter) sont envoyés par **Brevo** (Sendinblue SAS, France), qui reçoit seulement votre adresse et le contenu de l'e-mail.
+**Où** : les comptes sont hébergés par **Supabase** (Supabase Inc.), notre sous-traitant, sur des serveurs situés **à Paris** (région AWS eu-west-3). Les CV, logos et photos sont rangés dans le stockage de Supabase, au même endroit. Les e-mails de connexion (confirmation de l'adresse, lien de connexion, nouveau mot de passe) sont envoyés par **Brevo** (Sendinblue SAS, France), qui reçoit seulement votre adresse et le contenu de l'e-mail.
 
 **Les alertes du lundi** (si vous les demandez dans votre profil) : chaque lundi, un e-mail avec les nouvelles offres de votre secteur. Il est envoyé par **Brevo** (Sendinblue SAS, France), notre sous-traitant pour l'envoi d'e-mails, qui reçoit seulement votre prénom, votre adresse et le contenu de l'e-mail. Chaque e-mail contient un lien pour arrêter, en un clic.
 
@@ -46,7 +46,7 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 
 **Dans votre navigateur** : une fois connecté, le site garde votre session dans le stockage local du navigateur, pour que vous restiez connecté. C'est indispensable au service et ce n'est pas un traceur publicitaire. « Se déconnecter » l'efface.
 
-**Vos droits** : depuis « Mon compte », vous pouvez **modifier**, **cacher** votre profil, ou **supprimer votre compte** et toutes ses données, à tout moment. Vous pouvez aussi nous écrire à {{ site.email }} pour accéder à vos données, les corriger ou les supprimer.
+**Vos droits** : depuis « Mon compte », vous pouvez **modifier**, **cacher** votre profil, retirer votre CV, ou **supprimer votre compte** et toutes ses données (CV, logo et photos compris), à tout moment. Vous pouvez aussi nous écrire à {{ site.email }} pour accéder à vos données, les corriger ou les supprimer.
 
 {% if offres %}## Les offres de stages et de jobs
 

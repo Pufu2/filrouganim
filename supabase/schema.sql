@@ -3,6 +3,7 @@
 -- Peut être relancé sans danger : les tables et les données sont gardées, les règles sont remplacées.
 -- Version 2 du 25/10/2026 : candidatures, favoris, profils et offres plus complets, purge des comptes inactifs.
 -- Version 3 du 26/10/2026 : pages publiques des structures, alertes e-mail des candidats.
+-- Version 4 du 10/11/2026 : CV des candidats, logo et photos des structures (stockage), connexion Google et mot de passe.
 --
 -- Qui voit quoi :
 --   - les offres publiées des structures vérifiées : tout le monde (le site, Google) ;
@@ -360,3 +361,58 @@ language sql security definer set search_path = '' as $$
   update public.profils set alertes = false where jeton_alertes = jeton returning true $$;
 revoke all on function public.desabonner_alertes(uuid) from public;
 grant execute on function public.desabonner_alertes(uuid) to anon, authenticated;
+
+-- ------------------------------------------------------------------ version 4 (10/11/2026)
+-- Le CV des candidats (facultatif), le logo et les photos des structures, rangés dans le stockage de Supabase :
+--   - « cv » (privé) : un PDF par candidat, dans son dossier ; lisible par lui, par les structures vérifiées
+--     (si le profil est visible) et par les structures à qui il a postulé ;
+--   - « structures » (public) : le logo et jusqu'à 5 photos, dans le dossier de la structure.
+-- Chacun n'écrit et ne supprime que dans son propre dossier (le nom du dossier est son identifiant).
+
+alter table public.profils add column if not exists cv_nom text check (char_length(cv_nom) <= 120);
+alter table public.structures add column if not exists logo text
+  check (logo ~ '^[0-9a-f-]{36}/[a-z0-9-]{1,40}\.jpg$');
+alter table public.structures add column if not exists photos text[] not null default '{}'
+  check (cardinality(photos) <= 5 and array_to_string(photos, ',') ~ '^([0-9a-f-]{36}/[a-z0-9-]{1,40}\.jpg(,|$))*$');
+
+grant select (cv_nom) on public.profils to authenticated;
+grant insert (cv_nom), update (cv_nom) on public.profils to authenticated;
+grant select (logo, photos) on public.structures to anon;
+grant insert (logo, photos), update (logo, photos) on public.structures to authenticated;
+grant select (cv_nom) on public.profils to service_role;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types) values
+  ('cv', 'cv', false, 2097152, array['application/pdf']),
+  ('structures', 'structures', true, 2097152, array['image/jpeg'])
+on conflict (id) do update set public = excluded.public, file_size_limit = excluded.file_size_limit,
+                               allowed_mime_types = excluded.allowed_mime_types;
+
+-- le CV de ce dossier peut-il être lu par la structure connectée ?
+create or replace function public.cv_lisible(dossier text) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.profils p
+                 where p.id::text = dossier
+                   and ((p.publie and public.structure_verifiee()) or public.a_postule_chez_moi(p.id))) $$;
+revoke all on function public.cv_lisible(text) from public, anon, authenticated;
+grant execute on function public.cv_lisible(text) to authenticated;
+
+drop policy if exists "cv : le sien"                    on storage.objects;
+drop policy if exists "cv : structures vérifiées"       on storage.objects;
+drop policy if exists "photos : les siennes, ajouter"   on storage.objects;
+drop policy if exists "photos : les siennes, modifier"  on storage.objects;
+drop policy if exists "photos : les siennes, supprimer" on storage.objects;
+drop policy if exists "photos : les siennes, lister"    on storage.objects;
+create policy "cv : le sien" on storage.objects for all to authenticated
+  using (bucket_id = 'cv' and (storage.foldername(name))[1] = (select auth.uid())::text and name = (select auth.uid())::text || '/cv.pdf')
+  with check (bucket_id = 'cv' and name = (select auth.uid())::text || '/cv.pdf');
+create policy "cv : structures vérifiées" on storage.objects for select to authenticated
+  using (bucket_id = 'cv' and public.cv_lisible((storage.foldername(name))[1]));
+create policy "photos : les siennes, ajouter" on storage.objects for insert to authenticated
+  with check (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "photos : les siennes, modifier" on storage.objects for update to authenticated
+  using (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text)
+  with check (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "photos : les siennes, supprimer" on storage.objects for delete to authenticated
+  using (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "photos : les siennes, lister" on storage.objects for select to authenticated
+  using (bucket_id = 'structures' and (storage.foldername(name))[1] = (select auth.uid())::text);

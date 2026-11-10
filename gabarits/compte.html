@@ -24,7 +24,7 @@
 {% macro cases(nom, options) %}<div class="cases">{% for v, l in options %}<label><input type="checkbox" name="{{ nom }}" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>{% endmacro %}
 {% block tete_note %}<p class="note-main">mon compte</p>{% endblock %}
 {% block h1 %}Mon compte{% endblock %}
-{% block tete_chapo %}<p class="chapo" id="chapo-compte">Un seul compte, sans mot de passe : vous recevez un lien de connexion par e-mail.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo" id="chapo-compte">Un seul compte, avec Google ou votre e-mail.</p>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
 <div class="cadre espace-compte" id="espace-compte" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
@@ -42,21 +42,58 @@
       <ul class="auth-plus">
         <li>Animateurs : un profil gratuit, jamais public, et les offres près de chez vous</li>
         <li>Structures : vos offres là où les jeunes cherchent leur BAFA</li>
-        <li>Sans mot de passe : un lien de connexion par e-mail</li>
+        <li>Connexion avec Google, ou votre e-mail et un mot de passe</li>
       </ul>
       <p class="auth-note">Données hébergées en Europe. Jamais revendues.</p>
     </aside>
 
     <div class="auth-corps">
+      {% set google %}<button type="button" class="bouton-google" data-google><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continuer avec Google</button>
+      <p class="auth-ou"><span>ou avec votre e-mail</span></p>{% endset %}
+      {% set oeil %}<button type="button" class="mdp-oeil" data-oeil aria-label="Afficher le mot de passe" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>{% endset %}
       <div class="compte-vue" id="v-connexion" hidden>
         <h2>Bon retour</h2>
         <p class="auth-sous">Connectez-vous à votre espace Fil Roug'Anim.</p>
+        {{ google }}
         <form id="f-connexion" class="formulaire">
           <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
-          <button class="bouton-r bouton-large" type="submit">Recevoir mon lien de connexion <span aria-hidden="true">→</span></button>
+          <div class="champ"><span class="champ-ligne"><label for="mdp-connexion">Mot de passe</label><button type="button" class="bouton-texte petit-lien" data-vers="v-mdp-oublie">Mot de passe oublié&nbsp;?</button></span>
+            <span class="mdp"><input id="mdp-connexion" type="password" name="mdp" required autocomplete="current-password" minlength="8" maxlength="72" placeholder="••••••••">{{ oeil }}</span></div>
+          <button class="bouton-r bouton-large" type="submit">Se connecter <span aria-hidden="true">→</span></button>
         </form>
         <p class="auth-lien">Pas encore de compte&nbsp;? <a href="{{ lien('/compte/') }}?inscription=1">Créer un compte gratuit</a></p>
-        <p class="petit auth-rgpd">Le lien est valable une heure. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+        <p class="auth-lien petit"><button type="button" class="bouton-texte" data-vers="v-lien">Recevoir plutôt un lien de connexion par e-mail</button></p>
+        <p class="petit auth-rgpd">{{ m.icone("diplome") }}Données hébergées en Europe · RGPD · aucun partage avec des tiers. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
+      </div>
+
+      <div class="compte-vue" id="v-lien" hidden>
+        <h2>Un lien par e-mail</h2>
+        <p class="auth-sous">Sans mot de passe : vous recevez un lien de connexion, valable une heure.</p>
+        <form id="f-lien" class="formulaire">
+          <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
+          <button class="bouton-r bouton-large" type="submit">Recevoir mon lien <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-lien"><button type="button" class="bouton-texte" data-vers="v-connexion">← Retour à la connexion</button></p>
+      </div>
+
+      <div class="compte-vue" id="v-mdp-oublie" hidden>
+        <h2>Mot de passe oublié</h2>
+        <p class="auth-sous">Indiquez votre adresse : vous recevez un lien pour en choisir un nouveau.</p>
+        <form id="f-mdp-oublie" class="formulaire">
+          <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
+          <button class="bouton-r bouton-large" type="submit">Recevoir le lien <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-lien"><button type="button" class="bouton-texte" data-vers="v-connexion">← Retour à la connexion</button></p>
+      </div>
+
+      <div class="compte-vue" id="v-nouveau-mdp" hidden>
+        <h2>Nouveau mot de passe</h2>
+        <p class="auth-sous">Choisissez-le d'au moins 8 caractères.</p>
+        <form id="f-nouveau-mdp" class="formulaire">
+          <div class="champ"><label for="mdp-nouveau">Nouveau mot de passe</label>
+            <span class="mdp"><input id="mdp-nouveau" type="password" name="mdp" required autocomplete="new-password" minlength="8" maxlength="72">{{ oeil }}</span></div>
+          <button class="bouton-r bouton-large" type="submit">Enregistrer et ouvrir mon espace <span aria-hidden="true">→</span></button>
+        </form>
       </div>
 
       <div class="compte-vue" id="v-inscription" hidden>
@@ -73,8 +110,8 @@
           <p class="auth-sous">Choisissez votre profil : l'espace s'adapte à vous.</p>
           <p class="auth-groupe">Je cherche un poste</p>
           <div class="profils-choix" role="radiogroup" aria-label="Votre profil">
-            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg></span><span class="pc-texte"><b>Animateur ou animatrice</b><small>BAFA, stagiaire BAFA, BPJEPS… : stage pratique, colo, centre de loisirs</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
-            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span><span class="pc-texte"><b>Directeur ou adjoint</b><small>BAFD, stagiaire BAFD, DEJEPS : direction de séjour ou d'accueil</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
+            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat" data-poste="animateur"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg></span><span class="pc-texte"><b>Animateur ou animatrice</b><small>BAFA, stagiaire BAFA, BPJEPS… : stage pratique, colo, centre de loisirs</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
+            <button type="button" class="profil-choix" role="radio" aria-checked="false" data-role="candidat" data-poste="directeur"><span class="pc-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span><span class="pc-texte"><b>Directeur ou adjoint</b><small>BAFD, stagiaire BAFD, DEJEPS : direction de séjour ou d'accueil</small></span><span class="pc-badge pc-gratuit">Gratuit</span><span class="pc-rond" aria-hidden="true"></span></button>
           </div>
           <p class="auth-groupe">Je recrute</p>
           <div class="profils-choix" role="radiogroup" aria-label="Votre profil">
@@ -83,19 +120,26 @@
           <button class="bouton-r bouton-large" type="button" id="ins-continuer" disabled>Continuer <span aria-hidden="true">→</span></button>
         </div>
         <div id="ins-2" hidden>
-          <h2>Votre adresse e-mail</h2>
-          <p class="auth-sous">Pas de mot de passe : vous recevez un lien de connexion, valable une heure.</p>
+          <p class="ins-choisi"><span id="ins-choisi-nom"></span><button type="button" class="bouton-texte" id="ins-retour">Modifier</button></p>
+          <h2 id="ins-2-titre">Votre fiche en 3 étapes</h2>
+          <ol class="ins-etapes">
+            <li><b>Votre compte</b><span>Avec Google, ou votre e-mail et un mot de passe. Une minute.</span></li>
+            <li><b id="ins-e2">Votre profil</b><span id="ins-e2-t">Diplômes, dates, ce que vous cherchez : un aperçu se met à jour pendant que vous écrivez.</span></li>
+            <li><b id="ins-e3">C'est en ligne</b><span id="ins-e3-t">Les structures vérifiées de votre secteur peuvent vous écrire.</span></li>
+          </ol>
+          {{ google }}
           <form id="f-inscription" class="formulaire">
             <label class="champ"><span>Adresse e-mail</span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="vous@email.fr"></label>
+            <div class="champ"><label for="mdp-inscription">Mot de passe (8 caractères ou plus)</label>
+              <span class="mdp"><input id="mdp-inscription" type="password" name="mdp" required autocomplete="new-password" minlength="8" maxlength="72">{{ oeil }}</span></div>
             <button class="bouton-r bouton-large" type="submit">Créer mon compte <span aria-hidden="true">→</span></button>
           </form>
-          <p class="auth-lien"><button type="button" class="bouton-texte" id="ins-retour">← Changer de profil</button></p>
           <p class="petit auth-rgpd">En créant un compte, vous acceptez les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>. <a href="{{ lien('/confidentialite/') }}#comptes">Ce que nous gardons</a></p>
         </div>
         <div id="ins-3" hidden>
-          <h2>Regardez votre boîte mail</h2>
+          <h2>Confirmez votre adresse</h2>
           <p class="auth-sous" id="ins-envoye"></p>
-          <p class="petit">Pas reçu&nbsp;? Regardez dans les indésirables, ou <button type="button" class="bouton-texte" id="ins-renvoyer">renvoyez le lien</button>.</p>
+          <p class="petit">Pas reçu&nbsp;? Regardez dans les indésirables, ou <button type="button" class="bouton-texte" id="ins-renvoyer">renvoyez l'e-mail</button>.</p>
         </div>
       </div>
     </div>
@@ -136,37 +180,109 @@
       <div id="liste-offres-pour-toi" class="liste-compte"></div>
     </div>
 
-    <details class="carte-compte replier" id="bloc-profil" open>
-    <summary><h2>Mon profil</h2></summary>
-    <p>Votre profil n'est visible que par les <b>structures inscrites et vérifiées</b>. Il n'est jamais public, ni sur Google. Elles vous écrivent à l'adresse choisie ci-dessous ; vous répondez si vous voulez.</p>
-    <form id="f-profil" class="formulaire">
-      <div class="champs-2">
-        <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
-        <label class="champ"><span>E-mail où les structures vous écrivent</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
-        <label class="champ"><span>Votre département</span>{{ select_deps("departement") }}</label>
-        <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
-        <label class="champ champ-large"><span>Le poste que je cherche, en quelques mots</span><input name="poste_recherche" maxlength="60" placeholder="Ex. : Animateur en colo cet été, stagiaire BAFA"></label>
-        <label class="champ"><span>Disponible à partir du</span><input type="date" name="dispo_debut"></label>
-        <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="dispo_fin"></label>
-        <label class="champ champ-large"><span>Disponibilités, en clair</span><input name="disponibilites" maxlength="300" placeholder="Ex. : juillet et août, les mercredis hors vacances"></label>
+    <div class="assistant" id="bloc-profil" data-assistant>
+      <div class="assistant-corps">
+        <div class="as-tete"><p><b class="as-n"></b> · <span class="as-titre"></span></p><p class="as-duree">Environ 4 min</p></div>
+        <div class="as-barre" aria-hidden="true"><span></span></div>
+        <nav class="as-onglets" aria-label="Les parties de mon profil" hidden></nav>
+        <form id="f-profil" class="formulaire" novalidate>
+          <fieldset class="etape" data-titre="Vous">
+            <legend class="etape-q">Pour commencer, vous…</legend>
+            <p class="etape-aide">Un prénom ou un pseudo suffit. Jamais de nom de famille, d'adresse ni de téléphone.</p>
+            <div class="champs-2">
+              <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
+              <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
+              <label class="champ"><span>Votre département</span>{{ select_deps("departement") }}</label>
+            </div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Diplômes">
+            <legend class="etape-q">Vos diplômes</legend>
+            <p class="etape-aide">Cochez ceux que vous avez, et ceux en cours (stagiaire). Les structures filtrent les profils avec.</p>
+            {{ cases("diplomes", DIPLOMES) }}
+            <label class="case-accord"><input type="checkbox" name="permis_b"> J'ai le permis B</label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Ce que vous cherchez">
+            <legend class="etape-q">Ce que vous cherchez</legend>
+            <p class="etape-aide">Plusieurs choix possibles.</p>
+            {{ cases("recherche", RECHERCHE) }}
+            <label class="champ"><span>Le poste que je cherche, en quelques mots</span><input name="poste_recherche" maxlength="60" placeholder="Ex. : Animateur en colo cet été, stagiaire BAFA"></label>
+            <p class="puces-idees" data-remplir="poste_recherche"><span>Idées :</span>{% for t in ["Stage pratique BAFA", "Animateur en colo cet été", "Animatrice en centre de loisirs", "Directeur de séjour", "Adjoint de direction", "Surveillant de baignade"] %}<button type="button" class="puce-idee">{{ t }}</button>{% endfor %}</p>
+          </fieldset>
+          <fieldset class="etape" data-titre="Vos dates">
+            <legend class="etape-q">Quand êtes-vous disponible&nbsp;?</legend>
+            <p class="etape-aide">Des dates claires, c'est ce qui rassure le plus une structure.</p>
+            <div class="champs-2">
+              <label class="champ"><span>Disponible à partir du</span><input type="date" name="dispo_debut"></label>
+              <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="dispo_fin"></label>
+            </div>
+            <label class="champ"><span>Disponibilités, en clair</span><input name="disponibilites" maxlength="300" placeholder="Ex. : juillet et août, les mercredis hors vacances"></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Expérience">
+            <legend class="etape-q">Votre expérience</legend>
+            <p class="etape-aide">Avec quels publics, et dans quels accueils avez-vous déjà travaillé (même en stage ou en bénévole)&nbsp;?</p>
+            {{ cases("experiences", EXPERIENCES) }}
+            <label class="champ"><span>Vos activités et talents (séparés par des virgules, 10 au plus)</span><input name="activites" maxlength="320" placeholder="Ex. : grands jeux, guitare, théâtre, cuisine, anglais"></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Où travailler">
+            <legend class="etape-q">Où pouvez-vous travailler&nbsp;?</legend>
+            <p class="etape-aide">En plus de votre département : ceux de votre région, ou partout en France pour les séjours.</p>
+            <div class="cases" id="cases-mobilite">{% for d in departements %}<label data-region="{{ d.region }}" hidden><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label data-region="toutes"><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Présentation et CV">
+            <legend class="etape-q">Présentez-vous</legend>
+            <p class="etape-aide">Quelques lignes, personnelles : ce que vous avez déjà fait avec des enfants, ce que vous aimez mener.</p>
+            <label class="champ"><span>Quelques mots sur vous</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>
+            <div class="champ champ-fichier">
+              <span>Votre CV (facultatif, en PDF, 2 Mo au plus)</span>
+              <div class="fichier-actuel" id="cv-actuel" hidden><span class="fichier-icone" aria-hidden="true">PDF</span><span id="cv-nom"></span><button type="button" class="bouton-texte" id="cv-voir">Ouvrir</button><button type="button" class="bouton-texte bouton-danger" id="cv-retirer">Retirer</button></div>
+              <label class="depot"><input type="file" name="cv_fichier" accept="application/pdf"><span class="depot-texte"><b>Choisir un PDF</b> ou le déposer ici</span></label>
+              <p class="petit">Comme votre profil, il n'est visible que par les structures vérifiées et celles à qui vous postulez. Retirez-y votre adresse et votre numéro si vous préférez.</p>
+            </div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Contact et visibilité">
+            <legend class="etape-q">Comment les structures vous écrivent</legend>
+            <p class="etape-aide">Votre profil n'est jamais public, ni sur Google : seules les structures inscrites et vérifiées le voient.</p>
+            <label class="champ"><span>E-mail où les structures vous écrivent</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
+            <label class="case-accord"><input type="checkbox" name="publie"> Montrer mon profil aux structures vérifiées (décochez pour le cacher sans le supprimer)</label>
+            <label class="case-accord" id="alertes"><input type="checkbox" name="alertes"> M'envoyer chaque lundi les nouvelles offres de mon secteur par e-mail (un lien dans chaque e-mail pour arrêter)</label>
+            <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
+          </fieldset>
+          <div class="as-pied">
+            <button type="button" class="bouton-texte as-retour">← Retour</button>
+            <span class="as-pied-droite">
+              <button type="submit" class="bouton-blanc as-enregistrer">Enregistrer</button>
+              <button type="button" class="bouton-r as-suivant">Continuer <span aria-hidden="true">→</span></button>
+              <button type="submit" class="bouton-r as-fin">Enregistrer mon profil <span aria-hidden="true">→</span></button>
+            </span>
+          </div>
+        </form>
       </div>
-      <fieldset><legend>Mes diplômes</legend>{{ cases("diplomes", DIPLOMES) }}</fieldset>
-      <fieldset><legend>Ce que je cherche</legend>{{ cases("recherche", RECHERCHE) }}</fieldset>
-      <fieldset><legend>Mes expériences</legend>{{ cases("experiences", EXPERIENCES) }}</fieldset>
-      <label class="champ"><span>Mes activités et talents (séparés par des virgules, 10 au plus)</span><input name="activites" maxlength="320" placeholder="Ex. : grands jeux, guitare, théâtre, cuisine, anglais"></label>
-      <label class="case-accord"><input type="checkbox" name="permis_b"> J'ai le permis B</label>
-      <fieldset><legend>Je peux aussi travailler…</legend>
-        <p class="petit">Les départements de votre région (choisissez d'abord votre département plus haut).</p>
-        <div class="cases" id="cases-mobilite">{% for d in departements %}<label data-region="{{ d.region }}" hidden><input type="checkbox" name="mobilite" value="{{ d.code }}"> {{ d.nom }}</label>{% endfor %}<label data-region="toutes"><input type="checkbox" name="mobilite" value="france"> Partout en France (séjours)</label></div>
-      </fieldset>
-      <label class="champ"><span>Quelques mots sur vous (expériences, envies, activités préférées)</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>
-      <p class="petit">N'écrivez ni votre adresse, ni votre numéro de téléphone, ni votre nom de famille : les structures vous contactent par e-mail.</p>
-      <label class="case-accord"><input type="checkbox" name="publie"> Montrer mon profil aux structures vérifiées (décochez pour le cacher sans le supprimer)</label>
-      <label class="case-accord" id="alertes"><input type="checkbox" name="alertes"> M'envoyer chaque lundi les nouvelles offres de mon secteur par e-mail (un lien dans chaque e-mail pour arrêter)</label>
-      <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
-      <button class="bouton-r" type="submit">Enregistrer mon profil</button>
-    </form>
-    </details>
+      <aside class="assistant-cote" aria-label="Aperçu de votre carte">
+        <div class="as-boite">
+          <p class="as-cote-titre">Votre carte, vue par les structures</p>
+          <div class="tp-carte as-carte">
+            <div class="tp-carte-haut"><span class="tp-avatar" data-ap="initiale">?</span><span class="tp-badge-exemple" data-ap="badge">Disponible</span></div>
+            <div class="tp-carte-corps">
+              <h2 data-ap="nom">Votre prénom</h2>
+              <p class="tp-carte-lieu" data-ap="lieu">Votre ville</p>
+              <p class="tp-carte-detail" data-ap="detail">Vos diplômes</p>
+            </div>
+            <div class="tp-carte-pied"><span class="tp-carte-note" data-ap="note">Profil privé</span><button type="button" class="bouton-texte as-voir-fiche">Voir la fiche <span aria-hidden="true">→</span></button></div>
+          </div>
+          <p class="as-complet">Votre profil est complet à <b data-ap="pourcent">0 %</b></p>
+          <div class="as-barre" aria-hidden="true"><span data-ap="jauge"></span></div>
+        </div>
+        <div class="as-boite">
+          <p class="as-cote-titre">Ce que votre profil vous apporte</p>
+          <ul class="as-plus">
+            <li><b>Les structures vous écrivent</b><span>Centres de loisirs et organisateurs de séjours de votre secteur.</span></li>
+            <li><b>Les offres pour vous</b><span>Celles de votre département, et chaque lundi par e-mail si vous voulez.</span></li>
+            <li><b>Postuler en un clic</b><span>Avec votre profil et votre CV, puis vous suivez la réponse.</span></li>
+          </ul>
+          <p class="as-liens"><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" target="_blank" rel="noopener">Voir un exemple de profil</a></p>
+        </div>
+      </aside>
+    </div>
   </div>
 
   {# 4. Structure #}
@@ -179,40 +295,114 @@
       <div id="liste-candidatures-recues" class="liste-compte"></div>
     </div>
 
-    <details class="carte-compte replier" id="bloc-structure" open>
-      <summary><h2>Ma structure</h2></summary>
-      <form id="f-structure" class="formulaire">
-        <div class="champs-2">
-          <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization"></label>
-          <label class="champ"><span>Type</span>{{ choix("type", TYPES) }}</label>
-          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
-          <label class="champ"><span>E-mail de recrutement (de préférence générique)</span><input type="email" name="email_contact" required maxlength="200"></label>
-          <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
-          <label class="champ"><span>SIRET, RNA ou n° de déclaration (pour la vérification)</span><input name="identifiant" maxlength="40"></label>
-        </div>
-        <label class="champ"><span>Qui sommes-nous ? (facultatif)</span><textarea name="presentation" rows="4" maxlength="1000"></textarea></label>
-        <fieldset class="page-publique">
-          <legend>Ma page publique</legend>
-          <p class="petit">Une fois la structure vérifiée, elle a sa page sur Fil Roug'Anim, avec ses offres. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}" target="_blank" rel="noopener">Voir un exemple</a> · <a id="voir-ma-page" href="#" target="_blank" rel="noopener" hidden>Voir ma page</a></p>
-          <label class="case-accord"><input type="checkbox" name="page_publique"> Afficher la page de ma structure</label>
-          <div class="champs-2">
+    <div class="assistant" id="bloc-structure" data-assistant>
+      <div class="assistant-corps">
+        <div class="as-tete"><p><b class="as-n"></b> · <span class="as-titre"></span></p><p class="as-duree">Environ 6 min</p></div>
+        <div class="as-barre" aria-hidden="true"><span></span></div>
+        <nav class="as-onglets" aria-label="Les parties de ma fiche" hidden></nav>
+        <form id="f-structure" class="formulaire" novalidate>
+          <fieldset class="etape" data-titre="Votre structure">
+            <legend class="etape-q">Votre structure, c'est…</legend>
+            <p class="etape-aide">Les candidats le voient en premier sur votre page.</p>
+            <div class="cartes-choix">{% for v, l, d in [("accueil-de-loisirs", "Accueil de loisirs", "Mercredis et vacances"), ("sejours", "Organisateur de séjours", "Colos, mini-camps"), ("periscolaire", "Accueil périscolaire", "Matins, midis, soirs"), ("accueil-de-jeunes", "Accueil de jeunes", "Ados, espace jeunes"), ("association", "Association", "Éducation populaire, sport, culture"), ("collectivite", "Collectivité", "Mairie, communauté de communes"), ("autre", "Autre", "Une autre structure d'animation")] %}<label class="carte-choix"><input type="radio" name="type" value="{{ v }}" required><span><b>{{ l }}</b><small>{{ d }}</small></span></label>{% endfor %}</div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Nom et lieu">
+            <legend class="etape-q">Comment s'appelle-t-elle, et où&nbsp;?</legend>
+            <div class="champs-2">
+              <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization"></label>
+              <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
+              <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
+              <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
+            </div>
+            <label class="champ"><span>Votre accroche, en une phrase</span><input name="accroche" maxlength="140" placeholder="Ex. : Un centre où les enfants choisissent leurs activités"></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Publics et activités">
+            <legend class="etape-q">Vos publics et vos activités</legend>
+            <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
+            <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400" placeholder="Ex. : grands jeux, cuisine, jardin, théâtre"></label>
+            <label class="champ"><span>Où (lieux d'accueil, séjours)</span><input name="lieux" maxlength="300" placeholder="Ex. : centre de loisirs à Créteil, mini-camps en Seine-et-Marne l'été"></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Présentation">
+            <legend class="etape-q">Présentez votre structure</legend>
+            <p class="etape-aide">Qui vous êtes, combien d'enfants, l'équipe. Puis votre projet : ce qui vous tient à cœur.</p>
+            <label class="champ"><span>Qui sommes-nous&nbsp;?</span><textarea name="presentation" rows="5" maxlength="1000"></textarea></label>
+            <label class="champ"><span>Notre projet</span><textarea name="projet" rows="5" maxlength="2000"></textarea></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Photos et logo">
+            <legend class="etape-q">Vos photos et votre logo</legend>
+            <p class="etape-aide">Jusqu'à 5 photos des lieux et des activités (sans enfant reconnaissable sans l'accord des parents). Elles sont réduites et nettoyées (lieu de prise de vue retiré) avant l'envoi.</p>
+            <div class="champ champ-fichier">
+              <span>Le logo (facultatif)</span>
+              <div class="depot-ligne"><span class="logo-apercu" id="logo-apercu" aria-hidden="true"></span>
+                <label class="depot depot-petit"><input type="file" name="logo_fichier" accept="image/jpeg,image/png,image/webp"><span class="depot-texte"><b>Choisir une image</b></span></label>
+                <button type="button" class="bouton-texte bouton-danger" id="logo-retirer" hidden>Retirer</button></div>
+            </div>
+            <div class="champ champ-fichier">
+              <span>Les photos</span>
+              <ul class="photos-grille" id="photos-grille"></ul>
+              <label class="depot" id="photos-depot"><input type="file" name="photos_fichier" accept="image/jpeg,image/png,image/webp" multiple><span class="depot-texte"><b>Ajouter des photos</b> ou les déposer ici</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Pour l'équipe">
+            <legend class="etape-q">Ce que vous offrez à l'équipe</legend>
+            <p class="etape-aide">Préparation payée, tutorat des stagiaires, formation, logement… Une ligne par point : chacun devient une coche sur votre page.</p>
+            <label class="champ"><span>Ce que nous offrons à l'équipe</span><textarea name="avantages" rows="5" maxlength="800" placeholder="Un tuteur pour chaque stagiaire BAFA&#10;Un temps de préparation payé avant les vacances"></textarea></label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Votre page">
+            <legend class="etape-q">Votre page sur Fil Roug'Anim</legend>
+            <p class="etape-aide">Une fois la structure vérifiée, elle a sa page, avec ses offres. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}" target="_blank" rel="noopener">Voir un exemple</a> · <a id="voir-ma-page" href="#" target="_blank" rel="noopener" hidden>Voir ma page</a></p>
+            <div class="champ"><span>Couleur de la page</span>
+              <div class="couleurs">{% for c, l in [("rouge", "Rouge"), ("sauge", "Sauge"), ("bleu", "Bleu"), ("prune", "Prune"), ("ocre", "Ocre"), ("nuit", "Nuit")] %}<label class="theme-{{ c }}"><input type="radio" name="couleur" value="{{ c }}"><span>{{ l }}</span></label>{% endfor %}</div>
+            </div>
             <label class="champ"><span>Adresse de la page</span><span class="champ-prefixe">filrouganim.fr/trouver-un-poste/structures/<input name="slug" maxlength="60" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="mon-centre-de-loisirs"></span></label>
-            <label class="champ"><span>Accroche (une phrase)</span><input name="accroche" maxlength="140" placeholder="Ex. : Un centre où les enfants choisissent leurs activités"></label>
+            <label class="case-accord"><input type="checkbox" name="page_publique"> Afficher la page de ma structure</label>
+          </fieldset>
+          <fieldset class="etape" data-titre="Contact et vérification">
+            <legend class="etape-q">Le contact et la vérification</legend>
+            <p class="etape-aide">Nous vérifions chaque structure à la main, en général sous 2 jours ouvrés, avant que ses offres soient en ligne.</p>
+            <div class="champs-2">
+              <label class="champ"><span>E-mail de recrutement (de préférence générique)</span><input type="email" name="email_contact" required maxlength="200"></label>
+              <label class="champ"><span>SIRET, RNA ou n° de déclaration</span><input name="identifiant" maxlength="40"></label>
+            </div>
+            <label class="case-accord" id="accord-structure"><input type="checkbox" name="accord" required> J'agis pour cette structure et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
+          </fieldset>
+          <div class="as-pied">
+            <button type="button" class="bouton-texte as-retour">← Retour</button>
+            <span class="as-pied-droite">
+              <button type="submit" class="bouton-blanc as-enregistrer">Enregistrer</button>
+              <button type="button" class="bouton-r as-suivant">Continuer <span aria-hidden="true">→</span></button>
+              <button type="submit" class="bouton-r as-fin">Enregistrer ma fiche <span aria-hidden="true">→</span></button>
+            </span>
           </div>
-          <div class="champ"><span>Couleur de la page</span>
-            <div class="couleurs">{% for c, l in [("rouge", "Rouge"), ("sauge", "Sauge"), ("bleu", "Bleu"), ("prune", "Prune"), ("ocre", "Ocre"), ("nuit", "Nuit")] %}<label class="theme-{{ c }}"><input type="radio" name="couleur" value="{{ c }}"><span>{{ l }}</span></label>{% endfor %}</div>
+        </form>
+      </div>
+      <aside class="assistant-cote" aria-label="Aperçu de votre carte">
+        <div class="as-boite">
+          <p class="as-cote-titre">Votre carte dans l'annuaire</p>
+          <div class="tp-carte as-carte">
+            <div class="tp-carte-haut rc-carte-structure" data-ap="haut"><span class="tp-avatar" data-ap="initiale">?</span><span class="tp-badge-exemple" data-ap="badge">Structure</span></div>
+            <div class="tp-carte-corps">
+              <h2 data-ap="nom">Votre structure</h2>
+              <p class="tp-carte-lieu" data-ap="lieu">Votre ville</p>
+              <p class="tp-carte-detail" data-ap="detail">Vos publics</p>
+            </div>
+            <div class="tp-carte-pied"><span class="tp-carte-note" data-ap="note">Offres sur la page</span><button type="button" class="bouton-texte as-voir-fiche">Voir la page <span aria-hidden="true">→</span></button></div>
           </div>
-          <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
-          <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400" placeholder="Ex. : grands jeux, cuisine, jardin, théâtre"></label>
-          <label class="champ"><span>Où (lieux d'accueil, séjours)</span><input name="lieux" maxlength="300"></label>
-          <label class="champ"><span>Notre projet</span><textarea name="projet" rows="4" maxlength="2000"></textarea></label>
-          <label class="champ"><span>Ce que nous offrons à l'équipe (préparation, tutorat, formation…)</span><textarea name="avantages" rows="3" maxlength="800"></textarea></label>
-        </fieldset>
-        <label class="case-accord" id="accord-structure"><input type="checkbox" name="accord" required> J'agis pour cette structure et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
-        <button class="bouton-r" type="submit">Enregistrer</button>
-      </form>
-    </details>
+          <p class="as-complet">Votre fiche est complète à <b data-ap="pourcent">0 %</b></p>
+          <div class="as-barre" aria-hidden="true"><span data-ap="jauge"></span></div>
+        </div>
+        <div class="as-boite">
+          <p class="as-cote-titre">Ce que votre fiche vous apporte</p>
+          <ul class="as-plus">
+            <li><b>Une page sur Google</b><span>Votre projet, vos photos et vos offres, avec un lien vers votre site.</span></li>
+            <li><b>Là où l'on cherche</b><span>Vos offres sur les pages des sessions BAFA de votre département.</span></li>
+            <li><b>Les profils des candidats</b><span>Animateurs et directeurs de votre secteur, avec leur CV.</span></li>
+            <li><b>Les candidatures au même endroit</b><span>Vous les suivez, vous répondez, sans commission.</span></li>
+          </ul>
+          <p class="as-liens"><a href="{{ lien('/recruter/exemple-de-page-structure/') }}" target="_blank" rel="noopener">Voir un exemple de page</a></p>
+        </div>
+      </aside>
+    </div>
 
     <div class="carte-compte" id="bloc-offres" hidden>
       <div class="titre-et-bouton"><h2>Mes offres</h2><button type="button" class="bouton-r" id="nouvelle-offre">Nouvelle offre</button></div>
@@ -260,6 +450,14 @@
     </div>
   </div>
 
+  {# La fiche complète d'un profil (pour une structure) ou l'aperçu de sa propre fiche #}
+  <div class="fiche-voile" id="fiche-voile" hidden>
+    <div class="fiche-fenetre" role="dialog" aria-modal="true" aria-label="Fiche">
+      <button type="button" class="ff-fermer fiche-fermer" id="fiche-fermer" aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="fiche-contenu"></div>
+    </div>
+  </div>
+
   {# 5. Toujours en bas une fois connecté #}
   <div class="compte-vue compte-pied" id="v-session" hidden>
     <p>Connecté avec <b id="email-session"></b></p>
@@ -272,9 +470,12 @@
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
   "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
-  "regions_deps": departements | map(attribute="region") | list} | tojson }}</script>
+  "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list,
+  "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
+  "tuiles": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"} | tojson }}</script>
 {% endblock %}
 {% block scripts %}
+<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/fiche.js') }}" defer></script>
 <script src="{{ statique('js/supabase-2.117.3.js') }}"></script>
 <script src="{{ statique('js/compte.js') }}"></script>
 {% endblock %}

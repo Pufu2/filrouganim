@@ -1,5 +1,6 @@
-/* Fil Roug'Anim : la page « Mon compte ».
-   Connexion par lien reçu par e-mail (Supabase), puis profil candidat ou fiche de structure et offres.
+/* Fil Roug'Anim : la page « Mon espace ».
+   Connexion avec Google, avec un e-mail et un mot de passe, ou par lien reçu par e-mail (Supabase).
+   Puis le profil (animateur, directeur) ou la fiche de structure, remplis pas à pas avec un aperçu, les offres et les candidatures.
    Ce qui vient des personnes est toujours écrit avec textContent, jamais comme du HTML. */
 (function () {
   "use strict";
@@ -7,11 +8,13 @@
   if (!racine || !window.supabase) return;
 
   var L = JSON.parse(document.getElementById("libelles").textContent);
+  var recuperation = /type=recovery/.test(location.hash);
   var sb = window.supabase.createClient(racine.dataset.url, racine.dataset.cle, {
     auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true }
   });
   var params = new URLSearchParams(location.search);
   var utilisateur = null, profil = null, structure = null, offreEnCours = null;
+  var MEMOIRE = "fra-inscription";
 
   function $(id) { return document.getElementById(id); }
   function libelle(liste, v) { var t = L[liste].filter(function (x) { return x[0] === v; })[0]; return t ? t[1] : v; }
@@ -22,18 +25,33 @@
     if (texte != null) e.textContent = texte;
     return e;
   }
-  function dateFr(iso) {
+  function dateFr(iso, annee) {
     if (!iso) return "";
-    return new Date(iso.slice(0, 10) + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    var o = { day: "numeric", month: "long" };
+    if (annee !== false) o.year = "numeric";
+    return new Date(iso.slice(0, 10) + "T12:00:00").toLocaleDateString("fr-FR", o);
   }
+  function jourMois(iso) { return iso ? new Date(iso.slice(0, 10) + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : ""; }
   function aujourdhui() { return new Date().toISOString().slice(0, 10); }
+  function majuscule(t) { return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
+  function initiales(nom) {
+    var mots = (nom || "").replace(/^L['’]/i, "").replace(/['’]/g, " ").split(/\s+/).filter(function (m) { return m && ["des", "de", "du", "la", "le", "les", "et", "d", "l"].indexOf(m.toLowerCase()) < 0; });
+    return ((mots[0] || "?").charAt(0) + (mots[1] ? mots[1].charAt(0) : "")).toUpperCase();
+  }
+  function memoire(v) {
+    try {
+      if (v === undefined) return JSON.parse(localStorage.getItem(MEMOIRE) || "null");
+      if (v === null) localStorage.removeItem(MEMOIRE); else localStorage.setItem(MEMOIRE, JSON.stringify(v));
+    } catch (e) { return null; }
+  }
 
-  var VUES = ["v-chargement", "v-connexion", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-session"];
+  var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-session"];
+  var VUES_AUTH = ["v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription"];
   function montrer() {
     var ids = Array.prototype.slice.call(arguments);
     VUES.forEach(function (v) { $(v).hidden = ids.indexOf(v) < 0; });
     // connexion et inscription : la page passe en deux colonnes, sans le haut de page
-    var auth = ids.indexOf("v-connexion") >= 0 || ids.indexOf("v-inscription") >= 0;
+    var auth = ids.some(function (v) { return VUES_AUTH.indexOf(v) >= 0; });
     $("auth").hidden = !auth;
     document.body.classList.toggle("page-auth", auth);
   }
@@ -47,6 +65,13 @@
   function erreurLisible(e) {
     var t = (e && (e.message || e.error_description)) || String(e);
     if (e && (e.status === 429 || /rate limit/i.test(t))) return "Trop de demandes d'un coup : réessayez dans quelques minutes.";
+    if (/invalid login credentials/i.test(t)) return "Adresse e-mail ou mot de passe incorrect. Vous vous étiez inscrit avec Google ? Utilisez le bouton « Continuer avec Google ».";
+    if (/email not confirmed/i.test(t)) return "Votre adresse n'est pas encore confirmée : cliquez sur le lien reçu par e-mail (regardez aussi dans les indésirables).";
+    if (/password should be|weak password/i.test(t)) return "Mot de passe trop simple : 8 caractères au moins, sans votre adresse e-mail.";
+    if (/user already registered|already been registered/i.test(t)) return "Un compte existe déjà avec cette adresse : connectez-vous.";
+    if (/provider is not enabled|unsupported provider/i.test(t)) return "La connexion avec Google arrive bientôt. En attendant, utilisez votre adresse e-mail.";
+    if (/mime type|invalid_mime/i.test(t)) return "Ce type de fichier n'est pas accepté (PDF pour le CV, JPEG, PNG ou WebP pour les images).";
+    if (/payload too large|maximum allowed size|exceeded/i.test(t)) return "Le fichier est trop lourd (2 Mo au plus).";
     if (/check constraint/i.test(t)) return "Un champ n'est pas au bon format (adresse e-mail, lien commençant par https://, dates, longueur du texte…).";
     if (/déjà/.test(t)) return t;
     if (/structures_slug_key|duplicate key/i.test(t)) return "Cette adresse de page est déjà prise : choisissez-en une autre.";
@@ -57,9 +82,10 @@
   /* -- formulaires : remplir et lire, sans HTML -- */
   function remplir(form, donnees) {
     Array.prototype.forEach.call(form.elements, function (c) {
-      if (!c.name || !(c.name in donnees)) return;
+      if (!c.name || !(c.name in donnees) || c.type === "file") return;
       var v = donnees[c.name];
       if (c.type === "checkbox") c.checked = Array.isArray(v) ? v.indexOf(c.value) >= 0 : !!v;
+      else if (c.type === "radio") c.checked = c.value === v;
       else c.value = v == null ? "" : (Array.isArray(v) ? v.join(", ") : v);
     });
   }
@@ -68,7 +94,10 @@
     champs.forEach(function (nom) {
       var liste = form.querySelectorAll('[name="' + nom + '"]');
       if (!liste.length) return;
-      if (liste[0].type === "checkbox" && liste.length > 1) {
+      if (liste[0].type === "radio") {
+        var c = Array.prototype.filter.call(liste, function (x) { return x.checked; })[0];
+        o[nom] = c ? c.value : null;
+      } else if (liste[0].type === "checkbox" && liste.length > 1) {
         o[nom] = Array.prototype.filter.call(liste, function (c) { return c.checked; }).map(function (c) { return c.value; });
       } else if (liste[0].type === "checkbox") {
         o[nom] = liste[0].checked;
@@ -80,23 +109,54 @@
     return o;
   }
   function occupe(form, oui) {
-    var b = form.querySelector('[type="submit"]');
-    if (b) { b.disabled = oui; b.setAttribute("aria-busy", oui ? "true" : "false"); }
+    Array.prototype.forEach.call(form.querySelectorAll('[type="submit"]'), function (b) { b.disabled = oui; b.setAttribute("aria-busy", oui ? "true" : "false"); });
+  }
+
+  /* -- mots de passe : l'œil pour les afficher -- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-oeil]"), function (b) {
+    b.addEventListener("click", function () {
+      var i = b.parentNode.querySelector("input"), voir = i.type === "password";
+      i.type = voir ? "text" : "password";
+      b.setAttribute("aria-pressed", voir ? "true" : "false");
+      b.setAttribute("aria-label", voir ? "Cacher le mot de passe" : "Afficher le mot de passe");
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-vers]"), function (b) {
+    b.addEventListener("click", function () {
+      message("");
+      montrer(b.dataset.vers);
+      var email = ($("f-connexion").email.value || "").trim();
+      var champ = $(b.dataset.vers).querySelector('input[type="email"]');
+      if (champ && email && !champ.value) champ.value = email;
+      if (champ) champ.focus();
+    });
+  });
+  function adresseRetour(role) {
+    var garder = new URLSearchParams();
+    if (role) garder.set("role", role);
+    ["role", "postuler"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
+    return location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
   }
 
   /* -- démarrage -- */
   async function demarrer() {
     var h = new URLSearchParams(location.hash.slice(1));
     if (h.get("error_description")) {
-      message("Ce lien de connexion n'est plus valable (il sert une seule fois, pendant une heure). Demandez-en un nouveau.", true);
+      message(/expired|invalid/i.test(h.get("error_description")) ? "Ce lien n'est plus valable (il sert une seule fois, pendant une heure). Demandez-en un nouveau."
+                                                                    : "La connexion n'a pas abouti : " + h.get("error_description"), true);
       history.replaceState(null, "", location.pathname + location.search);
     }
     var r = await sb.auth.getSession();
     var session = r.data && r.data.session;
-    if (!session) { montrer(params.get("inscription") ? "v-inscription" : "v-connexion"); return; }
+    if (!session) {
+      if (params.get("inscription")) { montrer("v-inscription"); preparerInscription(); }
+      else montrer("v-connexion");
+      return;
+    }
     if (location.hash) history.replaceState(null, "", location.pathname + location.search);
     utilisateur = session.user;
     $("email-session").textContent = utilisateur.email;
+    if (recuperation) { montrer("v-nouveau-mdp"); $("f-nouveau-mdp").mdp.focus(); return; }
     var rep = await Promise.all([
       sb.from("profils").select(CHAMPS_VUS + ",publie,seize_ans,alertes").eq("id", utilisateur.id).maybeSingle(),
       sb.from("structures").select("*").eq("id", utilisateur.id).maybeSingle()
@@ -105,26 +165,77 @@
     profil = rep[0].data; structure = rep[1].data;
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
-    if (params.get("role") === "candidat" || params.get("postuler")) return voirCandidat();
-    if (params.get("role") === "structure") return voirStructure();
+    var m = memoire() || {};
+    var role = params.get("role") || (params.get("postuler") ? "candidat" : m.role);
+    if (role === "candidat") return voirCandidat();
+    if (role === "structure") return voirStructure();
     montrer("v-choix", "v-session");
   }
 
+  /* -- connexion -- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-google]"), function (b) {
+    b.addEventListener("click", async function () {
+      if (roleChoisi) memoire({ role: roleChoisi, poste: posteChoisi });
+      b.disabled = true;
+      var r = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: adresseRetour(roleChoisi) } });
+      if (r.error) { b.disabled = false; message(erreurLisible(r.error), true); }
+    });
+  });
   $("f-connexion").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this;
+    occupe(form, true);
+    var r = await sb.auth.signInWithPassword({ email: form.email.value.trim(), password: form.mdp.value });
+    occupe(form, false);
+    if (r.error) { message(erreurLisible(r.error), true); return; }
+    message("");
+    form.mdp.value = "";
+    demarrer();
+  });
+  $("f-lien").addEventListener("submit", async function (e) {
     e.preventDefault();
     var form = this, email = form.email.value.trim();
     occupe(form, true);
-    var garder = new URLSearchParams();
-    ["role", "postuler"].forEach(function (k) { if (params.get(k)) garder.set(k, params.get(k)); });
-    var retour = location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
-    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: retour } });
+    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: adresseRetour(null) } });
     occupe(form, false);
     if (r.error) message(erreurLisible(r.error), true);
     else message("C'est envoyé. Ouvrez l'e-mail reçu à " + email + " et cliquez sur le lien (regardez aussi dans les indésirables).");
   });
+  $("f-mdp-oublie").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this, email = form.email.value.trim();
+    occupe(form, true);
+    var r = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    occupe(form, false);
+    if (r.error) message(erreurLisible(r.error), true);
+    else message("Si un compte existe à " + email + ", un lien pour choisir un nouveau mot de passe vient de partir (regardez aussi dans les indésirables).");
+  });
+  $("f-nouveau-mdp").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this;
+    occupe(form, true);
+    var r = await sb.auth.updateUser({ password: form.mdp.value });
+    occupe(form, false);
+    if (r.error) { message(erreurLisible(r.error), true); return; }
+    recuperation = false;
+    form.mdp.value = "";
+    message("Mot de passe enregistré.");
+    demarrer();
+  });
+  sb.auth.onAuthStateChange(function (evenement) {
+    if (evenement === "PASSWORD_RECOVERY") { recuperation = true; montrer("v-nouveau-mdp"); }
+  });
 
   /* -- inscription en trois étapes : profil, compte, confirmation -- */
-  var roleChoisi = null;
+  var roleChoisi = null, posteChoisi = null;
+  var TEXTES = {
+    candidat: ["Votre profil en 3 étapes", "Votre profil", "Diplômes, dates, ce que vous cherchez, votre CV si vous voulez : un aperçu se met à jour pendant que vous écrivez.",
+               "C'est en ligne", "Les structures vérifiées de votre secteur peuvent vous écrire, et vous postulez en un clic.",
+               "Les structures de votre secteur vous trouvent."],
+    structure: ["Votre fiche en 3 étapes", "Votre fiche", "Photos, projet, publics, activités : un aperçu de votre page se met à jour pendant que vous écrivez.",
+                "La vérification", "Nous vérifions la structure (en général sous 2 jours ouvrés), puis vos offres et votre page sont en ligne.",
+                "Les animateurs de votre secteur vous trouvent."]
+  };
   function etapeInscription(n) {
     [1, 2, 3].forEach(function (i) {
       $("ins-" + i).hidden = i !== n;
@@ -132,29 +243,56 @@
       if (i === n) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
       li.classList.toggle("fait", i < n);
     });
+    if (n === 2 && roleChoisi) {
+      var t = TEXTES[roleChoisi], b = document.querySelector('.profil-choix[aria-checked="true"] b');
+      $("ins-choisi-nom").textContent = b ? b.textContent : "";
+      $("ins-2-titre").textContent = t[0];
+      $("ins-e2").textContent = t[1]; $("ins-e2-t").textContent = t[2];
+      $("ins-e3").textContent = t[3]; $("ins-e3-t").textContent = t[4];
+      $("auth-titre").textContent = t[5];
+    } else $("auth-titre").textContent = "Votre espace dans l'animation.";
+  }
+  function choisir(b) {
+    Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (x) { x.setAttribute("aria-checked", x === b ? "true" : "false"); });
+    roleChoisi = b.dataset.role;
+    posteChoisi = b.dataset.poste || null;
+    $("ins-continuer").disabled = false;
   }
   Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (b) {
-    b.addEventListener("click", function () {
-      Array.prototype.forEach.call(document.querySelectorAll(".profil-choix"), function (x) { x.setAttribute("aria-checked", x === b ? "true" : "false"); });
-      roleChoisi = b.dataset.role;
-      $("ins-continuer").disabled = false;
-    });
+    b.addEventListener("click", function () { choisir(b); });
   });
+  // arrivée depuis « Je recrute » (?role=structure) : le profil est déjà choisi
+  function preparerInscription() {
+    var role = params.get("role");
+    var b = role && document.querySelector('.profil-choix[data-role="' + role + '"]');
+    if (b) { choisir(b); etapeInscription(2); }
+  }
   $("ins-continuer").addEventListener("click", function () { if (roleChoisi) { etapeInscription(2); $("f-inscription").email.focus(); } });
   $("ins-retour").addEventListener("click", function () { etapeInscription(1); });
-  async function envoyerInscription() {
-    var form = $("f-inscription"), email = form.email.value.trim();
+  var emailInscrit = "";
+  $("f-inscription").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this;
+    emailInscrit = form.email.value.trim();
+    memoire({ role: roleChoisi, poste: posteChoisi });
     occupe(form, true);
-    var retour = location.origin + location.pathname + "?role=" + encodeURIComponent(roleChoisi || "candidat");
-    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: retour } });
+    var r = await sb.auth.signUp({ email: emailInscrit, password: form.mdp.value, options: { emailRedirectTo: adresseRetour(roleChoisi) } });
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
     message("");
-    $("ins-envoye").textContent = "Nous avons envoyé un lien de connexion à " + email + ". Cliquez dessus pour ouvrir votre espace.";
+    form.mdp.value = "";
+    if (r.data && r.data.session) { demarrer(); return; }                 // la confirmation par e-mail est désactivée
+    if (r.data && r.data.user && r.data.user.identities && !r.data.user.identities.length) {
+      message("Un compte existe déjà avec cette adresse : connectez-vous (ou utilisez « Mot de passe oublié »).", true);
+      montrer("v-connexion"); $("f-connexion").email.value = emailInscrit; return;
+    }
+    $("ins-envoye").textContent = "Nous avons envoyé un e-mail à " + emailInscrit + ". Cliquez sur le lien qu'il contient : votre espace s'ouvre, et vous remplissez votre " + (roleChoisi === "structure" ? "fiche" : "profil") + ".";
     etapeInscription(3);
-  }
-  $("f-inscription").addEventListener("submit", function (e) { e.preventDefault(); envoyerInscription(); });
-  $("ins-renvoyer").addEventListener("click", envoyerInscription);
+  });
+  $("ins-renvoyer").addEventListener("click", async function () {
+    var r = await sb.auth.resend({ type: "signup", email: emailInscrit, options: { emailRedirectTo: adresseRetour(roleChoisi) } });
+    message(r.error ? erreurLisible(r.error) : "C'est renvoyé.", !!r.error);
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll(".role"), function (b) {
     b.addEventListener("click", function () {
@@ -163,20 +301,112 @@
     });
   });
 
-  /* -- candidat -- */
+  /* ====================================================================================
+     L'assistant : une étape à la fois (création), ou des onglets (modification)
+     ==================================================================================== */
+  function Assistant(bloc, quandChange) {
+    var form = bloc.querySelector("form"), etapes = Array.prototype.slice.call(form.querySelectorAll(".etape"));
+    var n = 0, creation = true;
+    var nav = bloc.querySelector(".as-onglets");
+    etapes.forEach(function (f, i) {
+      var b = el("button", null, f.dataset.titre);
+      b.type = "button";
+      b.addEventListener("click", function () { aller(i); });
+      nav.appendChild(b);
+    });
+    function aller(i) {
+      n = Math.max(0, Math.min(etapes.length - 1, i));
+      etapes.forEach(function (f, k) { f.hidden = k !== n; });
+      Array.prototype.forEach.call(nav.children, function (b, k) { if (k === n) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+      bloc.querySelector(".as-n").textContent = creation ? "Étape " + (n + 1) + " sur " + etapes.length : (bloc.id === "bloc-profil" ? "Mon profil" : "Ma fiche");
+      bloc.querySelector(".as-titre").textContent = etapes[n].dataset.titre;
+      bloc.querySelector(".as-barre span").style.width = ((n + 1) / etapes.length * 100) + "%";
+      bloc.querySelector(".as-retour").hidden = n === 0;
+      var derniere = n === etapes.length - 1;
+      bloc.querySelector(".as-suivant").hidden = derniere;
+      bloc.querySelector(".as-fin").hidden = !derniere;
+      bloc.querySelector(".as-enregistrer").hidden = creation || derniere;
+      if (quandChange) quandChange();
+    }
+    // les champs de l'étape sont-ils bons ? (le navigateur montre le premier problème)
+    function valide(i) {
+      var champs = etapes[i].querySelectorAll("input, select, textarea");
+      for (var k = 0; k < champs.length; k++) {
+        if (!champs[k].checkValidity()) { champs[k].reportValidity(); return false; }
+      }
+      return true;
+    }
+    bloc.querySelector(".as-suivant").addEventListener("click", function () {
+      if (!valide(n)) return;
+      aller(n + 1);
+      bloc.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+    bloc.querySelector(".as-retour").addEventListener("click", function () { aller(n - 1); });
+    // à l'envoi : tout doit être bon, on montre l'étape du premier problème
+    form.addEventListener("submit", function (e) {
+      for (var i = 0; i < etapes.length; i++) {
+        var champs = etapes[i].querySelectorAll("input, select, textarea");
+        for (var k = 0; k < champs.length; k++) {
+          if (!champs[k].checkValidity()) { e.preventDefault(); e.stopImmediatePropagation(); aller(i); champs[k].reportValidity(); return; }
+        }
+      }
+    }, true);
+    form.addEventListener("input", function () { if (quandChange) quandChange(); });
+    form.addEventListener("change", function () { if (quandChange) quandChange(); });
+    return {
+      ouvrir: function (enCreation) { creation = enCreation; nav.hidden = creation; bloc.querySelector(".as-duree").hidden = !creation; aller(0); }
+    };
+  }
+
+  /* -- dépôt de fichiers par glisser-déposer -- */
+  Array.prototype.forEach.call(document.querySelectorAll(".depot"), function (d) {
+    ["dragenter", "dragover"].forEach(function (t) { d.addEventListener(t, function () { d.classList.add("survol"); }); });
+    ["dragleave", "drop"].forEach(function (t) { d.addEventListener(t, function () { d.classList.remove("survol"); }); });
+  });
+  // une image réduite (1600 px au plus) et réencodée en JPEG : plus légère, et sans les données de lieu de l'appareil photo
+  function reduireImage(fichier, cote) {
+    return new Promise(function (ok, ko) {
+      if (!/^image\/(jpeg|png|webp)$/.test(fichier.type)) { ko(new Error("mime type")); return; }
+      var img = new Image(), url = URL.createObjectURL(fichier);
+      img.onload = function () {
+        var k = Math.min(1, cote / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? ok(b) : ko(new Error("image")); }, "image/jpeg", 0.84);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); ko(new Error("Cette image ne peut pas être lue.")); };
+      img.src = url;
+    });
+  }
+  function nomAuHasard(prefixe) { return prefixe + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7) + ".jpg"; }
+
+  /* ====================================================================================
+     Candidat (animateur, directeur)
+     ==================================================================================== */
   var CHAMPS_PROFIL = ["prenom", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
                        "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans", "alertes"];
+  var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
+  var cvAEnvoyer = null;
   function voirCandidat() {
     montrer("v-candidat", "v-session");
-    $("chapo-compte").textContent = profil ? "Votre espace : vos candidatures, les offres pour vous et votre profil." : "Créez votre profil en deux minutes. C'est gratuit, et ça le restera.";
-    remplir($("f-profil"), profil || { email_contact: utilisateur.email, publie: true });
+    var nouveau = !profil, m = memoire() || {};
+    $("chapo-compte").textContent = nouveau ? "Votre profil en quelques minutes. C'est gratuit, et ça le restera." : "Votre espace : vos candidatures, les offres pour vous et votre profil.";
+    var depart = profil || { email_contact: utilisateur.email, publie: true, prenom: (utilisateur.user_metadata && (utilisateur.user_metadata.given_name || "")) || "" };
+    if (nouveau && m.poste === "directeur") { depart.recherche = ["direction"]; depart.poste_recherche = "Direction de séjour ou d'accueil"; }
+    $("f-profil").reset();
+    remplir($("f-profil"), depart);
+    cvAEnvoyer = null;
+    montrerCv();
     montrerMobilite();
-    $("bloc-profil").open = !profil;
-    $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = !profil;
-    $("tuiles-candidat").hidden = !profil;
-    if (!profil) {
+    assistantProfil.ouvrir(nouveau);
+    $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = nouveau;
+    $("tuiles-candidat").hidden = nouveau;
+    if (nouveau) {
       if (params.get("postuler")) message("Créez d'abord votre profil : votre candidature partira juste après.");
-      $("bloc-profil").open = true;
       return;
     }
     tableauCandidat();
@@ -191,47 +421,134 @@
     });
   }
   $("f-profil").departement.addEventListener("change", montrerMobilite);
+  Array.prototype.forEach.call(document.querySelectorAll(".puces-idees"), function (p) {
+    var champ = $("f-profil").elements[p.dataset.remplir];
+    Array.prototype.forEach.call(p.querySelectorAll(".puce-idee"), function (b) {
+      b.addEventListener("click", function () { champ.value = b.textContent; champ.dispatchEvent(new Event("input", { bubbles: true })); });
+    });
+  });
+  function lireProfil() {
+    var d = lire($("f-profil"), CHAMPS_PROFIL);
+    d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 10);
+    return d;
+  }
+  // l'aperçu de la carte, et le profil complet à X %
+  function apercuProfil() {
+    var d = lireProfil(), b = $("bloc-profil");
+    function ap(nom) { return b.querySelector('[data-ap="' + nom + '"]'); }
+    ap("initiale").textContent = (d.prenom || "?").charAt(0).toUpperCase();
+    ap("nom").textContent = d.prenom || "Votre prénom";
+    ap("lieu").textContent = (d.ville ? d.ville + " " : "") + (d.departement ? "(" + d.departement + ")" : "") + (d.poste_recherche ? " · " + d.poste_recherche : "") || "Votre ville";
+    var det = (d.diplomes || []).map(function (x) { return libelle("diplomes", x); });
+    if (d.dispo_debut) det.push("disponible dès le " + dateFr(d.dispo_debut, false));
+    ap("detail").textContent = det.join(" · ") || "Vos diplômes";
+    ap("badge").textContent = d.publie === false ? "Profil caché" : (cvAEnvoyer || (profil && profil.cv_nom) ? "CV joint" : "Disponible");
+    ap("note").textContent = d.publie === false ? "Les structures ne le voient pas" : "Vu par les structures vérifiées";
+    var points = [d.prenom, d.departement, (d.diplomes || []).length, (d.recherche || []).length, d.poste_recherche, d.dispo_debut, d.disponibilites,
+                  (d.experiences || []).length, (d.activites || []).length, (d.mobilite || []).length, d.presentation && d.presentation.length > 40,
+                  cvAEnvoyer || (profil && profil.cv_nom), d.email_contact];
+    var p = Math.round(points.filter(Boolean).length / points.length * 100);
+    ap("pourcent").textContent = p + " %";
+    ap("jauge").style.width = p + "%";
+  }
+  $("bloc-profil").querySelector(".as-voir-fiche").addEventListener("click", function () {
+    var d = lireProfil();
+    d.cv_nom = cvAEnvoyer ? cvAEnvoyer.name : (profil && profil.cv_nom);
+    d.maj_le = profil ? profil.maj_le : new Date().toISOString();
+    ouvrirFiche(ficheProfil(d, { apercu: true }));
+  });
+
+  // le CV : un PDF de 2 Mo au plus, dans le dossier du candidat (lisible par lui et par les structures vérifiées)
+  function montrerCv() {
+    var nom = cvAEnvoyer ? cvAEnvoyer.name + " (envoyé à l'enregistrement)" : (profil && profil.cv_nom);
+    $("cv-actuel").hidden = !nom;
+    $("cv-nom").textContent = nom || "";
+    $("cv-voir").hidden = !!cvAEnvoyer || !nom;
+  }
+  $("f-profil").cv_fichier.addEventListener("change", function () {
+    var f = this.files[0];
+    this.value = "";
+    if (!f) return;
+    if (f.type !== "application/pdf") { message("Le CV doit être un fichier PDF.", true); return; }
+    if (f.size > 2 * 1024 * 1024) { message("Le CV fait plus de 2 Mo : enregistrez-le en PDF plus léger (« Réduire la taille du fichier »).", true); return; }
+    message("");
+    cvAEnvoyer = f;
+    montrerCv(); apercuProfil();
+  });
+  $("cv-voir").addEventListener("click", function () { ouvrirCv(utilisateur.id); });
+  $("cv-retirer").addEventListener("click", async function () {
+    if (cvAEnvoyer) { cvAEnvoyer = null; montrerCv(); apercuProfil(); return; }
+    if (!confirm("Retirer votre CV ? Les structures ne le verront plus.")) return;
+    var r = await sb.storage.from("cv").remove([utilisateur.id + "/cv.pdf"]);
+    var u = r.error ? r : await sb.from("profils").update({ cv_nom: null }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+    if (u.error) { message(erreurLisible(u.error), true); return; }
+    profil = u.data;
+    message("CV retiré.");
+    montrerCv(); apercuProfil();
+  });
+  async function ouvrirCv(id) {
+    var fen = window.open("", "_blank");
+    var r = await sb.storage.from("cv").createSignedUrl(id + "/cv.pdf", 120);
+    if (r.error || !r.data) { if (fen) fen.close(); message("Le CV ne peut pas être ouvert : " + erreurLisible(r.error || "introuvable"), true); return; }
+    if (fen) fen.location = r.data.signedUrl; else location.href = r.data.signedUrl;
+  }
 
   $("f-profil").addEventListener("submit", async function (e) {
     e.preventDefault();
-    var form = this, d = lire(form, CHAMPS_PROFIL);
-    d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 10);
+    var form = this, d = lireProfil();
     if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de vos disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
       ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single()
       : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+    if (!r.error && cvAEnvoyer) {
+      var u = await sb.storage.from("cv").upload(utilisateur.id + "/cv.pdf", cvAEnvoyer, { upsert: true, contentType: "application/pdf", cacheControl: "60" });
+      if (u.error) { occupe(form, false); profil = r.data; message("Profil enregistré, mais le CV n'est pas parti : " + erreurLisible(u.error), true); voirCandidat(); return; }
+      r = await sb.from("profils").update({ cv_nom: cvAEnvoyer.name.slice(0, 120) }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+    }
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
     var nouveau = !profil;
     profil = r.data;
+    memoire(null);
     message(nouveau ? "Votre profil est créé. Les structures vérifiées de votre secteur peuvent maintenant vous écrire."
                     : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus (sauf celles à qui vous avez postulé)."));
     voirCandidat();
   });
 
-  /* -- structure -- */
+  /* ====================================================================================
+     Structure
+     ==================================================================================== */
   var CHAMPS_STRUCTURE = ["nom", "type", "ville", "departement", "email_contact", "site", "identifiant", "presentation",
                           "page_publique", "slug", "accroche", "couleur", "publics", "activites", "lieux", "projet", "avantages"];
+  var assistantStructure = Assistant($("bloc-structure"), apercuStructure);
+  var photos = [], logo = null, aSupprimer = [];
   function enSlug(t) {
-    return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+    return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
   }
+  function urlPhoto(chemin) { return L.photos + chemin; }
   function voirStructure() {
     montrer("v-structure", "v-session");
-    var f = $("f-structure");
+    var f = $("f-structure"), nouveau = !structure;
+    f.reset();
     remplir(f, structure || { email_contact: utilisateur.email, page_publique: true, couleur: "rouge" });
-    Array.prototype.forEach.call(f.querySelectorAll('[name="couleur"]'), function (r) { r.checked = r.value === ((structure && structure.couleur) || "rouge"); });
+    if (!structure || !structure.couleur) remplir(f, { couleur: "rouge" });
+    photos = (structure && structure.photos || []).slice();
+    logo = structure && structure.logo || null;
+    aSupprimer = [];
+    montrerPhotos();
     var voir = $("voir-ma-page");
     voir.hidden = !(structure && structure.verifiee && structure.slug && structure.page_publique);
     if (!voir.hidden) voir.href = L.lien_structures + structure.slug + "/";
-    $("accord-structure").hidden = !!structure;
-    f.accord.required = !structure;
+    $("accord-structure").hidden = !nouveau;
+    f.accord.required = nouveau;
+    assistantStructure.ouvrir(nouveau);
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
-    if (!structure) {
-      $("chapo-compte").textContent = "Présentez votre structure. Nous la vérifions avant que ses offres soient en ligne.";
-      st.textContent = "Étape 1 : la fiche de votre structure. Ensuite, vous pourrez écrire vos offres.";
+    if (nouveau) {
+      $("chapo-compte").textContent = "Présentez votre structure, étape par étape. Nous la vérifions avant que ses offres soient en ligne.";
+      st.hidden = true;
     } else if (!structure.verifiee) {
       $("chapo-compte").textContent = "Votre espace structure.";
       st.textContent = "Vérification en cours (en général sous 2 jours ouvrés). Vous pouvez déjà préparer vos offres : elles seront en ligne dès que la structure sera vérifiée.";
@@ -241,29 +558,112 @@
       st.textContent = "Structure vérifiée : vos offres en ligne sont visibles par tous, et vous voyez les profils des candidats.";
       st.className = "statut statut-ok";
     }
-    $("bloc-offres").hidden = !structure;
+    $("bloc-offres").hidden = nouveau;
     $("bloc-candidats").hidden = !(structure && structure.verifiee);
-    $("bloc-structure").open = !structure;
-    $("tuiles-structure").hidden = !structure;
+    $("tuiles-structure").hidden = nouveau;
     if (structure) chargerOffres().then(tableauStructure);
     if (structure && structure.verifiee) chargerCandidats();
   }
-  $("f-structure").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    var form = this, d = lire(form, CHAMPS_STRUCTURE);
-    var coche = form.querySelector('[name="couleur"]:checked');
-    d.couleur = coche ? coche.value : "rouge";
+  function lireStructure() {
+    var d = lire($("f-structure"), CHAMPS_STRUCTURE);
+    d.couleur = d.couleur || "rouge";
     d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 12);
     d.slug = enSlug(d.slug || d.nom);
     if (d.slug.length < 3) d.slug = null;
+    d.photos = photos.slice(0, 5);
+    d.logo = logo;
+    return d;
+  }
+  function apercuStructure() {
+    var d = lireStructure(), b = $("bloc-structure");
+    function ap(nom) { return b.querySelector('[data-ap="' + nom + '"]'); }
+    var haut = ap("haut");
+    haut.className = "tp-carte-haut rc-carte-structure theme-" + d.couleur;
+    haut.style.backgroundImage = d.photos.length ? "linear-gradient(rgba(35,31,32,.15), rgba(35,31,32,.15)), url(" + JSON.stringify(urlPhoto(d.photos[0])) + ")" : "";
+    haut.style.backgroundSize = "cover"; haut.style.backgroundPosition = "center";
+    var ini = ap("initiale");
+    ini.textContent = "";
+    if (d.logo) { var im = el("img"); im.src = urlPhoto(d.logo); im.alt = ""; ini.appendChild(im); } else ini.textContent = d.nom ? initiales(d.nom) : "?";
+    ap("badge").textContent = d.type ? libelle("types", d.type) : "Structure";
+    ap("nom").textContent = d.nom || "Votre structure";
+    ap("lieu").textContent = d.ville ? d.ville + (d.departement ? " (" + d.departement + ")" : "") : "Votre ville";
+    ap("detail").textContent = (d.publics || []).map(function (x) { return libelle("publics", x); }).join(" · ") || "Vos publics";
+    ap("note").textContent = d.page_publique ? "filrouganim.fr/…/" + (d.slug || "votre-page") : "Page cachée";
+    var points = [d.type, d.nom, d.ville, d.departement, d.accroche, (d.publics || []).length, d.activites.length, d.lieux, d.presentation, d.projet,
+                  d.photos.length, d.logo, d.avantages, d.site, d.email_contact, d.identifiant];
+    var p = Math.round(points.filter(Boolean).length / points.length * 100);
+    ap("pourcent").textContent = p + " %";
+    ap("jauge").style.width = p + "%";
+  }
+  $("bloc-structure").querySelector(".as-voir-fiche").addEventListener("click", function () {
+    var d = lireStructure();
+    d.offres = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= aujourdhui(); });
+    d.fondatrice = structure && structure.fondatrice;
+    ouvrirFiche(ficheStructure(d));
+  });
+  // les photos et le logo, envoyés dès qu'on les choisit (dans le dossier de la structure)
+  function montrerPhotos() {
+    var g = $("photos-grille");
+    g.textContent = "";
+    photos.forEach(function (ch, i) {
+      var li = el("li", i === 0 ? "photo-une" : null), im = el("img");
+      im.src = urlPhoto(ch); im.alt = "Photo " + (i + 1); im.loading = "lazy";
+      var x = el("button", null, "×");
+      x.type = "button"; x.setAttribute("aria-label", "Retirer la photo " + (i + 1));
+      x.addEventListener("click", function () { aSupprimer.push(ch); photos.splice(i, 1); montrerPhotos(); apercuStructure(); });
+      li.appendChild(im); li.appendChild(x); g.appendChild(li);
+    });
+    $("photos-depot").hidden = photos.length >= 5;
+    var a = $("logo-apercu");
+    a.style.backgroundImage = logo ? "url(" + JSON.stringify(urlPhoto(logo)) + ")" : "";
+    $("logo-retirer").hidden = !logo;
+  }
+  async function envoyerImage(fichier, prefixe, cote) {
+    var blob = await reduireImage(fichier, cote);
+    if (blob.size > 2 * 1024 * 1024) throw new Error("exceeded");
+    var chemin = utilisateur.id + "/" + nomAuHasard(prefixe);
+    var r = await sb.storage.from("structures").upload(chemin, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+    if (r.error) throw r.error;
+    return chemin;
+  }
+  $("f-structure").photos_fichier.addEventListener("change", async function () {
+    var liste = Array.prototype.slice.call(this.files, 0, 5 - photos.length), champ = this;
+    champ.value = "";
+    if (!liste.length) return;
+    message("Envoi des photos…");
+    try {
+      for (var i = 0; i < liste.length; i++) photos.push(await envoyerImage(liste[i], "photo", 1600));
+      message("Photos ajoutées. Pensez à enregistrer votre fiche.");
+    } catch (e) { message(erreurLisible(e), true); }
+    montrerPhotos(); apercuStructure();
+  });
+  $("f-structure").logo_fichier.addEventListener("change", async function () {
+    var f = this.files[0];
+    this.value = "";
+    if (!f) return;
+    try {
+      var ancien = logo;
+      logo = await envoyerImage(f, "logo", 400);
+      if (ancien) aSupprimer.push(ancien);
+      message("Logo ajouté. Pensez à enregistrer votre fiche.");
+    } catch (e) { message(erreurLisible(e), true); }
+    montrerPhotos(); apercuStructure();
+  });
+  $("logo-retirer").addEventListener("click", function () { if (logo) aSupprimer.push(logo); logo = null; montrerPhotos(); apercuStructure(); });
+
+  $("f-structure").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this, d = lireStructure();
     occupe(form, true);
     var r = structure
       ? await sb.from("structures").update(d).eq("id", utilisateur.id).select().single()
       : await sb.from("structures").insert(d).select().single();
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
+    if (aSupprimer.length) { sb.storage.from("structures").remove(aSupprimer); aSupprimer = []; }
     var nouveau = !structure;
     structure = r.data;
+    memoire(null);
     message(nouveau ? "Fiche enregistrée. Nous vérifions la structure, puis vos offres pourront être en ligne." : "Fiche enregistrée.");
     voirStructure();
   });
@@ -339,8 +739,269 @@
     chargerOffres().then(tableauStructure);
   });
 
-  /* -- un profil de candidat, affiché pour une structure -- */
+  /* ====================================================================================
+     Les fiches (même mise en page que les pages du site : classes fp-*)
+     ==================================================================================== */
+  function icone(chemin) {
+    var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("class", "icone"); s.setAttribute("aria-hidden", "true");
+    s.innerHTML = chemin;   // chemins fixes, écrits ici : jamais de texte venu d'une personne
+    return s;
+  }
+  var IC = { badge: '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+             lettre: '<rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="1.8"/>' };
+  function bloc(titre) { var s = el("section", "fp-bloc"); s.appendChild(el("h2", null, titre)); return s; }
+  function coches(liste, douces) { var ul = el("ul", "fp-coches" + (douces ? " fp-coches-douces" : "")); liste.forEach(function (t) { ul.appendChild(el("li", null, t)); }); return ul; }
+  function chiffres(liste) {
+    var ul = el("ul", "fp-chiffres");
+    liste.forEach(function (c) { var li = el("li"); li.appendChild(el("b", null, c[0])); li.appendChild(el("span", null, c[1])); ul.appendChild(li); });
+    return ul;
+  }
+  function texteReplie(sec, paragraphes) {
+    var t = el("div", "fp-texte");
+    t.setAttribute("data-replie", "");
+    paragraphes.forEach(function (p, i) {
+      if (Array.isArray(p)) { t.appendChild(el("h3", null, p[1])); return; }
+      (p || "").split(/\n\s*\n/).forEach(function (x) { if (x.trim()) t.appendChild(el("p", i === 0 && sec.dataset.accroche ? "fp-accroche" : null, x.trim())); });
+    });
+    sec.appendChild(t);
+    var b = el("button", "fp-lire", "Lire la suite"); b.type = "button"; b.hidden = true;
+    sec.appendChild(b);
+  }
+  function carteOu(points, libelleCarte) {
+    var c = el("div", "fp-carte");
+    c.setAttribute("data-fp-carte", JSON.stringify({ points: points }));
+    c.setAttribute("data-tuiles", L.tuiles);
+    c.setAttribute("role", "img"); c.setAttribute("aria-label", libelleCarte);
+    return c;
+  }
+  function entete(racineFiche, o) {
+    if (o.photos && o.photos.length) {
+      var g = el("div", "fp-galerie fp-galerie-" + Math.min(o.photos.length, 5));
+      o.photos.slice(0, 5).forEach(function (ch, i) { var a = el("span", "fp-photo"), im = el("img"); im.src = urlPhoto(ch); im.alt = "Photo " + (i + 1); a.appendChild(im); g.appendChild(a); });
+      racineFiche.appendChild(g);
+    } else {
+      var ban = el("div", "fp-banniere"); ban.setAttribute("aria-hidden", "true"); ban.appendChild(el("span", null, o.banniere || ""));
+      racineFiche.appendChild(ban);
+    }
+    var id = el("div", "fp-identite");
+    var av = el("span", "fp-avatar");
+    if (o.logo) { var im2 = el("img"); im2.src = urlPhoto(o.logo); im2.alt = ""; av.appendChild(im2); } else av.textContent = o.initiale;
+    id.appendChild(av);
+    var t = el("div");
+    t.appendChild(el("h1", null, o.nom));
+    t.appendChild(el("p", "fp-sous", o.sous));
+    var ul = el("ul", "fp-badges");
+    o.badges.forEach(function (b) { var li = el("li"); li.appendChild(icone(IC.badge)); li.appendChild(document.createTextNode(b)); ul.appendChild(li); });
+    t.appendChild(ul);
+    id.appendChild(t);
+    racineFiche.appendChild(id);
+  }
+  function contactTete(aside, initiale, nom, sous, logoChemin) {
+    var tete = el("div", "fp-contact-tete"), av = el("span", "fp-avatar fp-avatar-petit");
+    if (logoChemin) { var im = el("img"); im.src = urlPhoto(logoChemin); im.alt = ""; av.appendChild(im); } else av.textContent = initiale;
+    var s = el("span"); s.appendChild(el("b", null, nom)); s.appendChild(el("small", null, sous));
+    tete.appendChild(av); tete.appendChild(s); aside.appendChild(tete);
+  }
+
+  // la fiche d'un profil de candidat : pour une structure (avec Écrire, Favori, CV), ou en aperçu pour le candidat
+  var RECH_DETAIL = { "stage-pratique": "Les 14 jours de stage pratique du BAFA, dans un accueil déclaré.", "ete": "En séjour ou en centre de loisirs, juillet et août.",
+    "petites-vacances": "Toussaint, Noël, hiver, printemps.", "mercredis": "Les mercredis, hors vacances scolaires.", "periscolaire": "Matins, midis et soirs des jours d'école.",
+    "annee": "Un poste toute l'année.", "direction": "Direction ou direction adjointe.", "alternance": "BPJEPS ou DEJEPS en alternance." };
+  function ficheProfil(p, opts) {
+    opts = opts || {};
+    var f = el("div", "fp theme-sauge"), c = el("div", "cadre");
+    f.appendChild(c);
+    if (opts.apercu) c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées. Il n'est jamais public."));
+    var badges = (p.diplomes || []).map(function (x) { return libelle("diplomes", x); });
+    if (p.permis_b) badges.push("Permis B");
+    if (p.cv_nom) badges.push("CV joint");
+    entete(c, { banniere: p.poste_recherche || "", initiale: (p.prenom || "?").charAt(0).toUpperCase(), nom: p.prenom || "Votre prénom",
+                sous: [p.poste_recherche, p.ville || nomDep(p.departement)].filter(Boolean).join(" · "), badges: badges });
+    var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
+    grille.appendChild(pr); c.appendChild(grille);
+    var mob = (p.mobilite || []);
+    pr.appendChild(chiffres([
+      [p.dispo_debut ? jourMois(p.dispo_debut) : "À voir", p.dispo_debut ? (p.dispo_fin ? "disponible jusqu'au " + dateFr(p.dispo_fin) : "disponible à partir de cette date") : "les dates, avec " + (p.prenom || "le candidat")],
+      [String(mob.length + 1), mob.length ? "zones où travailler" : "zone où travailler"],
+      [String((p.experiences || []).length), (p.experiences || []).length > 1 ? "types d'expérience" : "type d'expérience"]
+    ]));
+    if ((p.recherche || []).length) {
+      var s1 = bloc("Ce que " + (p.prenom || "le candidat") + " cherche"), fo = el("div", "fp-formules");
+      p.recherche.forEach(function (r, i) {
+        var a = el("article", "fp-formule" + (i === 0 ? " fp-formule-une" : ""));
+        if (i === 0) a.appendChild(el("span", "fp-formule-badge", "En priorité"));
+        a.appendChild(el("h3", null, libelle("recherche", r)));
+        a.appendChild(el("p", "fp-formule-lieu", RECH_DETAIL[r] || ""));
+        fo.appendChild(a);
+      });
+      s1.appendChild(fo);
+      if (p.disponibilites) s1.appendChild(el("p", "fp-note", "Disponibilités : " + p.disponibilites));
+      pr.appendChild(s1);
+    }
+    if (p.presentation || p.cv_nom) {
+      var s2 = bloc("Présentation");
+      if (p.presentation) texteReplie(s2, [p.presentation]);
+      if (p.cv_nom) {
+        var cv = el("div", "fp-cv"), ic = el("span", "fichier-icone", "PDF"), t = el("span");
+        t.appendChild(el("b", null, "Le CV de " + (p.prenom || "ce candidat"))); t.appendChild(el("small", null, p.cv_nom));
+        cv.appendChild(ic); cv.appendChild(t);
+        if (opts.cvId) {
+          var bcv = el("button", "fp-cv-bouton", "Ouvrir le CV"); bcv.type = "button";
+          bcv.addEventListener("click", function () { ouvrirCv(opts.cvId); });
+          cv.appendChild(bcv);
+        }
+        s2.appendChild(cv);
+      }
+      pr.appendChild(s2);
+    }
+    if ((p.experiences || []).length || (p.activites || []).length) {
+      var s3 = bloc("Ce que " + (p.prenom || "le candidat") + " sait faire");
+      if ((p.experiences || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Ses expériences")); s3.appendChild(coches(p.experiences.map(function (x) { return libelle("experiences", x); }))); }
+      if ((p.activites || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Ses activités et talents")); s3.appendChild(coches(p.activites.map(majuscule).concat(p.permis_b ? ["Permis B"] : []), true)); }
+      pr.appendChild(s3);
+    }
+    if (p.departement) {
+      var s4 = bloc("Où " + (p.prenom || "le candidat") + " peut travailler"), ou = el("ul", "fp-ou"), pts = [];
+      [p.departement].concat(mob).forEach(function (d, i) {
+        var li = el("li");
+        li.appendChild(el("b", null, d === "france" ? "Partout en France" : (i === 0 && p.ville ? p.ville : nomDep(d))));
+        li.appendChild(el("span", null, d === "france" ? "pour les séjours" : (i === 0 && p.ville ? nomDep(d) + " (" + d + ")" : "département (" + d + ")")));
+        ou.appendChild(li);
+        if (L.centres[d]) pts.push([L.centres[d][0], L.centres[d][1], nomDep(d), i === 0 ? 1 : 0]);
+      });
+      s4.appendChild(ou);
+      if (pts.length) s4.appendChild(carteOu(pts, "Carte des départements où " + (p.prenom || "le candidat") + " peut travailler"));
+      s4.appendChild(el("p", "fp-note", "Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme)."));
+      pr.appendChild(s4);
+    }
+    if (p.maj_le) pr.appendChild(el("p", "fp-bon", "Profil mis à jour le " + dateFr(p.maj_le) + ". Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas."));
+
+    var aside = el("aside", "fp-contact");
+    contactTete(aside, (p.prenom || "?").charAt(0).toUpperCase(), p.prenom || "Votre prénom", [p.ville, nomDep(p.departement)].filter(Boolean).join(" · "));
+    var dispo = el("p", "fp-contact-chiffre");
+    if (p.dispo_debut) { dispo.appendChild(document.createTextNode((p.dispo_fin ? "Disponible du " : "Disponible à partir du "))); dispo.appendChild(el("b", null, jourMois(p.dispo_debut))); if (p.dispo_fin) { dispo.appendChild(document.createTextNode(" au ")); dispo.appendChild(el("b", null, jourMois(p.dispo_fin))); } }
+    else dispo.textContent = p.disponibilites || "Dates à voir ensemble";
+    aside.appendChild(dispo);
+    if ((p.diplomes || []).length) {
+      var ul = el("ul", "fp-contact-liste");
+      p.diplomes.forEach(function (d) { var li = el("li"); li.appendChild(el("span", null, libelle("diplomes", d))); li.appendChild(el("b", null, "✓")); ul.appendChild(li); });
+      aside.appendChild(ul);
+    }
+    if (opts.ecrire && p.email_contact) {
+      var a = el("a", "fp-bouton-principal");
+      a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
+      a.appendChild(icone(IC.lettre)); a.appendChild(document.createTextNode("Écrire à " + p.prenom));
+      aside.appendChild(a);
+    } else aside.appendChild(el("span", "fp-bouton-principal fp-inerte", "Écrire à " + (p.prenom || "vous")));
+    if (opts.favori) aside.appendChild(opts.favori);
+    aside.appendChild(el("p", "fp-contact-note", opts.apercu ? "Les structures vérifiées vous écrivent à l'adresse de votre profil ; vous répondez si vous voulez." : "Réservé aux structures vérifiées. Beaucoup de candidats ont 16 ou 17 ans : restez dans le cadre du recrutement."));
+    grille.appendChild(aside);
+    return f;
+  }
+
+  // l'aperçu de la page de la structure, avant la vérification
+  function ficheStructure(d) {
+    var f = el("div", "fp theme-" + (d.couleur || "rouge")), c = el("div", "cadre");
+    f.appendChild(c);
+    c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre page telle qu'elle sera en ligne une fois la structure vérifiée."));
+    var type = d.type ? libelle("types", d.type) : "Structure d'animation";
+    entete(c, { photos: d.photos, logo: d.logo, banniere: type, initiale: initiales(d.nom), nom: d.nom || "Votre structure",
+                sous: type + (d.ville ? " à " + d.ville : ""), badges: ["Vérifiée par Fil Roug'Anim"].concat(d.offres.length ? ["Recrute en ce moment"] : []).concat(d.fondatrice ? ["Structure fondatrice"] : []).concat(["Sans commission"]) });
+    var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
+    grille.appendChild(pr); c.appendChild(grille);
+    pr.appendChild(chiffres([[String(d.offres.length), d.offres.length === 1 ? "offre en ce moment" : "offres en ce moment"],
+      [(d.publics || []).length ? libelle("publics", d.publics[0]).replace(" ans", "") + (d.publics.length > 1 ? " et +" : "") : "Tous", (d.publics || []).length ? "ans, les publics" : "les publics"],
+      [d.departement || "—", nomDep(d.departement) || "le département"]]));
+    var s1 = bloc(d.offres.length ? "Ses offres" : "Pas d'offre en ce moment");
+    if (d.offres.length) {
+      var fo = el("div", "fp-formules");
+      d.offres.slice(0, 6).forEach(function (o, i) {
+        var a = el("article", "fp-formule" + (i === 0 && d.offres.length > 1 ? " fp-formule-une" : ""));
+        a.appendChild(el("p", "fp-formule-sur", libelle("contrats", o.contrat)));
+        var dt = el("p", "fp-formule-date"); dt.appendChild(el("b", null, jourMois(o.debut))); dt.appendChild(document.createTextNode(" " + o.debut.slice(0, 4))); a.appendChild(dt);
+        a.appendChild(el("h3", null, o.intitule)); a.appendChild(el("p", "fp-formule-lieu", o.ville + " (" + o.departement + ")"));
+        fo.appendChild(a);
+      });
+      s1.appendChild(fo);
+    } else s1.appendChild(el("p", null, "Vos offres en ligne apparaîtront ici, en cartes."));
+    pr.appendChild(s1);
+    if (d.presentation || d.projet || d.accroche) {
+      var s2 = bloc("Présentation");
+      if (d.accroche) s2.dataset.accroche = "1";
+      var morceaux = [];
+      if (d.accroche) morceaux.push(d.accroche);
+      if (d.presentation) morceaux.push(d.presentation);
+      if (d.projet) { morceaux.push(["h3", "Notre projet"]); morceaux.push(d.projet); }
+      texteReplie(s2, morceaux);
+      pr.appendChild(s2);
+    }
+    if (d.avantages || (d.publics || []).length || d.activites.length) {
+      var s3 = bloc("Ce que la structure propose");
+      if (d.avantages) { s3.appendChild(el("p", "fp-sous-titre", "À l'équipe")); s3.appendChild(coches(d.avantages.split("\n").map(function (x) { return x.trim().replace(/\.$/, ""); }).filter(Boolean))); }
+      if ((d.publics || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Aux enfants et aux jeunes")); s3.appendChild(coches(d.publics.map(function (x) { return libelle("publics", x); }), true)); }
+      if (d.activites.length) { s3.appendChild(el("p", "fp-sous-titre", "Les activités")); s3.appendChild(coches(d.activites.map(majuscule), true)); }
+      pr.appendChild(s3);
+    }
+    if (d.departement) {
+      var s4 = bloc("Où elle accueille"), ou = el("ul", "fp-ou");
+      [[d.ville || "Votre ville", type.toLowerCase()], [nomDep(d.departement), "département (" + d.departement + ")"]].forEach(function (x) { var li = el("li"); li.appendChild(el("b", null, x[0])); li.appendChild(el("span", null, x[1])); ou.appendChild(li); });
+      s4.appendChild(ou);
+      if (L.centres[d.departement]) s4.appendChild(carteOu([[L.centres[d.departement][0], L.centres[d.departement][1], nomDep(d.departement), 1]], "Carte : " + nomDep(d.departement)));
+      if (d.lieux) s4.appendChild(el("p", "fp-lieux", d.lieux));
+      pr.appendChild(s4);
+    }
+    var aside = el("aside", "fp-contact");
+    contactTete(aside, initiales(d.nom), d.nom || "Votre structure", type + (d.ville ? " · " + d.ville : ""), d.logo);
+    aside.appendChild(el("p", "fp-contact-chiffre", d.offres.length ? d.offres.length + (d.offres.length > 1 ? " offres en ce moment" : " offre en ce moment") : "Recrute toute l'année"));
+    aside.appendChild(el("span", "fp-bouton-principal fp-inerte", "Postuler avec mon profil"));
+    if (d.site) { var s = el("span", "fp-bouton-second fp-inerte", "Le site de la structure"); s.appendChild(el("small", null, d.site.replace(/^https?:\/\//, "").replace(/\/$/, ""))); aside.appendChild(s); }
+    aside.appendChild(el("p", "fp-contact-note", "Les candidats postulent avec leur profil (et leur CV) : vous les retrouvez dans « Candidatures reçues »."));
+    grille.appendChild(aside);
+    return f;
+  }
+
+  var dernierFocus = null;
+  function ouvrirFiche(fiche) {
+    dernierFocus = document.activeElement;
+    var cont = $("fiche-contenu");
+    cont.textContent = "";
+    cont.appendChild(fiche);
+    $("fiche-voile").hidden = false;
+    document.documentElement.classList.add("fiche-ouverte");
+    $("fiche-voile").scrollTop = 0;
+    $("fiche-fermer").focus();
+    if (window.FicheFRA) window.FicheFRA.preparer(cont);
+  }
+  function fermerFiche() {
+    $("fiche-voile").hidden = true;
+    $("fiche-contenu").textContent = "";
+    document.documentElement.classList.remove("fiche-ouverte");
+    if (dernierFocus) dernierFocus.focus();
+  }
+  $("fiche-fermer").addEventListener("click", fermerFiche);
+  $("fiche-voile").addEventListener("click", function (e) { if (e.target === this) fermerFiche(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("fiche-voile").hidden) fermerFiche(); });
+
+  /* -- un profil de candidat, en ligne dans la liste d'une structure -- */
   var favoris = [];
+  function boutonFavori(p, classe) {
+    var f = el("button", classe);
+    f.type = "button";
+    var maj = function () { var oui = favoris.indexOf(p.id) >= 0; f.textContent = oui ? "★ Favori" : "☆ Mettre en favori"; f.setAttribute("aria-pressed", oui); };
+    maj();
+    f.addEventListener("click", async function () {
+      var oui = favoris.indexOf(p.id) >= 0;
+      var r = oui ? await sb.from("favoris").delete().eq("profil_id", p.id) : await sb.from("favoris").insert({ profil_id: p.id });
+      if (r.error) { message(erreurLisible(r.error), true); return; }
+      if (oui) favoris.splice(favoris.indexOf(p.id), 1); else favoris.push(p.id);
+      maj(); tableauStructure();
+      Array.prototype.forEach.call(document.querySelectorAll('[data-favori="' + p.id + '"]'), function (b) { if (b !== f) b.dispatchEvent(new CustomEvent("maj")); });
+    });
+    f.setAttribute("data-favori", p.id);
+    f.addEventListener("maj", maj);
+    return f;
+  }
   function carteProfil(p, avecFavori) {
     var c = el("article", "ligne-compte profil-candidat");
     var corps = el("div");
@@ -350,44 +1011,34 @@
       var ul = el("ul", "pastilles");
       p.diplomes.forEach(function (x) { ul.appendChild(el("li", null, libelle("diplomes", x))); });
       if (p.permis_b) ul.appendChild(el("li", null, "Permis B"));
+      if (p.cv_nom) ul.appendChild(el("li", null, "CV joint"));
       corps.appendChild(ul);
     }
-    if (p.recherche && p.recherche.length) corps.appendChild(el("p", "petit", "Cherche : " + p.recherche.map(function (x) { return libelle("recherche", x); }).join(", ")));
-    if (p.experiences && p.experiences.length) corps.appendChild(el("p", "petit", "Expérience : " + p.experiences.map(function (x) { return libelle("experiences", x); }).join(", ")));
-    if (p.activites && p.activites.length) corps.appendChild(el("p", "petit", "Activités : " + p.activites.join(", ")));
     var dispo = [];
     if (p.dispo_debut) dispo.push((p.dispo_fin ? "du " : "à partir du ") + dateFr(p.dispo_debut) + (p.dispo_fin ? " au " + dateFr(p.dispo_fin) : ""));
     if (p.disponibilites) dispo.push(p.disponibilites);
     if (dispo.length) corps.appendChild(el("p", "petit", "Disponible : " + dispo.join(" · ")));
-    if (p.mobilite && p.mobilite.length) corps.appendChild(el("p", "petit", "Peut aussi travailler : " + p.mobilite.map(nomDep).join(", ")));
-    if (p.presentation) corps.appendChild(el("p", "presentation", p.presentation));
+    if (p.recherche && p.recherche.length) corps.appendChild(el("p", "petit", "Cherche : " + p.recherche.map(function (x) { return libelle("recherche", x); }).join(", ")));
     if (p.maj_le) corps.appendChild(el("p", "petit", "Profil mis à jour le " + dateFr(p.maj_le)));
     c.appendChild(corps);
     var actions = el("div", "boutons boutons-colonne");
-    var a = el("a", "bouton-r", "Écrire");
+    var voir = el("button", "bouton-r", "Voir la fiche");
+    voir.type = "button";
+    voir.addEventListener("click", function () {
+      ouvrirFiche(ficheProfil(p, { ecrire: true, cvId: p.cv_nom ? p.id : null, favori: avecFavori && p.id ? boutonFavori(p, "fp-bouton-second") : null }));
+    });
+    actions.appendChild(voir);
+    var a = el("a", "bouton-texte", "Écrire");
     a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
     actions.appendChild(a);
-    if (avecFavori && p.id) {
-      var f = el("button", "bouton-texte bouton-favori");
-      f.type = "button";
-      var maj = function () { var oui = favoris.indexOf(p.id) >= 0; f.textContent = oui ? "★ Favori" : "☆ Mettre en favori"; f.setAttribute("aria-pressed", oui); };
-      maj();
-      f.addEventListener("click", async function () {
-        var oui = favoris.indexOf(p.id) >= 0;
-        var r = oui ? await sb.from("favoris").delete().eq("profil_id", p.id) : await sb.from("favoris").insert({ profil_id: p.id });
-        if (r.error) { message(erreurLisible(r.error), true); return; }
-        if (oui) favoris.splice(favoris.indexOf(p.id), 1); else favoris.push(p.id);
-        maj(); tableauStructure();
-      });
-      actions.appendChild(f);
-    }
+    if (avecFavori && p.id) actions.appendChild(boutonFavori(p, "bouton-texte bouton-favori"));
     c.appendChild(actions);
     return c;
   }
 
   /* -- candidats (structures vérifiées seulement : la base refuse les autres) -- */
   var CHAMPS_VUS = "id,prenom,departement,ville,poste_recherche,mobilite,diplomes,recherche,experiences,activites,permis_b," +
-                   "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le";
+                   "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le,cv_nom";
   async function chargerCandidats() {
     var f = $("f-candidats");
     var fav = await sb.from("favoris").select("profil_id");
@@ -412,8 +1063,8 @@
   var recues = [];
   async function chargerCandidaturesRecues() {
     var ids = mesOffres.map(function (o) { return o.id; });
-    var bloc = $("bloc-candidatures-recues"), liste = $("liste-candidatures-recues");
-    if (!ids.length) { bloc.hidden = true; recues = []; return; }
+    var blocR = $("bloc-candidatures-recues"), liste = $("liste-candidatures-recues");
+    if (!ids.length) { blocR.hidden = true; recues = []; return; }
     if (structure.verifiee && !favoris.length) {
       var fav = await sb.from("favoris").select("profil_id");
       favoris = (fav.data || []).map(function (x) { return x.profil_id; });
@@ -421,7 +1072,7 @@
     var r = await sb.from("candidatures").select("id,offre_id,message,statut,cree_le,profils(" + CHAMPS_VUS + ")")
       .in("offre_id", ids).order("cree_le", { ascending: false });
     recues = r.data || [];
-    bloc.hidden = false;
+    blocR.hidden = false;
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
     if (!recues.length) { liste.appendChild(el("p", "aucune", "Pas encore de candidature. Elles arrivent ici dès qu'un candidat postule à l'une de vos offres en ligne.")); return; }
@@ -471,6 +1122,7 @@
     tuile(t, recues.length, (recues.length > 1 ? "candidatures" : "candidature") + (nouvelles ? " dont " + nouvelles + " nouvelle" + (nouvelles > 1 ? "s" : "") : ""), "bloc-candidatures-recues");
     if (structure.verifiee) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
     tableauEnCours = false;
+    apercuStructure();
   }
 
   /* -- espace candidat : candidatures, offres pour toi -- */
@@ -566,7 +1218,7 @@
     offreVisee = null;
     if (params.get("postuler")) history.replaceState(null, "", location.pathname);
     params.delete("postuler");
-    message("Candidature envoyée. La structure voit votre profil et votre message ; vous suivez sa réponse dans « Mes candidatures ».");
+    message("Candidature envoyée. La structure voit votre profil" + (profil.cv_nom ? ", votre CV" : "") + " et votre message ; vous suivez sa réponse dans « Mes candidatures ».");
     tableauCandidat();
   });
 
@@ -576,13 +1228,24 @@
   /* -- session -- */
   $("deconnexion").addEventListener("click", async function () {
     await sb.auth.signOut();
+    memoire(null);
     location.href = location.pathname;
   });
+  // les fichiers d'un compte (CV, photos, logo) : supprimés avec lui
+  async function supprimerMesFichiers() {
+    var r = await Promise.all([sb.storage.from("cv").list(utilisateur.id), sb.storage.from("structures").list(utilisateur.id, { limit: 100 })]);
+    var a = (r[0].data || []).map(function (f) { return utilisateur.id + "/" + f.name; });
+    var b = (r[1].data || []).map(function (f) { return utilisateur.id + "/" + f.name; });
+    if (a.length) await sb.storage.from("cv").remove(a);
+    if (b.length) await sb.storage.from("structures").remove(b);
+  }
   $("supprimer").addEventListener("click", async function () {
-    if (!confirm("Supprimer définitivement votre compte" + (structure ? ", votre fiche et toutes vos offres" : " et votre profil") + " ? Ce n'est pas réversible.")) return;
+    if (!confirm("Supprimer définitivement votre compte" + (structure ? ", votre fiche, vos photos et toutes vos offres" : ", votre profil et votre CV") + " ? Ce n'est pas réversible.")) return;
+    try { await supprimerMesFichiers(); } catch (e) { /* on supprime le compte quand même */ }
     var r = await sb.rpc("supprimer_mon_compte");
     if (r.error) { message(erreurLisible(r.error) + " Écrivez-nous pour que nous le supprimions.", true); return; }
     await sb.auth.signOut();
+    memoire(null);
     profil = structure = utilisateur = null;
     montrer("v-connexion");
     message("Votre compte et vos données sont supprimés.");
