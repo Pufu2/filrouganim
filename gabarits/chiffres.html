@@ -17,7 +17,7 @@
           {% if a.animateurs is defined %}<li><span>Animateurs inscrits avec un profil</span><b>{{ a.animateurs }}</b></li>
           <li><span>Structures inscrites</span><b>{{ a.structures }}</b></li>
           <li><span>Offres en ligne</span><b>{{ a.offres }}</b></li>
-          <li><span>Candidatures envoyées</span><b>{{ a.candidatures }}</b></li>{% endif %}
+          {% if a.candidatures is defined %}<li><span>Candidatures envoyées</span><b>{{ a.candidatures }}</b></li>{% endif %}{% endif %}
         </ul>
       </section>
       <section class="chiffres-carte">
