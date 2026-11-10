@@ -24,6 +24,7 @@ import datetime as dt
 import json
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -108,17 +109,26 @@ def supabase():
         return None
     entetes = {"apikey": cle, "Authorization": f"Bearer {cle}", "Prefer": "count=exact", "Range": "0-0"}
     def compte(table, filtre=""):
-        _, h = lire_json(f"{url}/rest/v1/{table}?select=id{filtre}", entetes)
+        try:
+            _, h = lire_json(f"{url}/rest/v1/{table}?select=id{filtre}", entetes)
+        except urllib.error.HTTPError as e:  # une table que la clé n'a pas le droit de lire est passée, les autres comptent
+            print(f"Supabase : {table} non lue ({e.code})")
+            return None
         return int((h.get("Content-Range") or "*/0").split("/")[-1])
     def dernieres(table, role):
-        d, _ = lire_json(f"{url}/rest/v1/{table}?select=departement,cree_le&order=cree_le.desc&limit=5",
+        try:
+            d, _ = lire_json(f"{url}/rest/v1/{table}?select=departement,cree_le&order=cree_le.desc&limit=5",
                          {"apikey": cle, "Authorization": f"Bearer {cle}"})
+        except urllib.error.HTTPError as e:
+            print(f"Supabase : dernières inscriptions de {table} non lues ({e.code})")
+            return []
         return [{"role": role, "departement": x.get("departement"), "mois": (x.get("cree_le") or "")[:7]} for x in d]
     r = {"animateurs": compte("profils"), "structures": compte("structures"),
          "offres": compte("offres", "&publiee=eq.true"), "candidatures": compte("candidatures")}
+    r = {k: v for k, v in r.items() if v is not None}
     inscrits = sorted(dernieres("profils", "animateur") + dernieres("structures", "structure"), key=lambda x: x["mois"], reverse=True)
     r["dernieres_inscriptions"] = inscrits[:5]
-    print(f"Supabase : {r['animateurs']} animateurs, {r['structures']} structures, {r['candidatures']} candidatures")
+    print(f"Supabase : {r.get('animateurs')} animateurs, {r.get('structures')} structures, {r.get('offres')} offres")
     return r
 
 
@@ -134,7 +144,13 @@ def main():
         try:
             nouveau = f()
         except Exception as e:  # une source en panne garde ses derniers chiffres
-            print(f"{nom} : en panne ({e}), derniers chiffres gardés")
+            detail = ""
+            if isinstance(e, urllib.error.HTTPError):
+                try:
+                    detail = " : " + " ".join(e.read().decode("utf-8", "ignore").split())[:200]
+                except Exception:
+                    pass
+            print(f"{nom} : en panne ({e}{detail}), derniers chiffres gardés")
             continue
         if nouveau:
             chiffres.update(nouveau)
