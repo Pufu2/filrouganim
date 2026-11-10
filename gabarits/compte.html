@@ -300,7 +300,7 @@
         <a class="bouton-r" id="abo-payer" href="#">Payer par carte <span aria-hidden="true">→</span></a>
         <a class="abo-facture" id="abo-facture" href="#">Payer sur facture (virement, mandat administratif, Chorus Pro)</a>
         <a class="abo-cgv" href="{{ lien('/conditions-de-vente/') }}" target="_blank" rel="noopener">Conditions de vente</a>
-        <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail }}" target="_blank" rel="noopener" hidden>Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span></a>
+        <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span>{% else %}Factures, nombre de centres, arrêt : écrivez-nous{% endif %}</a>
       </div>
     </div>
     <div class="tuiles" id="tuiles-structure"></div>

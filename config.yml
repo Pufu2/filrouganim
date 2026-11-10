@@ -52,7 +52,7 @@ fondateurs:
   places: 10
   reservees: 0
 
-# Abonnement des structures : Stripe, compte de l'entreprise de Jeuphorie (même micro-entreprise).
+# Abonnement des structures : Stripe, compte « Fil Roug'Anim » (même micro-entreprise que Jeuphorie, compte séparé).
 # Un seul tarif dégressif par formule : la quantité payée est le nombre de centres (la structure comprise).
 # Les paiements sont relevés par outils/abonnements.py (GitHub Actions, toutes les 15 minutes).
 abonnement:
@@ -60,11 +60,13 @@ abonnement:
   prix_fondateur: "39,50 €"
   centre_en_plus: "39,50 €"
   centre_en_plus_fondateur: "19,75 €"
-  paiement: https://buy.stripe.com/14A28rb4pdjFaPC0NVbMQ0z
-  paiement_fondateur: https://buy.stripe.com/6oU5kD0pL3J5bTGaovbMQ0A
-  liens_stripe: [plink_1UaHzLFdbcbZnFAtKMJtErn1, plink_1UaHzPFdbcbZnFAtpbM7JWwX]
-  # espace des abonnés Stripe (factures, carte, arrêt) : le même que Jeuphorie, c'est le même compte
-  portail: https://billing.stripe.com/p/login/4gMcN55K57Zlf5SgMTbMQ00
+  paiement: https://buy.stripe.com/eVq28s8Yy40011rfJEe7m00
+  # le lien fondateur se ferme tout seul après 10 paiements
+  paiement_fondateur: https://buy.stripe.com/fZu14ogr01RSbG5btoe7m01
+  liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMsmKIAmufAQXGGvVHNEuh]
+  # espace des abonnés Stripe (factures, carte, nombre de centres, arrêt) : lien de connexion du portail client
+  # (Stripe → Paramètres → Facturation → Portail client → « Lien de connexion »)
+  portail: ""
 
 # Comptes des candidats et des structures (Supabase, projet « filrouganim », région Paris).
 # L'URL et la clé « publishable » sont faites pour être publiques : la sécurité vient des règles
