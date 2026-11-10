@@ -57,32 +57,16 @@
           <span class="tp-badge-exemple">Exemple de profil</span>
         </a>
         <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a> <span class="tp-fictif">profil fictif</span></h2>
+          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
           <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
           <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}{% if p.dispo_debut %} · disponible du {{ p.dispo_debut | date_fr(False) }} au {{ p.dispo_fin | date_fr }}{% endif %}</p>
         </div>
         <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
       </li>
       {% endif %}
-      <li class="tp-carte tp-carte-vide">
-        <div class="tp-carte-vide-corps">
-          <span class="tp-avatar tp-avatar-vide" aria-hidden="true">+</span>
-          <h2>Votre profil ici</h2>
-          <p>En deux minutes, gratuit. Visible seulement par les structures vérifiées : jamais public, jamais sur Google.</p>
-          <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil <span aria-hidden="true">→</span></a>
-        </div>
-      </li>
     </ul>
     {% if not offres %}<p class="tp-sans-offre">Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes. <a href="{{ lien('/trouver-un-poste/offres/') }}">Voir la page des offres</a></p>{% else %}<p class="tp-sans-offre"><a href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>{% endif %}
 
-    <div class="tp-appel">
-      <div>
-        <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>Vous cherchez votre stage pratique ?</p>
-        <h2>Votre profil, vu par les structures <em>de votre secteur</em></h2>
-        <p>Stagiaire BAFA, animateur, BAFD, CPJEPS, BPJEPS, DEJEPS : tous les profils de l'animation. Vous le cachez ou le supprimez quand vous voulez. Pas de mot de passe : un lien par e-mail.</p>
-      </div>
-      <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a>
-    </div>
   </div>
 </section>
 

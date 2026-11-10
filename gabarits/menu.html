@@ -54,7 +54,7 @@
     </div>
   </div>
   <div class="mm-item">
-    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-poste"{% if page.url.startswith('/trouver-un-poste/') %} data-actif{% endif %}>Trouver un poste<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-poste"{% if page.url.startswith('/trouver-un-poste/') %} data-actif{% endif %}>Je cherche un poste<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-poste" hidden>
       <div class="cadre mm-grille">
         <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}">
@@ -85,7 +85,7 @@
     </div>
   </div>
   <div class="mm-item">
-    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-recruter"{% if page.url.startswith('/recruter/') or page.url.startswith('/outils/') or page.url == '/chiffres/' %} data-actif{% endif %}>Recruter<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-recruter"{% if page.url.startswith('/recruter/') or page.url.startswith('/outils/') or page.url == '/chiffres/' %} data-actif{% endif %}>Je recrute<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-recruter" hidden>
       <div class="cadre mm-grille">
         <a class="mm-une" href="{{ lien('/recruter/') }}">

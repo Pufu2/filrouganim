@@ -39,13 +39,6 @@
     <p class="compte of-compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
     {% if offres %}<div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
     <ul class="tp-cartes" id="aucune-offre"{% if offres %} hidden{% endif %}>
-      <li class="tp-carte tp-carte-vide">
-        <div class="tp-carte-vide-corps">
-          {{ m.mascotte("of-mascotte") }}
-          <h2>Pas encore d'offre ici</h2>
-          <p>Les centres de loisirs et les organisateurs de séjours publient leurs offres eux-mêmes. Essayez un département voisin, ou laissez-les venir à vous.</p>
-        </div>
-      </li>
       {% if p %}
       <li class="tp-carte tp-carte-exemple">
         <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
@@ -53,21 +46,13 @@
           <span class="tp-badge-exemple">Exemple de profil</span>
         </a>
         <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a> <span class="tp-fictif">profil fictif</span></h2>
+          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
           <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
           <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}</p>
         </div>
         <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
       </li>
       {% endif %}
-      <li class="tp-carte tp-carte-vide">
-        <div class="tp-carte-vide-corps">
-          <span class="tp-avatar tp-avatar-vide" aria-hidden="true">+</span>
-          <h2>Votre profil ici</h2>
-          <p>En deux minutes, gratuit. Visible seulement par les structures vérifiées : jamais public, jamais sur Google.</p>
-          <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil <span aria-hidden="true">→</span></a>
-        </div>
-      </li>
     </ul>
     <p class="tp-comment"><b>Comment ça marche.</b> Chaque offre est publiée par une structure vérifiée, sous sa responsabilité. Vous candidatez directement auprès d'elle : aucun frais, aucun intermédiaire. <a href="{{ lien('/trouver-un-poste/') }}">Préparer sa recherche</a></p>
   </div>

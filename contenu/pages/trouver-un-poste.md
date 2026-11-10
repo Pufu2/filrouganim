@@ -1,5 +1,5 @@
 ---
-court: Trouver un poste
+court: Je cherche un poste
 gabarit: trouver-un-poste.html
 titre: "Trouver un poste dans l'animation : stages BAFA et jobs"
 url: /trouver-un-poste/

@@ -43,7 +43,7 @@ hebergeur:
 # Offre fondateurs (étape 2) : les premières structures paieront moitié prix, à vie, tant que le service existe.
 # « places » : le nombre total (à décider par Pufu2) ; « reservees » : à augmenter à chaque structure inscrite.
 fondateurs:
-  places: 30
+  places: 10
   reservees: 0
 
 # Comptes des candidats et des structures (Supabase, projet « filrouganim », région Paris).

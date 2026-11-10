@@ -39,24 +39,24 @@
   <a class="station station-droite station-lien" href="{{ lien('/trouver-un-poste/') }}">
     <span class="station-noeud" aria-hidden="true">2</span>
     <span class="station-carte">
-      <span class="note-main">trouver un poste</span>
-      <span class="station-titre">Trouver son stage ou son job</span>
+      <span class="note-main">je cherche un poste</span>
+      <span class="station-titre">Je cherche un stage ou un job</span>
       <span class="station-texte">Stage pratique BAFA, job d'été, poste à l'année, alternance : un profil gratuit, jamais public, et les offres des structures.</span>
       <span class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</span>
-      <span class="station-aller">Trouver un poste <span aria-hidden="true">→</span></span>
+      <span class="station-aller">Voir les offres <span aria-hidden="true">→</span></span>
     </span>
   </a>
 
   <a class="station station-lien station-lien-rouge" href="{{ lien('/recruter/') }}">
     <span class="station-noeud station-noeud-plein" aria-hidden="true">3</span>
     <span class="station-carte station-carte-rouge">
-      <span class="note-main">recruter</span>
-      <span class="station-titre">Recruter son équipe d'animation</span>
+      <span class="note-main">je recrute</span>
+      <span class="station-titre">Je recrute des animateurs</span>
       <span class="station-texte">Vos offres là où les jeunes cherchent leur BAFA, les profils des animateurs de votre secteur, une page pour votre structure.</span>
       <span class="station-chiffre"><b>Offre fondateurs</b> : moitié prix à vie{% if restantes > 0 %} · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% endif %}</span>
-      <span class="station-aller">Recruter <span aria-hidden="true">→</span></span>
+      <span class="station-aller">Publier une offre <span aria-hidden="true">→</span></span>
     </span>
   </a>
 </div>
-{% if audience.nb_tuiles and audience.nb_tuiles >= 2 %}<div class="cadre">{{ m.bloc_chiffres(audience, lien) }}</div>{% endif %}
+<section class="cb-bande"><div class="cadre">{{ m.bloc_chiffres(audience, lien) }}</div></section>
 {% endblock %}
