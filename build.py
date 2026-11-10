@@ -809,7 +809,7 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Je cherche un poste", "/trouver-un-poste/")}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/")}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -850,14 +850,14 @@ class Site:
             self.ajouter(f"/trouver-un-poste/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
-                         fil=[("Je cherche un poste", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+                         fil=[("Animateurs & directeurs", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
         self.ajouter("/trouver-un-poste/offres/", "offres.html", titre="Offres de stages pratiques BAFA et de jobs d'animation",
                      description="Les offres de stages pratiques BAFA, de jobs d'été et de postes d'animation publiées par les structures vérifiées, avec des filtres par département, contrat, poste et date.",
                      h1="Les offres d'animation", indexer=bool(self.offres),
                      mois=sorted({o["debut"].strftime("%Y-%m") for o in self.offres}),
-                     fil=[("Je cherche un poste", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
+                     fil=[("Animateurs & directeurs", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
-        TP = ("Je cherche un poste", "/trouver-un-poste/")
+        TP = ("Animateurs & directeurs", "/trouver-un-poste/")
         STR = ("Les structures", "/trouver-un-poste/structures/")
         structures = self.structures_en_ligne()
         for st in structures:
@@ -876,7 +876,7 @@ class Site:
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
-                         indexer=False, structure=st, point=self.point_structure(st), fil=[("Je recrute", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+                         indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
                       maj_le=en_date(ex["profil"].get("maj_le")))

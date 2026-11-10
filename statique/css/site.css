@@ -2064,7 +2064,10 @@ html.fiche-ouverte { overflow: hidden; }
   .as-duree { display: none; }
 }
 /* l'assistant prend toute la largeur de « Mon espace » */
-.espace-compte:has(.assistant:not([hidden])) { max-width: 1120px; }
+.espace-compte:has(#v-candidat:not([hidden])), .espace-compte:has(#v-structure:not([hidden])) { max-width: 1120px; }
+/* liens de la connexion : du texte, pas des boutons encadrés */
+.auth .bouton-texte { border: 0; padding: 0; background: none; text-decoration: underline; text-underline-offset: 3px; }
+.auth .petit-lien { text-decoration: none; }
 .formulaire .etape { border: 0; padding: 0; border-radius: 0; }
 .as-carte .tp-carte-pied .bouton-texte { border: 0; padding: 0; white-space: nowrap; font-size: 14px; }
 .as-pied .as-retour { border: 0; padding-left: 0; }
