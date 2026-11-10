@@ -1747,6 +1747,7 @@ class Site:
             cible.parent.mkdir(parents=True, exist_ok=True)
             cible.write_text(self.rendre_page(page), encoding="utf-8")
         self.ecrire_donnees_recherche()
+        self.ecrire_pied_liens()
         self.ecrire_lieux_google()
         if not self.apercu:
             self.ecrire_fichiers_seo()
@@ -1756,6 +1757,16 @@ class Site:
         (SORTIE / ".nojekyll").write_text("", encoding="utf-8")
         print(f"{len(self.pages)} pages fabriquées dans {SORTIE}, {len(self.sessions)} sessions à venir"
               + (" (aperçu)" if self.apercu else ""))
+
+    def ecrire_pied_liens(self):
+        """Les listes « Voir N autres villes / départements » du pied de page, chargées au clic :
+        écrites dans chaque page, elles pesaient 150 Ko de plus par page (plus de 500 Mo pour tout le site)."""
+        plus = {}
+        for x in self.recherches_frequentes() or []:
+            for i, (nom, liens) in enumerate(x["groupes"]):
+                if len(liens) > 24:
+                    plus[f"{x['cle']}-{i}"] = [[t, u] for t, u in liens[24:]]
+        (SORTIE / "pied-liens.json").write_text(json.dumps(plus, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     def ecrire_donnees_recherche(self):
         """Toutes les sessions, en données compactes, pour la recherche avec filtres (lue par statique/js/filtres.js)."""

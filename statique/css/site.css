@@ -57,7 +57,7 @@ mark.a-completer { background: #fff1a8; padding: 0 .2em; }
 .logo { gap: 8px; }
 .logo-chat { height: 44px; width: auto; color: var(--fil-clair); flex: none; }
 .logo-titre { height: 32px; width: auto; color: var(--creme); }
-.logo-titre .fil { fill: var(--fil-clair); }
+.logo-titre { --logo-fil: var(--fil-clair); }
 @media (max-width: 380px) { .logo-chat { height: 34px; } .logo-titre { height: 24px; } }
 .menu { display: flex; gap: 6px; font-size: 1rem; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
 .menu a { flex: none; color: var(--creme); text-decoration: none; padding: 8px 14px; border-radius: 8px; }
@@ -657,7 +657,7 @@ html { scroll-padding-top: 90px; }
 .entete.defile { background: rgba(251, 248, 242, .86); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 8px 20px -14px rgba(35, 31, 32, .5); }
 .logo, .logo:hover { color: var(--encre); }
 .logo .logo-titre { height: 34px; color: var(--encre); }
-.logo-titre .fil { fill: var(--fil); }
+.logo-titre { --logo-fil: var(--fil); }
 .entete.defile .logo-titre { display: block; height: 30px; }
 @media (max-width: 380px) { .logo .logo-titre { height: 26px; } }
 .menu a { color: var(--encre); }
@@ -670,7 +670,7 @@ html { scroll-padding-top: 90px; }
 .mot-fil { color: var(--fil-clair); }
 .pied { border-top: 3px solid var(--fil); }
 .pied-nom .logo-titre { color: var(--creme); }
-.pied .logo-titre .fil { fill: var(--fil-clair); }
+.pied .logo-titre { --logo-fil: var(--fil-clair); }
 .pied a { color: #ffd0d5; }
 
 /* L'accueil : la recherche à cheval sur le bas du bloc foncé */
@@ -757,7 +757,7 @@ html { scroll-padding-top: 90px; }
 .auth-cote { background: var(--nuit); color: #e4dcd6; padding: 56px clamp(24px, 5vw, 64px); display: flex; flex-direction: column; justify-content: center; gap: 20px; }
 .auth-logo { margin: 0 0 12px; }
 .auth-logo .logo-titre { height: 34px; color: var(--creme); }
-.auth-logo .logo-titre .fil { fill: var(--fil-clair); }
+.auth-logo .logo-titre { --logo-fil: var(--fil-clair); }
 .auth-titre { color: #fff; font-size: clamp(1.8rem, 3.4vw, 2.5rem); margin: 0; max-width: 16ch; }
 .auth-plus { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; max-width: 42ch; }
 .auth-plus li { position: relative; padding-left: 28px; }
