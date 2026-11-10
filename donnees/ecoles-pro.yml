@@ -127,6 +127,7 @@ ecoles:
   - {organisme_nom: "EPLEFPA Alençon-Sées", diplome: BPJEPS, specialite: "asec", ville: "Sées", departement: "61", derniere_rentree: 2026-09-07}
   - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Boulogne-sur-Mer", departement: "62", derniere_rentree: 2026-09-24}
   - {organisme_nom: "INFA 63 - Institut National de Formation d'Animateur 63", diplome: BPJEPS, specialite: "asec", ville: "Clermont-Ferrand", departement: "63", derniere_rentree: 2026-09-28}
+  - {organisme_nom: "URFOL", diplome: BPJEPS, specialite: "asec", ville: "Clermont-Ferrand", departement: "63", derniere_rentree: 2026-11-12}
   - {organisme_nom: "INFA", diplome: BPJEPS, specialite: "asec", ville: "Pau", departement: "64", derniere_rentree: 2026-09-16}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Pau", departement: "64", derniere_rentree: 2026-11-03}
   - {organisme_nom: "Etcharry Formation Developpement", diplome: BPJEPS, specialite: "asec", ville: "Ustaritz", departement: "64", derniere_rentree: 2026-10-29}
@@ -149,7 +150,7 @@ ecoles:
   - {organisme_nom: "Enseis", diplome: BPJEPS, specialite: "asec", ville: "La Ravoire", departement: "73", derniere_rentree: 2026-03-23}
   - {organisme_nom: "Fédération des Oeuvres Laïques de Haute-Savoie", diplome: BPJEPS, specialite: "asec", ville: "Annecy", departement: "74", derniere_rentree: 2026-10-05}
   - {organisme_nom: "Animetcom Consultant", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-11-02}
-  - {organisme_nom: "BLUE UP Formation", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "BLUE UP Formation", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-11-12}
   - {organisme_nom: "GRETA Metehor-Paris", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-11-09}
   - {organisme_nom: "Ligue de l'enseignement de la région Ile-de-France", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-10-07}
   - {organisme_nom: "TRANS-FAIRE Formation", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-11-09}
@@ -198,10 +199,10 @@ ecoles:
   - {organisme_nom: "Formatic Association", diplome: CC-ACM, specialite: null, ville: "Arles", departement: "13", derniere_rentree: 2026-09-21}
   - {organisme_nom: "CEMEA PACA", diplome: CC-ACM, specialite: null, ville: "Marseille", departement: "13", derniere_rentree: 2026-10-05}
   - {organisme_nom: "LES FRANCAS Union Régionale PACA", diplome: CC-ACM, specialite: null, ville: "Marseille", departement: "13", derniere_rentree: 2026-01-26}
-  - {organisme_nom: "Qwantic", diplome: CC-ACM, specialite: null, ville: "Marseille", departement: "13", derniere_rentree: 2026-03-30}
   - {organisme_nom: "FRANCAS DES HAUTS DE France", diplome: CC-ACM, specialite: null, ville: "Hérouville-Saint-Clair", departement: "14", derniere_rentree: 2026-05-11}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: CC-ACM, specialite: null, ville: "La Rochelle", departement: "17", derniere_rentree: 2026-05-04}
   - {organisme_nom: "CEMEA de Bourgogne Franche-Comté", diplome: CC-ACM, specialite: null, ville: "Besançon", departement: "25", derniere_rentree: 2026-10-05}
+  - {organisme_nom: "Union française des centres de vacances", diplome: CC-ACM, specialite: null, ville: "Besançon", departement: "25", derniere_rentree: 2026-11-12}
   - {organisme_nom: "Trajectoire formation", diplome: CC-ACM, specialite: null, ville: "Montbéliard", departement: "25", derniere_rentree: 2026-06-03}
   - {organisme_nom: "STAJ AURA", diplome: CC-ACM, specialite: null, ville: "Montélimar", departement: "26", derniere_rentree: 2026-01-12}
   - {organisme_nom: "Drome Profession Sport Animation", diplome: CC-ACM, specialite: null, ville: "Valence", departement: "26", derniere_rentree: 2026-02-26}
@@ -330,6 +331,7 @@ ecoles:
   - {organisme_nom: "CEMEA Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Prades", departement: "66", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Union Française des Centres de Vacances Alsace", diplome: CPJEPS, specialite: "aavq", ville: "Haguenau", departement: "67", derniere_rentree: 2026-10-14}
   - {organisme_nom: "Coordination pour Promouvoir Compétences et Volontariat - Ile de France", diplome: CPJEPS, specialite: "aavq", ville: "Strasbourg", departement: "67", derniere_rentree: 2026-09-14}
+  - {organisme_nom: "Union Française des Centres de Vacances Alsace", diplome: CPJEPS, specialite: "aavq", ville: "Strasbourg", departement: "67", derniere_rentree: 2026-11-12}
   - {organisme_nom: "Union Française des Centres de Vacances Alsace", diplome: CPJEPS, specialite: "aavq", ville: "Mulhouse", departement: "68", derniere_rentree: 2026-10-07}
   - {organisme_nom: "IFIR", diplome: CPJEPS, specialite: "aavq", ville: "Lyon", departement: "69", derniere_rentree: 2026-11-02}
   - {organisme_nom: "CEMEA de Bourgogne Franche-Comté", diplome: CPJEPS, specialite: "aavq", ville: "Chargey-lès-Gray", departement: "70", derniere_rentree: 2026-03-09}
@@ -374,6 +376,7 @@ ecoles:
   - {organisme_nom: "Loisirs Education et Citoyenneté - LEC", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Toulouse", departement: "31", derniere_rentree: 2026-04-01}
   - {organisme_nom: "Union Régionale des FRANCAS Nouvelle Aquitaine", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-09-22}
   - {organisme_nom: "C.E.M.E.A_NA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Bègles", departement: "33", derniere_rentree: 2026-11-10}
+  - {organisme_nom: "Le Merlet", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Mèze", departement: "34", derniere_rentree: 2026-11-12}
   - {organisme_nom: "Askoria", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Rennes", departement: "35", derniere_rentree: 2026-04-27}
   - {organisme_nom: "CEMEA région Centre", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Tours", departement: "37", derniere_rentree: 2026-05-11}
   - {organisme_nom: "Centre d'Entraînement aux Méthodes d'Education Active", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Nantes", departement: "44", derniere_rentree: 2026-04-27}
@@ -413,6 +416,7 @@ ecoles:
   - {organisme_nom: "CREPS de Reims", diplome: DESJEPS, specialite: "direction", ville: "Reims", departement: "51", derniere_rentree: 2026-09-16}
   - {organisme_nom: "EPLE FPA du Morvan", diplome: DESJEPS, specialite: "direction", ville: "Challuy", departement: "58", derniere_rentree: 2026-03-06}
   - {organisme_nom: "CPIE", diplome: DESJEPS, specialite: "direction", ville: "Arras", departement: "62", derniere_rentree: 2026-11-06}
+  - {organisme_nom: "Arfatsema", diplome: DESJEPS, specialite: "direction", ville: "Lyon", departement: "69", derniere_rentree: 2026-11-12}
   - {organisme_nom: "BLUE UP Formation", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-03-09}
   - {organisme_nom: "Challenges Academia", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-28}
   - {organisme_nom: "Federation Francaise de Judo et Disciplines Associees", diplome: DESJEPS, specialite: "direction", ville: "Paris", departement: "75", derniere_rentree: 2026-09-02}
