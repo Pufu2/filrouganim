@@ -14,7 +14,7 @@
   <div class="rc-fondateurs" id="fondateurs">
     <div class="rc-fondateurs-texte">
       <p class="rc-fondateurs-sur">{{ m.icone("etape") }}Offre fondateurs · {% if restantes > 0 %}plus que {{ restantes }} place{{ 's' if restantes > 1 }}{% else %}complet{% endif %}</p>
-      <p><b>Moitié prix, à vie, pour les {{ site.fondateurs.places }} premières structures.</b> Créer le compte et publier ne coûte rien pendant le lancement. Le prix sera annoncé avant la fin du lancement : vous choisirez alors de vous abonner ou non.</p>
+      <p>{% if restantes > 0 %}<b>{{ site.abonnement.prix_fondateur }} par an, à vie</b>, pour les {{ site.fondateurs.places }} premières structures, au lieu de {{ site.abonnement.prix }}. {% else %}<b>{{ site.abonnement.prix }} par an.</b> {% endif %}Chaque centre en plus : moitié prix. Sans commission, arrêt à tout moment.</p>
     </div>
     <a class="tp-bande-bouton rc-creer" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer le compte de ma structure</a>
   </div>
@@ -57,13 +57,14 @@
     <h2 class="rc-titre-cartes rc-titre-etapes">En ligne en <em>3 étapes</em></h2>
     <ol class="rc-etapes">
       <li><b>Le compte</b><span>Avec Google, ou une adresse e-mail et un mot de passe.</span></li>
-      <li><b>La fiche</b><span>Étape par étape, avec l'aperçu de votre page, et votre SIRET, RNA ou n° de déclaration.</span></li>
-      <li><b>En ligne</b><span>Nous vérifions la structure sous 2 jours ouvrés, puis vos offres et votre page sont visibles.</span></li>
+      <li><b>La fiche et l'abonnement</b><span>Étape par étape, avec l'aperçu de votre page. Puis l'abonnement, par carte ou sur facture.</span></li>
+      <li><b>En ligne</b><span>Nous vérifions la structure (SIRET, RNA ou n° de déclaration) sous 2 jours ouvrés, puis votre page et vos offres sont visibles.</span></li>
     </ol>
 
     <ul class="rc-engagements" aria-label="Nos engagements">
       <li>Aucune commission sur vos recrutements</li>
       <li>Sans engagement, arrêt à tout moment</li>
+      <li>Paiement par carte ou sur facture</li>
       <li>Chaque structure vérifiée à la main</li>
       <li>Vos données jamais revendues</li>
     </ul>
@@ -76,7 +77,7 @@
       <div>
         <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Offre fondateurs</p>
         <h2>Votre structure, <em>là où l'on cherche</em></h2>
-        <p>{% if restantes > 0 %}Il reste {{ restantes }} place{{ 's' if restantes > 1 }} à moitié prix, à vie. {% endif %}Une question avant de vous lancer ? <a href="{{ lien('/contact/') }}">Écrivez-nous</a>.</p>
+        <p>{% if restantes > 0 %}Il reste {{ restantes }} place{{ 's' if restantes > 1 }} à {{ site.abonnement.prix_fondateur }} par an, à vie. {% else %}{{ site.abonnement.prix }} par an, chaque centre en plus moitié prix. {% endif %}Une mairie ou une association qui paie sur facture (virement, mandat administratif, Chorus Pro) ? C'est prévu. Une question ? <a href="{{ lien('/contact/') }}">Écrivez-nous</a>.</p>
       </div>
       <a class="tp-appel-bouton" href="{{ creer }}">Créer le compte de ma structure <span aria-hidden="true">→</span></a>
     </div>

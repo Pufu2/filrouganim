@@ -166,3 +166,36 @@ profils, `logo` et `photos` des structures, et deux espaces de stockage :
 
 Tant que Google n'est pas activé, le bouton affiche « La connexion avec Google arrive bientôt » :
 l'e-mail et le mot de passe marchent déjà.
+
+## Version 5 (10/11/2026) : l'abonnement des structures et les centres
+
+- **Prix** : 79 €/an, chaque centre en plus 39,50 € ; fondateurs (10 premières) 39,50 € et 19,75 €, à vie.
+  Un tarif dégressif par formule dans Stripe (compte de l'entreprise de Jeuphorie), produit « Fil Roug'Anim · Espace
+  structure » ; la quantité payée = le nombre de centres. Liens de paiement dans `config.yml` (`abonnement`) ;
+  le lien fondateur se ferme tout seul après 10 paiements.
+- **En ligne** = structure vérifiée ET abonnement en cours (`abonnement_fin`). Les fonctions `est_verifiee`,
+  `structure_verifiee` et `offre_en_ligne` en tiennent compte : sans abonnement, ni page, ni offres, ni profils.
+- **Relevé** : `outils/abonnements.py`, toutes les 15 minutes (`.github/workflows/abonnements.yml`). Il lit Stripe
+  et écrit `abonnement_fin`, `abonnement_id`, `centres_payes`, `fondatrice` avec la clé serveur.
+
+### À faire une fois (Pufu2)
+
+1. Stripe → Développeurs → Clés API → **Créer une clé restreinte** « Fil Roug'Anim abonnements » :
+   *Checkout Sessions* en lecture, *Subscriptions* en lecture, rien d'autre. La coller directement dans GitHub →
+   dépôt filrouganim → Settings → Secrets → Actions → `STRIPE_ABONNEMENTS_KEY`.
+2. Stripe → Paramètres → Facturation → **Portail client** : autoriser « Mettre à jour les quantités » et
+   « Annuler l'abonnement » pour le produit « Fil Roug'Anim · Espace structure ».
+3. Stripe → Paramètres → Facturation → Abonnements et e-mails : activer **« Envoyer un rappel avant le renouvellement »**
+   (au moins 30 jours avant), comme le promettent les conditions de vente.
+
+### Payer sur facture (mairie, association)
+
+La structure demande une facture par e-mail (bouton dans « Mon espace », avec la référence de son compte).
+Dans Stripe : Abonnements → Créer un abonnement → client (avec son adresse et son SIRET), prix « Fil Roug'Anim »
+(standard ou fondateur), quantité = nombre de centres, **Envoyer une facture** (paiement sous 30 jours), et dans
+les métadonnées : `site` = `filrouganim`, `structure_id` = la référence du compte, `formule` = `standard` ou
+`fondateur`. Le relevé fait le reste.
+
+### Vérifier une structure
+
+Table Editor → structures → `verifiee` = true, après avoir contrôlé le SIRET, le RNA ou le n° de déclaration.

@@ -1,0 +1,30 @@
+name: Relever les abonnements des structures
+
+# Les paiements Stripe des structures sont recopiés dans la base (outils/abonnements.py).
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: abonnements
+  cancel-in-progress: false
+
+jobs:
+  relever:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Stripe vers la base
+        env:
+          STRIPE_ABONNEMENTS_KEY: ${{ secrets.STRIPE_ABONNEMENTS_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: python3 outils/abonnements.py

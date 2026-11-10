@@ -24,6 +24,10 @@ structure:
     Un tuteur pour chaque stagiaire BAFA, et une aide pour financer l'approfondissement.
     Des réunions d'équipe courtes, chaque semaine.
   site: null
+  # une structure peut regrouper plusieurs centres, chacun avec sa page et ses offres
+  centres:
+    - {nom: "Les Pelotes du Mont-Mesly", type: accueil-de-loisirs, ville: Créteil, departement: "94"}
+    - {nom: "Mini-camps des Pelotes", type: sejours, ville: Fontainebleau, departement: "77"}
   offres:
     - {intitule: "Animateur·rice stagiaire BAFA, vacances d'hiver", ville: Créteil, departement: "94", debut: 2027-02-08, contrat: cee}
     - {intitule: "Animateur·rice BAFA, mercredis 2026-2027", ville: Créteil, departement: "94", debut: 2026-11-04, contrat: cdd}

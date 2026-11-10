@@ -538,7 +538,7 @@
     aSupprimer = [];
     montrerPhotos();
     var voir = $("voir-ma-page");
-    voir.hidden = !(structure && structure.verifiee && structure.slug && structure.page_publique);
+    voir.hidden = !(actif(structure) && structure.slug && structure.page_publique);
     if (!voir.hidden) voir.href = L.lien_structures + structure.slug + "/";
     $("accord-structure").hidden = !nouveau;
     f.accord.required = nouveau;
@@ -546,24 +546,153 @@
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
-    if (nouveau) {
-      $("chapo-compte").textContent = "Présentez votre structure, étape par étape. Nous la vérifions avant que ses offres soient en ligne.";
-      st.hidden = true;
+    $("chapo-compte").textContent = nouveau ? "Présentez votre structure, étape par étape. Votre page est en ligne une fois l'abonnement réglé et la structure vérifiée." : "Votre espace structure.";
+    if (nouveau) st.hidden = true;
+    else if (!paye(structure)) {
+      st.textContent = "Votre fiche est enregistrée. Dernière étape : l'abonnement. Nous vérifions ensuite la structure, et votre page et vos offres sont en ligne.";
+      st.className = "statut statut-attente";
     } else if (!structure.verifiee) {
-      $("chapo-compte").textContent = "Votre espace structure.";
-      st.textContent = "Vérification en cours (en général sous 2 jours ouvrés). Vous pouvez déjà préparer vos offres : elles seront en ligne dès que la structure sera vérifiée.";
+      st.textContent = "Abonnement réglé, merci ! Nous vérifions la structure (en général sous 2 jours ouvrés). Vous pouvez déjà préparer vos offres : elles seront en ligne dès la vérification.";
       st.className = "statut statut-attente";
     } else {
-      $("chapo-compte").textContent = "Votre espace structure.";
-      st.textContent = "Structure vérifiée : vos offres en ligne sont visibles par tous, et vous voyez les profils des candidats.";
+      st.textContent = "Structure en ligne : votre page et vos offres sont visibles par tous, et vous voyez les profils des candidats.";
       st.className = "statut statut-ok";
     }
     $("bloc-offres").hidden = nouveau;
-    $("bloc-candidats").hidden = !(structure && structure.verifiee);
+    $("bloc-centres").hidden = nouveau;
+    $("bloc-candidats").hidden = !actif(structure);
     $("tuiles-structure").hidden = nouveau;
+    if (structure) chargerCentres().then(montrerAbonnement);
+    else $("bloc-abonnement").hidden = true;
     if (structure) chargerOffres().then(tableauStructure);
-    if (structure && structure.verifiee) chargerCandidats();
+    if (actif(structure)) chargerCandidats();
   }
+
+  /* -- l'abonnement (Stripe) : payé si la fin de période n'est pas passée ; en ligne si payé ET vérifié -- */
+  function paye(s) { return !!(s && s.abonnement_fin && s.abonnement_fin >= aujourdhui()); }
+  function actif(s) { return !!(s && s.verifiee && paye(s)); }
+  var placesFondatrices = null;
+  function euros(n) { return n.toLocaleString("fr-FR", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) + " €"; }
+  async function montrerAbonnement() {
+    var A = L.abonnement || {}, b = $("bloc-abonnement");
+    if (!A.paiement) { b.hidden = true; return; }
+    b.hidden = false;
+    var nbCentres = 1 + mesCentres.length;
+    $("abo-portail").hidden = !paye(structure);
+    if (paye(structure)) {
+      // abonnement en cours : ce qui est payé, et l'espace abonnés pour les factures, la carte, le nombre de centres ou l'arrêt
+      $("abo-sur").textContent = "Votre abonnement";
+      $("abo-titre").textContent = "En cours jusqu'au " + dateFr(structure.abonnement_fin);
+      var n = structure.centres_payes || 1;
+      $("abo-detail").textContent = n + (n > 1 ? " centres payés" : " centre payé (votre structure)") + (structure.fondatrice ? " · tarif fondateur, à vie" : "") +
+        (nbCentres > n ? ". Vous avez " + nbCentres + " centres : ajoutez-en " + (nbCentres - n) + " à l'abonnement depuis l'espace abonnés (quantité), ou écrivez-nous." : ".");
+      ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture"].forEach(function (id) { $(id).hidden = true; });
+      return;
+    }
+    ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture"].forEach(function (id) { $(id).hidden = false; });
+    if (placesFondatrices === null) {
+      var r = await sb.rpc("places_fondatrices");
+      placesFondatrices = r.error ? 0 : r.data;
+    }
+    var fond = placesFondatrices > 0;
+    var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
+    $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Mettre votre structure en ligne";
+    $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
+    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils des candidats. Chaque centre en plus : " + euros(p2) + " par an. Sans commission, arrêt à tout moment.";
+    var champ = $("abo-nb");
+    if (!champ.dataset.touche) champ.value = nbCentres;
+    function maj() {
+      var nb = Math.max(1, Math.min(30, parseInt(champ.value, 10) || 1));
+      $("abo-total").textContent = nb > 1 ? "Total : " + euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (à indiquer en « quantité » sur la page de paiement)." : "Total : " + euros(p1) + " par an.";
+      var q = new URLSearchParams({ client_reference_id: utilisateur.id, prefilled_email: utilisateur.email, locale: "fr" });
+      $("abo-payer").href = (fond ? A.paiement_fondateur : A.paiement) + "?" + q.toString();
+      var corps = "Bonjour,\n\nNous souhaitons régler l'abonnement Fil Roug'Anim sur facture.\n\n" +
+        "Structure : " + (structure.nom || "") + "\nSIRET, RNA ou n° de déclaration : " + (structure.identifiant || "") +
+        "\nNombre de centres : " + nb + "\nAdresse de facturation : \nService et n° d'engagement (Chorus Pro, si besoin) : \n" +
+        "Mode de paiement (virement, mandat administratif) : \n\nRéférence du compte : " + utilisateur.id + "\n";
+      $("abo-facture").href = "mailto:" + L.email_site + "?subject=" + encodeURIComponent("Abonnement sur facture : " + (structure.nom || "")) + "&body=" + encodeURIComponent(corps);
+    }
+    if (!champ.dataset.ecoute) { champ.dataset.ecoute = "1"; champ.addEventListener("input", function () { champ.dataset.touche = "1"; maj(); }); }
+    maj();
+  }
+
+  /* -- les centres de la structure : chacun sa page et ses offres, dans la limite des centres payés -- */
+  var mesCentres = [], centreEnCours = null;
+  var CHAMPS_CENTRE = ["nom", "type", "ville", "departement", "accroche", "presentation", "publics", "activites"];
+  async function chargerCentres() {
+    var r = await sb.from("centres").select("*").eq("structure_id", utilisateur.id).order("cree_le");
+    mesCentres = r.error ? [] : (r.data || []);
+    var liste = $("liste-centres");
+    liste.textContent = "";
+    var sel = $("f-offre").centre_id, garde = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
+    mesCentres.forEach(function (c) { var o = el("option", null, c.nom + " (" + c.ville + ")"); o.value = c.id; sel.appendChild(o); });
+    sel.value = garde;
+    $("champ-centre-offre").hidden = !mesCentres.length;
+    if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
+    if (!mesCentres.length) { liste.appendChild(el("p", "aucune", "Un seul lieu ? Rien à faire ici : la page de votre structure suffit.")); return; }
+    var payes = (structure && paye(structure)) ? (structure.centres_payes || 1) - 1 : 0;
+    mesCentres.forEach(function (c, i) {
+      var item = el("article", "ligne-compte"), corps = el("div");
+      corps.appendChild(el("h3", null, c.nom));
+      corps.appendChild(el("p", "petit", libelle("types", c.type || structure.type) + " · " + c.ville + " (" + c.departement + ")"));
+      var etat = i < payes ? (actif(structure) ? ["En ligne", "etat etat-ok"] : ["Payé, en attente de la vérification", "etat etat-attente"])
+                           : ["À ajouter à l'abonnement (moitié prix)", "etat etat-attente"];
+      corps.appendChild(el("p", etat[1], etat[0]));
+      if (i < payes && actif(structure) && structure.slug) {
+        var a = el("a", "petit", "Voir la page du centre");
+        a.href = L.lien_structures + structure.slug + "/" + c.slug + "/"; a.target = "_blank"; a.rel = "noopener";
+        corps.appendChild(a);
+      }
+      item.appendChild(corps);
+      var actions = el("div", "boutons");
+      var m = el("button", "bouton-texte", "Modifier"); m.type = "button";
+      m.addEventListener("click", function () { ouvrirCentre(c); });
+      var d = el("button", "bouton-texte bouton-danger", "Supprimer"); d.type = "button";
+      d.addEventListener("click", async function () {
+        if (!confirm("Supprimer le centre « " + c.nom + " » ? Ses offres restent, rattachées à la structure.")) return;
+        var x = await sb.from("centres").delete().eq("id", c.id);
+        if (x.error) message(erreurLisible(x.error), true); else { message("Centre supprimé."); chargerCentres().then(montrerAbonnement); }
+      });
+      actions.appendChild(m); actions.appendChild(d);
+      item.appendChild(actions);
+      liste.appendChild(item);
+    });
+  }
+  function ouvrirCentre(c) {
+    centreEnCours = c || null;
+    var f = $("f-centre");
+    f.reset();
+    remplir(f, c || { ville: structure.ville, departement: structure.departement });
+    $("titre-f-centre").textContent = c ? "Modifier le centre" : "Nouveau centre";
+    f.hidden = false;
+    f.nom.focus();
+  }
+  $("nouveau-centre").addEventListener("click", function () { ouvrirCentre(null); });
+  $("annuler-centre").addEventListener("click", function () { $("f-centre").hidden = true; centreEnCours = null; });
+  $("f-centre").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this;
+    var champs = form.querySelectorAll("[required]");
+    for (var k = 0; k < champs.length; k++) { if (!champs[k].checkValidity()) { champs[k].reportValidity(); return; } }
+    var d = lire(form, CHAMPS_CENTRE);
+    d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 12);
+    var base = enSlug(d.nom).slice(0, 56) || "centre", slug = base, n = 2;
+    while (mesCentres.some(function (c) { return c.slug === slug && (!centreEnCours || c.id !== centreEnCours.id); })) slug = base + "-" + n++;
+    d.slug = centreEnCours && centreEnCours.nom === d.nom ? centreEnCours.slug : slug;
+    occupe(form, true);
+    var r = centreEnCours ? await sb.from("centres").update(d).eq("id", centreEnCours.id) : await sb.from("centres").insert(d);
+    occupe(form, false);
+    if (r.error) { message(erreurLisible(r.error), true); return; }
+    form.hidden = true;
+    message(centreEnCours ? "Centre enregistré." : "Centre ajouté." + (paye(structure) ? " Ajoutez-le à votre abonnement pour qu'il soit en ligne." : ""));
+    centreEnCours = null;
+    chargerCentres().then(montrerAbonnement);
+  });
+  if (params.get("paiement") === "ok") {
+    setTimeout(function () { message("Merci ! Votre paiement est bien parti. Il apparaît ici d'ici 15 minutes environ ; nous vérifions ensuite la structure, puis votre page et vos offres sont en ligne."); }, 1200);
+  }
+
   function lireStructure() {
     var d = lire($("f-structure"), CHAMPS_STRUCTURE);
     d.couleur = d.couleur || "rouge";
@@ -669,7 +798,7 @@
   });
 
   /* -- offres de la structure -- */
-  var CHAMPS_OFFRE = ["intitule", "poste", "contrat", "type_accueil", "nb_postes", "age_min", "age_max", "ville", "departement", "debut", "fin", "public", "diplomes",
+  var CHAMPS_OFFRE = ["centre_id", "intitule", "poste", "contrat", "type_accueil", "nb_postes", "age_min", "age_max", "ville", "departement", "debut", "fin", "public", "diplomes",
                       "remuneration_montant", "remuneration_unite", "candidater", "expire_le", "texte", "loge", "publiee"];
   var mesOffres = [];
   async function chargerOffres() {
@@ -687,7 +816,7 @@
       var etat, classe;
       if (o.expire_le < aujourdhui()) { etat = "Expirée le " + dateFr(o.expire_le); classe = "etat etat-off"; }
       else if (!o.publiee) { etat = "En pause"; classe = "etat etat-off"; }
-      else if (!structure.verifiee) { etat = "En attente de la vérification"; classe = "etat etat-attente"; }
+      else if (!actif(structure)) { etat = paye(structure) ? "En attente de la vérification" : "En attente de l'abonnement"; classe = "etat etat-attente"; }
       else { etat = "En ligne jusqu'au " + dateFr(o.expire_le); classe = "etat etat-ok"; }
       corps.appendChild(el("p", classe, etat));
       item.appendChild(corps);
@@ -735,7 +864,7 @@
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
     form.hidden = true; offreEnCours = null;
-    message(structure.verifiee ? "Offre enregistrée. Elle apparaît sur le site dans l'heure." : "Offre enregistrée. Elle sera en ligne dès que la structure sera vérifiée.");
+    message(actif(structure) ? "Offre enregistrée. Elle apparaît sur le site dans l'heure." : "Offre enregistrée. Elle sera en ligne dès que l'abonnement sera réglé et la structure vérifiée.");
     chargerOffres().then(tableauStructure);
   });
 
@@ -1065,7 +1194,7 @@
     var ids = mesOffres.map(function (o) { return o.id; });
     var blocR = $("bloc-candidatures-recues"), liste = $("liste-candidatures-recues");
     if (!ids.length) { blocR.hidden = true; recues = []; return; }
-    if (structure.verifiee && !favoris.length) {
+    if (actif(structure) && !favoris.length) {
       var fav = await sb.from("favoris").select("profil_id");
       favoris = (fav.data || []).map(function (x) { return x.profil_id; });
     }
@@ -1092,7 +1221,7 @@
       tete.appendChild(sel);
       bloc1.appendChild(tete);
       if (c.message) bloc1.appendChild(el("p", "presentation message-candidat", "« " + c.message + " »"));
-      if (c.profils) bloc1.appendChild(carteProfil(c.profils, structure.verifiee));
+      if (c.profils) bloc1.appendChild(carteProfil(c.profils, actif(structure)));
       liste.appendChild(bloc1);
       if (c.statut === "envoyee") {
         // ouverte par la structure : le candidat voit « vue »
@@ -1120,7 +1249,7 @@
     var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
     tuile(t, enLigne, enLigne > 1 ? "offres en ligne" : "offre en ligne", "bloc-offres");
     tuile(t, recues.length, (recues.length > 1 ? "candidatures" : "candidature") + (nouvelles ? " dont " + nouvelles + " nouvelle" + (nouvelles > 1 ? "s" : "") : ""), "bloc-candidatures-recues");
-    if (structure.verifiee) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
+    if (actif(structure)) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
     tableauEnCours = false;
     apercuStructure();
   }

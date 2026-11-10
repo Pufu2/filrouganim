@@ -34,7 +34,7 @@
       {{ avatar() }}
       <div>
         <h1>{{ st.nom }}</h1>
-        <p class="fp-sous">{{ type_nom }} à {{ st.ville }}</p>
+        <p class="fp-sous">{{ type_nom }} à {{ st.ville }}{% if st.parent %} · un centre de <a href="{{ lien(st.parent.url) }}">{{ st.parent.nom }}</a>{% endif %}</p>
         <ul class="fp-badges">
           <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>
           {% if st.offres %}<li>{{ m.icone("date") }}Recrute en ce moment</li>{% endif %}
@@ -70,6 +70,20 @@
           <p class="fp-note">Candidature directe auprès de la structure, sans frais ni intermédiaire.</p>
           {% else %}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, elle peut vous trouver et vous écrire.</p>{% endif %}
         </section>
+
+        {% if st.centres %}
+        <section class="fp-bloc" aria-labelledby="t-centres">
+          <h2 id="t-centres">Ses {{ st.centres | length + 1 }} centres</h2>
+          <ul class="fp-centres">
+            <li class="fp-centre fp-centre-ici"><span class="fp-centre-ic" aria-hidden="true">{{ initiales }}</span><span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }} ({{ st.departement }})</small></span><span class="fp-centre-note">Vous êtes ici</span></li>
+            {% for c in st.centres %}
+            <li class="fp-centre">{% set _ci = c.nom.replace("L'", "").split() %}<span class="fp-centre-ic" aria-hidden="true">{{ (_ci[0][0] ~ (_ci[1][0] if _ci | length > 1 else "")) | upper }}</span>
+              <span><b>{% if c.url %}<a href="{{ lien(c.url) }}">{{ c.nom }}</a>{% else %}{{ c.nom }}{% endif %}</b><small>{{ TYPES_STRUCTURE.get(c.type or st.type, "Centre") }} · {{ c.ville }} ({{ c.departement }}){% if c.offres %} · {{ c.offres | length }} offre{{ 's' if c.offres | length > 1 }}{% endif %}</small></span>
+              {% if c.url %}<a class="fp-centre-note" href="{{ lien(c.url) }}">Voir <span aria-hidden="true">→</span></a>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </section>
+        {% endif %}
 
         {% if st.presentation or st.projet %}
         <section class="fp-bloc" aria-labelledby="t-pres">
