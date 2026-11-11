@@ -387,7 +387,7 @@
   /* ====================================================================================
      Candidat (animateur, directeur)
      ==================================================================================== */
-  var CHAMPS_PROFIL = ["prenom", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
+  var CHAMPS_PROFIL = ["prenom", "annee_naissance", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
                        "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans", "alertes"];
   var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
   var cvAEnvoyer = null;
@@ -399,6 +399,7 @@
     if (nouveau && m.poste === "directeur") { depart.recherche = ["direction"]; depart.poste_recherche = "Direction de séjour ou d'accueil"; }
     $("f-profil").reset();
     remplir($("f-profil"), depart);
+    remplirQualifs(depart.qualifications);
     cvAEnvoyer = null;
     montrerCv();
     montrerMobilite();
@@ -430,8 +431,32 @@
       b.addEventListener("click", function () { champ.value = b.textContent; champ.dispatchEvent(new Event("input", { bubbles: true })); });
     });
   });
+  // les qualifications : une case par qualification, et sa date de fin (mois) facultative
+  function lireQualifs() {
+    return Array.prototype.filter.call(document.querySelectorAll("[data-qualif]"), function (c) { return c.checked; }).map(function (c) {
+      var fin = document.querySelector('[data-qualif-fin="' + c.dataset.qualif + '"]').value;
+      return fin ? { q: c.dataset.qualif, fin: fin } : { q: c.dataset.qualif };
+    });
+  }
+  function remplirQualifs(liste) {
+    var parQ = {};
+    (liste || []).forEach(function (x) { parQ[x.q] = x; });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-qualif]"), function (c) {
+      var x = parQ[c.dataset.qualif];
+      c.checked = !!x;
+      var f = document.querySelector('[data-qualif-fin="' + c.dataset.qualif + '"]');
+      f.value = x && x.fin ? x.fin : "";
+      c.closest(".qualif").classList.toggle("on", !!x);
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-qualif]"), function (c) {
+    c.addEventListener("change", function () { c.closest(".qualif").classList.toggle("on", c.checked); });
+  });
+  function age(annee) { return annee ? new Date().getFullYear() - annee : null; }
   function lireProfil() {
     var d = lire($("f-profil"), CHAMPS_PROFIL);
+    d.annee_naissance = d.annee_naissance ? parseInt(d.annee_naissance, 10) : null;
+    d.qualifications = lireQualifs();
     d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 30); }).filter(Boolean).slice(0, 10);
     return d;
   }
@@ -441,7 +466,7 @@
     function ap(nom) { return b.querySelector('[data-ap="' + nom + '"]'); }
     ap("initiale").textContent = (d.prenom || "?").charAt(0).toUpperCase();
     ap("nom").textContent = d.prenom || "Votre prénom";
-    ap("lieu").textContent = (d.ville ? d.ville + " " : "") + (d.departement ? "(" + d.departement + ")" : "") + (d.poste_recherche ? " · " + d.poste_recherche : "") || "Votre ville";
+    ap("lieu").textContent = [(d.ville ? d.ville + " " : "") + (d.departement ? "(" + d.departement + ")" : ""), d.annee_naissance ? age(d.annee_naissance) + " ans" : "", d.poste_recherche].filter(Boolean).join(" · ") || "Votre ville";
     var det = (d.diplomes || []).map(function (x) { return libelle("diplomes", x); });
     if (d.dispo_debut) det.push("disponible dès le " + dateFr(d.dispo_debut, false));
     ap("detail").textContent = det.join(" · ") || "Vos diplômes";
@@ -941,6 +966,27 @@
   var RECH_DETAIL = { "stage-pratique": "Les 14 jours de stage pratique du BAFA, dans un accueil déclaré.", "ete": "En séjour ou en centre de loisirs, juillet et août.",
     "petites-vacances": "Toussaint, Noël, hiver, printemps.", "mercredis": "Les mercredis, hors vacances scolaires.", "periscolaire": "Matins, midis et soirs des jours d'école.",
     "annee": "Un poste toute l'année.", "direction": "Direction ou direction adjointe.", "alternance": "BPJEPS ou DEJEPS en alternance." };
+  var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  function moisAnnee(ym) { var x = ym.split("-"); return ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][+x[1] - 1] + " " + x[0]; }
+  // 12 mois à partir d'aujourd'hui : en couleur, ceux où le candidat est disponible (ses dates, ou ce qu'il cherche)
+  function bandeMois(p) {
+    var r = p.recherche || [], debut = p.dispo_debut ? p.dispo_debut.slice(0, 7) : null, fin = p.dispo_fin ? p.dispo_fin.slice(0, 7) : null;
+    var parMois = function (m) { // m : 1 à 12
+      if (r.indexOf("annee") >= 0 || r.indexOf("mercredis") >= 0 || r.indexOf("periscolaire") >= 0) return m !== 8;
+      return (r.indexOf("ete") >= 0 && (m === 7 || m === 8)) || (r.indexOf("petites-vacances") >= 0 && [2, 4, 10, 12].indexOf(m) >= 0);
+    };
+    if (!debut && !r.length) return null;
+    var ul = el("ol", "fp-mois"), d = new Date(), n = 0;
+    for (var i = 0; i < 12; i++) {
+      var y = d.getFullYear() + Math.floor((d.getMonth() + i) / 12), m = (d.getMonth() + i) % 12 + 1, ym = y + "-" + (m < 10 ? "0" : "") + m;
+      var dispo = debut ? (ym >= debut && (!fin || ym <= fin)) : parMois(m);
+      var li = el("li", dispo ? "on" : null); li.appendChild(el("span", null, MOIS_COURTS[m - 1])); if (m === 1 || i === 0) li.appendChild(el("small", null, String(y)));
+      li.setAttribute("aria-label", MOIS_COURTS[m - 1] + " " + y + (dispo ? " : disponible" : ""));
+      if (dispo) n++;
+      ul.appendChild(li);
+    }
+    return n ? ul : null;
+  }
   function ficheProfil(p, opts) {
     opts = opts || {};
     var f = el("div", "fp theme-sauge"), c = el("div", "cadre");
@@ -948,7 +994,9 @@
     if (opts.apercu) c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées. Il n'est jamais public."));
     var badges = (p.diplomes || []).map(function (x) { return libelle("diplomes", x); });
     if (p.permis_b) badges.push("Permis B");
+    (p.qualifications || []).forEach(function (q) { var b = libelle("qualifs", q.q).replace(/ \(.*\)$/, ""); if (badges.indexOf(b) < 0) badges.push(b); });
     if (p.cv_nom) badges.push("CV joint");
+    if (p.annee_naissance) badges.unshift(age(p.annee_naissance) + " ans");
     entete(c, { banniere: p.poste_recherche || "", initiale: (p.prenom || "?").charAt(0).toUpperCase(), nom: p.prenom || "Votre prénom",
                 sous: [p.poste_recherche, p.ville || nomDep(p.departement)].filter(Boolean).join(" · "), badges: badges });
     var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
@@ -956,9 +1004,23 @@
     var mob = (p.mobilite || []);
     pr.appendChild(chiffres([
       [p.dispo_debut ? jourMois(p.dispo_debut) : "À voir", p.dispo_debut ? (p.dispo_fin ? "disponible jusqu'au " + dateFr(p.dispo_fin) : "disponible à partir de cette date") : "les dates, avec " + (p.prenom || "le candidat")],
-      [String(mob.length + 1), mob.length ? "zones où travailler" : "zone où travailler"],
-      [String((p.experiences || []).length), (p.experiences || []).length > 1 ? "types d'expérience" : "type d'expérience"]
+      p.annee_naissance ? [age(p.annee_naissance) + " ans", "né" + "·e en " + p.annee_naissance + (age(p.annee_naissance) >= 18 ? " · majeur·e" : " · mineur·e")]
+                        : [String((p.experiences || []).length), (p.experiences || []).length > 1 ? "types d'expérience" : "type d'expérience"],
+      [String(mob.length + 1), mob.length ? "zones où travailler" : "zone où travailler"]
     ]));
+    var bande = bandeMois(p);
+    if (bande) { var sd = bloc("Ses disponibilités sur l'année"); sd.appendChild(bande); pr.appendChild(sd); }
+    if ((p.qualifications || []).length) {
+      var sq = bloc("Ses qualifications"), ql = el("ul", "fp-qualifs");
+      p.qualifications.forEach(function (q) {
+        var li = el("li"), perime = q.fin && q.fin < new Date().toISOString().slice(0, 7);
+        li.appendChild(icone(IC.badge));
+        var t = el("span"); t.appendChild(el("b", null, libelle("qualifs", q.q)));
+        t.appendChild(el("small", perime ? "fp-qualif-perime" : null, q.fin ? (perime ? "à renouveler (fin " : "valable jusqu'en ") + moisAnnee(q.fin) + (perime ? ")" : "") : "date de fin non précisée"));
+        li.appendChild(t); ql.appendChild(li);
+      });
+      sq.appendChild(ql); pr.appendChild(sq);
+    }
     if ((p.recherche || []).length) {
       var s1 = bloc("Ce que " + (p.prenom || "le candidat") + " cherche"), fo = el("div", "fp-formules");
       p.recherche.forEach(function (r, i) {
@@ -1138,7 +1200,7 @@
   function carteProfil(p, avecFavori) {
     var c = el("article", "ligne-compte profil-candidat");
     var corps = el("div");
-    corps.appendChild(el("h3", null, p.prenom + " · " + (p.ville ? p.ville + ", " : "") + nomDep(p.departement)));
+    corps.appendChild(el("h3", null, p.prenom + (p.annee_naissance ? ", " + age(p.annee_naissance) + " ans" : "") + " · " + (p.ville ? p.ville + ", " : "") + nomDep(p.departement)));
     if (p.poste_recherche) corps.appendChild(el("p", "accroche-profil", p.poste_recherche));
     if (p.diplomes && p.diplomes.length) {
       var ul = el("ul", "pastilles");
@@ -1171,7 +1233,7 @@
 
   /* -- candidats (structures vérifiées seulement : la base refuse les autres) -- */
   var CHAMPS_VUS = "id,prenom,departement,ville,poste_recherche,mobilite,diplomes,recherche,experiences,activites,permis_b," +
-                   "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le,cv_nom";
+                   "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le,cv_nom,annee_naissance,qualifications";
   async function chargerCandidats() {
     var f = $("f-candidats");
     var fav = await sb.from("favoris").select("profil_id");
@@ -1297,7 +1359,7 @@
   async function chargerDemandesRecues() {
     var blocD = $("bloc-demandes-recues");
     if (!actif(structure)) { blocD.hidden = true; return; }
-    var r = await sb.from("demandes").select("id,prenom,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
+    var r = await sb.from("demandes").select("id,prenom,annee_naissance,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
       .contains("destinataires", [utilisateur.id]).order("cree_le", { ascending: false }).limit(50);
     demandesRecues = r.data || [];
     blocD.hidden = false;
@@ -1306,7 +1368,7 @@
     if (!demandesRecues.length) { liste.appendChild(el("p", "aucune", "Pas encore de demande. Elles arrivent ici, et par e-mail, dès qu'un candidat de votre secteur décrit le poste qu'il cherche.")); return; }
     demandesRecues.forEach(function (x) {
       var item = el("article", "ligne-compte"), corps = el("div");
-      corps.appendChild(el("h3", null, (POSTES_D[x.poste] || x.poste) + " · " + x.prenom));
+      corps.appendChild(el("h3", null, (POSTES_D[x.poste] || x.poste) + " · " + x.prenom + (x.annee_naissance ? ", " + age(x.annee_naissance) + " ans" : "")));
       corps.appendChild(el("p", "petit", resumeDemande(x) + " · le " + dateFr(x.cree_le)));
       if ((x.diplomes || []).length) {
         var ul = el("ul", "pastilles");

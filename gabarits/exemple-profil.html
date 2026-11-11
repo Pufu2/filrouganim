@@ -9,6 +9,10 @@
 {% set RECH_DETAIL = {"stage-pratique": "Les 14 jours de stage pratique du BAFA, dans un accueil déclaré.", "ete": "En séjour ou en centre de loisirs, juillet et août.",
    "petites-vacances": "Toussaint, Noël, hiver, printemps.", "mercredis": "Les mercredis, hors vacances scolaires.", "periscolaire": "Matins, midis et soirs des jours d'école.",
    "annee": "Un poste toute l'année.", "direction": "Direction ou direction adjointe.", "alternance": "BPJEPS ou DEJEPS en alternance."} %}
+{% set QUALIFS = {"bsb": "BSB (surveillant de baignade)", "bnssa": "BNSSA", "psc1": "PSC1", "pse1": "PSE1", "sst": "SST", "canoe": "Qualification canoë-kayak",
+                   "voile": "Qualification voile", "escalade": "Qualification escalade", "velo": "Qualification VTT / cyclisme"} %}
+{% set MOIS_L = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"] %}
+{% set age = annee - p.annee_naissance if p.annee_naissance else None %}
 {% block tete %}{% endblock %}
 {% block contenu %}
 <div class="fp theme-sauge">
@@ -25,6 +29,7 @@
         <h1>{{ p.prenom }}</h1>
         <p class="fp-sous">{{ p.poste_recherche }} · {{ p.ville }}</p>
         <ul class="fp-badges">
+          {% if age %}<li>{{ m.icone("etape") }}{{ age }} ans</li>{% endif %}
           {% for d in p.diplomes %}<li>{{ m.icone("diplome") }}{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}
           {% if p.permis_b %}<li>{{ m.icone("etape") }}Permis B</li>{% endif %}
           {% if p.cv_nom %}<li>{{ m.icone("etape") }}CV joint</li>{% endif %}
@@ -36,8 +41,17 @@
         <ul class="fp-chiffres">
           <li><b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b><span>disponible jusqu'au {{ p.dispo_fin | date_fr }}</span></li>
           <li><b>{{ p.mobilite | length + 1 }}</b><span>zone{{ 's' if p.mobilite }} où travailler</span></li>
-          <li><b>{{ p.experiences | length }}</b><span>type{{ 's' if p.experiences | length > 1 }} d'expérience</span></li>
+          {% if age %}<li><b>{{ age }} ans</b><span>né·e en {{ p.annee_naissance }} · {{ "majeur·e" if age >= 18 else "mineur·e" }}</span></li>{% else %}<li><b>{{ p.experiences | length }}</b><span>type{{ 's' if p.experiences | length > 1 }} d'expérience</span></li>{% endif %}
         </ul>
+
+        {% if page.mois_dispo %}<section class="fp-bloc" aria-labelledby="t-mois">
+          <h2 id="t-mois">Ses disponibilités sur l'année</h2>
+          <ol class="fp-mois">{% for x in page.mois_dispo %}<li{% if x.on %} class="on"{% endif %} aria-label="{{ x.nom }} {{ x.annee or '' }}{{ ' : disponible' if x.on }}"><span>{{ x.nom }}</span>{% if x.annee %}<small>{{ x.annee }}</small>{% endif %}</li>{% endfor %}</ol>
+        </section>{% endif %}
+        {% if p.qualifications %}<section class="fp-bloc" aria-labelledby="t-qualifs">
+          <h2 id="t-qualifs">Ses qualifications</h2>
+          <ul class="fp-qualifs">{% for q in p.qualifications %}<li>{{ m.icone("diplome") }}<span><b>{{ QUALIFS.get(q.q, q.q) }}</b><small>{% if q.fin %}valable jusqu'en {{ MOIS_L[q.fin[5:7] | int - 1] }} {{ q.fin[:4] }}{% else %}date de fin non précisée{% endif %}</small></span></li>{% endfor %}</ul>
+        </section>{% endif %}
 
         <section class="fp-bloc" aria-labelledby="t-cherche">
           <h2 id="t-cherche">Ce que {{ p.prenom }} cherche</h2>
@@ -82,7 +96,7 @@
           <h2 id="t-contient">Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
           <ul class="fp-coches">
             <li>Un prénom ou un pseudo, la ville si on veut, les diplômes, les dates, les expériences et les talents, le CV si on veut</li>
-            <li>Ni photo, ni nom de famille, ni date de naissance, ni adresse, ni téléphone : les structures choisissent sur ce que vous savez faire</li>
+            <li>L'année de naissance (pour l'âge), mais ni photo, ni nom de famille, ni date de naissance complète, ni adresse, ni téléphone : les structures choisissent sur ce que vous savez faire</li>
             <li>Vous pouvez cacher votre profil, retirer votre CV ou tout supprimer à tout moment</li>
           </ul>
         </section>

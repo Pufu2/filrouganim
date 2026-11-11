@@ -46,6 +46,8 @@ profil:
   dispo_debut: 2027-07-06
   dispo_fin: 2027-08-28
   cv_nom: "CV-Camille-animatrice.pdf"
+  annee_naissance: 2008
+  qualifications: [{q: psc1}, {q: bsb, fin: "2028-06"}, {q: canoe}]
   disponibilites: "Tout l'été, et les vacances de printemps."
   presentation: |-
     J'ai fait ma formation générale BAFA en février. J'ai été bénévole deux ans dans un club de foot pour les 8-10 ans, et j'adore inventer des grands jeux.

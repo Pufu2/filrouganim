@@ -6,6 +6,7 @@
 -- Version 4 du 10/11/2026 : CV des candidats, logo et photos des structures (stockage), connexion Google et mot de passe.
 -- Version 5 du 10/11/2026 : abonnement des structures (Stripe), centres d'une même structure.
 -- Version 6 du 11/11/2026 : l'annuaire inversé (demandes des candidats, envoyées aux structures les plus proches).
+-- Version 7 du 11/11/2026 : année de naissance et qualifications (avec date de fin facultative) dans les profils.
 --
 -- Qui voit quoi :
 --   - les offres publiées des structures vérifiées : tout le monde (le site, Google) ;
@@ -639,3 +640,44 @@ create policy "mes demandes : lire"    on public.demandes for select to authenti
 create policy "mes demandes : retirer" on public.demandes for delete to authenticated using (candidat_id = (select auth.uid()));
 create policy "demandes reçues : lire" on public.demandes for select to authenticated
   using ((select auth.uid()) = any (destinataires) and (select public.structure_verifiee()));
+
+-- ------------------------------------------------------------------ version 7 (11/11/2026)
+-- L'année de naissance (les structures voient l'âge : conduite, nuits en séjour, direction) et les qualifications
+-- (BSB, BNSSA, PSC1, PSE1, SST, qualifications d'activités), chacune avec une date de fin facultative.
+-- Comme le reste du profil : visibles seulement par les structures vérifiées et celles à qui le candidat écrit.
+
+alter table public.profils add column if not exists annee_naissance smallint check (annee_naissance between 1940 and 2015);
+alter table public.profils add column if not exists qualifications jsonb not null default '[]'
+  check (jsonb_typeof(qualifications) = 'array' and jsonb_array_length(qualifications) <= 12 and char_length(qualifications::text) <= 1200);
+grant select (annee_naissance, qualifications) on public.profils to authenticated, service_role;
+grant insert (annee_naissance, qualifications), update (annee_naissance, qualifications) on public.profils to authenticated;
+
+alter table public.demandes add column if not exists annee_naissance smallint check (annee_naissance between 1940 and 2015);
+
+create or replace function public.envoyer_demande(d jsonb) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare
+  qui uuid := auth.uid();
+  z text[] := array(select jsonb_array_elements_text(d -> 'zone'));
+  dep text := d ->> 'departement';
+  dest uuid[];
+begin
+  if qui is null then raise exception 'Connectez-vous pour envoyer votre demande.'; end if;
+  if (select count(*) from public.demandes where candidat_id = qui and cree_le > now() - interval '24 hours') >= 3 then
+    raise exception 'Vous avez déjà envoyé 3 demandes aujourd''hui : réessayez demain.';
+  end if;
+  if not (dep = any (z)) then z := array_prepend(dep, z); end if;
+  dest := array(select s.id from public.structures_de_la_zone(z, dep, 3) s);
+  insert into public.demandes (candidat_id, prenom, annee_naissance, poste, departement, ville, zone, partout, periodes, dispo_debut, dispo_fin,
+                               diplomes, experiences, message, email_contact, seize_ans, destinataires)
+  values (qui, d ->> 'prenom', nullif(d ->> 'annee_naissance', '')::smallint, d ->> 'poste', dep, nullif(d ->> 'ville', ''), z,
+          coalesce((d ->> 'partout')::boolean, false),
+          array(select jsonb_array_elements_text(coalesce(d -> 'periodes', '[]'))),
+          nullif(d ->> 'dispo_debut', '')::date, nullif(d ->> 'dispo_fin', '')::date,
+          array(select jsonb_array_elements_text(coalesce(d -> 'diplomes', '[]'))),
+          array(select jsonb_array_elements_text(coalesce(d -> 'experiences', '[]'))),
+          nullif(d ->> 'message', ''), d ->> 'email_contact', coalesce((d ->> 'seize_ans')::boolean, false), dest);
+  return cardinality(dest);
+end $$;
+revoke all on function public.envoyer_demande(jsonb) from public, anon, authenticated;
+grant execute on function public.envoyer_demande(jsonb) to authenticated;

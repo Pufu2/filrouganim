@@ -17,6 +17,8 @@
 {% set EXPERIENCES = [("petite-enfance", "Moins de 6 ans"), ("enfants", "6-11 ans"), ("ados", "Ados"), ("handicap", "Enfants en situation de handicap"),
                       ("sejours", "Séjours avec nuitées"), ("itinerance", "Séjours itinérants, camping"), ("etranger", "Séjours à l'étranger"),
                       ("periscolaire", "Périscolaire"), ("direction", "Direction, adjoint"), ("baignade", "Surveillance de baignade")] %}
+{% set QUALIFS = [("bsb", "BSB (surveillant de baignade)"), ("bnssa", "BNSSA"), ("psc1", "PSC1"), ("pse1", "PSE1"), ("sst", "SST (sauveteur secouriste du travail)"),
+                  ("canoe", "Qualification canoë-kayak"), ("voile", "Qualification voile"), ("escalade", "Qualification escalade"), ("velo", "Qualification VTT / cyclisme")] %}
 {% set ACCUEILS = [("accueil-de-loisirs", "Accueil de loisirs (centre de loisirs)"), ("periscolaire", "Accueil périscolaire"), ("sejour-vacances", "Séjour de vacances (colo)"),
                    ("mini-camp", "Mini-camp"), ("accueil-de-jeunes", "Accueil de jeunes"), ("scoutisme", "Scoutisme"), ("autre", "Autre")] %}
 {% macro select_deps(nom, vide="Choisir", requis=True) %}<select name="{{ nom }}"{% if requis %} required{% endif %}><option value="">{{ vide }}</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select>{% endmacro %}
@@ -199,13 +201,18 @@
               <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
               <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
               <label class="champ"><span>Votre département</span>{{ select_deps("departement") }}</label>
+              <label class="champ"><span>Votre année de naissance</span><select name="annee_naissance" required><option value="">Choisir</option>{% for a in range(annee - 16, 1949, -1) %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
             </div>
+            <p class="petit">Seulement l'année : les structures voient votre âge (certains postes demandent d'être majeur, pour conduire ou diriger).</p>
           </fieldset>
           <fieldset class="etape" data-titre="Diplômes">
             <legend class="etape-q">Vos diplômes</legend>
             <p class="etape-aide">Cochez ceux que vous avez, et ceux en cours (stagiaire). Les structures filtrent les profils avec.</p>
             {{ cases("diplomes", DIPLOMES) }}
             <label class="case-accord"><input type="checkbox" name="permis_b"> J'ai le permis B</label>
+            <div class="champ"><span>Vos qualifications (date de fin facultative)</span>
+              <ul class="qualifs" id="qualifs">{% for v, l in QUALIFS %}<li class="qualif"><label><input type="checkbox" data-qualif="{{ v }}"> {{ l }}</label><label class="qualif-fin"><span>valable jusqu'au</span><input type="month" data-qualif-fin="{{ v }}" aria-label="{{ l }} : valable jusqu'au (facultatif)"></label></li>{% endfor %}</ul>
+            </div>
           </fieldset>
           <fieldset class="etape" data-titre="Ce que vous cherchez">
             <legend class="etape-q">Ce que vous cherchez</legend>
@@ -518,7 +525,7 @@
 </div>
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
-  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_demande": lien('/trouver-un-poste/demande/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
+  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "qualifs": QUALIFS, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_demande": lien('/trouver-un-poste/demande/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
   "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list,
   "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "abonnement": site.abonnement, "email_site": site.email, "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
   "tuiles": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"} | tojson }}</script>

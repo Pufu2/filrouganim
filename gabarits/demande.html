@@ -65,7 +65,10 @@
         </fieldset>
         <fieldset class="etape" data-titre="Votre message">
           <legend class="etape-q">Quelques mots pour les structures</legend>
-          <label class="champ"><span>Votre prénom (ou un pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
+          <div class="champs-2">
+            <label class="champ"><span>Votre prénom (ou un pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
+            <label class="champ"><span>Votre année de naissance</span><select name="annee_naissance" required><option value="">Choisir</option>{% for a in range(annee - 16, 1949, -1) %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
+          </div>
           <label class="champ"><span>Votre message (facultatif)</span><textarea name="message" rows="5" maxlength="800" placeholder="Ex. : J'ai fait ma formation générale BAFA en février. J'aime les grands jeux et j'ai encadré des 8-10 ans au foot."></textarea></label>
           <p class="petit">Ni nom de famille, ni adresse, ni téléphone : les structures vous écrivent par e-mail.</p>
         </fieldset>
@@ -110,6 +113,7 @@
         <p class="dm-apercu-titre" data-dm="titre">Votre demande se construit ici</p>
         <dl>
           <div><dt>Poste</dt><dd data-dm="poste">à préciser</dd></div>
+          <div><dt>Âge</dt><dd data-dm="age">à préciser</dd></div>
           <div><dt>Où</dt><dd data-dm="ou">à préciser</dd></div>
           <div><dt>Quand</dt><dd data-dm="quand">à préciser</dd></div>
           <div><dt>Diplômes</dt><dd data-dm="diplomes">à préciser</dd></div>
