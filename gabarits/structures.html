@@ -3,7 +3,7 @@
 {# L'annuaire des structures vérifiées : une recherche, puis des cartes (comme un annuaire de pros) #}
 {% macro carte(st, url, exemple=False) %}
 {% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
-<li class="ac theme-{{ st.couleur or 'rouge' }}" data-type="{{ st.type }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
+<li class="ac theme-{{ st.couleur or 'rouge' }}" data-type="{{ FAMILLE_DE.get(st.type, st.type) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
   <a href="{{ url }}">
     <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
     <span class="ac-corps">

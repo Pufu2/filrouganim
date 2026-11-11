@@ -134,7 +134,7 @@
   function adresseRetour(role) {
     var garder = new URLSearchParams();
     if (role) garder.set("role", role);
-    ["role", "postuler", "profil"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
+    ["role", "postuler", "profil", "type"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
     return location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
   }
 
@@ -559,7 +559,8 @@
     montrer("v-structure", "v-session");
     var f = $("f-structure"), nouveau = !structure;
     f.reset();
-    remplir(f, structure || { email_contact: utilisateur.email, page_publique: true, couleur: "rouge" });
+    var typeVoulu = { periscolaire: "periscolaire", extrascolaire: "accueil-de-loisirs", sejours: "sejours" }[params.get("type")];
+    remplir(f, structure || { email_contact: utilisateur.email, page_publique: true, couleur: "rouge", type: typeVoulu });
     if (!structure || !structure.couleur) remplir(f, { couleur: "rouge" });
     photos = (structure && structure.photos || []).slice();
     logo = structure && structure.logo || null;

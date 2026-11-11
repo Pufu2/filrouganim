@@ -107,6 +107,9 @@ def paragraphes(texte):
 # Libellés partagés avec la page Mon compte (gabarits/compte.html)
 TYPES_STRUCTURE = {"accueil-de-loisirs": "Accueil de loisirs", "sejours": "Organisateur de séjours", "accueil-de-jeunes": "Accueil de jeunes",
                    "periscolaire": "Accueil périscolaire", "association": "Association", "collectivite": "Collectivité", "autre": "Structure d'animation"}
+# les trois familles de structures (accueil, onglets) : des mots qui se distinguent vraiment
+FAMILLES_STRUCTURE = [("periscolaire", "Périscolaire"), ("extrascolaire", "Extrascolaire"), ("sejours", "Séjours")]
+FAMILLE_DE = {"periscolaire": "periscolaire", "accueil-de-loisirs": "extrascolaire", "accueil-de-jeunes": "extrascolaire", "sejours": "sejours"}
 PUBLICS = {"3-5": "3-5 ans", "6-11": "6-11 ans", "12-14": "12-14 ans", "15-17": "15-17 ans", "handicap": "Enfants en situation de handicap",
            "familles": "Familles"}
 DIPLOMES_PROFIL = {"stagiaire-bafa": "Stagiaire BAFA", "bafa": "BAFA", "stagiaire-bafd": "Stagiaire BAFD", "bafd": "BAFD", "psc1": "PSC1",
@@ -273,7 +276,7 @@ class Site:
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
-        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE,
+        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
                                 PUBLICS=PUBLICS, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
