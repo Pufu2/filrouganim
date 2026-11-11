@@ -36,7 +36,7 @@
 
 <section class="bande bande-papier tp-cartes-bande">
   <div class="cadre">
-    <p class="compte of-compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
+    <p class="compte of-compte" id="compte-offres" aria-live="polite"{% if not offres %} hidden{% endif %}>{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
     {% if offres %}<div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
     <h2 class="rc-titre-cartes an-titre" id="animateurs">Les animateurs <em>inscrits</em></h2>
     <p class="tp-sans-offre an-compte" data-animateurs-compte="animateurs-of" aria-live="polite"></p>
