@@ -418,6 +418,18 @@ class Site:
         """Où placer la structure sur la carte de sa fiche : sa ville si on la connaît, sinon le centre du département."""
         return self.geo.get(f"{st['departement']}|{st['ville']}") or self.centres_dep.get(st["departement"])
 
+    def mois_dispo(self, p):
+        """Les 12 mois à venir, et ceux où le candidat est disponible (comme la bande de la fiche dans « Mon espace »)."""
+        noms = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
+        d, f = p.get("dispo_debut"), p.get("dispo_fin")
+        mois = []
+        for i in range(12):
+            a, m = self.aujourdhui.year + (self.aujourdhui.month - 1 + i) // 12, (self.aujourdhui.month - 1 + i) % 12 + 1
+            cle = (a, m)
+            on = bool(d) and cle >= (d.year, d.month) and (not f or cle <= (f.year, f.month))
+            mois.append({"nom": noms[m - 1], "annee": a if (m == 1 or i == 0) else None, "on": on})
+        return mois
+
     def points_profil(self, p):
         """Les départements d'un profil (le sien en premier), au centre du département : jamais une adresse."""
         pts = []
@@ -906,7 +918,7 @@ class Site:
                       maj_le=en_date(ex["profil"].get("maj_le")))
             self.ajouter("/trouver-un-poste/exemple-de-profil/", "exemple-profil.html", titre="Exemple de profil de candidat",
                          description="À quoi ressemble un profil de candidat sur Fil Roug'Anim, et qui peut le voir : un exemple fictif.",
-                         h1="Un exemple de profil", indexer=False, profil=pr, points=self.points_profil(pr),
+                         h1="Un exemple de profil", indexer=False, profil=pr, points=self.points_profil(pr), mois_dispo=self.mois_dispo(pr),
                          intro="Voici ce que voit une structure vérifiée quand elle consulte un profil. Ce profil est fictif.",
                          fil=[TP, ("Exemple de profil", "/trouver-un-poste/exemple-de-profil/")])
         # outils gratuits (calculs dans le navigateur)

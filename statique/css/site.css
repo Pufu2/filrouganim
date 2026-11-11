@@ -2176,3 +2176,28 @@ html.fiche-ouverte { overflow: hidden; }
 @media (max-width: 760px) { .ac-st-tete { flex-direction: column; align-items: stretch; } .ac-st-bouton { justify-content: center; } }
 #ro-p2 .ro-champ { min-width: 220px; } #ro-p2 .ro-champ select { width: 100%; }
 @media (max-width: 560px) { #ro-p2 .ro-champ { min-width: 0; } }
+/* profils : les qualifications (formulaire et fiche), la bande des disponibilités */
+.qualifs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.qualif { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--trait); border-radius: 12px; background: #fff; }
+.qualif > label:first-child { display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
+.qualif input[type="checkbox"] { accent-color: var(--fil); width: 1.1em; height: 1.1em; }
+.qualif-fin { display: none; align-items: center; gap: 8px; font-size: .85rem; color: var(--doux); }
+.qualif.on { border-color: var(--fil); background: #fff8f6; }
+.qualif.on .qualif-fin { display: flex; }
+.qualif-fin input { font: inherit; padding: 5px 8px; border: 1.5px solid var(--trait); border-radius: 8px; background: var(--papier); }
+.fp-mois { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
+.fp-mois li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 26px 0 6px; border-radius: 8px; background: var(--sable); font-size: 12px; color: var(--doux); }
+.fp-mois li::before { content: ""; position: absolute; top: 8px; left: 18%; right: 18%; height: 10px; border-radius: 5px; background: #e3d8cb; }
+.fp-mois li.on { background: #fff; box-shadow: inset 0 0 0 1.5px var(--theme); color: var(--encre); font-weight: 700; }
+.fp-mois li.on::before { background: var(--theme); }
+.fp-mois small { font-size: 10px; font-weight: 400; color: var(--doux); }
+.fp-qualifs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.fp-qualifs li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--trait); border-radius: 14px; background: #fdfaf6; }
+.fp-qualifs .icone { width: 30px; height: 30px; padding: 6px; border-radius: 50%; background: #fff; border: 1px solid var(--trait); color: var(--theme); flex: none; }
+.fp-qualifs b { display: block; font-size: 14.5px; }
+.fp-qualifs small { font-size: 12.5px; color: var(--doux); }
+.fp-qualifs .fp-qualif-perime { color: var(--fil-fonce); font-weight: 700; }
+/* un peu plus soigné : les chiffres des fiches avec un filet de couleur */
+.fp-chiffres li { position: relative; overflow: hidden; }
+.fp-chiffres li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--theme); opacity: .85; }
+@media (max-width: 560px) { .fp-mois { grid-template-columns: repeat(6, minmax(0, 1fr)); } }

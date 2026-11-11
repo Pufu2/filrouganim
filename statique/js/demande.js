@@ -25,7 +25,7 @@
   function lire() {
     var d = {};
     ["poste", "etendue"].forEach(function (k) { var c = form.querySelector('[name="' + k + '"]:checked'); d[k] = c ? c.value : null; });
-    ["departement", "ville", "dispo_debut", "dispo_fin", "prenom", "message", "email_contact"].forEach(function (k) { d[k] = (form.elements[k].value || "").trim(); });
+    ["departement", "ville", "dispo_debut", "dispo_fin", "prenom", "annee_naissance", "message", "email_contact"].forEach(function (k) { d[k] = (form.elements[k].value || "").trim(); });
     ["periodes", "diplomes", "experiences"].forEach(function (k) {
       d[k] = Array.prototype.filter.call(form.querySelectorAll('[name="' + k + '"]'), function (c) { return c.checked; }).map(function (c) { return c.value; });
     });
@@ -56,6 +56,7 @@
     function ap(k) { return document.querySelector('[data-dm="' + k + '"]'); }
     ap("titre").textContent = d.poste ? libelle("postes_paires", d.poste) + (d.prenom ? ", " + d.prenom : "") : "Votre demande se construit ici";
     ap("poste").textContent = d.poste ? libelle("postes_paires", d.poste) : "à préciser";
+    ap("age").textContent = d.annee_naissance ? (new Date().getFullYear() - d.annee_naissance) + " ans" : "à préciser";
     ap("ou").textContent = d.departement ? (d.ville ? d.ville + ", " : "") + nomDep(d.departement) + " (" + d.departement + ")" +
       (d.etendue === "region" ? " · toute la région" : d.etendue === "partout" ? " · partout en France" : "") : "à préciser";
     var q = d.periodes.map(function (x) { return libelle("periodes", x).toLowerCase(); });
@@ -131,7 +132,7 @@
     var z = zone(d);
     var corps = { poste: d.poste, departement: d.departement, ville: d.ville, zone: z, partout: d.etendue === "partout", periodes: d.periodes,
                   dispo_debut: d.dispo_debut, dispo_fin: d.dispo_fin, diplomes: d.diplomes, experiences: d.experiences,
-                  message: d.message, prenom: d.prenom, email_contact: d.email_contact, seize_ans: d.seize_ans };
+                  message: d.message, prenom: d.prenom, annee_naissance: d.annee_naissance, email_contact: d.email_contact, seize_ans: d.seize_ans };
     var b = $("dm-envoyer"); b.disabled = true;
     var r = await sb.rpc("envoyer_demande", { d: corps });
     b.disabled = false;
