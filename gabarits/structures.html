@@ -3,7 +3,7 @@
 {# L'annuaire des structures vérifiées : une recherche, puis des cartes (comme un annuaire de pros) #}
 {% macro carte(st, url, exemple=False) %}
 {% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
-<li class="ac theme-{{ st.couleur or 'rouge' }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
+<li class="ac theme-{{ st.couleur or 'rouge' }}" data-type="{{ st.type }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
   <a href="{{ url }}">
     <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
     <span class="ac-corps">
@@ -35,18 +35,26 @@
     {% if not page.structures and page.exemple %}{{ carte(page.exemple, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
     </ul>
     {% if not page.structures %}<p class="petit annuaire-note">Les premières structures vérifiées arrivent : voici à quoi ressemblera leur fiche. <a href="{{ lien('/recruter/') }}">Vous recrutez&nbsp;? Inscrivez votre structure</a></p>{% endif %}
-    <p class="aucune" id="annuaire-vide" hidden>Aucune structure dans ce secteur pour l'instant. Créez votre profil : les nouvelles structures de votre secteur pourront vous écrire.</p>
+    <p class="aucune" id="annuaire-vide" hidden>Aucune structure inscrite dans ce secteur pour l'instant. <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous cherchez</a> : votre demande attend, et part dès qu'une structure de votre secteur s'inscrit.</p>
   </div>
 </section>
 <script>
 (function () {
   var q = document.getElementById("q-structures"), cartes = document.querySelectorAll("#annuaire .ac"), vide = document.getElementById("annuaire-vide");
   var sa = function (t) { return t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); };
-  q.addEventListener("input", function () {
-    var mots = sa(q.value).split(/\s+/).filter(Boolean), n = 0;
-    Array.prototype.forEach.call(cartes, function (c) { var ok = mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; }); c.hidden = !ok; if (ok) n++; });
-    vide.hidden = n > 0;
-  });
+  var ps = new URLSearchParams(location.search), type = ps.get("type") || "";
+  function filtrer() {
+    var mots = sa(q.value).replace(/[(),]/g, " ").split(/\s+/).filter(Boolean), n = 0;
+    Array.prototype.forEach.call(cartes, function (c) {
+      if (c.querySelector(".ac-exemple")) return;   // l'exemple reste visible tant qu'il n'y a pas de vraie structure
+      var ok = (!type || c.dataset.type === type) && mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; });
+      c.hidden = !ok; if (ok) n++;
+    });
+    vide.hidden = n > 0 || !(mots.length || type);
+  }
+  q.addEventListener("input", filtrer);
+  if (ps.get("ou")) q.value = ps.get("ou");
+  if (ps.get("ou") || type) filtrer();
 })();
 </script>
 {% endblock %}

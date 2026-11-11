@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Les animateurs inscrits : un résumé public par profil (statique/js/animateurs.js), la fiche complète pour les structures abonnées #}
+{% set creer = lien('/compte/') ~ '?inscription=1&role=structure' %}
+{% block tete_note %}<p class="tp-sur">Structures · les candidats de votre secteur</p>{% endblock %}
+{% block h1 %}Les animateurs <em>inscrits</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Stagiaires BAFA, animateurs, directeurs et surveillants de baignade qui cherchent un poste. Chacun en résumé ici ; la fiche complète, le CV et l'e-mail pour leur écrire s'ouvrent avec l'abonnement de votre structure.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="tp-recherche"><div class="cadre">
+  <form class="tp-barre" role="search" aria-label="Filtrer les animateurs" onsubmit="return false">
+    <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="an-dep">Département</label>
+      <select id="an-dep" class="an-select" data-animateurs-filtre="animateurs-liste"><option value="">Toute la France</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select>
+    </div>
+  </form>
+  <div class="tp-bande">
+    <p><b>Offre fondateurs.</b> {{ site.abonnement.prix_fondateur }} par an, à vie, pour les {{ site.fondateurs.places }} premières structures : fiches complètes, CV, page de votre structure et offres.</p>
+    <a class="tp-bande-bouton" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer l'espace de ma structure</a>
+  </div>
+</div></div>
+<section class="bande bande-papier tp-cartes-bande" aria-label="Les animateurs">
+  <div class="cadre">
+    <p class="compte" data-animateurs-compte="animateurs-liste" aria-live="polite"></p>
+    <ul class="tp-cartes" id="animateurs-liste" data-animateurs="100">
+      {% if EXEMPLES.profil %}{{ m.carte_exemple_profil(EXEMPLES.profil, lien) }}{% endif %}
+    </ul>
+    <p class="tp-comment"><b>Qui voit quoi.</b> Ici, chacun ne voit qu'un résumé : prénom, poste, département, diplômes et dates. L'âge, la ville, la présentation, les qualifications, le CV et l'e-mail sont réservés aux structures vérifiées et abonnées. Les candidats choisissent de paraître ou non dans cette liste.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}{{ m.animateurs_scripts(lien) }}{% endblock %}

@@ -42,7 +42,7 @@
       <p class="auth-logo">{% include "svg/logo-titre.svg" %}</p>
       <h2 class="auth-titre" id="auth-titre">Votre espace dans l'animation.</h2>
       <ul class="auth-plus">
-        <li>Animateurs : un profil gratuit, jamais public, et les offres près de chez vous</li>
+        <li>Animateurs : un profil gratuit, vu en entier par les seules structures vérifiées, et les offres près de chez vous</li>
         <li>Structures : vos offres là où les jeunes cherchent leur BAFA</li>
         <li>Connexion avec Google, ou votre e-mail et un mot de passe</li>
       </ul>
@@ -254,9 +254,10 @@
           </fieldset>
           <fieldset class="etape" data-titre="Contact et visibilité">
             <legend class="etape-q">Comment les structures vous écrivent</legend>
-            <p class="etape-aide">Votre profil n'est jamais public, ni sur Google : seules les structures inscrites et vérifiées le voient.</p>
+            <p class="etape-aide">Votre fiche complète (âge, ville, présentation, CV, contact) n'est vue que par les structures vérifiées et abonnées. Dans la liste des animateurs, les autres visiteurs ne voient qu'un résumé, sans moyen de vous contacter.</p>
             <label class="champ"><span>E-mail où les structures vous écrivent</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
             <label class="case-accord"><input type="checkbox" name="publie"> Montrer mon profil aux structures vérifiées (décochez pour le cacher sans le supprimer)</label>
+            <label class="case-accord"><input type="checkbox" name="resume_public"> Montrer un résumé dans la liste des animateurs du site : prénom, poste, département, diplômes et dates (jamais votre ville, votre âge ni votre contact)</label>
             <label class="case-accord" id="alertes"><input type="checkbox" name="alertes"> M'envoyer chaque lundi les nouvelles offres de mon secteur par e-mail (un lien dans chaque e-mail pour arrêter)</label>
             <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
           </fieldset>

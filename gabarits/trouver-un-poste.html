@@ -38,7 +38,7 @@
 
 <section class="bande bande-papier tp-cartes-bande" aria-label="Offres et profils">
   <div class="cadre">
-    <ul class="tp-cartes">
+    <ul class="tp-cartes" id="animateurs-tp" data-animateurs="6">
       {% for o in offres[:5] %}
       <li class="tp-carte">
         <a class="tp-carte-haut tp-carte-offre" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}" tabindex="-1" aria-hidden="true"><span>{{ CONTRATS.get(o.contrat, o.contrat) }}</span></a>
@@ -50,20 +50,7 @@
         <div class="tp-carte-pied"><span></span><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir l'offre <span aria-hidden="true">→</span></a></div>
       </li>
       {% endfor %}
-      {% if p %}
-      <li class="tp-carte tp-carte-exemple">
-        <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
-          <span class="tp-avatar">{{ p.prenom[:1] }}</span>
-          <span class="tp-badge-exemple">Exemple de profil</span>
-        </a>
-        <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
-          <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
-          <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}{% if p.dispo_debut %} · disponible du {{ p.dispo_debut | date_fr(False) }} au {{ p.dispo_fin | date_fr }}{% endif %}</p>
-        </div>
-        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
-      </li>
-      {% endif %}
+      {% if p %}{{ m.carte_exemple_profil(p, lien) }}{% endif %}
     </ul>
     {% if not offres %}<p class="tp-sans-offre">Les offres des centres de loisirs et des organisateurs de séjours arrivent ici, publiées par les structures elles-mêmes. <a href="{{ lien('/trouver-un-poste/offres/') }}">Voir la page des offres</a></p>{% else %}<p class="tp-sans-offre"><a href="{{ lien('/trouver-un-poste/offres/') }}">Toutes les offres, avec les filtres <span aria-hidden="true">→</span></a></p>{% endif %}
 
@@ -111,6 +98,7 @@
 </section>
 {% endblock %}
 {% block scripts %}
+{{ m.animateurs_scripts(lien) }}
 <script>
 (function () {
   var form = document.getElementById("tp-form"), voile = document.getElementById("tp-ff");

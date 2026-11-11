@@ -134,7 +134,7 @@
   function adresseRetour(role) {
     var garder = new URLSearchParams();
     if (role) garder.set("role", role);
-    ["role", "postuler"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
+    ["role", "postuler", "profil"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
     return location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
   }
 
@@ -158,7 +158,7 @@
     $("email-session").textContent = utilisateur.email;
     if (recuperation) { montrer("v-nouveau-mdp"); $("f-nouveau-mdp").mdp.focus(); return; }
     var rep = await Promise.all([
-      sb.from("profils").select(CHAMPS_VUS + ",publie,seize_ans,alertes").eq("id", utilisateur.id).maybeSingle(),
+      sb.from("profils").select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").eq("id", utilisateur.id).maybeSingle(),
       sb.from("structures").select("*").eq("id", utilisateur.id).maybeSingle()
     ]);
     if (rep[0].error || rep[1].error) { montrer("v-session"); message(erreurLisible(rep[0].error || rep[1].error), true); return; }
@@ -388,14 +388,14 @@
      Candidat (animateur, directeur)
      ==================================================================================== */
   var CHAMPS_PROFIL = ["prenom", "annee_naissance", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
-                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "seize_ans", "alertes"];
+                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "resume_public", "seize_ans", "alertes"];
   var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
   var cvAEnvoyer = null;
   function voirCandidat() {
     montrer("v-candidat", "v-session");
     var nouveau = !profil, m = memoire() || {};
     $("chapo-compte").textContent = nouveau ? "Votre profil en quelques minutes. C'est gratuit, et ça le restera." : "Votre espace : vos candidatures, les offres pour vous et votre profil.";
-    var depart = profil || { email_contact: utilisateur.email, publie: true, prenom: (utilisateur.user_metadata && (utilisateur.user_metadata.given_name || "")) || "" };
+    var depart = profil || { email_contact: utilisateur.email, publie: true, resume_public: true, prenom: (utilisateur.user_metadata && (utilisateur.user_metadata.given_name || "")) || "" };
     if (nouveau && m.poste === "directeur") { depart.recherche = ["direction"]; depart.poste_recherche = "Direction de séjour ou d'accueil"; }
     $("f-profil").reset();
     remplir($("f-profil"), depart);
@@ -508,7 +508,7 @@
     if (cvAEnvoyer) { cvAEnvoyer = null; montrerCv(); apercuProfil(); return; }
     if (!confirm("Retirer votre CV ? Les structures ne le verront plus.")) return;
     var r = await sb.storage.from("cv").remove([utilisateur.id + "/cv.pdf"]);
-    var u = r.error ? r : await sb.from("profils").update({ cv_nom: null }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+    var u = r.error ? r : await sb.from("profils").update({ cv_nom: null }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     if (u.error) { message(erreurLisible(u.error), true); return; }
     profil = u.data;
     message("CV retiré.");
@@ -527,12 +527,12 @@
     if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de vos disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
-      ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single()
-      : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+      ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single()
+      : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     if (!r.error && cvAEnvoyer) {
       var u = await sb.storage.from("cv").upload(utilisateur.id + "/cv.pdf", cvAEnvoyer, { upsert: true, contentType: "application/pdf", cacheControl: "60" });
       if (u.error) { occupe(form, false); profil = r.data; message("Profil enregistré, mais le CV n'est pas parti : " + erreurLisible(u.error), true); voirCandidat(); return; }
-      r = await sb.from("profils").update({ cv_nom: cvAEnvoyer.name.slice(0, 120) }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,seize_ans,alertes").single();
+      r = await sb.from("profils").update({ cv_nom: cvAEnvoyer.name.slice(0, 120) }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     }
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
@@ -595,6 +595,27 @@
     if (structure) chargerOffres().then(tableauStructure);
     if (actif(structure)) chargerCandidats();
     if (structure) chargerDemandesRecues().then(tableauStructure);
+    if (params.get("profil") && !profilDemande) { profilDemande = true; ouvrirProfilDemande(params.get("profil")); }
+  }
+
+  /* -- un profil choisi dans la liste publique des animateurs (?profil=…) : la fiche complète pour une structure
+        vérifiée et abonnée ; sinon, ce qu'il reste à faire pour la voir -- */
+  var profilDemande = false;
+  async function ouvrirProfilDemande(id) {
+    if (!/^[0-9a-f-]{36}$/.test(id)) return;
+    if (!actif(structure)) {
+      message(!structure ? "Créez l'espace de votre structure : la fiche complète des animateurs est réservée aux structures vérifiées et abonnées."
+        : !paye(structure) ? "La fiche complète des animateurs est réservée aux structures abonnées : réglez l'abonnement ci-dessous, puis vous verrez tous les profils."
+        : "Abonnement réglé : la fiche complète s'ouvre dès que nous avons vérifié votre structure (en général sous 2 jours ouvrés).");
+      var ab = $("bloc-abonnement");
+      if (structure && ab && !ab.hidden) ab.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    var r = await sb.from("profils").select(CHAMPS_VUS).eq("id", id).eq("publie", true).maybeSingle();
+    if (r.error || !r.data) { message("Ce profil n'est plus en ligne.", true); return; }
+    var p = r.data;
+    if (!favoris.length) { var fav = await sb.from("favoris").select("profil_id"); favoris = (fav.data || []).map(function (x) { return x.profil_id; }); }
+    ouvrirFiche(ficheProfil(p, { ecrire: true, cvId: p.cv_nom ? p.id : null, favori: boutonFavori(p, "fp-bouton-second") }));
   }
 
   /* -- l'abonnement (Stripe) : payé si la fin de période n'est pas passée ; en ligne si payé ET vérifié -- */
@@ -991,7 +1012,7 @@
     opts = opts || {};
     var f = el("div", "fp theme-sauge"), c = el("div", "cadre");
     f.appendChild(c);
-    if (opts.apercu) c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées. Il n'est jamais public."));
+    if (opts.apercu) c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées et abonnées. Les autres visiteurs n'en voient qu'un résumé, sans contact."));
     var badges = (p.diplomes || []).map(function (x) { return libelle("diplomes", x); });
     if (p.permis_b) badges.push("Permis B");
     (p.qualifications || []).forEach(function (q) { var b = libelle("qualifs", q.q).replace(/ \(.*\)$/, ""); if (badges.indexOf(b) < 0) badges.push(b); });

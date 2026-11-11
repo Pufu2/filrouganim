@@ -130,7 +130,7 @@
         {% if st.offres %}<ul class="fp-contact-liste">{% for o in st.offres[:3] %}<li><span>{{ o.intitule }}</span><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b></li>{% endfor %}</ul>{% endif %}
         <a class="fp-bouton-principal" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
         {% if st.site %}<a class="fp-bouton-second" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
-        <p class="fp-contact-note">Profil gratuit, jamais public : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
+        <p class="fp-contact-note">Profil gratuit, vu en entier par les seules structures vérifiées : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
       </aside>
     </div>
   </div>

@@ -2,7 +2,7 @@
 court: Confidentialité
 titre: Confidentialité
 url: /confidentialite/
-description: "Ce que Fil Roug'Anim garde, et ne garde pas : pas de cookie publicitaire, des comptes facultatifs, des profils jamais publics."
+description: "Ce que Fil Roug'Anim garde, et ne garde pas : pas de cookie publicitaire, des comptes facultatifs, des profils vus en entier par les seules structures vérifiées."
 ---
 
 **En bref : pas de cookie publicitaire, pas de publicité, pas de revente de données.** Vous consultez les sessions et les offres sans rien nous donner. Seul un **compte**, facultatif, demande quelques informations : elles sont décrites plus bas.
@@ -34,7 +34,7 @@ Créer un compte est **facultatif** : il sert aux candidats qui veulent être tr
 
 **Qui voit quoi**
 
-- Votre profil de candidat n'est **jamais public** et n'apparaît pas sur Google. Seules les **structures inscrites et vérifiées** le voient, tant que vous le laissez visible. Quand vous postulez à une offre, la structure qui l'a publiée voit votre profil, votre CV et votre message, même si votre profil est caché. Votre CV suit les mêmes règles que votre profil : il n'est jamais public, et chaque ouverture passe par un lien valable deux minutes.
+- Votre profil complet de candidat n'apparaît pas sur Google. Seules les **structures inscrites, vérifiées et abonnées** le voient, tant que vous le laissez visible. Dans la liste des animateurs du site, les autres visiteurs voient seulement un **résumé** (prénom, poste, département, diplômes et dates), sans ville, âge, présentation, CV ni contact ; vous pouvez retirer ce résumé à tout moment depuis votre espace (case « Montrer un résumé »). Quand vous postulez à une offre, la structure qui l'a publiée voit votre profil, votre CV et votre message, même si votre profil est caché. Votre CV suit les mêmes règles que votre profil : il n'est jamais public, et chaque ouverture passe par un lien valable deux minutes.
 - Les offres et la page des structures vérifiées (nom, ville, site, présentation, logo et photos) sont publiques.
 - Les structures s'engagent à n'utiliser les profils que pour recruter, sans les copier ni les transmettre.
 

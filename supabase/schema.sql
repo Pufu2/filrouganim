@@ -681,3 +681,26 @@ begin
 end $$;
 revoke all on function public.envoyer_demande(jsonb) from public, anon, authenticated;
 grant execute on function public.envoyer_demande(jsonb) to authenticated;
+
+-- ------------------------------------------------------------------ version 8 (11/11/2026)
+-- La liste publique des animateurs : un résumé seulement (prénom, poste, département, diplômes, période),
+-- sans ville, âge, présentation, CV ni contact. La fiche complète reste réservée aux structures vérifiées et abonnées.
+-- Le candidat peut retirer son résumé de la liste (resume_public).
+
+alter table public.profils add column if not exists resume_public boolean not null default true;
+grant select (resume_public) on public.profils to authenticated;
+grant insert (resume_public), update (resume_public) on public.profils to authenticated;
+
+create or replace function public.profils_resume(dep text default null, n integer default 60)
+returns table (id uuid, prenom text, poste_recherche text, departement text, diplomes text[], recherche text[],
+               dispo_debut date, dispo_fin date, cv boolean, qualifs integer, maj_le timestamptz)
+language sql stable security definer set search_path = '' as $$
+  select p.id, p.prenom, p.poste_recherche, p.departement, p.diplomes, p.recherche, p.dispo_debut, p.dispo_fin,
+         p.cv_nom is not null, jsonb_array_length(p.qualifications), p.maj_le
+  from public.profils p
+  where p.publie and p.resume_public
+    and (dep is null or dep = '' or p.departement = dep or dep = any (p.mobilite))
+  order by p.maj_le desc
+  limit greatest(1, least(n, 100)) $$;
+revoke all on function public.profils_resume(text, integer) from public, anon, authenticated;
+grant execute on function public.profils_resume(text, integer) to anon, authenticated;

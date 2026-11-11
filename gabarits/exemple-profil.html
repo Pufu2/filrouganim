@@ -21,7 +21,7 @@
       <a href="{{ lien('/') }}">Accueil</a>
       {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
     </nav>
-    <p class="fp-exemple">Profil fictif. Un vrai profil n'est jamais public : seules les structures vérifiées le voient, et celles à qui vous avez postulé.</p>
+    <p class="fp-exemple">Profil fictif. Un vrai profil complet n'est vu que par les structures vérifiées et abonnées, et celles à qui vous avez postulé ; les autres visiteurs n'en voient qu'un résumé.</p>
     <div class="fp-banniere" aria-hidden="true"><span>{{ p.poste_recherche }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
     <div class="fp-identite">
       <span class="fp-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
@@ -116,7 +116,7 @@
 <section class="bande bande-papier">
   <div class="cadre">
     <div class="tp-appel">
-      <div><h2>Votre profil, <em>en quelques minutes</em></h2><p>Gratuit, jamais public. Les structures vérifiées de votre secteur vous écrivent directement.</p></div>
+      <div><h2>Votre profil, <em>en quelques minutes</em></h2><p>Gratuit, vu en entier par les seules structures vérifiées. Les structures vérifiées de votre secteur vous écrivent directement.</p></div>
       <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil gratuit <span aria-hidden="true">→</span></a>
     </div>
   </div>
