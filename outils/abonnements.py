@@ -131,8 +131,6 @@ def main():
             supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, nouveau)
         structures[sid].update(nouveau)
     print(f"{vus} abonnement(s) Fil Roug'Anim relevé(s).")
-    if not essai:
-        demandes(cle_sb)
 
 
 POSTES = {"animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur ou animatrice", "directeur": "Direction ou adjoint",
@@ -193,7 +191,14 @@ def demandes(cle_sb):
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except urllib.error.HTTPError as e:
-        sys.exit(f"Erreur {e.code} : {e.read().decode('utf-8', 'replace')[:300]}")
+    # les demandes partent même si Stripe ne répond pas (clé expirée, panne) : les deux relevés sont indépendants
+    erreurs = []
+    cle = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
+    for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle)):
+        try:
+            etape()
+        except urllib.error.HTTPError as e:
+            erreurs.append(f"Erreur {e.code} : {e.read().decode('utf-8', 'replace')[:300]}")
+            print(erreurs[-1])
+    if erreurs:
+        sys.exit("\n".join(erreurs))
