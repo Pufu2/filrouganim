@@ -111,7 +111,7 @@
 {% macro recherche_onglets(lien, departements, onglets=True) %}
 <div class="ro{% if not onglets %} ro-seul{% endif %}">
   {% if onglets %}<div class="ro-onglets" role="tablist" aria-label="Que cherchez-vous ?">
-    <button type="button" role="tab" id="ro-t2" aria-selected="true" aria-controls="ro-p2">{{ icone("cherche") }}Trouver un poste</button>
+    <button type="button" role="tab" id="ro-t2" aria-selected="true" aria-controls="ro-p2">{{ icone("cherche") }}Trouver une structure</button>
     <button type="button" role="tab" id="ro-t1" aria-selected="false" aria-controls="ro-p1" tabindex="-1">{{ icone("diplome") }}Se former</button>
     <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je suis une structure</button>
   </div>{% endif %}
@@ -139,19 +139,21 @@
   </div>
   {% if onglets %}
   <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2">
-  <form class="ro-panneau" action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
+  <form class="ro-panneau" action="{{ lien('/trouver-un-poste/structures/') }}" method="get">
     <fieldset class="ro-quoi">
-      <legend class="ro-titre">Quel poste cherchez-vous ?</legend>
+      <legend class="ro-titre">Quelle structure ?</legend>
       <div class="ro-puces">
-        {% for v, l in [("animateur-stagiaire", "Stage pratique BAFA"), ("animateur", "Animateur"), ("directeur", "Direction"), ("surveillant-baignade", "Baignade")] %}<label class="ro-puce"><input type="radio" name="poste" value="{{ v }}"{% if loop.first %} checked{% endif %}><span>{{ l }}</span></label>{% endfor %}
+        <label class="ro-puce"><input type="radio" name="type" value="" checked><span>Toutes</span></label>
+        {% for v in ["accueil-de-loisirs", "sejours", "periscolaire", "accueil-de-jeunes", "association"] %}<label class="ro-puce"><input type="radio" name="type" value="{{ v }}"><span>{{ TYPES_STRUCTURE[v] }}</span></label>{% endfor %}
       </div>
     </fieldset>
     <div class="ro-ou">
-      <label class="ro-titre" for="ro-dep">Où ?</label>
+      <label class="ro-titre" for="ro-st-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<select id="ro-dep" name="dep" required><option value="">Votre département</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select></span>
-        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Trouver mes structures</button>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-st-ou" name="ou" type="search" placeholder="Ville, département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes data-villes-valeur="nom"></span>
+        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les structures</button>
       </div>
+      <p class="ro-plus">Pas le temps de chercher ? <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous voulez</a> : votre demande part chez les 3 structures les plus proches.</p>
     </div>
   </form>
   </div>
@@ -412,4 +414,30 @@
   <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>
   <a class="s-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir <span aria-hidden="true">→</span></a>
 </article>
+{% endmacro %}
+
+{# La liste publique des animateurs inscrits (statique/js/animateurs.js) : les libellés et les scripts, une fois par page #}
+{% macro animateurs_scripts(lien) %}
+{% set deps = {} %}{% for d in departements %}{% set _ = deps.update({d.code: d.nom}) %}{% endfor %}
+<script type="application/json" id="an-libelles">{{ {"url": site.supabase.url, "cle": site.supabase.cle, "prix": site.abonnement.prix,
+  "creer": lien('/compte/') ~ '?inscription=1&role=structure', "compte": lien('/compte/'),
+  "diplomes": DIPLOMES_PROFIL, "recherche": RECHERCHE, "deps": deps} | tojson }}</script>
+<script src="{{ statique('js/supabase-2.117.3.js') }}"></script>
+<script src="{{ statique('js/animateurs.js') }}"></script>
+{% endmacro %}
+
+{# La carte de l'exemple de profil (Camille) #}
+{% macro carte_exemple_profil(p, lien) %}
+<li class="tp-carte tp-carte-exemple">
+  <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
+    <span class="tp-avatar">{{ p.prenom[:1] }}</span>
+    <span class="tp-badge-exemple">Exemple de profil</span>
+  </a>
+  <div class="tp-carte-corps">
+    <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
+    <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
+    <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}</p>
+  </div>
+  <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure abonnée</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
+</li>
 {% endmacro %}

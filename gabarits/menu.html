@@ -5,7 +5,7 @@
 {% set ICONES = {"/se-former/bafa/": "diplome", "/se-former/bafd/": "etoile", "/se-former/psc1/": "croix", "/se-former/surveillant-de-baignade/": "eau",
   "/se-former/cpjeps/": "diplome", "/se-former/bpjeps/": "diplome", "/se-former/dejeps/": "diplome", "/se-former/desjeps/": "diplome", "/se-former/ecoles/": "ecole",
   "/se-former/etapes-du-bafa/": "etapes", "/se-former/financer-son-bafa/": "euro", "/se-former/questions-frequentes/": "question", "/blog/": "bulle", "/lexique/": "livre",
-  "/se-former/sessions/organismes/": "structure", "/trouver-un-poste/": "profil", "/trouver-un-poste/exemple-de-profil/": "etoile", "/trouver-un-poste/structures/": "structure",
+  "/se-former/sessions/organismes/": "structure", "/trouver-un-poste/": "profil", "/trouver-un-poste/exemple-de-profil/": "etoile", "/trouver-un-poste/structures/": "structure", "/recruter/animateurs/": "profil",
   "/trouver-un-poste/trouver-son-stage-pratique/": "cible", "/trouver-un-poste/preparer-son-entretien/": "bulle", "/trouver-un-poste/le-projet-pedagogique/": "livre",
   "/trouver-un-poste/contrat-d-engagement-educatif/": "contrat", "/outils/salaire-cee/": "calcul", "/outils/mon-parcours-bafa/": "calendrier",
   "/trouver-un-poste/preparer-sa-valise-de-colo/": "valise", "/compte/?inscription=1": "structure", "/recruter/exemple-de-page-structure/": "etoile",
@@ -98,6 +98,7 @@
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico(ICONES_TITRES.get("Votre structure", "fleche")) }}Votre structure</p>
           {{ lien_menu('/compte/?inscription=1', 'Créer mon espace structure') }}
+          {{ lien_menu('/recruter/animateurs/', 'Les animateurs inscrits', 'Par département') }}
           {{ lien_menu('/recruter/exemple-de-page-structure/', 'Un exemple de fiche structure') }}
           {{ lien_menu('/chiffres/', 'Les chiffres du site', 'Qui vous verra') }}
         </div>

@@ -2201,3 +2201,47 @@ html.fiche-ouverte { overflow: hidden; }
 .fp-chiffres li { position: relative; overflow: hidden; }
 .fp-chiffres li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--theme); opacity: .85; }
 @media (max-width: 560px) { .fp-mois { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+/* La liste publique des animateurs (animateurs.js) : cartes, résumé verrouillé */
+.ro-plus { margin: 12px 0 0; font-size: 13.5px; color: var(--doux); }
+.ro-plus a { color: var(--fil-fonce); font-weight: 700; }
+.an-carte .tp-carte-haut { border: 0; width: 100%; cursor: pointer; font: inherit;
+  background: radial-gradient(circle at 78% 28%, #dfe9e1 0 17%, transparent 18%), radial-gradient(circle at 20% 78%, #f6e0c8 0 20%, transparent 21%), linear-gradient(135deg, #f4f1ea, #e9efe8); }
+.an-carte .tp-avatar { background: #3f5b4b; }
+.an-badge { position: absolute; top: 14px; left: 14px; padding: 6px 12px; border-radius: 99px; background: #fff; color: #3f5b4b; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px -6px rgba(0, 0, 0, .3); }
+.an-lien { all: unset; cursor: pointer; color: var(--encre); }
+.an-lien:hover { color: var(--fil-fonce); }
+.an-lien:focus-visible, .an-voir:focus-visible { outline: 2px solid var(--fil); outline-offset: 3px; border-radius: 4px; }
+.an-voir { border: 0; background: none; padding: 0; cursor: pointer; font: 700 14px/1.2 var(--texte); color: var(--fil-fonce); }
+.an-voir:hover { text-decoration: underline; }
+.an-note { display: inline-flex; align-items: center; gap: 6px; }
+.an-note svg, .an-bulle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; flex: none; }
+.an-select { border: 0; background: transparent; font: inherit; color: var(--encre); width: 100%; padding: 0; min-height: 44px; }
+.an-voile { position: fixed; inset: 0; z-index: 90; background: rgba(35, 31, 32, .55); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.an-voile[hidden] { display: none; }
+.an-fiche { position: relative; width: min(560px, 100%); background: #fbf8f2; border-radius: 20px; padding: 28px 28px 24px; box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .6); }
+.an-fermer { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #e6dccf; background: #fff; display: grid; place-items: center; cursor: pointer; }
+.an-fermer svg { width: 18px; height: 18px; fill: none; stroke: var(--encre); stroke-width: 2; }
+.an-tete { display: flex; align-items: center; gap: 18px; margin: 0 40px 16px 0; }
+.an-avatar { width: 72px; height: 72px; font-size: 32px; background: #3f5b4b; flex: none; }
+.an-tete h2 { margin: 0; font-size: 1.8rem; font-weight: 500; }
+.an-sous { margin: 4px 0 0; color: #3f5b4b; font-weight: 700; font-size: 14.5px; }
+.an-puces { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.an-puces li { padding: 5px 11px; border-radius: 99px; background: #fff; border: 1px solid #e6dccf; font-size: 13px; font-weight: 700; }
+.an-lignes { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0 0 18px; font-size: 14px; }
+.an-lignes dt { color: var(--doux); }
+.an-lignes dd { margin: 0; }
+.an-verrou { display: grid; border-radius: 16px; overflow: hidden; border: 1px solid #e6dccf; background: #fff; }
+.an-verrou > * { grid-area: 1 / 1; }
+.an-flou { padding: 16px 18px; align-self: stretch; filter: blur(4px); user-select: none; pointer-events: none; }
+.an-flou p { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; font-size: 13px; }
+.an-flou span { flex: 1; height: 10px; border-radius: 6px; background: #e8e0d6; }
+.an-bulle { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 22px 18px; background: rgba(251, 248, 242, .72); }
+.an-bulle > svg { width: 30px; height: 30px; color: var(--fil-fonce); margin-bottom: 6px; }
+.an-bulle-t { margin: 0 0 4px; font: 600 1.15rem/1.3 var(--titres); }
+.an-bulle-p { margin: 0 0 14px; font-size: 13.5px; color: #4a4142; max-width: 40ch; }
+.an-boutons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+@media (max-width: 560px) {
+  .an-fiche { padding: 22px 18px 18px; }
+  .an-boutons a { width: 100%; text-align: center; }
+}
