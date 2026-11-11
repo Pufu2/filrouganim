@@ -1,6 +1,6 @@
 # Chiffres publics de visibilité du site (visiteurs, Google, comptes créés).
 # Fichier écrit chaque nuit par outils/audience.py : ne pas modifier à la main. Voir docs/CHIFFRES.md.
-mis_a_jour: '2026-11-10'
+mis_a_jour: '2026-11-11'
 chiffres:
   impressions_28j: 553
   impressions_evolution: null
@@ -17,3 +17,6 @@ chiffres:
   structures: 0
   offres: 0
   dernieres_inscriptions: []
+  inscriptions_par_mois: []
+  inscriptions_par_departement: []
+  premiere_inscription: null
