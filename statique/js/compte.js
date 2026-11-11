@@ -407,9 +407,12 @@
     $("tuiles-candidat").hidden = nouveau;
     if (nouveau) {
       if (params.get("postuler")) message("Créez d'abord votre profil : votre candidature partira juste après.");
+      // une demande déjà envoyée sans profil : on la montre, pour la suivre ou la retirer
+      mesDemandes().then(function (d) { $("bloc-mes-demandes").hidden = !d.length; });
       return;
     }
     tableauCandidat();
+    mesDemandes();
     if (params.get("postuler")) ouvrirPostuler(params.get("postuler"));
   }
   // « Je peux aussi travailler… » : les départements de la région du candidat (et ceux déjà cochés)
@@ -566,6 +569,7 @@
     else $("bloc-abonnement").hidden = true;
     if (structure) chargerOffres().then(tableauStructure);
     if (actif(structure)) chargerCandidats();
+    if (structure) chargerDemandesRecues().then(tableauStructure);
   }
 
   /* -- l'abonnement (Stripe) : payé si la fin de période n'est pas passée ; en ligne si payé ET vérifié -- */
@@ -1249,9 +1253,74 @@
     var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
     tuile(t, enLigne, enLigne > 1 ? "offres en ligne" : "offre en ligne", "bloc-offres");
     tuile(t, recues.length, (recues.length > 1 ? "candidatures" : "candidature") + (nouvelles ? " dont " + nouvelles + " nouvelle" + (nouvelles > 1 ? "s" : "") : ""), "bloc-candidatures-recues");
+    if (actif(structure)) tuile(t, demandesRecues.length, demandesRecues.length > 1 ? "demandes reçues" : "demande reçue", "bloc-demandes-recues");
     if (actif(structure)) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
     tableauEnCours = false;
     apercuStructure();
+  }
+
+  /* -- l'annuaire inversé : les demandes du candidat, et celles que reçoit la structure -- */
+  var POSTES_D = { "animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur ou animatrice", "directeur": "Direction ou adjoint",
+                   "surveillant-baignade": "Surveillance de baignade", "directeur-adjoint": "Direction adjointe", "autre": "Autre poste" };
+  var PERIODES_D = { "ete": "l'été", "petites-vacances": "les petites vacances", "mercredis": "les mercredis", "periscolaire": "le périscolaire", "annee": "toute l'année" };
+  function resumeDemande(d) {
+    var q = (d.periodes || []).map(function (x) { return PERIODES_D[x] || x; });
+    if (d.dispo_debut) q.push((d.dispo_fin ? "du " : "dès le ") + dateFr(d.dispo_debut, false) + (d.dispo_fin ? " au " + dateFr(d.dispo_fin, false) : ""));
+    return (d.ville ? d.ville + ", " : "") + nomDep(d.departement) + (d.partout ? " · partout en France" : (d.zone || []).length > 1 ? " · toute la région" : "") +
+      (q.length ? " · " + q.join(", ") : "");
+  }
+  async function mesDemandes() {
+    var r = await sb.from("demandes").select("id,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,destinataires,cree_le").order("cree_le", { ascending: false });
+    var liste = $("liste-mes-demandes"); liste.textContent = "";
+    var d = r.data || [];
+    $("bloc-mes-demandes").hidden = false;
+    if (r.error || !d.length) { liste.appendChild(el("p", "aucune", r.error ? erreurLisible(r.error) : "Pas encore de demande. Décrivez le poste que vous cherchez : ça prend une minute.")); return d; }
+    d.forEach(function (x) {
+      var item = el("article", "ligne-compte"), corps = el("div");
+      corps.appendChild(el("h3", null, POSTES_D[x.poste] || x.poste));
+      corps.appendChild(el("p", "petit", resumeDemande(x) + " · envoyée le " + dateFr(x.cree_le)));
+      var nb = (x.destinataires || []).length;
+      corps.appendChild(el("p", nb ? "etat etat-ok" : "etat etat-attente", nb ? "Reçue par " + nb + (nb > 1 ? " structures" : " structure") + " : elles vous répondent par e-mail" : "En attente d'une structure dans votre secteur (30 jours au plus)"));
+      item.appendChild(corps);
+      var b = el("button", "bouton-texte", "Retirer"); b.type = "button";
+      b.addEventListener("click", async function () {
+        if (!confirm("Retirer cette demande ? Les structures ne la verront plus.")) return;
+        var x2 = await sb.from("demandes").delete().eq("id", x.id);
+        if (x2.error) message(erreurLisible(x2.error), true); else { message("Demande retirée."); mesDemandes(); }
+      });
+      item.appendChild(b);
+      liste.appendChild(item);
+    });
+    return d;
+  }
+  var demandesRecues = [];
+  async function chargerDemandesRecues() {
+    var blocD = $("bloc-demandes-recues");
+    if (!actif(structure)) { blocD.hidden = true; return; }
+    var r = await sb.from("demandes").select("id,prenom,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
+      .contains("destinataires", [utilisateur.id]).order("cree_le", { ascending: false }).limit(50);
+    demandesRecues = r.data || [];
+    blocD.hidden = false;
+    var liste = $("liste-demandes-recues"); liste.textContent = "";
+    if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
+    if (!demandesRecues.length) { liste.appendChild(el("p", "aucune", "Pas encore de demande. Elles arrivent ici, et par e-mail, dès qu'un candidat de votre secteur décrit le poste qu'il cherche.")); return; }
+    demandesRecues.forEach(function (x) {
+      var item = el("article", "ligne-compte"), corps = el("div");
+      corps.appendChild(el("h3", null, (POSTES_D[x.poste] || x.poste) + " · " + x.prenom));
+      corps.appendChild(el("p", "petit", resumeDemande(x) + " · le " + dateFr(x.cree_le)));
+      if ((x.diplomes || []).length) {
+        var ul = el("ul", "pastilles");
+        x.diplomes.forEach(function (y) { ul.appendChild(el("li", null, libelle("diplomes", y))); });
+        corps.appendChild(ul);
+      }
+      if ((x.experiences || []).length) corps.appendChild(el("p", "petit", "Expérience : " + x.experiences.map(function (y) { return libelle("experiences", y); }).join(", ")));
+      if (x.message) corps.appendChild(el("p", "presentation message-candidat", "« " + x.message + " »"));
+      item.appendChild(corps);
+      var a = el("a", "bouton-r", "Répondre");
+      a.href = "mailto:" + encodeURIComponent(x.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre demande sur Fil Roug'Anim : " + structure.nom);
+      item.appendChild(a);
+      liste.appendChild(item);
+    });
   }
 
   /* -- espace candidat : candidatures, offres pour toi -- */

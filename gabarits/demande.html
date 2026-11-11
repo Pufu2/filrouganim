@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# L'annuaire inversé, sur le modèle de jasonmarinho.com/trouver-un-pro : le candidat décrit le poste qu'il cherche,
+   voit tout de suite quelles structures recevront sa demande, et l'envoie (3 structures au plus, celles qui paient).
+   Tout se passe dans le navigateur (statique/js/demande.js) ; l'envoi passe par la fonction envoyer_demande de la base. #}
+{% set POSTES_D = [("animateur-stagiaire", "Stage pratique BAFA", "Les 14 jours de stage, dans un accueil déclaré", "etape"),
+                   ("animateur", "Animateur ou animatrice", "Colo, centre de loisirs, périscolaire", "cherche"),
+                   ("directeur", "Direction ou adjoint", "BAFD, stagiaire BAFD, BPJEPS, DEJEPS", "diplome"),
+                   ("surveillant-baignade", "Surveillance de baignade", "BSB, BNSSA, en séjour ou en centre", "lieu")] %}
+{% set PERIODES = [("ete", "L'été"), ("petites-vacances", "Les petites vacances"), ("mercredis", "Les mercredis"), ("periscolaire", "Le périscolaire"), ("annee", "Toute l'année")] %}
+{% set DIPLOMES = [("stagiaire-bafa", "Stagiaire BAFA"), ("bafa", "BAFA"), ("stagiaire-bafd", "Stagiaire BAFD"), ("bafd", "BAFD"), ("psc1", "PSC1"),
+                   ("surveillant-baignade", "Surveillant de baignade"), ("cqp-ap", "CQP animateur périscolaire"), ("cpjeps", "CPJEPS"), ("bpjeps", "BPJEPS"),
+                   ("dejeps", "DEJEPS"), ("desjeps", "DESJEPS"), ("autre", "Autre")] %}
+{% set EXPERIENCES = [("petite-enfance", "Moins de 6 ans"), ("enfants", "6-11 ans"), ("ados", "Ados"), ("handicap", "Enfants en situation de handicap"),
+                      ("sejours", "Séjours avec nuitées"), ("itinerance", "Séjours itinérants, camping"), ("etranger", "Séjours à l'étranger"),
+                      ("periscolaire", "Périscolaire"), ("direction", "Direction, adjoint"), ("baignade", "Surveillance de baignade")] %}
+{% block tete_note %}<p class="tp-sur">Gratuit · sans intermédiaire</p>{% endblock %}
+{% block h1 %}Décrivez le poste que vous cherchez, <em>les structures viennent à vous</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Stage pratique BAFA, colo, centre de loisirs, direction : répondez à quelques questions, vous voyez tout de suite quelles structures recevront votre demande. Elles vous répondent directement.</p>
+<ul class="dm-promesses"><li>3 structures au plus</li><li>Votre contact n'est jamais vendu</li><li>Pas de structure près de chez vous ? Votre demande attend</li></ul>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="dm" id="demande" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
+<div class="cadre dm-grille">
+  <div class="assistant-corps dm-corps">
+    <div id="dm-assistant">
+      <div class="as-tete"><p><b class="as-n"></b> · <span class="as-titre"></span></p><p class="as-duree">Environ 1 min</p></div>
+      <div class="as-barre" aria-hidden="true"><span></span></div>
+      <form id="f-demande" class="formulaire" novalidate>
+        <fieldset class="etape" data-titre="Le poste">
+          <legend class="etape-q">Vous cherchez quoi&nbsp;?</legend>
+          <div class="cartes-choix dm-cartes">{% for v, l, d, ic in POSTES_D %}<label class="carte-choix"><input type="radio" name="poste" value="{{ v }}" required><span><i class="dm-ic" aria-hidden="true">{{ m.icone(ic) }}</i><b>{{ l }}</b><small>{{ d }}</small></span></label>{% endfor %}</div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Où">
+          <legend class="etape-q">Où voulez-vous travailler&nbsp;?</legend>
+          <div class="champs-2">
+            <label class="champ"><span>Votre département</span><select name="departement" required><option value="">Choisir</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}" data-region="{{ r.id }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select></label>
+            <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
+          </div>
+          <div class="champ"><span>Jusqu'où&nbsp;?</span>
+            <div class="cartes-choix dm-zone">
+              <label class="carte-choix"><input type="radio" name="etendue" value="departement" checked><span><b>Mon département</b><small>Les structures les plus proches</small></span></label>
+              <label class="carte-choix"><input type="radio" name="etendue" value="region"><span><b>Toute ma région</b><small>Je peux me déplacer</small></span></label>
+              <label class="carte-choix"><input type="radio" name="etendue" value="partout"><span><b>Partout en France</b><small>Pour les séjours, logé sur place</small></span></label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Quand">
+          <legend class="etape-q">Quand êtes-vous disponible&nbsp;?</legend>
+          <div class="cases">{% for v, l in PERIODES %}<label><input type="checkbox" name="periodes" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>
+          <div class="champs-2">
+            <label class="champ"><span>À partir du (facultatif)</span><input type="date" name="dispo_debut"></label>
+            <label class="champ"><span>Jusqu'au (facultatif)</span><input type="date" name="dispo_fin"></label>
+          </div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Diplômes">
+          <legend class="etape-q">Vos diplômes</legend>
+          <p class="etape-aide">Ceux que vous avez, et ceux en cours (stagiaire).</p>
+          <div class="cases">{% for v, l in DIPLOMES %}<label><input type="checkbox" name="diplomes" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Expérience">
+          <legend class="etape-q">Votre expérience</legend>
+          <p class="etape-aide">Avec quels publics, dans quels accueils (même en stage ou bénévole)&nbsp;? Rien encore ? Passez, c'est normal pour un premier stage.</p>
+          <div class="cases">{% for v, l in EXPERIENCES %}<label><input type="checkbox" name="experiences" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Votre message">
+          <legend class="etape-q">Quelques mots pour les structures</legend>
+          <label class="champ"><span>Votre prénom (ou un pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
+          <label class="champ"><span>Votre message (facultatif)</span><textarea name="message" rows="5" maxlength="800" placeholder="Ex. : J'ai fait ma formation générale BAFA en février. J'aime les grands jeux et j'ai encadré des 8-10 ans au foot."></textarea></label>
+          <p class="petit">Ni nom de famille, ni adresse, ni téléphone : les structures vous écrivent par e-mail.</p>
+        </fieldset>
+        <fieldset class="etape" data-titre="Qui la reçoit">
+          <legend class="etape-q">Votre demande partira chez…</legend>
+          <div id="dm-destinataires" class="dm-destinataires" aria-live="polite"></div>
+        </fieldset>
+        <fieldset class="etape" data-titre="Envoyer">
+          <legend class="etape-q">Où les structures vous répondent</legend>
+          <label class="champ"><span>Votre adresse e-mail</span><input type="email" name="email_contact" required maxlength="200" autocomplete="email"></label>
+          <label class="case-accord"><input type="checkbox" name="seize_ans" required> J'ai 16 ans ou plus, et j'accepte les <a href="{{ lien('/conditions-utilisation/') }}">conditions d'utilisation</a>.</label>
+          <div class="dm-connexion" id="dm-connexion" hidden>
+            <p class="petit">Pour envoyer, il faut un compte gratuit : il vous permet de suivre vos demandes et de les retirer. Une minute :</p>
+            <button type="button" class="bouton-google" data-google><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Envoyer avec Google</button>
+            <button type="button" class="bouton-texte dm-lien" id="dm-lien">Recevoir plutôt un lien de connexion par e-mail</button>
+          </div>
+        </fieldset>
+        <div class="as-pied">
+          <button type="button" class="bouton-texte as-retour">← Retour</button>
+          <span class="as-pied-droite">
+            <button type="button" class="bouton-r as-suivant">Continuer <span aria-hidden="true">→</span></button>
+            <button type="submit" class="bouton-r as-fin" id="dm-envoyer">Envoyer ma demande <span aria-hidden="true">→</span></button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <div id="dm-fini" class="dm-fini" hidden>
+      <p class="abo-sur">Demande envoyée</p>
+      <h2 id="dm-fini-titre"></h2>
+      <p id="dm-fini-texte"></p>
+      <p class="boutons"><a class="bouton-r" href="{{ lien('/compte/') }}">Suivre ma demande dans mon espace <span aria-hidden="true">→</span></a> <a class="bouton-texte" href="{{ lien('/trouver-un-poste/offres/') }}">Voir les offres</a></p>
+      <p class="petit">Un profil complet (dates, talents, CV) aide les structures à vous répondre : vous pouvez le remplir depuis votre espace.</p>
+    </div>
+    <p class="compte-message" id="dm-message" role="status" aria-live="polite" hidden></p>
+  </div>
+
+  <aside class="assistant-cote dm-cote" aria-label="Aperçu de votre demande">
+    <div class="as-boite">
+      <p class="as-cote-titre">Ce que les structures vont lire</p>
+      <div class="dm-apercu">
+        <p class="dm-apercu-sur">Nouvelle demande</p>
+        <p class="dm-apercu-titre" data-dm="titre">Votre demande se construit ici</p>
+        <dl>
+          <div><dt>Poste</dt><dd data-dm="poste">à préciser</dd></div>
+          <div><dt>Où</dt><dd data-dm="ou">à préciser</dd></div>
+          <div><dt>Quand</dt><dd data-dm="quand">à préciser</dd></div>
+          <div><dt>Diplômes</dt><dd data-dm="diplomes">à préciser</dd></div>
+          <div><dt>Expérience</dt><dd data-dm="experiences">à préciser</dd></div>
+        </dl>
+        <p class="dm-apercu-msg" data-dm="message" hidden></p>
+      </div>
+    </div>
+    <div class="as-boite">
+      <p class="as-cote-titre">Pourquoi passer par ici</p>
+      <ul class="as-plus">
+        <li><b>Des structures vérifiées</b><span>Accueils de loisirs, organisateurs de séjours, collectivités : chacune est vérifiée à la main.</span></li>
+        <li><b>Vous voyez qui la reçoit</b><span>Avant d'envoyer, et 3 structures au plus : des réponses utiles, pas une avalanche.</span></li>
+        <li><b>Gratuit, toujours</b><span>Le contrat se signe directement avec la structure, sans intermédiaire.</span></li>
+      </ul>
+      <p class="as-liens">Vous préférez choisir vous-même&nbsp;? <a href="{{ lien('/trouver-un-poste/offres/') }}">Les offres</a> · <a href="{{ lien('/trouver-un-poste/structures/') }}">Les structures</a></p>
+    </div>
+  </aside>
+</div>
+</div>
+<script type="application/json" id="dm-libelles">{{ {"postes": POSTES_D | map("first") | list, "postes_noms": POSTES_D | map(attribute=1) | list,
+  "periodes": PERIODES, "diplomes": DIPLOMES, "experiences": EXPERIENCES,
+  "regions": regions | map(attribute="id") | list, "deps_region": regions | map(attribute="deps") | map("map", attribute="code") | map("list") | list,
+  "noms_deps": departements | map(attribute="nom") | list, "deps": departements | map(attribute="code") | list,
+  "lien_structures": lien('/trouver-un-poste/structures/')} | tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ statique('js/supabase-2.117.3.js') }}"></script>
+<script src="{{ statique('js/demande.js') }}"></script>
+{% endblock %}

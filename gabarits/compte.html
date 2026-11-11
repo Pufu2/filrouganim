@@ -174,6 +174,12 @@
       <div id="liste-mes-candidatures" class="liste-compte"></div>
     </div>
 
+    <div class="carte-compte" id="bloc-mes-demandes" hidden>
+      <div class="titre-et-bouton"><h2>Mes demandes</h2><a class="bouton-r" href="{{ lien('/trouver-un-poste/demande/') }}">Nouvelle demande</a></div>
+      <p class="petit">Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent par e-mail.</p>
+      <div id="liste-mes-demandes" class="liste-compte"></div>
+    </div>
+
     <div class="carte-compte" id="bloc-offres-pour-toi" hidden>
       <h2>Les offres pour vous</h2>
       <p class="petit">Les offres en ligne dans votre département et là où vous pouvez travailler. Vous postulez en un clic, avec votre profil.</p>
@@ -304,6 +310,12 @@
       </div>
     </div>
     <div class="tuiles" id="tuiles-structure"></div>
+
+    <div class="carte-compte" id="bloc-demandes-recues" hidden>
+      <h2>Demandes reçues</h2>
+      <p class="petit">Des animateurs et des directeurs de votre secteur décrivent le poste qu'ils cherchent : leur demande arrive chez 3 structures au plus. Répondez-leur directement par e-mail.</p>
+      <div id="liste-demandes-recues" class="liste-compte"></div>
+    </div>
 
     <div class="carte-compte" id="bloc-candidatures-recues" hidden>
       <h2>Candidatures reçues</h2>
@@ -506,7 +518,7 @@
 </div>
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
-  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
+  "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_demande": lien('/trouver-un-poste/demande/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
   "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list,
   "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "abonnement": site.abonnement, "email_site": site.email, "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
   "tuiles": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"} | tojson }}</script>

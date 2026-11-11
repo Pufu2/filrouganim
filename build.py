@@ -857,6 +857,10 @@ class Site:
                      h1="Les offres d'animation", indexer=bool(self.offres),
                      mois=sorted({o["debut"].strftime("%Y-%m") for o in self.offres}),
                      fil=[("Animateurs & directeurs", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
+        # l'annuaire inversé : le candidat décrit le poste qu'il cherche, les structures les plus proches reçoivent sa demande
+        self.ajouter("/trouver-un-poste/demande/", "demande.html", titre="Trouver une structure : décrivez le poste que vous cherchez",
+                     description="Stage pratique BAFA, colo, centre de loisirs, direction : décrivez le poste que vous cherchez, et votre demande part chez les 3 structures d'animation les plus proches de chez vous. Gratuit, sans intermédiaire.",
+                     fil=[("Animateurs & directeurs", "/trouver-un-poste/"), ("Décrire ce que je cherche", "/trouver-un-poste/demande/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
         TP = ("Animateurs & directeurs", "/trouver-un-poste/")
         STR = ("Les structures", "/trouver-un-poste/structures/")

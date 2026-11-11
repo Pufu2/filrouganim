@@ -1,4 +1,4 @@
-name: Relever les abonnements des structures
+name: Relever les abonnements des structures (et relayer les demandes)
 
 # Les paiements Stripe des structures sont recopiés dans la base (outils/abonnements.py).
 on:
@@ -27,4 +27,5 @@ jobs:
         env:
           STRIPE_ABONNEMENTS_KEY: ${{ secrets.STRIPE_ABONNEMENTS_KEY }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
         run: python3 outils/abonnements.py
