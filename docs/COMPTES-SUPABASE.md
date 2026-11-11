@@ -199,3 +199,16 @@ les métadonnées : `site` = `filrouganim`, `structure_id` = la référence du c
 ### Vérifier une structure
 
 Table Editor → structures → `verifiee` = true, après avoir contrôlé le SIRET, le RNA ou le n° de déclaration.
+
+## Version 6 (11/11/2026) : l'annuaire inversé
+
+Sur le modèle de jasonmarinho.com/trouver-un-pro : un animateur ou un directeur décrit le poste qu'il cherche
+(`/trouver-un-poste/demande/`), voit les structures qui recevront sa demande, et l'envoie (compte nécessaire :
+Google ou lien par e-mail, le brouillon est gardé le temps de se connecter). La demande part chez les **3 structures
+en ligne** (vérifiées et abonnées) les plus proches : celles du département d'abord, puis de la région.
+
+- Table `demandes`, fonctions `destinataires_possibles` (aperçu), `envoyer_demande` (3 demandes par 24 h au plus),
+  `relayer_demandes` (les demandes sans structure attendent 30 jours et partent dès qu'une structure arrive).
+- La structure les lit dans « Mon espace » → « Demandes reçues » et reçoit un e-mail (Brevo, `alertes@filrouganim.fr`),
+  envoyé par le relevé des 15 minutes (`outils/abonnements.py`, secret `BREVO_API_KEY`).
+- Le candidat les suit et les retire dans « Mon espace » → « Mes demandes ».

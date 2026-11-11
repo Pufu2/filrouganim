@@ -15,6 +15,7 @@ Usage : python3 outils/abonnements.py [--essai]   (--essai affiche ce qui serait
 """
 import base64
 import datetime as dt
+import html
 import json
 import os
 import re
@@ -130,6 +131,65 @@ def main():
             supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, nouveau)
         structures[sid].update(nouveau)
     print(f"{vus} abonnement(s) Fil Roug'Anim relevé(s).")
+    if not essai:
+        demandes(cle_sb)
+
+
+POSTES = {"animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur ou animatrice", "directeur": "Direction ou adjoint",
+          "surveillant-baignade": "Surveillance de baignade", "directeur-adjoint": "Direction adjointe", "autre": "Autre poste"}
+PERIODES = {"ete": "l'été", "petites-vacances": "les petites vacances", "mercredis": "les mercredis", "periscolaire": "le périscolaire", "annee": "toute l'année"}
+
+
+def demandes(cle_sb):
+    """L'annuaire inversé : les demandes en attente partent chez les structures qui viennent d'arriver dans leur zone,
+    puis chaque structure qui reçoit une nouvelle demande est prévenue par e-mail (une seule fois par demande)."""
+    try:
+        n = supabase("POST", "rpc/relayer_demandes", cle_sb, {})
+        if n:
+            print(f"{n} demande(s) en attente relayée(s).")
+        lignes = supabase("GET", "demandes?select=id,prenom,poste,departement,ville,periodes,dispo_debut,destinataires,notifiees,partout"
+                                 "&order=cree_le", cle_sb) or []
+    except urllib.error.HTTPError as e:
+        print(f"Demandes : non lues ({e.code})")
+        return
+    a_prevenir = [(d, [x for x in d["destinataires"] if x not in (d.get("notifiees") or [])]) for d in lignes]
+    a_prevenir = [(d, xs) for d, xs in a_prevenir if xs]
+    if not a_prevenir:
+        return
+    cle_brevo = os.environ.get("BREVO_API_KEY", "").strip()
+    if not cle_brevo:
+        print("BREVO_API_KEY absente : les structures ne sont pas prévenues par e-mail (elles voient les demandes dans leur espace).")
+        return
+    sys.path.insert(0, str(RACINE / "outils"))
+    from alertes import envoyer
+    ids = sorted({x for _, xs in a_prevenir for x in xs})
+    structures = {s["id"]: s for s in supabase("GET", "structures?select=id,nom,email_contact&id=in.(" + ",".join(ids) + ")", cle_sb)}
+    espace = CONFIG["url"].rstrip("/") + "/compte/"
+    for d, xs in a_prevenir:
+        quand = ", ".join(PERIODES.get(p, p) for p in d.get("periodes") or [])
+        lieu = (d.get("ville") + ", " if d.get("ville") else "") + d["departement"] + (" · partout en France" if d.get("partout") else "")
+        sujet = f"Nouvelle demande : {POSTES.get(d['poste'], d['poste'])}, {lieu}"
+        for sid in xs:
+            st = structures.get(sid)
+            if not st or not st.get("email_contact"):
+                continue
+            texte = (f"Bonjour,\n\n{d['prenom']} cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug'Anim :\n\n"
+                     f"{POSTES.get(d['poste'], d['poste'])}\n{lieu}{' · ' + quand if quand else ''}\n\n"
+                     f"Elle n'est envoyée qu'à 3 structures au plus. Lisez-la et répondez directement depuis votre espace : {espace}\n\n"
+                     f"L'équipe Fil Roug'Anim")
+            html_c = ("<p>Bonjour,</p><p><b>" + html.escape(d["prenom"]) + "</b> cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug'Anim :</p>"
+                      "<p style=\"padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2\"><b>" + html.escape(POSTES.get(d["poste"], d["poste"])) + "</b><br>"
+                      + html.escape(lieu) + (" · " + html.escape(quand) if quand else "") + "</p>"
+                      "<p>Elle n'est envoyée qu'à 3 structures au plus. Lisez-la et répondez directement :</p>"
+                      "<p><a href=\"" + espace + "\" style=\"display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold\">Voir la demande</a></p>"
+                      "<p style=\"color:#6b6264;font-size:13px\">Fil Roug'Anim · filrouganim.fr</p>")
+            try:
+                envoyer(cle_brevo, CONFIG.get("email_alertes") or CONFIG["email"], CONFIG["nom"], st["email_contact"], sujet, texte, html_c)
+                print(f"Demande {d['id']} : {st['nom']} prévenue.")
+            except Exception as e:
+                print(f"Demande {d['id']} : e-mail à {st['nom']} non parti ({e}).")
+                continue
+        supabase("PATCH", f"demandes?id=eq.{d['id']}", cle_sb, {"notifiees": d["destinataires"]})
 
 
 if __name__ == "__main__":

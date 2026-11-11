@@ -5,6 +5,7 @@
 -- Version 3 du 26/10/2026 : pages publiques des structures, alertes e-mail des candidats.
 -- Version 4 du 10/11/2026 : CV des candidats, logo et photos des structures (stockage), connexion Google et mot de passe.
 -- Version 5 du 10/11/2026 : abonnement des structures (Stripe), centres d'une même structure.
+-- Version 6 du 11/11/2026 : l'annuaire inversé (demandes des candidats, envoyées aux structures les plus proches).
 --
 -- Qui voit quoi :
 --   - les offres publiées des structures vérifiées : tout le monde (le site, Google) ;
@@ -522,3 +523,119 @@ create policy "ses offres : modifier" on public.offres for update to authenticat
   using (structure_id = (select auth.uid()))
   with check (structure_id = (select auth.uid())
               and (centre_id is null or exists (select 1 from public.centres c where c.id = centre_id and c.structure_id = (select auth.uid()))));
+
+-- ------------------------------------------------------------------ version 6 (11/11/2026)
+-- L'annuaire inversé : un animateur ou un directeur décrit le poste qu'il cherche, et sa demande part chez
+-- les 3 structures en ligne (vérifiées et abonnées) les plus proches de lui. Sans structure dans sa zone,
+-- la demande attend (30 jours) et part dès qu'une structure s'inscrit (relayer_demandes, lancé toutes les 15 minutes).
+-- Les structures qui la reçoivent la lisent dans leur espace et reçoivent un e-mail ; personne d'autre ne la voit.
+
+create table if not exists public.demandes (
+  id             bigint generated always as identity primary key,
+  candidat_id    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  prenom         text not null check (char_length(prenom) between 1 and 40),
+  poste          text not null check (poste in ('animateur-stagiaire', 'animateur', 'directeur-adjoint', 'directeur', 'surveillant-baignade', 'autre')),
+  departement    text not null check (departement ~ '^(0[1-9]|1[0-9]|2[1-9AB]|[3-8][0-9]|9[0-5])$'),
+  ville          text check (char_length(ville) <= 80),
+  zone           text[] not null check (cardinality(zone) between 1 and 20
+                   and array_to_string(zone, ',') ~ '^((0[1-9]|1[0-9]|2[1-9AB]|[3-8][0-9]|9[0-5])(,|$))+$'),
+  partout        boolean not null default false,
+  periodes       text[] not null default '{}' check (periodes <@ array['ete', 'petites-vacances', 'mercredis', 'periscolaire', 'annee']),
+  dispo_debut    date,
+  dispo_fin      date check (dispo_fin >= dispo_debut),
+  diplomes       text[] not null default '{}' check (diplomes <@ array['stagiaire-bafa', 'bafa', 'stagiaire-bafd', 'bafd', 'psc1',
+                   'surveillant-baignade', 'cqp-ap', 'cpjeps', 'bpjeps', 'dejeps', 'desjeps', 'autre']),
+  experiences    text[] not null default '{}' check (experiences <@ array['petite-enfance', 'enfants', 'ados', 'handicap', 'sejours',
+                   'itinerance', 'etranger', 'periscolaire', 'direction', 'baignade']),
+  message        text check (char_length(message) <= 800),
+  email_contact  text not null check (email_contact ~ '^[^@\s<>"]+@[^@\s<>"]+\.[a-zA-Z]{2,}$'),
+  seize_ans      boolean not null check (seize_ans),
+  destinataires  uuid[] not null default '{}',
+  notifiees      uuid[] not null default '{}',
+  cree_le        timestamptz not null default now()
+);
+create index if not exists demandes_candidat on public.demandes (candidat_id);
+create index if not exists demandes_destinataires on public.demandes using gin (destinataires);
+alter table public.demandes enable row level security;
+
+-- les structures en ligne d'une zone : d'abord celles du département du candidat, puis les autres ;
+-- une structure compte aussi par ses centres en ligne
+create or replace function public.structures_de_la_zone(z text[], dep text, n integer default 3)
+returns table (id uuid, nom text, ville text, departement text, slug text, page_publique boolean)
+language sql stable security definer set search_path = '' as $$
+  select s.id, s.nom, s.ville, s.departement, s.slug, s.page_publique
+  from public.structures s
+  where s.verifiee and s.abonnement_fin >= current_date
+    and (s.departement = any (z) or exists (select 1 from public.centres c where c.structure_id = s.id
+                                            and c.departement = any (z) and public.centre_en_ligne(c.id)))
+  order by (s.departement = dep or exists (select 1 from public.centres c where c.structure_id = s.id
+                                           and c.departement = dep and public.centre_en_ligne(c.id))) desc,
+           s.fondatrice desc, s.cree_le
+  limit greatest(1, least(n, 3)) $$;
+
+-- ce que le candidat voit avant d'envoyer : qui recevra sa demande (le nom et la ville, déjà publics)
+create or replace function public.destinataires_possibles(z text[], dep text)
+returns table (nom text, ville text, departement text, slug text)
+language sql stable security definer set search_path = '' as $$
+  select nom, ville, departement, case when page_publique then slug end from public.structures_de_la_zone(z, dep, 3) $$;
+
+-- envoyer une demande (connecté) : 3 demandes au plus par 24 heures
+create or replace function public.envoyer_demande(d jsonb) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare
+  qui uuid := auth.uid();
+  z text[] := array(select jsonb_array_elements_text(d -> 'zone'));
+  dep text := d ->> 'departement';
+  dest uuid[];
+begin
+  if qui is null then raise exception 'Connectez-vous pour envoyer votre demande.'; end if;
+  if (select count(*) from public.demandes where candidat_id = qui and cree_le > now() - interval '24 hours') >= 3 then
+    raise exception 'Vous avez déjà envoyé 3 demandes aujourd''hui : réessayez demain.';
+  end if;
+  if not (dep = any (z)) then z := array_prepend(dep, z); end if;
+  dest := array(select s.id from public.structures_de_la_zone(z, dep, 3) s);
+  insert into public.demandes (candidat_id, prenom, poste, departement, ville, zone, partout, periodes, dispo_debut, dispo_fin,
+                               diplomes, experiences, message, email_contact, seize_ans, destinataires)
+  values (qui, d ->> 'prenom', d ->> 'poste', dep, nullif(d ->> 'ville', ''), z, coalesce((d ->> 'partout')::boolean, false),
+          array(select jsonb_array_elements_text(coalesce(d -> 'periodes', '[]'))),
+          nullif(d ->> 'dispo_debut', '')::date, nullif(d ->> 'dispo_fin', '')::date,
+          array(select jsonb_array_elements_text(coalesce(d -> 'diplomes', '[]'))),
+          array(select jsonb_array_elements_text(coalesce(d -> 'experiences', '[]'))),
+          nullif(d ->> 'message', ''), d ->> 'email_contact', coalesce((d ->> 'seize_ans')::boolean, false), dest);
+  return cardinality(dest);
+end $$;
+
+-- les demandes en attente (sans structure dans la zone) partent dès qu'une structure s'inscrit : rôle serveur seulement
+create or replace function public.relayer_demandes() returns integer
+language plpgsql security definer set search_path = '' as $$
+declare n integer := 0; r record; dest uuid[];
+begin
+  for r in select id, zone, departement from public.demandes
+           where cardinality(destinataires) = 0 and cree_le > now() - interval '30 days' loop
+    dest := array(select s.id from public.structures_de_la_zone(r.zone, r.departement, 3) s);
+    if cardinality(dest) > 0 then
+      update public.demandes set destinataires = dest where id = r.id;
+      n := n + 1;
+    end if;
+  end loop;
+  return n;
+end $$;
+
+revoke all on function public.structures_de_la_zone(text[], text, integer), public.destinataires_possibles(text[], text),
+                       public.envoyer_demande(jsonb), public.relayer_demandes() from public, anon, authenticated;
+grant execute on function public.destinataires_possibles(text[], text) to anon, authenticated;
+grant execute on function public.envoyer_demande(jsonb) to authenticated;
+grant execute on function public.relayer_demandes() to service_role;
+
+revoke all on public.demandes from anon, authenticated;
+grant select, delete on public.demandes to authenticated;
+grant select, update (notifiees) on public.demandes to service_role;
+grant select (id, nom, email_contact) on public.structures to service_role;
+
+drop policy if exists "mes demandes : lire"            on public.demandes;
+drop policy if exists "mes demandes : retirer"         on public.demandes;
+drop policy if exists "demandes reçues : lire"         on public.demandes;
+create policy "mes demandes : lire"    on public.demandes for select to authenticated using (candidat_id = (select auth.uid()));
+create policy "mes demandes : retirer" on public.demandes for delete to authenticated using (candidat_id = (select auth.uid()));
+create policy "demandes reçues : lire" on public.demandes for select to authenticated
+  using ((select auth.uid()) = any (destinataires) and (select public.structure_verifiee()));
