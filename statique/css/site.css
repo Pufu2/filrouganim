@@ -2245,3 +2245,15 @@ html.fiche-ouverte { overflow: hidden; }
   .an-fiche { padding: 22px 18px 18px; }
   .an-boutons a { width: 100%; text-align: center; }
 }
+
+/* menu Structures : le bouton de l'annuaire inversé, sous « Les chiffres du site » (moins appuyé que le grand cadre) */
+.mm-colonne a.mm-bouton-plus { display: flex; flex-direction: row; align-items: center; gap: 12px; margin: 12px 0 0; padding: 12px 14px; border-radius: 14px;
+  background: #fbecee; border: 1px solid #f2cdd2; color: var(--encre); text-decoration: none; }
+.mm-colonne a.mm-bouton-plus:hover { background: #f8e0e3; text-decoration: none; }
+.mm-bouton-plus > svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--fil-fonce); stroke-width: 1.8; stroke-linejoin: round; }
+.mm-bouton-plus > span:nth-of-type(1) { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.mm-bouton-plus b { font-size: .95rem; font-weight: 700; color: var(--fil-fonce); }
+.an-compte { margin: -10px 0 18px; }
+.mm-bouton-plus small { font-size: .8rem; color: var(--doux); line-height: 1.35; }
+.mm-bouton-plus > span:last-child { color: var(--fil-fonce); font-weight: 700; }
+.an-titre { margin-top: 44px; scroll-margin-top: 90px; }

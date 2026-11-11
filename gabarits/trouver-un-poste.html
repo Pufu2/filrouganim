@@ -38,7 +38,7 @@
 
 <section class="bande bande-papier tp-cartes-bande" aria-label="Offres et profils">
   <div class="cadre">
-    <ul class="tp-cartes" id="animateurs-tp" data-animateurs="6">
+    <ul class="tp-cartes">
       {% for o in offres[:5] %}
       <li class="tp-carte">
         <a class="tp-carte-haut tp-carte-offre" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}" tabindex="-1" aria-hidden="true"><span>{{ CONTRATS.get(o.contrat, o.contrat) }}</span></a>
@@ -98,7 +98,6 @@
 </section>
 {% endblock %}
 {% block scripts %}
-{{ m.animateurs_scripts(lien) }}
 <script>
 (function () {
   var form = document.getElementById("tp-form"), voile = document.getElementById("tp-ff");

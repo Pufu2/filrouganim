@@ -38,27 +38,17 @@
   <div class="cadre">
     <p class="compte of-compte" id="compte-offres" aria-live="polite">{{ offres | length }} offre{{ 's' if offres | length > 1 }}</p>
     {% if offres %}<div class="sessions" id="liste-offres-publiques">{% for o in offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
-    <ul class="tp-cartes" id="aucune-offre"{% if offres %} hidden{% endif %}>
-      {% if p %}
-      <li class="tp-carte tp-carte-exemple">
-        <a class="tp-carte-haut" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}" tabindex="-1" aria-hidden="true">
-          <span class="tp-avatar">{{ p.prenom[:1] }}</span>
-          <span class="tp-badge-exemple">Exemple de profil</span>
-        </a>
-        <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">{{ p.prenom }}</a></h2>
-          <p class="tp-carte-lieu">{{ p.ville }} ({{ p.departement }}) · {{ p.poste_recherche }}</p>
-          <p class="tp-carte-detail">{% for d in p.diplomes %}{{ DIPLOMES_PROFIL_NOMS.get(d, d) }}{{ " · " if not loop.last }}{% endfor %}</p>
-        </div>
-        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voit une structure</span><a href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir le profil <span aria-hidden="true">→</span></a></div>
-      </li>
-      {% endif %}
+    <h2 class="rc-titre-cartes an-titre" id="animateurs">Les animateurs <em>inscrits</em></h2>
+    <p class="tp-sans-offre an-compte" data-animateurs-compte="animateurs-of" aria-live="polite"></p>
+    <ul class="tp-cartes" id="animateurs-of" data-animateurs="100">
+      {% if p %}{{ m.carte_exemple_profil(p, lien) }}{% endif %}
     </ul>
+    <p class="tp-sans-offre">Chaque animateur en résumé : la fiche complète, le CV et l'e-mail sont réservés aux structures vérifiées et abonnées. <a href="{{ lien('/recruter/') }}">Vous recrutez ? Voir l'offre fondateurs</a></p>
     <p class="tp-comment"><b>Comment ça marche.</b> Chaque offre est publiée par une structure vérifiée, sous sa responsabilité. Vous candidatez directement auprès d'elle : aucun frais, aucun intermédiaire. <a href="{{ lien('/trouver-un-poste/') }}">Préparer sa recherche</a></p>
   </div>
 </section>
 {% endblock %}
-{% block scripts %}<script>
+{% block scripts %}{{ m.animateurs_scripts(lien) }}<script>
 (function () {
   var f = document.getElementById("filtres-offres"), voile = document.getElementById("of-ff");
   if (!f || !voile) return;
@@ -95,7 +85,6 @@
       c.hidden = !ok; if (ok) n++;
     });
     document.getElementById("compte-offres").textContent = n + " offre" + (n > 1 ? "s" : "") + (f.elements.dep.value && ou.value ? " · " + ou.value : "");
-    document.getElementById("aucune-offre").hidden = n > 0;
     history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
     marquer();
   }

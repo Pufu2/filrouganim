@@ -913,9 +913,7 @@ class Site:
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
-        self.ajouter("/recruter/animateurs/", "animateurs.html", titre="Les animateurs et directeurs qui cherchent un poste",
-                     description="Stagiaires BAFA, animateurs, directeurs : les candidats inscrits sur Fil Roug'Anim, par département. Fiche complète pour les structures abonnées.",
-                     h1="Les animateurs inscrits", fil=[("Structures", "/recruter/"), ("Les animateurs inscrits", "/recruter/animateurs/")])
+        self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
                       maj_le=en_date(ex["profil"].get("maj_le")))
