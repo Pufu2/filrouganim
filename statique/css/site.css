@@ -2255,5 +2255,21 @@ html.fiche-ouverte { overflow: hidden; }
 .mm-bouton-plus b { font-size: .88rem; font-weight: 700; color: var(--fil-fonce); }
 .an-compte { margin: -10px 0 18px; }
 .mm-bouton-plus small { white-space: nowrap; font-size: .72rem; color: var(--doux); line-height: 1.35; }
-.mm-bouton-plus > span:last-child { color: var(--fil-fonce); font-weight: 700; }
 .an-titre { margin-top: 44px; scroll-margin-top: 90px; }
+
+/* accueil, onglet « Je suis une structure » : trois cartes, comme « Je suis un pro » sur jasonmarinho.com */
+.ro-structure { display: block; }
+.ro-familles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+.ro-famille { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; border: 1px solid #eee4d9; background: #fff; color: var(--encre); text-decoration: none; transition: border-color .15s, transform .15s; }
+.ro-famille:hover { border-color: var(--fil); transform: translateY(-2px); text-decoration: none; color: var(--encre); }
+.ro-famille-ic { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+.ro-famille-ic svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ro-famille-periscolaire .ro-famille-ic { background: #e8f1ec; color: #2f5a44; }
+.ro-famille-extrascolaire .ro-famille-ic { background: #fff4d2; color: #6b5200; }
+.ro-famille-sejours .ro-famille-ic { background: #fbe4e7; color: var(--fil-fonce); }
+.ro-famille-t { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.ro-famille-t b { font-size: 1rem; }
+.ro-famille-t span { font-size: 13px; color: var(--doux); line-height: 1.4; }
+.ro-famille-go { color: var(--fil-fonce); font-weight: 700; }
+@media (max-width: 860px) { .ro-familles { grid-template-columns: 1fr; } }
+#ro-p2 .ro-panneau { align-items: start; }
