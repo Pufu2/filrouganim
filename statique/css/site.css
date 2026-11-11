@@ -2247,13 +2247,13 @@ html.fiche-ouverte { overflow: hidden; }
 }
 
 /* menu Structures : le bouton de l'annuaire inversé, sous « Les chiffres du site » (moins appuyé que le grand cadre) */
-.mm-colonne a.mm-bouton-plus { display: inline-flex; align-self: flex-start; flex-direction: row; align-items: center; gap: 8px; margin: 10px 0 0; padding: 7px 12px; border-radius: 12px;
+.mm-colonne a.mm-bouton-plus { display: inline-flex; align-self: flex-start; flex-direction: row; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 10px; border-radius: 12px; max-width: 100%;
   background: #fbecee; border: 1px solid #f2cdd2; color: var(--encre); text-decoration: none; }
 .mm-colonne a.mm-bouton-plus:hover { background: #f8e0e3; text-decoration: none; }
 .mm-bouton-plus > svg { width: 15px; height: 15px; flex: none; fill: none; stroke: var(--fil-fonce); stroke-width: 1.8; stroke-linejoin: round; }
 .mm-bouton-plus > span:nth-of-type(1) { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .mm-bouton-plus b { font-size: .88rem; font-weight: 700; color: var(--fil-fonce); }
 .an-compte { margin: -10px 0 18px; }
-.mm-bouton-plus small { white-space: nowrap; font-size: .74rem; color: var(--doux); line-height: 1.35; }
+.mm-bouton-plus small { white-space: nowrap; font-size: .72rem; color: var(--doux); line-height: 1.35; }
 .mm-bouton-plus > span:last-child { color: var(--fil-fonce); font-weight: 700; }
 .an-titre { margin-top: 44px; scroll-margin-top: 90px; }
