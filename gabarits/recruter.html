@@ -23,7 +23,7 @@
 <section class="bande bande-papier tp-cartes-bande" aria-labelledby="t-voir">
   <div class="cadre">
     <h2 id="t-voir" class="rc-titre-cartes">Voir avant de <em>s'inscrire</em></h2>
-    <ul class="tp-cartes" id="animateurs-rc" data-animateurs="5">
+    <ul class="tp-cartes">
       {% if st %}
       {% set _m = st.nom.replace("L'", "").replace("’", " ").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et", "d", "l"]) | list %}
       <li class="tp-carte tp-carte-exemple">
@@ -39,9 +39,8 @@
         <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voient les candidats</span><a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir la page <span aria-hidden="true">→</span></a></div>
       </li>
       {% endif %}
-      {% if EXEMPLES.profil %}{{ m.carte_exemple_profil(EXEMPLES.profil, lien) }}{% endif %}
     </ul>
-    <p class="tp-sans-offre">Exemples fictifs. Chaque structure vérifiée remplit sa page depuis son espace : présentation, photos, publics, activités et offres.</p>
+    <p class="tp-sans-offre">Exemple fictif. Chaque structure vérifiée remplit sa page depuis son espace : présentation, photos, publics, activités et offres.</p>
   </div>
 </section>
 
@@ -85,4 +84,3 @@
   </div>
 </section>
 {% endblock %}
-{% block scripts %}{{ m.animateurs_scripts(lien) }}{% endblock %}
