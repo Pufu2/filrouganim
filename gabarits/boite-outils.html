@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# La boîte à outils des structures : les guides (partie « recruter »), les outils gratuits et des conseils courts #}
+{% set guides = site.guides | selectattr("partie", "equalto", "recruter") | list %}
+{% block tete_note %}<p class="note-main">pour les structures</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier bo">
+  <div class="cadre">
+    <h2 class="bo-h">Les guides <em>pour recruter</em></h2>
+    {{ m.cartes_liens(guides + [{"url": "/trouver-un-poste/contrat-d-engagement-educatif/", "court": "Le contrat d'engagement éducatif", "resume": "Rémunération minimale, 80 jours sur 12 mois, repos : les règles du CEE."}], page.url, lien) }}
+
+    <h2 class="bo-h">Les outils <em>gratuits</em></h2>
+    <ul class="bo-outils">
+      {% for u, t, d, ic in [("/outils/annonce-animateur/", "Écrire son annonce", "Une offre claire et complète, prête à copier.", "annonce"),
+                             ("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires.", "equipe"),
+                             ("/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut d'une équipe en CEE, poste par poste.", "euro"),
+                             ("/outils/salaire-cee/", "Vérifier un CEE", "Le minimum par jour et les 80 jours sur 12 mois.", "contrat")] %}
+      <li><a href="{{ lien(u) }}"><span class="bo-ic bo-ic-{{ ic }}" aria-hidden="true"><svg viewBox="0 0 24 24">{% if ic == "annonce" %}<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>{% elif ic == "equipe" %}<circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/>{% elif ic == "euro" %}<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>{% else %}<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>{% endif %}</svg></span><span class="bo-t"><b>{{ t }}</b><span>{{ d }}</span></span><span class="bo-go" aria-hidden="true">→</span></a></li>
+      {% endfor %}
+    </ul>
+
+    <h2 class="bo-h">Conseils <em>en vrac</em></h2>
+    <ol class="bo-conseils">
+      {% for t, d in [
+        ("Publiez vos offres d'été dès février", "Les animateurs les plus demandés signent au printemps. En juin, il reste surtout ceux qui n'ont pas encore cherché."),
+        ("Écrivez la rémunération dans l'offre", "C'est la première question des jeunes. Une offre sans montant reçoit moins de réponses."),
+        ("Répondez à chaque candidature sous 48 heures", "Même par un non. Les jeunes postulent à plusieurs endroits et disent oui au premier qui répond."),
+        ("Accueillez des stagiaires BAFA", "Ce sont vos diplômés de l'an prochain. Un stage bien vécu, c'est un animateur qui revient."),
+        ("Gardez vos anciens animateurs en favoris", "Recontactez-les dès la fin de l'été pour l'été suivant : le recrutement le plus simple est celui qu'on n'a pas à refaire."),
+        ("Payez la réunion de préparation", "C'est elle qui fait l'équipe, et c'est un argument fort dans l'offre."),
+        ("Financez un approfondissement", "Contre un engagement pour les prochaines vacances : vous fidélisez et l'équipe progresse."),
+        ("Cherchez vos surveillants de baignade dès mars", "Les BSB et BNSSA sont rares et vite pris. Vérifiez la date de fin de leur qualification."),
+        ("Nouez un lien avec un organisme de formation", "Les organismes BAFA près de chez vous cherchent des lieux de stage pour leurs stagiaires : proposez-vous."),
+        ("Diversifiez vos viviers", "Étudiants en STAPS, en carrières sociales ou en sciences de l'éducation, lycées professionnels du service à la personne, clubs sportifs."),
+        ("Préparez un livret d'accueil", "Horaires, consignes, contacts, projet pédagogique en une page : l'animateur arrive rassuré, vous gagnez du temps."),
+        ("Mettez des photos sur votre page", "Vos locaux, vos activités, votre équipe : les jeunes veulent voir où ils vont travailler."),
+        ("Déclarez l'équipe sur TAM à temps", "Le contrôle d'honorabilité se fait à partir de la fiche complémentaire : pas d'animateur qui commence sans y être."),
+        ("Faites un vrai bilan de fin de période", "Un échange avec chacun : ce qui a marché, ce qui manque, et s'il revient. Notez-le pour l'an prochain."),
+        ("Pensez au service civique et à l'apprentissage", "Pour un poste à l'année, ce sont souvent les meilleures portes d'entrée, avec des aides à la clé."),
+        ("Répondez aux demandes de l'annuaire inversé", "Quand un animateur décrit le poste qu'il cherche, sa demande ne part qu'aux 3 structures les plus proches.")] %}
+      <li><b>{{ t }}</b><span>{{ d }}</span></li>
+      {% endfor %}
+    </ol>
+
+    <div class="bo-appel">
+      <div><b>Votre espace structure</b><span>Votre page, vos offres, les profils de votre secteur et un tableau de bord avec les vues de votre page.</span></div>
+      <a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Créer l'espace de ma structure <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -704,3 +704,38 @@ language sql stable security definer set search_path = '' as $$
   limit greatest(1, least(n, 100)) $$;
 revoke all on function public.profils_resume(text, integer) from public, anon, authenticated;
 grant execute on function public.profils_resume(text, integer) to anon, authenticated;
+
+-- ------------------------------------------------------------------ version 9 (13/11/2026)
+-- Le tableau de bord des structures : les vues de leur page et de leurs offres, et les clics (candidater, site).
+-- Rien de personnel : un compteur par structure, par jour, par type (et par offre). Les pages publiques comptent
+-- par la fonction compter (une fois par visite et par page, côté navigateur) ; chaque structure lit les siens.
+
+create table if not exists public.stats_jour (
+  structure_id uuid not null references public.structures (id) on delete cascade,
+  jour         date not null default current_date,
+  type         text not null check (type in ('page', 'offre', 'clic_candidater', 'clic_site', 'clic_email')),
+  offre_id     bigint not null default 0,
+  n            integer not null default 0,
+  primary key (structure_id, jour, type, offre_id)
+);
+alter table public.stats_jour enable row level security;
+revoke all on public.stats_jour from anon, authenticated;
+
+create or replace function public.compter(s uuid, t text, o bigint default 0) returns void
+language sql security definer set search_path = '' as $$
+  insert into public.stats_jour as x (structure_id, jour, type, offre_id, n)
+  select s, current_date, t, coalesce(o, 0), 1
+  where t in ('page', 'offre', 'clic_candidater', 'clic_site', 'clic_email')
+    and exists (select 1 from public.structures where id = s and verifiee and abonnement_fin >= current_date)
+  on conflict (structure_id, jour, type, offre_id) do update set n = least(x.n + 1, 100000) $$;
+
+create or replace function public.mes_stats(jours integer default 60)
+returns table (jour date, type text, offre_id bigint, n integer)
+language sql stable security definer set search_path = '' as $$
+  select jour, type, offre_id, n from public.stats_jour
+  where structure_id = auth.uid() and jour > current_date - least(greatest(jours, 1), 400)
+  order by jour $$;
+
+revoke all on function public.compter(uuid, text, bigint), public.mes_stats(integer) from public, anon, authenticated;
+grant execute on function public.compter(uuid, text, bigint) to anon, authenticated;
+grant execute on function public.mes_stats(integer) to authenticated;

@@ -12,9 +12,10 @@
   {% if o.age_min and o.age_max %}<li><span>Enfants</span><b>{{ o.age_min }}-{{ o.age_max }} ans</b></li>{% elif o.public %}<li><span>Public</span><b>{{ o.public }}</b></li>{% endif %}
   {% if o.nb_postes and o.nb_postes > 1 %}<li><span>Postes</span><b>{{ o.nb_postes }}</b></li>{% endif %}
 </ul>
-<p class="boutons">{% if site.comptes_ouverts and o.brut %}<a class="bouton-r" href="{{ lien('/compte/') }}?postuler={{ o.id }}">Postuler avec mon profil <span aria-hidden="true">→</span></a> {% endif %}<a class="{{ 'bouton-blanc' if site.comptes_ouverts and o.brut else 'bouton-r' }}" href="{{ ('mailto:' ~ o.candidater) if '@' in o.candidater and not o.candidater.startswith('http') else o.candidater }}" rel="noopener nofollow">Candidater auprès de la structure <span aria-hidden="true">→</span></a></p>
+<p class="boutons">{% if site.comptes_ouverts and o.brut %}<a class="bouton-r" data-stat="clic_candidater" href="{{ lien('/compte/') }}?postuler={{ o.id }}">Postuler avec mon profil <span aria-hidden="true">→</span></a> {% endif %}<a class="{{ 'bouton-blanc' if site.comptes_ouverts and o.brut else 'bouton-r' }}" data-stat="{{ 'clic_email' if '@' in o.candidater and not o.candidater.startswith('http') else 'clic_candidater' }}" href="{{ ('mailto:' ~ o.candidater) if '@' in o.candidater and not o.candidater.startswith('http') else o.candidater }}" rel="noopener nofollow">Candidater auprès de la structure <span aria-hidden="true">→</span></a></p>
 {% endblock %}
 {% block contenu %}
+{% if o.structure.id %}<div id="stat" hidden data-s="{{ o.structure.id }}" data-t="offre" data-o="{{ o.id }}" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></div>{% endif %}
 <section class="bande bande-papier">
   <article class="cadre texte">
     <p><b>Contrat :</b> {{ {"cee": "contrat d'engagement éducatif", "cdd": "CDD", "cdi": "CDI", "stage-pratique": "stage pratique BAFA", "apprentissage": "apprentissage", "benevole": "bénévolat"}[o.contrat] }}{% if o.loge %} · logé sur place{% endif %}{% if o.diplomes %} · <b>Diplômes :</b> {{ o.diplomes | join(", ") }}{% endif %}</p>
@@ -23,3 +24,4 @@
   </article>
 </section>
 {% endblock %}
+{% block scripts %}{% if o.structure.id %}<script src="{{ statique('js/stats.js') }}" defer></script>{% endif %}{% endblock %}

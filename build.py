@@ -161,7 +161,9 @@ def themes_de(theme):
 
 OUTILS = [("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires pour votre accueil."),
           ("/outils/salaire-cee/", "Contrat d'engagement éducatif", "La rémunération minimale et les 80 jours sur 12 mois."),
-          ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement.")]
+          ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement."),
+          ("/outils/annonce-animateur/", "Écrire son annonce", "Une offre d'animateur claire et complète, prête à copier."),
+          ("/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut de l'équipe d'animation d'un séjour ou d'une période, en CEE.")]
 
 
 def date_fr(d, annee=True):
@@ -391,7 +393,7 @@ class Site:
         Les règles d'accès de la base ne laissent passer que les offres en ligne et non expirées."""
         champs = ("id,intitule,poste,contrat,ville,departement,debut,fin,public,remuneration_montant,"
                   "remuneration_unite,loge,diplomes,texte,candidater,expire_le,cree_le,nb_postes,type_accueil,age_min,age_max,"
-                  "structures(nom,type,site,slug,fondatrice,page_publique)")
+                  "structures(id,nom,type,site,slug,fondatrice,page_publique)")
         lignes = self.lire_supabase(f"offres?select={champs},centre_id&order=debut", "centres des offres") \
             or self.lire_supabase(f"offres?select={champs}&order=debut", "offres des comptes")
         if lignes == [] and self.config.get("supabase"):
@@ -403,7 +405,7 @@ class Site:
             st = l.get("structures") or {}
             offres.append({
                 "id": str(l["id"]), "intitule": l["intitule"], "poste": l["poste"], "contrat": l["contrat"], "centre_id": l.get("centre_id"),
-                "structure": {"nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site"),
+                "structure": {"id": st.get("id"), "nom": st.get("nom", ""), "type": st.get("type"), "site": st.get("site"),
                               "fondatrice": st.get("fondatrice"),
                               "slug": st.get("slug") if st.get("page_publique") else None},
                 "ville": l["ville"], "departement": l["departement"],
@@ -825,7 +827,7 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/")}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/"), "recruter": ("Structures", "/recruter/")}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -916,6 +918,10 @@ class Site:
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+        self.ajouter("/recruter/boite-a-outils/", "boite-outils.html", titre="La boîte à outils des structures d'animation : recruter, déclarer, financer",
+                     description="Pour les centres de loisirs, organisateurs de séjours et associations : recruter ses animateurs, accueillir un service civique ou un apprenti, les aides, la déclaration TAM, et des outils gratuits.",
+                     h1="La boîte à outils des structures", intro="Recruter, déclarer, financer, fidéliser : des guides vérifiés, des outils gratuits et des conseils courts, pour les centres de loisirs, les séjours et les associations.",
+                     fil=[("Structures", "/recruter/"), ("La boîte à outils", "/recruter/boite-a-outils/")])
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
@@ -940,6 +946,12 @@ class Site:
             ("/outils/mon-parcours-bafa/", "outil.html", "Mon parcours BAFA : les dates limites de chaque étape",
              "Mon parcours BAFA : mes dates limites", "Entrez la date de votre formation générale : vous voyez jusqu'à quand faire votre stage pratique et votre approfondissement.",
              "Calculez les dates limites de votre BAFA : stage pratique dans les 18 mois, parcours complet en 30 mois, et les sessions d'approfondissement à temps.", "parcours"),
+            ("/outils/annonce-animateur/", "outil.html", "Écrire une annonce d'animateur ou de directeur : le générateur gratuit",
+             "Écrire son annonce d'animateur", "Remplissez les cases : l'annonce s'écrit toute seule, dans l'ordre où les jeunes la lisent. Copiez-la, ou publiez-la depuis votre espace.",
+             "Générateur gratuit d'annonce pour recruter un animateur BAFA, un stagiaire ou un directeur : poste, dates, public, contrat, rémunération, projet et avantages, dans le bon ordre.", "annonce"),
+            ("/outils/budget-equipe/", "outil.html", "Budget de l'équipe d'animation en CEE : le calculateur gratuit",
+             "Calculer le budget de son équipe", "Combien coûte l'équipe d'animation d'un séjour ou d'une période de vacances en contrat d'engagement éducatif ? Le total brut, poste par poste.",
+             "Calculateur gratuit du budget d'une équipe d'animation en contrat d'engagement éducatif : animateurs, stagiaires, direction, jours de préparation, avec le minimum légal de 52,93 € brut par jour.", "budget"),
         ]:
             self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, fil=[OT, (h1, url)])
         if (self.config.get("supabase") or {}).get("url"):
