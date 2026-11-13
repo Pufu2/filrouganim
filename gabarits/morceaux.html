@@ -139,7 +139,7 @@
   </div>
   {% if onglets %}
   <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2">
-  <form class="ro-panneau" action="{{ lien('/trouver-un-poste/structures/') }}" method="get">
+  <form class="ro-panneau" id="ro-demande" action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Quelle structure ?</legend>
       <div class="ro-puces">
@@ -150,12 +150,40 @@
     <div class="ro-ou">
       <label class="ro-titre" for="ro-st-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-st-ou" name="ou" type="search" placeholder="Ville, département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search" data-villes data-villes-valeur="nom"></span>
-        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les structures</button>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-st-ou" type="search" placeholder="Ville, département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="go" data-villes data-villes-valeur="nom">
+          <datalist id="lieux-st">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})" data-dep="{{ d.code }}"></option>{% endfor %}</datalist></span>
+        <input type="hidden" name="dep" value=""><input type="hidden" name="ville" value="">
+        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Trouver mes structures</button>
       </div>
-      <p class="ro-plus">Pas le temps de chercher ? <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous voulez</a> : votre demande part chez les 3 structures les plus proches.</p>
+      <p class="ro-plus">Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent. <a href="{{ lien('/trouver-un-poste/structures/') }}">Voir toutes les structures</a></p>
     </div>
   </form>
+  <script>
+  (function () {
+    // « Lyon », « 93 », « Gironde (33) » : on retrouve le département ; une ville connue garde aussi son nom
+    var f = document.getElementById("ro-demande"); if (!f) return;
+    var ou = document.getElementById("ro-st-ou");
+    function sa(t) { return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim(); }
+    var deps = Array.prototype.map.call(f.querySelectorAll("#lieux-st option"), function (o) { return { nom: sa(o.value.replace(/\s*\(.*$/, "")), code: o.dataset.dep }; });
+    f.addEventListener("submit", function () {
+      var v = sa(ou.value), dep = "", ville = "", villes = [];
+      try { villes = JSON.parse(document.getElementById("villes-populaires").textContent) || []; } catch (e) {}
+      var m = v.match(/(?:^|\()\s*(\d{2}|2a|2b|9[78]\d)\s*\)?$/);
+      if (m) dep = m[1].toUpperCase();
+      else if (v) {
+        var d = deps.filter(function (x) { return x.nom === v; })[0] || deps.filter(function (x) { return x.nom.indexOf(v) === 0; })[0];
+        var c = villes.filter(function (x) { return sa(x.nom) === v; })[0];
+        if (c) { dep = c.dep; ville = c.nom; } else if (d) dep = d.code; else ville = ou.value.trim();
+      }
+      f.elements.dep.value = dep; f.elements.ville.value = ville;
+      // une adresse propre : seulement ce qui est rempli
+      if (!dep) f.elements.dep.disabled = true;
+      if (!ville) f.elements.ville.disabled = true;
+      var t = f.querySelector("[name=type]:checked"); if (t && !t.value) t.disabled = true;
+    });
+    window.addEventListener("pageshow", function () { Array.prototype.forEach.call(f.querySelectorAll("[disabled]"), function (e) { e.disabled = false; }); });
+  })();
+  </script>
   </div>
   <div class="ro-panneau ro-structure" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
     <p class="ro-titre">Votre structure ?</p>
