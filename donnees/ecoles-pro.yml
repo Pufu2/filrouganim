@@ -122,7 +122,8 @@ ecoles:
   - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Loon-Plage", departement: "59", derniere_rentree: 2026-11-02}
   - {organisme_nom: "UFCV Hauts-de-France", diplome: BPJEPS, specialite: "asec", ville: "Valenciennes", departement: "59", derniere_rentree: 2026-11-10}
   - {organisme_nom: "CREPS de Wattignies - CFA MSA", diplome: BPJEPS, specialite: "asec", ville: "Wattignies", departement: "59", derniere_rentree: 2026-09-10}
-  - {organisme_nom: "Association FORME", diplome: BPJEPS, specialite: "asec", ville: "Agnetz", departement: "60", derniere_rentree: 2026-01-15}
+  - {organisme_nom: "Association FORME", diplome: BPJEPS, specialite: "asec", ville: "Agnetz", departement: "60", derniere_rentree: 2026-11-05}
+  - {organisme_nom: "INFREP Oise", diplome: BPJEPS, specialite: "asec", ville: "Beauvais", departement: "60", derniere_rentree: 2026-10-28}
   - {organisme_nom: "EPLEFPA Alençon-Sées", diplome: BPJEPS, specialite: "asec", ville: "Sées", departement: "61", derniere_rentree: 2026-09-07}
   - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Boulogne-sur-Mer", departement: "62", derniere_rentree: 2026-09-24}
   - {organisme_nom: "INFA 63 - Institut National de Formation d'Animateur 63", diplome: BPJEPS, specialite: "asec", ville: "Clermont-Ferrand", departement: "63", derniere_rentree: 2026-09-28}
