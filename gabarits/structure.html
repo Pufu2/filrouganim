@@ -13,6 +13,7 @@
 {% macro avatar(classe="") %}<span class="fp-avatar {{ classe }}" aria-hidden="true">{% if st.logo %}<img src="{{ base_photos ~ st.logo }}" alt="" loading="lazy">{% else %}{{ initiales }}{% endif %}</span>{% endmacro %}
 {% block tete %}{% endblock %}
 {% block contenu %}
+{% if not st.exemple and st.id %}<div id="stat" hidden data-s="{{ st.id }}" data-t="page" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></div>{% endif %}
 <div class="fp theme-{{ st.couleur or 'rouge' }}">
   <div class="cadre">
     <nav class="fil-ariane fp-ariane" aria-label="Fil d'Ariane">
@@ -128,8 +129,8 @@
         <div class="fp-contact-tete">{{ avatar("fp-avatar-petit") }}<span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }}</small></span></div>
         <p class="fp-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
         {% if st.offres %}<ul class="fp-contact-liste">{% for o in st.offres[:3] %}<li><span>{{ o.intitule }}</span><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b></li>{% endfor %}</ul>{% endif %}
-        <a class="fp-bouton-principal" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
-        {% if st.site %}<a class="fp-bouton-second" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
+        <a class="fp-bouton-principal" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
+        {% if st.site %}<a class="fp-bouton-second" data-stat="clic_site" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
         <p class="fp-contact-note">Profil gratuit, vu en entier par les seules structures vérifiées : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
       </aside>
     </div>
@@ -146,4 +147,4 @@
 </section>
 {% endif %}
 {% endblock %}
-{% block scripts %}{% if point %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script>{% endif %}<script src="{{ statique('js/fiche.js') }}" defer></script>{% endblock %}
+{% block scripts %}{% if point %}<link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script>{% endif %}<script src="{{ statique('js/fiche.js') }}" defer></script>{% if not st.exemple and st.id %}<script src="{{ statique('js/stats.js') }}" defer></script>{% endif %}{% endblock %}

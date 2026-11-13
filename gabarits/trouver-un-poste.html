@@ -83,7 +83,7 @@
       <div class="tp-boite">
         <h2>À lire <em>pour bien démarrer</em></h2>
         <ul class="tp-lectures">{% for g in site.guides | selectattr("partie", "equalto", "trouver-un-poste") | list %}<li><a href="{{ lien(g.url) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg><span>{{ g.court }}</span><span aria-hidden="true">→</span></a></li>{% endfor %}
-        {% for u, t, d in OUTILS if u != "/outils/taux-d-encadrement/" %}<li><a href="{{ lien(u) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 7.5h8M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span>{{ t }}</span><span aria-hidden="true">→</span></a></li>{% endfor %}</ul>
+        {% for u, t, d in OUTILS if u in ["/outils/salaire-cee/", "/outils/mon-parcours-bafa/"] %}<li><a href="{{ lien(u) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 7.5h8M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span>{{ t }}</span><span aria-hidden="true">→</span></a></li>{% endfor %}</ul>
       </div>
     </div>
   </div>

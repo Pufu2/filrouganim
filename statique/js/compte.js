@@ -593,9 +593,10 @@
     $("tuiles-structure").hidden = nouveau;
     if (structure) chargerCentres().then(montrerAbonnement);
     else $("bloc-abonnement").hidden = true;
-    if (structure) chargerOffres().then(tableauStructure);
+    if (structure) chargerOffres().then(tableauStructure).then(function () { tableauDeBord(); });
+    $("bloc-tableau").hidden = nouveau;
     if (actif(structure)) chargerCandidats();
-    if (structure) chargerDemandesRecues().then(tableauStructure);
+    if (structure) chargerDemandesRecues().then(function () { tableauStructure(); if (!$("tb-conseils").firstChild) return; conseilsStructure(); });
     if (params.get("profil") && !profilDemande) { profilDemande = true; ouvrirProfilDemande(params.get("profil")); }
   }
 
@@ -1341,6 +1342,113 @@
     if (actif(structure)) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
     tableauEnCours = false;
     apercuStructure();
+  }
+
+
+  /* -- le tableau de bord de la structure : vues, clics, offres les plus vues, secteur, conseils -- */
+  var tbJours = 30;
+  Array.prototype.forEach.call(document.querySelectorAll("#bloc-tableau [data-jours]"), function (b) {
+    b.addEventListener("click", function () {
+      tbJours = parseInt(b.dataset.jours, 10);
+      Array.prototype.forEach.call(document.querySelectorAll("#bloc-tableau [data-jours]"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      tableauDeBord();
+    });
+  });
+  function jourIso(d) { return d.toISOString().slice(0, 10); }
+  async function tableauDeBord() {
+    if (!structure) return;
+    var J = tbJours, auj = new Date(aujourdhui() + "T12:00:00");
+    var debut = new Date(auj); debut.setDate(debut.getDate() - J + 1);
+    var avant = new Date(debut); avant.setDate(avant.getDate() - J);
+    var r = await sb.rpc("mes_stats", { jours: J * 2 });
+    var lignes = (r && r.data) || [];
+    var d0 = jourIso(debut), dA = jourIso(avant);
+    function somme(types, depuis, jusque) {
+      return lignes.filter(function (l) { return types.indexOf(l.type) >= 0 && l.jour >= depuis && (!jusque || l.jour < jusque); })
+        .reduce(function (a, l) { return a + l.n; }, 0);
+    }
+    var CH = [["page", ["page"], "vues de votre page"], ["offre", ["offre"], "vues de vos offres"],
+              ["postuler", ["clic_candidater", "clic_email"], "clics pour postuler"], ["site", ["clic_site"], "clics vers votre site"]];
+    var box = $("tb-chiffres"); box.textContent = "";
+    CH.forEach(function (c) {
+      var n = somme(c[1], d0), p = somme(c[1], dA, d0);
+      var t = el("div", "tb-chiffre");
+      t.appendChild(el("b", null, n.toLocaleString("fr-FR")));
+      t.appendChild(el("span", null, c[2]));
+      if (p || n) {
+        var ev = p ? Math.round((n - p) / p * 100) : null;
+        t.appendChild(el("small", ev === null ? "tb-neutre" : ev >= 0 ? "tb-hausse" : "tb-baisse", ev === null ? "nouveau" : (ev >= 0 ? "+" : "") + ev + " % sur la période d'avant"));
+      }
+      box.appendChild(t);
+    });
+    // le graphe, jour par jour
+    var g = $("tb-graphe"); g.textContent = "";
+    var parJour = {}, max = 0;
+    lignes.forEach(function (l) { if ((l.type === "page" || l.type === "offre") && l.jour >= d0) parJour[l.jour] = (parJour[l.jour] || 0) + l.n; });
+    for (var i = 0; i < J; i++) { var d = new Date(debut); d.setDate(d.getDate() + i); max = Math.max(max, parJour[jourIso(d)] || 0); }
+    for (i = 0; i < J; i++) {
+      var dd = new Date(debut); dd.setDate(dd.getDate() + i);
+      var v = parJour[jourIso(dd)] || 0, barre = el("span", "tb-barre");
+      barre.style.height = (max ? Math.max(3, Math.round(v / max * 100)) : 3) + "%";
+      barre.title = dd.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + " : " + v + " vue" + (v > 1 ? "s" : "");
+      if (!v) barre.classList.add("tb-zero");
+      g.appendChild(barre);
+    }
+    g.setAttribute("aria-label", "Vues par jour sur " + J + " jours : " + somme(["page", "offre"], d0) + " au total");
+    var enLigne = actif(structure);
+    $("tb-sous").textContent = enLigne ? "Les vues de votre page et de vos offres, et les clics des candidats, sur " + J + " jours." :
+      "Les chiffres commencent dès que votre page est en ligne (abonnement réglé et structure vérifiée).";
+    // les offres les plus vues
+    var ol = $("tb-offres"); ol.textContent = "";
+    var vuesOffre = {};
+    lignes.forEach(function (l) { if (l.type === "offre" && l.jour >= d0) vuesOffre[l.offre_id] = (vuesOffre[l.offre_id] || 0) + l.n; });
+    var classees = mesOffres.map(function (o) { return { o: o, n: vuesOffre[o.id] || 0 }; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 5);
+    if (!classees.length) ol.appendChild(el("li", "tb-vide", "Pas encore d'offre : publiez-en une pour la voir ici."));
+    classees.forEach(function (x) { var li = el("li"); li.appendChild(el("span", null, x.o.intitule)); li.appendChild(el("b", null, x.n + " vue" + (x.n > 1 ? "s" : ""))); ol.appendChild(li); });
+    // le secteur : les animateurs inscrits dans le département
+    var sec = $("tb-secteur"); sec.textContent = "";
+    var rp = await sb.rpc("profils_resume", { dep: structure.departement, n: 100 });
+    var nb = ((rp && rp.data) || []).length;
+    var p1 = el("p"); p1.appendChild(el("b", null, nb + (nb === 100 ? "+" : ""))); p1.appendChild(el("span", null, " animateur" + (nb > 1 ? "s" : "") + " dans votre département ou prêt" + (nb > 1 ? "s" : "") + " à y travailler"));
+    sec.appendChild(p1);
+    var p2 = el("p"); p2.appendChild(el("b", null, String(demandesRecues.length))); p2.appendChild(el("span", null, " demande" + (demandesRecues.length > 1 ? "s" : "") + " de l'annuaire inversé reçue" + (demandesRecues.length > 1 ? "s" : "")));
+    sec.appendChild(p2);
+    if (enLigne) { var a = el("a", "bouton-texte", "Voir les profils"); a.href = "#bloc-candidats"; sec.appendChild(a); }
+    conseilsStructure();
+  }
+  function conseilsStructure() {
+    var ul = $("tb-conseils"); ul.textContent = "";
+    var st = structure, ok = 0, tout = 0;
+    function conseil(fait, texte, cible, lienTexte) {
+      tout++; if (fait) ok++;
+      var li = el("li", fait ? "tb-fait" : "tb-a-faire");
+      li.appendChild(el("span", null, texte));
+      if (!fait && cible) { var a = el("a", null, lienTexte || "Le faire"); a.href = cible; if (/^http|^\//.test(cible)) { a.target = "_blank"; a.rel = "noopener"; } li.appendChild(a); }
+      ul.appendChild(li);
+    }
+    var enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= aujourdhui(); });
+    var bientot = enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(aujourdhui())) / 864e5 <= 7; });
+    conseil(!!st.logo, "Ajoutez votre logo : votre carte se reconnaît dans la liste.", "#bloc-structure");
+    conseil((st.photos || []).length >= 3, "Mettez au moins 3 photos (locaux, activités, équipe) : les jeunes veulent voir où ils vont.", "#bloc-structure");
+    conseil(!!(st.projet && st.projet.length > 80), "Racontez votre projet en quelques lignes : c'est ce qui vous distingue.", "#bloc-structure");
+    conseil(!!st.avantages, "Listez ce que vous offrez (préparation payée, repas, BAFA financé…).", "#bloc-structure");
+    conseil(enLigne.length > 0, "Publiez au moins une offre : elle apparaît sur la page des offres et sur votre page.", "#bloc-offres", "Publier une offre");
+    conseil(!enLigne.some(function (o) { return !o.remuneration_montant; }), "Indiquez la rémunération dans chaque offre : c'est la première question des candidats.", "#bloc-offres", "Compléter mes offres");
+    conseil(!bientot.length, bientot.length ? "Une offre expire dans moins de 7 jours : prolongez-la si vous recrutez encore." : "Vos offres ne sont pas sur le point d'expirer.", "#bloc-offres", "Voir mes offres");
+    if (demandesRecues.length) conseil(false, "Répondez aux demandes de l'annuaire inversé : chacune n'est envoyée qu'à 3 structures.", "#bloc-demandes-recues", "Voir les demandes");
+    $("tb-score").textContent = ok + " sur " + tout;
+    // le conseil du moment, selon le mois et le type de structure
+    var m = new Date().getMonth() + 1, type = st.type || "";
+    var saison = m >= 2 && m <= 4 ? ["C'est le moment de publier vos offres d'été : les animateurs signent au printemps.", "/recruter/reussir-son-recrutement/"]
+      : m === 5 || m === 6 ? [type === "periscolaire" ? "Recrutez maintenant votre équipe périscolaire de la rentrée." : "Bouclez l'équipe d'été et pensez déjà au périscolaire de la rentrée.", "/recruter/reussir-son-recrutement/"]
+      : m === 7 || m === 8 ? ["Faites le bilan avec chaque animateur et reproposez dès maintenant un poste pour l'été prochain.", "/recruter/reussir-son-recrutement/"]
+      : m === 9 ? ["Faites le point sur les aides de l'année avec votre conseiller CAF et votre SDJES.", "/recruter/aides-pour-recruter/"]
+      : m === 10 || m === 11 ? ["Publiez vos offres pour les vacances d'hiver, et pensez à un apprenti BPJEPS pour l'an prochain.", "/recruter/recruter-un-apprenti/"]
+      : ["Préparez les vacances de printemps, et accueillez les stagiaires BAFA qui sortent de formation générale.", "/recruter/accueillir-un-stagiaire-bafa/"];
+    if (type === "sejours" && m >= 1 && m <= 4) saison = ["Séjours d'été : cherchez vos surveillants de baignade dès maintenant, ils partent vite.", "/recruter/reussir-son-recrutement/"];
+    var li = el("li", "tb-moment"); li.appendChild(el("span", null, "Ce mois-ci : " + saison[0]));
+    var a = el("a", null, "Le guide"); a.href = saison[1]; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a);
+    ul.insertBefore(li, ul.firstChild);
   }
 
   /* -- l'annuaire inversé : les demandes du candidat, et celles que reçoit la structure -- */

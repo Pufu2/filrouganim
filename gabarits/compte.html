@@ -319,6 +319,23 @@
     </div>
     <div class="tuiles" id="tuiles-structure"></div>
 
+    <section class="carte-compte tb" id="bloc-tableau" hidden aria-labelledby="t-tableau">
+      <div class="tb-tete">
+        <div><h2 id="t-tableau">Votre tableau de bord</h2><p class="petit" id="tb-sous">Les vues de votre page et de vos offres, et les clics des candidats.</p></div>
+        <div class="tb-periodes" role="group" aria-label="Période">{% for j, l in [(7, "7 jours"), (30, "30 jours"), (90, "3 mois")] %}<button type="button" data-jours="{{ j }}" aria-pressed="{{ 'true' if j == 30 else 'false' }}">{{ l }}</button>{% endfor %}</div>
+      </div>
+      <div class="tb-chiffres" id="tb-chiffres"></div>
+      <div class="tb-graphe-boite"><p class="tb-l">Vues par jour <small>(page et offres)</small></p><div class="tb-graphe" id="tb-graphe" role="img" aria-label="Vues par jour"></div></div>
+      <div class="tb-deux">
+        <div><p class="tb-l">Vos offres les plus vues</p><ol class="tb-offres" id="tb-offres"></ol></div>
+        <div><p class="tb-l">Votre secteur</p><div id="tb-secteur" class="tb-secteur"></div></div>
+      </div>
+      <div class="tb-conseils-boite"><p class="tb-l">Pour être mieux vu <small id="tb-score"></small></p><ul class="tb-conseils" id="tb-conseils"></ul></div>
+      <div class="tb-outils"><p class="tb-l">Vos outils</p>
+        <ul>{% for u, t in [("/outils/annonce-animateur/", "Écrire une annonce"), ("/outils/taux-d-encadrement/", "Taux d'encadrement"), ("/outils/budget-equipe/", "Budget de l'équipe"), ("/recruter/reussir-son-recrutement/", "Réussir son recrutement"), ("/recruter/aides-pour-recruter/", "Les aides pour recruter"), ("/recruter/boite-a-outils/", "Toute la boîte à outils")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener">{{ t }}</a></li>{% endfor %}</ul>
+      </div>
+    </section>
+
     <div class="carte-compte" id="bloc-demandes-recues" hidden>
       <h2>Demandes reçues</h2>
       <p class="petit">Des animateurs et des directeurs de votre secteur décrivent le poste qu'ils cherchent : leur demande arrive chez 3 structures au plus. Répondez-leur directement par e-mail.</p>
