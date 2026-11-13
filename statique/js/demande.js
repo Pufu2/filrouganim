@@ -173,6 +173,10 @@
     if (br) remplir(br);
     if (p.get("poste")) remplir({ poste: p.get("poste") });
     if (p.get("dep")) remplir({ departement: p.get("dep") });
+    if (p.get("ville")) remplir({ ville: p.get("ville") });
+    // depuis l'accueil : la famille de structure coche les périodes qui vont avec
+    var PERIODES_DE = { periscolaire: ["periscolaire"], extrascolaire: ["mercredis", "petites-vacances"], sejours: ["ete", "petites-vacances"] };
+    if (PERIODES_DE[p.get("type")]) remplir({ periodes: PERIODES_DE[p.get("type")] });
     var s = await sb.auth.getSession();
     utilisateur = s.data && s.data.session ? s.data.session.user : null;
     if (location.hash) history.replaceState(null, "", location.pathname + location.search);
