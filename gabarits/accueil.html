@@ -22,41 +22,40 @@
     <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
   </div>
 </div>
-<div class="parcours">
-  <svg class="parcours-fil" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0 C 50 60, 20 90, 30 160 S 75 250, 68 340 S 25 450, 32 530 S 72 640, 66 720 S 40 840, 50 1000"/></svg>
-
-  <a class="station station-lien" href="{{ lien('/se-former/') }}">
-    <span class="station-noeud" aria-hidden="true">1</span>
-    <span class="station-carte">
+{# Les trois parties du site : des cartes illustrées, comme les cartes d'offres et de profils #}
+<div class="cadre">
+<div class="pa" aria-label="Les trois parties du site">
+  <a class="pa-c pa-former" href="{{ lien('/se-former/') }}">
+    <span class="pa-haut" aria-hidden="true"><span class="pa-n">1</span><span class="pa-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg></span></span>
+    <span class="pa-corps">
       <span class="note-main">trouver sa formation</span>
-      <span class="station-titre">Se former</span>
-      <span class="station-texte">BAFA, BAFD, PSC1, BPJEPS, DEJEPS : les sessions avec leurs dates et leurs prix, et les guides pour s'y retrouver.</span>
-      <span class="station-chiffre"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes</span>
-      <span class="station-aller">Voir les sessions <span aria-hidden="true">→</span></span>
+      <span class="pa-t">Se former</span>
+      <span class="pa-x">BAFA, BAFD, PSC1, BPJEPS, DEJEPS : les sessions avec leurs dates et leurs prix.</span>
+      <span class="pa-ch"><b>{{ stats.nb }}</b> sessions · <b>{{ stats.nb_organismes }}</b> organismes</span>
     </span>
+    <span class="pa-pied">Voir les sessions <span aria-hidden="true">→</span></span>
   </a>
-
-  <a class="station station-droite station-lien" href="{{ lien('/trouver-un-poste/') }}">
-    <span class="station-noeud" aria-hidden="true">2</span>
-    <span class="station-carte">
+  <a class="pa-c pa-poste" href="{{ lien('/trouver-un-poste/') }}">
+    <span class="pa-haut" aria-hidden="true"><span class="pa-n">2</span><span class="pa-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg></span></span>
+    <span class="pa-corps">
       <span class="note-main">trouver un stage ou un job</span>
-      <span class="station-titre">Animateurs &amp; directeurs</span>
-      <span class="station-texte">Stage pratique BAFA, job d'été, poste à l'année, direction : les offres, et un profil gratuit que les structures consultent.</span>
-      <span class="station-chiffre">{% if offres %}<b>{{ offres | length }}</b> offres en ligne{% else %}Les premières offres arrivent bientôt{% endif %} · toujours gratuit</span>
-      <span class="station-aller">Voir les offres <span aria-hidden="true">→</span></span>
+      <span class="pa-t">Animateurs &amp; directeurs</span>
+      <span class="pa-x">Stage pratique, job d'été, poste à l'année : les offres, et un profil gratuit que les structures consultent.</span>
+      <span class="pa-ch">{% if offres %}<b>{{ offres | length }}</b> offre{{ 's' if offres | length > 1 }} en ligne · {% endif %}toujours gratuit</span>
     </span>
+    <span class="pa-pied">Voir les offres <span aria-hidden="true">→</span></span>
   </a>
-
-  <a class="station station-lien station-lien-rouge" href="{{ lien('/recruter/') }}">
-    <span class="station-noeud station-noeud-plein" aria-hidden="true">3</span>
-    <span class="station-carte station-carte-rouge">
+  <a class="pa-c pa-struct" href="{{ lien('/recruter/') }}">
+    <span class="pa-haut" aria-hidden="true"><span class="pa-n">3</span><span class="pa-ic"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span></span>
+    <span class="pa-corps">
       <span class="note-main">recruter et se faire connaître</span>
-      <span class="station-titre">Structures</span>
-      <span class="station-texte">Une page pour votre structure, vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs et directeurs de votre secteur.</span>
-      <span class="station-chiffre">{% if restantes > 0 %}<b>Offre fondateurs</b> : {{ site.abonnement.prix_fondateur }} par an à vie · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }}{% else %}<b>{{ site.abonnement.prix }}</b> par an, sans commission{% endif %}</span>
-      <span class="station-aller">Voir l'espace structures <span aria-hidden="true">→</span></span>
+      <span class="pa-t">Structures</span>
+      <span class="pa-x">Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils de votre secteur.</span>
+      <span class="pa-ch">{% if restantes > 0 %}<b>{{ site.abonnement.prix_fondateur }}</b> par an · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }} fondatrice{{ 's' if restantes > 1 }}{% else %}<b>{{ site.abonnement.prix }}</b> par an, sans commission{% endif %}</span>
     </span>
+    <span class="pa-pied">Voir l'espace structures <span aria-hidden="true">→</span></span>
   </a>
+</div>
 </div>
 <section class="cb-bande"><div class="cadre">{{ m.bloc_chiffres(audience, lien) }}</div></section>
 <section class="bande bande-papier ac-st" aria-labelledby="t-ac-st">
