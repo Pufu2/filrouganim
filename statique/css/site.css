@@ -2420,3 +2420,11 @@ html.fiche-ouverte { overflow: hidden; }
 .pc-avatar { width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font: 600 1.25rem/1 var(--titres); }
 .pc-lieu { margin: 2px 0 0; font-size: .88rem; color: var(--doux); }
 .co-e-actions .bouton-r, .co-e-actions .bouton-blanc { padding: 11px 18px; font-size: .98rem; line-height: 1.2; }
+/* les conseils, dans l'espace des structures abonnées */
+#liste-conseils { margin-top: 14px; }
+#liste-conseils:not(.co-c-tous) li:nth-child(n+5) { display: none; }
+#liste-conseils .co-c-semaine { background: #fff4d2; border-color: #f3dd94; }
+#liste-conseils .co-c-semaine b::after { content: " · conseil de la semaine"; font-weight: 400; color: #6b5200; font-size: .85rem; }
+.co-conseils-verrou { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: var(--papier); }
+.co-conseils-verrou p { margin: 0; }
+.co-conseils-verrou[hidden] { display: none; }

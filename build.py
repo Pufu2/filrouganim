@@ -920,7 +920,7 @@ class Site:
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         self.ajouter("/recruter/boite-a-outils/", "boite-outils.html", titre="La boîte à outils des structures d'animation : recruter, déclarer, financer",
                      description="Pour les centres de loisirs, organisateurs de séjours et associations : recruter ses animateurs, accueillir un service civique ou un apprenti, les aides, la déclaration TAM, et des outils gratuits.",
-                     h1="La boîte à outils des structures", intro="Recruter, déclarer, financer, fidéliser : des guides vérifiés, des outils gratuits et des conseils courts, pour les centres de loisirs, les séjours et les associations.",
+                     h1="La boîte à outils des structures", intro="Recruter, déclarer, financer : des guides vérifiés et des outils gratuits, pour les centres de loisirs, les séjours et les associations.",
                      fil=[("Structures", "/recruter/"), ("La boîte à outils", "/recruter/boite-a-outils/")])
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")
         if ex.get("profil"):
