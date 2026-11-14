@@ -190,11 +190,61 @@ def demandes(cle_sb):
         supabase("PATCH", f"demandes?id=eq.{d['id']}", cle_sb, {"notifiees": d["destinataires"]})
 
 
+TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
+             "paiement": ("Abonnement payé", "Abonnements payés"), "demande": ("Nouvelle demande (annuaire inversé)", "Nouvelles demandes (annuaire inversé)")}
+
+
+def prevenir_admin(cle_sb):
+    """Un seul e-mail à l'adresse du site quand il y a du neuf : fiches animateurs, structures, paiements, demandes
+    (la base les note d'elle-même dans evenements_admin ; chaque événement n'est envoyé qu'une fois)."""
+    try:
+        evts = supabase("GET", "evenements_admin?select=id,type,resume,cree_le&envoye=is.false&order=cree_le", cle_sb) or []
+    except urllib.error.HTTPError as e:
+        print(f"Événements admin : non lus ({e.code})")
+        return
+    if not evts:
+        return
+    cle_brevo = os.environ.get("BREVO_API_KEY", "").strip()
+    if not cle_brevo:
+        print(f"{len(evts)} événement(s) pour l'administration, mais BREVO_API_KEY est absente : rien n'est envoyé.")
+        return
+    sys.path.insert(0, str(RACINE / "outils"))
+    from alertes import envoyer
+    groupes = {}
+    for e in evts:
+        groupes.setdefault(e["type"], []).append(e)
+    titres = [f"{len(v)} {TYPES_EVT[k][1 if len(v) > 1 else 0].lower()}" for k, v in groupes.items()]
+    sujet = "Fil Roug'Anim : " + ", ".join(titres)
+    admin = CONFIG["url"].rstrip("/") + "/compte/?role=admin"
+    texte, html_c = [], []
+    for k in ["paiement", "structure", "profil", "demande"]:
+        if k not in groupes:
+            continue
+        texte.append(TYPES_EVT[k][1 if len(groupes[k]) > 1 else 0] + " :")
+        html_c.append("<h3 style=\"margin:18px 0 6px\">" + html.escape(TYPES_EVT[k][1 if len(groupes[k]) > 1 else 0]) + "</h3><ul style=\"margin:0;padding-left:18px\">")
+        for e in groupes[k]:
+            quand = dt.datetime.fromisoformat(e["cree_le"].replace("Z", "+00:00")).astimezone(dt.timezone(dt.timedelta(hours=1))).strftime("%d/%m à %H:%M")
+            texte.append(f"- {e['resume']} ({quand})")
+            html_c.append("<li>" + html.escape(e["resume"]) + " <span style=\"color:#8a7d76\">(" + quand + ")</span></li>")
+        html_c.append("</ul>")
+        texte.append("")
+    texte.append("Tout voir dans l'espace admin : " + admin)
+    html_c.append("<p style=\"margin-top:20px\"><a href=\"" + admin + "\" style=\"display:inline-block;background:#d61f35;color:#fff;padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:bold\">Ouvrir l'espace admin</a></p>")
+    try:
+        envoyer(cle_brevo, CONFIG.get("email_alertes") or CONFIG["email"], CONFIG["nom"], CONFIG["email"], sujet, "\n".join(texte), "".join(html_c))
+    except Exception as e:
+        print(f"E-mail à l'administration non parti ({e}).")
+        return
+    supabase("PATCH", "evenements_admin?id=in.(" + ",".join(str(e["id"]) for e in evts) + ")", cle_sb, {"envoye": True})
+    print(f"Administration prévenue : {sujet}")
+
+
 if __name__ == "__main__":
-    # les demandes partent même si Stripe ne répond pas (clé expirée, panne) : les deux relevés sont indépendants
+    # les demandes partent même si Stripe ne répond pas (clé expirée, panne) : les relevés sont indépendants
     erreurs = []
     cle = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
-    for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle)):
+    for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
+                  lambda: None if "--essai" in sys.argv or not cle else prevenir_admin(cle)):
         try:
             etape()
         except urllib.error.HTTPError as e:
