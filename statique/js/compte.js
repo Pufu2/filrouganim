@@ -227,7 +227,14 @@
     } catch (e) { return null; }
   }
 
-  var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-session"];
+  var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-admin", "v-session"];
+  var estAdmin = false;
+  function voirAdmin() {
+    montrer("v-admin", "v-session");
+    $("chapo-compte").textContent = "L'administration de Fil Roug'Anim : les chiffres, ce qu'il reste à traiter, et toutes les fiches.";
+    ongletDepart("v-admin", "stats");
+    if (window.FRA_ADMIN) window.FRA_ADMIN.charger();
+  }
   var VUES_AUTH = ["v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription"];
   function montrer() {
     var ids = Array.prototype.slice.call(arguments);
@@ -345,6 +352,17 @@
     ]);
     if (rep[0].error || rep[1].error) { montrer("v-session"); message(erreurLisible(rep[0].error || rep[1].error), true); return; }
     profil = rep[0].data; structure = rep[1].data;
+    // l'administration : la base dit si ce compte en fait partie ; il passe d'un espace à l'autre
+    var ad = await sb.rpc("est_admin");
+    estAdmin = !!(ad && ad.data === true);
+    if (estAdmin) {
+      $("co-bascule").hidden = false;
+      var voulu = params.get("role") || "admin";
+      Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (a) { if (a.dataset.bascule === voulu) a.setAttribute("aria-current", "page"); });
+      if (voulu === "admin") return voirAdmin();
+      if (voulu === "structure") return voirStructure();
+      if (voulu === "candidat") return voirCandidat();
+    }
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
     var m = memoire() || {};
@@ -1975,5 +1993,8 @@
     message("Votre compte et vos données sont supprimés.");
   });
 
+  // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace
+  window.FRA_ESPACE = { sb: sb, el: el, ouvrirFiche: ouvrirFiche, fermerFiche: fermerFiche, message: message, erreur: erreurLisible,
+                        montrerOnglet: montrerOnglet, dateFr: dateFr, libelle: libelle, nomDep: nomDep, age: age, L: L, ficheProfil: ficheProfil };
   demarrer().catch(function (e) { montrer("v-connexion"); message(erreurLisible(e), true); });
 })();

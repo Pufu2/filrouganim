@@ -752,3 +752,8 @@ grant select on public.ressources_structures to authenticated;
 drop policy if exists "structures abonnées : lire" on public.ressources_structures;
 create policy "structures abonnées : lire" on public.ressources_structures for select to authenticated
   using (exists (select 1 from public.structures s where s.id = (select auth.uid()) and s.abonnement_fin >= current_date));
+
+-- ------------------------------------------------------------------ version 11 (14/11/2026)
+-- L'administration : la table admins, est_admin(), admin_donnees() (tout, pour les statistiques et les listes),
+-- admin_modifier(table, clé, champs) (colonnes prévues seulement) et admin_supprimer(table, clé).
+-- Voir la migration v11_espace_admin dans Supabase pour le détail ; le compte admin est ajouté dans la base, pas ici.

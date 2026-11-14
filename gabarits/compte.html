@@ -147,6 +147,14 @@
     </div>
   </div>
 
+  {# L'administration : passer d'un espace à l'autre #}
+  <nav class="co-bascule" id="co-bascule" hidden aria-label="Mes espaces">
+    <span>Administration</span>
+    <a href="?role=admin" data-bascule="admin">Admin</a>
+    <a href="?role=candidat" data-bascule="candidat">Espace animateur</a>
+    <a href="?role=structure" data-bascule="structure">Espace structure</a>
+  </nav>
+
   {# 2. Premier passage : candidat ou structure #}
   <div class="compte-vue" id="v-choix" hidden>
     <h2>Vous êtes…</h2>
@@ -576,6 +584,21 @@
     </div>
   </div>
 
+  {# 4 bis. L'administration (comptes de la table admins seulement : la base refuse tous les autres) #}
+  <div class="compte-vue co-onglets" id="v-admin" hidden>
+    <nav class="co-nav" data-onglets="admin" aria-label="Administration">
+      {% for k, t, ic in [("stats", "Statistiques", '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'), ("afaire", "À traiter", '<path d="M5 12l5 5 9-10"/>'),
+                          ("structures", "Structures", '<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/>'), ("animateurs", "Animateurs", '<circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/>'),
+                          ("offres", "Offres", '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>'), ("demandes", "Demandes", '<path d="M4 12l16-8-6 16-2-6z"/>'),
+                          ("comptes", "Comptes", '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/>'), ("contenus", "Guides et conseils", '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>')] %}
+      <button type="button" data-onglet-vers="{{ k }}"><svg viewBox="0 0 24 24" aria-hidden="true">{{ ic | safe }}</svg><span>{{ t }}</span><i class="co-pastille" data-pastille-admin="{{ k }}" hidden></i></button>
+      {% endfor %}
+    </nav>
+    {% for k in ["stats", "afaire", "structures", "animateurs", "offres", "demandes", "comptes", "contenus"] %}
+    <section class="carte-compte ad-bloc" id="ad-{{ k }}" data-onglet="{{ k }}"></section>
+    {% endfor %}
+  </div>
+
   {# 5. Toujours en bas une fois connecté #}
   <div class="compte-vue compte-pied" id="v-session" hidden>
     <p>Connecté avec <b id="email-session"></b></p>
@@ -596,4 +619,5 @@
 <link rel="stylesheet" href="{{ statique('js/leaflet-1.9.4/leaflet.css') }}"><script src="{{ statique('js/leaflet-1.9.4/leaflet.js') }}" defer></script><script src="{{ statique('js/fiche.js') }}" defer></script>
 <script src="{{ statique('js/supabase-2.117.3.js') }}"></script>
 <script src="{{ statique('js/compte.js') }}"></script>
+<script src="{{ statique('js/admin.js') }}"></script>
 {% endblock %}
