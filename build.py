@@ -12,6 +12,7 @@ Les sessions passées disparaissent toutes seules à chaque fabrication.
 import argparse
 import collections
 import datetime as dt
+import hashlib
 import html
 import json
 import os
@@ -1749,6 +1750,17 @@ class Site:
                            "indexer": indexer, **extra})
 
     # -- rendu
+    def version_statique(self, chemin):
+        """« ?v=… » d'après le contenu des fichiers .js et .css : le navigateur reprend le nouveau fichier dès qu'il change,
+        au lieu de garder l'ancien en mémoire pendant dix minutes."""
+        if not chemin.endswith((".js", ".css")):
+            return ""
+        cache = self.__dict__.setdefault("_versions", {})
+        if chemin not in cache:
+            f = RACINE / "statique" / chemin.lstrip("/")
+            cache[chemin] = "?v=" + hashlib.sha1(f.read_bytes()).hexdigest()[:10] if f.is_file() else ""
+        return cache[chemin]
+
     def rendre_page(self, page):
         url_page = page["url"]
 
@@ -1757,7 +1769,7 @@ class Site:
 
         contexte = {
             "site": self.config, "page": page, "lien": lien, "apercu": self.apercu,
-            "statique": lambda chemin: lien("/" + chemin.lstrip("/")),
+            "statique": lambda chemin: lien("/" + chemin.lstrip("/")) + self.version_statique(chemin),
             "toutes_sessions": self.sessions, "departements": list(self.departements.values()),
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
