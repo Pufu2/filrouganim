@@ -333,11 +333,11 @@
         <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span>{% else %}Factures, nombre de centres, arrêt : écrivez-nous{% endif %}</a>
       </div>
     </div>
-    <div class="tuiles" id="tuiles-structure" data-onglet="tableau"></div>
+    <div class="tuiles" id="tuiles-structure" data-onglet="aucun"></div>
 
     <section class="carte-compte tb" id="bloc-tableau" data-onglet="tableau" hidden aria-labelledby="t-tableau">
       <div class="tb-tete">
-        <div><h2 id="t-tableau">Votre tableau de bord</h2><p class="petit" id="tb-sous">Les vues de votre page et de vos offres, et les clics des candidats.</p></div>
+        <div><h2 id="t-tableau">Vues et clics</h2><p class="petit" id="tb-sous">Les vues de votre page et de vos offres, et les clics des candidats.</p></div>
         <div class="tb-periodes" role="group" aria-label="Période">{% for j, l in [(7, "7 jours"), (30, "30 jours"), (90, "3 mois")] %}<button type="button" data-jours="{{ j }}" aria-pressed="{{ 'true' if j == 30 else 'false' }}">{{ l }}</button>{% endfor %}</div>
       </div>
       <div class="tb-chiffres" id="tb-chiffres"></div>
