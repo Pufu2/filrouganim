@@ -22,7 +22,7 @@ Recruter coûte cher pour une petite structure. Plusieurs dispositifs existent p
 
 Les taux du PEC sont fixés chaque année par un arrêté du préfet de région : demandez le taux en vigueur avant de signer.
 
-Pour aller plus loin : [recruter un apprenti](/recruter/recruter-un-apprenti/) et [accueillir un service civique](/recruter/recruter-un-service-civique/).
+Pour aller plus loin : [recruter un apprenti](/compte/guides/recruter-un-apprenti/) et [accueillir un service civique](/compte/guides/recruter-un-service-civique/).
 
 ## Pour former l'équipe
 

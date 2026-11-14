@@ -71,16 +71,16 @@
       var nomSt = st.nom || "votre structure";
       return {
         tableau: { sur: "Tableau de bord", t: "Bonjour, ", em: nomSt, p: "Votre recrutement en un coup d'œil : les vues de votre page, les candidats et ce qu'il reste à faire.",
-                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "/recruter/reussir-son-recrutement/"],
+                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "/compte/guides/reussir-son-recrutement/"],
                    resume: { t: "À faire", lignes: afaire, vide: "Rien d'urgent : tout est à jour.", mini: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
         page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
                 actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(actif(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
                 resume: { t: "Votre page", jauge: true } },
         offres: { sur: "Mes offres", t: "Vos offres, ", em: "là où les jeunes cherchent", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
-                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "/outils/annonce-animateur/", 2]], guide: ["Une annonce qui donne envie", "/recruter/reussir-son-recrutement/"],
+                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "/compte/outils/annonce-animateur/", 2]], guide: ["Une annonce qui donne envie", "/compte/guides/reussir-son-recrutement/"],
                   resume: { t: "Vos offres", lignes: bientot ? [[bientot, (bientot > 1 ? "expirent" : "expire") + " dans 7 jours", "offres"]] : [], mini: [[enLigne.length, "en ligne"], [mesOffres.length - enLigne.length, "hors ligne"]] } },
         candidats: { sur: "Candidats", t: "Les animateurs ", em: "de votre secteur", p: "Les candidatures à vos offres, et les profils des animateurs qui cherchent près de chez vous. Mettez les meilleurs en favoris.",
-                     actions: [], guide: ["Accueillir un stagiaire BAFA", "/recruter/accueillir-un-stagiaire-bafa/"],
+                     actions: [], guide: ["Accueillir un stagiaire BAFA", "/compte/guides/accueillir-un-stagiaire-bafa/"],
                      resume: { t: "Candidatures", lignes: nouvelles ? [[nouvelles, nouvelles > 1 ? "nouvelles à lire" : "nouvelle à lire", "candidats"]] : [], vide: "Pas de nouvelle candidature.", mini: [[recues.length, "reçues"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
         demandes: { sur: "Demandes reçues", t: "Ils décrivent leur besoin, ", em: "vous répondez", p: "Les animateurs qui cherchent un poste envoient leur demande aux 3 structures les plus proches. Répondez vite : vous n'êtes que trois.",
                     actions: [], guide: ["Comment ça marche", "/trouver-un-poste/demande/"],
@@ -88,8 +88,8 @@
         abonnement: { sur: "Abonnement et centres", t: "Votre abonnement, ", em: "sans commission", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
                       actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
                       resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["!", "à régler pour être en ligne", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
-        outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti.",
-                  actions: [["Toute la boîte à outils", "/recruter/boite-a-outils/", 2]], guide: null, resume: null }
+        outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
+                  actions: [], guide: null, resume: null }
       }[nom];
     }
     var pr = profil || {};
@@ -784,6 +784,9 @@
     // les conseils : pour les structures abonnées ; un conseil de la semaine en tête, 4 visibles, les autres au clic
     $("bloc-conseils").hidden = nouveau || !paye(structure);
     $("bloc-conseils-verrou").hidden = nouveau || paye(structure);
+    $("bloc-outils").hidden = nouveau || !paye(structure);
+    $("bloc-outils-verrou").hidden = nouveau || paye(structure);
+    $("tb-outils").hidden = !paye(structure);
     if (!$("bloc-conseils").hidden) {
       var ol = $("liste-conseils"), items = Array.prototype.slice.call(ol.children);
       var semaine = Math.floor(Date.now() / (7 * 864e5)) % items.length;
@@ -1563,10 +1566,6 @@
       tableauDeBord();
     });
   });
-  $("conseils-tous").addEventListener("click", function () {
-    var ol = $("liste-conseils"), ouvert = ol.classList.toggle("co-c-tous");
-    this.setAttribute("aria-expanded", ouvert); this.textContent = ouvert ? "Moins de conseils" : "Voir les 16 conseils";
-  });
   function jourIso(d) { return d.toISOString().slice(0, 10); }
   async function tableauDeBord() {
     if (!structure) return;
@@ -1652,13 +1651,13 @@
     $("tb-score").textContent = ok + " sur " + tout;
     // le conseil du moment, selon le mois et le type de structure
     var m = new Date().getMonth() + 1, type = st.type || "";
-    var saison = m >= 2 && m <= 4 ? ["C'est le moment de publier vos offres d'été : les animateurs signent au printemps.", "/recruter/reussir-son-recrutement/"]
-      : m === 5 || m === 6 ? [type === "periscolaire" ? "Recrutez maintenant votre équipe périscolaire de la rentrée." : "Bouclez l'équipe d'été et pensez déjà au périscolaire de la rentrée.", "/recruter/reussir-son-recrutement/"]
-      : m === 7 || m === 8 ? ["Faites le bilan avec chaque animateur et reproposez dès maintenant un poste pour l'été prochain.", "/recruter/reussir-son-recrutement/"]
-      : m === 9 ? ["Faites le point sur les aides de l'année avec votre conseiller CAF et votre SDJES.", "/recruter/aides-pour-recruter/"]
-      : m === 10 || m === 11 ? ["Publiez vos offres pour les vacances d'hiver, et pensez à un apprenti BPJEPS pour l'an prochain.", "/recruter/recruter-un-apprenti/"]
-      : ["Préparez les vacances de printemps, et accueillez les stagiaires BAFA qui sortent de formation générale.", "/recruter/accueillir-un-stagiaire-bafa/"];
-    if (type === "sejours" && m >= 1 && m <= 4) saison = ["Séjours d'été : cherchez vos surveillants de baignade dès maintenant, ils partent vite.", "/recruter/reussir-son-recrutement/"];
+    var saison = m >= 2 && m <= 4 ? ["C'est le moment de publier vos offres d'été : les animateurs signent au printemps.", "/compte/guides/reussir-son-recrutement/"]
+      : m === 5 || m === 6 ? [type === "periscolaire" ? "Recrutez maintenant votre équipe périscolaire de la rentrée." : "Bouclez l'équipe d'été et pensez déjà au périscolaire de la rentrée.", "/compte/guides/reussir-son-recrutement/"]
+      : m === 7 || m === 8 ? ["Faites le bilan avec chaque animateur et reproposez dès maintenant un poste pour l'été prochain.", "/compte/guides/reussir-son-recrutement/"]
+      : m === 9 ? ["Faites le point sur les aides de l'année avec votre conseiller CAF et votre SDJES.", "/compte/guides/aides-pour-recruter/"]
+      : m === 10 || m === 11 ? ["Publiez vos offres pour les vacances d'hiver, et pensez à un apprenti BPJEPS pour l'an prochain.", "/compte/guides/recruter-un-apprenti/"]
+      : ["Préparez les vacances de printemps, et accueillez les stagiaires BAFA qui sortent de formation générale.", "/compte/guides/accueillir-un-stagiaire-bafa/"];
+    if (type === "sejours" && m >= 1 && m <= 4) saison = ["Séjours d'été : cherchez vos surveillants de baignade dès maintenant, ils partent vite.", "/compte/guides/reussir-son-recrutement/"];
     var li = el("li", "tb-moment"); li.appendChild(el("span", null, "Ce mois-ci : " + saison[0]));
     var a = el("a", null, "Le guide"); a.href = saison[1]; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a);
     ul.insertBefore(li, ul.firstChild);

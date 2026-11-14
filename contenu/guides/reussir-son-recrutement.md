@@ -20,7 +20,7 @@ Les animateurs choisissent aussi leur structure. Ceux qui recrutent tôt, avec u
 | **Le périscolaire et les mercredis** | **mai-juin** pour la rentrée | début juillet |
 | **Les stagiaires BAFA** | dès qu'ils finissent leur formation générale (souvent après les vacances d'hiver ou de printemps) | 1 mois avant |
 
-Pensez aussi à la **déclaration de l'accueil** sur TAM, environ deux mois avant : [déclarer son accueil](/recruter/declarer-son-accueil/).
+Pensez aussi à la **déclaration de l'accueil** sur TAM, environ deux mois avant : [déclarer son accueil](/compte/guides/declarer-son-accueil/).
 
 ## Une annonce qui donne envie
 
@@ -33,7 +33,7 @@ Une bonne annonce répond aux questions que se posent les jeunes, **dans cet ord
 5. **Ce que vous offrez** : préparation payée, tutorat, formation, BAFA financé, possibilité de revenir.
 6. **Comment candidater**, simplement.
 
-Notre [générateur d'annonce](/outils/annonce-animateur/) vous aide à l'écrire en deux minutes.
+Notre [générateur d'annonce](/compte/outils/annonce-animateur/) vous aide à l'écrire en deux minutes.
 
 ## L'entretien, en 20 minutes
 

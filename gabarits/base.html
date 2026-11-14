@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.langue }}">
+<html lang="{{ site.langue }}"{% if page.reserve %} class="reserve-attente"{% endif %}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -163,6 +163,8 @@
 {% endif %}
 {% if site.goatcounter and not apercu %}<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
 {% block scripts %}{% endblock %}
+{% if page.reserve %}<div id="reserve" hidden data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}" data-compte="{{ lien('/compte/') }}" data-recruter="{{ lien('/recruter/') }}"></div>
+<script src="{{ statique('js/supabase-2.117.3.js') }}"></script><script src="{{ statique('js/reserve.js') }}"></script>{% endif %}
 <script type="application/json" id="villes-populaires">{{ stats.villes | tojson }}</script>
 <script src="{{ statique('js/villes.js') }}" defer></script>
 <script src="{{ statique('js/menu.js') }}" defer></script>
