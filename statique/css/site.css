@@ -2428,13 +2428,10 @@ html.fiche-ouverte { overflow: hidden; }
 .co-conseils-verrou p { margin: 0; }
 .co-conseils-verrou[hidden] { display: none; }
 
-/* les pages réservées aux structures abonnées : rien avant la vérification, puis le verrou si besoin */
-.reserve-attente #contenu { visibility: hidden; }
-.reserve-ferme #contenu { filter: blur(6px); pointer-events: none; user-select: none; max-height: 120vh; overflow: hidden; }
-.reserve-voile { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 16px; background: rgba(35, 31, 32, .35); }
-.reserve-boite { width: min(480px, 100%); padding: 28px; border-radius: 22px; background: #fbf8f2; box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .6); text-align: center; }
-.reserve-t { margin: 0 0 10px; font: 600 1.5rem/1.2 var(--titres); }
-.reserve-boite > p:not(.reserve-t) { color: #4a4142; line-height: 1.55; }
-.reserve-boutons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 18px 0 12px; }
-.reserve-plus { font-size: .9rem; font-weight: 700; color: var(--fil-fonce); }
-.retour-espace { margin: 28px 0 0; }
+/* guides et outils ouverts en fenêtre dans « Mon espace » */
+.co-guide, .co-outil { padding: 22px 8px 20px; }
+.co-guide h1, .co-outil h1 { font: 500 clamp(1.6rem, 3.5vw, 2.2rem)/1.15 var(--titres); margin: 6px 0 8px; }
+.co-guide table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .95rem; }
+.co-guide td, .co-guide th { border: 1px solid var(--trait); padding: 8px 10px; text-align: left; vertical-align: top; }
+.co-guide th { background: var(--papier); }
+.co-outil .resultat { margin-top: 16px; }

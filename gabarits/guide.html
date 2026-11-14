@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
 {% block tete_chapo %}<p class="chapo">{{ page.description }}</p><p class="tete-petit">Mis à jour le {{ page.entete.mis_a_jour | date_fr }} · sources officielles citées en bas de page</p>{% endblock %}
-{% block tete_note %}{% if page.reserve %}<p class="note-main">réservé aux structures abonnées</p>{% else %}{{ super() }}{% endif %}{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
   <article class="cadre texte">
     {{ contenu | safe }}
-    {% if page.reserve %}<p class="retour-espace"><a class="bouton-blanc" href="{{ lien('/compte/') }}?onglet=outils">← Retour à ma boîte à outils</a></p>{% endif %}
   </article>
 </section>
 <section class="bande bande-sable">
