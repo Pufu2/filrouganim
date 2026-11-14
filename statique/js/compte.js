@@ -17,6 +17,76 @@
   var MEMOIRE = "fra-inscription";
 
   function $(id) { return document.getElementById(id); }
+
+  /* -- les onglets de « Mon espace » : un menu à gauche (en haut sur téléphone), une partie à la fois -- */
+  var VIDES = {
+    "v-structure": { candidats: "Les profils des candidats et les candidatures à vos offres s'ouvrent ici dès que votre page est en ligne (abonnement réglé et structure vérifiée).",
+                     demandes: "Les demandes de l'annuaire inversé arrivent ici dès que votre page est en ligne : les animateurs de votre secteur décrivent le poste qu'ils cherchent.",
+                     offres: "Enregistrez d'abord votre page (onglet « Ma page ») : vous pourrez ensuite publier vos offres.",
+                     abonnement: "Enregistrez d'abord votre page (onglet « Ma page ») : l'abonnement se règle juste après.",
+                     tableau: "Enregistrez d'abord votre page (onglet « Ma page ») : votre tableau de bord apparaîtra ici." },
+    "v-candidat": { candidatures: "Pas encore de candidature : créez votre profil, puis postulez aux offres en un clic.",
+                    demandes: "Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches.",
+                    offres: "Créez votre profil (onglet « Mon profil ») : les offres de votre secteur apparaîtront ici.",
+                    tableau: "Créez votre profil (onglet « Mon profil ») : votre tableau de bord apparaîtra ici." }
+  };
+  var ongletActuel = {};
+  function majVide(vue) {
+    var v = $(vue), nom = ongletActuel[vue]; if (!v || !nom) return;
+    var vide = v.querySelector(".co-vide");
+    if (!vide) { vide = document.createElement("div"); vide.className = "carte-compte co-vide"; vide.appendChild(document.createElement("p")); v.appendChild(vide); }
+    var visibles = Array.prototype.filter.call(v.querySelectorAll('[data-onglet="' + nom + '"]'), function (b) { return !b.hidden && b.children.length; });
+    var texte = (VIDES[vue] || {})[nom];
+    var cacher = visibles.length > 0 || !texte;
+    if (vide.hidden !== cacher) vide.hidden = cacher;
+    if (vide.firstChild.textContent !== (texte || "")) vide.firstChild.textContent = texte || "";
+    if (nom === "demandes" && vue === "v-candidat" && !vide.hidden && !vide.querySelector("a")) {
+      var a = document.createElement("a"); a.className = "bouton-r"; a.href = L.lien_demande || "/trouver-un-poste/demande/"; a.textContent = "Décrire ce que je cherche"; vide.appendChild(a);
+    }
+  }
+  function montrerOnglet(vue, nom, remonter) {
+    var v = $(vue), nav = v && v.querySelector(".co-nav");
+    if (!nav) return;
+    if (!nav.querySelector('[data-onglet-vers="' + nom + '"]')) nom = nav.querySelector("[data-onglet-vers]").dataset.ongletVers;
+    ongletActuel[vue] = nom;
+    Array.prototype.forEach.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) {
+      if (b.dataset.ongletVers === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+    Array.prototype.forEach.call(v.querySelectorAll("[data-onglet]"), function (b) { b.classList.toggle("hors-onglet", b.dataset.onglet !== nom); });
+    try { sessionStorage.setItem("fra-onglet-" + vue, nom); } catch (e) {}
+    majVide(vue);
+    if (remonter) window.scrollTo({ top: Math.max(0, v.getBoundingClientRect().top + window.scrollY - 100), behavior: "smooth" });
+  }
+  function ongletDepart(vue, defaut, force) {
+    var mem = null;
+    try { mem = sessionStorage.getItem("fra-onglet-" + vue); } catch (e) {}
+    montrerOnglet(vue, force ? defaut : (params.get("onglet") || mem || defaut));
+  }
+  function allerA(id) {
+    var e = $(id); if (!e) return;
+    var vue = e.closest(".compte-vue"), b = e.closest("[data-onglet]");
+    if (vue && b) montrerOnglet(vue.id, b.dataset.onglet);
+    setTimeout(function () { e.scrollIntoView({ behavior: "smooth", block: "start" }); }, 30);
+  }
+  // une partie qui s'affiche ou se cache (chargement, abonnement) : on remet à jour le message « rien ici »
+  if (window.MutationObserver) ["v-structure", "v-candidat"].forEach(function (vue) {
+    var v = $(vue); if (!v) return;
+    new MutationObserver(function (ms) {
+      if (ms.some(function (m) { return !m.target.classList || !m.target.classList.contains("co-vide"); })) majVide(vue);
+    }).observe(v, { attributes: true, attributeFilter: ["hidden"], subtree: true });
+  });
+  function pastille(nom, valeur) {
+    var p = document.querySelector('#v-structure [data-pastille="' + nom + '"]');
+    if (!p) return;
+    p.hidden = !valeur; p.textContent = valeur === true ? "!" : String(valeur || "");
+    p.classList.toggle("co-pastille-neutre", nom === "offres");
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-onglet-vers]");
+    if (b) { montrerOnglet(b.closest(".compte-vue").id, b.dataset.ongletVers, true); return; }
+    var a = e.target.closest && e.target.closest('a[href^="#bloc-"]');
+    if (a && $(a.getAttribute("href").slice(1))) { e.preventDefault(); allerA(a.getAttribute("href").slice(1)); }
+  });
   function libelle(liste, v) { var t = L[liste].filter(function (x) { return x[0] === v; })[0]; return t ? t[1] : v; }
   function nomDep(code) { var i = L.deps.indexOf(code); return i < 0 ? (code === "france" ? "partout en France" : code) : L.noms_deps[i]; }
   function el(tag, classe, texte) {
@@ -404,6 +474,7 @@
     montrerCv();
     montrerMobilite();
     assistantProfil.ouvrir(nouveau);
+    ongletDepart("v-candidat", nouveau ? "profil" : "tableau", nouveau);
     $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = nouveau;
     $("tuiles-candidat").hidden = nouveau;
     if (nouveau) {
@@ -572,6 +643,7 @@
     $("accord-structure").hidden = !nouveau;
     f.accord.required = nouveau;
     assistantStructure.ouvrir(nouveau);
+    ongletDepart("v-structure", nouveau ? "page" : !paye(structure) ? "abonnement" : "tableau", nouveau);
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
@@ -610,7 +682,7 @@
         : !paye(structure) ? "La fiche complète des animateurs est réservée aux structures abonnées : réglez l'abonnement ci-dessous, puis vous verrez tous les profils."
         : "Abonnement réglé : la fiche complète s'ouvre dès que nous avons vérifié votre structure (en général sous 2 jours ouvrés).");
       var ab = $("bloc-abonnement");
-      if (structure && ab && !ab.hidden) ab.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (structure && ab) allerA("bloc-abonnement");
       return;
     }
     var r = await sb.from("profils").select(CHAMPS_VUS).eq("id", id).eq("publie", true).maybeSingle();
@@ -1341,6 +1413,11 @@
     if (actif(structure)) tuile(t, demandesRecues.length, demandesRecues.length > 1 ? "demandes reçues" : "demande reçue", "bloc-demandes-recues");
     if (actif(structure)) tuile(t, favoris.length, favoris.length > 1 ? "favoris" : "favori", "bloc-candidats");
     tableauEnCours = false;
+    pastille("offres", enLigne);
+    pastille("candidats", nouvelles);
+    pastille("demandes", demandesRecues.length);
+    pastille("abonnement", !paye(structure));
+    majVide("v-structure");
     apercuStructure();
   }
 
@@ -1592,7 +1669,7 @@
     $("postuler-titre").textContent = offreVisee.intitule;
     $("postuler-infos").textContent = ((offreVisee.structures && offreVisee.structures.nom) || "") + " · " + offreVisee.ville + " (" + offreVisee.departement + ") · à partir du " + dateFr(offreVisee.debut);
     $("bloc-postuler").hidden = false;
-    $("bloc-postuler").scrollIntoView({ behavior: "smooth", block: "start" });
+    allerA("bloc-postuler");
   }
   $("annuler-postuler").addEventListener("click", function () { $("bloc-postuler").hidden = true; offreVisee = null; });
   $("f-postuler").addEventListener("submit", async function (e) {

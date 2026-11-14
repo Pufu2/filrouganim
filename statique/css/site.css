@@ -2363,3 +2363,25 @@ html.fiche-ouverte { overflow: hidden; }
 .tb-outils a { display: inline-block; padding: 7px 12px; border-radius: 99px; border: 1px solid var(--trait); background: var(--papier); color: var(--encre); font-weight: 700; font-size: .9rem; text-decoration: none; }
 .tb-outils a:hover { border-color: var(--fil); color: var(--fil-fonce); }
 @media (max-width: 760px) { .tb-chiffres { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tb-deux { grid-template-columns: 1fr; } .tb-conseils li { flex-direction: column; align-items: flex-start; } }
+
+/* « Mon espace » en onglets : le menu à gauche, une partie à la fois (en haut et défilant sur téléphone) */
+.compte-vue.co-onglets:not([hidden]) { display: grid; grid-template-columns: 230px minmax(0, 1fr); column-gap: 28px; align-items: start; }
+.co-onglets > * { grid-column: 2; min-width: 0; }
+.co-onglets > .co-nav { grid-column: 1; grid-row: 1 / span 40; position: sticky; top: 92px; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 18px; background: #fff; border: 1px solid var(--trait); }
+.co-nav button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 12px; border: 0; border-radius: 12px; background: transparent; font: 700 .95rem var(--texte); color: var(--encre); text-align: left; cursor: pointer; }
+.co-nav button:hover { background: var(--papier); }
+.co-nav button[aria-current="page"] { background: var(--nuit); color: #fff; }
+.co-nav svg { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.co-nav span { flex: 1; }
+.co-pastille { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; display: inline-grid; place-items: center; background: var(--fil); color: #fff; font: 700 .75rem/1 var(--texte); font-style: normal; }
+.co-pastille[hidden] { display: none; }
+.hors-onglet { display: none !important; }
+.co-vide p { margin: 0 0 12px; color: var(--doux); } .co-vide p:last-child { margin: 0; }
+.co-outils h2 { margin-top: 0; }
+@media (max-width: 900px) {
+  .compte-vue.co-onglets:not([hidden]) { display: block; }
+  .co-onglets > .co-nav { position: sticky; top: 64px; z-index: 5; flex-direction: row; overflow-x: auto; margin: 0 -16px 18px; padding: 8px 16px; border-radius: 0; border-width: 1px 0; scrollbar-width: none; }
+  .co-nav::-webkit-scrollbar { display: none; }
+  .co-nav button { width: auto; flex: none; padding: 9px 12px; white-space: nowrap; }
+}
+.co-pastille-neutre { background: #e8ddd0; color: var(--encre); } .co-nav button[aria-current="page"] .co-pastille-neutre { background: rgba(255,255,255,.2); color: #fff; }
