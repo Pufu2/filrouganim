@@ -161,9 +161,7 @@ def themes_de(theme):
 
 OUTILS = [("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires pour votre accueil."),
           ("/outils/salaire-cee/", "Contrat d'engagement éducatif", "La rémunération minimale et les 80 jours sur 12 mois."),
-          ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement."),
-          ("/outils/annonce-animateur/", "Écrire son annonce", "Une offre d'animateur claire et complète, prête à copier."),
-          ("/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut de l'équipe d'animation d'un séjour ou d'une période, en CEE.")]
+          ("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Les dates limites du stage pratique et de l'approfondissement.")]
 
 
 def date_fr(d, annee=True):
@@ -832,10 +830,12 @@ class Site:
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
             partie = PARTIES[entete["partie"]]
-            url = f"{partie[1]}{f.stem}/"
+            reserve = entete["partie"] == "recruter"   # les guides des structures : dans « Mon espace », réservés aux abonnées
+            url = f"/compte/guides/{f.stem}/" if reserve else f"{partie[1]}{f.stem}/"
             guides.append({**entete, "url": url})
             self.ajouter(url, "guide.html", titre=entete["titre"], description=entete["description"],
-                         corps_md=corps, entete=entete, fil=[partie, (entete["court"], url)])
+                         corps_md=corps, entete=entete, indexer=not reserve, reserve=reserve,
+                         fil=[("Mon espace", "/compte/"), (entete["court"], url)] if reserve else [partie, (entete["court"], url)])
         guides.sort(key=lambda g: g.get("ordre", 99))
         self.config["guides"] = guides
         self.ajouter("/se-former/questions-frequentes/", "faq.html",
@@ -918,10 +918,8 @@ class Site:
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
-        self.ajouter("/recruter/boite-a-outils/", "boite-outils.html", titre="La boîte à outils des structures d'animation : recruter, déclarer, financer",
-                     description="Pour les centres de loisirs, organisateurs de séjours et associations : recruter ses animateurs, accueillir un service civique ou un apprenti, les aides, la déclaration TAM, et des outils gratuits.",
-                     h1="La boîte à outils des structures", intro="Recruter, déclarer, financer : des guides vérifiés et des outils gratuits, pour les centres de loisirs, les séjours et les associations.",
-                     fil=[("Structures", "/recruter/"), ("La boîte à outils", "/recruter/boite-a-outils/")])
+        for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'declarer-son-accueil', 'reussir-son-recrutement']]:
+            self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/")
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")
         if ex.get("profil"):
             pr = dict(ex["profil"], dispo_debut=en_date(ex["profil"].get("dispo_debut")), dispo_fin=en_date(ex["profil"].get("dispo_fin")),
@@ -946,14 +944,19 @@ class Site:
             ("/outils/mon-parcours-bafa/", "outil.html", "Mon parcours BAFA : les dates limites de chaque étape",
              "Mon parcours BAFA : mes dates limites", "Entrez la date de votre formation générale : vous voyez jusqu'à quand faire votre stage pratique et votre approfondissement.",
              "Calculez les dates limites de votre BAFA : stage pratique dans les 18 mois, parcours complet en 30 mois, et les sessions d'approfondissement à temps.", "parcours"),
-            ("/outils/annonce-animateur/", "outil.html", "Écrire une annonce d'animateur ou de directeur : le générateur gratuit",
+        ]:
+            self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, fil=[OT, (h1, url)])
+        # les outils des structures abonnées : dans « Mon espace », hors des moteurs de recherche
+        for url, gab, titre, h1, intro, description, outil in [
+            ("/compte/outils/annonce-animateur/", "outil.html", "Écrire une annonce d'animateur ou de directeur",
              "Écrire son annonce d'animateur", "Remplissez les cases : l'annonce s'écrit toute seule, dans l'ordre où les jeunes la lisent. Copiez-la, ou publiez-la depuis votre espace.",
              "Générateur gratuit d'annonce pour recruter un animateur BAFA, un stagiaire ou un directeur : poste, dates, public, contrat, rémunération, projet et avantages, dans le bon ordre.", "annonce"),
-            ("/outils/budget-equipe/", "outil.html", "Budget de l'équipe d'animation en CEE : le calculateur gratuit",
+            ("/compte/outils/budget-equipe/", "outil.html", "Budget de l'équipe d'animation en CEE",
              "Calculer le budget de son équipe", "Combien coûte l'équipe d'animation d'un séjour ou d'une période de vacances en contrat d'engagement éducatif ? Le total brut, poste par poste.",
              "Calculateur gratuit du budget d'une équipe d'animation en contrat d'engagement éducatif : animateurs, stagiaires, direction, jours de préparation, avec le minimum légal de 52,93 € brut par jour.", "budget"),
         ]:
-            self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, fil=[OT, (h1, url)])
+            self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, indexer=False, reserve=True,
+                         fil=[("Mon espace", "/compte/"), (h1, url)])
         if (self.config.get("supabase") or {}).get("url"):
             self.ajouter("/alertes/desabonnement/", "desabonnement.html", titre="Arrêter les alertes", indexer=False,
                          h1="Arrêter les alertes du lundi")

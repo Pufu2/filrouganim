@@ -2,7 +2,7 @@
 {% import "morceaux.html" as m with context %}
 {# Les outils gratuits : le calcul se fait dans le navigateur (statique/js/outils.js), rien n'est envoyé. #}
 {% set o = page.outil %}
-{% block tete_note %}<p class="note-main">outil gratuit</p>{% endblock %}
+{% block tete_note %}<p class="note-main">{{ 'réservé aux structures abonnées' if page.reserve else 'outil gratuit' }}</p>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
 <div class="cadre outil" data-outil="{{ o }}">
@@ -100,7 +100,7 @@
   <div class="carte-compte resultat" id="resultat" aria-live="polite" data-smic="12.31" data-coef="4.30" data-compte="{{ lien('/compte/') }}"></div>
   <article class="texte">
     <h2>Pourquoi cet ordre ?</h2>
-    <p>Les jeunes lisent une offre en quelques secondes et cherchent, dans l'ordre : le poste et les dates, le lieu et le public, le contrat et la rémunération, puis ce qui rend votre accueil différent. Une annonce qui répond à ces questions reçoit plus de candidatures, et de meilleures. Plus de conseils dans <a href="{{ lien('/recruter/reussir-son-recrutement/') }}">Réussir son recrutement</a>.</p>
+    <p>Les jeunes lisent une offre en quelques secondes et cherchent, dans l'ordre : le poste et les dates, le lieu et le public, le contrat et la rémunération, puis ce qui rend votre accueil différent. Une annonce qui répond à ces questions reçoit plus de candidatures, et de meilleures. Plus de conseils dans <a href="{{ lien('/compte/guides/reussir-son-recrutement/') }}">Réussir son recrutement</a>.</p>
     <p class="petit">Rien n'est envoyé : l'annonce s'écrit sur votre ordinateur. Le minimum légal en CEE est de 4,30 fois le Smic horaire par jour (article D432-2 du code de l'action sociale et des familles), soit 52,93 € brut avec le Smic horaire à 12,31 €.</p>
   </article>
 
@@ -130,6 +130,9 @@
   </article>
 {% endif %}
 
+  {% if page.reserve %}
+  <p class="retour-espace"><a class="bouton-blanc" href="{{ lien('/compte/') }}?onglet=outils">← Retour à ma boîte à outils</a></p>
+  {% else %}
   <nav class="autres-outils" aria-label="Les autres outils">
     <h2>Les autres outils gratuits</h2>
     <ul class="liste-outils">
@@ -138,6 +141,7 @@
     {% endfor %}
     </ul>
   </nav>
+  {% endif %}
 </div>
 </section>
 {% endblock %}

@@ -347,37 +347,26 @@
         <div><p class="tb-l">Votre secteur</p><div id="tb-secteur" class="tb-secteur"></div></div>
       </div>
       <div class="tb-conseils-boite"><p class="tb-l">Pour être mieux vu <small id="tb-score"></small></p><ul class="tb-conseils" id="tb-conseils"></ul></div>
-      <div class="tb-outils"><p class="tb-l">Vos outils</p>
-        <ul>{% for u, t in [("/outils/annonce-animateur/", "Écrire une annonce"), ("/outils/taux-d-encadrement/", "Taux d'encadrement"), ("/outils/budget-equipe/", "Budget de l'équipe"), ("/recruter/reussir-son-recrutement/", "Réussir son recrutement"), ("/recruter/aides-pour-recruter/", "Les aides pour recruter"), ("/recruter/boite-a-outils/", "Toute la boîte à outils")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener">{{ t }}</a></li>{% endfor %}</ul>
+      <div class="tb-outils" id="tb-outils"><p class="tb-l">Vos outils</p>
+        <ul>{% for u, t in [("/compte/outils/annonce-animateur/", "Écrire une annonce"), ("/outils/taux-d-encadrement/", "Taux d'encadrement"), ("/compte/outils/budget-equipe/", "Budget de l'équipe"), ("/compte/guides/reussir-son-recrutement/", "Réussir son recrutement"), ("/compte/guides/aides-pour-recruter/", "Les aides pour recruter")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener">{{ t }}</a></li>{% endfor %}</ul>
       </div>
     </section>
     <section class="carte-compte co-conseils" id="bloc-conseils" data-onglet="tableau" hidden aria-labelledby="t-conseils">
-      <div class="titre-et-bouton"><h2 id="t-conseils">Nos conseils pour recruter</h2><button type="button" class="bouton-blanc" id="conseils-tous" aria-expanded="false">Voir les 16 conseils</button></div>
-      <p class="petit">Réservés aux structures abonnées. Un nouveau conseil chaque semaine en tête de liste.</p>
+      <h2 id="t-conseils">Nos conseils pour recruter</h2>
+      <p class="petit">Les six qui comptent le plus, avec celui de la semaine en tête.</p>
       <ol class="bo-conseils" id="liste-conseils">
-      {% for t, d in [
-        ("Publiez vos offres d'été dès février", "Les animateurs les plus demandés signent au printemps. En juin, il reste surtout ceux qui n'ont pas encore cherché."),
+      {% for t, d in [("Publiez vos offres d'été dès février", "Les animateurs les plus demandés signent au printemps. En juin, il reste surtout ceux qui n'ont pas encore cherché."),
         ("Écrivez la rémunération dans l'offre", "C'est la première question des jeunes. Une offre sans montant reçoit moins de réponses."),
         ("Répondez à chaque candidature sous 48 heures", "Même par un non. Les jeunes postulent à plusieurs endroits et disent oui au premier qui répond."),
         ("Accueillez des stagiaires BAFA", "Ce sont vos diplômés de l'an prochain. Un stage bien vécu, c'est un animateur qui revient."),
         ("Gardez vos anciens animateurs en favoris", "Recontactez-les dès la fin de l'été pour l'été suivant : le recrutement le plus simple est celui qu'on n'a pas à refaire."),
-        ("Payez la réunion de préparation", "C'est elle qui fait l'équipe, et c'est un argument fort dans l'offre."),
-        ("Financez un approfondissement", "Contre un engagement pour les prochaines vacances : vous fidélisez et l'équipe progresse."),
-        ("Cherchez vos surveillants de baignade dès mars", "Les BSB et BNSSA sont rares et vite pris. Vérifiez la date de fin de leur qualification."),
-        ("Nouez un lien avec un organisme de formation", "Les organismes BAFA près de chez vous cherchent des lieux de stage pour leurs stagiaires : proposez-vous."),
-        ("Diversifiez vos viviers", "Étudiants en STAPS, en carrières sociales ou en sciences de l'éducation, lycées professionnels du service à la personne, clubs sportifs."),
-        ("Préparez un livret d'accueil", "Horaires, consignes, contacts, projet pédagogique en une page : l'animateur arrive rassuré, vous gagnez du temps."),
-        ("Mettez des photos sur votre page", "Vos locaux, vos activités, votre équipe : les jeunes veulent voir où ils vont travailler."),
-        ("Déclarez l'équipe sur TAM à temps", "Le contrôle d'honorabilité se fait à partir de la fiche complémentaire : pas d'animateur qui commence sans y être."),
-        ("Faites un vrai bilan de fin de période", "Un échange avec chacun : ce qui a marché, ce qui manque, et s'il revient. Notez-le pour l'an prochain."),
-        ("Pensez au service civique et à l'apprentissage", "Pour un poste à l'année, ce sont souvent les meilleures portes d'entrée, avec des aides à la clé."),
         ("Répondez aux demandes de l'annuaire inversé", "Quand un animateur décrit le poste qu'il cherche, sa demande ne part qu'aux 3 structures les plus proches.")] %}
         <li data-n="{{ loop.index0 }}"><b>{{ t }}</b><span>{{ d }}</span></li>
       {% endfor %}
       </ol>
     </section>
     <section class="carte-compte co-conseils-verrou" id="bloc-conseils-verrou" data-onglet="tableau" hidden>
-      <p><b>Nos conseils pour recruter</b> : 16 conseils concrets, un nouveau chaque semaine. Ils s'ouvrent avec l'abonnement.</p>
+      <p><b>Les conseils, les guides et les outils pour recruter</b> s'ouvrent avec l'abonnement.</p>
       <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
     </section>
 
@@ -569,14 +558,17 @@
       <p class="petit">Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas. Beaucoup de candidats ont 16 ou 17 ans.</p>
     </div>
 
-    <section class="carte-compte co-outils" id="bloc-outils" data-onglet="outils" aria-labelledby="t-outils">
+    <section class="carte-compte co-conseils-verrou" id="bloc-outils-verrou" data-onglet="outils" hidden>
+      <p><b>La boîte à outils est réservée aux structures abonnées</b> : guides pour recruter un service civique ou un apprenti, les aides, la déclaration TAM, un générateur d'annonce et le budget de l'équipe.</p>
+      <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
+    </section>
+    <section class="carte-compte co-outils" id="bloc-outils" data-onglet="outils" hidden aria-labelledby="t-outils">
       <h2 id="t-outils">La boîte à outils</h2>
-      <p class="petit">Des outils gratuits et des guides vérifiés pour recruter, déclarer et financer. Ils s'ouvrent dans un nouvel onglet.</p>
+      <p class="petit">Des outils et des guides vérifiés pour recruter, déclarer et financer, réservés aux structures abonnées.</p>
       <p class="tb-l">Les outils</p>
-      <ul class="bo-outils">{% for u, t, d in [("/outils/annonce-animateur/", "Écrire son annonce", "Une offre claire et complète, prête à copier."), ("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires."), ("/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut d'une équipe en CEE, poste par poste."), ("/outils/salaire-cee/", "Vérifier un CEE", "Le minimum par jour et les 80 jours sur 12 mois.")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener"><span class="bo-t"><b>{{ t }}</b><span>{{ d }}</span></span><span class="bo-go" aria-hidden="true">↗</span></a></li>{% endfor %}</ul>
+      <ul class="bo-outils">{% for u, t, d in [("/compte/outils/annonce-animateur/", "Écrire son annonce", "Une offre claire et complète, prête à copier."), ("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires."), ("/compte/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut d'une équipe en CEE, poste par poste."), ("/outils/salaire-cee/", "Vérifier un CEE", "Le minimum par jour et les 80 jours sur 12 mois.")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener"><span class="bo-t"><b>{{ t }}</b><span>{{ d }}</span></span><span class="bo-go" aria-hidden="true">↗</span></a></li>{% endfor %}</ul>
       <p class="tb-l" style="margin-top:22px">Les guides</p>
       <ul class="bo-outils">{% for g in site.guides | selectattr("partie", "equalto", "recruter") | list %}<li><a href="{{ lien(g.url) }}" target="_blank" rel="noopener"><span class="bo-t"><b>{{ g.court }}</b><span>{{ g.resume }}</span></span><span class="bo-go" aria-hidden="true">↗</span></a></li>{% endfor %}</ul>
-      <p style="margin-top:18px"><a class="bouton-blanc" href="{{ lien('/recruter/boite-a-outils/') }}" target="_blank" rel="noopener">Toute la boîte à outils</a></p>
     </section>
   </div>
 
