@@ -157,10 +157,17 @@
   </div>
 
   {# 3. Profil candidat #}
-  <div class="compte-vue" id="v-candidat" hidden>
-    <div class="tuiles" id="tuiles-candidat"></div>
+  <div class="compte-vue co-onglets" id="v-candidat" hidden>
+    <nav class="co-nav" data-onglets="candidat" aria-label="Mon espace">
+      <button type="button" data-onglet-vers="tableau"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Tableau de bord</span><i class="co-pastille" data-pastille="tableau" hidden></i></button>
+      <button type="button" data-onglet-vers="profil"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Mon profil</span><i class="co-pastille" data-pastille="profil" hidden></i></button>
+      <button type="button" data-onglet-vers="candidatures"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg><span>Mes candidatures</span><i class="co-pastille" data-pastille="candidatures" hidden></i></button>
+      <button type="button" data-onglet-vers="demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Mes demandes</span><i class="co-pastille" data-pastille="demandes" hidden></i></button>
+      <button type="button" data-onglet-vers="offres"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Offres pour moi</span><i class="co-pastille" data-pastille="offres" hidden></i></button>
+    </nav>
+    <div class="tuiles" id="tuiles-candidat" data-onglet="tableau"></div>
 
-    <div class="carte-compte carte-accent" id="bloc-postuler" hidden>
+    <div class="carte-compte carte-accent" id="bloc-postuler" data-onglet="tableau" hidden>
       <p class="note-main">postuler</p>
       <h2 id="postuler-titre"></h2>
       <p id="postuler-infos" class="petit"></p>
@@ -171,24 +178,24 @@
       </form>
     </div>
 
-    <div class="carte-compte" id="bloc-mes-candidatures" hidden>
+    <div class="carte-compte" id="bloc-mes-candidatures" data-onglet="candidatures" hidden>
       <h2>Mes candidatures</h2>
       <div id="liste-mes-candidatures" class="liste-compte"></div>
     </div>
 
-    <div class="carte-compte" id="bloc-mes-demandes" hidden>
+    <div class="carte-compte" id="bloc-mes-demandes" data-onglet="demandes" hidden>
       <div class="titre-et-bouton"><h2>Mes demandes</h2><a class="bouton-r" href="{{ lien('/trouver-un-poste/demande/') }}">Nouvelle demande</a></div>
       <p class="petit">Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent par e-mail.</p>
       <div id="liste-mes-demandes" class="liste-compte"></div>
     </div>
 
-    <div class="carte-compte" id="bloc-offres-pour-toi" hidden>
+    <div class="carte-compte" id="bloc-offres-pour-toi" data-onglet="offres" hidden>
       <h2>Les offres pour vous</h2>
       <p class="petit">Les offres en ligne dans votre département et là où vous pouvez travailler. Vous postulez en un clic, avec votre profil.</p>
       <div id="liste-offres-pour-toi" class="liste-compte"></div>
     </div>
 
-    <div class="assistant" id="bloc-profil" data-assistant>
+    <div class="assistant" id="bloc-profil" data-onglet="profil" data-assistant>
       <div class="assistant-corps">
         <div class="as-tete"><p><b class="as-n"></b> · <span class="as-titre"></span></p><p class="as-duree">Environ 4 min</p></div>
         <div class="as-barre" aria-hidden="true"><span></span></div>
@@ -300,9 +307,18 @@
   </div>
 
   {# 4. Structure #}
-  <div class="compte-vue" id="v-structure" hidden>
+  <div class="compte-vue co-onglets" id="v-structure" hidden>
+    <nav class="co-nav" data-onglets="structure" aria-label="Mon espace">
+      <button type="button" data-onglet-vers="tableau"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Tableau de bord</span><i class="co-pastille" data-pastille="tableau" hidden></i></button>
+      <button type="button" data-onglet-vers="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Ma page</span><i class="co-pastille" data-pastille="page" hidden></i></button>
+      <button type="button" data-onglet-vers="offres"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg><span>Mes offres</span><i class="co-pastille" data-pastille="offres" hidden></i></button>
+      <button type="button" data-onglet-vers="candidats"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Candidats</span><i class="co-pastille" data-pastille="candidats" hidden></i></button>
+      <button type="button" data-onglet-vers="demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Demandes reçues</span><i class="co-pastille" data-pastille="demandes" hidden></i></button>
+      <button type="button" data-onglet-vers="abonnement"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span>Abonnement et centres</span><i class="co-pastille" data-pastille="abonnement" hidden></i></button>
+      <button type="button" data-onglet-vers="outils"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span>Boîte à outils</span><i class="co-pastille" data-pastille="outils" hidden></i></button>
+    </nav>
     <p class="statut" id="statut-structure" hidden></p>
-    <div class="carte-compte abo" id="bloc-abonnement" hidden>
+    <div class="carte-compte abo" id="bloc-abonnement" data-onglet="abonnement" hidden>
       <div class="abo-texte">
         <p class="abo-sur" id="abo-sur">Mettre votre structure en ligne</p>
         <h2 id="abo-titre"></h2>
@@ -317,9 +333,9 @@
         <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span>{% else %}Factures, nombre de centres, arrêt : écrivez-nous{% endif %}</a>
       </div>
     </div>
-    <div class="tuiles" id="tuiles-structure"></div>
+    <div class="tuiles" id="tuiles-structure" data-onglet="tableau"></div>
 
-    <section class="carte-compte tb" id="bloc-tableau" hidden aria-labelledby="t-tableau">
+    <section class="carte-compte tb" id="bloc-tableau" data-onglet="tableau" hidden aria-labelledby="t-tableau">
       <div class="tb-tete">
         <div><h2 id="t-tableau">Votre tableau de bord</h2><p class="petit" id="tb-sous">Les vues de votre page et de vos offres, et les clics des candidats.</p></div>
         <div class="tb-periodes" role="group" aria-label="Période">{% for j, l in [(7, "7 jours"), (30, "30 jours"), (90, "3 mois")] %}<button type="button" data-jours="{{ j }}" aria-pressed="{{ 'true' if j == 30 else 'false' }}">{{ l }}</button>{% endfor %}</div>
@@ -336,18 +352,18 @@
       </div>
     </section>
 
-    <div class="carte-compte" id="bloc-demandes-recues" hidden>
+    <div class="carte-compte" id="bloc-demandes-recues" data-onglet="demandes" hidden>
       <h2>Demandes reçues</h2>
       <p class="petit">Des animateurs et des directeurs de votre secteur décrivent le poste qu'ils cherchent : leur demande arrive chez 3 structures au plus. Répondez-leur directement par e-mail.</p>
       <div id="liste-demandes-recues" class="liste-compte"></div>
     </div>
 
-    <div class="carte-compte" id="bloc-candidatures-recues" hidden>
+    <div class="carte-compte" id="bloc-candidatures-recues" data-onglet="candidats" hidden>
       <h2>Candidatures reçues</h2>
       <div id="liste-candidatures-recues" class="liste-compte"></div>
     </div>
 
-    <div class="assistant" id="bloc-structure" data-assistant>
+    <div class="assistant" id="bloc-structure" data-onglet="page" data-assistant>
       <div class="assistant-corps">
         <div class="as-tete"><p><b class="as-n"></b> · <span class="as-titre"></span></p><p class="as-duree">Environ 6 min</p></div>
         <div class="as-barre" aria-hidden="true"><span></span></div>
@@ -456,7 +472,7 @@
       </aside>
     </div>
 
-    <div class="carte-compte" id="bloc-centres" hidden>
+    <div class="carte-compte" id="bloc-centres" data-onglet="abonnement" hidden>
       <div class="titre-et-bouton"><h2>Mes centres</h2><button type="button" class="bouton-r" id="nouveau-centre">Ajouter un centre</button></div>
       <p class="petit">Vous gérez plusieurs accueils de loisirs, séjours ou accueils de jeunes ? Chaque centre a sa page et ses offres, et la page de votre structure les regroupe. Chaque centre en plus coûte moitié prix.</p>
       <div id="liste-centres" class="liste-compte"></div>
@@ -477,7 +493,7 @@
       </form>
     </div>
 
-    <div class="carte-compte" id="bloc-offres" hidden>
+    <div class="carte-compte" id="bloc-offres" data-onglet="offres" hidden>
       <div class="titre-et-bouton"><h2>Mes offres</h2><button type="button" class="bouton-r" id="nouvelle-offre">Nouvelle offre</button></div>
       <div id="liste-offres" class="liste-compte"></div>
       <form id="f-offre" class="formulaire formulaire-offre" hidden>
@@ -510,7 +526,7 @@
       </form>
     </div>
 
-    <div class="carte-compte" id="bloc-candidats" hidden>
+    <div class="carte-compte" id="bloc-candidats" data-onglet="candidats" hidden>
       <h2>Les candidats</h2>
       <form id="f-candidats" class="filtres-candidats">
         <label class="champ"><span>Département</span>{{ select_deps("dep", "Tous", False) }}</label>
@@ -522,6 +538,16 @@
       <div id="liste-candidats" class="liste-compte"></div>
       <p class="petit">Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas. Beaucoup de candidats ont 16 ou 17 ans.</p>
     </div>
+
+    <section class="carte-compte co-outils" id="bloc-outils" data-onglet="outils" aria-labelledby="t-outils">
+      <h2 id="t-outils">La boîte à outils</h2>
+      <p class="petit">Des outils gratuits et des guides vérifiés pour recruter, déclarer et financer. Ils s'ouvrent dans un nouvel onglet.</p>
+      <p class="tb-l">Les outils</p>
+      <ul class="bo-outils">{% for u, t, d in [("/outils/annonce-animateur/", "Écrire son annonce", "Une offre claire et complète, prête à copier."), ("/outils/taux-d-encadrement/", "Taux d'encadrement", "Combien d'animateurs, de diplômés et de stagiaires."), ("/outils/budget-equipe/", "Budget de l'équipe", "Le coût brut d'une équipe en CEE, poste par poste."), ("/outils/salaire-cee/", "Vérifier un CEE", "Le minimum par jour et les 80 jours sur 12 mois.")] %}<li><a href="{{ lien(u) }}" target="_blank" rel="noopener"><span class="bo-t"><b>{{ t }}</b><span>{{ d }}</span></span><span class="bo-go" aria-hidden="true">↗</span></a></li>{% endfor %}</ul>
+      <p class="tb-l" style="margin-top:22px">Les guides</p>
+      <ul class="bo-outils">{% for g in site.guides | selectattr("partie", "equalto", "recruter") | list %}<li><a href="{{ lien(g.url) }}" target="_blank" rel="noopener"><span class="bo-t"><b>{{ g.court }}</b><span>{{ g.resume }}</span></span><span class="bo-go" aria-hidden="true">↗</span></a></li>{% endfor %}</ul>
+      <p style="margin-top:18px"><a class="bouton-blanc" href="{{ lien('/recruter/boite-a-outils/') }}" target="_blank" rel="noopener">Toute la boîte à outils, avec les conseils</a></p>
+    </section>
   </div>
 
   {# La fiche complète d'un profil (pour une structure) ou l'aperçu de sa propre fiche #}
