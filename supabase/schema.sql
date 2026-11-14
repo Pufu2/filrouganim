@@ -757,3 +757,8 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- L'administration : la table admins, est_admin(), admin_donnees() (tout, pour les statistiques et les listes),
 -- admin_modifier(table, clé, champs) (colonnes prévues seulement) et admin_supprimer(table, clé).
 -- Voir la migration v11_espace_admin dans Supabase pour le détail ; le compte admin est ajouté dans la base, pas ici.
+
+-- ------------------------------------------------------------------ versions 12 et 13 (14/11/2026)
+-- v12 : evenements_admin, remplie par la base à chaque fiche animateur, structure, paiement ou demande ;
+--       outils/abonnements.py en envoie le résumé à l'adresse du site toutes les 15 minutes.
+-- v13 : structure_payee() ; une structure n'écrit ses offres et ses centres qu'avec un abonnement en cours.
