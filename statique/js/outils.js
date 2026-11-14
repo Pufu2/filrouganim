@@ -109,77 +109,7 @@
   }
 
 
-  /* -- l'annonce d'animateur : dans l'ordre où les jeunes la lisent -- */
-  function jourFr(v) { return v ? new Date(v + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : ""; }
-  function annonce() {
-    var v = function (k) { return (f[k].value || "").trim(); };
-    var minimum = Math.round(parseFloat(res.dataset.smic) * parseFloat(res.dataset.coef) * 100) / 100;
-    var offres = Array.prototype.filter.call(f.querySelectorAll("[name=offre]"), function (c) { return c.checked; }).map(function (c) { return c.value; });
-    var l = [];
-    var titre = v("poste") + (v("ville") ? " à " + v("ville") : "");
-    l.push(titre.toUpperCase());
-    if (v("debut")) l.push(v("fin") ? "Du " + jourFr(v("debut")) + " au " + jourFr(v("fin")) : "À partir du " + jourFr(v("debut")));
-    l.push("");
-    var qui = (v("structure") || "Notre structure") + " recrute pour " + f.accueil.value + (v("ville") ? " à " + v("ville") : "") + ".";
-    if (v("public") || v("groupe")) qui += " Vous accompagnerez " + [v("groupe"), v("public") ? "de " + v("public") : ""].filter(Boolean).join(" ") + ".";
-    l.push(qui);
-    if (v("projet")) { l.push(""); l.push(v("projet")); }
-    l.push("");
-    var c = "Contrat : " + f.contrat.value;
-    if (n("brut")) c += ", " + euros(n("brut")) + " brut par jour";
-    l.push(c + ".");
-    if (offres.length) { l.push(""); l.push("Ce que nous offrons :"); offres.forEach(function (o) { l.push("- " + o); }); }
-    l.push("");
-    l.push("Pour candidater : " + (v("contact") || "écrivez-nous en quelques lignes, avec vos disponibilités") + ".");
-    var texte = l.join("\n");
-
-    res.textContent = "";
-    var manque = [];
-    if (!v("debut")) manque.push("les dates");
-    if (!v("ville")) manque.push("la ville");
-    if (!v("public")) manque.push("l'âge des enfants");
-    if (!n("brut") && f.contrat.value.indexOf("bénévolat") < 0) manque.push("la rémunération");
-    if (!v("projet")) manque.push("votre projet");
-    if (!v("contact")) manque.push("comment candidater");
-    var score = 6 - manque.length;
-    res.appendChild(grand(score + "/6", score === 6 ? "votre annonce répond à toutes les questions des candidats" : "il manque : " + manque.join(", ")));
-    if (n("brut") && f.contrat.value.indexOf("CEE") >= 0 && n("brut") < minimum) res.appendChild(el("p", "alerte", "Attention : en CEE, le minimum légal est de " + euros(minimum) + " brut par jour."));
-    var pre = el("pre", "annonce-texte", texte);
-    res.appendChild(pre);
-    var p = el("p", "boutons");
-    var b = el("button", "bouton-r", "Copier l'annonce"); b.type = "button";
-    b.addEventListener("click", function () {
-      var fait = function () { b.textContent = "Copiée !"; setTimeout(function () { b.textContent = "Copier l'annonce"; }, 1800); };
-      if (navigator.clipboard) navigator.clipboard.writeText(texte).then(fait, function () {}); else { var r = document.createRange(); r.selectNodeContents(pre); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
-    });
-    p.appendChild(b);
-    var a = el("a", "bouton-blanc", "La publier depuis mon espace"); a.href = res.dataset.compte;
-    p.appendChild(a);
-    res.appendChild(p);
-  }
-
-  /* -- le budget brut de l'équipe en CEE -- */
-  function budget() {
-    var minimum = Math.round(parseFloat(res.dataset.smic) * parseFloat(res.dataset.coef) * 100) / 100;
-    var jours = Math.floor(n("jours")) + Math.floor(n("prepa"));
-    var postes = [["anim", "brut_anim", "animateur"], ["stag", "brut_stag", "stagiaire"], ["dir", "brut_dir", "direction"]];
-    var total = 0, personnes = 0, ul = el("ul", "etapes-dates");
-    res.textContent = "";
-    postes.forEach(function (p) {
-      var nb = Math.floor(n(p[0])), b = n(p[1]);
-      if (!nb) return;
-      var sous = nb * jours * b;
-      total += sous; personnes += nb;
-      ligne(ul, pluriel(nb, p[2] === "direction" ? "personne de direction" : p[2]) + " × " + pluriel(jours, "jour") + " × " + euros(b) + " = " + euros(sous) + (b < minimum ? " (sous le minimum légal de " + euros(minimum) + " par jour)" : ""), b < minimum ? "alerte" : "fait");
-    });
-    if (!personnes) { res.appendChild(el("p", null, "Indiquez le nombre de personnes dans l'équipe pour voir le budget.")); return; }
-    res.appendChild(grand(euros(total), "brut pour l'équipe, soit " + euros(total / Math.max(1, Math.floor(n("jours")))) + " par jour d'accueil"));
-    res.appendChild(ul);
-    if (jours > 80) res.appendChild(el("p", "alerte", "Plus de 80 jours : c'est au-delà du plafond du CEE sur 12 mois."));
-    res.appendChild(el("p", "petit", "Ajoutez les cotisations patronales, les repas et l'hébergement de l'équipe si vous les prenez en charge."));
-  }
-
-  var calcul = { encadrement: encadrement, cee: cee, parcours: parcours, annonce: annonce, budget: budget }[outil];
+  var calcul = { encadrement: encadrement, cee: cee, parcours: parcours }[outil];
   if (outil === "parcours") {
     try {
       var mem = JSON.parse(localStorage.getItem("fra-parcours") || "null");

@@ -739,3 +739,16 @@ language sql stable security definer set search_path = '' as $$
 revoke all on function public.compter(uuid, text, bigint), public.mes_stats(integer) from public, anon, authenticated;
 grant execute on function public.compter(uuid, text, bigint) to anon, authenticated;
 grant execute on function public.mes_stats(integer) to authenticated;
+
+-- ------------------------------------------------------------------ version 10 (14/11/2026)
+-- Les ressources des structures abonnées (guides et conseils pour recruter). Leur texte n'est que dans la base,
+-- jamais dans le dépôt ni sur le site public : seul le compte d'une structure à l'abonnement en cours peut les lire.
+create table if not exists public.ressources_structures (
+  slug text primary key, type text not null check (type in ('guide', 'conseil')), titre text not null,
+  court text, resume text, html text not null, ordre integer not null default 9, maj date);
+alter table public.ressources_structures enable row level security;
+revoke all on public.ressources_structures from anon, authenticated;
+grant select on public.ressources_structures to authenticated;
+drop policy if exists "structures abonnées : lire" on public.ressources_structures;
+create policy "structures abonnées : lire" on public.ressources_structures for select to authenticated
+  using (exists (select 1 from public.structures s where s.id = (select auth.uid()) and s.abonnement_fin >= current_date));

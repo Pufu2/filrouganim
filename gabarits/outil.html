@@ -2,7 +2,7 @@
 {% import "morceaux.html" as m with context %}
 {# Les outils gratuits : le calcul se fait dans le navigateur (statique/js/outils.js), rien n'est envoyé. #}
 {% set o = page.outil %}
-{% block tete_note %}<p class="note-main">{{ 'réservé aux structures abonnées' if page.reserve else 'outil gratuit' }}</p>{% endblock %}
+{% block tete_note %}<p class="note-main">outil gratuit</p>{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
 <div class="cadre outil" data-outil="{{ o }}">
@@ -74,65 +74,8 @@
     <p>Les trois étapes se font dans l'ordre : formation générale, stage pratique d'au moins 14 jours, puis approfondissement (6 jours) ou qualification (8 jours). Le stage pratique doit avoir lieu <b>au plus tard 18 mois</b> après la formation générale, et le parcours entier tient en <b>30 mois</b> au plus.</p>
     <p class="petit">Les dates sont indicatives : la date qui fait foi est celle de votre dossier sur <a href="https://bafa-bafd.jeunes.gouv.fr/">bafa-bafd.jeunes.gouv.fr</a>, et votre organisme de formation peut vous confirmer les délais. <a href="{{ lien('/se-former/etapes-du-bafa/') }}">Le guide des étapes du BAFA, avec ses sources</a>.</p>
   </article>
-{% elif o == "annonce" %}
-  <form class="carte-compte formulaire" id="f-outil">
-    <div class="champs-2">
-      <label class="champ"><span>Le poste</span><select name="poste">
-        <option value="Animateur ou animatrice BAFA">Animateur ou animatrice BAFA</option><option value="Animateur ou animatrice stagiaire BAFA">Stagiaire BAFA</option>
-        <option value="Directeur ou directrice adjoint(e)">Directeur adjoint</option><option value="Directeur ou directrice">Directeur</option>
-        <option value="Surveillant ou surveillante de baignade">Surveillant de baignade</option><option value="Animateur ou animatrice périscolaire">Animateur périscolaire</option></select></label>
-      <label class="champ"><span>Votre structure</span><input name="structure" maxlength="80" placeholder="Accueil de loisirs Les Lucioles"></label>
-      <label class="champ"><span>Ville</span><input name="ville" maxlength="60" placeholder="Lyon 8e"></label>
-      <label class="champ"><span>Type d'accueil</span><select name="accueil"><option value="un accueil de loisirs">Accueil de loisirs</option><option value="un séjour de vacances">Séjour de vacances (colo)</option><option value="un accueil périscolaire">Périscolaire</option><option value="des mini-camps">Mini-camps</option></select></label>
-      <label class="champ"><span>Du</span><input type="date" name="debut"></label>
-      <label class="champ"><span>Au</span><input type="date" name="fin"></label>
-      <label class="champ"><span>Âge des enfants</span><input name="public" maxlength="40" placeholder="6-11 ans"></label>
-      <label class="champ"><span>Taille du groupe</span><input name="groupe" maxlength="40" placeholder="40 enfants"></label>
-      <label class="champ"><span>Contrat</span><select name="contrat"><option value="contrat d'engagement éducatif (CEE)">CEE</option><option value="CDD">CDD</option><option value="CDI">CDI</option><option value="bénévolat (stage BAFA)">Bénévole</option></select></label>
-      <label class="champ"><span>Rémunération brute par jour (€)</span><input type="number" name="brut" min="0" step="0.01" inputmode="decimal" placeholder="60"></label>
-      <label class="champ champ-large"><span>Votre projet en 2 ou 3 phrases</span><textarea name="projet" rows="3" maxlength="500" placeholder="Nature, cabanes et grands jeux : un été dehors, en petits groupes, avec un mini-camp par semaine."></textarea></label>
-    </div>
-    <fieldset class="champ-large"><legend class="champ-titre">Ce que vous offrez</legend>
-      <div class="cases">{% for v in ["Repas pris en charge", "Logement sur place", "Réunion de préparation payée", "Un référent pour les stagiaires", "BAFA ou approfondissement financé", "Possibilité de revenir aux prochaines vacances", "Transport depuis la gare"] %}<label><input type="checkbox" name="offre" value="{{ v }}"> {{ v }}</label>{% endfor %}</div>
-    </fieldset>
-    <label class="champ champ-large"><span>Pour candidater</span><input name="contact" maxlength="120" placeholder="recrutement@exemple.fr ou un lien"></label>
-  </form>
-  <div class="carte-compte resultat" id="resultat" aria-live="polite" data-smic="12.31" data-coef="4.30" data-compte="{{ lien('/compte/') }}"></div>
-  <article class="texte">
-    <h2>Pourquoi cet ordre ?</h2>
-    <p>Les jeunes lisent une offre en quelques secondes et cherchent, dans l'ordre : le poste et les dates, le lieu et le public, le contrat et la rémunération, puis ce qui rend votre accueil différent. Une annonce qui répond à ces questions reçoit plus de candidatures, et de meilleures. Plus de conseils dans <a href="{{ lien('/compte/guides/reussir-son-recrutement/') }}">Réussir son recrutement</a>.</p>
-    <p class="petit">Rien n'est envoyé : l'annonce s'écrit sur votre ordinateur. Le minimum légal en CEE est de 4,30 fois le Smic horaire par jour (article D432-2 du code de l'action sociale et des familles), soit 52,93 € brut avec le Smic horaire à 12,31 €.</p>
-  </article>
-
-{% elif o == "budget" %}
-  <form class="carte-compte formulaire" id="f-outil">
-    <div class="champs-2">
-      <label class="champ"><span>Jours d'accueil</span><input type="number" name="jours" min="1" max="80" value="20" inputmode="numeric"></label>
-      <label class="champ"><span>Jours de préparation payés (par personne)</span><input type="number" name="prepa" min="0" max="10" value="1" inputmode="numeric"></label>
-      <label class="champ"><span>Animateurs diplômés</span><input type="number" name="anim" min="0" max="200" value="4" inputmode="numeric"></label>
-      <label class="champ"><span>Brut par jour, animateur (€)</span><input type="number" name="brut_anim" min="0" step="0.01" value="60" inputmode="decimal"></label>
-      <label class="champ"><span>Stagiaires BAFA</span><input type="number" name="stag" min="0" max="200" value="2" inputmode="numeric"></label>
-      <label class="champ"><span>Brut par jour, stagiaire (€)</span><input type="number" name="brut_stag" min="0" step="0.01" value="52.93" inputmode="decimal"></label>
-      <label class="champ"><span>Direction (directeur et adjoints)</span><input type="number" name="dir" min="0" max="20" value="1" inputmode="numeric"></label>
-      <label class="champ"><span>Brut par jour, direction (€)</span><input type="number" name="brut_dir" min="0" step="0.01" value="85" inputmode="decimal"></label>
-    </div>
-  </form>
-  <div class="carte-compte resultat" id="resultat" aria-live="polite" data-smic="12.31" data-coef="4.30"></div>
-  <article class="texte">
-    <h2>Ce que le calcul compte, et ne compte pas</h2>
-    <ul>
-      <li>Le total est <b>brut</b> : ajoutez les cotisations patronales. En contrat d'engagement éducatif, elles peuvent être calculées sur une base forfaitaire réduite : demandez le taux à jour à l'Urssaf ou à votre expert-comptable.</li>
-      <li>Chaque poste est comparé au <b>minimum légal</b> de 4,30 fois le Smic horaire par jour (article D432-2 du code de l'action sociale et des familles), soit 52,93 € brut.</li>
-      <li>Un animateur ne peut pas dépasser <b>80 jours de CEE</b> sur 12 mois, tous employeurs confondus.</li>
-      <li>Le nombre d'animateurs dépend du nombre d'enfants : <a href="{{ lien('/outils/taux-d-encadrement/') }}">calculez-le avec le taux d'encadrement</a>.</li>
-    </ul>
-    <p class="petit">Rien n'est envoyé : le calcul se fait sur votre ordinateur. Cet outil aide à préparer un budget ; il ne remplace pas un conseil social ou comptable.</p>
-  </article>
 {% endif %}
 
-  {% if page.reserve %}
-  <p class="retour-espace"><a class="bouton-blanc" href="{{ lien('/compte/') }}?onglet=outils">← Retour à ma boîte à outils</a></p>
-  {% else %}
   <nav class="autres-outils" aria-label="Les autres outils">
     <h2>Les autres outils gratuits</h2>
     <ul class="liste-outils">
@@ -141,7 +84,6 @@
     {% endfor %}
     </ul>
   </nav>
-  {% endif %}
 </div>
 </section>
 {% endblock %}

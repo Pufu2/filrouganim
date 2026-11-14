@@ -825,17 +825,15 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/"), "recruter": ("Structures", "/recruter/")}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/")}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
             partie = PARTIES[entete["partie"]]
-            reserve = entete["partie"] == "recruter"   # les guides des structures : dans « Mon espace », réservés aux abonnées
-            url = f"/compte/guides/{f.stem}/" if reserve else f"{partie[1]}{f.stem}/"
+            url = f"{partie[1]}{f.stem}/"
             guides.append({**entete, "url": url})
             self.ajouter(url, "guide.html", titre=entete["titre"], description=entete["description"],
-                         corps_md=corps, entete=entete, indexer=not reserve, reserve=reserve,
-                         fil=[("Mon espace", "/compte/"), (entete["court"], url)] if reserve else [partie, (entete["court"], url)])
+                         corps_md=corps, entete=entete, fil=[partie, (entete["court"], url)])
         guides.sort(key=lambda g: g.get("ordre", 99))
         self.config["guides"] = guides
         self.ajouter("/se-former/questions-frequentes/", "faq.html",
@@ -946,17 +944,6 @@ class Site:
              "Calculez les dates limites de votre BAFA : stage pratique dans les 18 mois, parcours complet en 30 mois, et les sessions d'approfondissement à temps.", "parcours"),
         ]:
             self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, fil=[OT, (h1, url)])
-        # les outils des structures abonnées : dans « Mon espace », hors des moteurs de recherche
-        for url, gab, titre, h1, intro, description, outil in [
-            ("/compte/outils/annonce-animateur/", "outil.html", "Écrire une annonce d'animateur ou de directeur",
-             "Écrire son annonce d'animateur", "Remplissez les cases : l'annonce s'écrit toute seule, dans l'ordre où les jeunes la lisent. Copiez-la, ou publiez-la depuis votre espace.",
-             "Générateur gratuit d'annonce pour recruter un animateur BAFA, un stagiaire ou un directeur : poste, dates, public, contrat, rémunération, projet et avantages, dans le bon ordre.", "annonce"),
-            ("/compte/outils/budget-equipe/", "outil.html", "Budget de l'équipe d'animation en CEE",
-             "Calculer le budget de son équipe", "Combien coûte l'équipe d'animation d'un séjour ou d'une période de vacances en contrat d'engagement éducatif ? Le total brut, poste par poste.",
-             "Calculateur gratuit du budget d'une équipe d'animation en contrat d'engagement éducatif : animateurs, stagiaires, direction, jours de préparation, avec le minimum légal de 52,93 € brut par jour.", "budget"),
-        ]:
-            self.ajouter(url, gab, titre=titre, h1=h1, intro=intro, description=description, outil=outil, indexer=False, reserve=True,
-                         fil=[("Mon espace", "/compte/"), (h1, url)])
         if (self.config.get("supabase") or {}).get("url"):
             self.ajouter("/alertes/desabonnement/", "desabonnement.html", titre="Arrêter les alertes", indexer=False,
                          h1="Arrêter les alertes du lundi")
