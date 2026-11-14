@@ -781,6 +781,14 @@
     else $("bloc-abonnement").hidden = true;
     if (structure) chargerOffres().then(tableauStructure).then(function () { tableauDeBord(); });
     $("bloc-tableau").hidden = nouveau;
+    // les conseils : pour les structures abonnées ; un conseil de la semaine en tête, 4 visibles, les autres au clic
+    $("bloc-conseils").hidden = nouveau || !paye(structure);
+    $("bloc-conseils-verrou").hidden = nouveau || paye(structure);
+    if (!$("bloc-conseils").hidden) {
+      var ol = $("liste-conseils"), items = Array.prototype.slice.call(ol.children);
+      var semaine = Math.floor(Date.now() / (7 * 864e5)) % items.length;
+      items.slice(semaine).concat(items.slice(0, semaine)).forEach(function (li, k) { li.classList.toggle("co-c-semaine", k === 0); ol.appendChild(li); });
+    }
     if (actif(structure)) chargerCandidats();
     if (structure) chargerDemandesRecues().then(function () { tableauStructure(); if (!$("tb-conseils").firstChild) return; conseilsStructure(); });
     if (params.get("profil") && !profilDemande) { profilDemande = true; ouvrirProfilDemande(params.get("profil")); }
@@ -1554,6 +1562,10 @@
       Array.prototype.forEach.call(document.querySelectorAll("#bloc-tableau [data-jours]"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
       tableauDeBord();
     });
+  });
+  $("conseils-tous").addEventListener("click", function () {
+    var ol = $("liste-conseils"), ouvert = ol.classList.toggle("co-c-tous");
+    this.setAttribute("aria-expanded", ouvert); this.textContent = ouvert ? "Moins de conseils" : "Voir les 16 conseils";
   });
   function jourIso(d) { return d.toISOString().slice(0, 10); }
   async function tableauDeBord() {
