@@ -243,6 +243,8 @@
     var auth = ids.some(function (v) { return VUES_AUTH.indexOf(v) >= 0; });
     $("auth").hidden = !auth;
     document.body.classList.toggle("page-auth", auth);
+    // l'administration prend toute la largeur de l'écran
+    document.body.classList.toggle("admin-large", ids.indexOf("v-admin") >= 0);
   }
   function message(texte, erreur) {
     var m = $("message");
