@@ -159,6 +159,13 @@
     var v = $(vue), nav = v && v.querySelector(".co-nav");
     if (!nav) return;
     if (!nav.querySelector('[data-onglet-vers="' + nom + '"]')) nom = nav.querySelector("[data-onglet-vers]").dataset.ongletVers;
+    // un onglet fermé (structure sans abonnement) renvoie vers l'abonnement, avec l'explication
+    var cible = nav.querySelector('[data-onglet-vers="' + nom + '"]');
+    if (cible && cible.classList.contains("co-ferme")) {
+      nom = structure ? "abonnement" : "page";
+      message(structure ? "Cette partie s'ouvre dès que l'abonnement est réglé : votre page, vos offres, les profils des candidats et les demandes de votre secteur."
+                        : "Commencez par enregistrer votre page ; vous réglerez ensuite l'abonnement, et tout votre espace s'ouvrira.");
+    }
     ongletActuel[vue] = nom;
     Array.prototype.forEach.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) {
       if (b.dataset.ongletVers === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
@@ -227,6 +234,7 @@
     } catch (e) { return null; }
   }
 
+  var CONNEXION_SEULE = "fra-connexion-seule";
   var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-admin", "v-session"];
   var estAdmin = false;
   function voirAdmin() {
@@ -256,7 +264,8 @@
   function erreurLisible(e) {
     var t = (e && (e.message || e.error_description)) || String(e);
     if (e && (e.status === 429 || /rate limit/i.test(t))) return "Trop de demandes d'un coup : réessayez dans quelques minutes.";
-    if (/invalid login credentials/i.test(t)) return "Adresse e-mail ou mot de passe incorrect. Vous vous étiez inscrit avec Google ? Utilisez le bouton « Continuer avec Google ».";
+    if (/invalid login credentials/i.test(t)) return "Adresse e-mail ou mot de passe incorrect. Vous vous étiez inscrit avec Google ? Utilisez le bouton « Continuer avec Google ». Pas encore de compte ? Créez-le avec « Commencer ».";
+    if (/signups? not allowed|user not found|otp_disabled/i.test(t)) return "Aucun compte avec cette adresse. Pour en créer un, passez par « Commencer ».";
     if (/email not confirmed/i.test(t)) return "Votre adresse n'est pas encore confirmée : cliquez sur le lien reçu par e-mail (regardez aussi dans les indésirables).";
     if (/password should be|weak password/i.test(t)) return "Mot de passe trop simple : 8 caractères au moins, sans votre adresse e-mail.";
     if (/user already registered|already been registered/i.test(t)) return "Un compte existe déjà avec cette adresse : connectez-vous.";
@@ -357,6 +366,19 @@
     // l'administration : la base dit si ce compte en fait partie ; il passe d'un espace à l'autre
     var ad = await sb.rpc("est_admin");
     estAdmin = !!(ad && ad.data === true);
+    // « Mon espace » n'ouvre pas de compte : un compte que Google vient de créer depuis la connexion est retiré,
+    // et la personne passe par « Commencer » (où elle choisit animateur ou structure)
+    var connexionSeule = false;
+    try { connexionSeule = localStorage.getItem(CONNEXION_SEULE) === "1"; localStorage.removeItem(CONNEXION_SEULE); } catch (e) {}
+    var toutNeuf = utilisateur.created_at && (Date.now() - new Date(utilisateur.created_at).getTime()) < 15 * 60 * 1000;
+    if (connexionSeule && toutNeuf && !profil && !structure && !estAdmin) {
+      await sb.rpc("supprimer_mon_compte");
+      await sb.auth.signOut();
+      utilisateur = null; memoire(null);
+      montrer("v-inscription"); preparerInscription();
+      message("Vous n'avez pas encore de compte avec cette adresse. Créez-le ici : choisissez « Animateur » ou « Structure », puis continuez avec Google.");
+      return;
+    }
     if (estAdmin) {
       $("co-bascule").hidden = false;
       var voulu = params.get("role") || "admin";
@@ -378,6 +400,8 @@
   Array.prototype.forEach.call(document.querySelectorAll("[data-google]"), function (b) {
     b.addEventListener("click", async function () {
       if (roleChoisi) memoire({ role: roleChoisi, poste: posteChoisi });
+      // depuis « Mon espace », Google ne sert qu'à se connecter : au retour, un compte tout neuf est refusé
+      try { if (b.closest("#v-connexion")) localStorage.setItem(CONNEXION_SEULE, "1"); else localStorage.removeItem(CONNEXION_SEULE); } catch (e) {}
       b.disabled = true;
       var r = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: adresseRetour(roleChoisi) } });
       if (r.error) { b.disabled = false; message(erreurLisible(r.error), true); }
@@ -398,7 +422,7 @@
     e.preventDefault();
     var form = this, email = form.email.value.trim();
     occupe(form, true);
-    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: adresseRetour(null) } });
+    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: adresseRetour(null), shouldCreateUser: false } });
     occupe(form, false);
     if (r.error) message(erreurLisible(r.error), true);
     else message("C'est envoyé. Ouvrez l'e-mail reçu à " + email + " et cliquez sur le lien (regardez aussi dans les indésirables).");
@@ -775,7 +799,15 @@
     $("accord-structure").hidden = !nouveau;
     f.accord.required = nouveau;
     assistantStructure.ouvrir(nouveau);
-    ongletDepart("v-structure", nouveau ? "page" : !paye(structure) ? "abonnement" : "tableau", nouveau);
+    // tant que l'abonnement n'est pas réglé : seulement « Ma page » et « Abonnement », le reste est fermé
+    var ferme = !paye(structure);
+    Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
+      var verrou = ferme && ["page", "abonnement"].indexOf(b.dataset.ongletVers) < 0;
+      b.classList.toggle("co-ferme", verrou);
+      b.setAttribute("aria-disabled", verrou ? "true" : "false");
+      b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page, puis réglez l'abonnement" : "S'ouvre avec l'abonnement") : "";
+    });
+    ongletDepart("v-structure", nouveau ? "page" : ferme ? "abonnement" : "tableau", nouveau || ferme);
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
@@ -1058,7 +1090,7 @@
     var nouveau = !structure;
     structure = r.data;
     memoire(null);
-    message(nouveau ? "Fiche enregistrée. Nous vérifions la structure, puis vos offres pourront être en ligne." : "Fiche enregistrée.");
+    message(nouveau || !paye(structure) ? "Fiche enregistrée. Dernière étape : réglez l'abonnement, et tout votre espace s'ouvre (nous vérifions ensuite la structure)." : "Fiche enregistrée.");
     voirStructure();
   });
 
