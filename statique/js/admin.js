@@ -87,6 +87,7 @@
 
   /* -- statistiques -- */
   function stats() {
+    if (window.FRA_STATS) { window.FRA_STATS.rendre($("ad-stats"), D, E); return; }
     var c = $("ad-stats"); c.textContent = "";
     c.appendChild(el("h2", null, "Statistiques"));
     var p = D.profils, s = D.structures, o = D.offres, d = D.demandes, ca = D.candidatures, u = D.comptes;

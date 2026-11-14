@@ -2487,3 +2487,90 @@ html.fiche-ouverte { overflow: hidden; }
 .ad-ligne { grid-template-columns: 1fr; }
 .ad-pastilles { justify-content: flex-start; }
 .ad-grille { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+/* l'administration en pleine largeur (seulement la vue admin) */
+body.admin-large #espace-compte { width: calc(100% - 48px); max-width: 1760px; }
+body.admin-large .compte-vue.co-onglets#v-admin:not([hidden]) { grid-template-columns: 220px minmax(0, 1fr); column-gap: 24px; }
+body.admin-large #v-admin > .ad-bloc { padding: 26px 28px; }
+@media (max-width: 900px) { body.admin-large #espace-compte { width: calc(100% - 32px); } body.admin-large #v-admin > .ad-bloc { padding: 18px 14px; } }
+
+/* les statistiques : un tableau de bord sur une grille de 12 colonnes */
+.st { background: #f7f2ec; border-color: #ece3d8; }
+.st-tete { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.st-tete h2 { margin: 0; font: 600 1.9rem/1.1 var(--titres); }
+.st-maj { margin: 6px 0 0; font-size: .85rem; color: var(--doux); }
+.st-periodes { display: inline-flex; padding: 4px; border-radius: 12px; background: #fff; border: 1px solid #e6dccf; }
+.st-periodes button { border: 0; background: none; padding: 8px 14px; border-radius: 9px; font: 700 .88rem var(--texte); color: var(--doux); cursor: pointer; }
+.st-periodes button[aria-pressed="true"] { background: var(--nuit); color: #fff; }
+.st-themes { display: flex; gap: 4px; margin: 20px 0 18px; border-bottom: 1px solid #e3d8cb; overflow-x: auto; scrollbar-width: none; }
+.st-themes button { border: 0; background: none; padding: 10px 14px; font: 700 .93rem var(--texte); color: var(--doux); border-bottom: 2.5px solid transparent; margin-bottom: -1px; white-space: nowrap; cursor: pointer; }
+.st-themes button:hover { color: var(--encre); }
+.st-themes button[aria-selected="true"] { color: var(--encre); border-bottom-color: var(--fil); }
+.st-grille { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.st-carte { background: #fff; border: 1px solid #ebe1d5; border-radius: 16px; padding: 18px 20px; min-width: 0; box-shadow: 0 1px 2px rgba(35, 31, 32, .04); }
+.st-c2 { grid-column: span 2; } .st-c4 { grid-column: span 4; } .st-c6 { grid-column: span 6; } .st-c8 { grid-column: span 8; } .st-c12 { grid-column: span 12; }
+.st-carte-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.st-carte-tete h3 { margin: 0; font: 700 1rem/1.3 var(--texte); }
+.st-carte-tete p { margin: 3px 0 0; font-size: .84rem; color: var(--doux); line-height: 1.45; }
+/* chiffres clés */
+.st-kpi { display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 10px; }
+.st-kpi-titre { margin: 0; font-size: .82rem; font-weight: 700; color: var(--doux); line-height: 1.3; min-height: 2.1em; }
+.st-kpi-ligne { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.st-kpi-ligne b { font: 600 1.85rem/1.1 var(--titres); color: var(--encre); letter-spacing: -.01em; }
+.st-kpi-aide { margin: 0; font-size: .76rem; color: var(--doux); line-height: 1.35; min-height: 1.35em; }
+.st-delta { font-size: .76rem; font-weight: 700; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+.st-delta-haut { background: #e3f1e7; color: #276043; } .st-delta-bas { background: #fbe4e7; color: #a8162a; } .st-delta-neutre { background: #f1e9df; color: #6b5f58; }
+.st-etincelle { display: block; width: 100%; height: 34px; margin-top: 6px; }
+/* grand graphique */
+.st-graphe { position: relative; }
+.st-legende { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 10px; }
+.st-leg { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border-radius: 99px; border: 1px solid #ebe1d5; background: #fff; font: 700 .8rem var(--texte); color: var(--encre); cursor: pointer; }
+.st-leg i { width: 9px; height: 9px; border-radius: 3px; }
+.st-leg[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+.st-graphe-zone { position: relative; width: 100%; }
+.st-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.st-grille-ligne { stroke: #efe6db; stroke-width: 1; }
+.st-axe { fill: #8a7d76; font: 600 11px var(--texte); }
+.st-repere { stroke: #b9aca3; stroke-width: 1; stroke-dasharray: 3 3; }
+.st-bulle { position: absolute; z-index: 3; min-width: 180px; padding: 10px 12px; border-radius: 12px; background: var(--nuit); color: #e4dcd6; font-size: .82rem; box-shadow: 0 12px 28px -12px rgba(0, 0, 0, .5); pointer-events: none; display: flex; flex-direction: column; gap: 4px; }
+.st-bulle[hidden] { display: none; }
+.st-bulle > b { color: #fff; margin-bottom: 2px; }
+.st-bulle span { display: flex; align-items: center; gap: 6px; } .st-bulle span b { color: #fff; margin-left: auto; padding-left: 10px; }
+.st-bulle i { width: 8px; height: 8px; border-radius: 2px; }
+/* anneau */
+.st-anneau { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.st-anneau-svg { width: 132px; height: 132px; flex: none; }
+.st-anneau-total { font: 600 22px var(--titres); fill: var(--encre); }
+.st-anneau-legende { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 160px; display: grid; gap: 7px; }
+.st-anneau-legende li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto 42px; align-items: center; gap: 8px; font-size: .86rem; }
+.st-anneau-legende i { width: 10px; height: 10px; border-radius: 3px; }
+.st-anneau-legende span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-anneau-legende small { color: var(--doux); text-align: right; }
+.st-revenu { margin: -2px 0 16px; display: flex; flex-direction: column; gap: 2px; }
+.st-revenu b { font: 600 2.2rem/1.1 var(--titres); }
+.st-revenu span { font-size: .85rem; color: var(--doux); }
+/* listes à barres (le fond de la ligne fait la barre) */
+.st-liste-tete { display: flex; justify-content: space-between; padding: 0 10px 6px; font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #9a8d85; }
+.st-liste-ligne { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 7px 10px; margin: 3px 0; border-radius: 8px; font-size: .88rem; overflow: hidden; }
+.st-liste-ligne > i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--fil); opacity: .13; border-radius: 8px; }
+.st-liste-ligne span, .st-liste-ligne b { position: relative; }
+.st-liste-ligne span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-liste-ligne b { white-space: nowrap; } .st-liste-ligne small { color: var(--doux); font-weight: 600; }
+.st-vide { margin: 8px 0; color: var(--doux); font-size: .88rem; }
+/* entonnoir en colonnes */
+.st-entonnoir { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 10px; align-items: end; }
+.st-et { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.st-et > b { font: 600 1.35rem/1 var(--titres); }
+.st-et > small { font-size: .72rem; color: var(--doux); line-height: 1.3; min-height: 2.6em; }
+.st-et-barre { height: 120px; display: flex; align-items: flex-end; background: #f6efe7; border-radius: 8px; overflow: hidden; }
+.st-et-barre i { display: block; width: 100%; background: var(--fil); border-radius: 8px 8px 0 0; }
+.st-et > span { font-size: .8rem; font-weight: 700; line-height: 1.3; }
+/* tableaux */
+.st-tableau-boite { overflow-x: auto; }
+.st-tableau { width: 100%; border-collapse: collapse; font-size: .87rem; }
+.st-tableau th { text-align: left; padding: 8px 10px; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: #9a8d85; border-bottom: 1px solid #ebe1d5; white-space: nowrap; }
+.st-tableau td { padding: 9px 10px; border-bottom: 1px solid #f3ece4; }
+.st-tableau tr:hover td { background: #fbf8f4; }
+.st-tableau .st-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 1350px) { .st-c2 { grid-column: span 4; } .st-c4 { grid-column: span 6; } .st-c8 { grid-column: span 12; } }
+@media (max-width: 760px) { .st-c2 { grid-column: span 6; } .st-c4, .st-c6, .st-c8 { grid-column: span 12; } .st-entonnoir { grid-auto-flow: row; grid-auto-columns: auto; } .st-et-barre { height: 14px; } .st-et-barre i { height: 100% !important; width: var(--l, 100%); } }
