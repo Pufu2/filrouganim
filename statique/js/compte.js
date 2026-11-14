@@ -44,6 +44,117 @@
       var a = document.createElement("a"); a.className = "bouton-r"; a.href = L.lien_demande || "/trouver-un-poste/demande/"; a.textContent = "Décrire ce que je cherche"; vide.appendChild(a);
     }
   }
+
+  /* -- l'en-tête de chaque onglet (comme l'espace de jasonmarinho.com) : sur-titre, grand titre, actions, et « À faire » à droite -- */
+  var ICO = {
+    tableau: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    page: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    offres: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
+    candidats: '<circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/>',
+    demandes: '<path d="M4 12l16-8-6 16-2-6z"/>',
+    abonnement: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    outils: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>'
+  };
+  function iconeOnglet(nom) { var sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("viewBox", "0 0 24 24"); sv.setAttribute("aria-hidden", "true"); sv.innerHTML = ICO[nom] || ICO.page; return sv; }
+  function enteteDonnees(vue, nom) {
+    var pl = function (n, mot, motPl) { return n + " " + (n > 1 ? (motPl || mot + "s") : mot); };
+    if (vue === "v-structure") {
+      var st = structure || {}, auj = aujourdhui();
+      var enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= auj; });
+      var bientot = enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(auj)) / 864e5 <= 7; }).length;
+      var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
+      var afaire = [];
+      if (structure && !paye(structure)) afaire.push(["!", "abonnement à régler", "abonnement"]);
+      if (nouvelles) afaire.push([nouvelles, pl(nouvelles, "nouvelle candidature", "nouvelles candidatures"), "candidats"]);
+      if (demandesRecues.length) afaire.push([demandesRecues.length, pl(demandesRecues.length, "demande reçue", "demandes reçues").replace(/^\d+ /, ""), "demandes"]);
+      if (bientot) afaire.push([bientot, (bientot > 1 ? "offres expirent" : "offre expire") + " cette semaine", "offres"]);
+      var nomSt = st.nom || "votre structure";
+      return {
+        tableau: { sur: "Tableau de bord", t: "Bonjour, ", em: nomSt, p: "Votre recrutement en un coup d'œil : les vues de votre page, les candidats et ce qu'il reste à faire.",
+                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "/recruter/reussir-son-recrutement/"],
+                   resume: { t: "À faire", lignes: afaire, vide: "Rien d'urgent : tout est à jour.", mini: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
+        page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
+                actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(actif(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
+                resume: { t: "Votre page", jauge: true } },
+        offres: { sur: "Mes offres", t: "Vos offres, ", em: "là où les jeunes cherchent", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
+                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "/outils/annonce-animateur/", 2]], guide: ["Une annonce qui donne envie", "/recruter/reussir-son-recrutement/"],
+                  resume: { t: "Vos offres", lignes: bientot ? [[bientot, (bientot > 1 ? "expirent" : "expire") + " dans 7 jours", "offres"]] : [], mini: [[enLigne.length, "en ligne"], [mesOffres.length - enLigne.length, "hors ligne"]] } },
+        candidats: { sur: "Candidats", t: "Les animateurs ", em: "de votre secteur", p: "Les candidatures à vos offres, et les profils des animateurs qui cherchent près de chez vous. Mettez les meilleurs en favoris.",
+                     actions: [], guide: ["Accueillir un stagiaire BAFA", "/recruter/accueillir-un-stagiaire-bafa/"],
+                     resume: { t: "Candidatures", lignes: nouvelles ? [[nouvelles, nouvelles > 1 ? "nouvelles à lire" : "nouvelle à lire", "candidats"]] : [], vide: "Pas de nouvelle candidature.", mini: [[recues.length, "reçues"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
+        demandes: { sur: "Demandes reçues", t: "Ils décrivent leur besoin, ", em: "vous répondez", p: "Les animateurs qui cherchent un poste envoient leur demande aux 3 structures les plus proches. Répondez vite : vous n'êtes que trois.",
+                    actions: [], guide: ["Comment ça marche", "/trouver-un-poste/demande/"],
+                    resume: { t: "Demandes", mini: [[demandesRecues.length, demandesRecues.length > 1 ? "reçues" : "reçue"]] } },
+        abonnement: { sur: "Abonnement et centres", t: "Votre abonnement, ", em: "sans commission", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
+                      actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
+                      resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["!", "à régler pour être en ligne", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
+        outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti.",
+                  actions: [["Toute la boîte à outils", "/recruter/boite-a-outils/", 2]], guide: null, resume: null }
+      }[nom];
+    }
+    var pr = profil || {};
+    var enCours = mesCandidatures.filter(function (c) { return c.statut === "envoyee" || c.statut === "vue"; }).length;
+    var retenues = mesCandidatures.filter(function (c) { return c.statut === "retenue"; }).length;
+    return {
+      tableau: { sur: "Tableau de bord", t: "Bonjour" + (pr.prenom ? " " : ""), em: pr.prenom || "", p: "Vos candidatures, vos demandes et les offres de votre secteur, au même endroit.",
+                 actions: [["Voir les offres", L.lien_offre, 2], ["Décrire ce que je cherche", L.lien_demande, 2]], guide: ["Trouver son stage pratique", "/trouver-un-poste/trouver-son-stage-pratique/"],
+                 resume: { t: "En ce moment", lignes: retenues ? [[retenues, retenues > 1 ? "candidatures retenues" : "candidature retenue", "candidatures"]] : [], vide: "Pas de nouvelle réponse.", mini: [[mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature"], [enCours, "en attente"]] } },
+      profil: { sur: "Mon profil", t: "Votre profil, ", em: "vu par les structures", p: "Les structures vérifiées de votre secteur le consultent et vous écrivent directement. Plus il est complet, plus on vous contacte.",
+                actions: [["Voir ma fiche", "#bloc-profil .as-voir-fiche", 1]], guide: ["Un exemple de profil", "/trouver-un-poste/exemple-de-profil/"], resume: null },
+      candidatures: { sur: "Mes candidatures", t: "Vos candidatures, ", em: "suivies de près", p: "Envoyée, vue, retenue : vous voyez où en est chacune.", actions: [["Voir les offres", L.lien_offre, 2]], guide: ["Préparer son entretien", "/trouver-un-poste/preparer-son-entretien/"],
+                      resume: { t: "Suivi", mini: [[mesCandidatures.length, "envoyées"], [retenues, retenues > 1 ? "retenues" : "retenue"]] } },
+      demandes: { sur: "Mes demandes", t: "Décrivez, ", em: "les structures viennent à vous", p: "Votre demande part chez les 3 structures les plus proches, qui vous répondent par e-mail.", actions: [["Nouvelle demande", L.lien_demande, 2]], guide: null, resume: null },
+      offres: { sur: "Offres pour moi", t: "Les offres ", em: "de votre secteur", p: "Les offres en ligne près de chez vous et dans les départements où vous pouvez travailler.", actions: [["Toutes les offres", L.lien_offre, 2]], guide: null, resume: null }
+    }[nom];
+  }
+  function majEntete(vue) {
+    var v = $(vue), nom = ongletActuel[vue]; if (!v || !nom) return;
+    var d = enteteDonnees(vue, nom), e = v.querySelector(".co-entete");
+    if (!e) { e = el("section", "co-entete"); var nav = v.querySelector(".co-nav"); v.insertBefore(e, nav.nextSibling); }
+    e.textContent = "";
+    if (!d) { e.hidden = true; return; }
+    e.hidden = false;
+    var g = el("div", "co-e-texte");
+    var sur = el("p", "co-e-sur"); sur.appendChild(iconeOnglet(nom === "profil" ? "page" : nom === "candidatures" ? "offres" : nom)); sur.appendChild(document.createTextNode(d.sur)); g.appendChild(sur);
+    var h = el("h2"); h.appendChild(document.createTextNode(d.t)); if (d.em) h.appendChild(el("em", null, d.em)); g.appendChild(h);
+    g.appendChild(el("p", "co-e-p", d.p));
+    var acts = el("div", "co-e-actions");
+    (d.actions || []).forEach(function (a, i) {
+      var b;
+      if (a[2] === 2) { b = el("a", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.href = a[1]; if (/^\/|^http/.test(a[1]) && a[1].indexOf("/compte/") < 0) { b.target = "_blank"; b.rel = "noopener"; } }
+      else if (a[2] === 1) { b = el("button", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.type = "button"; b.addEventListener("click", function () { var c = v.querySelector(a[1]); if (c) { c.click(); var bl = c.closest("[data-onglet]"); if (bl) allerA(bl.id); } }); }
+      else { b = el("button", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.type = "button"; b.dataset.ongletVers = a[1]; }
+      acts.appendChild(b);
+    });
+    if (d.guide) { var gd = el("a", "co-e-guide", "✦ " + d.guide[0]); gd.href = d.guide[1]; gd.target = "_blank"; gd.rel = "noopener"; acts.appendChild(gd); }
+    if (acts.children.length) g.appendChild(acts);
+    e.appendChild(g);
+    var r = d.resume;
+    if (r) {
+      var c = el("div", "co-e-resume");
+      c.appendChild(el("p", "co-e-r-t", r.t));
+      if (r.jauge) {
+        var pc = $("bloc-structure").querySelector('[data-ap="pourcent"]');
+        var pct = pc ? parseInt(pc.textContent, 10) || 0 : 0;
+        var big = el("p", "co-e-r-pc"); big.appendChild(el("b", null, pct + " %")); big.appendChild(el("span", null, " complétée")); c.appendChild(big);
+        var j = el("div", "co-e-jauge"); var jj = el("span"); jj.style.width = pct + "%"; j.appendChild(jj); c.appendChild(j);
+      }
+      (r.lignes || []).forEach(function (l) {
+        var b = el("button", "co-e-ligne"); b.type = "button"; b.dataset.ongletVers = l[2];
+        b.appendChild(el("b", null, String(l[0]))); b.appendChild(el("span", null, l[1])); b.appendChild(el("i", null, "›"));
+        c.appendChild(b);
+      });
+      if (!(r.lignes || []).length && r.vide) c.appendChild(el("p", "co-e-r-vide", r.vide));
+      if (r.mini && r.mini.length) {
+        var m = el("p", "co-e-mini");
+        r.mini.forEach(function (x) { var s2 = el("span"); s2.appendChild(el("b", null, String(x[0]))); s2.appendChild(document.createTextNode(" " + x[1])); m.appendChild(s2); });
+        c.appendChild(m);
+      }
+      e.appendChild(c);
+    } else e.classList.add("co-entete-seul");
+    if (r) e.classList.remove("co-entete-seul");
+  }
+
   function montrerOnglet(vue, nom, remonter) {
     var v = $(vue), nav = v && v.querySelector(".co-nav");
     if (!nav) return;
@@ -55,6 +166,7 @@
     Array.prototype.forEach.call(v.querySelectorAll("[data-onglet]"), function (b) { b.classList.toggle("hors-onglet", b.dataset.onglet !== nom); });
     try { sessionStorage.setItem("fra-onglet-" + vue, nom); } catch (e) {}
     majVide(vue);
+    try { majEntete(vue); } catch (err) {}
     if (remonter) window.scrollTo({ top: Math.max(0, v.getBoundingClientRect().top + window.scrollY - 100), behavior: "smooth" });
   }
   function ongletDepart(vue, defaut, force) {
@@ -659,6 +771,8 @@
       st.textContent = "Structure en ligne : votre page et vos offres sont visibles par tous, et vous voyez les profils des candidats.";
       st.className = "statut statut-ok";
     }
+    if (st.classList.contains("statut-ok")) st.dataset.onglet = "tableau"; else { delete st.dataset.onglet; st.classList.remove("hors-onglet"); }
+    montrerOnglet("v-structure", ongletActuel["v-structure"]);
     $("bloc-offres").hidden = nouveau;
     $("bloc-centres").hidden = nouveau;
     $("bloc-candidats").hidden = !actif(structure);
@@ -1295,7 +1409,16 @@
   function carteProfil(p, avecFavori) {
     var c = el("article", "ligne-compte profil-candidat");
     var corps = el("div");
-    corps.appendChild(el("h3", null, p.prenom + (p.annee_naissance ? ", " + age(p.annee_naissance) + " ans" : "") + " · " + (p.ville ? p.ville + ", " : "") + nomDep(p.departement)));
+    var tete = el("div", "pc-tete");
+    var COUL = ["#3f5b4b", "#a8162a", "#8a5a2b", "#2f6f73", "#5b3f86"];
+    var av = el("span", "pc-avatar", (p.prenom || "?").charAt(0).toUpperCase());
+    av.style.background = COUL[((p.prenom || "").charCodeAt(0) || 0) % COUL.length];
+    tete.appendChild(av);
+    var tt = el("div");
+    tt.appendChild(el("h3", null, p.prenom + (p.annee_naissance ? ", " + age(p.annee_naissance) + " ans" : "")));
+    tt.appendChild(el("p", "pc-lieu", (p.ville ? p.ville + ", " : "") + nomDep(p.departement)));
+    tete.appendChild(tt);
+    corps.appendChild(tete);
     if (p.poste_recherche) corps.appendChild(el("p", "accroche-profil", p.poste_recherche));
     if (p.diplomes && p.diplomes.length) {
       var ul = el("ul", "pastilles");
@@ -1419,6 +1542,7 @@
     pastille("abonnement", !paye(structure));
     majVide("v-structure");
     apercuStructure();
+    try { majEntete("v-structure"); } catch (err) {}
   }
 
 
@@ -1658,6 +1782,7 @@
       }
       l2.appendChild(item);
     });
+    try { majEntete("v-candidat"); } catch (err) {}
   }
 
   var offreVisee = null;
