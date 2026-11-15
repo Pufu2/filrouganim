@@ -2,7 +2,7 @@
 # Source : Caisse des Dépôts, catalogue des formations éligibles au CPF (Licence Ouverte Etalab).
 # Fichier écrit par outils/relever_cpf.py : ne pas modifier à la main. Faits seulement : école, diplôme,
 # département, durée moyenne en heures, prix TTC (le plus bas et le plus haut), nombre de sessions ouvertes.
-# Relevé du 2026-11-14.
+# Relevé du 2026-11-15.
 
 formations:
   - {"organisme_nom": "Les Francas Auvergne Rhone Alpes", "siret": "77986880100076", "diplome": "BPJEPS", "specialite": "asec", "departement": "01", "prix_min": 9030, "prix_max": 9030, "heures": null, "sessions": 1, "distance": false}
@@ -63,7 +63,7 @@ formations:
   - {"organisme_nom": "Les Francas Auvergne Rhone Alpes", "siret": "77986880100076", "diplome": "BPJEPS", "specialite": "asec", "departement": "43", "prix_min": 9030, "prix_max": 9030, "heures": null, "sessions": 1, "distance": false}
   - {"organisme_nom": "AFOCAL Pays de la Loire", "siret": "39822063200036", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 6900, "prix_max": 6900, "heures": 1800, "sessions": 2, "distance": false}
   - {"organisme_nom": "Animaje", "siret": "41235455700024", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 6500, "prix_max": 6500, "heures": null, "sessions": 3, "distance": false}
-  - {"organisme_nom": "Association Region des CEMEA des Pays de Loire", "siret": "33748609600049", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 490, "prix_max": 9000, "heures": 452, "sessions": 18, "distance": false}
+  - {"organisme_nom": "Association Region des CEMEA des Pays de Loire", "siret": "33748609600049", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 490, "prix_max": 9000, "heures": 145, "sessions": 18, "distance": false}
   - {"organisme_nom": "Federation Amicales Laiques", "siret": "78601876200124", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 6962, "prix_max": 6962, "heures": 1701, "sessions": 2, "distance": false}
   - {"organisme_nom": "IRSS", "siret": "33441214500263", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 7980, "prix_max": 7980, "heures": 1500, "sessions": 1, "distance": false}
   - {"organisme_nom": "Union Regionale des Francas des Pays de Loire", "siret": "78602077600039", "diplome": "BPJEPS", "specialite": "asec", "departement": "44", "prix_min": 1050, "prix_max": 8715, "heures": null, "sessions": 7, "distance": false}
@@ -105,7 +105,7 @@ formations:
   - {"organisme_nom": "Les Francas Auvergne Rhone Alpes", "siret": "77986880100076", "diplome": "BPJEPS", "specialite": "asec", "departement": "69", "prix_min": 9030, "prix_max": 9030, "heures": 1707, "sessions": 2, "distance": false}
   - {"organisme_nom": "Ocellia", "siret": "30293883200045", "diplome": "BPJEPS", "specialite": "asec", "departement": "69", "prix_min": 7252, "prix_max": 7252, "heures": null, "sessions": 1, "distance": false}
   - {"organisme_nom": "Association de Gestion et de Developpement du Club CAMUS", "siret": "39992626000049", "diplome": "BPJEPS", "specialite": "asec", "departement": "71", "prix_min": 7044, "prix_max": 7044, "heures": 1100, "sessions": 1, "distance": false}
-  - {"organisme_nom": "Association Region des CEMEA des Pays de Loire", "siret": "33748609600049", "diplome": "BPJEPS", "specialite": "asec", "departement": "72", "prix_min": 490, "prix_max": 9600, "heures": 150, "sessions": 28, "distance": false}
+  - {"organisme_nom": "Association Region des CEMEA des Pays de Loire", "siret": "33748609600049", "diplome": "BPJEPS", "specialite": "asec", "departement": "72", "prix_min": 490, "prix_max": 9600, "heures": 226, "sessions": 28, "distance": false}
   - {"organisme_nom": "Profession Sport Animation Savoie", "siret": "38955914700035", "diplome": "BPJEPS", "specialite": "asec", "departement": "73", "prix_min": 6930, "prix_max": 6930, "heures": 1890, "sessions": 1, "distance": false}
   - {"organisme_nom": "ANIM et COM CONSULTANT", "siret": "87949360900017", "diplome": "BPJEPS", "specialite": "asec", "departement": "75", "prix_min": 990, "prix_max": 6150, "heures": 1213, "sessions": 8, "distance": false}
   - {"organisme_nom": "Union Francaise Centre Vacances Loisirs", "siret": "77568562101547", "diplome": "BPJEPS", "specialite": "asec", "departement": "75", "prix_min": 1500, "prix_max": 5940, "heures": 803, "sessions": 4, "distance": false}

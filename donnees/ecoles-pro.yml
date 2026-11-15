@@ -12,6 +12,7 @@ ecoles:
   - {organisme_nom: "GRETA Alpes Provence", diplome: BPJEPS, specialite: "asec", ville: "Gap", departement: "05", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Horizon", diplome: BPJEPS, specialite: "asec", ville: "Antibes", departement: "06", derniere_rentree: 2026-03-02}
   - {organisme_nom: "I.F.A.C. 92", diplome: BPJEPS, specialite: "asec", ville: "Grasse", departement: "06", derniere_rentree: 2026-10-29}
+  - {organisme_nom: "CEMEA PACA", diplome: BPJEPS, specialite: "asec", ville: "Nice", departement: "06", derniere_rentree: 2026-11-17}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Nice", departement: "06", derniere_rentree: 2026-05-26}
   - {organisme_nom: "Poinfor", diplome: BPJEPS, specialite: "asec", ville: "La Chapelle-Saint-Luc", departement: "10", derniere_rentree: 2026-09-17}
   - {organisme_nom: "LEAP Emilie de RODAT", diplome: BPJEPS, specialite: "asec", ville: "Pezens", departement: "11", derniere_rentree: 2026-10-05}
@@ -21,7 +22,7 @@ ecoles:
   - {organisme_nom: "Familles Rurales Fédération départementale Aveyron", diplome: BPJEPS, specialite: "asec", ville: "Rodez", departement: "12", derniere_rentree: 2026-10-05}
   - {organisme_nom: "PREPA-Sports a", diplome: BPJEPS, specialite: "asec", ville: "Aix-en-Provence", departement: "13", derniere_rentree: 2026-10-02}
   - {organisme_nom: "Formatic Association", diplome: BPJEPS, specialite: "asec", ville: "Arles", departement: "13", derniere_rentree: 2026-02-02}
-  - {organisme_nom: "CEMEA PACA", diplome: BPJEPS, specialite: "asec", ville: "Marseille", departement: "13", derniere_rentree: 2026-06-08}
+  - {organisme_nom: "CEMEA PACA", diplome: BPJEPS, specialite: "asec", ville: "Marseille", departement: "13", derniere_rentree: 2026-11-17}
   - {organisme_nom: "LES FRANCAS Union Régionale PACA", diplome: BPJEPS, specialite: "asec", ville: "Marseille", departement: "13", derniere_rentree: 2026-01-19}
   - {organisme_nom: "Ligue de l'enseignement - FAIL13", diplome: BPJEPS, specialite: "asec", ville: "Marseille", departement: "13", derniere_rentree: 2026-10-16}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Marseille", departement: "13", derniere_rentree: 2026-04-13}
@@ -29,6 +30,7 @@ ecoles:
   - {organisme_nom: "U.F.C.V.", diplome: BPJEPS, specialite: "asec", ville: "Caen", departement: "14", derniere_rentree: 2026-10-19}
   - {organisme_nom: "Centre Régional Actions Formations Sport et Santé", diplome: BPJEPS, specialite: "asec", ville: "Colombelles", departement: "14", derniere_rentree: 2026-09-21}
   - {organisme_nom: "CEMEA de Normandie", diplome: BPJEPS, specialite: "asec", ville: "Cormelles-le-Royal", departement: "14", derniere_rentree: 2026-09-24}
+  - {organisme_nom: "GRETA Portes Normandes", diplome: BPJEPS, specialite: "asec", ville: "Vire-Normandie", departement: "14", derniere_rentree: 2026-11-17}
   - {organisme_nom: "MFR Jarnac", diplome: BPJEPS, specialite: "asec", ville: "Jarnac", departement: "16", derniere_rentree: 2026-09-23}
   - {organisme_nom: "Ligue de l'enseignement Nouvelle Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Gémozac", departement: "17", derniere_rentree: 2026-02-02}
   - {organisme_nom: "MFR de la Saintonge et de l'Aunis", diplome: BPJEPS, specialite: "asec", ville: "Saint-Genis-de-Saintonge", departement: "17", derniere_rentree: 2026-09-07}
@@ -158,6 +160,7 @@ ecoles:
   - {organisme_nom: "UNION REGIONALE DES FRANCAS D'ILE DE France", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-05-04}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: BPJEPS, specialite: "asec", ville: "Paris", departement: "75", derniere_rentree: 2026-10-08}
   - {organisme_nom: "IRTS-IDS Normandie (ADSCI)", diplome: BPJEPS, specialite: "asec", ville: "Canteleu", departement: "76", derniere_rentree: 2026-11-02}
+  - {organisme_nom: "GRETA Portes Normandes", diplome: BPJEPS, specialite: "asec", ville: "Elbeuf", departement: "76", derniere_rentree: 2026-11-17}
   - {organisme_nom: "Profession Sport et Loisirs 76", diplome: BPJEPS, specialite: "asec", ville: "Le Havre", departement: "76", derniere_rentree: 2026-10-19}
   - {organisme_nom: "CEMEA de Normandie", diplome: BPJEPS, specialite: "asec", ville: "Rouen", departement: "76", derniere_rentree: 2026-10-01}
   - {organisme_nom: "Profession Sport et Loisirs 76", diplome: BPJEPS, specialite: "asec", ville: "Rouen", departement: "76", derniere_rentree: 2026-10-12}
@@ -378,6 +381,7 @@ ecoles:
   - {organisme_nom: "Le Merlet", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Mèze", departement: "34", derniere_rentree: 2026-11-12}
   - {organisme_nom: "Askoria", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Rennes", departement: "35", derniere_rentree: 2026-04-27}
   - {organisme_nom: "CEMEA région Centre", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Tours", departement: "37", derniere_rentree: 2026-05-11}
+  - {organisme_nom: "CEMEA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Saint-Martin-d'Hères", departement: "38", derniere_rentree: 2026-11-17}
   - {organisme_nom: "Respire", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Blois", departement: "41", derniere_rentree: 2026-11-16}
   - {organisme_nom: "Centre d'Entraînement aux Méthodes d'Education Active", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Nantes", departement: "44", derniere_rentree: 2026-04-27}
   - {organisme_nom: "Francas", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Nantes", departement: "44", derniere_rentree: 2026-09-14}
