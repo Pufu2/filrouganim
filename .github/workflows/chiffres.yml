@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: chiffres
@@ -32,6 +33,8 @@ jobs:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: python3 outils/audience.py
       - name: Enregistrer
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git add donnees/audience.yml
           if git diff --cached --quiet; then
@@ -40,7 +43,11 @@ jobs:
           fi
           git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com commit -m "Chiffres : relevé du $(date -u +%d/%m/%Y) à $(date -u +%H:%M)"
           for essai in 1 2 3; do
-            git pull --rebase -q origin main && git push && exit 0
+            if git pull --rebase -q origin main && git push; then
+              # un envoi fait par GitHub Actions ne relance pas la publication : on la lance nous-mêmes
+              gh workflow run publier.yml --ref main
+              exit 0
+            fi
             sleep 10
           done
           exit 1

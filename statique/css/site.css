@@ -3110,3 +3110,8 @@ body.en-app #co-bascule a[aria-current] { color: var(--fil-fonce); background: #
 .ba-retour { flex: none; padding: 7px 14px; border-radius: 99px; background: #fff; color: var(--encre); font-weight: 700; text-decoration: none; }
 .ba-retour:hover { color: var(--fil-fonce); }
 @media (max-width: 600px) { .ba-t { display: none; } }
+/* « Trouver une structure » (accueil) : le bouton ne déborde plus, il passe sous la case quand la place manque */
+#ro-p2 .ro-ligne { flex-wrap: wrap; }
+#ro-p2 .ro-champ { flex: 1 1 180px; min-width: 180px; }
+#ro-p2 .ro-aller { flex: 1 0 auto; justify-content: center; }
+@media (max-width: 560px) { #ro-p2 .ro-champ { min-width: 0; flex-basis: 100%; } }
