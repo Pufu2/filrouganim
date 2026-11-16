@@ -249,18 +249,6 @@
   var CONNEXION_SEULE = "fra-connexion-seule";
   var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-admin", "v-session"];
   var estAdmin = false;
-  function choisirEspace(role) {
-    voirAdmin();
-    Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (x) { if (x.dataset.bascule === "admin") x.setAttribute("aria-current", "page"); else x.removeAttribute("aria-current"); });
-    montrerOnglet("v-admin", role === "structure" ? "structures" : "animateurs");
-    var m = $("message"); m.textContent = "";
-    m.appendChild(document.createTextNode(role === "structure"
-      ? "Vous n'avez pas de structure à vous : choisissez-en une ci-dessous et cliquez « Ouvrir son espace » (vous y voyez et modifiez tout). "
-      : "Vous n'avez pas de profil d'animateur à vous : choisissez-en un ci-dessous et cliquez « Ouvrir son espace ». "));
-    var a = el("a", null, role === "structure" ? "Ou créer une structure à votre nom" : "Ou créer votre propre profil");
-    a.href = "?role=" + role + "&creer=1"; m.appendChild(a);
-    m.hidden = false; m.classList.remove("erreur");
-  }
   // l'administration : un bandeau qui reste toujours visible hors de l'admin, pour savoir où l'on est et y revenir
   function bandeauAdmin(ids) {
     var b = $("bandeau-admin");
@@ -602,8 +590,8 @@
       Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (a) { if (a.dataset.bascule === voulu) a.setAttribute("aria-current", "page"); });
       if (voulu === "admin") return voirAdmin();
       // sans structure ni profil à soi : on choisit dans l'administration l'espace à ouvrir (ou on crée le sien avec &creer=1)
-      if (voulu === "structure") return structure || params.get("creer") ? voirStructure() : choisirEspace("structure");
-      if (voulu === "candidat") return profil || params.get("creer") ? voirCandidat() : choisirEspace("candidat");
+      if (voulu === "structure") return voirStructure();
+      if (voulu === "candidat") return voirCandidat();
     }
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
@@ -884,8 +872,10 @@
     cvAEnvoyer = null;
     montrerCv();
     montrerMobilite();
-    assistantProfil.ouvrir(nouveau);
+    var apercu = nouveau && estAdmin && !espaceDe;
+    assistantProfil.ouvrir(nouveau && !apercu);
     ongletDepart("v-candidat", nouveau ? "profil" : "tableau", nouveau);
+    if (apercu) message("Aperçu administrateur : tous les onglets sont ouverts. Vous n'avez pas de profil d'animateur ; pour voir celui de quelqu'un, ouvrez son espace depuis l'admin (Animateurs, « Ouvrir son espace »).");
     $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = nouveau;
     $("tuiles-candidat").hidden = nouveau;
     if (nouveau) {
@@ -1054,7 +1044,9 @@
     if (!voir.hidden) voir.href = L.lien_structures + structure.slug + "/";
     $("accord-structure").hidden = !nouveau;
     f.accord.required = nouveau;
-    assistantStructure.ouvrir(nouveau);
+    // l'administration sans fiche à elle : l'espace complet, ouvert, sans le parcours d'inscription
+    var apercu = nouveau && estAdmin && !espaceDe;
+    assistantStructure.ouvrir(nouveau && !apercu);
     // tant que l'abonnement n'est pas réglé : seulement « Ma page » et « Abonnement », le reste est fermé
     var ferme = !paye(structure) && !estAdmin;
     Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
@@ -1063,12 +1055,16 @@
       b.setAttribute("aria-disabled", verrou ? "true" : "false");
       b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page, puis réglez l'abonnement" : "S'ouvre avec l'abonnement") : "";
     });
-    ongletDepart("v-structure", nouveau ? "page" : ferme ? "abonnement" : "tableau", nouveau || ferme);
+    ongletDepart("v-structure", apercu ? "candidats" : nouveau ? "page" : ferme ? "abonnement" : "tableau", nouveau || ferme);
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
     $("chapo-compte").textContent = nouveau ? "Présentez votre structure, étape par étape. Votre page est en ligne une fois l'abonnement réglé et la structure vérifiée." : "Votre espace structure.";
-    if (nouveau) st.hidden = true;
+    if (apercu) {
+      st.textContent = "Aperçu administrateur : tous les onglets sont ouverts. « Candidats » montre tous les profils, « Boîte à outils » les guides et les outils. Pour voir les vraies offres et les vrais chiffres d'une structure, ouvrez son espace depuis l'admin (Structures, « Ouvrir son espace »).";
+      st.className = "statut statut-attente";
+    }
+    else if (nouveau) st.hidden = true;
     else if (!paye(structure)) {
       st.textContent = "Votre fiche est enregistrée. Dernière étape : l'abonnement. Nous vérifions ensuite la structure, et votre page et vos offres sont en ligne.";
       st.className = "statut statut-attente";
@@ -1083,20 +1079,21 @@
     montrerOnglet("v-structure", ongletActuel["v-structure"]);
     $("bloc-offres").hidden = nouveau;
     $("bloc-centres").hidden = nouveau;
-    $("bloc-candidats").hidden = !actif(structure);
+    $("bloc-candidats").hidden = !(actif(structure) || estAdmin);
     $("tuiles-structure").hidden = nouveau;
     if (structure) chargerCentres().then(montrerAbonnement);
     else $("bloc-abonnement").hidden = true;
     if (structure) chargerOffres().then(tableauStructure).then(function () { tableauDeBord(); });
     $("bloc-tableau").hidden = nouveau;
     // les conseils : pour les structures abonnées ; un conseil de la semaine en tête, 4 visibles, les autres au clic
-    $("bloc-conseils").hidden = nouveau || !paye(structure);
-    $("bloc-conseils-verrou").hidden = nouveau || paye(structure);
-    $("bloc-outils").hidden = nouveau || !paye(structure);
-    $("bloc-outils-verrou").hidden = nouveau || paye(structure);
-    $("tb-outils").hidden = !paye(structure);
-    if (!nouveau && paye(structure)) chargerRessources();
-    if (actif(structure)) chargerCandidats();
+    var outils = estAdmin || (!nouveau && paye(structure));
+    $("bloc-conseils").hidden = !outils;
+    $("bloc-conseils-verrou").hidden = outils || nouveau;
+    $("bloc-outils").hidden = !outils;
+    $("bloc-outils-verrou").hidden = outils || nouveau;
+    $("tb-outils").hidden = !outils;
+    if (outils) chargerRessources();
+    if (actif(structure) || estAdmin) chargerCandidats();
     if (structure) chargerDemandesRecues().then(function () { tableauStructure(); if (!$("tb-conseils").firstChild) return; conseilsStructure(); });
     if (params.get("profil") && !profilDemande) { profilDemande = true; ouvrirProfilDemande(params.get("profil")); }
   }
@@ -1656,7 +1653,7 @@
     }
     if (opts.ecrire && p.email_contact) {
       var a = el("a", "fp-bouton-principal");
-      a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
+      a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim" + (structure && structure.nom ? " : " + structure.nom : ""));
       a.appendChild(icone(IC.lettre)); a.appendChild(document.createTextNode("Écrire à " + p.prenom));
       aside.appendChild(a);
     } else aside.appendChild(el("span", "fp-bouton-principal fp-inerte", "Écrire à " + (p.prenom || "vous")));
@@ -1810,7 +1807,7 @@
     });
     actions.appendChild(voir);
     var a = el("a", "bouton-texte", "Écrire");
-    a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim : " + structure.nom);
+    a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim" + (structure && structure.nom ? " : " + structure.nom : ""));
     actions.appendChild(a);
     if (avecFavori && p.id) actions.appendChild(boutonFavori(p, "bouton-texte bouton-favori"));
     c.appendChild(actions);
@@ -2100,7 +2097,7 @@
     if (!a) return;
     e.preventDefault();
     var h = a.getAttribute("href").slice(1);
-    if (!structure || !paye(structure)) { allerA("bloc-outils-verrou"); return; }
+    if (!estAdmin && (!structure || !paye(structure))) { allerA("bloc-outils-verrou"); return; }
     if (h.indexOf("guide-") === 0) ouvrirGuide(h.slice(6)); else ouvrirOutil(h.slice(6));
   });
   function ouvrirOutil(nom) {
@@ -2243,7 +2240,7 @@
       if (x.message) corps.appendChild(el("p", "presentation message-candidat", "« " + x.message + " »"));
       item.appendChild(corps);
       var a = el("a", "bouton-r", "Répondre");
-      a.href = "mailto:" + encodeURIComponent(x.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre demande sur Fil Roug'Anim : " + structure.nom);
+      a.href = "mailto:" + encodeURIComponent(x.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre demande sur Fil Roug'Anim" + (structure && structure.nom ? " : " + structure.nom : ""));
       item.appendChild(a);
       liste.appendChild(item);
     });
