@@ -1169,6 +1169,14 @@ class Site:
     def ecrire_lieux_google(self):
         """/chiffres/lieux.json : pour chaque ville, département et région, ses pages et ce que Google en montre
         (affichages, clics, place moyenne sur 28 jours). Sert à « Les chiffres de ta ville »."""
+        sortie = self.lieux_google()
+        (SORTIE / "chiffres").mkdir(parents=True, exist_ok=True)
+        (SORTIE / "chiffres" / "lieux.json").write_text(json.dumps(sortie, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    def lieux_google(self):
+        """Les villes, départements et régions avec leurs pages et ce que Google en montre (calculé une fois)."""
+        if getattr(self, "_lieux", None) is not None:
+            return self._lieux
         g = {}
         for u, imp, clics, place in self.audience().get("pages_google") or []:
             u = u.split("?")[0].split("#")[0]
@@ -1201,8 +1209,8 @@ class Site:
         sortie = sorted(lieux.values(), key=lambda e: (-sum(x[2] for x in e["p"]), e["n"]))
         for e in sortie:
             e["p"].sort(key=lambda x: -x[2])
-        (SORTIE / "chiffres").mkdir(parents=True, exist_ok=True)
-        (SORTIE / "chiffres" / "lieux.json").write_text(json.dumps(sortie, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        self._lieux = sortie
+        return sortie
 
     def ecrire_rss(self):
         base = self.config["url"].rstrip("/")
@@ -1311,15 +1319,16 @@ class Site:
             u = u.split("?")[0].split("#")[0]
             g[u if u.endswith("/") else u + "/"] = (imp, clics, place)
         par_famille = {cle: [] for cle, _ in self.FAMILLES_GOOGLE}
-        for p in self.pages:
-            if not p.get("indexer") or not p.get("ville") or p["url"] not in g:
+        # les pages de ville (les mêmes que « Les chiffres de ta ville »), formation par formation
+        for e in self.lieux_google():
+            if e["g"] != "ville":
                 continue
-            imp, clics, place = g[p["url"]]
-            if not place or place > 10:
-                continue
-            fam = self.famille_page(p["url"])
-            if fam in par_famille:
-                par_famille[fam].append({"v": p["ville"]["nom"], "t": p.get("h1") or p["titre"], "u": p["url"], "i": imp, "c": clics, "p": place})
+            for titre, u, imp, clics, place in e["p"]:
+                if not place or place > 10:
+                    continue
+                fam = self.famille_page(u)
+                if fam in par_famille:
+                    par_famille[fam].append({"v": e["n"], "t": titre, "u": u, "i": imp, "c": clics, "p": place})
         for l in par_famille.values():
             l.sort(key=lambda x: (x["p"], -x["i"]))
         onglets = [(cle, nom, par_famille[cle]) for cle, nom in self.FAMILLES_GOOGLE if cle != "conseils"]
