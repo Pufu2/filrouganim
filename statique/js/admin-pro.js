@@ -45,7 +45,7 @@
   /* ---------- briques ---------- */
   function hero(c, sur, titre, em, texte, actions, cote) {
     var h = el("div", "ap-hero"), g = el("div", "ap-hero-t");
-    var k = el("p", "ap-sur"); k.appendChild(ic("coeur", "ap-ic-mini")); k.appendChild(document.createTextNode("Administration · " + sur)); g.appendChild(k);
+    var k = el("p", "ap-sur"); k.appendChild(ic("coeur", "ap-ic-mini")); k.appendChild(el("span", "ap-sur-pre", "Administration · ")); k.appendChild(document.createTextNode(sur)); g.appendChild(k);
     var t = el("h2"); t.appendChild(document.createTextNode(titre)); t.appendChild(el("em", null, em)); g.appendChild(t);
     if (texte) g.appendChild(el("p", "ap-hero-p", texte));
     if (actions && actions.length) { var a = el("div", "ap-hero-actions"); actions.forEach(function (x) { a.appendChild(x); }); g.appendChild(a); }
@@ -140,7 +140,8 @@
     var an = payees.reduce(function (a, s) { return a + prixAn(s); }, 0);
     var debutMois = AUJ.slice(0, 8) + "01", ceMois = compte(T, function (t) { return iso(t.c.cree_le) >= debutMois; });
     var date = auj.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-    hero(c, date, "Votre plateforme, ", "en un coup d'œil",
+    var nAt = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
+    hero(c, date, "Bonjour, ", nAt ? nAt + " demande" + (nAt > 1 ? "s" : "") + " à traiter" : "tout est à jour",
       fr(D.comptes.length) + " comptes (le vôtre compris) : " + compte(T, function (t) { return t.type === "animateur"; }) + " animateurs, " + st.length + " structures dont " + payees.length + " payée" + (payees.length > 1 ? "s" : "") + ", +" + ceMois + " ce mois-ci.",
       [bouton("Ouvrir le QG demandes", "qg", true, "boite"), bouton("Structures", "structures"), bouton("Ventes", "ventes")], boiteATraiter());
     // les revenus

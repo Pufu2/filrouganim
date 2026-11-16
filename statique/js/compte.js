@@ -293,13 +293,17 @@
   function majApp(ids) {
     vueApp = ["v-structure", "v-candidat", "v-admin"].filter(function (v) { return ids.indexOf(v) >= 0; })[0] || null;
     document.body.classList.toggle("en-app", !!vueApp);
+    document.body.classList.toggle("admin-g", vueApp === "v-admin");
     if (!vueApp) return;
     var nav = $(vueApp).querySelector(".co-nav");
+    // l'administration a sa barre du haut (façon accueil) : la bascule et le compte y vont
+    var droite = vueApp === "v-admin" && window.FRA_ADMIN_G ? window.FRA_ADMIN_G.droite() : null;
     // la bascule de l'administration, sous le logo
     var bas = $("co-bascule");
-    if (bas && !bas.hidden && bas.parentNode !== nav) nav.insertBefore(bas, nav.querySelector(".co-groupe"));
+    if (bas && !bas.hidden && droite) { if (bas.parentNode !== droite) droite.insertBefore(bas, droite.firstChild); }
+    else if (bas && !bas.hidden && bas.parentNode !== nav) nav.insertBefore(bas, nav.querySelector(".co-groupe"));
     // la carte du compte, en bas du menu
-    var moi = nav.querySelector(".co-moi");
+    var moi = nav.querySelector(".co-moi") || (droite && droite.querySelector(".co-moi"));
     if (!moi) {
       moi = el("div", "co-moi");
       var b = el("button", "co-moi-bouton"); b.type = "button"; b.setAttribute("aria-expanded", "false");
@@ -314,6 +318,8 @@
       document.addEventListener("click", function (e) { if (!moi.contains(e.target)) { menu.hidden = true; b.setAttribute("aria-expanded", "false"); } });
       moi.appendChild(menu); moi.appendChild(b); nav.appendChild(moi);
     }
+    if (droite && moi.parentNode !== droite) droite.appendChild(moi);
+    else if (!droite && moi.parentNode !== nav) nav.appendChild(moi);
     var nom = vueApp === "v-structure" ? (structure && structure.nom) || "Ma structure" : vueApp === "v-candidat" ? (profil && profil.prenom) || "Mon profil" : "Administration";
     moi.querySelector(".co-moi-av").textContent = initiales(nom) || "?";
     moi.querySelector(".co-moi-t b").textContent = nom;
