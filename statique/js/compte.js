@@ -72,7 +72,7 @@
       return {
         tableau: { sur: "Tableau de bord", t: "Bonjour, ", em: nomSt, p: "Votre recrutement en un coup d'œil : les vues de votre page, les candidats et ce qu'il reste à faire.",
                    actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "#guide-reussir-son-recrutement"],
-                   resume: { t: "À faire", lignes: afaire, vide: "Rien d'urgent : tout est à jour.", mini: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
+                   resume: { t: "En ce moment", grands: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
         page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
                 actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(actif(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
                 resume: { t: "Votre page", jauge: true } },
@@ -98,7 +98,7 @@
     return {
       tableau: { sur: "Tableau de bord", t: "Bonjour" + (pr.prenom ? " " : ""), em: pr.prenom || "", p: "Vos candidatures, vos demandes et les offres de votre secteur, au même endroit.",
                  actions: [["Voir les offres", L.lien_offre, 2], ["Décrire ce que je cherche", L.lien_demande, 2]], guide: ["Trouver son stage pratique", "/trouver-un-poste/trouver-son-stage-pratique/"],
-                 resume: { t: "En ce moment", lignes: retenues ? [[retenues, retenues > 1 ? "candidatures retenues" : "candidature retenue", "candidatures"]] : [], vide: "Pas de nouvelle réponse.", mini: [[mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature"], [enCours, "en attente"]] } },
+                 resume: { t: "En ce moment", grands: [[mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature"], [enCours, "en attente"]] } },
       profil: { sur: "Mon profil", t: "Votre profil, ", em: "vu par les structures", p: "Les structures vérifiées de votre secteur le consultent et vous écrivent directement. Plus il est complet, plus on vous contacte.",
                 actions: [["Voir ma fiche", "#bloc-profil .as-voir-fiche", 1]], guide: ["Un exemple de profil", "/trouver-un-poste/exemple-de-profil/"], resume: null },
       candidatures: { sur: "Mes candidatures", t: "Vos candidatures, ", em: "suivies de près", p: "Envoyée, vue, retenue : vous voyez où en est chacune.", actions: [["Voir les offres", L.lien_offre, 2]], guide: ["Préparer son entretien", "/trouver-un-poste/preparer-son-entretien/"],
@@ -115,7 +115,8 @@
     if (!d) { e.hidden = true; return; }
     e.hidden = false;
     var g = el("div", "co-e-texte");
-    var sur = el("p", "co-e-sur"); sur.appendChild(iconeOnglet(nom === "profil" ? "page" : nom === "candidatures" ? "offres" : nom)); sur.appendChild(document.createTextNode(d.sur)); g.appendChild(sur);
+    var sur = el("p", "co-e-sur"); sur.appendChild(iconeOnglet(nom === "profil" ? "page" : nom === "candidatures" ? "offres" : nom));
+    sur.appendChild(document.createTextNode(nom === "tableau" ? new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : d.sur)); g.appendChild(sur);
     var h = el("h2"); h.appendChild(document.createTextNode(d.t)); if (d.em) h.appendChild(el("em", null, d.em)); g.appendChild(h);
     g.appendChild(el("p", "co-e-p", d.p));
     var acts = el("div", "co-e-actions");
@@ -145,6 +146,11 @@
         c.appendChild(b);
       });
       if (!(r.lignes || []).length && r.vide) c.appendChild(el("p", "co-e-r-vide", r.vide));
+      if (r.grands) {
+        var gr = el("div", "co-e-grands");
+        r.grands.forEach(function (x) { var d2 = el("div"); d2.appendChild(el("b", null, String(x[0]))); d2.appendChild(el("span", null, x[1])); gr.appendChild(d2); });
+        c.appendChild(gr);
+      }
       if (r.mini && r.mini.length) {
         var m = el("p", "co-e-mini");
         r.mini.forEach(function (x) { var s2 = el("span"); s2.appendChild(el("b", null, String(x[0]))); s2.appendChild(document.createTextNode(" " + x[1])); m.appendChild(s2); });
@@ -174,6 +180,8 @@
     try { sessionStorage.setItem("fra-onglet-" + vue, nom); } catch (e) {}
     majVide(vue);
     try { majEntete(vue); } catch (err) {}
+    document.body.classList.remove("menu-ouvert");
+    if (vueApp === vue) majTitreApp();
     if (remonter) window.scrollTo({ top: Math.max(0, v.getBoundingClientRect().top + window.scrollY - 100), behavior: "smooth" });
   }
   function ongletDepart(vue, defaut, force) {
@@ -199,6 +207,7 @@
     if (!p) return;
     p.hidden = !valeur; p.textContent = valeur === true ? "!" : String(valeur || "");
     p.classList.toggle("co-pastille-neutre", nom === "offres");
+    if (vueApp) majTitreApp();
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-onglet-vers]");
@@ -254,6 +263,72 @@
     // l'administration prend toute la largeur de l'écran
     document.body.classList.toggle("admin-large", ids.indexOf("v-admin") >= 0);
     majParcours();
+    majApp(ids);
+  }
+  /* -- « Mon espace » en application : menu fixe à gauche, barre du haut, carte du compte en bas du menu -- */
+  var vueApp = null;
+  function majApp(ids) {
+    vueApp = ["v-structure", "v-candidat", "v-admin"].filter(function (v) { return ids.indexOf(v) >= 0; })[0] || null;
+    document.body.classList.toggle("en-app", !!vueApp);
+    if (!vueApp) return;
+    var nav = $(vueApp).querySelector(".co-nav");
+    // la bascule de l'administration, sous le logo
+    var bas = $("co-bascule");
+    if (bas && !bas.hidden && bas.parentNode !== nav) nav.insertBefore(bas, nav.querySelector(".co-groupe"));
+    // la carte du compte, en bas du menu
+    var moi = nav.querySelector(".co-moi");
+    if (!moi) {
+      moi = el("div", "co-moi");
+      var b = el("button", "co-moi-bouton"); b.type = "button"; b.setAttribute("aria-expanded", "false");
+      b.appendChild(el("span", "co-moi-av")); var tx = el("span", "co-moi-t"); tx.appendChild(el("b")); tx.appendChild(el("small")); b.appendChild(tx);
+      b.appendChild(el("span", "co-moi-ch", "⌃"));
+      var menu = el("div", "co-moi-menu"); menu.hidden = true;
+      var site = el("a", null, "Retour au site"); site.href = "/"; menu.appendChild(site);
+      var aide = el("a", null, "Une question ? Écrivez-nous"); aide.href = "mailto:" + L.email_site; menu.appendChild(aide);
+      var dec = el("button", null, "Se déconnecter"); dec.type = "button"; dec.addEventListener("click", function () { $("deconnexion").click(); }); menu.appendChild(dec);
+      var sup = el("button", "co-moi-danger", "Supprimer mon compte"); sup.type = "button"; sup.addEventListener("click", function () { $("supprimer").click(); }); menu.appendChild(sup);
+      b.addEventListener("click", function () { menu.hidden = !menu.hidden; b.setAttribute("aria-expanded", menu.hidden ? "false" : "true"); });
+      document.addEventListener("click", function (e) { if (!moi.contains(e.target)) { menu.hidden = true; b.setAttribute("aria-expanded", "false"); } });
+      moi.appendChild(menu); moi.appendChild(b); nav.appendChild(moi);
+    }
+    var nom = vueApp === "v-structure" ? (structure && structure.nom) || "Ma structure" : vueApp === "v-candidat" ? (profil && profil.prenom) || "Mon profil" : "Administration";
+    moi.querySelector(".co-moi-av").textContent = initiales(nom) || "?";
+    moi.querySelector(".co-moi-t b").textContent = nom;
+    moi.querySelector(".co-moi-t small").textContent = vueApp === "v-structure" ? (actif(structure) ? "Structure · en ligne" : paye(structure) ? "Structure · en vérification" : "Structure · sans abonnement")
+      : vueApp === "v-candidat" ? "Animateur · " + (profil && profil.publie ? "profil visible" : "profil caché") : (utilisateur && utilisateur.email || "");
+    // la barre du haut
+    var barre = $("app-barre");
+    if (!barre) {
+      barre = el("header", "app-barre"); barre.id = "app-barre";
+      var burger = el("button", "app-burger"); burger.type = "button"; burger.setAttribute("aria-label", "Ouvrir le menu");
+      burger.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+      burger.addEventListener("click", function () { document.body.classList.toggle("menu-ouvert"); });
+      barre.appendChild(burger);
+      barre.appendChild(el("h1", "app-titre"));
+      var outils = el("div", "app-outils");
+      function bouton(href, titre, svg) { var a = el("a", "app-ic"); a.href = href; a.title = titre; a.setAttribute("aria-label", titre); a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + svg + "</svg>"; outils.appendChild(a); return a; }
+      bouton("/", "Retour au site", '<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>');
+      var mp = bouton("#", "Ma page en ligne", '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'); mp.id = "app-ma-page"; mp.target = "_blank"; mp.rel = "noopener";
+      bouton("mailto:" + L.email_site, "Une question ? Écrivez-nous", '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h0"/>');
+      var cloche = el("button", "app-ic app-cloche"); cloche.type = "button"; cloche.title = "À faire"; cloche.setAttribute("aria-label", "À faire");
+      cloche.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><i hidden></i>';
+      cloche.addEventListener("click", function () { if (vueApp && vueApp !== "v-admin") montrerOnglet(vueApp, "tableau", true); });
+      outils.appendChild(cloche);
+      barre.appendChild(outils);
+      var ec = $("espace-compte"); ec.insertBefore(barre, ec.firstChild);
+      var voile = el("div", "app-voile"); voile.addEventListener("click", function () { document.body.classList.remove("menu-ouvert"); }); ec.appendChild(voile);
+    }
+    var mp2 = $("app-ma-page");
+    mp2.hidden = !(vueApp === "v-structure" && actif(structure) && structure.slug && structure.page_publique);
+    if (!mp2.hidden) mp2.href = L.lien_structures + structure.slug + "/";
+    majTitreApp();
+  }
+  function majTitreApp() {
+    if (!vueApp) return;
+    var c = $(vueApp).querySelector(".co-nav [aria-current] span");
+    $("app-barre").querySelector(".app-titre").textContent = c ? c.textContent : "Mon espace";
+    var n = Array.prototype.reduce.call($(vueApp).querySelectorAll(".co-nav .co-pastille:not([hidden]):not(.co-pastille-neutre)"), function (a, p) { return a + (parseInt(p.textContent, 10) || 1); }, 0);
+    var i = $("app-barre").querySelector(".app-cloche i"); i.hidden = !n; i.textContent = n;
   }
   // un assistant en création à l'écran : la page passe en « parcours » (sans menu de l'espace ni haut de page)
   function majParcours() {
@@ -962,7 +1037,7 @@
       st.textContent = "Structure en ligne : votre page et vos offres sont visibles par tous, et vous voyez les profils des candidats.";
       st.className = "statut statut-ok";
     }
-    if (st.classList.contains("statut-ok")) st.dataset.onglet = "tableau"; else { delete st.dataset.onglet; st.classList.remove("hors-onglet"); }
+    if (st.classList.contains("statut-ok")) st.dataset.onglet = "aucun"; else { delete st.dataset.onglet; st.classList.remove("hors-onglet"); }
     montrerOnglet("v-structure", ongletActuel["v-structure"]);
     $("bloc-offres").hidden = nouveau;
     $("bloc-centres").hidden = nouveau;
@@ -1734,6 +1809,7 @@
     var r = await sb.from("candidatures").select("id,offre_id,message,statut,cree_le,profils(" + CHAMPS_VUS + ")")
       .in("offre_id", ids).order("cree_le", { ascending: false });
     recues = r.data || [];
+    try { aFaireStructure(); } catch (e) {}
     blocR.hidden = false;
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
@@ -1805,8 +1881,44 @@
     });
   });
   function jourIso(d) { return d.toISOString().slice(0, 10); }
+  // « À faire aujourd'hui » : trois tuiles et une ligne d'état (comme les tableaux de bord des applis pros)
+  var ICO_T = {
+    candidats: '<circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/>',
+    demandes: '<path d="M4 12l16-8-6 16-2-6z"/>',
+    offres: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
+    profil: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    candidatures: '<path d="M5 12l5 5 9-10"/>'
+  };
+  function tuileApp(conteneur, ico, titre, n, sous, vers, ton) {
+    var b = el("button", "tb-tuile" + (ton ? " tb-tuile-" + ton : ""));
+    b.type = "button"; if (vers) b.dataset.ongletVers = vers;
+    var i = el("span", "tb-ic"); i.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICO_T[ico] + "</svg>";
+    var t = el("span", "tb-t-texte"); t.appendChild(el("b", null, titre)); t.appendChild(el("small", null, sous));
+    b.appendChild(i); b.appendChild(t); b.appendChild(el("span", "tb-n", String(n)));
+    conteneur.appendChild(b);
+  }
+  function etatApp(p, ok, texte) {
+    p.textContent = ""; p.className = "tb-etat " + (ok ? "tb-etat-ok" : "tb-etat-alerte");
+    p.appendChild(el("span", "tb-etat-ic", ok ? "✓" : "!")); p.appendChild(el("span", null, texte));
+  }
+  function aFaireStructure() {
+    var box = $("tb-tuiles"); if (!box || !structure) return;
+    box.textContent = "";
+    var auj = aujourdhui();
+    var enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= auj; });
+    var bientot = enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(auj)) / 864e5 <= 7; }).length;
+    var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
+    tuileApp(box, "candidats", "Candidatures", nouvelles, nouvelles ? (nouvelles > 1 ? "nouvelles à lire" : "nouvelle à lire") : (recues.length ? recues.length + " reçue" + (recues.length > 1 ? "s" : "") + " en tout" : "Aucune pour l'instant"), "candidats", nouvelles ? "chaud" : null);
+    tuileApp(box, "demandes", "Demandes", demandesRecues.length, demandesRecues.length ? "Répondez vite : vous êtes 3 au plus" : "Aucune demande", "demandes", demandesRecues.length ? "chaud" : null);
+    tuileApp(box, "offres", "Offres en ligne", enLigne.length, bientot ? bientot + (bientot > 1 ? " expirent" : " expire") + " cette semaine" : enLigne.length ? "Rien n'expire cette semaine" : "Publiez votre première offre", "offres", bientot ? "alerte" : null);
+    var reste = (nouvelles ? 1 : 0) + (demandesRecues.length ? 1 : 0) + (bientot ? 1 : 0);
+    if (!paye(structure)) etatApp($("tb-etat"), false, "Abonnement à régler : votre page et vos offres seront en ligne juste après la vérification.");
+    else if (!structure.verifiee) etatApp($("tb-etat"), false, "Nous vérifions votre structure (en général sous 2 jours ouvrés). Vos offres seront en ligne juste après.");
+    else etatApp($("tb-etat"), !reste, reste ? "Quelques réponses vous attendent : un candidat contacté vite accepte plus souvent." : "Rien en attente : votre page et vos offres sont en ligne, tout est à jour.");
+  }
   async function tableauDeBord() {
     if (!structure) return;
+    aFaireStructure();
     var J = tbJours, auj = new Date(aujourdhui() + "T12:00:00");
     var debut = new Date(auj); debut.setDate(debut.getDate() - J + 1);
     var avant = new Date(debut); avant.setDate(avant.getDate() - J);
@@ -1863,15 +1975,15 @@
     sec.appendChild(p1);
     var p2 = el("p"); p2.appendChild(el("b", null, String(demandesRecues.length))); p2.appendChild(el("span", null, " demande" + (demandesRecues.length > 1 ? "s" : "") + " de l'annuaire inversé reçue" + (demandesRecues.length > 1 ? "s" : "")));
     sec.appendChild(p2);
-    if (enLigne) { var a = el("a", "bouton-texte", "Voir les profils"); a.href = "#bloc-candidats"; sec.appendChild(a); }
+    if (enLigne) { var a = el("button", "tb-lien", "Voir les profils →"); a.type = "button"; a.dataset.ongletVers = "candidats"; sec.appendChild(a); }
     conseilsStructure();
   }
   function conseilsStructure() {
     var ul = $("tb-conseils"); ul.textContent = "";
     var st = structure, ok = 0, tout = 0;
     function conseil(fait, texte, cible, lienTexte) {
-      tout++; if (fait) ok++;
-      var li = el("li", fait ? "tb-fait" : "tb-a-faire");
+      tout++; if (fait) { ok++; return; }
+      var li = el("li", "tb-a-faire");
       li.appendChild(el("span", null, texte));
       if (!fait && cible) { var a = el("a", null, lienTexte || "Le faire"); a.href = cible; if (/^http|^\//.test(cible)) { a.target = "_blank"; a.rel = "noopener"; } li.appendChild(a); }
       ul.appendChild(li);
@@ -1887,6 +1999,8 @@
     conseil(!bientot.length, bientot.length ? "Une offre expire dans moins de 7 jours : prolongez-la si vous recrutez encore." : "Vos offres ne sont pas sur le point d'expirer.", "#bloc-offres", "Voir mes offres");
     if (demandesRecues.length) conseil(false, "Répondez aux demandes de l'annuaire inversé : chacune n'est envoyée qu'à 3 structures.", "#bloc-demandes-recues", "Voir les demandes");
     $("tb-score").textContent = ok + " sur " + tout;
+    $("tb-progres").style.width = Math.round(ok / tout * 100) + "%";
+    if (ok === tout) ul.appendChild(el("li", "tb-fait", "Tout est fait : votre page est complète."));
     // le conseil du moment, selon le mois et le type de structure
     var m = new Date().getMonth() + 1, type = st.type || "";
     var saison = m >= 2 && m <= 4 ? ["C'est le moment de publier vos offres d'été : les animateurs signent au printemps.", "#guide-reussir-son-recrutement"]
@@ -1896,7 +2010,7 @@
       : m === 10 || m === 11 ? ["Publiez vos offres pour les vacances d'hiver, et pensez à un apprenti BPJEPS pour l'an prochain.", "#guide-recruter-un-apprenti"]
       : ["Préparez les vacances de printemps, et accueillez les stagiaires BAFA qui sortent de formation générale.", "#guide-accueillir-un-stagiaire-bafa"];
     if (type === "sejours" && m >= 1 && m <= 4) saison = ["Séjours d'été : cherchez vos surveillants de baignade dès maintenant, ils partent vite.", "#guide-reussir-son-recrutement"];
-    var li = el("li", "tb-moment"); li.appendChild(el("span", null, "Ce mois-ci : " + saison[0]));
+    var li = el("li", "tb-moment"); li.appendChild(el("span", null, saison[0]));
     var a = el("a", null, "Le guide"); a.href = saison[1]; li.appendChild(a);
     ul.insertBefore(li, ul.firstChild);
   }
@@ -2067,6 +2181,7 @@
     var r = await sb.from("demandes").select("id,prenom,annee_naissance,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
       .contains("destinataires", [utilisateur.id]).order("cree_le", { ascending: false }).limit(50);
     demandesRecues = r.data || [];
+    try { aFaireStructure(); } catch (e) {}
     blocD.hidden = false;
     var liste = $("liste-demandes-recues"); liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
@@ -2092,6 +2207,54 @@
 
   /* -- espace candidat : candidatures, offres pour toi -- */
   var mesCandidatures = [];
+  // le tableau de bord de l'animateur : à faire, offres près de chez lui, profil à compléter, pour bien démarrer
+  function carteApp(titre, lien, vers) {
+    var c = el("article", "tb-carte"), tt = el("div", "tb-tete");
+    tt.appendChild(el("h2", "tb-titre", titre));
+    if (lien) { var b = el("button", "tb-lien", lien + " →"); b.type = "button"; b.dataset.ongletVers = vers; tt.appendChild(b); }
+    c.appendChild(tt); return c;
+  }
+  function tableauAnimateur(offres) {
+    var t = $("tuiles-candidat"); t.textContent = ""; t.className = "tb-app";
+    var g = el("div", "tb-col"), d = el("div", "tb-col tb-cote"); t.appendChild(g); t.appendChild(d);
+    var retenues = mesCandidatures.filter(function (c) { return c.statut === "retenue"; }).length;
+    var attente = mesCandidatures.filter(function (c) { return c.statut === "envoyee" || c.statut === "vue"; }).length;
+    var c1 = carteApp("À faire aujourd'hui"), tu = el("div", "tb-tuiles"); c1.appendChild(tu);
+    tuileApp(tu, "candidatures", "Réponses", retenues, retenues ? (retenues > 1 ? "candidatures retenues" : "candidature retenue") : attente ? attente + " en attente de réponse" : "Aucune pour l'instant", "candidatures", retenues ? "chaud" : null);
+    tuileApp(tu, "offres", "Offres pour vous", offres.length, offres.length ? "Dans votre secteur" : "Revenez bientôt", "offres", null);
+    tuileApp(tu, "demandes", "Mes demandes", "→", "Décrivez ce que vous cherchez", "demandes", null);
+    var et = el("p"); c1.appendChild(et);
+    etatApp(et, !!profil.publie, profil.publie ? "Votre profil est visible : les structures vérifiées de votre secteur peuvent vous écrire." : "Votre profil est caché : les structures ne le voient pas. Rendez-le visible dans « Mon profil ».");
+    g.appendChild(c1);
+    var c2 = carteApp("Offres près de chez vous", "Toutes", "offres"), ul = el("ul", "tb-liste-offres");
+    offres.slice(0, 4).forEach(function (o) {
+      var li = el("li"), a = el("a"); a.href = L.lien_offre + "#offre-" + o.id; a.target = "_blank"; a.rel = "noopener";
+      var tx = el("span", "tb-o-t"); tx.appendChild(el("b", null, o.intitule)); tx.appendChild(el("small", null, ((o.structures && o.structures.nom) || "") + " · " + o.ville + " (" + o.departement + ") · dès le " + dateFr(o.debut)));
+      a.appendChild(tx); a.appendChild(el("span", "tb-fleche", "→")); li.appendChild(a); ul.appendChild(li);
+    });
+    if (!offres.length) ul.appendChild(el("li", "tb-vide", "Pas d'offre en ligne dans votre secteur pour l'instant. Les structures recrutent souvent dès l'hiver pour l'été."));
+    c2.appendChild(ul); g.appendChild(c2);
+    // le profil à compléter
+    var points = [[(profil.diplomes || []).length, "Vos diplômes (BAFA, stagiaire…)"], [profil.presentation && profil.presentation.length > 60, "Quelques lignes pour vous présenter"],
+      [profil.dispo_debut || profil.disponibilites, "Vos dates de disponibilité"], [(profil.experiences || []).length, "Vos expériences avec les enfants"],
+      [(profil.activites || []).length, "Les activités que vous aimez mener"], [profil.cv_nom, "Votre CV (facultatif)"]];
+    var ok = points.filter(function (x) { return x[0]; }).length;
+    var c3 = carteApp("Votre profil"), sc = el("span", "tb-score", ok + " sur " + points.length); c3.firstChild.appendChild(sc);
+    var pr = el("div", "tb-progres"), ps = el("span"); ps.style.width = Math.round(ok / points.length * 100) + "%"; pr.appendChild(ps); c3.appendChild(pr);
+    var ul3 = el("ul", "tb-conseils");
+    points.filter(function (x) { return !x[0]; }).forEach(function (x) { var li = el("li", "tb-a-faire"); li.appendChild(el("span", null, x[1])); var b = el("a", null, "Ajouter"); b.href = "#bloc-profil"; li.appendChild(b); ul3.appendChild(li); });
+    if (ok === points.length) ul3.appendChild(el("li", "tb-fait", "Profil complet : bravo !"));
+    c3.appendChild(ul3); d.appendChild(c3);
+    var c4 = carteApp("Pour bien démarrer"), ul4 = el("ul", "tb-liens");
+    [["/trouver-un-poste/trouver-son-stage-pratique/", "Trouver son stage pratique", "Où chercher, quand, comment écrire"],
+     ["/trouver-un-poste/preparer-son-entretien/", "Préparer son entretien", "Les questions qu'on vous posera"],
+     [L.lien_demande, "Décrire ce que je cherche", "Les structures proches viennent à vous"]].forEach(function (x) {
+      var li = el("li"), a = el("a"); a.href = x[0]; a.target = "_blank"; a.rel = "noopener";
+      var tx = el("span", "tb-o-t"); tx.appendChild(el("b", null, x[1])); tx.appendChild(el("small", null, x[2])); a.appendChild(tx); a.appendChild(el("span", "tb-fleche", "→"));
+      li.appendChild(a); ul4.appendChild(li);
+    });
+    c4.appendChild(ul4); d.appendChild(c4);
+  }
   async function tableauCandidat() {
     var deps = [profil.departement].concat(profil.mobilite || []).filter(function (d) { return d !== "france"; });
     var rep = await Promise.all([
@@ -2100,15 +2263,7 @@
     ]);
     mesCandidatures = rep[0].data || [];
     var offres = rep[1].data || [];
-    var t = $("tuiles-candidat");
-    t.textContent = "";
-    tuile(t, mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature", "bloc-mes-candidatures");
-    tuile(t, offres.length, offres.length > 1 ? "offres pour vous" : "offre pour vous", "bloc-offres-pour-toi");
-    var vis = el("a", "tuile");
-    vis.href = "#bloc-profil";
-    vis.appendChild(el("b", null, profil.publie ? "Visible" : "Caché"));
-    vis.appendChild(el("span", null, profil.publie ? "votre profil, pour les structures vérifiées" : "votre profil : les structures ne le voient pas"));
-    t.appendChild(vis);
+    tableauAnimateur(offres);
 
     var l1 = $("liste-mes-candidatures");
     l1.textContent = "";
