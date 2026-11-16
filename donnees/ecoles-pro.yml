@@ -299,6 +299,7 @@ ecoles:
   - {organisme_nom: "Centre de Formation d'Apprentis du Sport et de l'Animation", diplome: CPJEPS, specialite: "aavq", ville: "Ajaccio", departement: "2A", derniere_rentree: 2026-10-12}
   - {organisme_nom: "CEMEA Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Nîmes", departement: "30", derniere_rentree: 2026-09-14}
   - {organisme_nom: "Union Régionale des Francas d'Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Ramonville-Saint-Agne", departement: "31", derniere_rentree: 2026-09-28}
+  - {organisme_nom: "Leo Lagrange Formation", diplome: CPJEPS, specialite: "aavq", ville: "Toulouse", departement: "31", derniere_rentree: 2026-11-18}
   - {organisme_nom: "Loisirs Education et Citoyenneté - LEC", diplome: CPJEPS, specialite: "aavq", ville: "Toulouse", departement: "31", derniere_rentree: 2026-09-14}
   - {organisme_nom: "UFCV Occitanie", diplome: CPJEPS, specialite: "aavq", ville: "Toulouse", departement: "31", derniere_rentree: 2026-09-21}
   - {organisme_nom: "EPNAK", diplome: CPJEPS, specialite: "aavq", ville: "Bordeaux", departement: "33", derniere_rentree: 2026-01-12}
