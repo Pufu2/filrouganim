@@ -783,3 +783,9 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v18 (16/11/2026) : profils.provenance et structures.provenance (canal du premier passage, noté à la création) ;
 -- table admin_prospects (prospection : organismes, structures, contacts ; statut, étapes, note), réservée à l'admin.
+
+-- ------------------------------------------------------------------ version 19 (16/11/2026)
+-- Administration, partie 3 : admin_indexation (état des pages dans Google, rempli par outils/indexation.py),
+-- actualites (écrites par l'admin, lues par les membres connectés quand elles sont publiées),
+-- admin_posts (posts publiés sur les réseaux), et l'admin peut créer ou supprimer des guides et conseils.
+-- Voir la migration v19_indexation_actualites_posts dans Supabase pour le détail.

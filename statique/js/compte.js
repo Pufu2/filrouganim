@@ -2012,6 +2012,7 @@
     classees.forEach(function (x) { var li = el("li"); li.appendChild(el("span", null, x.o.intitule)); li.appendChild(el("b", null, x.n + " vue" + (x.n > 1 ? "s" : ""))); ol.appendChild(li); });
     // le secteur : les animateurs inscrits dans le département
     var sec = $("tb-secteur"); sec.textContent = "";
+    carteActualites(sec.closest(".tb-col") || sec.parentNode.parentNode, "structures");
     var rp = await sb.rpc("profils_resume", { dep: structure.departement, n: 100 });
     var nb = ((rp && rp.data) || []).length;
     var p1 = el("p"); p1.appendChild(el("b", null, nb + (nb === 100 ? "+" : ""))); p1.appendChild(el("span", null, " animateur" + (nb > 1 ? "s" : "") + " dans votre département ou prêt" + (nb > 1 ? "s" : "") + " à y travailler"));
@@ -2257,6 +2258,21 @@
     if (lien) { var b = el("button", "tb-lien", lien + " →"); b.type = "button"; b.dataset.ongletVers = vers; tt.appendChild(b); }
     c.appendChild(tt); return c;
   }
+  // les actualités du secteur, écrites par l'administration (rien si aucune n'est publiée pour ce public)
+  async function carteActualites(colonne, pour) {
+    var r = await sb.from("actualites").select("titre,resume,categorie,lien,source,date,pour").eq("publie", true).contains("pour", [pour]).order("date", { ascending: false }).limit(3);
+    if (!r || r.error || !r.data || !r.data.length || !colonne) return;
+    var vieille = colonne.querySelector(".tb-actus"); if (vieille) vieille.remove();
+    var c = carteApp("Actualités du secteur"); c.classList.add("tb-actus");
+    var ul = el("ul", "tb-actus-l");
+    r.data.forEach(function (a) {
+      var li = el("li"); li.appendChild(el("small", null, (a.categorie || "Actualité") + " · " + dateFr(a.date)));
+      li.appendChild(el("b", null, a.titre)); if (a.resume) li.appendChild(el("p", null, a.resume));
+      if (a.lien) { var s = el("a", null, "Lire sur " + (a.source || a.lien.replace(/^https:\/\/(www\.)?/, "").split("/")[0]) + " →"); s.href = a.lien; s.target = "_blank"; s.rel = "noopener"; li.appendChild(s); }
+      ul.appendChild(li);
+    });
+    c.appendChild(ul); colonne.appendChild(c);
+  }
   function tableauAnimateur(offres) {
     var t = $("tuiles-candidat"); t.textContent = ""; t.className = "tb-app";
     var g = el("div", "tb-col"), d = el("div", "tb-col tb-cote"); t.appendChild(g); t.appendChild(d);
@@ -2297,6 +2313,7 @@
       li.appendChild(a); ul4.appendChild(li);
     });
     c4.appendChild(ul4); d.appendChild(c4);
+    carteActualites(d, "animateurs");
   }
   async function tableauCandidat() {
     var deps = [profil.departement].concat(profil.mobilite || []).filter(function (d) { return d !== "france"; });

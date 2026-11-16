@@ -1191,7 +1191,73 @@ class Site:
                        "mis_a_jour": str(self.donnees.get("audience", {}).get("mis_a_jour") or "")})
         (SORTIE / "chiffres" / "google.json").write_text(json.dumps(google, ensure_ascii=False, separators=(",", ":"), default=str), encoding="utf-8")
         (SORTIE / "compte").mkdir(parents=True, exist_ok=True)
+        # pour l'administration (Contenus du site, Réseaux sociaux) : les articles et guides avec leurs chiffres Google,
+        # et des idées de posts tirées des sessions du moment
+        perf = {x[0]: x[2:5] for x in pages}
+        (SORTIE / "compte" / "contenus.json").write_text(json.dumps(self.contenus_admin(perf), ensure_ascii=False, separators=(",", ":"), default=str), encoding="utf-8")
+        (SORTIE / "compte" / "posts.json").write_text(json.dumps(self.idees_posts(), ensure_ascii=False, separators=(",", ":"), default=str), encoding="utf-8")
         (SORTIE / "compte" / "organismes.json").write_text(json.dumps(getattr(self, "organismes_admin", {}), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    def contenus_admin(self, perf):
+        """Les articles, guides et fiches formations, avec leur fichier, leur date et ce que Google en montre (28 jours)."""
+        sortie = []
+        def un(type_, f, entete, url, date=None):
+            imp, clics, place = perf.get(url, (0, 0, None))
+            sortie.append({"type": type_, "titre": entete.get("titre"), "court": entete.get("court"), "url": url,
+                           "fichier": f"contenu/{f.parent.name}/{f.name}", "date": str(date or entete.get("maj") or entete.get("date") or ""),
+                           "categorie": entete.get("categorie"), "mots": len(re.findall(r"\w+", f.read_text(encoding="utf-8"))),
+                           "impressions": imp, "clics": clics, "place": place})
+        for f in sorted((RACINE / "contenu" / "blog").glob("*.md")):
+            e, _ = lire_markdown(f)
+            un("Article", f, e, f"/blog/{f.stem}/", en_date(e["date"]))
+        for g in self.config.get("guides") or []:
+            f = RACINE / "contenu" / "guides" / (g["url"].rstrip("/").rsplit("/", 1)[1] + ".md")
+            if f.exists():
+                un("Guide", f, g, g["url"])
+        for g in self.config.get("formations") or []:
+            f = RACINE / "contenu" / "formations" / (g["url"].rstrip("/").rsplit("/", 1)[1] + ".md")
+            if f.exists():
+                un("Fiche formation", f, g, g["url"])
+        return sortie
+
+    def idees_posts(self):
+        """Des idées de posts pour les réseaux sociaux, tirées des sessions et des articles du moment (rien n'est publié tout seul)."""
+        auj, idees = self.aujourdhui, []
+        semaine = auj.isocalendar()
+        cle = f"{semaine[0]}-s{semaine[1]:02d}"
+        villes_url = {(p.get("h1") or p["titre"]): p["url"] for p in self.pages}
+        bientot = [s for s in self.sessions if s["diplome"] == "BAFA" and s["type"] == "formation-generale"
+                   and auj <= s["debut"] <= auj + dt.timedelta(days=30) and not s.get("complet")]
+        if bientot:
+            villes = collections.Counter(s["ville"] for s in bientot if s.get("ville")).most_common(3)
+            prix = sorted(s["prix"] for s in bientot if s.get("prix"))
+            texte = (f"🎒 {len(bientot)} sessions de formation générale BAFA commencent dans les 30 prochains jours"
+                     + ((f", dont {', '.join(f'{n} à {v}' for v, n in villes)}" if villes[0][1] > 1 else f", notamment à {', '.join(v for v, _ in villes)}") if villes else "") + "."
+                     + (f" Prix médian : {prix[len(prix) // 2]:.0f} €." if prix else "")
+                     + "\n\nToutes les dates, les prix et les places près de chez vous, comparés gratuitement 👉")
+            idees.append({"cle": f"bafa-30j-{cle}", "titre": "Les sessions BAFA du mois", "pour": "jeunes", "texte": texte, "lien": "/se-former/sessions/"})
+            for v, n in villes[:2]:
+                u = villes_url.get(f"Passer le BAFA à {v}")
+                if u and n > 1:
+                    idees.append({"cle": f"bafa-{u.strip('/').rsplit('/', 1)[1]}-{cle}", "titre": f"Le BAFA à {v}", "pour": "jeunes",
+                                  "texte": f"📍 Vous voulez passer votre BAFA à {v} ? {n} sessions de formation générale commencent dans le mois qui vient. Comparez les dates et les prix 👉", "lien": u})
+        appro = [s for s in self.sessions if s["diplome"] == "BAFA" and s["type"] == "approfondissement" and auj <= s["debut"] <= auj + dt.timedelta(days=45)]
+        if appro:
+            themes = collections.Counter(s["theme"] for s in appro if s.get("theme")).most_common(3)
+            idees.append({"cle": f"appro-{cle}", "titre": "Les approfondissements du moment", "pour": "jeunes",
+                          "texte": f"🌊 Il vous reste l'approfondissement ? {len(appro)} sessions dans les 6 semaines qui viennent"
+                                   + (f" (les thèmes les plus proposés : {', '.join(t for t, _ in themes)})" if themes else "") + ". Trouvez la vôtre 👉",
+                          "lien": "/se-former/sessions/"})
+        for a in (self.articles or [])[:3]:
+            idees.append({"cle": "article-" + a["url"].strip("/").rsplit("/", 1)[1], "titre": "Article : " + a["titre"], "pour": "jeunes",
+                          "texte": f"📖 {a['titre']}\n\n{a.get('resume') or a.get('description') or ''}\n\nÀ lire sur le blog 👉", "lien": a["url"]})
+        idees.append({"cle": f"recruter-{cle}", "titre": "Pour les structures qui recrutent", "pour": "structures",
+                      "texte": "🧭 Vous cherchez des animateurs pour les vacances ? Sur Fil Roug'Anim, ce sont les animateurs qui décrivent le poste qu'ils cherchent : leur demande arrive directement chez les structures les plus proches. Créez la page de votre structure 👉",
+                      "lien": "/trouver-un-poste/structures/"})
+        idees.append({"cle": f"demande-{cle}", "titre": "Pour les animateurs qui cherchent un poste", "pour": "animateurs",
+                      "texte": "✋ Animateur, stagiaire BAFA ou directeur ? Décrivez en 2 minutes le poste que vous cherchez (quand, où, quel public) : votre demande part chez les structures les plus proches de chez vous. Gratuit 👉",
+                      "lien": "/trouver-un-poste/demande/"})
+        return {"semaine": cle, "idees": idees}
 
     def lieux_google(self):
         """Les villes, départements et régions avec leurs pages et ce que Google en montre (calculé une fois)."""

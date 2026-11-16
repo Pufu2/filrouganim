@@ -985,14 +985,269 @@
     remplir();
   }
 
+  /* ---------- Indexation (Google page par page) ---------- */
+  var IDX = null, PLAN = null, CONT = null, POSTS = null, PUB = null, ACT = null;
+  var ix = { f: "a_soumettre", q: "", rub: "" };
+  var COUV = [[/submitted and indexed/i, "Indexée"], [/indexed, not submitted/i, "Indexée (hors plan du site)"], [/discovered/i, "Découverte, pas encore explorée"],
+              [/crawled/i, "Explorée, pas encore indexée"], [/unknown/i, "Inconnue de Google"], [/duplicate|canonical/i, "Doublon d'une autre page"],
+              [/noindex/i, "Exclue (noindex)"], [/redirect/i, "Redirection"], [/not found|404/i, "Introuvable (404)"], [/soft 404/i, "Page jugée vide"], [/blocked/i, "Bloquée"]];
+  function couv(x) { if (!x) return "Pas encore vérifiée"; for (var i = 0; i < COUV.length; i++) if (COUV[i][0].test(x)) return COUV[i][1]; return x; }
+  function indexee(r) { return !!(r && r.couverture && /indexed/i.test(r.couverture) && !/not indexed|currently/i.test(r.couverture)); }
+  function rubrique(u) { var p = u.replace(/^https:\/\/[^/]+/, "").split("/").filter(Boolean); if (!p.length) return "Accueil"; if (p[0] === "se-former" && p[1] === "sessions") return "Sessions"; if (p[0] === "se-former" && p[1] === "ecoles") return "Écoles"; return { "se-former": "Se former", "trouver-un-poste": "Postes et structures", blog: "Blog", lexique: "Lexique", chiffres: "Chiffres" }[p[0]] || "Autres pages"; }
+  function lienGsc(u) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u); }
+  function indexation() {
+    var c = $("ad-indexation"); if (!c) return; c.textContent = "";
+    var parUrl = {}; (IDX || []).forEach(function (r) { parUrl[r.url] = r; });
+    var urls = (PLAN && PLAN.length ? PLAN : Object.keys(parUrl));
+    var L = urls.map(function (u) { var r = parUrl[u] || { url: u }; return Object.assign({ etatIx: !r.verifie_le ? "jamais" : indexee(r) ? "indexee" : r.demandee_le ? "demandee" : "a_soumettre" }, r, { url: u }); });
+    var n = function (k) { return compte(L, function (x) { return x.etatIx === k; }); };
+    var verifiees = L.length - n("jamais");
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "Pages indexées"));
+    cote.appendChild(el("p", "ap-cote-gros", verifiees ? pct(n("indexee"), verifiees) : "–"));
+    [["Vérifiées", fr(verifiees) + " / " + fr(L.length)], ["Dernière vérification", IDX && IDX.length ? depuis(IDX.reduce(function (a, r) { return r.verifie_le > a ? r.verifie_le : a; }, "")) : "pas encore"]].forEach(function (x) {
+      var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, x[1])); cote.appendChild(r); });
+    hero(c, "Indexation", "Vos pages ", "dans Google",
+      "Une page qui n'est pas indexée ne sort jamais dans Google. Toutes les 6 heures, environ 300 pages du plan du site sont vérifiées auprès de Google (2 000 par jour au plus). Pour une page pas encore indexée : « Inspecter » ouvre la Search Console, cliquez sur « Demander l'indexation » (une dizaine par jour), puis « C'est fait » ici.",
+      [bouton("Visibilité", "visibilite", true, "loupe"), bouton("← Vue d'ensemble", "accueil")], cote);
+    var g = grille(c, "ap-g4");
+    kpi(g, "base", "Pages du plan du site", fr(L.length), "dans sitemap.xml");
+    kpi(g, "coche", "Indexées", fr(n("indexee")), verifiees ? pct(n("indexee"), verifiees) + " des pages vérifiées" : "en attente du premier relevé", "ok");
+    kpi(g, "alerte", "Pas encore dans Google", fr(n("a_soumettre") + n("demandee")), n("demandee") + " déjà demandées", n("a_soumettre") ? "jaune" : null);
+    kpi(g, "horloge", "Pas encore vérifiées", fr(n("jamais")), "vues au fil des relevés");
+    if (!IDX || !IDX.length) {
+      var v = carte(c, "Premier relevé à venir");
+      v.appendChild(el("p", "ap-petit", "La vérification se fait dans « Relever les chiffres » (toutes les 6 heures), avec la même clé Search Console que vos chiffres. Les premiers résultats arrivent au prochain relevé ; tout le plan du site est vu en 2 à 3 jours."));
+    }
+    // par rubrique
+    var rubs = {}; L.forEach(function (x) { var k = rubrique(x.url); rubs[k] = rubs[k] || [0, 0, 0]; rubs[k][0]++; if (x.etatIx === "indexee") rubs[k][1]++; if (x.etatIx !== "jamais") rubs[k][2]++; });
+    var cr = carte(c, "Par rubrique", "indexées / vérifiées");
+    tableau(cr, ["Rubrique", "Pages", "Vérifiées", "Indexées", "Part indexée"], Object.keys(rubs).sort(function (a, b) { return rubs[b][0] - rubs[a][0]; }).map(function (k) {
+      return [cellule(k), fr(rubs[k][0]), fr(rubs[k][2]), fr(rubs[k][1]), rubs[k][2] ? etiquette(pct(rubs[k][1], rubs[k][2]), rubs[k][1] / rubs[k][2] >= .8 ? "ok" : rubs[k][1] / rubs[k][2] >= .4 ? "jaune" : "rose") : "–"];
+    }));
+    // la liste
+    var lc = carte(c, "Les pages");
+    var on = el("div", "ap-puces"); lc.appendChild(on);
+    [["a_soumettre", "À soumettre"], ["demandee", "Demandées"], ["jamais", "Pas encore vérifiées"], ["indexee", "Indexées"], ["toutes", "Toutes"]].forEach(function (x) {
+      var b = el("button", null, x[1] + " " + fr(x[0] === "toutes" ? L.length : n(x[0]))); b.type = "button"; b.setAttribute("aria-pressed", ix.f === x[0] ? "true" : "false");
+      b.addEventListener("click", function () { ix.f = x[0]; indexation(); }); on.appendChild(b); });
+    var outils = el("div", "ap-barre-outils"); lc.appendChild(outils);
+    var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Chercher une adresse…"; q.value = ix.q; outils.appendChild(q);
+    var sr = el("select", "ap-select"); [""].concat(Object.keys(rubs).sort()).forEach(function (k) { var o = el("option", null, k || "Toutes les rubriques"); o.value = k; if (ix.rub === k) o.selected = true; sr.appendChild(o); }); outils.appendChild(sr);
+    var zone = el("div"); lc.appendChild(zone);
+    function remplir() {
+      zone.textContent = "";
+      var m = ix.q.trim().toLowerCase();
+      var l = L.filter(function (x) { return (ix.f === "toutes" || x.etatIx === ix.f) && (!ix.rub || rubrique(x.url) === ix.rub) && (!m || x.url.toLowerCase().indexOf(m) >= 0); });
+      // d'abord les pages qui comptent : celles que Google montre déjà, puis les plus courtes (les pages mères)
+      var imp = {}; ((G && G.pages) || []).forEach(function (p) { imp["https://filrouganim.fr" + p[0]] = p[2]; });
+      l.sort(function (a, b) { return (imp[b.url] || 0) - (imp[a.url] || 0) || a.url.length - b.url.length; });
+      tableau(zone, ["Page", "Dans Google", "Dernier passage de Google", ""], l.slice(0, 150).map(function (x) {
+        var chemin = x.url.replace("https://filrouganim.fr", "") || "/";
+        var t = x.etatIx === "indexee" ? "ok" : x.etatIx === "jamais" ? "neutre" : x.etatIx === "demandee" ? "rose" : "jaune";
+        var d = el("div"); d.appendChild(etiquette(couv(x.couverture), t)); if (x.demandee_le && x.etatIx !== "indexee") d.appendChild(el("small", "ap-petit", " demandée " + depuis(x.demandee_le)));
+        return [cellule(chemin, rubrique(x.url) + (imp[x.url] ? " · " + fr(imp[x.url]) + " affichages" : "")), d,
+          cellule(x.dernier_passage ? E.dateFr(iso(x.dernier_passage)) : "–", x.verifie_le ? "vérifiée " + depuis(x.verifie_le) : null),
+          actions([["Inspecter", null, lienGsc(x.url)], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
+      }));
+      if (l.length > 150) zone.appendChild(el("p", "ap-petit", "Les 150 premières sur " + fr(l.length) + " : affinez avec la recherche ou la rubrique."));
+    }
+    q.addEventListener("input", function () { ix.q = q.value; remplir(); });
+    sr.addEventListener("change", function () { ix.rub = sr.value; remplir(); });
+    remplir();
+    var p = document.querySelector('[data-pastille-admin="indexation"]'); if (p) { p.hidden = !n("a_soumettre"); p.textContent = n("a_soumettre") > 99 ? "99+" : n("a_soumettre"); }
+  }
+  async function demandee(u) {
+    var maintenant = new Date().toISOString();
+    var r = await E.sb.from("admin_indexation").upsert({ url: u, demandee_le: maintenant });
+    if (r && r.error) { E.message(E.erreur(r.error), true); return; }
+    var x = (IDX || []).filter(function (y) { return y.url === u; })[0]; if (x) x.demandee_le = maintenant; else (IDX = IDX || []).push({ url: u, demandee_le: maintenant });
+    E.message("Noté : Google repassera dans les jours qui viennent."); indexation();
+  }
+
+  /* ---------- Actualités du secteur ---------- */
+  var CATS_ACT = ["Réglementation", "BAFA et BAFD", "Emploi et recrutement", "Aides et financement", "Vie du site"];
+  var act = { edition: null };
+  function actualites() {
+    var c = $("ad-actualites"); if (!c) return; c.textContent = "";
+    var l = ACT || [];
+    hero(c, "Actualités", "Les actualités ", "du secteur",
+      "Ce que vous publiez ici apparaît dans l'espace des membres connectés (animateurs, structures, ou les deux), dans une carte « Actualités du secteur ». Rien n'est écrit tout seul : ajoutez une nouvelle à partir d'une source sûre, avec son lien.",
+      [bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(c, [[String(compte(l, function (a) { return a.publie; })), "publiées"], [String(compte(l, function (a) { return !a.publie; })), "brouillons"],
+                 [String(compte(l, function (a) { return a.publie && iso(a.date) >= joursAvant(30); })), "ce mois-ci", "rouge"]]);
+    var g = el("div", "ap-pros"); c.appendChild(g);
+    var x = act.edition || { titre: "", resume: "", categorie: CATS_ACT[0], lien: "", source: "", pour: ["animateurs", "structures"], publie: true, date: AUJ };
+    var fc = carte(g, x.id ? "Modifier l'actualité" : "Nouvelle actualité");
+    var f = el("form", "ap-form-v");
+    function champ(nom, titre, type, val) { var lb = el("label", "ap-champ"); lb.appendChild(el("span", null, titre)); var i = el(type === "texte" ? "textarea" : "input", "ap-recherche"); if (type === "texte") i.rows = 5; else i.type = type || "text"; i.name = nom; i.value = val || ""; lb.appendChild(i); f.appendChild(lb); return i; }
+    var it = champ("titre", "Titre", "text", x.titre); it.required = true; it.maxLength = 160;
+    champ("resume", "En deux ou trois phrases", "texte", x.resume).maxLength = 1200;
+    var lc = el("label", "ap-champ"); lc.appendChild(el("span", null, "Catégorie")); var sc = el("select", "ap-select"); sc.name = "categorie";
+    CATS_ACT.forEach(function (k) { var o = el("option", null, k); o.value = k; if (x.categorie === k) o.selected = true; sc.appendChild(o); }); lc.appendChild(sc); f.appendChild(lc);
+    var il = champ("lien", "Lien vers la source (https://…)", "url", x.lien); il.pattern = "https://.*";
+    champ("source", "Nom de la source (ex. jeunes.gouv.fr)", "text", x.source);
+    champ("date", "Date", "date", iso(x.date));
+    var pr2 = el("div", "ap-cases"); [["animateurs", "Animateurs"], ["structures", "Structures"]].forEach(function (k) { var lb = el("label"); var i = el("input"); i.type = "checkbox"; i.name = "pour"; i.value = k[0]; i.checked = (x.pour || []).indexOf(k[0]) >= 0; lb.appendChild(i); lb.appendChild(document.createTextNode(" " + k[1])); pr2.appendChild(lb); });
+    var lp = el("label"); var ip = el("input"); ip.type = "checkbox"; ip.name = "publie"; ip.checked = !!x.publie; lp.appendChild(ip); lp.appendChild(document.createTextNode(" Publiée")); pr2.appendChild(lp);
+    f.appendChild(pr2);
+    var bs = el("div", "ap-boutons"); var ok = el("button", "ap-bouton", x.id ? "Enregistrer" : "Ajouter"); ok.type = "submit"; bs.appendChild(ok);
+    if (x.id) { var an = el("button", "ap-lien-b", "Annuler"); an.type = "button"; an.addEventListener("click", function () { act.edition = null; actualites(); }); bs.appendChild(an); }
+    f.appendChild(bs);
+    f.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var pour = Array.prototype.filter.call(f.querySelectorAll('[name="pour"]'), function (i) { return i.checked; }).map(function (i) { return i.value; });
+      if (!pour.length) { E.message("Choisissez au moins un public (animateurs ou structures).", true); return; }
+      var v = { titre: f.titre.value.trim(), resume: f.resume.value.trim() || null, categorie: sc.value, lien: f.lien.value.trim() || null, source: f.source.value.trim() || null, date: f.date.value || AUJ, pour: pour, publie: ip.checked };
+      ok.disabled = true;
+      var r = x.id ? await E.sb.from("actualites").update(v).eq("id", x.id) : await E.sb.from("actualites").insert(v);
+      ok.disabled = false;
+      if (r.error) { E.message(E.erreur(r.error), true); return; }
+      act.edition = null; await lireActualites(); E.message("Enregistré."); actualites();
+    });
+    fc.appendChild(f);
+    var srcs = el("p", "ap-petit"); srcs.appendChild(document.createTextNode("Sources sûres : "));
+    [["jeunes.gouv.fr (BAFA, BAFD)", "https://www.jeunes.gouv.fr/bafa-bafd"], ["service-public.fr", "https://www.service-public.fr/particuliers/vosdroits/F2135"], ["Légifrance", "https://www.legifrance.gouv.fr/"]].forEach(function (s, i) {
+      if (i) srcs.appendChild(document.createTextNode(" · ")); var a = el("a", null, s[0]); a.href = s[1]; a.target = "_blank"; a.rel = "noopener"; srcs.appendChild(a); });
+    fc.appendChild(srcs);
+    var droite = el("div", "ap-col"); g.appendChild(droite);
+    var lst = carte(droite, "Toutes les actualités", l.length + " au total");
+    if (!l.length) lst.appendChild(el("p", "ap-vide", "Aucune actualité pour l'instant. Les membres ne voient pas la carte tant qu'il n'y en a pas."));
+    l.forEach(function (a) {
+      var r = el("div", "ap-act"); var t = el("div");
+      var h = el("p", "ap-act-sur"); h.appendChild(etiquette(a.categorie || "Actualité", "neutre")); h.appendChild(document.createTextNode(" " + E.dateFr(iso(a.date)) + " · pour les " + (a.pour || []).join(" et "))); t.appendChild(h);
+      t.appendChild(el("b", null, a.titre)); if (a.resume) t.appendChild(el("p", "ap-petit", a.resume));
+      if (a.lien) { var s = el("a", "ap-petit", "Source : " + (a.source || a.lien.replace(/^https:\/\/(www\.)?/, "").split("/")[0])); s.href = a.lien; s.target = "_blank"; s.rel = "noopener"; t.appendChild(s); }
+      r.appendChild(t);
+      var d = el("div", "ap-col-fin"); d.appendChild(etiquette(a.publie ? "publiée" : "brouillon", a.publie ? "ok" : "jaune"));
+      d.appendChild(actions([[a.publie ? "Dépublier" : "Publier", async function () { var q = await E.sb.from("actualites").update({ publie: !a.publie }).eq("id", a.id); if (q.error) return E.message(E.erreur(q.error), true); await lireActualites(); actualites(); }],
+        ["Modifier", function () { act.edition = a; actualites(); window.scrollTo(0, 0); }],
+        ["Supprimer", async function () { if (!window.confirm("Supprimer « " + a.titre + " » ?")) return; var q = await E.sb.from("actualites").delete().eq("id", a.id); if (q.error) return E.message(E.erreur(q.error), true); await lireActualites(); actualites(); }, null, "ap-danger"]]));
+      r.appendChild(d); lst.appendChild(r);
+    });
+  }
+  async function lireActualites() { var r = await E.sb.from("actualites").select("*").order("date", { ascending: false }).order("id", { ascending: false }); ACT = (r && !r.error && r.data) || []; }
+
+  /* ---------- Contenus du site (articles, guides, fiches) ---------- */
+  var ct = { f: "tous", tri: "impressions" };
+  function contenusSite() {
+    var c = $("ad-site"); if (!c) return; c.textContent = "";
+    var l = CONT || [];
+    var tot = l.reduce(function (a, x) { return a + (x.impressions || 0); }, 0), clics = l.reduce(function (a, x) { return a + (x.clics || 0); }, 0);
+    hero(c, "Contenus du site", "Vos articles ", "et vos guides",
+      "Chaque article, guide et fiche formation du site public, avec ce que Google en montre sur 28 jours. Les textes sont dans le dépôt (dossier contenu/) : « Modifier » ouvre le fichier sur GitHub. Les guides réservés aux structures abonnées sont à part, dans « Guides et conseils ».",
+      [bouton("Guides et conseils (structures)", "contenus", true, "livre"), bouton("← Vue d'ensemble", "accueil")]);
+    var g = grille(c, "ap-g4");
+    kpi(g, "livre", "Articles du blog", String(compte(l, function (x) { return x.type === "Article"; })), "dans contenu/blog");
+    kpi(g, "offre", "Guides et fiches", String(compte(l, function (x) { return x.type !== "Article"; })), "guides et fiches formations");
+    kpi(g, "oeil", "Affichages dans Google", fr(tot), "sur 28 jours, ces pages seules");
+    kpi(g, "lien", "Clics depuis Google", fr(clics), pct(clics, tot) + " des affichages", "ok");
+    var on = el("div", "ap-puces"); c.appendChild(on);
+    [["tous", "Tout"], ["Article", "Articles"], ["Guide", "Guides"], ["Fiche formation", "Fiches formations"], ["vieux", "À rafraîchir (plus de 6 mois)"], ["zero", "Pas encore vus dans Google"]].forEach(function (x) {
+      var b = el("button", null, x[1]); b.type = "button"; b.setAttribute("aria-pressed", ct.f === x[0] ? "true" : "false"); b.addEventListener("click", function () { ct.f = x[0]; contenusSite(); }); on.appendChild(b); });
+    var six = joursAvant(183);
+    var v = l.filter(function (x) { return ct.f === "tous" || x.type === ct.f || (ct.f === "vieux" && x.date && x.date < six) || (ct.f === "zero" && !x.impressions); });
+    v.sort(function (a, b) { return (b.impressions || 0) - (a.impressions || 0) || (b.date || "").localeCompare(a.date || ""); });
+    tableau(c, ["Contenu", "Date", "Affichages", "Clics", "Place moyenne", ""], v.map(function (x) {
+      return [cellule(x.titre, x.type + (x.categorie ? " · " + x.categorie : "") + " · " + fr(x.mots) + " mots"), cellule(x.date ? E.dateFr(x.date) : "–", x.date && x.date < six ? "à rafraîchir" : null),
+        cellule(fr(x.impressions)), cellule(fr(x.clics)), cellule(x.place ? String(Math.round(x.place * 10) / 10).replace(".", ",") : "–", x.place && x.place <= 10 ? "1re page" : x.place && x.place <= 20 ? "2e page" : null),
+        actions([["Voir", null, x.url], ["Modifier", null, "https://github.com/" + DEPOT + "/edit/main/" + x.fichier]])];
+    }));
+    // des idées de sujets : les recherches où le site sort, mais loin
+    var cs = carte(c, "Des sujets à creuser", "recherches où le site apparaît après la 1re page");
+    var R = ((G && G.recherches) || []).filter(function (r) { return r.place > 10; }).sort(function (a, b) { return b.impressions - a.impressions; }).slice(0, 12);
+    tableau(cs, ["Recherche", "Affichages", "Place"], R.map(function (r) { return [cellule(r.recherche), cellule(fr(r.impressions)), cellule(String(Math.round(r.place * 10) / 10).replace(".", ","))]; }));
+    cs.appendChild(el("p", "ap-petit", "Un article ou une section de guide qui répond exactement à l'une de ces recherches peut faire passer le site en première page."));
+  }
+
+  /* ---------- Réseaux sociaux ---------- */
+  var RESEAUX = ["Instagram", "Facebook", "LinkedIn", "TikTok"];
+  var rs = { reseau: "Instagram" };
+  function lienPost(i) { return "https://filrouganim.fr" + i.lien + "?utm_source=" + rs.reseau.toLowerCase() + "&utm_medium=social&utm_campaign=" + encodeURIComponent(i.cle); }
+  function reseaux() {
+    var c = $("ad-reseaux"); if (!c) return; c.textContent = "";
+    var pub = PUB || [], idees = (POSTS && POSTS.idees) || [];
+    var dernier = pub.reduce(function (a, p) { return p.publie_le > a ? p.publie_le : a; }, "");
+    var venus = D.structures.concat(D.profils).filter(function (x) { var k = canal(x.provenance); return k === "Facebook" || k === "Instagram" || k === "Autres réseaux"; }).length;
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "Dernier post"));
+    cote.appendChild(el("p", "ap-cote-gros", dernier ? depuis(dernier) : "jamais"));
+    [["Posts sur 30 jours", String(compte(pub, function (p) { return iso(p.publie_le) >= joursAvant(29); }))], ["Inscrits venus des réseaux", String(venus)]].forEach(function (x) {
+      var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, x[1])); cote.appendChild(r); });
+    hero(c, "Réseaux sociaux", "Des posts prêts, ", "chaque semaine",
+      "Chaque publication du site prépare des idées de posts à partir des vraies sessions et des derniers articles. Choisissez le réseau, copiez le texte (le lien est suivi : vous verrez les visites et les inscriptions dans « Provenance »), publiez, puis « C'est publié ».",
+      [bouton("Provenance", "provenance", true, "lien"), bouton("← Vue d'ensemble", "accueil")], cote);
+    // calendrier des 5 dernières semaines
+    var cal = carte(c, "Vos 5 dernières semaines", "un point par jour où vous avez posté");
+    var jours = {}; pub.forEach(function (p) { var k = iso(p.publie_le); jours[k] = (jours[k] || 0) + 1; });
+    var gr = el("div", "ap-cal"); for (var i = 34; i >= 0; i--) { var j = joursAvant(i); var d = el("span", jours[j] ? "ap-cal-on" : null); d.title = E.dateFr(j) + (jours[j] ? " · " + jours[j] + " post" + (jours[j] > 1 ? "s" : "") : ""); gr.appendChild(d); }
+    cal.appendChild(gr);
+    cal.appendChild(el("p", "ap-petit", "Le bon rythme pour démarrer : 2 à 3 posts par semaine, surtout avant les vacances scolaires (c'est là que les jeunes cherchent leur BAFA et que les structures recrutent)."));
+    var on = el("div", "ap-puces"); c.appendChild(on);
+    RESEAUX.forEach(function (k) { var b = el("button", null, k); b.type = "button"; b.setAttribute("aria-pressed", rs.reseau === k ? "true" : "false"); b.addEventListener("click", function () { rs.reseau = k; reseaux(); }); on.appendChild(b); });
+    var g = el("div", "ap-posts"); c.appendChild(g);
+    if (!idees.length) g.appendChild(el("p", "ap-vide", "Les idées arrivent avec la prochaine publication du site."));
+    idees.forEach(function (i) {
+      var fait = pub.filter(function (p) { return p.cle === i.cle + ":" + rs.reseau.toLowerCase(); })[0];
+      var k = el("section", "ap-carte ap-post" + (fait ? " ap-post-fait" : ""));
+      var h = el("div", "ap-carte-h"); h.appendChild(el("h3", null, i.titre)); h.appendChild(etiquette({ jeunes: "jeunes en formation", structures: "structures", animateurs: "animateurs" }[i.pour] || i.pour, "neutre")); k.appendChild(h);
+      var texte = i.texte + "\n" + lienPost(i);
+      var t = el("p", "ap-post-t", texte); k.appendChild(t);
+      var b = el("div", "ap-boutons");
+      var cp = el("button", "ap-bouton", "Copier le texte"); cp.type = "button";
+      cp.addEventListener("click", function () { if (navigator.clipboard) navigator.clipboard.writeText(texte).then(function () { cp.textContent = "Copié ✓"; setTimeout(function () { cp.textContent = "Copier le texte"; }, 2000); }); });
+      b.appendChild(cp);
+      if (fait) b.appendChild(etiquette("publié " + depuis(fait.publie_le) + " sur " + rs.reseau, "ok"));
+      else { var ok = el("button", "ap-lien-b", "C'est publié"); ok.type = "button"; ok.addEventListener("click", async function () {
+        var r = await E.sb.from("admin_posts").upsert({ cle: i.cle + ":" + rs.reseau.toLowerCase(), reseau: rs.reseau, titre: i.titre, texte: texte, publie_le: new Date().toISOString() });
+        if (r.error) return E.message(E.erreur(r.error), true); await lirePosts(); E.message("Bravo, c'est noté."); reseaux(); }); b.appendChild(ok); }
+      k.appendChild(b); g.appendChild(k);
+    });
+    var hist = carte(c, "Déjà publiés", pub.length + " au total");
+    tableau(hist, ["Post", "Réseau", "Publié", ""], pub.slice(0, 30).map(function (p) {
+      return [cellule(p.titre || p.cle), cellule(p.reseau), cellule(E.dateFr(iso(p.publie_le))),
+        actions([["Retirer", async function () { var r = await E.sb.from("admin_posts").delete().eq("cle", p.cle); if (r.error) return E.message(E.erreur(r.error), true); await lirePosts(); reseaux(); }, null, "ap-danger"]])];
+    }));
+  }
+  async function lirePosts() { var r = await E.sb.from("admin_posts").select("*").order("publie_le", { ascending: false }); PUB = (r && !r.error && r.data) || []; }
+
+  /* ---------- Guides et conseils : en créer un ---------- */
+  function enteteGuides() {
+    var c = $("ad-contenus"); if (!c || c.querySelector(".ap-nouveau-guide")) return;
+    var d = el("details", "ap-carte ap-nouveau-guide"); var s = el("summary", null, "+ Nouveau guide ou conseil"); d.appendChild(s);
+    var f = el("form", "ap-form-v");
+    [["titre", "Titre"], ["slug", "Adresse courte (ex. aides-embauche), sans espace"], ["court", "Titre court (facultatif)"]].forEach(function (x) { var lb = el("label", "ap-champ"); lb.appendChild(el("span", null, x[1])); var i = el("input", "ap-recherche"); i.name = x[0]; if (x[0] !== "court") i.required = true; if (x[0] === "slug") i.pattern = "[a-z0-9-]+"; lb.appendChild(i); f.appendChild(lb); });
+    var lt = el("label", "ap-champ"); lt.appendChild(el("span", null, "Type")); var st = el("select", "ap-select"); st.name = "type"; [["guide", "Guide (une page complète)"], ["conseil", "Conseil (une phrase ou deux)"]].forEach(function (o) { var op = el("option", null, o[1]); op.value = o[0]; st.appendChild(op); }); lt.appendChild(st); f.appendChild(lt);
+    var lh = el("label", "ap-champ"); lh.appendChild(el("span", null, "Texte (HTML simple : <p>, <h2>, <ul><li>, <a>)")); var th = el("textarea", "ap-recherche ad-code"); th.rows = 8; th.name = "html"; th.required = true; lh.appendChild(th); f.appendChild(lh);
+    var ok = el("button", "ap-bouton", "Créer"); ok.type = "submit"; f.appendChild(ok);
+    f.addEventListener("submit", async function (e) {
+      e.preventDefault(); ok.disabled = true;
+      var r = await E.sb.from("ressources_structures").insert({ slug: f.slug.value.trim(), titre: f.titre.value.trim(), court: f.court.value.trim() || null, type: st.value, html: th.value, ordre: 9, maj: AUJ });
+      ok.disabled = false;
+      if (r.error) return E.message(E.erreur(r.error), true);
+      E.message("Créé : les structures abonnées le voient tout de suite."); A.recharger();
+    });
+    d.appendChild(f); c.insertBefore(d, c.children[1] || null);
+  }
+
   /* ---------- chargement ---------- */
   async function toutLire() {
     var lireJson = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
     var r = await Promise.all([E.sb.rpc("admin_sante"), lireGithub(), lireJson("/chiffres/google.json"), lireJson("/compte/organismes.json"),
-                               E.sb.from("admin_prospects").select("*")]);
+                               E.sb.from("admin_prospects").select("*"), lireIndexation(), lireJson("/compte/contenus.json"), lireJson("/compte/posts.json"),
+                               lirePosts(), lireActualites(), fetch("/sitemap.xml").then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; })]);
     S = (r[0] && !r[0].error && r[0].data) || {};
     G = r[2] || {}; ORG = r[3] || { suivis: [], autres: [] }; PROS = (r[4] && !r[4].error && r[4].data) || [];
+    CONT = r[6] || []; POSTS = r[7] || { idees: [] };
+    PLAN = (r[10] || "").match(/<loc>[^<]+<\/loc>/g); PLAN = (PLAN || []).map(function (x) { return x.slice(5, -6); });
     verifieA = new Date();
+  }
+  async function lireIndexation() {
+    var tout = [];
+    for (var i = 0; i < 20; i++) {
+      var r = await E.sb.from("admin_indexation").select("*").order("url").range(i * 1000, i * 1000 + 999);
+      if (!r || r.error || !r.data) break;
+      tout = tout.concat(r.data); if (r.data.length < 1000) break;
+    }
+    IDX = tout;
   }
   window.FRA_ADMIN_PRO = {
     rendre: async function (donnees, actions) {
@@ -1001,6 +1256,7 @@
       if (!S) { S = {}; QG(); ventes(); accueil(); await toutLire(); }
       accueil(); QG(); sante(); ventes();
       membresPage(); enteteStructures(); enteteAnimateurs(); organismes(); visibilite(); provenance(); prospection();
+      indexation(); actualites(); contenusSite(); reseaux(); enteteGuides();
       var p = document.querySelector('[data-pastille-admin="qg"]'); var n = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
       if (p) { p.hidden = !n; p.textContent = n; }
     }

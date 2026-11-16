@@ -3379,3 +3379,33 @@ body.admin-large #v-admin > .ap-page { padding: 0; }
 @media (max-width: 560px) { .ap-canaux, .ap-ia { grid-template-columns: 1fr 1fr; } .ap-pro { grid-template-columns: 1fr; } }
 /* Membres, Structures et Animateurs : la page pro sans le cadre beige des listes */
 body.en-app #v-admin > #ad-comptes, body.en-app #v-admin > #ad-structures, body.en-app #v-admin > #ad-animateurs { background: none; border: 0; box-shadow: none; padding: 0; }
+
+/* Admin pro, partie 3 : indexation, actualités, contenus du site, réseaux sociaux */
+.ap-form-v { display: flex; flex-direction: column; gap: 10px; }
+.ap-champ { display: flex; flex-direction: column; gap: 4px; font: 700 .8rem var(--texte); color: var(--doux); }
+.ap-champ .ap-recherche, .ap-champ .ap-select { margin: 0; width: 100%; font-weight: 500; color: var(--encre); }
+.ap-champ textarea.ap-recherche { resize: vertical; min-height: 90px; font: 500 .9rem/1.45 var(--texte); }
+.ap-cases { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .9rem; }
+.ap-act { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid #f3ece4; }
+.ap-act:first-of-type { border-top: 0; }
+.ap-act b { display: block; margin: 4px 0 2px; }
+.ap-act-sur { margin: 0; font-size: .8rem; color: var(--doux); }
+.ap-col-fin { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.ap-cal { display: grid; grid-template-columns: repeat(7, 22px); gap: 5px; margin: 6px 0 10px; }
+.ap-cal span { width: 22px; height: 22px; border-radius: 6px; background: #f3ece4; }
+.ap-cal span.ap-cal-on { background: var(--rouge, #c8102e); }
+.ap-posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.ap-post { display: flex; flex-direction: column; }
+.ap-post-t { white-space: pre-wrap; font-size: .88rem; line-height: 1.5; background: #fbf8f4; border-radius: 10px; padding: 10px 12px; flex: 1; overflow-wrap: anywhere; }
+.ap-post-fait { opacity: .7; }
+.ap-nouveau-guide { margin: 0 0 14px; }
+.ap-nouveau-guide summary { cursor: pointer; font-weight: 800; }
+.ap-nouveau-guide[open] summary { margin-bottom: 12px; }
+@media (max-width: 760px) { .ap-act { flex-direction: column; } .ap-col-fin { align-items: flex-start; } }
+.tb-actus-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.tb-actus-l li { padding-top: 12px; border-top: 1px solid #f3ece4; }
+.tb-actus-l li:first-child { border-top: 0; padding-top: 0; }
+.tb-actus-l small { color: var(--doux); font-size: .78rem; font-weight: 700; }
+.tb-actus-l b { display: block; margin: 2px 0 4px; line-height: 1.3; }
+.tb-actus-l p { margin: 0 0 4px; font-size: .88rem; color: var(--doux); }
+.tb-actus-l a { font-size: .85rem; font-weight: 700; }
