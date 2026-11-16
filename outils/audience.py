@@ -92,9 +92,10 @@ def search_console(aujourdhui):
     # les six derniers mois, mois par mois
     d, _ = lire_json(url, entetes, {"startDate": (fin - dt.timedelta(days=185)).isoformat(), "endDate": fin.isoformat(),
                                     "dimensions": ["date"], "rowLimit": 400})
-    par_mois = {}
+    par_mois, par_jour = {}, []
     for l in d.get("rows") or []:
         par_mois[l["keys"][0][:7]] = par_mois.get(l["keys"][0][:7], 0) + int(l.get("impressions") or 0)
+        par_jour.append([l["keys"][0], int(l.get("impressions") or 0), int(l.get("clicks") or 0)])
     # le détail des 28 derniers jours : les recherches tapées dans Google et les pages du site affichées
     def detail(dimension):
         d, _ = lire_json(url, entetes, {"startDate": (fin - dt.timedelta(days=27)).isoformat(), "endDate": fin.isoformat(),
@@ -110,6 +111,8 @@ def search_console(aujourdhui):
     return {"impressions_28j": imp, "impressions_evolution": evolution(imp, imp_avant),
             "clics_28j": clics, "clics_evolution": evolution(clics, clics_avant),
             "impressions_par_mois": [{"mois": m, "n": n} for m, n in sorted(par_mois.items())][-7:],
+            # jour par jour (date, affichages, clics) : la courbe de la page des chiffres, semaine par semaine au début
+            "impressions_par_jour": sorted(par_jour)[-185:],
             "gsc_du": (fin - dt.timedelta(days=27)).isoformat(), "gsc_au": fin.isoformat(),
             "recherches_total": len(requetes), "recherches_premiere_page": len(premiere(requetes)),
             "pages_vues_google": len(pages), "pages_premiere_page_n": len(premiere(pages)),

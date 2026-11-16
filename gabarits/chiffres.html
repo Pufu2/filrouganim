@@ -1,250 +1,125 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# La page des chiffres, sur le modèle de jasonmarinho.com/chiffres : le haut foncé avec les trois grands chiffres,
-   une bande de quatre chiffres, les affichages mois par mois, puis le détail page par page et recherche par recherche. #}
+{# La page des chiffres, bâtie comme jasonmarinho.com/chiffres (mêmes parties, même ordre, mêmes mesures), aux couleurs du site :
+   1. le haut foncé : le multiplicateur depuis le premier mois mesuré, la courbe des affichages Google, quatre cartes ;
+   2. les demandes des animateurs (annuaire inversé et candidatures), en direct, sans rien sur la personne ;
+   3. votre ville sur Google : les villes en première page, formation par formation, avec la place dans les résultats ;
+   4. l'encart pour rejoindre l'annuaire. #}
 {% set a = audience %}
 {% set s = cd.site %}
 {% macro n(x) %}{{ "{:,}".format(x or 0).replace(",", " ") }}{% endmacro %}
-{% macro evo(x, periode) %}{% if x is not none and x is defined %}<span class="ch-evo{{ ' ch-evo-bas' if x < 0 }}">{{ '+' if x >= 0 }}{{ x }} % vs {{ periode }} d'avant</span>{% else %}<span class="ch-evo ch-evo-neutre">Nouveau</span>{% endif %}{% endmacro %}
+{% macro aide(texte) %}<button type="button" class="cj-q" aria-label="Ce que veut dire ce chiffre">?<span role="tooltip">{{ texte }}</span></button>{% endmacro %}
+{% macro evo(x, periode) %}{% if x is not none and x is defined %}<span class="cj-evo{{ ' cj-evo-bas' if x < 0 }}">{{ '+' if x >= 0 }}{{ x }} % vs {{ periode }} d'avant</span>{% else %}<span class="cj-evo cj-evo-neutre">Premier mois mesuré</span>{% endif %}{% endmacro %}
 {% block tete %}
-<section class="tete ch-tete">
-  <div class="cadre ch-tete-grille">
-    <div>
-      <nav class="fil-ariane" aria-label="Fil d'Ariane"><a href="{{ lien('/') }}">Accueil</a><span aria-hidden="true">›</span><span aria-current="page">Les chiffres</span></nav>
-      <p class="tp-sur">Transparence</p>
-      <h1>La visibilité du site, <em>en chiffres réels</em></h1>
-      <p class="chapo">Vous hésitez à publier une offre ou à créer votre profil ? Voici ce que Fil Roug'Anim reçoit vraiment de Google et ce que voient les visiteurs, mis à jour chaque jour. Pas de chiffre arrondi pour faire joli.</p>
-      <ul class="ch-garanties"><li>Google Search Console</li><li>Mis à jour chaque jour</li><li>Aucune donnée personnelle</li></ul>
+<section class="tete cj-tete">
+  <div class="cadre">
+    <nav class="fil-ariane" aria-label="Fil d'Ariane"><a href="{{ lien('/') }}">Accueil</a><span aria-hidden="true">›</span><span aria-current="page">Les chiffres</span></nav>
+    <div class="cj-haut">
+      <div>
+        <p class="cj-sur"><span class="cj-point" aria-hidden="true"></span>Transparence · chiffres en direct</p>
+        <h1>La visibilité du site, <em>en chiffres réels</em></h1>
+        <p class="cj-chapo">Ce que filrouganim.fr reçoit vraiment de Google et des animateurs, mis à jour chaque jour. Données de Google Search Console et notre propre mesure des visites : rien d'arrondi, rien de caché.</p>
+      </div>
+      {% if cp.multi %}
+      <div class="cj-multi"><p class="cj-x"><span>×</span>{{ cp.multi.x }}</p><p class="cj-x-t">d'affichages dans Google {{ "la semaine du " ~ cp.multi.fin ~ " que celle du " ~ cp.multi.debut ~ ", la première semaine mesurée" if cp.multi.unite == "semaine" else "en " ~ cp.multi.fin ~ " qu'en " ~ cp.multi.debut ~ ", le premier mois mesuré" }}</p></div>
+      {% elif a.impressions_28j %}
+      <div class="cj-multi"><p class="cj-x">{{ n(a.impressions_28j) }}</p><p class="cj-x-t">affichages dans Google sur 28 jours, le premier mois mesuré</p></div>
+      {% endif %}
     </div>
-    <div class="ch-grand">
-      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><div><b>{{ n(a.impressions_28j) if a.impressions_28j is defined else '—' }}</b><span>affichages dans Google sur 28 jours</span></div>{% if a.impressions_28j is defined %}{{ evo(a.impressions_evolution, "28 j") }}{% endif %}</div>
-      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 9l12 4-5 2-2 5z"/><path d="M5 3v3M3 5h3M5.5 9.5l-2 2M9.5 5.5l2-2"/></svg></span><div><b>{{ n(a.clics_28j) if a.clics_28j is defined else '—' }}</b><span>clics depuis Google sur 28 jours</span></div>{% if a.clics_28j is defined %}{{ evo(a.clics_evolution, "28 j") }}{% endif %}</div>
-      <div class="ch-grand-ligne"><span class="ch-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .7 3.2 2.5 3.5 5.2"/></svg></span><div><b>{{ n(a.visiteurs_30j) if a.visiteurs_30j is defined else '—' }}</b><span>{% if a.visiteurs_30j is defined %}visiteurs du site sur 30 jours{% else %}visiteurs : le compteur vient d'être installé{% endif %}</span></div>{% if a.visiteurs_30j is defined %}{{ evo(a.visiteurs_evolution, "30 j") }}{% endif %}</div>
-      {% if a.gsc_du %}<p class="ch-periode">Google : du {{ a.gsc_du | date_fr(False) }} au {{ a.gsc_au | date_fr(False) }} (Google a deux à trois jours de retard)</p>{% endif %}
-    </div>
+    {% if cp.serie | length > 1 %}
+    <figure class="cj-courbe" aria-label="Affichages dans Google {{ 'semaine par semaine' if cp.unite == 'semaine' else 'mois par mois' }}">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="cj-aire" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7d8a" stop-opacity=".32"/><stop offset="1" stop-color="#ff7d8a" stop-opacity="0"/></linearGradient></defs>
+        <path class="cj-aire" d="M{{ cp.serie[0].x }} 100 {% for p in cp.serie %}L{{ p.x }} {{ p.y }} {% endfor %}L{{ cp.serie[-1].x }} 100Z"/>
+        <path class="cj-ligne" d="{% for p in cp.serie %}{{ 'M' if loop.first else 'L' }}{{ p.x }} {{ p.y }} {% endfor %}"/>
+      </svg>
+      {% for p in cp.serie %}<span class="cj-pt{{ ' cj-pt-der' if loop.last }}{{ ' cj-pt-cours' if p.en_cours }}" style="left: {{ p.x }}%; top: {{ p.y }}%"><b>{{ n(p.n) }}</b></span><span class="cj-mois" style="left: {{ p.x }}%">{{ p.l }}{{ ' (en cours)' if p.en_cours }}</span>{% endfor %}
+    </figure>
+    {% endif %}
+    <ul class="cj-cartes">
+      <li><p class="cj-c-t">Affichages Google · 28 j {{ aide("Une page du site est apparue dans les résultats de Google pour une recherche. Ce n'est pas une visite : c'est la vitrine qui passe devant les yeux.") }}</p><b>{{ n(a.impressions_28j) if a.impressions_28j is defined else '—' }}</b>{% if a.impressions_28j is defined %}{{ evo(a.impressions_evolution, "28 j") }}{% endif %}</li>
+      <li><p class="cj-c-t">Clics depuis Google · 28 j {{ aide("Quelqu'un a cliqué sur une page du site depuis Google. Les visites venues des réseaux sociaux, des e-mails ou d'un lien direct n'y sont pas : elles sont dans les visiteurs.") }}</p><b>{{ n(a.clics_28j) if a.clics_28j is defined else '—' }}</b>{% if a.clics_28j is defined %}{{ evo(a.clics_evolution, "28 j") }}{% endif %}</li>
+      <li><p class="cj-c-t">Visiteurs du site · 30 j {{ aide("Une visite du site, comptée par notre propre mesure, sans cookie publicitaire ni adresse IP gardée.") }}</p><b>{{ n(a.visiteurs_30j) if a.visiteurs_30j is defined else '—' }}</b>{% if a.visiteurs_30j is defined %}{{ evo(a.visiteurs_evolution, "30 j") }}{% endif %}</li>
+      <li class="cj-c-dem"><a href="#demandes"><p class="cj-c-t"><span id="cj-dem-titre">Demandes d'animateurs</span><span class="cj-fleche" aria-hidden="true">↓</span></p><b id="cj-dem-n">{{ cp.demandes | length }}</b><span class="cj-c-der" id="cj-dem-der"></span></a></li>
+    </ul>
+    <p class="cj-pied">{% if cp.mois_en_cours %}<span>{{ cp.mois_en_cours.nom | capitalize }} en cours : {{ n(cp.mois_en_cours.n) }} affichages pour l'instant</span>{% endif %}{% if a.gsc_du %}<span>Google : du {{ a.gsc_du | date_fr(False) }} au {{ a.gsc_au | date_fr(False) }} (3 jours de retard chez Google)</span>{% endif %}</p>
   </div>
 </section>
 {% endblock %}
 {% block contenu %}
-<section class="ch-bande" aria-label="Chiffres clés">
-  <ul class="ch-quatre">
-    <li><b>{{ n(a.recherches_premiere_page) if a.recherches_premiere_page is defined else n(s.sessions) }}</b><span>{{ "recherches différentes où le site sort en première page" if a.recherches_premiere_page is defined else "sessions à venir, comparées" }}</span></li>
-    <li><b>{{ n(a.pages_vues_google) if a.pages_vues_google is defined else n(s.organismes) }}</b><span>{{ "pages du site vues dans Google sur 28 jours" if a.pages_vues_google is defined else "organismes de formation" }}</span></li>
-    <li><b>{{ n(s.villes) }}</b><span>pages de ville pour le BAFA, le BAFD, le BSB, le PSC et les écoles</span></li>
-    <li><b>{% if a.taux_clic is defined %}{{ ("%.1f" % a.taux_clic).replace(".", ",") }} %{% else %}{{ n(s.pages) }}{% endif %}</b><span>{{ "des affichages se transforment en clic (taux de clic)" if a.taux_clic is defined else "pages proposées à Google" }}</span></li>
-  </ul>
+<section class="bande cj-section cj-creme" id="demandes" aria-labelledby="t-demandes">
+  <div class="cadre">
+    <p class="cj-kicker">Demandes d'animateurs</p>
+    <h2 id="t-demandes" class="cj-h2">Chaque demande compte, <em>même la première</em></h2>
+    <p class="cj-intro">Le service est jeune : on préfère montrer les vrais chiffres, petits ou grands. Mis à jour en direct, avec le poste, le département et le mois seulement.</p>
+    <div class="cj-boite">
+      <div class="cj-postes" id="cj-postes" role="group" aria-label="Filtrer par poste"></div>
+      <p class="cj-aide-t">Touchez un poste pour ne voir que ses demandes et ses départements.</p>
+      <div class="cj-deux">
+        <div><h3 class="cj-h3">Le fil des demandes</h3><ol class="cj-fil" id="cj-fil"></ol></div>
+        <div><h3 class="cj-h3">Par département</h3><div class="cj-deps" id="cj-deps"></div></div>
+      </div>
+      <div class="cj-compteurs" id="cj-compteurs"></div>
+      <div class="cj-citation">
+        <p><em>« On démarre, et ça se voit ici.</em> On ne compte ni nos tests ni les fiches d'exemple, et une demande envoyée à plusieurs structures reste une seule demande. Jamais le nom, le message ni les coordonnées de l'animateur. » L'équipe Fil Roug'Anim</p>
+        <a class="bouton-r" href="{{ lien('/trouver-un-poste/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Décrire ce que je cherche</a>
+      </div>
+    </div>
+  </div>
 </section>
 
-
-<section class="bande ch-section ch-creme" aria-labelledby="t-ville">
+<section class="bande cj-section cj-gris" id="google" aria-labelledby="t-google">
   <div class="cadre">
-    <p class="ch-sur">Votre ville</p>
-    <h2 id="t-ville" class="ch-titre">Les chiffres <em>de votre ville</em></h2>
-    <p class="ch-intro">Tapez le nom de votre ville : vous voyez tout ce que Google montre pour ses pages (BAFA, BAFD, BSB, PSC, écoles), même quand les chiffres sont petits. Rien n'est caché ni arrondi.</p>
-    <form class="ch-cherche" id="ch-cherche" role="search" onsubmit="return false">
-      <label class="sr" for="ch-lieu">Ville, département ou région</label>
-      <span class="ch-cherche-champ">{{ m.icone("cherche") }}<input id="ch-lieu" type="search" placeholder="Ex. Lyon, Gironde, Bretagne…" autocomplete="off"></span>
-      <button class="ch-cherche-bouton" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l5-6 4 3 7-9"/></svg>Voir les chiffres</button>
+    <p class="cj-kicker">Sur Google</p>
+    <h2 id="t-google" class="cj-h2">Votre ville <em>sur Google</em></h2>
+    <p class="cj-intro"><b>{{ n(a.recherches_premiere_page or 0) }}</b> recherche{{ 's' if (a.recherches_premiere_page or 0) > 1 }} et <b>{{ n(cp.villes_premiere) }}</b> page{{ 's' if cp.villes_premiere > 1 }} de ville en première page de Google. Choisissez votre formation et votre ville : vous voyez où elle sort, en vrai.</p>
+    <div class="cj-onglets" role="tablist" aria-label="Formations">
+      {% for cle, nom, villes in cp.onglets %}<button type="button" role="tab" class="cj-onglet" data-famille="{{ cle }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ nom }} <small>{{ villes | length }}</small></button>{% endfor %}
+    </div>
+    <form class="cj-cherche" id="cj-cherche" role="search">
+      <label class="sr" for="cj-lieu">Votre ville, votre département ou votre région</label>
+      <span class="cj-champ">{{ m.icone("cherche") }}<input id="cj-lieu" type="search" placeholder="Ex. Lyon, Gironde, Bretagne…" autocomplete="off"></span>
+      <button type="submit" class="cj-voir"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l5-6 4 3 7-9"/></svg>Voir</button>
     </form>
-    <p class="ch-cherche-aide">{{ "{:,}".format(s.villes).replace(",", " ") }} villes ont déjà leurs pages. La vôtre n'y est pas ? Elle arrive dès qu'une formation y est prévue. Vous pouvez aussi chercher votre département ou votre région.</p>
-    <p class="ch-puces">{% for v in ["Paris", "Lyon", "Marseille", "Toulouse", "Nantes", "Bordeaux", "Lille"] %}<button type="button" class="ch-puce" data-lieu="{{ v }}">{{ v }}</button>{% endfor %}</p>
-    <div class="ch-resultat" id="ch-resultat" aria-live="polite" hidden></div>
-  </div>
-</section>
-{% if a.impressions_par_mois %}
-{% set maxi = a.impressions_par_mois | map(attribute="n") | max %}
-<section class="bande ch-section ch-blanc" aria-labelledby="t-mois">
-  <div class="cadre">
-    <p class="ch-sur">Sur Google, mois par mois</p>
-    <h2 id="t-mois" class="ch-titre">Les affichages <em>dans Google</em></h2>
-    <p class="ch-intro">Nombre de fois où une page du site est apparue dans les résultats de Google, chaque mois. Le site est en ligne depuis fin octobre 2026 : tout commence ici.</p>
-    <div class="ch-graphe">
-      <ol class="ch-barres" aria-label="Affichages dans Google par mois">
-        {% for x in a.impressions_par_mois %}<li{% if x.en_cours %} class="ch-en-cours"{% endif %}><span class="ch-barre-n">{{ n(x.n) }}</span><span class="ch-barre" style="height: {{ [((x.n / (maxi or 1)) * 100) | round, 2] | max }}%"></span><span class="ch-barre-mois">{{ x.nom }}</span></li>{% endfor %}
-      </ol>
-      <p class="ch-legende"><span class="ch-leg-plein"></span>Affichages dans Google {% if a.impressions_par_mois[-1].en_cours %}<span class="ch-leg-raye"></span>Mois en cours (pas terminé){% endif %}{% if a.clics_28j is defined %} · {{ n(a.clics_28j) }} clic{{ 's' if a.clics_28j > 1 }} depuis Google sur 28 jours{% endif %}</p>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<section class="bande ch-section ch-creme" aria-labelledby="t-premiere">
-  <div class="cadre">
-    <p class="ch-sur">Les recherches</p>
-    <h2 id="t-premiere" class="ch-titre">Où le site sort <em>en première page</em></h2>
-    <p class="ch-intro">Les pages et les recherches tapées dans Google pour lesquelles le site apparaît dans les 10 premiers résultats, en moyenne sur 28 jours. La place est celle mesurée par Google : sur votre téléphone, elle peut être un peu différente.</p>
-    {% if cd.familles %}
-    <div class="ch-onglets" role="tablist" aria-label="Formations">
-      {% for cle, nom, pages in cd.familles %}<button class="ch-onglet{{ ' on' if loop.first }}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="ch-p-{{ cle }}" id="ch-t-{{ cle }}">{{ nom }} <small>{{ pages | length }}</small></button>{% endfor %}
-    </div>
-    {% for cle, nom, pages in cd.familles %}
-    <div class="ch-panneau" id="ch-p-{{ cle }}" role="tabpanel" aria-labelledby="ch-t-{{ cle }}"{% if not loop.first %} hidden{% endif %}>
-      <p class="ch-panneau-t">{{ pages | length }} page{{ 's' if pages | length > 1 }} en première page</p>
-      <ul class="ch-places">{% for p in pages[:24] %}<li><span class="ch-place{{ ' ch-place-top' if p.place <= 3 }}"><b>{{ ("%.1f" % p.place).replace(".", ",") }}</b>place</span><a href="{{ lien(p.url) }}">{{ p.titre }}</a><small>{{ p.impressions }} affichage{{ 's' if p.impressions > 1 }}{% if p.clics %} · {{ p.clics }} clic{{ 's' if p.clics > 1 }}{% endif %}</small></li>{% endfor %}</ul>
-    </div>
-    {% endfor %}
-    {% else %}
-    <p class="ch-vide">Le détail page par page arrive avec le prochain relevé de nuit.</p>
-    {% endif %}
-    {% if cd.recherches %}
-    <div class="ch-tableau">
-      <p class="ch-tableau-aide">Copiez une recherche et collez-la dans Google pour vérifier vous-même. Google adapte ses résultats à la personne, au lieu et à l'appareil : la place affichée est une moyenne sur 28 jours.</p>
-      <table>
-        <thead><tr><th>Recherche dans Google</th><th>Place moyenne</th><th>Affichages</th><th>Clics</th></tr></thead>
-        <tbody>{% for r in cd.recherches[:15] %}<tr><td><b>« {{ r.recherche }} »</b> <button class="ch-copier" type="button" data-copier="{{ r.recherche }}">Copier</button></td><td><span class="ch-place-pastille">{{ ("%.1f" % r.place).replace(".", ",") }}</span></td><td>{{ r.impressions }}</td><td>{{ r.clics }}</td></tr>{% endfor %}</tbody>
-      </table>
-    </div>
-    <p class="ch-note">Pourquoi une page peut être en première page sans recherche listée ? Google ne donne pas le texte des recherches trop rares, pour protéger la vie privée de ceux qui les tapent.</p>
-    {% endif %}
-  </div>
-</section>
-
-
-{% if cd.pages %}
-<section class="bande ch-section ch-blanc" aria-labelledby="t-pages">
-  <div class="cadre">
-    <p class="ch-sur">Les pages du site</p>
-    <h2 id="t-pages" class="ch-titre">Votre ville <em>dans Google</em></h2>
-    <p class="ch-intro">Les pages de ville, de département et les guides qui sortent en première page. Les affichages et clics d'une page ne sont indiqués qu'au-delà de 100 affichages sur 28 jours : en dessous, ce serait trop peu pour en tirer quoi que ce soit.</p>
-    <div class="ch-onglets ch-filtres" role="group" aria-label="Filtrer les pages">
-      <button class="ch-onglet on" type="button" data-filtre="" aria-pressed="true">Toutes <small>{{ cd.pages | length }}</small></button>
-      {% for cle, nom, pages in cd.familles %}<button class="ch-onglet" type="button" data-filtre="{{ cle }}" aria-pressed="false">{{ nom }} <small>{{ pages | length }}</small></button>{% endfor %}
-    </div>
-    <ul class="ch-pages" id="ch-pages">{% for p in cd.pages %}<li data-famille="{{ p.famille }}"><span class="ch-pages-ico" aria-hidden="true">{{ m.icone("lieu") if p.famille != 'conseils' else m.icone("etape") }}</span><div><a href="{{ lien(p.url) }}">{{ p.titre }}</a><small>{{ {'bafa': 'Page BAFA', 'bafd': 'Page BAFD', 'bsb': 'Page BSB', 'psc': 'Page PSC', 'ecoles': 'Page des écoles', 'conseils': 'Guide ou article'}.get(p.famille, 'Page du site') }}</small></div><p><span class="ch-place-pastille{{ ' ch-pastille-top' if p.place <= 3 }}">{{ ("%.1f" % p.place).replace(".", ",") }}</span>{% if p.impressions >= 100 %}{{ p.impressions }} affichages · {{ p.clics }} clic{{ 's' if p.clics > 1 }}{% else %}Place moyenne de la page{% endif %}</p></li>{% endfor %}</ul>
-    <nav class="ch-pagination" id="ch-pagination" aria-label="Pages de la liste"></nav>
-  </div>
-</section>
-{% endif %}
-<section class="bande ch-section ch-creme" aria-labelledby="t-site">
-  <div class="cadre">
-    <p class="ch-sur">Le site</p>
-    <h2 id="t-site" class="ch-titre">Ce que vous trouvez <em>ici</em></h2>
-    <p class="ch-intro">Relevé chaque nuit sur les pages des organismes, le calendrier national et les catalogues publics.</p>
-    <ul class="ch-site">
-      <li><b>{{ n(s.sessions) }}</b><span>sessions à venir</span><a href="{{ lien('/se-former/sessions/') }}">Les sessions →</a></li>
-      <li><b>{{ n(s.organismes) }}</b><span>organismes de formation</span><a href="{{ lien('/se-former/sessions/organismes/') }}">Les organismes →</a></li>
-      <li><b>{{ n(s.villes) }}</b><span>villes avec leur page</span><a href="{{ lien('/se-former/villes/') }}">Toutes les villes →</a></li>
-      <li><b>{{ n(s.ecoles) }}</b><span>écoles des diplômes pros</span><a href="{{ lien('/se-former/ecoles/') }}">Les écoles →</a></li>
-      <li><b>{{ n(s.pages) }}</b><span>pages proposées à Google</span><a href="{{ lien('/se-former/villes/') }}">Parcourir →</a></li>
-      <li><b>{{ n(s.articles) }}</b><span>articles de blog</span><a href="{{ lien('/blog/') }}">Le blog →</a></li>
-    </ul>
-  </div>
-</section>
-
-<section class="bande ch-section ch-blanc" aria-labelledby="t-comptes">
-  <div class="cadre">
-    <p class="ch-sur">Les inscriptions · en toute transparence</p>
-    <h2 id="t-comptes" class="ch-titre">Chaque inscription compte, <em>même la première</em></h2>
-    <p class="ch-intro">Combien d'animateurs et de structures se sont vraiment inscrits ? Le service est jeune : on préfère vous montrer les vrais chiffres, petits ou grands. Ils se mettent à jour chaque nuit.</p>
-    {% if a.animateurs is defined %}
-    <div class="ch-insc">
-      <div class="ch-insc-total">
-        <p class="ch-garanties ch-garanties-sombre"><span>Mis à jour chaque nuit</span><span>Profil, département et mois seulement</span></p>
-        <p class="ch-insc-t">Inscriptions{% if cd.premiere_inscription %} depuis {{ mois_nom(cd.premiere_inscription) }}{% endif %}</p>
-        <b class="ch-insc-n">{{ a.comptes }}</b>
-        <ul class="ch-insc-detail"><li><b>{{ a.animateurs }}</b> animateur{{ 's' if a.animateurs > 1 }} ou directeur{{ 's' if a.animateurs > 1 }}</li><li><b>{{ a.structures }}</b> structure{{ 's' if a.structures > 1 }}</li><li><b>{{ a.offres or 0 }}</b> offre{{ 's' if (a.offres or 0) > 1 }} en ligne</li></ul>
-      </div>
-      <div class="ch-insc-cartes">
-        <div class="ch-carte-blanche">
-          <p class="ch-carte-t">Mois par mois</p>
-          {% if cd.inscriptions_mois %}<ol class="ch-mini-barres">{% for x in cd.inscriptions_mois %}<li><span class="ch-mini-n">{{ x.animateurs + x.structures }}</span><span class="ch-mini-barre" style="height: {{ [x.h, 3] | max }}%"></span><span class="ch-mini-mois">{{ x.nom }}</span></li>{% endfor %}</ol>
-          {% else %}<p class="ch-vide-petit">La première inscription s'affichera ici.</p>{% endif %}
-        </div>
-        <div class="ch-carte-blanche">
-          <p class="ch-carte-t">Par département</p>
-          {% if cd.inscriptions_dep %}<ul class="ch-par-dep">{% for d in cd.inscriptions_dep[:6] %}<li><b>{{ d.nom }}</b><span>{{ d.animateurs }} animateur{{ 's' if d.animateurs > 1 }} · {{ d.structures }} structure{{ 's' if d.structures > 1 }}</span>{% if not d.structures %}<em>Aucune structure inscrite : la place est libre</em>{% endif %}</li>{% endfor %}</ul>
-          {% else %}<p class="ch-vide-petit">Aucun département pour l'instant : la place est libre partout.</p>{% endif %}
-        </div>
+    <p class="cj-cherche-aide">{{ n(s.villes) }} villes ont déjà leurs pages, pour le BAFA, le BAFD, le BSB, le PSC et les écoles. La vôtre n'y est pas ? Tapez-la quand même : elle arrive dès qu'une formation y est prévue. Votre département ou votre région marchent aussi.</p>
+    <div class="cj-google">
+      <div class="cj-liste"><p class="cj-liste-t"><span>En première page</span><span id="cj-nb-villes"></span></p><ol id="cj-villes"></ol></div>
+      <div class="cj-droite">
+        <div class="cj-serp" id="cj-serp"></div>
+        <div class="cj-trois" id="cj-trois"></div>
+        <div class="cj-liens" id="cj-liens"></div>
       </div>
     </div>
-    <div class="ch-carte-blanche ch-fil">
-      <p class="ch-carte-t">Le fil des inscriptions</p>
-      {% if a.dernieres_inscriptions %}<ul class="recentes">{% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="recentes-date">{{ r.quand }}</span></li>{% endfor %}</ul>{% endif %}
-      <p class="ch-vide-petit">La prochaine inscription s'affichera ici.</p>
-    </div>
-    <p class="ch-citation">« On démarre, et ça se voit ici. Les comptes de test et les exemples ne sont pas comptés. Jamais le nom, l'adresse ni le message d'une personne. »</p>
-    {% else %}
-    <p class="ch-vide">Les chiffres des comptes arrivent avec le prochain relevé de nuit.</p>
-    {% endif %}
+    <div class="cj-detail" id="cj-detail" hidden></div>
+    <hr class="cj-trait">
+    <p class="cj-bas">Cliquez sur une ville ou tapez la vôtre : vous verrez toutes ses pages, ce que Google en montre et leur place.</p>
+    <details class="cj-lire">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Comment lire ces chiffres</summary>
+      <div>
+        <p><b>La place</b> est la position moyenne de la page dans Google sur les 28 derniers jours : 1, c'est tout en haut ; 10, le bas de la première page ; au-delà, la page 2 et plus.</p>
+        <p><b>Affichages</b> : combien de fois Google a montré la page. <b>Clics</b> : combien de personnes sont venues depuis Google.</p>
+        <p><b>Vérifiez vous-même</b> : copiez la recherche et collez-la dans Google. Votre place peut varier un peu, car Google adapte ses résultats à la personne, au lieu et à l'appareil.</p>
+        <p><b>Pas de recherche affichée ?</b> Google ne donne pas le texte des recherches trop rares, pour protéger la vie privée de ceux qui les tapent. La place compte quand même toutes les recherches.</p>
+      </div>
+    </details>
   </div>
 </section>
 
-<section class="bande ch-section ch-creme" aria-labelledby="t-lire">
+<section class="bande cj-section cj-blanc">
   <div class="cadre">
-    <p class="ch-sur">Bien lire ces chiffres</p>
-    <h2 id="t-lire" class="ch-titre">Ce que chaque chiffre <em>veut dire</em></h2>
-    <div class="ch-lire">
-      <div><h3>Un affichage</h3><p>Une page du site est apparue dans les résultats de Google pour une recherche. Ce n'est pas une visite : c'est la vitrine qui passe devant les yeux.</p></div>
-      <div><h3>Un clic</h3><p>Quelqu'un a cliqué sur une page du site depuis Google. Les visites qui arrivent par les réseaux sociaux, un e-mail ou un lien direct n'y sont pas : elles sont dans les visiteurs.</p></div>
-      <div><h3>La place moyenne</h3><p>Moyenne sur 28 jours, pondérée par les affichages. Elle varie selon la ville, l'appareil et l'historique de chacun : c'est pour ça qu'on ne montre pas de capture de nos propres recherches.</p></div>
-      <div><h3>Un visiteur</h3><p>Une visite du site sur 30 jours, comptée par notre propre mesure, sans cookie et sans garder d'adresse IP. Google masque aussi les recherches trop rares : les vrais totaux sont un peu plus hauts que la somme des recherches affichées.</p></div>
+    <div class="cj-final">
+      <h2 class="cj-h2">Rejoignez l'annuaire <em>là où les animateurs cherchent</em></h2>
+      <p>Votre page apparaît sur les pages de votre ville (<b>{{ n(s.villes) }}</b> villes pour le BAFA, le BAFD, le BSB, le PSC et les écoles) et dans l'annuaire des structures, avec vos propres statistiques chaque mois : vues, clics, candidatures et demandes reçues.</p>
+      <p class="cj-final-boutons">
+        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type=extrascolaire"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg>Créer la page de mon accueil de loisirs</a>
+        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type=sejours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 20l7-14 7 14M12 6v14"/></svg>Créer la page de mes séjours</a>
+        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=candidat"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg>Créer mon profil d'animateur</a>
+      </p>
+      <p class="cj-final-boutons"><a class="cj-contour" href="{{ lien('/recruter/exemple-de-page-structure/') }}">Exemple de page structure</a></p>
     </div>
   </div>
 </section>
-
-<section class="bande ch-section ch-blanc ch-final">
-  <div class="cadre">
-    <h2 class="ch-titre">Rejoignez Fil Roug'Anim <em>là où l'on cherche</em></h2>
-    <p class="ch-intro">Votre profil d'animateur ou la page de votre structure apparaissent là où les jeunes cherchent leur formation et où les structures cherchent leurs équipes.</p>
-    <p class="ch-final-boutons"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1">Créer mon profil d'animateur <span aria-hidden="true">→</span></a><a class="bouton-blanc ch-bouton-contour" href="{{ lien('/compte/') }}?inscription=1">Créer l'espace de ma structure</a><a class="ch-lien" href="{{ lien('/trouver-un-poste/exemple-de-profil/') }}">Voir un exemple de profil</a></p>
-  </div>
-</section>
+<script type="application/json" id="cj-donnees">{{ {"demandes": cp.demandes, "postes": cp.postes, "deps": cp.deps, "structures_dep": cp.structures_dep or {},
+  "onglets": cp.onglets, "lieux": lien('/chiffres/lieux.json'), "sb": site.supabase.url, "cle": site.supabase.cle} | tojson }}</script>
 {% endblock %}
-{% block scripts %}<script>
-(function () {
-  var t = document.querySelectorAll(".ch-onglet[aria-controls]");
-  t.forEach(function (b) { b.addEventListener("click", function () {
-    t.forEach(function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-selected", on ? "true" : "false"); document.getElementById(x.getAttribute("aria-controls")).hidden = !on; });
-  }); });
-  // « Les chiffres de votre ville » : lieux.json est lu au premier besoin
-  var lieux = null, champ = document.getElementById("ch-lieu"), res = document.getElementById("ch-resultat");
-  function sans(t) { return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[-']/g, " ").trim(); }
-  function nb(x) { return x.toLocaleString("fr-FR"); }
-  function montrer(q) {
-    var k = sans(q); if (!k) return;
-    var trouves = lieux.filter(function (e) { return sans(e.n) === k || (k.length > 2 && sans(e.n).indexOf(k) === 0) || e.d === q.trim().toUpperCase(); }).slice(0, 4);
-    res.hidden = false; res.textContent = "";
-    if (!trouves.length) { var v = document.createElement("p"); v.className = "ch-vide-petit"; v.textContent = "Pas encore de page pour « " + q + " ». Elle arrive dès qu'une formation y est prévue."; res.appendChild(v); return; }
-    trouves.forEach(function (e) {
-      var bloc = document.createElement("div"); bloc.className = "ch-lieu";
-      var imp = e.p.reduce(function (s, x) { return s + x[2]; }, 0), cl = e.p.reduce(function (s, x) { return s + x[3]; }, 0);
-      var t = document.createElement("h3"); t.textContent = e.n + (e.d && e.g === "ville" ? " (" + e.d + ")" : "") + (e.g === "departement" ? " · département" : e.g === "region" ? " · région" : ""); bloc.appendChild(t);
-      var r = document.createElement("p"); r.className = "ch-lieu-total"; r.textContent = e.p.length + " page" + (e.p.length > 1 ? "s" : "") + " · " + nb(imp) + " affichage" + (imp > 1 ? "s" : "") + " · " + nb(cl) + " clic" + (cl > 1 ? "s" : "") + " sur 28 jours"; bloc.appendChild(r);
-      var ul = document.createElement("ul");
-      e.p.forEach(function (x) {
-        var li = document.createElement("li"), a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; li.appendChild(a);
-        var s = document.createElement("span"); s.textContent = x[2] ? nb(x[2]) + " aff. · " + x[3] + " clic" + (x[3] > 1 ? "s" : "") + (x[4] ? " · place " + String(x[4]).replace(".", ",") : "") : "pas encore vue dans Google"; li.appendChild(s);
-        ul.appendChild(li);
-      });
-      bloc.appendChild(ul); res.appendChild(bloc);
-    });
-  }
-  function chercher(q) {
-    if (lieux) return montrer(q);
-    fetch("{{ lien('/chiffres/lieux.json') }}").then(function (r) { return r.json(); }).then(function (d) { lieux = d; montrer(q); });
-  }
-  document.getElementById("ch-cherche").addEventListener("submit", function () { chercher(champ.value); });
-  document.querySelectorAll("[data-lieu]").forEach(function (b) { b.addEventListener("click", function () { champ.value = b.dataset.lieu; chercher(b.dataset.lieu); }); });
-  // « Votre ville dans Google » : filtres et pages de 12
-  var liste = document.getElementById("ch-pages"), pag = document.getElementById("ch-pagination"), filtre = "", page = 0;
-  function afficher() {
-    if (!liste) return;
-    var items = Array.prototype.filter.call(liste.children, function (li) { return !filtre || li.dataset.famille === filtre; });
-    Array.prototype.forEach.call(liste.children, function (li) { li.hidden = true; });
-    var n = Math.ceil(items.length / 12) || 1; page = Math.min(page, n - 1);
-    items.slice(page * 12, page * 12 + 12).forEach(function (li) { li.hidden = false; });
-    pag.textContent = "";
-    if (n > 1) for (var i = 0; i < n; i++) { var b = document.createElement("button"); b.type = "button"; b.textContent = i + 1; if (i === page) b.setAttribute("aria-current", "page"); (function (k) { b.addEventListener("click", function () { page = k; afficher(); }); })(i); pag.appendChild(b); }
-    var info = document.createElement("span"); info.textContent = (items.length ? page * 12 + 1 : 0) + " à " + Math.min(items.length, page * 12 + 12) + " sur " + items.length; pag.appendChild(info);
-  }
-  document.querySelectorAll("[data-filtre]").forEach(function (b) { b.addEventListener("click", function () {
-    filtre = b.dataset.filtre; page = 0;
-    document.querySelectorAll("[data-filtre]").forEach(function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on ? "true" : "false"); });
-    afficher();
-  }); });
-  afficher();
-  document.querySelectorAll("[data-copier]").forEach(function (b) { b.addEventListener("click", function () {
-    if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.copier).then(function () { b.textContent = "Copié"; setTimeout(function () { b.textContent = "Copier"; }, 1500); });
-  }); });
-})();
-</script>{% endblock %}
+{% block scripts %}<script src="{{ statique('js/chiffres.js') }}" defer></script>{% endblock %}

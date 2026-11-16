@@ -1263,6 +1263,75 @@ class Site:
                                  "ecoles": len(self.ecoles_pro()), "articles": len(getattr(self, "articles", []))}}
         return self._detail
 
+    POSTES_DEMANDE = {"animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur", "directeur-adjoint": "Direction adjointe",
+                      "directeur": "Direction", "surveillant-baignade": "Surveillant de baignade", "coordinateur": "Coordination", "autre": "Autre poste"}
+
+    def chiffres_page(self):
+        """La page /chiffres/ et le bloc de l'accueil, sur le modèle de jasonmarinho.com/chiffres : la courbe des affichages
+        Google (par mois, ou par semaine tant que le site a moins de trois mois mesurés), le multiplicateur depuis le premier
+        mois mesuré, les demandes reçues (sans rien sur la personne) et les villes en première page de Google, formation par formation."""
+        if getattr(self, "_cp", None) is not None:
+            return self._cp
+        a = self.audience()
+        # la courbe : par mois s'il y a au moins trois mois avec des affichages, sinon par semaine
+        mois = [x for x in a.get("impressions_par_mois") or [] if x.get("n")]
+        jours = a.get("impressions_par_jour") or []
+        serie, unite = [], "mois"
+        if len(mois) >= 3 or not jours:
+            for x in mois[-6:]:
+                serie.append({"l": MOIS_COURTS[int(x["mois"][5:7]) - 1].rstrip("."), "n": x["n"], "en_cours": bool(x.get("en_cours"))})
+        else:
+            unite = "semaine"
+            debut = next((dt.date.fromisoformat(j[0]) for j in jours if j[1]), None)
+            if debut:
+                fin = dt.date.fromisoformat(jours[-1][0])
+                parj = {j[0]: j[1] for j in jours}
+                d = debut
+                while d <= fin:
+                    n = sum(parj.get((d + dt.timedelta(days=k)).isoformat(), 0) for k in range(7))
+                    serie.append({"l": f"{d.day} {MOIS_COURTS[d.month - 1].rstrip('.')}", "n": n, "en_cours": d + dt.timedelta(days=6) > fin})
+                    d += dt.timedelta(days=7)
+                serie = serie[-8:]
+        complets = [x for x in serie if not x["en_cours"]]
+        multi = None
+        if len(complets) >= 2 and complets[0]["n"] and complets[-1]["n"] / complets[0]["n"] >= 1.2:
+            multi = {"x": f"{complets[-1]['n'] / complets[0]['n']:.1f}".replace(".", ","),
+                     "fin": complets[-1]["l"], "debut": complets[0]["l"], "unite": unite}
+        # les points du graphe (coordonnées en pour cent, pour un SVG qui s'étire)
+        maxi = max((x["n"] for x in serie), default=0) or 1
+        for i, x in enumerate(serie):
+            x["x"] = round(3 + 94 * (i / (len(serie) - 1) if len(serie) > 1 else 0.5), 2)
+            x["y"] = round(88 - 76 * x["n"] / maxi, 2)
+        # les demandes et candidatures reçues (la base ne donne ni nom ni message)
+        brut = self.lire_supabase("rpc/chiffres_publics", "chiffres publics des demandes")
+        dem = (brut or {}).get("demandes") if isinstance(brut, dict) else []
+        # les villes en première page de Google, formation par formation
+        g = {}
+        for u, imp, clics, place in a.get("pages_google") or []:
+            u = u.split("?")[0].split("#")[0]
+            g[u if u.endswith("/") else u + "/"] = (imp, clics, place)
+        par_famille = {cle: [] for cle, _ in self.FAMILLES_GOOGLE}
+        for p in self.pages:
+            if not p.get("indexer") or not p.get("ville") or p["url"] not in g:
+                continue
+            imp, clics, place = g[p["url"]]
+            if not place or place > 10:
+                continue
+            fam = self.famille_page(p["url"])
+            if fam in par_famille:
+                par_famille[fam].append({"v": p["ville"]["nom"], "t": p.get("h1") or p["titre"], "u": p["url"], "i": imp, "c": clics, "p": place})
+        for l in par_famille.values():
+            l.sort(key=lambda x: (x["p"], -x["i"]))
+        onglets = [(cle, nom, par_famille[cle]) for cle, nom in self.FAMILLES_GOOGLE if cle != "conseils"]
+        cm = self.aujourdhui
+        en_cours = next((x for x in a.get("impressions_par_mois") or [] if x.get("en_cours")), None)
+        self._cp = {"serie": serie, "unite": unite, "multi": multi, "demandes": dem or [], "postes": self.POSTES_DEMANDE,
+                    "deps": {d["code"]: d["nom"] for d in self.departements.values()},
+                    "structures_dep": (brut or {}).get("structures_par_dep") if isinstance(brut, dict) else {},
+                    "onglets": onglets, "villes_premiere": sum(len(x[2]) for x in onglets),
+                    "mois_en_cours": {"nom": MOIS[cm.month - 1], "n": en_cours["n"]} if en_cours else None}
+        return self._cp
+
     def panneau_chiffres(self):
         """La petite fenêtre « Le site en chiffres » du bouton statistiques (comme sur jasonmarinho.com) : les chiffres de
         Google et des visites dès qu'ils existent, sinon les chiffres du site lui-même (sessions, organismes, villes)."""
@@ -1802,7 +1871,7 @@ class Site:
             "stats": self.stats, "audience": self.audience(), "filtres": self.filtres, "specialites": self.specialites, "offres": self.offres, "diplomes": list(self.diplomes.values()),
             "mois_sessions": sorted({s["mois"] for s in self.sessions}),
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
-            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(), "cd": self.chiffres_detail(),
+            "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(), "cd": self.chiffres_detail(), "cp": self.chiffres_page(), "MOIS_COURTS_FR": MOIS_COURTS,
             "c": self.chiffres_blog(), "articles": getattr(self, "articles", []), "mois_pages": getattr(self, "mois_pages", {}),
             "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),

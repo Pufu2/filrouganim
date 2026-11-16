@@ -767,3 +767,8 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- (periscolaire, extrascolaire, accueil-de-jeunes, sejours, mini-camps, autre), structures.age_min / age_max (0 à 30),
 -- code_commune (code INSEE de la liste officielle) sur structures, centres et profils, public « 18-25 ».
 -- Le « type » reste rempli (déduit des accueils) pour les pages et filtres d'avant.
+
+-- v15 (16/11/2026) : chiffres_publics() (security definer, lisible par tous) : pour la page /chiffres/ et l'accueil,
+-- les demandes de l'annuaire inversé et les candidatures (poste, département, ville éventuelle, mois, état, source :
+-- jamais de nom, de message ni de coordonnées), sans les comptes de l'administration ; et le nombre de structures
+-- en ligne par département.

@@ -224,30 +224,31 @@
 {% macro evolution(x) %}{% if x is not none %}<small class="{{ 'hausse' if x >= 0 else 'baisse' }}">{{ '+' if x >= 0 }}{{ x }} % sur la période d'avant</small>{% endif %}{% endmacro %}
 {% macro fr(x) %}{{ "{:,}".format(x or 0).replace(",", " ") }}{% endmacro %}
 {% macro bloc_chiffres(a, lien, lien_page=True) %}
-{# L'encadré des chiffres de l'accueil, sur le modèle de jasonmarinho.com : quatre chiffres, les affichages Google
-   mois par mois et les recherches qui mènent au site (ou les dernières inscriptions). #}
+{# L'encadré des chiffres de l'accueil, comme celui de jasonmarinho.com : les demandes reçues (en premier, en foncé),
+   les visiteurs, les apparitions et les clics Google, puis les dernières demandes et les apparitions mois par mois. #}
+{% set POSTES_CB = {"animateur-stagiaire": ("Stage BAFA", "cb-e-stage"), "animateur": ("Animateur", "cb-e-anim"), "directeur": ("Direction", "cb-e-dir"),
+                    "directeur-adjoint": ("Direction", "cb-e-dir"), "coordinateur": ("Direction", "cb-e-dir")} %}
 <section class="cb" aria-labelledby="t-chiffres">
   <div class="cb-tete">
     <div>
       <p class="cb-sur">Transparence totale</p>
       <h2 id="t-chiffres">Tous les chiffres du site sont publics.</h2>
-      <p>Visites, recherches Google, inscriptions : les vrais chiffres, mis à jour chaque jour, consultables par tout le monde. Pas de vitrine gonflée.</p>
+      <p>Visites, recherches Google, demandes d'animateurs : les vrais chiffres, en direct, consultables par tout le monde. Pas de vitrine gonflée.</p>
     </div>
     {% if lien_page %}<a class="cb-bouton" href="{{ lien('/chiffres/') }}">Voir tous les chiffres</a>{% endif %}
   </div>
   <ul class="cb-tuiles">
-    {% set tuiles = [] %}
-    {% if a.visiteurs_30j %}{% set _ = tuiles.append((a.visiteurs_30j, "visiteurs sur 30 jours", a.visiteurs_evolution, None)) %}{% endif %}
-    {% if a.impressions_28j is defined %}{% set _ = tuiles.append((a.impressions_28j, "apparitions dans Google", a.impressions_evolution, None)) %}{% endif %}
-    {% if a.clics_28j is defined %}{% set _ = tuiles.append((a.clics_28j, "clics depuis Google", a.clics_evolution, None)) %}{% endif %}
-    {% if a.recherches_premiere_page %}{% set _ = tuiles.append((a.recherches_premiere_page, "recherches où le site sort en 1re page", None, "sur 28 jours")) %}{% endif %}
-    {% if a.comptes %}{% set _ = tuiles.append((a.comptes, "comptes créés", None, a.animateurs ~ " animateur" ~ ("s" if a.animateurs > 1 else "") ~ " · " ~ a.structures ~ " structure" ~ ("s" if a.structures > 1 else ""))) %}{% endif %}
-    {% set _ = tuiles.append((cd.site.sessions, "sessions de formation à venir", None, "relevées chaque nuit")) %}
-    {% set _ = tuiles.append((cd.site.villes, "villes avec leur page", None, "BAFA, BAFD, BSB, PSC, écoles")) %}
-    {% set _ = tuiles.append((cd.site.organismes, "organismes de formation comparés", None, "sans publicité")) %}
-    {% for v, nom, ev, note in tuiles[:4] %}<li><b>{{ fr(v) }}</b><span>{{ nom }}</span>{% if ev is not none %}<small class="{{ 'hausse' if ev >= 0 else 'baisse' }}">{{ '+' if ev >= 0 }}{{ ev }} % sur la période d'avant</small>{% elif note %}<small>{{ note }}</small>{% endif %}</li>{% endfor %}
+    <li class="cb-tuile-dem"><b data-cb-dem>{{ cp.demandes | length }}</b><span>demande{{ 's' if cp.demandes | length != 1 }} d'animateurs reçue{{ 's' if cp.demandes | length != 1 }}</span></li>
+    <li><b>{{ fr(a.visiteurs_30j) if a.visiteurs_30j is defined else '—' }}</b><span>visiteurs sur 30 jours</span>{{ evolution(a.visiteurs_evolution) if a.visiteurs_evolution is defined }}</li>
+    <li><b>{{ fr(a.impressions_28j) if a.impressions_28j is defined else '—' }}</b><span>apparitions dans Google</span>{{ evolution(a.impressions_evolution) if a.impressions_evolution is defined }}</li>
+    <li><b>{{ fr(a.clics_28j) if a.clics_28j is defined else '—' }}</b><span>clics depuis Google</span>{{ evolution(a.clics_evolution) if a.clics_evolution is defined }}</li>
   </ul>
   <div class="cb-deux">
+    <div class="cb-carte">
+      <p class="cb-carte-t">Les dernières demandes d'animateurs</p>
+      <ul class="cb-liste" data-cb-liste>{% for d in cp.demandes[:4] %}{% set po = POSTES_CB.get(d.poste, ("Autre poste", "cb-e-autre")) %}<li><span class="cb-etiq {{ po[1] }}">{{ po[0] }}</span><b>{{ d.ville or cp.deps.get(d.dep, "Autre lieu") }}</b><span class="cb-date">{{ MOIS_COURTS_FR[(d.mois[5:7] | int) - 1] }} {{ d.mois[:4] }}</span></li>{% else %}<li class="cb-vide">La première demande s'affichera ici.</li>{% endfor %}</ul>
+      <p class="cb-note">Le poste, le lieu et le mois, jamais rien sur l'animateur.</p>
+    </div>
     {% if a.impressions_par_mois %}
     {% set maxi = a.impressions_par_mois | map(attribute="n") | max %}
     <div class="cb-carte">
@@ -257,25 +258,28 @@
       </ol>
     </div>
     {% endif %}
-    <div class="cb-carte">
-      {% if cd.recherches %}
-      <p class="cb-carte-t">Ce qu'on tape dans Google pour arriver ici</p>
-      <ul class="cb-liste">{% for r in cd.recherches[:5] %}<li><span class="cb-pastille">{{ ("%.1f" % r.place).replace(".", ",") }}<i>place</i></span><b>« {{ r.recherche }} »</b><span class="cb-date">{{ r.impressions }} aff.</span></li>{% endfor %}</ul>
-      <p class="cb-note">La place moyenne dans Google sur 28 jours.</p>
-      {% elif a.dernieres_inscriptions %}
-      <p class="cb-carte-t">Les dernières inscriptions</p>
-      <ul class="cb-liste">{% for r in a.dernieres_inscriptions %}<li><span class="etiquette{{ ' etiquette-structure' if r.role == 'structure' }}">{{ 'Structure' if r.role == 'structure' else 'Animateur' }}</span><b>{{ r.lieu }}</b><span class="cb-date">{{ r.quand }}</span></li>{% endfor %}</ul>
-      <p class="cb-note">Le profil, le département et le mois, jamais rien sur la personne.</p>
-      {% else %}
-      <p class="cb-carte-t">Le site, cette nuit</p>
-      <ul class="cb-liste">
-        <li><b>{{ fr(cd.site.organismes) }}</b><span>organismes de formation comparés</span></li>
-        <li><b>{{ fr(cd.site.ecoles) }}</b><span>écoles des diplômes pros</span></li>
-        <li><b>{{ fr(cd.site.pages) }}</b><span>pages proposées à Google</span></li>
-      </ul>
-      {% endif %}
-    </div>
   </div>
+  <script>
+  // les demandes en direct (poste, lieu, mois seulement)
+  (function () {
+    var D = {{ {"sb": site.supabase.url, "cle": site.supabase.cle, "deps": cp.deps} | tojson }}, M = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+    var P = { "animateur-stagiaire": ["Stage BAFA", "cb-e-stage"], "animateur": ["Animateur", "cb-e-anim"], "directeur": ["Direction", "cb-e-dir"], "directeur-adjoint": ["Direction", "cb-e-dir"], "coordinateur": ["Direction", "cb-e-dir"] };
+    if (!window.fetch || !D.sb) return;
+    fetch(D.sb + "/rest/v1/rpc/chiffres_publics", { headers: { apikey: D.cle } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (x) {
+      if (!x || !x.demandes) return;
+      var n = document.querySelector("[data-cb-dem]"); if (n) { n.textContent = x.demandes.length; n.nextElementSibling.textContent = "demande" + (x.demandes.length !== 1 ? "s" : "") + " d'animateurs reçue" + (x.demandes.length !== 1 ? "s" : ""); }
+      var ul = document.querySelector("[data-cb-liste]"); if (!ul || !x.demandes.length) return;
+      ul.textContent = "";
+      x.demandes.slice(0, 4).forEach(function (d) {
+        var p = P[d.poste] || ["Autre poste", "cb-e-autre"], li = document.createElement("li");
+        var e = document.createElement("span"); e.className = "cb-etiq " + p[1]; e.textContent = p[0]; li.appendChild(e);
+        var b = document.createElement("b"); b.textContent = d.ville || D.deps[d.dep] || "Autre lieu"; li.appendChild(b);
+        var t = document.createElement("span"); t.className = "cb-date"; t.textContent = M[+d.mois.slice(5, 7) - 1] + " " + d.mois.slice(0, 4); li.appendChild(t);
+        ul.appendChild(li);
+      });
+    }).catch(function () {});
+  })();
+  </script>
 </section>
 {% endmacro %}
 
