@@ -104,6 +104,11 @@ def goatcounter(aujourdhui):
         DETAIL["pages_lues"] = [[x.get("path"), x.get("title") or "", int(x.get("count") or 0)] for x in pages]
         refs = appel("stats/toprefs", fin - dt.timedelta(days=29), fin, limit=15).get("stats") or []
         DETAIL["provenances"] = [[x.get("name") or "Accès direct", int(x.get("count") or 0)] for x in refs]
+        try:
+            camp = appel("stats/campaigns", fin - dt.timedelta(days=29), fin, limit=15).get("stats") or []
+            DETAIL["campagnes"] = [[x.get("name") or "?", int(x.get("count") or 0)] for x in camp]
+        except Exception:
+            DETAIL["campagnes"] = []
         print(f"GoatCounter : détail lu ({len(DETAIL['visiteurs_par_jour'])} jours, {len(pages)} pages, {len(refs)} provenances)")
     except Exception as e:  # le détail est un plus : les totaux restent
         print(f"GoatCounter : détail non lu ({e})")

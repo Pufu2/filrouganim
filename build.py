@@ -825,6 +825,11 @@ class Site:
                            "initiales": ("".join(m[0] for m in mots[:3]) if len(mots) > 1 else o["nom"][:3]).upper()})
         cartes.sort(key=lambda c: (-c["n"], c["nom"]))
         autres = collections.Counter(s["org"]["nom"] for s in S if not s["organisme"] and s["diplome"] in ("BAFA", "BAFD", "BSB"))
+        # pour l'administration (prospection des organismes) : ce que le site montre déjà de chacun
+        self.organismes_admin = {"suivis": [{"id": c["id"], "nom": c["nom"], "habilitation": c.get("habilitation"), "site": c.get("site"), "n": c["n"],
+                                             "villes": c["villes_n"], "diplomes": c["diplomes"], "prix_min": c["prix_min"],
+                                             "page": f"/se-former/sessions/organismes/{c['id']}/" if c.get("en_ligne") else None} for c in cartes],
+                                 "autres": [{"nom": n, "n": k} for n, k in autres.most_common()]}
         self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD, BSB et PSC : la liste",
                      h1="Les organismes de formation",
                      description="Les organismes de formation au BAFA, au BAFD, au BSB et au PSC présents sur le site : leurs prochaines sessions, leurs diplômes, leurs prix et le lien vers leur site.",
@@ -1172,6 +1177,21 @@ class Site:
         sortie = self.lieux_google()
         (SORTIE / "chiffres").mkdir(parents=True, exist_ok=True)
         (SORTIE / "chiffres" / "lieux.json").write_text(json.dumps(sortie, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        # pour l'administration (Visibilité) : Google page par page et jour par jour (les mêmes chiffres que la page publique)
+        a = self.audience()
+        titres = {p["url"]: p.get("h1") or p["titre"] for p in self.pages}
+        pages = []
+        for u, imp, clics, place in a.get("pages_google") or []:
+            v = u.split("?")[0].split("#")[0]
+            v = v if v.endswith("/") else v + "/"
+            pages.append([v, titres.get(v, v), imp, clics, place, self.famille_page(v)])
+        google = {k: a.get(k) for k in ("impressions_28j", "impressions_evolution", "clics_28j", "clics_evolution", "visiteurs_30j", "visiteurs_evolution",
+                                       "recherches_total", "recherches_premiere_page", "pages_vues_google", "pages_premiere_page_n", "gsc_du", "gsc_au")}
+        google.update({"par_jour": a.get("impressions_par_jour") or [], "recherches": a.get("recherches") or [], "pages": pages,
+                       "mis_a_jour": str(self.donnees.get("audience", {}).get("mis_a_jour") or "")})
+        (SORTIE / "chiffres" / "google.json").write_text(json.dumps(google, ensure_ascii=False, separators=(",", ":"), default=str), encoding="utf-8")
+        (SORTIE / "compte").mkdir(parents=True, exist_ok=True)
+        (SORTIE / "compte" / "organismes.json").write_text(json.dumps(getattr(self, "organismes_admin", {}), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     def lieux_google(self):
         """Les villes, départements et régions avec leurs pages et ce que Google en montre (calculé une fois)."""

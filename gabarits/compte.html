@@ -633,17 +633,21 @@
       <button type="button" data-onglet-vers="ventes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Ventes</span><i class="co-pastille" data-pastille-admin="ventes" hidden></i></button>
       <button type="button" data-onglet-vers="afaire"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>À traiter</span><i class="co-pastille" data-pastille-admin="afaire" hidden></i></button>
       <p class="co-groupe">Utilisateurs</p>
-      <button type="button" data-onglet-vers="structures"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span>Structures</span><i class="co-pastille" data-pastille-admin="structures" hidden></i></button>
+      <button type="button" data-onglet-vers="comptes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg><span>Membres</span><i class="co-pastille" data-pastille-admin="comptes" hidden></i></button>
       <button type="button" data-onglet-vers="animateurs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Animateurs</span><i class="co-pastille" data-pastille-admin="animateurs" hidden></i></button>
-      <button type="button" data-onglet-vers="comptes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg><span>Comptes</span><i class="co-pastille" data-pastille-admin="comptes" hidden></i></button>
+      <button type="button" data-onglet-vers="structures"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span>Structures</span><i class="co-pastille" data-pastille-admin="structures" hidden></i></button>
+      <button type="button" data-onglet-vers="organismes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg><span>Organismes</span><i class="co-pastille" data-pastille-admin="organismes" hidden></i></button>
       <p class="co-groupe">Acquisition</p>
+      <button type="button" data-onglet-vers="visibilite"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg><span>Visibilité</span><i class="co-pastille" data-pastille-admin="visibilite" hidden></i></button>
+      <button type="button" data-onglet-vers="provenance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span>Provenance</span><i class="co-pastille" data-pastille-admin="provenance" hidden></i></button>
+      <button type="button" data-onglet-vers="prospection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Prospection</span><i class="co-pastille" data-pastille-admin="prospection" hidden></i></button>
       <button type="button" data-onglet-vers="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Statistiques détaillées</span><i class="co-pastille" data-pastille-admin="stats" hidden></i></button>
       <p class="co-groupe">Contenu</p>
       <button type="button" data-onglet-vers="offres"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg><span>Offres</span><i class="co-pastille" data-pastille-admin="offres" hidden></i></button>
       <button type="button" data-onglet-vers="demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Toutes les demandes</span><i class="co-pastille" data-pastille-admin="demandes" hidden></i></button>
       <button type="button" data-onglet-vers="contenus"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Guides et conseils</span><i class="co-pastille" data-pastille-admin="contenus" hidden></i></button>
     </nav>
-    {% for k in ["accueil", "qg", "sante", "ventes"] %}
+    {% for k in ["accueil", "qg", "sante", "ventes", "organismes", "visibilite", "provenance", "prospection"] %}
     <section class="ap-page" id="ad-{{ k }}" data-onglet="{{ k }}"></section>
     {% endfor %}
     {% for k in ["stats", "afaire", "structures", "animateurs", "offres", "demandes", "comptes", "contenus"] %}

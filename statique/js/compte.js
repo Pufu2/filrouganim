@@ -17,6 +17,8 @@
   // l'administration peut ouvrir l'espace d'un autre compte (?compte=…) : tout se lit et s'enregistre alors pour ce compte
   var espaceDe = null;
   function idEspace() { return espaceDe || utilisateur.id; }
+  // le canal du premier passage (voir base.html), joint à la fiche quand elle est créée
+  function provenance() { try { return espaceDe ? null : (localStorage.getItem("fra-provenance") || null); } catch (e) { return null; } }
   var MEMOIRE = "fra-inscription";
 
   function $(id) { return document.getElementById(id); }
@@ -1000,7 +1002,7 @@
     occupe(form, true);
     var r = profil
       ? await sb.from("profils").update(d).eq("id", idEspace()).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single()
-      : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
+      : await sb.from("profils").insert(Object.assign({ provenance: provenance() }, d)).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     if (!r.error && cvAEnvoyer) {
       var u = await sb.storage.from("cv").upload(utilisateur.id + "/cv.pdf", cvAEnvoyer, { upsert: true, contentType: "application/pdf", cacheControl: "60" });
       if (u.error) { occupe(form, false); profil = r.data; message("Profil enregistré, mais le CV n'est pas parti : " + erreurLisible(u.error), true); voirCandidat(); return; }
@@ -1382,7 +1384,7 @@
     occupe(form, true);
     var r = structure
       ? await sb.from("structures").update(d).eq("id", idEspace()).select().single()
-      : await sb.from("structures").insert(d).select().single();
+      : await sb.from("structures").insert(Object.assign({ provenance: provenance() }, d)).select().single();
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
     if (aSupprimer.length) { sb.storage.from("structures").remove(aSupprimer); aSupprimer = []; }

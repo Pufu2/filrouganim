@@ -780,3 +780,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v17 (16/11/2026) : demandes.suivi (a_traiter, en_cours, traitee) et demandes.note_admin (QG demandes) ;
 -- table admin_audience (audience détaillée écrite par outils/audience.py avec la clé secrète, lisible par l'admin seul) ;
 -- admin_modifier accepte demandes (suivi, note_admin, destinataires) ; admin_sante() (e-mails, stockage, base, alertes).
+
+-- v18 (16/11/2026) : profils.provenance et structures.provenance (canal du premier passage, noté à la création) ;
+-- table admin_prospects (prospection : organismes, structures, contacts ; statut, étapes, note), réservée à l'admin.

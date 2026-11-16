@@ -175,10 +175,10 @@
     var vues30 = D.vues.filter(function (v) { return v.jour >= joursAvant(29) && (v.type === "page" || v.type === "offre"); }).reduce(function (a, v) { return a + v.n; }, 0);
     [["Pilotage", [["qg", "boite", "QG demandes", aTraiter().length ? aTraiter().length + " point" + (aTraiter().length > 1 ? "s" : "") + " à traiter" : "Rien en attente"],
                    ["ventes", "courbe", "Ventes", euros(an / 12) + " par mois"], ["sante", "coeur", "État de santé", "Relevés, e-mails, base, stockage"], ["afaire", "coche", "À traiter", "Structures, demandes, offres"]]],
-     ["Utilisateurs", [["comptes", "personne", "Comptes", fr(D.comptes.length) + " comptes, +" + ceMois + " ce mois-ci"], ["structures", "maison", "Structures", st.length + " fiches, " + payees.length + " payées"],
+     ["Utilisateurs", [["comptes", "personne", "Membres", fr(D.comptes.length) + " comptes, +" + ceMois + " ce mois-ci"], ["structures", "maison", "Structures", st.length + " fiches, " + payees.length + " payées"],
                        ["animateurs", "groupe", "Animateurs", D.profils.length + " profils, " + compte(D.profils, function (p) { return p.publie; }) + " visibles"]]],
      ["Acquisition", [["stats", "courbe", "Statistiques détaillées", "Vues, clics, entonnoirs, trafic"], ["stats", "oeil", "Vues des pages structures", fr(vues30) + " sur 30 jours"],
-                      [null, "google", "Page des chiffres publics", "Google, visiteurs, demandes", "/chiffres/"]]],
+                      ["visibilite", "google", "Visibilité", "Google, page par page"], ["provenance", "lien", "Provenance", "Canaux, liens suivis, inscrits"], ["prospection", "avion", "Prospection", "Organismes, structures, contacts"]]],
      ["Contenu", [["offres", "offre", "Offres", compte(D.offres, function (o) { return o.publiee && o.expire_le >= AUJ; }) + " en ligne"], ["demandes", "avion", "Toutes les demandes", D.demandes.length + " reçues"],
                   ["contenus", "livre", "Guides et conseils", D.ressources.length + " ressources"]]]].forEach(function (p) {
       var k = carte(g4, null, null, "ap-acces"); k.appendChild(el("p", "ap-mini-t", p[0]));
@@ -239,7 +239,7 @@
   }
   function membres(c, T) {
     var k = carte(c, "Membres", null, "ap-membres");
-    var h = k.querySelector(".ap-carte-h"); var tous = vers("comptes"); tous.className = "ap-lien"; tous.textContent = "Tous les comptes →"; h.appendChild(tous);
+    var h = k.querySelector(".ap-carte-h"); var tous = vers("comptes"); tous.className = "ap-lien"; tous.textContent = "Tous les membres →"; h.appendChild(tous);
     var F = { tous: ["Tous", function () { return true; }], animateur: ["Animateurs", function (t) { return t.type === "animateur"; }],
               structure: ["Structures", function (t) { return t.type === "structure"; }], aucun: ["Sans fiche", function (t) { return t.type === "aucun"; }] };
     var puces = el("div", "ap-puces"); k.appendChild(puces);
@@ -583,10 +583,415 @@
       "Votre abonnement Fil Roug'Anim", function (x) { return "Bonjour,\n\nL'abonnement de " + (x.nom || "votre structure") + " se termine le " + E.dateFr(x.abonnement_fin) + ". Pour garder votre page et vos offres en ligne, pensez à le renouveler depuis votre espace.\n\nBonne journée,\nFil Roug'Anim"; });
   }
 
+
+  /* ====================================================================================
+     Partie 2 : membres, annuaires (structures, animateurs, organismes), visibilité,
+     provenance et prospection
+     ==================================================================================== */
+  var G = null, ORG = null, PROS = null;   // Google (chiffres/google.json), organismes (compte/organismes.json), prospects
+  function tableau(c, entetes, lignes) {
+    var t = el("table", "ap-table"), th = el("thead"), tr = el("tr");
+    entetes.forEach(function (h) { tr.appendChild(el("th", null, h)); }); th.appendChild(tr); t.appendChild(th);
+    var tb = el("tbody"); lignes.forEach(function (l) { var r = el("tr"); l.forEach(function (x) { var td = el("td"); if (x && x.nodeType) td.appendChild(x); else td.textContent = x == null ? "" : x; r.appendChild(td); }); tb.appendChild(r); });
+    t.appendChild(tb); var w = el("div", "ap-table-boite"); w.appendChild(t); c.appendChild(w);
+    if (!lignes.length) w.appendChild(el("p", "ap-vide ap-table-vide", "Rien ici pour l'instant."));
+  }
+  function cellule(titre, sous) { var d = el("div", "ap-cel"); d.appendChild(el("b", null, titre || "–")); if (sous) d.appendChild(el("small", null, sous)); return d; }
+  function actions(liste) { var d = el("div", "ap-boutons ap-boutons-fin"); liste.forEach(function (a) { if (!a) return; var b;
+      if (a[2]) { b = el("a", "ap-lien-b", a[0]); b.href = a[2]; if (!/^mailto:/.test(a[2])) { b.target = "_blank"; b.rel = "noopener"; } }
+      else { b = el("button", "ap-lien-b" + (a[3] ? " " + a[3] : ""), a[0]); b.type = "button"; b.addEventListener("click", a[1]); }
+      d.appendChild(b); }); return d; }
+  function ouvrirEspace(role, id) { location.href = "/compte/?role=" + role + "&compte=" + encodeURIComponent(id); }
+  function chiffres(c, liste) { var g = el("div", "ap-chiffres"); liste.forEach(function (x) { var d = el("div", x[2] ? "ap-chiffre-" + x[2] : null); d.appendChild(el("b", null, x[0])); d.appendChild(el("span", null, x[1])); g.appendChild(d); }); c.appendChild(g); }
+  function vues30(id) { var v = 0, k = 0; D.vues_structures && D.vues_structures.forEach(function (x) { if (x.structure_id === id && x.jour >= joursAvant(29)) { if (x.type === "page" || x.type === "offre") v += x.n; else if (x.type.indexOf("clic_") === 0) k += x.n; } }); return [v, k]; }
+
+  /* ---------- Membres ---------- */
+  var mb = { f: "tous", q: "", tri: "recent", vue: "grille" };
+  function derniereAction(t) {
+    var l = [];
+    if (t.p && t.p.maj_le) l.push([t.p.maj_le, "a mis à jour son profil"]);
+    if (t.s && t.s.maj_le) l.push([t.s.maj_le, "a mis à jour sa page"]);
+    D.candidatures.forEach(function (x) { if (x.candidat_id === t.c.id) l.push([x.cree_le, "a postulé à une offre"]); });
+    D.demandes.forEach(function (x) { if (x.candidat_id === t.c.id) l.push([x.cree_le, "a envoyé une demande"]); });
+    D.offres.forEach(function (x) { if (x.structure_id === t.c.id) l.push([x.cree_le, "a publié une offre"]); });
+    l.sort(function (a, b) { return (b[0] || "").localeCompare(a[0] || ""); });
+    return l[0] ? l[0][1] + " · " + E.dateFr(iso(l[0][0])) : "Rien dans l'espace pour l'instant";
+  }
+  function membresPage() {
+    var c = $("ad-comptes"); if (!c) return; c.textContent = "";
+    var T = types(), adm = D.comptes.filter(function (x) { return D.admins.indexOf(x.id) >= 0; });
+    var an = D.structures.filter(paye).reduce(function (a, s) { return a + prixAn(s); }, 0);
+    hero(c, "Membres", "Tous vos membres, ", "au même endroit",
+      fr(D.comptes.length) + " comptes, dont " + compte(T, function (t) { return t.type === "animateur"; }) + " animateurs et " + compte(T, function (t) { return t.type === "structure"; }) + " structures. Cliquez sur un membre pour ouvrir son espace.", [bouton("← Vue d'ensemble", "accueil")]);
+    var k = el("div", "ap-carte"); c.appendChild(k);
+    chiffres(k, [[fr(T.length), "membres"], [fr(compte(T, function (t) { return t.type === "animateur"; })), "animateurs"], [fr(compte(T, function (t) { return t.s && paye(t.s); })), "structures payantes", "rouge"],
+                 [fr(compte(T, function (t) { return t.s && !paye(t.s); })), "structures sans abonnement"], [fr(compte(T, function (t) { return t.type === "aucun"; })), "sans fiche"],
+                 [fr(compte(T, function (t) { return (t.p && t.p.provenance) || (t.s && t.s.provenance); })), "provenance connue"], [euros(an / 12), "par mois", "rouge"]]);
+    // la barre d'outils
+    var barre = el("div", "ap-barre-outils"); c.appendChild(barre);
+    var csv = el("button", "ap-lien-b", "⇩ Exporter CSV"); csv.type = "button"; barre.appendChild(csv);
+    var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Nom ou e-mail…"; q.value = mb.q; barre.appendChild(q);
+    var F = { tous: ["Tous", function () { return true; }], animateur: ["Animateurs", function (t) { return t.type === "animateur"; }], payante: ["Structures payantes", function (t) { return t.s && paye(t.s); }],
+              gratuite: ["Structures sans abonnement", function (t) { return t.s && !paye(t.s); }], aucun: ["Sans fiche", function (t) { return t.type === "aucun"; }], inactif: ["Jamais revenus", function (t) { return !t.c.derniere || iso(t.c.derniere) === iso(t.c.cree_le); }] };
+    var puces = el("div", "ap-puces"); barre.appendChild(puces);
+    Object.keys(F).forEach(function (cle) { var b = el("button", null, F[cle][0] + " " + compte(T, F[cle][1])); b.type = "button"; b.setAttribute("aria-pressed", mb.f === cle ? "true" : "false"); b.addEventListener("click", function () { mb.f = cle; membresPage(); }); puces.appendChild(b); });
+    var tri = el("select", "ap-select"); [["recent", "Inscription la plus récente"], ["ancien", "Inscription la plus ancienne"], ["visite", "Dernière visite"], ["nom", "Nom"]].forEach(function (x) { var o = el("option", null, x[1]); o.value = x[0]; if (mb.tri === x[0]) o.selected = true; tri.appendChild(o); });
+    tri.addEventListener("change", function () { mb.tri = tri.value; membresPage(); }); barre.appendChild(tri);
+    var vue = el("div", "ap-periodes"); [["grille", "▦"], ["liste", "☰"]].forEach(function (x) { var b = el("button", null, x[1]); b.type = "button"; b.title = x[0] === "grille" ? "En cartes" : "En liste"; b.setAttribute("aria-pressed", mb.vue === x[0] ? "true" : "false"); b.addEventListener("click", function () { mb.vue = x[0]; membresPage(); }); vue.appendChild(b); }); barre.appendChild(vue);
+    var zone = el("div", mb.vue === "grille" ? "ap-cartes-m" : "ap-liste-m"); c.appendChild(zone);
+    function liste() {
+      var m = mb.q.trim().toLowerCase();
+      var L = T.filter(F[mb.f][1]).filter(function (t) { return !m || (nomDe(t) + " " + (t.c.email || "")).toLowerCase().indexOf(m) >= 0; });
+      L.sort(function (a, b) {
+        if (mb.tri === "ancien") return (a.c.cree_le || "").localeCompare(b.c.cree_le || "");
+        if (mb.tri === "visite") return (b.c.derniere || "").localeCompare(a.c.derniere || "");
+        if (mb.tri === "nom") return nomDe(a).localeCompare(nomDe(b));
+        return (b.c.cree_le || "").localeCompare(a.c.cree_le || "");
+      });
+      return L;
+    }
+    function remplir() {
+      zone.textContent = "";
+      var L = liste();
+      L.slice(0, 120).forEach(function (t) {
+        var k2 = el("article", "ap-membre"), nom = nomDe(t);
+        var h = el("div", "ap-membre-h"); h.appendChild(el("span", "ap-av", nom.split(/\s+/).map(function (x) { return x[0]; }).join("").slice(0, 2).toUpperCase()));
+        var tx = el("div", "ap-membre-t"); tx.appendChild(el("b", null, nom)); tx.appendChild(el("small", null, t.c.email || "")); h.appendChild(tx);
+        h.appendChild(etiquette(t.type === "structure" ? (paye(t.s) ? (t.s.fondatrice ? "Fondatrice" : "Abonnée") : "Structure") : t.type === "animateur" ? "Animateur" : "Sans fiche", t.s && paye(t.s) ? "ok" : t.type === "aucun" ? "jaune" : null));
+        k2.appendChild(h);
+        var info = el("div", "ap-membre-i");
+        var bloc2 = function (titre, valeur, pastille) { var d = el("div"); d.appendChild(el("small", null, titre)); if (pastille) d.appendChild(etiquette(valeur, pastille)); else d.appendChild(el("b", null, valeur)); info.appendChild(d); };
+        bloc2("Inscrit", E.dateFr(iso(t.c.cree_le)));
+        var dv = t.c.derniere && iso(t.c.derniere) !== iso(t.c.cree_le) ? depuis(t.c.derniere) : "Jamais revenu";
+        bloc2("Dernière visite", dv.charAt(0).toUpperCase() + dv.slice(1), dv === "aujourd'hui" ? "ok" : dv === "Jamais revenu" ? "jaune" : "neutre");
+        var da = el("div", "ap-membre-a"); da.appendChild(el("small", null, "Dernière action")); da.appendChild(el("span", null, derniereAction(t))); info.appendChild(da);
+        k2.appendChild(info);
+        var tags = el("p", "ap-membre-tags");
+        if (t.p) (t.p.diplomes || []).slice(0, 3).forEach(function (x) { tags.appendChild(etiquette(lib("diplomes", x))); });
+        if (t.s) { (t.s.accueils || []).slice(0, 2).forEach(function (x) { tags.appendChild(etiquette(lib("accueils_st", x))); }); if (t.s.ville) tags.appendChild(etiquette(t.s.ville)); }
+        if (t.p && t.p.departement) tags.appendChild(etiquette(nomDep(t.p.departement)));
+        var prov = (t.p && t.p.provenance) || (t.s && t.s.provenance);
+        if (prov) tags.appendChild(etiquette("via " + canal(prov), "rose"));
+        if (tags.children.length) k2.appendChild(tags);
+        k2.appendChild(actions([t.s ? ["Espace", function () { ouvrirEspace("structure", t.c.id); }] : t.p ? ["Espace", function () { ouvrirEspace("candidat", t.c.id); }] : null,
+          t.c.email ? ["✉ Écrire", null, "mailto:" + t.c.email] : null, t.p ? ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(t.p, {})); }] : null]));
+        zone.appendChild(k2);
+      });
+      if (!L.length) zone.appendChild(el("p", "ap-vide", "Personne ici."));
+    }
+    q.addEventListener("input", function () { mb.q = q.value; remplir(); });
+    csv.addEventListener("click", function () {
+      var lignes = [["nom", "email", "type", "inscrit", "derniere_visite", "departement", "abonnement_fin", "provenance"]].concat(liste().map(function (t) {
+        return [nomDe(t), t.c.email || "", t.type, iso(t.c.cree_le), iso(t.c.derniere), (t.p && t.p.departement) || (t.s && t.s.departement) || "", (t.s && t.s.abonnement_fin) || "", (t.p && t.p.provenance) || (t.s && t.s.provenance) || ""];
+      }));
+      var txt = lignes.map(function (l) { return l.map(function (x) { return '"' + String(x).replace(/"/g, '""') + '"'; }).join(";"); }).join("\n");
+      var a = el("a"); a.href = URL.createObjectURL(new Blob(["﻿" + txt], { type: "text/csv;charset=utf-8" })); a.download = "membres-filrouganim-" + AUJ + ".csv"; document.body.appendChild(a); a.click(); a.remove();
+    });
+    remplir();
+  }
+
+  /* ---------- en-têtes des annuaires : structures et animateurs ---------- */
+  function enteteStructures() {
+    var c = $("ad-structures"); if (!c) return;
+    var w = el("div", "ap-entete-annuaire"), st = D.structures;
+    var enLigne = st.filter(function (s) { return paye(s) && s.verifiee; }), aVerif = st.filter(function (s) { return paye(s) && !s.verifiee; }), sans = st.filter(function (s) { return !paye(s); });
+    hero(w, "Annuaire des structures", "Les structures ", "de l'annuaire",
+      "Une structure paie, vous la vérifiez, elle est en ligne. Ici : celles qui sont en ligne, celles qui attendent votre vérification, et celles qui n'ont pas encore payé.", [bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(w, [[String(enLigne.length), "en ligne"], [compte(st, function (s) { return s.fondatrice && paye(s); }) + "/10", "fondatrices", "rouge"], [String(aVerif.length), "à vérifier"],
+                 [String(sans.length), "sans abonnement"], [String(compte(enLigne, function (s) { return !s.page_publique; })), "pages cachées"]]);
+    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("En ligne dans l'annuaire · " + enLigne.length)); w.appendChild(s1);
+    tableau(w, ["Structure", "Ville", "Accueils · âges", "Stats 30 jours", ""], enLigne.map(function (s) {
+      var v = vues30(s.id);
+      return [cellule((s.fondatrice ? "★ " : "") + s.nom, s.email_contact), cellule(s.ville, s.departement ? nomDep(s.departement) : ""),
+        cellule((s.accueils || []).map(function (x) { return lib("accueils_st", x); }).join(", ") || lib("types", s.type), s.age_min != null ? s.age_min + " à " + s.age_max + " ans" : ""),
+        cellule("👁 " + v[0] + " · ↗ " + v[1], "jusqu'au " + E.dateFr(s.abonnement_fin)),
+        actions([["Espace", function () { ouvrirEspace("structure", s.id); }], s.slug && s.page_publique ? ["Page", null, "/trouver-un-poste/structures/" + s.slug + "/"] : null,
+                 [s.page_publique ? "Masquer" : "Afficher", function () { A.modifier("structures", s.id, { page_publique: !s.page_publique }); }]])];
+    }));
+    var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-surveiller")); s2.appendChild(document.createTextNode("Payées, à vérifier · " + aVerif.length)); w.appendChild(s2);
+    w.appendChild(el("p", "ap-petit", "Vérifiez le SIRET, le RNA ou la déclaration d'accueil, puis mettez en ligne : la page et les offres paraissent à la publication suivante."));
+    tableau(w, ["Structure", "Ville", "Identifiant", "Payée", ""], aVerif.map(function (s) {
+      return [cellule(s.nom, s.email_contact), cellule(s.ville, s.departement), cellule(s.identifiant || "non donné", s.site || ""), cellule("jusqu'au " + E.dateFr(s.abonnement_fin), depuis(s.cree_le)),
+        actions([["✓ Vérifier", function () { A.modifier("structures", s.id, { verifiee: true }); }, null, "ap-fort"], ["Espace", function () { ouvrirEspace("structure", s.id); }]])];
+    }));
+    var s3 = el("p", "ap-titre-s"); s3.appendChild(el("i", "ap-dot ap-dot-neutre")); s3.appendChild(document.createTextNode("Fiches sans abonnement · " + sans.length)); w.appendChild(s3);
+    tableau(w, ["Structure", "Ville", "E-mail", "Inscrite", ""], sans.map(function (s) {
+      return [cellule(s.nom || "Sans nom"), cellule(s.ville, s.departement), cellule(s.email_contact), cellule(depuis(s.cree_le), E.dateFr(iso(s.cree_le))),
+        actions([s.email_contact ? ["✉ Écrire", null, "mailto:" + s.email_contact + "?subject=" + encodeURIComponent("Votre page sur Fil Roug'Anim")] : null, ["Espace", function () { ouvrirEspace("structure", s.id); }],
+                 ["Supprimer", function () { A.supprimer("structures", s.id, s.nom); }, null, "ap-danger"]])];
+    }));
+    w.appendChild(el("p", "ap-titre-s", "Toutes les fiches, étape par étape"));
+    c.insertBefore(w, c.firstChild);
+  }
+  function enteteAnimateurs() {
+    var c = $("ad-animateurs"); if (!c) return;
+    var w = el("div", "ap-entete-annuaire"), P = D.profils.filter(function (p) { return D.admins.indexOf(p.id) < 0; });
+    var post = {}; D.candidatures.forEach(function (x) { post[x.candidat_id] = (post[x.candidat_id] || 0) + 1; });
+    var dem = {}; D.demandes.forEach(function (x) { if (x.candidat_id) dem[x.candidat_id] = (dem[x.candidat_id] || 0) + 1; });
+    hero(w, "Annuaire des animateurs", "Les animateurs ", "de l'annuaire",
+      "Inscription libre et gratuite : vous n'intervenez que pour cacher un profil, ou aider quelqu'un qui n'a pas fini le sien.", [bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(w, [[String(P.length), "profils"], [String(compte(P, function (p) { return p.publie; })), "visibles", "rouge"], [String(compte(P, function (p) { return p.cv_nom; })), "avec CV"],
+                 [String(Object.keys(post).length), "ont postulé"], [String(Object.keys(dem).length), "ont envoyé une demande"], [String(compte(P, function (p) { return p.annee_naissance && auj.getFullYear() - p.annee_naissance < 18; })), "mineurs"]]);
+    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Les derniers profils · " + Math.min(P.length, 25) + " sur " + P.length)); w.appendChild(s1);
+    tableau(w, ["Animateur", "Lieu", "Diplômes", "Activité", ""], P.slice().sort(function (a, b) { return (b.maj_le || "").localeCompare(a.maj_le || ""); }).slice(0, 25).map(function (p) {
+      return [cellule(p.prenom + (p.annee_naissance ? ", " + (auj.getFullYear() - p.annee_naissance) + " ans" : ""), p.email_contact), cellule(p.ville || nomDep(p.departement), p.departement),
+        cellule((p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ") || "–", p.poste_recherche || ""),
+        cellule((post[p.id] || 0) + " candidature" + ((post[p.id] || 0) > 1 ? "s" : "") + " · " + (dem[p.id] || 0) + " demande" + ((dem[p.id] || 0) > 1 ? "s" : ""), (p.publie ? "visible" : "caché") + " · maj " + depuis(p.maj_le)),
+        actions([["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
+    }));
+    w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
+    c.insertBefore(w, c.firstChild);
+  }
+
+  /* ---------- Organismes de formation (les futurs clients) ---------- */
+  var STATUTS_P = { a_contacter: ["À contacter", null], contacte: ["Contacté", "jaune"], repondu: ["A répondu", "rose"], interesse: ["Intéressé", "ok"], client: ["Client", "ok"], pas_interesse: ["Pas intéressé", "neutre"] };
+  function prospect(cle) { return (PROS || []).filter(function (x) { return x.cle === cle; })[0] || null; }
+  async function enregistrerProspect(x) {
+    // seulement les colonnes de la table (les fiches affichées portent aussi des infos calculées)
+    var p = { cle: x.cle, type: x.type, nom: x.nom || null, email: x.email || null, ville: x.ville || null, statut: x.statut || "a_contacter", etapes: x.etapes || [], note: x.note || null };
+    p.maj = new Date().toISOString();
+    var r = await E.sb.from("admin_prospects").upsert(p);
+    if (r && r.error) { E.message(E.erreur(r.error), true); return; }
+    var i = (PROS || []).findIndex(function (x) { return x.cle === p.cle; }); if (i >= 0) PROS[i] = p; else (PROS = PROS || []).push(p);
+    E.message("Enregistré."); organismes(); prospection();
+  }
+  function selectStatut(p) {
+    var s2 = el("select", "ap-select"); Object.keys(STATUTS_P).forEach(function (k) { var o = el("option", null, STATUTS_P[k][0]); o.value = k; if ((p.statut || "a_contacter") === k) o.selected = true; s2.appendChild(o); });
+    s2.addEventListener("change", function () { enregistrerProspect(Object.assign({}, p, { statut: s2.value })); }); return s2;
+  }
+  function organismes() {
+    var c = $("ad-organismes"); if (!c) return; c.textContent = "";
+    var o = ORG || { suivis: [], autres: [] };
+    var sessions = o.suivis.reduce(function (a, x) { return a + x.n; }, 0);
+    var clients = compte(PROS || [], function (p) { return p.type === "organisme" && p.statut === "client"; });
+    hero(c, "Organismes de formation", "Les organismes, ", "vos futurs clients",
+      "Les organismes du BAFA, du BAFD, du BSB et du PSC dont le site compare les sessions. Le projet : une formule payante pour eux (mise en avant, page soignée, statistiques). Suivez ici qui vous avez contacté.", [bouton("Prospection", "prospection", true, "avion"), bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(c, [[String(o.suivis.length), "organismes suivis"], [fr(sessions), "sessions comparées"], [String(o.autres.length), "autres repérés"],
+                 [String(compte(PROS || [], function (p) { return p.type === "organisme" && p.statut !== "a_contacter"; })), "contactés"], [String(clients), "clients", "rouge"]]);
+    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Organismes avec leur page sur le site · " + o.suivis.length)); c.appendChild(s1);
+    tableau(c, ["Organisme", "Sessions", "Diplômes", "Prix dès", "Prospection", ""], o.suivis.map(function (x) {
+      var cle = "org:" + x.id, p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] };
+      return [cellule(x.nom, (x.habilitation ? "habilitation " + x.habilitation : "")), cellule(fr(x.n), x.villes + " villes"), cellule(x.diplomes.join(", ")), cellule(x.prix_min ? x.prix_min + " €" : "–"),
+        selectStatut(p), actions([x.page ? ["Sa page", null, x.page] : null, x.site ? ["Son site", null, x.site] : null])];
+    }));
+    var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-neutre")); s2.appendChild(document.createTextNode("Autres organismes repérés dans les sessions · " + o.autres.length)); c.appendChild(s2);
+    c.appendChild(el("p", "ap-petit", "Ils ont des sessions sur le site sans page à eux : des clients possibles aussi."));
+    tableau(c, ["Organisme", "Sessions", "Prospection"], o.autres.slice(0, 60).map(function (x) {
+      var cle = "org-autre:" + x.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-"), p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] };
+      return [cellule(x.nom), cellule(fr(x.n)), selectStatut(p)];
+    }));
+  }
+
+  /* ---------- Visibilité (Google, page par page) ---------- */
+  var IA = [["ChatGPT", /chatgpt|openai/i], ["Perplexity", /perplexity/i], ["Gemini", /gemini|bard/i], ["Copilot", /copilot|bing\.com\/chat/i], ["Claude", /claude/i], ["Mistral", /mistral|lechat/i]];
+  function visibilite() {
+    var c = $("ad-visibilite"); if (!c) return; c.textContent = "";
+    var g = G || {}, P = g.pages || [];
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "Clics depuis Google · 28 j"));
+    cote.appendChild(el("p", "ap-cote-gros", fr(g.clics_28j))); cote.appendChild(el("p", "ap-petit", fr(g.impressions_28j) + " affichages" + (g.gsc_du ? " du " + E.dateFr(g.gsc_du) + " au " + E.dateFr(g.gsc_au) : "")));
+    cote.appendChild(el("p", "ap-mini-t", "Visiteurs du site · 30 j")); cote.appendChild(el("p", "ap-cote-gros", fr(g.visiteurs_30j)));
+    hero(c, "Visibilité", "Où l'on vous trouve, ", "recherche par recherche",
+      "Ce que Google montre de chaque page, sa place, et les pages qui sont à deux doigts de la première page : c'est là qu'un peu de travail rapporte le plus.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    var g4 = grille(c, "ap-g4");
+    var prem = P.filter(function (x) { return x[4] && x[4] <= 10; });
+    kpi(g4, "google", "Clics depuis Google", fr(g.clics_28j), g.clics_evolution != null ? (g.clics_evolution > 0 ? "+" : "") + g.clics_evolution + " % vs 28 j d'avant" : "premier mois mesuré");
+    kpi(g4, "loupe", "Pages en première page", fr(prem.length), "sur " + fr(P.length) + " pages vues dans Google");
+    kpi(g4, "coche", "Recherches en première page", fr(g.recherches_premiere_page), "sur " + fr(g.recherches_total) + " recherches");
+    kpi(g4, "personne", "Visiteurs du site", fr(g.visiteurs_30j), g.visiteurs_evolution != null ? (g.visiteurs_evolution > 0 ? "+" : "") + g.visiteurs_evolution + " % vs 30 j d'avant" : "sur 30 jours");
+    // Google jour par jour
+    var k = carte(c, "Google, sur 28 jours", "clics et affichages par jour");
+    var pj = (g.par_jour || []).slice(-28);
+    if (pj.length > 1) {
+      courbe(k, [{ nom: "affichages", classe: "ap-l-avant", points: pj.map(function (x) { return x[1]; }) }], pj.map(function (x) { return new Date(x[0] + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }); }), 130);
+      courbe(k, [{ nom: "clics", classe: "ap-l-vis", aire: true, points_visibles: true, points: pj.map(function (x) { return x[2]; }) }], pj.map(function (x) { return new Date(x[0] + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }); }), 110);
+      legende(k, [["Affichages (en haut)", "ap-c-avant"], ["Clics (en bas)", "ap-c-vis"]]);
+    } else k.appendChild(el("p", "ap-vide", "Le détail jour par jour arrive avec le prochain relevé des chiffres."));
+    // où sont nos pages
+    var tr = [["1 à 3", function (p) { return p <= 3; }, "ap-s2"], ["4 à 10", function (p) { return p > 3 && p <= 10; }, "ap-s1"], ["11 à 20", function (p) { return p > 10 && p <= 20; }, "ap-s3"], ["21 à 50", function (p) { return p > 20 && p <= 50; }, "ap-s4"], ["Au-delà", function (p) { return p > 50; }, "ap-s5"]];
+    var avecPlace = P.filter(function (x) { return x[4]; });
+    var seg = el("div", "ap-seg ap-seg-gros"); tr.forEach(function (t) { var n = compte(avecPlace, function (x) { return t[1](x[4]); }); if (!n) return; var i = el("i", t[2]); i.style.width = (n / (avecPlace.length || 1) * 100) + "%"; i.title = t[0] + " : " + n; seg.appendChild(i); });
+    var kp = carte(c, "Où sont nos pages dans Google", "place moyenne sur 28 jours");
+    kp.appendChild(seg); legende(kp, tr.map(function (t) { return [t[0] + " : " + compte(avecPlace, function (x) { return t[1](x[4]); }), t[2]]; }));
+    kp.appendChild(el("p", "ap-petit", pct(prem.length, avecPlace.length) + " des pages vues dans Google sont en première page."));
+    // formation par formation
+    var fams = [["bafa", "BAFA"], ["bafd", "BAFD"], ["bsb", "BSB"], ["psc", "PSC"], ["ecoles", "Écoles pros"], ["conseils", "Guides et blog"]];
+    tableau(kp, ["Formation", "Pages vues", "En 1re page", "Affichages", "Clics"], fams.map(function (f) {
+      var l = P.filter(function (x) { return x[5] === f[0]; });
+      return [f[1], fr(l.length), fr(compte(l, function (x) { return x[4] && x[4] <= 10; })), fr(l.reduce(function (a, x) { return a + x[2]; }, 0)), fr(l.reduce(function (a, x) { return a + x[3]; }, 0))];
+    }));
+    // en tête, et à un pas de la première page
+    var deux = grille(c, "ap-g2");
+    function listePages(titre, sous, l, ton) {
+      var k3 = carte(deux, titre); k3.appendChild(el("p", "ap-petit", sous)); var ol = el("ol", "ap-pages-g");
+      l.slice(0, 12).forEach(function (x) { var li = el("li"); li.appendChild(el("span", "ap-place " + ton, String(x[4]).replace(".", ","))); var t = el("span", "ap-lus-t"); var a = el("a", null, x[1]); a.href = x[0]; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); t.appendChild(el("small", null, x[0])); li.appendChild(t); li.appendChild(el("b", null, fr(x[2]) + " aff." + (x[3] ? " · " + x[3] + " clic" + (x[3] > 1 ? "s" : "") : ""))); ol.appendChild(li); });
+      if (!l.length) ol.appendChild(el("li", "ap-vide", "Aucune pour l'instant."));
+      k3.appendChild(ol);
+    }
+    listePages("Nos pages en tête", "Places 1 à 3 : les plus vues d'abord.", P.filter(function (x) { return x[4] && x[4] <= 3; }).sort(function (a, b) { return b[2] - a[2]; }), "ap-place-top");
+    listePages("À un pas de la première page", "Places 11 à 20, les plus vues d'abord : un lien depuis une autre page ou un texte plus complet peut les faire passer en page 1.", P.filter(function (x) { return x[4] > 10 && x[4] <= 20; }).sort(function (a, b) { return b[2] - a[2]; }), "ap-place-pas");
+    // les recherches
+    var kr = carte(c, "Recherches en première page", fr((g.recherches || []).length) + " suivies");
+    tableau(kr, ["Recherche dans Google", "Place", "Affichages", "Clics"], (g.recherches || []).slice(0, 30).map(function (r) { return [r.recherche, String(r.place).replace(".", ","), fr(r.impressions), fr(r.clics)]; }));
+    // les IA
+    var ki = carte(c, "Les visiteurs envoyés par une IA", "30 jours");
+    var prov = (S && S.audience && S.audience.donnees && S.audience.donnees.provenances) || [];
+    var gi = el("div", "ap-ia"); IA.forEach(function (x) { var n = prov.filter(function (p) { return x[1].test(p[0]); }).reduce(function (a, p) { return a + p[1]; }, 0); var d = el("div", n ? "on" : null); d.appendChild(el("small", null, x[0])); d.appendChild(el("b", null, fr(n))); gi.appendChild(d); });
+    ki.appendChild(gi); ki.appendChild(el("p", "ap-petit", "Quand ChatGPT, Perplexity ou Gemini citent une page du site et qu'on clique dessus. Encore rare, mais ça monte vite."));
+  }
+
+  /* ---------- Provenance (d'où viennent les visiteurs et les inscrits) ---------- */
+  function canal(s) {
+    s = (s || "").toLowerCase();
+    if (!s || /^direct|^\(direct\)|accès direct/.test(s)) return "Accès direct";
+    if (/^lien:/.test(s)) return "Liens suivis";
+    if (/chatgpt|openai|perplexity|gemini|copilot|claude|mistral/.test(s)) return "IA";
+    if (/google|bing|qwant|duckduckgo|ecosia|yahoo|search|lilo/.test(s)) return "Moteurs de recherche";
+    if (/facebook|fb\.|messenger/.test(s)) return "Facebook";
+    if (/instagram/.test(s)) return "Instagram";
+    if (/tiktok|linkedin|t\.co|twitter|x\.com|youtube|snapchat|pinterest|whatsapp/.test(s)) return "Autres réseaux";
+    if (/mail|outlook|gmail|brevo|sendinblue|laposte|orange\.fr|free\.fr|yahoo/.test(s)) return "E-mails";
+    return "Autres sites";
+  }
+  var CANAUX = ["Moteurs de recherche", "Facebook", "Instagram", "Autres réseaux", "IA", "Liens suivis", "E-mails", "Autres sites", "Accès direct"];
+  function provenance() {
+    var c = $("ad-provenance"); if (!c) return; c.textContent = "";
+    var au = (S && S.audience && S.audience.donnees) || {}, prov = au.provenances || [];
+    var T = types(), insc = T.filter(function (t) { return (t.p && t.p.provenance) || (t.s && t.s.provenance); });
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "Inscriptions · 30 jours"));
+    var i30 = compte(T, function (t) { return iso(t.c.cree_le) >= joursAvant(29); }); cote.appendChild(el("p", "ap-cote-gros", String(i30)));
+    var parCanal = {}; insc.forEach(function (t) { var k2 = canal((t.p && t.p.provenance) || (t.s && t.s.provenance)); parCanal[k2] = (parCanal[k2] || 0) + 1; });
+    var premier = Object.keys(parCanal).sort(function (a, b) { return parCanal[b] - parCanal[a]; })[0];
+    cote.appendChild(el("p", "ap-petit", premier ? "Premier canal des inscrits : " + premier : "Le canal des inscrits est noté depuis cette mise à jour."));
+    hero(c, "Provenance", "D'où viennent ", "vos visiteurs et vos inscrits",
+      "Google, les réseaux, les e-mails, les IA, vos liens : jugé sur les inscriptions et les structures clientes, pas seulement sur les clics.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    // par canal
+    var k = carte(c, "Par canal", "visiteurs (30 jours), inscriptions et clientes de chaque canal");
+    var g = el("div", "ap-canaux"); k.appendChild(g);
+    CANAUX.forEach(function (nom) {
+      var vis = prov.filter(function (p) { return canal(p[0]) === nom; }).reduce(function (a, p) { return a + p[1]; }, 0);
+      var ins = compte(insc, function (t) { return canal((t.p && t.p.provenance) || (t.s && t.s.provenance)) === nom; });
+      var cli = compte(insc, function (t) { return t.s && paye(t.s) && canal(t.s.provenance) === nom; });
+      var d = el("div", "ap-canal"); var h = el("p", "ap-canal-n"); h.appendChild(el("i", "ap-dot")); h.appendChild(document.createTextNode(nom)); d.appendChild(h);
+      var tr = el("div", "ap-canal-3"); [[vis, "visiteurs"], [ins, ins > 1 ? "inscriptions" : "inscription"], [cli, cli > 1 ? "clientes" : "cliente"]].forEach(function (x) { var e = el("div"); e.appendChild(el("b", null, fr(x[0]))); e.appendChild(el("small", null, x[1])); tr.appendChild(e); });
+      d.appendChild(tr);
+      var noms = prov.filter(function (p) { return canal(p[0]) === nom; }).slice(0, 3).map(function (p) { return p[0] + " " + p[1]; }).join(" · ");
+      if (noms) d.appendChild(el("p", "ap-petit", noms));
+      g.appendChild(d);
+    });
+    k.appendChild(el("p", "ap-petit", "Le canal d'une inscription est celui du premier passage de la personne sur le site, noté depuis cette mise à jour : les comptes plus anciens n'en ont pas."));
+    // les liens suivis (campagnes)
+    var deux = grille(c, "ap-g2");
+    var kc = carte(deux, "Vos liens suivis", "30 jours");
+    barresH(kc, (au.campagnes || []).map(function (x) { return [x[0], x[1]]; }));
+    kc.appendChild(el("p", "ap-petit", "Pour suivre un lien partagé sur Facebook, Instagram ou par e-mail, ajoutez-lui ?utm_source=facebook&utm_campaign=nom-du-post. Exemple :"));
+    var ex = el("code", "ap-code", "https://filrouganim.fr/trouver-un-poste/?utm_source=instagram&utm_campaign=stage-ete"); kc.appendChild(ex);
+    // les dernières inscriptions et leur canal
+    var kd = carte(deux, "Les dernières inscriptions et leur canal");
+    var ol = el("ol", "ap-mini-liste ap-insc");
+    insc.sort(function (a, b) { return (b.c.cree_le || "").localeCompare(a.c.cree_le || ""); }).slice(0, 10).forEach(function (t) {
+      var pv = (t.p && t.p.provenance) || (t.s && t.s.provenance), li = el("li");
+      li.appendChild(etiquette(canal(pv), "rose")); var tx = el("span"); tx.appendChild(el("b", null, nomDe(t))); tx.appendChild(el("small", null, " · " + pv.split(" · ")[0] + " · arrivée sur " + (pv.split(" · ")[1] || "/") + " · " + depuis(t.c.cree_le))); li.appendChild(tx); ol.appendChild(li);
+    });
+    if (!ol.children.length) ol.appendChild(el("li", "ap-vide", "Les prochaines inscriptions s'afficheront ici avec leur canal."));
+    kd.appendChild(ol);
+  }
+
+  /* ---------- Prospection ---------- */
+  var pr = { onglet: "organisme", q: "" };
+  var MODELES = {
+    organisme: [["Premier contact", "Vos sessions BAFA sur Fil Roug'Anim",
+      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr), le comparateur des sessions BAFA, BAFD et PSC. Vos sessions y sont déjà, avec un lien vers votre site : {sessions} sessions en ce moment.\n\nLe site reçoit chaque mois des milliers de jeunes qui cherchent leur formation près de chez eux. Je prépare une formule pour les organismes : votre page mise en avant, vos sessions en tête dans votre région, et vos statistiques (vues, clics vers votre site).\n\nEst-ce que ça vous intéresserait d'en parler 10 minutes ?\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Re : vos sessions BAFA sur Fil Roug'Anim",
+      "Bonjour,\n\nJe me permets de revenir vers vous au sujet de vos sessions sur Fil Roug'Anim. Voici votre page : {page}\n\nUn retour, même court, m'aiderait beaucoup à construire la formule organismes.\n\nBonne journée,\nRafael"],
+      ["Dernière relance (14 jours)", "Dernière question",
+      "Bonjour,\n\nDernier message de ma part : souhaitez-vous que je vous tienne au courant de la formule organismes quand elle sera prête ? Un simple oui ou non me suffit.\n\nMerci et bonne journée,\nRafael"]],
+    structure: [["Premier contact", "Votre page sur Fil Roug'Anim",
+      "Bonjour,\n\nMerci d'avoir créé la page de {nom} sur Fil Roug'Anim. Il ne reste qu'une étape pour la mettre en ligne avec vos offres : l'abonnement (39,50 € par an au tarif fondateur, à vie, sans commission).\n\nUne question ? Répondez simplement à ce message.\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Votre page n'attend plus que vous",
+      "Bonjour,\n\nLes animateurs de votre secteur cherchent déjà : des demandes arrivent chaque semaine sur Fil Roug'Anim. Votre page {nom} peut être en ligne dès aujourd'hui.\n\nJe peux vous aider à la terminer si besoin.\n\nBonne journée,\nRafael"],
+      ["Dernière relance (14 jours)", "On garde votre place de fondateur ?",
+      "Bonjour,\n\nIl reste quelques places au tarif fondateur (39,50 € par an, à vie). Voulez-vous que je vous en garde une ?\n\nBonne journée,\nRafael"]],
+    contact: [["Premier contact", "Fil Roug'Anim : vos recrutements d'animateurs",
+      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr) : les animateurs et les stagiaires BAFA de votre secteur y décrivent le poste qu'ils cherchent, et leur demande arrive chez les 3 structures les plus proches.\n\nCréer la page de {nom} prend 6 minutes : https://filrouganim.fr/recruter/\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Re : vos recrutements d'animateurs", "Bonjour,\n\nJe reviens vers vous : avez-vous pu jeter un œil ? Je peux créer la page avec vous au téléphone si c'est plus simple.\n\nBonne journée,\nRafael"],
+      ["Dernière relance (14 jours)", "Dernière question", "Bonjour,\n\nDernier message : est-ce que vos recrutements de l'été sont déjà bouclés ? Un oui ou un non me suffit.\n\nMerci,\nRafael"]]
+  };
+  function contactsDe(type) {
+    if (type === "organisme") return ((ORG && ORG.suivis) || []).map(function (x) { var p = prospect("org:" + x.id); return Object.assign({ cle: "org:" + x.id, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [], infos: x.n + " sessions · " + x.villes + " villes", sessions: x.n, page: "https://filrouganim.fr" + (x.page || "/se-former/sessions/organismes/"), site: x.site }, p || {}); })
+      .concat(((ORG && ORG.autres) || []).slice(0, 40).map(function (x) { var cle = "org-autre:" + x.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-"), p = prospect(cle); return Object.assign({ cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [], infos: x.n + " sessions (sans page)", sessions: x.n, page: "https://filrouganim.fr/se-former/sessions/" }, p || {}); }));
+    if (type === "structure") return D.structures.filter(function (s) { return !paye(s); }).map(function (s) { var cle = "st:" + s.id, p = prospect(cle); return Object.assign({ cle: cle, type: "structure", nom: s.nom || "Sans nom", email: s.email_contact, ville: s.ville, statut: "a_contacter", etapes: [], infos: (s.ville || "") + " · inscrite " + depuis(s.cree_le) }, p || {}); });
+    return (PROS || []).filter(function (p) { return p.type === "contact"; }).map(function (p) { return Object.assign({ infos: p.ville || "" }, p); });
+  }
+  function aRelancer(p) { var e = p.etapes || []; return p.statut === "contacte" && e.length && e.length < 3 && (Date.now() - new Date(e[e.length - 1].date)) > 7 * 864e5; }
+  function prospection() {
+    var c = $("ad-prospection"); if (!c) return; c.textContent = "";
+    var tous = contactsDe("organisme").concat(contactsDe("structure"), contactsDe("contact"));
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "À relancer"));
+    cote.appendChild(el("p", "ap-cote-gros", String(compte(tous, aRelancer))));
+    [["Contactés", compte(tous, function (p) { return p.statut !== "a_contacter"; })], ["Ont répondu", compte(tous, function (p) { return ["repondu", "interesse", "client"].indexOf(p.statut) >= 0; })], ["Clients", compte(tous, function (p) { return p.statut === "client"; })]].forEach(function (x) {
+      var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, String(x[1]))); cote.appendChild(r); });
+    hero(c, "Prospection", "Trouvez vos clients, ", "écrivez-leur au bon moment",
+      "Les organismes de formation, les structures qui n'ont pas payé, et les contacts que vous ajoutez. Trois messages prêts par type (premier contact, relance à 7 jours, dernière relance) : un clic ouvre votre messagerie, et l'étape est notée.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    var on = el("div", "ap-puces ap-onglets-p"); c.appendChild(on);
+    [["organisme", "Organismes de formation"], ["structure", "Structures sans abonnement"], ["contact", "Contacts ajoutés"]].forEach(function (x) {
+      var b = el("button", null, x[1] + " " + contactsDe(x[0]).length); b.type = "button"; b.setAttribute("aria-pressed", pr.onglet === x[0] ? "true" : "false"); b.addEventListener("click", function () { pr.onglet = x[0]; prospection(); }); on.appendChild(b); });
+    var g = el("div", "ap-pros"); c.appendChild(g);
+    // à gauche : la séquence de messages
+    var seq = carte(g, "La séquence", "3 messages");
+    MODELES[pr.onglet].forEach(function (m, i) { var d = el("div", "ap-etape-m"); d.appendChild(el("span", "ap-pastille ap-zero", String(i + 1))); var t = el("div"); t.appendChild(el("b", null, m[0])); t.appendChild(el("small", null, m[1])); d.appendChild(t); seq.appendChild(d); });
+    seq.appendChild(el("p", "ap-petit", "{nom}, {sessions} et {page} se remplacent tout seuls. Vous pouvez retoucher le message dans votre messagerie avant de l'envoyer."));
+    // à droite : les contacts
+    var droite = el("div", "ap-col"); g.appendChild(droite);
+    if (pr.onglet === "contact") {
+      var ajout = carte(droite, "Ajouter un contact", "une structure repérée, un accueil de loisirs, une mairie…");
+      var f = el("form", "ap-form"); [["nom", "Nom de la structure"], ["email", "E-mail"], ["ville", "Ville"]].forEach(function (x) { var i = el("input", "ap-recherche"); i.name = x[0]; i.placeholder = x[1]; if (x[0] === "email") i.type = "email"; f.appendChild(i); });
+      var bt = el("button", "ap-bouton", "Ajouter"); bt.type = "submit"; f.appendChild(bt);
+      f.addEventListener("submit", function (e) { e.preventDefault(); if (!f.nom.value.trim()) return; enregistrerProspect({ cle: "contact:" + Date.now(), type: "contact", nom: f.nom.value.trim(), email: f.email.value.trim() || null, ville: f.ville.value.trim() || null, statut: "a_contacter", etapes: [] }); });
+      ajout.appendChild(f);
+    }
+    var lc = carte(droite, pr.onglet === "organisme" ? "Organismes de formation" : pr.onglet === "structure" ? "Structures sans abonnement" : "Vos contacts");
+    var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Chercher…"; q.value = pr.q; lc.appendChild(q);
+    var zone = el("div", "ap-pros-l"); lc.appendChild(zone);
+    function remplir() {
+      zone.textContent = "";
+      var m = pr.q.trim().toLowerCase();
+      var l = contactsDe(pr.onglet).filter(function (p) { return !m || (p.nom + " " + (p.email || "") + " " + (p.ville || "")).toLowerCase().indexOf(m) >= 0; });
+      l.sort(function (a, b) { return aRelancer(b) - aRelancer(a) || (a.statut === "a_contacter") - (b.statut === "a_contacter"); });
+      l.slice(0, 80).forEach(function (p) {
+        var r = el("div", "ap-pro"); var t = el("div", "ap-pro-t"); t.appendChild(el("b", null, p.nom));
+        var e = p.etapes || [];
+        t.appendChild(el("small", null, [p.infos, p.email, e.length ? "étape " + e.length + " le " + E.dateFr(iso(e[e.length - 1].date)) : "jamais contacté"].filter(Boolean).join(" · ")));
+        if (aRelancer(p)) t.appendChild(etiquette("à relancer", "jaune"));
+        r.appendChild(t);
+        r.appendChild(selectStatut(p));
+        var mail = el("input", "ap-recherche ap-mail"); mail.type = "email"; mail.placeholder = "E-mail"; mail.value = p.email || "";
+        mail.addEventListener("change", function () { enregistrerProspect(Object.assign({}, p, { email: mail.value.trim() || null })); });
+        r.appendChild(mail);
+        var n = Math.min(e.length, 2), mod = MODELES[pr.onglet][n];
+        var corps = mod[2].replace(/\{nom\}/g, p.nom).replace(/\{sessions\}/g, p.sessions || "").replace(/\{page\}/g, p.page || "https://filrouganim.fr");
+        var ecrire = el("a", "ap-bouton", "✉ " + mod[0]); ecrire.href = "mailto:" + (p.email || "") + "?subject=" + encodeURIComponent(mod[1]) + "&body=" + encodeURIComponent(corps);
+        ecrire.addEventListener("click", function () {
+          var propre = { cle: p.cle, type: p.type, nom: p.nom, email: p.email || null, ville: p.ville || null, note: p.note || null, statut: p.statut === "a_contacter" ? "contacte" : p.statut, etapes: e.concat([{ n: n + 1, date: new Date().toISOString() }]) };
+          setTimeout(function () { enregistrerProspect(propre); }, 300);
+        });
+        var cp = el("button", "ap-lien-b", "Copier"); cp.type = "button"; cp.addEventListener("click", function () { if (navigator.clipboard) navigator.clipboard.writeText(corps).then(function () { cp.textContent = "Copié"; }); });
+        var bs = el("div", "ap-boutons"); bs.appendChild(ecrire); bs.appendChild(cp); if (p.site) { var si = el("a", "ap-lien-b", "Site"); si.href = p.site; si.target = "_blank"; si.rel = "noopener"; bs.appendChild(si); }
+        r.appendChild(bs);
+        zone.appendChild(r);
+      });
+      if (!l.length) zone.appendChild(el("p", "ap-vide", pr.onglet === "contact" ? "Ajoutez votre premier contact ci-dessus." : "Personne ici."));
+    }
+    q.addEventListener("input", function () { pr.q = q.value; remplir(); });
+    remplir();
+  }
+
   /* ---------- chargement ---------- */
   async function toutLire() {
-    var r = await Promise.all([E.sb.rpc("admin_sante"), lireGithub()]);
+    var lireJson = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+    var r = await Promise.all([E.sb.rpc("admin_sante"), lireGithub(), lireJson("/chiffres/google.json"), lireJson("/compte/organismes.json"),
+                               E.sb.from("admin_prospects").select("*")]);
     S = (r[0] && !r[0].error && r[0].data) || {};
+    G = r[2] || {}; ORG = r[3] || { suivis: [], autres: [] }; PROS = (r[4] && !r[4].error && r[4].data) || [];
     verifieA = new Date();
   }
   window.FRA_ADMIN_PRO = {
@@ -595,6 +1000,7 @@
       ["comptes", "structures", "profils", "offres", "demandes", "candidatures", "vues", "ressources", "admins"].forEach(function (k) { D[k] = D[k] || []; });
       if (!S) { S = {}; QG(); ventes(); accueil(); await toutLire(); }
       accueil(); QG(); sante(); ventes();
+      membresPage(); enteteStructures(); enteteAnimateurs(); organismes(); visibilite(); provenance(); prospection();
       var p = document.querySelector('[data-pastille-admin="qg"]'); var n = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
       if (p) { p.hidden = !n; p.textContent = n; }
     }
