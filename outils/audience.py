@@ -22,6 +22,7 @@ Le réglage pas à pas est dans docs/CHIFFRES.md.
 import argparse
 import datetime as dt
 import json
+import re
 import os
 import sys
 import urllib.error
@@ -58,8 +59,15 @@ def goatcounter(aujourdhui):
         print("GoatCounter : pas de code ou pas de jeton, sauté")
         return None
     def total(debut, fin):
-        q = urllib.parse.urlencode({"start": debut.isoformat(), "end": fin.isoformat()})
-        d, _ = lire_json(f"https://{code}.goatcounter.com/api/v0/stats/total?{q}", {"Authorization": f"Bearer {jeton}"})
+        # l'API veut des dates complètes (RFC 3339, à l'heure ronde) : du début du premier jour à la fin du dernier
+        q = urllib.parse.urlencode({"start": f"{debut.isoformat()}T00:00:00Z", "end": f"{fin.isoformat()}T23:00:00Z"})
+        try:
+            d, _ = lire_json(f"https://{code}.goatcounter.com/api/v0/stats/total?{q}", {"Authorization": f"Bearer {jeton}"})
+        except urllib.error.HTTPError as e:
+            # le message de GoatCounter, sans le HTML autour, pour savoir ce qui ne va pas
+            texte = re.sub(r"<[^>]+>", " ", e.read().decode("utf-8", "ignore"))
+            texte = " ".join(texte.split())
+            raise RuntimeError(f"GoatCounter {e.code} sur {e.url.split('?')[0]} : {texte[-300:]}") from None
         return int(d.get("total") or 0)
     fin = aujourdhui - dt.timedelta(days=1)
     v30 = total(fin - dt.timedelta(days=29), fin)
