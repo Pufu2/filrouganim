@@ -117,8 +117,9 @@ def search_console(aujourdhui):
             "recherches_total": len(requetes), "recherches_premiere_page": len(premiere(requetes)),
             "pages_vues_google": len(pages), "pages_premiere_page_n": len(premiere(pages)),
             # seulement des recherches et des adresses de pages : rien sur les personnes qui les tapent
-            "recherches": [dict(x, recherche=x.pop("cle")) for x in premiere(requetes)[:40]],
-            "pages_premiere_page": [dict(x, url=x.pop("cle")) for x in premiere(pages)[:200]],
+            # (sans pop() : les mêmes lignes servent encore juste en dessous, pour pages_google)
+            "recherches": [{"recherche": x["cle"], "impressions": x["impressions"], "clics": x["clics"], "place": x["place"]} for x in premiere(requetes)[:40]],
+            "pages_premiere_page": [{"url": x["cle"], "impressions": x["impressions"], "clics": x["clics"], "place": x["place"]} for x in premiere(pages)[:200]],
             # toutes les pages vues dans Google (pour « Les chiffres de ta ville ») : [adresse, affichages, clics, place]
             "pages_google": [[x["cle"], x["impressions"], x["clics"], x["place"]] for x in sorted(pages, key=lambda x: -x["impressions"])]}
 

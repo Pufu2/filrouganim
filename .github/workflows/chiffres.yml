@@ -1,0 +1,46 @@
+name: Relever les chiffres
+
+# Les chiffres de visibilité seuls (Search Console, GoatCounter, comptes) : quelques secondes, toutes les 6 heures
+# et au bouton « Run workflow ». La publication horaire les met ensuite en ligne.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chiffres
+  cancel-in-progress: false
+
+jobs:
+  chiffres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Outils
+        run: pip install -q -r requirements.txt google-auth requests
+      - name: Chiffres de visibilité (GoatCounter, Search Console, comptes)
+        env:
+          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+          GSC_SERVICE_ACCOUNT: ${{ secrets.GSC_SERVICE_ACCOUNT }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: python3 outils/audience.py
+      - name: Enregistrer
+        run: |
+          git add donnees/audience.yml
+          if git diff --cached --quiet; then
+            echo "Aucun changement."
+            exit 0
+          fi
+          git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com commit -m "Chiffres : relevé du $(date -u +%d/%m/%Y) à $(date -u +%H:%M)"
+          for essai in 1 2 3; do
+            git pull --rebase -q origin main && git push && exit 0
+            sleep 10
+          done
+          exit 1
