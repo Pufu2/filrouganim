@@ -22,6 +22,11 @@
 {% set ACCUEILS = [("accueil-de-loisirs", "Accueil de loisirs (centre de loisirs)"), ("periscolaire", "Accueil périscolaire"), ("sejour-vacances", "Séjour de vacances (colo)"),
                    ("mini-camp", "Mini-camp"), ("accueil-de-jeunes", "Accueil de jeunes"), ("scoutisme", "Scoutisme"), ("autre", "Autre")] %}
 {% macro select_deps(nom, vide="Choisir", requis=True) %}<select name="{{ nom }}"{% if requis %} required{% endif %}><option value="">{{ vide }}</option>{% for r in regions %}<optgroup label="{{ r.nom }}">{% for d in r.deps | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.nom }} ({{ d.code }})</option>{% endfor %}</optgroup>{% endfor %}</select>{% endmacro %}
+{% macro commune(titre="Ville", aide="Tapez les premières lettres de la commune, puis choisissez-la dans la liste.") %}<div class="champ champ-commune" data-commune>
+  <label><span>{{ titre }}</span><span class="cm-boite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><input class="cm-saisie" type="text" autocomplete="off" spellcheck="false" placeholder="Ex. : Créteil, Lyon, 33000…" required></span></label>
+  <p class="cm-info">{{ aide }}</p>
+  <input type="hidden" name="ville"><input type="hidden" name="departement"><input type="hidden" name="code_commune">
+</div>{% endmacro %}
 {% macro choix(nom, options, vide=None) %}<select name="{{ nom }}" id="{{ nom }}"{% if not vide %} required{% endif %}>{% if vide %}<option value="">{{ vide }}</option>{% else %}<option value="">Choisir</option>{% endif %}{% for v, l in options %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>{% endmacro %}
 {% macro cases(nom, options) %}<div class="cases">{% for v, l in options %}<label><input type="checkbox" name="{{ nom }}" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>{% endmacro %}
 {% block tete_note %}<p class="note-main">mon compte</p>{% endblock %}
@@ -214,8 +219,7 @@
             <p class="etape-aide">Un prénom ou un pseudo suffit. Jamais de nom de famille, d'adresse ni de téléphone.</p>
             <div class="champs-2">
               <label class="champ"><span>Prénom (ou pseudo)</span><input name="prenom" required maxlength="40" autocomplete="given-name"></label>
-              <label class="champ"><span>Ville (facultatif)</span><input name="ville" maxlength="80" autocomplete="address-level2"></label>
-              <label class="champ"><span>Votre département</span>{{ select_deps("departement") }}</label>
+              {{ commune("Votre ville") }}
               <label class="champ"><span>Votre année de naissance</span><select name="annee_naissance" required><option value="">Choisir</option>{% for a in range(annee - 16, 1949, -1) %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
             </div>
             <p class="petit">Seulement l'année : les structures voient votre âge (certains postes demandent d'être majeur, pour conduire ou diriger).</p>
@@ -387,24 +391,32 @@
         <div class="as-barre" aria-hidden="true"><span></span></div>
         <nav class="as-onglets" aria-label="Les parties de ma fiche" hidden></nav>
         <form id="f-structure" class="formulaire" novalidate>
-          <fieldset class="etape" data-titre="Votre structure">
-            <legend class="etape-q">Votre structure, c'est…</legend>
-            <p class="etape-aide">Les candidats le voient en premier sur votre page.</p>
-            <div class="cartes-choix">{% for v, l, d in [("accueil-de-loisirs", "Accueil de loisirs", "Mercredis et vacances"), ("sejours", "Organisateur de séjours", "Colos, mini-camps"), ("periscolaire", "Accueil périscolaire", "Matins, midis, soirs"), ("accueil-de-jeunes", "Accueil de jeunes", "Ados, espace jeunes"), ("association", "Association", "Éducation populaire, sport, culture"), ("collectivite", "Collectivité", "Mairie, communauté de communes"), ("autre", "Autre", "Une autre structure d'animation")] %}<label class="carte-choix"><input type="radio" name="type" value="{{ v }}" required><span><b>{{ l }}</b><small>{{ d }}</small></span></label>{% endfor %}</div>
+          <fieldset class="etape" data-titre="Votre structure" data-aide="Cochez tout ce que vous organisez : une même structure fait souvent du périscolaire, de l'extrascolaire et des séjours.">
+            <legend class="etape-q">Qu'organise votre structure&nbsp;?</legend>
+            <p class="etape-aide">Plusieurs choix possibles. Les animateurs filtrent l'annuaire avec ces mots.</p>
+            <div class="cartes-choix cartes-icones" data-au-moins-un="Cochez au moins ce que vous organisez."><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="periscolaire"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M12 4V2"/></svg><b>Périscolaire</b><small>Matins, midis, soirs, mercredis</small></span></label><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="extrascolaire"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><b>Extrascolaire</b><small>Accueil de loisirs, vacances scolaires</small></span></label><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="accueil-de-jeunes"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 20c.6-3.6 2.8-5.5 5.5-5.5s4.9 1.9 5.5 5.5M14 14.6c.8-.4 1.6-.6 2.5-.6 2.4 0 4.3 1.7 4.8 5"/></svg><b>Accueil de jeunes</b><small>Ados, espace jeunes, local jeunes</small></span></label><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="sejours"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M5 20l7-14 7 14"/><path d="M12 6v14"/></svg><b>Séjours de vacances</b><small>Colos, séjours en France ou à l'étranger</small></span></label><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="mini-camps"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l8-13 8 13z"/><path d="M10 20l2-4 2 4"/><path d="M12 7V4l3 1-3 1"/></svg><b>Mini-camps</b><small>Courts séjours accessoires, 1 à 5 nuits</small></span></label><label class="carte-choix carte-icone"><input type="checkbox" name="accueils" value="autre"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><b>Autre</b><small>Activités, stages, ateliers…</small></span></label></div>
+            <div class="champ"><span>Et son statut</span><div class="pastilles-choix"><label class="pastille-choix"><input type="radio" name="statut" value="association" required><span><b>Association</b><small>Loi 1901, éducation populaire</small></span></label><label class="pastille-choix"><input type="radio" name="statut" value="collectivite" required><span><b>Collectivité</b><small>Mairie, intercommunalité, syndicat</small></span></label><label class="pastille-choix"><input type="radio" name="statut" value="entreprise" required><span><b>Entreprise</b><small>Organisme privé, société</small></span></label><label class="pastille-choix"><input type="radio" name="statut" value="autre" required><span><b>Autre</b><small>Fondation, établissement…</small></span></label></div></div>
+            <input type="hidden" name="type">
           </fieldset>
-          <fieldset class="etape" data-titre="Nom et lieu">
+          <fieldset class="etape" data-titre="Nom et lieu" data-aide="La ville vient de la liste officielle des communes : votre fiche apparaît au bon endroit dans l'annuaire et sur les pages des sessions BAFA du département.">
             <legend class="etape-q">Comment s'appelle-t-elle, et où&nbsp;?</legend>
             <div class="champs-2">
-              <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization"></label>
-              <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-              <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
-              <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
+              <label class="champ"><span>Nom de la structure</span><input name="nom" required maxlength="120" autocomplete="organization" placeholder="Ex. : Les Lucioles"></label>
+              {{ commune("Ville du siège ou de l'accueil principal") }}
             </div>
             <label class="champ"><span>Votre accroche, en une phrase</span><input name="accroche" maxlength="140" placeholder="Ex. : Un centre où les enfants choisissent leurs activités"></label>
+            <label class="champ"><span>Site internet (facultatif)</span><input type="url" name="site" maxlength="200" placeholder="https://"></label>
           </fieldset>
-          <fieldset class="etape" data-titre="Publics et activités">
-            <legend class="etape-q">Vos publics et vos activités</legend>
-            <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
+          <fieldset class="etape" data-titre="Publics et activités" data-aide="Indiquez la tranche d'âge la plus large que vous accueillez : de la petite section aux jeunes adultes.">
+            <legend class="etape-q">Qui accueillez-vous, pour quoi faire&nbsp;?</legend>
+            <div class="champ"><span>L'âge des enfants et des jeunes</span>
+              <div class="ages">
+                <label>De <select name="age_min" required><option value="">…</option>{% for a in range(0, 31) %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select></label>
+                <label>à <select name="age_max" required><option value="">…</option>{% for a in range(0, 31) %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select> ans</label>
+              </div>
+              <div class="ages-vite" aria-label="Tranches courantes">{% for a, b, l in [(3, 5, "Maternelle · 3-5"), (6, 11, "Élémentaire · 6-11"), (3, 11, "3-11"), (11, 17, "Ados · 11-17"), (6, 17, "6-17"), (16, 25, "16-25")] %}<button type="button" data-ages="{{ a }}-{{ b }}">{{ l }}</button>{% endfor %}</div>
+            </div>
+            <div class="champ"><span>Vous accueillez aussi (facultatif)</span>{{ cases("publics", [("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
             <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400" placeholder="Ex. : grands jeux, cuisine, jardin, théâtre"></label>
             <label class="champ"><span>Où (lieux d'accueil, séjours)</span><input name="lieux" maxlength="300" placeholder="Ex. : centre de loisirs à Créteil, mini-camps en Seine-et-Marne l'été"></label>
           </fieldset>
@@ -499,12 +511,11 @@
         <div class="champs-2">
           <label class="champ"><span>Nom du centre</span><input name="nom" required maxlength="120" placeholder="Ex. : Accueil de loisirs Jean-Moulin"></label>
           <label class="champ"><span>Type</span>{{ choix("type", TYPES, "Comme la structure") }}</label>
-          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
+          {{ commune() }}
           <label class="champ champ-large"><span>Accroche (une phrase)</span><input name="accroche" maxlength="140"></label>
         </div>
         <label class="champ"><span>Présentation du centre</span><textarea name="presentation" rows="4" maxlength="1500"></textarea></label>
-        <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
+        <div class="champ"><span>Les publics</span>{{ cases("publics", [("3-5", "3-5 ans"), ("6-11", "6-11 ans"), ("12-14", "12-14 ans"), ("15-17", "15-17 ans"), ("18-25", "18-25 ans"), ("handicap", "Enfants en situation de handicap"), ("familles", "Familles")]) }}</div>
         <label class="champ"><span>Les activités (séparées par des virgules, 12 au plus)</span><input name="activites" maxlength="400"></label>
         <p class="petit">Le projet, la couleur, le logo, les photos et ce que vous offrez à l'équipe sont repris de la page de votre structure.</p>
         <div class="boutons"><button class="bouton-r" type="submit">Enregistrer le centre</button><button type="button" class="bouton-texte" id="annuler-centre">Annuler</button></div>
@@ -521,8 +532,7 @@
           <label class="champ champ-large" id="champ-centre-offre" hidden><span>Le centre</span><select name="centre_id"><option value="">La structure (tous les centres)</option></select></label>
           <label class="champ"><span>Poste</span>{{ choix("poste", POSTES) }}</label>
           <label class="champ"><span>Contrat</span>{{ choix("contrat", CONTRATS) }}</label>
-          <label class="champ"><span>Ville</span><input name="ville" required maxlength="80"></label>
-          <label class="champ"><span>Département</span>{{ select_deps("departement") }}</label>
+          {{ commune() }}
           <label class="champ"><span>Début</span><input type="date" name="debut" required></label>
           <label class="champ"><span>Fin (vide pour un poste à l'année)</span><input type="date" name="fin"></label>
           <label class="champ"><span>Type d'accueil</span>{{ choix("type_accueil", ACCUEILS, "Choisir") }}</label>
@@ -611,7 +621,7 @@
 </section>
 <script type="application/json" id="libelles">{{ {"diplomes": DIPLOMES | list, "recherche": RECHERCHE | list, "types": TYPES | list, "postes": POSTES | list,
   "contrats": CONTRATS | list, "experiences": EXPERIENCES | list, "accueils": ACCUEILS | list, "qualifs": QUALIFS, "lien_offre": lien('/trouver-un-poste/offres/'), "lien_demande": lien('/trouver-un-poste/demande/'), "lien_structures": lien('/trouver-un-poste/structures/'), "deps": departements | map(attribute="code") | list, "noms_deps": departements | map(attribute="nom") | list,
-  "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list,
+  "regions_deps": departements | map(attribute="region") | list, "centres": CENTRES_DEP, "publics": PUBLICS | dictsort | list, "accueils_st": ACCUEILS_ST, "statuts": STATUTS | dictsort | list,
   "photos": site.supabase.url ~ "/storage/v1/object/public/structures/", "abonnement": site.abonnement, "email_site": site.email, "lien_exemple_structure": lien('/recruter/exemple-de-page-structure/'),
   "tuiles": "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"} | tojson }}</script>
 {% endblock %}

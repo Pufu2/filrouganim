@@ -49,7 +49,7 @@
       <div class="fp-principal">
         <ul class="fp-chiffres">
           <li><b>{{ st.offres | length }}</b><span>offre{{ 's' if st.offres | length != 1 }} en ce moment</span></li>
-          <li><b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span></li>
+          <li>{% if ages_structure(st) %}<b>{{ st.age_min }}{% if st.age_max != st.age_min %}-{{ st.age_max }}{% endif %}</b><span>ans, les publics</span>{% else %}<b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span>{% endif %}</li>
           <li><b>{{ st.departement }}</b><span>{{ nom_dep }}</span></li>
         </ul>
 
@@ -102,7 +102,9 @@
         <section class="fp-bloc" aria-labelledby="t-propose">
           <h2 id="t-propose">Ce que la structure propose</h2>
           {% if st.avantages %}<p class="fp-sous-titre">À l'équipe</p><ul class="fp-coches">{% for a in st.avantages.split("\n") if a.strip() %}<li>{{ a.strip().rstrip(".") }}</li>{% endfor %}</ul>{% endif %}
-          {% if st.publics %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
+          {% if st.accueils %}<p class="fp-sous-titre">Ce que nous organisons</p><ul class="fp-coches fp-coches-douces">{% for a, l in ACCUEILS_ST if a in st.accueils and a != "autre" %}<li>{{ l }}</li>{% endfor %}</ul>{% endif %}
+          {% if ages_structure(st) %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces"><li>{{ ages_structure(st) | capitalize }}</li>{% for p in st.publics or [] if p in ["handicap", "familles"] %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>
+          {% elif st.publics %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
           {% if st.activites %}<p class="fp-sous-titre">Les activités</p><ul class="fp-coches fp-coches-douces">{% for a in st.activites %}<li>{{ a | majuscule }}</li>{% endfor %}</ul>{% endif %}
         </section>
         {% endif %}

@@ -253,6 +253,15 @@
     document.body.classList.toggle("page-auth", auth);
     // l'administration prend toute la largeur de l'écran
     document.body.classList.toggle("admin-large", ids.indexOf("v-admin") >= 0);
+    majParcours();
+  }
+  // un assistant en création à l'écran : la page passe en « parcours » (sans menu de l'espace ni haut de page)
+  function majParcours() {
+    var oui = Array.prototype.some.call(document.querySelectorAll(".assistant.as-parcours"), function (a) {
+      for (var x = a; x && x !== document.body; x = x.parentNode) if (x.hidden) return false;
+      return true;
+    });
+    document.body.classList.toggle("en-parcours", oui);
   }
   function message(texte, erreur) {
     var m = $("message");
@@ -288,6 +297,7 @@
       else if (c.type === "radio") c.checked = c.value === v;
       else c.value = v == null ? "" : (Array.isArray(v) ? v.join(", ") : v);
     });
+    Array.prototype.forEach.call(form.querySelectorAll("[data-commune]"), function (b) { if (b.majCommune) b.majCommune(); });
   }
   function lire(form, champs) {
     var o = {};
@@ -308,6 +318,97 @@
     });
     return o;
   }
+  /* -- la ville : seulement une commune de la liste officielle (API Géo de l'État), qui donne le département -- */
+  var GEO = "https://geo.api.gouv.fr/communes";
+  var NOMS_DEPS = {};
+  L.deps.forEach(function (c, i) { NOMS_DEPS[c] = L.noms_deps[i]; });
+  function sansAccent(t) { return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function ChampCommune(b) {
+    var saisie = b.querySelector(".cm-saisie"), info = b.querySelector(".cm-info"), aideDepart = info.textContent;
+    var form = saisie.form, h = function (n) { return b.querySelector('[name="' + n + '"]'); };
+    var boite = b.querySelector(".cm-boite"), liste = el("div", "villes-liste villes-une-colonne cm-liste");
+    liste.hidden = true; liste.setAttribute("role", "listbox"); liste.id = "cm-" + Math.random().toString(36).slice(2, 8);
+    boite.classList.add("villes-hote"); boite.appendChild(liste);
+    saisie.setAttribute("role", "combobox"); saisie.setAttribute("aria-controls", liste.id); saisie.setAttribute("aria-expanded", "false"); saisie.setAttribute("aria-autocomplete", "list");
+    var minuterie = null, demande = 0, boutons = [], panne = false;
+    function choisie() { return !!(h("ville").value && h("departement").value); }
+    function valider() {
+      saisie.setCustomValidity(choisie() || (panne && saisie.value.trim().length > 1) ? "" : saisie.value.trim() ? "Choisissez votre ville dans la liste qui s'affiche." : "Indiquez votre ville.");
+    }
+    function montrerInfo() {
+      var ok = choisie();
+      b.classList.toggle("cm-ok", ok);
+      info.textContent = ok ? "✓ " + h("ville").value + " · " + (NOMS_DEPS[h("departement").value] || "département") + " (" + h("departement").value + ")" : aideDepart;
+      valider();
+    }
+    function prendre(c) {
+      h("ville").value = c.nom; h("departement").value = c.codeDepartement; h("code_commune").value = c.code || "";
+      saisie.value = c.nom; fermer(); montrerInfo();
+      h("departement").dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    function fermer() { liste.hidden = true; saisie.setAttribute("aria-expanded", "false"); }
+    function afficher(titre, communes) {
+      liste.textContent = "";
+      liste.appendChild(el("p", "villes-titre", titre));
+      boutons = communes.map(function (c) {
+        var x = el("button", "villes-choix");
+        x.type = "button"; x.setAttribute("role", "option");
+        x.appendChild(el("b", null, c.nom));
+        x.appendChild(el("span", null, (c.codesPostaux && c.codesPostaux[0] ? c.codesPostaux[0] + " · " : "") + (NOMS_DEPS[c.codeDepartement] || "") + " (" + c.codeDepartement + ")"));
+        x.addEventListener("mousedown", function (e) { e.preventDefault(); });
+        x.addEventListener("click", function () { prendre(c); saisie.focus(); });
+        liste.appendChild(x);
+        return x;
+      });
+      liste.hidden = false; saisie.setAttribute("aria-expanded", "true");
+    }
+    function chercher() {
+      var q = saisie.value.trim(), n = ++demande;
+      if (q.length < 2) return fermer();
+      var url = GEO + "?" + (/^\d{5}$/.test(q) ? "codePostal=" + q : "nom=" + encodeURIComponent(q)) + "&fields=nom,code,codeDepartement,codesPostaux&boost=population&limit=15";
+      fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (l) {
+        if (n !== demande) return;
+        panne = false;
+        // la France métropolitaine et la Corse (les départements du site)
+        l = l.filter(function (c) { return NOMS_DEPS[c.codeDepartement]; }).slice(0, 7);
+        if (!l.length) afficher("Aucune commune ne correspond. Vérifiez l'orthographe, ou tapez le code postal.", []);
+        else afficher("Choisissez votre commune", l);
+      }).catch(function () {
+        if (n !== demande) return;
+        // service de l'État injoignable : on n'empêche pas l'inscription, on garde ce qui est tapé
+        panne = true; fermer();
+        info.textContent = "La liste des communes ne répond pas. Tapez votre ville, puis indiquez le département entre parenthèses : Créteil (94).";
+        var m = saisie.value.match(/^(.+?)\s*\((\d[\dAB]|\d{3})\)\s*$/);
+        if (m && NOMS_DEPS[m[2]]) { h("ville").value = m[1]; h("departement").value = m[2]; h("code_commune").value = ""; montrerInfo(); }
+        valider();
+      });
+    }
+    saisie.addEventListener("input", function () {
+      h("ville").value = ""; h("departement").value = ""; h("code_commune").value = "";
+      montrerInfo();
+      clearTimeout(minuterie); minuterie = setTimeout(chercher, 220);
+    });
+    saisie.addEventListener("focus", function () { if (!choisie() && saisie.value.trim().length > 1) chercher(); });
+    saisie.addEventListener("blur", function () { setTimeout(fermer, 150); });
+    saisie.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") fermer();
+      if (e.key === "ArrowDown" && !liste.hidden && boutons[0]) { e.preventDefault(); boutons[0].focus(); }
+      if (e.key === "Enter" && !liste.hidden && boutons.length) { e.preventDefault(); boutons[0].click(); }
+    });
+    liste.addEventListener("keydown", function (e) {
+      var i = boutons.indexOf(document.activeElement);
+      if (e.key === "ArrowDown" && i < boutons.length - 1) { e.preventDefault(); boutons[i + 1].focus(); }
+      if (e.key === "ArrowUp") { e.preventDefault(); if (i > 0) boutons[i - 1].focus(); else saisie.focus(); }
+      if (e.key === "Escape") { fermer(); saisie.focus(); }
+    });
+    // les champs cachés ne reviennent pas à vide d'eux-mêmes avec reset()
+    form.addEventListener("reset", function () { h("ville").value = ""; h("departement").value = ""; h("code_commune").value = ""; b.classList.remove("cm-ok"); info.textContent = aideDepart; });
+    // après remplir() : la case montre la ville enregistrée
+    b.majCommune = function () { saisie.value = h("ville").value; montrerInfo(); };
+    montrerInfo();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-commune]"), ChampCommune);
+
   function occupe(form, oui) {
     Array.prototype.forEach.call(form.querySelectorAll('[type="submit"]'), function (b) { b.disabled = oui; b.setAttribute("aria-busy", oui ? "true" : "false"); });
   }
@@ -532,8 +633,31 @@
      ==================================================================================== */
   function Assistant(bloc, quandChange) {
     var form = bloc.querySelector("form"), etapes = Array.prototype.slice.call(form.querySelectorAll(".etape"));
-    var n = 0, creation = true;
+    var n = 0, creation = true, plusLoin = 0;
     var nav = bloc.querySelector(".as-onglets");
+    // à la création : le plan des étapes à gauche (comme les parcours d'inscription des sites pros)
+    var plan = el("aside", "as-plan"), ol = el("ol", "as-plan-etapes"), conseil = el("div", "as-conseil");
+    plan.setAttribute("aria-label", "Les étapes");
+    plan.appendChild(el("p", "as-plan-sur", bloc.id === "bloc-profil" ? "Votre profil d'animateur" : "Votre fiche structure"));
+    plan.appendChild(el("p", "as-plan-duree", etapes.length + " étapes · " + (bloc.querySelector(".as-duree") || {}).textContent.replace(/^Environ/, "environ")));
+    plan.appendChild(ol);
+    conseil.appendChild(el("b", null, "Le conseil"));
+    conseil.appendChild(el("p"));
+    plan.appendChild(conseil);
+    var aide = el("p", "as-plan-aide");
+    aide.appendChild(document.createTextNode("Une question ? "));
+    var mel = el("a", null, "Écrivez-nous"); mel.href = "mailto:" + L.email_site; aide.appendChild(mel);
+    plan.appendChild(aide);
+    bloc.insertBefore(plan, bloc.firstChild);
+    var points = etapes.map(function (f, i) {
+      var li = el("li"), b = el("button");
+      b.type = "button";
+      b.appendChild(el("i", null, String(i + 1)));
+      b.appendChild(el("span", null, f.dataset.titre));
+      b.addEventListener("click", function () { if (i <= plusLoin) aller(i); });
+      li.appendChild(b); ol.appendChild(li);
+      return li;
+    });
     etapes.forEach(function (f, i) {
       var b = el("button", null, f.dataset.titre);
       b.type = "button";
@@ -545,6 +669,14 @@
       etapes.forEach(function (f, k) { f.hidden = k !== n; });
       Array.prototype.forEach.call(nav.children, function (b, k) { if (k === n) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
       bloc.querySelector(".as-n").textContent = creation ? "Étape " + (n + 1) + " sur " + etapes.length : (bloc.id === "bloc-profil" ? "Mon profil" : "Ma fiche");
+      plusLoin = Math.max(plusLoin, n);
+      points.forEach(function (li, k) {
+        li.className = k === n ? "en-cours" : k <= plusLoin ? "fait" : "";
+        li.firstChild.disabled = k > plusLoin;
+        if (k === n) li.firstChild.setAttribute("aria-current", "step"); else li.firstChild.removeAttribute("aria-current");
+      });
+      conseil.hidden = !etapes[n].dataset.aide;
+      conseil.lastChild.textContent = etapes[n].dataset.aide || "";
       bloc.querySelector(".as-titre").textContent = etapes[n].dataset.titre;
       bloc.querySelector(".as-barre span").style.width = ((n + 1) / etapes.length * 100) + "%";
       bloc.querySelector(".as-retour").hidden = n === 0;
@@ -565,7 +697,7 @@
     bloc.querySelector(".as-suivant").addEventListener("click", function () {
       if (!valide(n)) return;
       aller(n + 1);
-      bloc.scrollIntoView({ block: "start", behavior: "smooth" });
+      if (creation) window.scrollTo({ top: 0, behavior: "smooth" }); else bloc.scrollIntoView({ block: "start", behavior: "smooth" });
     });
     bloc.querySelector(".as-retour").addEventListener("click", function () { aller(n - 1); });
     // à l'envoi : tout doit être bon, on montre l'étape du premier problème
@@ -580,7 +712,13 @@
     form.addEventListener("input", function () { if (quandChange) quandChange(); });
     form.addEventListener("change", function () { if (quandChange) quandChange(); });
     return {
-      ouvrir: function (enCreation) { creation = enCreation; nav.hidden = creation; bloc.querySelector(".as-duree").hidden = !creation; aller(0); }
+      ouvrir: function (enCreation) {
+        creation = enCreation; plusLoin = 0; nav.hidden = creation; bloc.querySelector(".as-duree").hidden = !creation;
+        plan.hidden = !creation;
+        bloc.classList.toggle("as-parcours", creation);
+        aller(0);
+        majParcours();
+      }
     };
   }
 
@@ -613,7 +751,7 @@
   /* ====================================================================================
      Candidat (animateur, directeur)
      ==================================================================================== */
-  var CHAMPS_PROFIL = ["prenom", "annee_naissance", "email_contact", "departement", "ville", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
+  var CHAMPS_PROFIL = ["prenom", "annee_naissance", "email_contact", "departement", "ville", "code_commune", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
                        "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "resume_public", "seize_ans", "alertes"];
   var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
   var cvAEnvoyer = null;
@@ -774,7 +912,7 @@
   /* ====================================================================================
      Structure
      ==================================================================================== */
-  var CHAMPS_STRUCTURE = ["nom", "type", "ville", "departement", "email_contact", "site", "identifiant", "presentation",
+  var CHAMPS_STRUCTURE = ["nom", "type", "statut", "accueils", "age_min", "age_max", "code_commune", "ville", "departement", "email_contact", "site", "identifiant", "presentation",
                           "page_publique", "slug", "accroche", "couleur", "publics", "activites", "lieux", "projet", "avantages"];
   var assistantStructure = Assistant($("bloc-structure"), apercuStructure);
   var photos = [], logo = null, aSupprimer = [];
@@ -786,8 +924,9 @@
     montrer("v-structure", "v-session");
     var f = $("f-structure"), nouveau = !structure;
     f.reset();
-    var typeVoulu = { periscolaire: "periscolaire", extrascolaire: "accueil-de-loisirs", sejours: "sejours" }[params.get("type")];
-    remplir(f, structure || { email_contact: utilisateur.email, page_publique: true, couleur: "rouge", type: typeVoulu });
+    var voulu = ["periscolaire", "extrascolaire", "sejours"].indexOf(params.get("type")) >= 0 ? [params.get("type")] : [];
+    remplir(f, structure ? Object.assign({}, structure, accueilsDe(structure)) : { email_contact: utilisateur.email, page_publique: true, couleur: "rouge", accueils: voulu });
+    controlerStructure();
     if (!structure || !structure.couleur) remplir(f, { couleur: "rouge" });
     photos = (structure && structure.photos || []).slice();
     logo = structure && structure.logo || null;
@@ -915,7 +1054,7 @@
 
   /* -- les centres de la structure : chacun sa page et ses offres, dans la limite des centres payés -- */
   var mesCentres = [], centreEnCours = null;
-  var CHAMPS_CENTRE = ["nom", "type", "ville", "departement", "accroche", "presentation", "publics", "activites"];
+  var CHAMPS_CENTRE = ["nom", "type", "ville", "departement", "code_commune", "accroche", "presentation", "publics", "activites"];
   async function chargerCentres() {
     var r = await sb.from("centres").select("*").eq("structure_id", utilisateur.id).order("cree_le");
     mesCentres = r.error ? [] : (r.data || []);
@@ -990,8 +1129,52 @@
     setTimeout(function () { message("Merci ! Votre paiement est bien parti. Il apparaît ici d'ici 15 minutes environ ; nous vérifions ensuite la structure, puis votre page et vos offres sont en ligne."); }, 1200);
   }
 
+  // une fiche d'avant (un seul « type », des tranches d'âge) : ce qu'elle organise, son statut, ses âges
+  function accueilsDe(st) {
+    var o = {};
+    if (!(st.accueils || []).length) o.accueils = { periscolaire: ["periscolaire"], "accueil-de-loisirs": ["extrascolaire"], "accueil-de-jeunes": ["accueil-de-jeunes"], sejours: ["sejours"] }[st.type] || [];
+    if (!st.statut && ["association", "collectivite"].indexOf(st.type) >= 0) o.statut = st.type;
+    if (st.age_min == null) {
+      var b = (st.publics || []).map(function (p) { return p.match(/^(\d+)-(\d+)$/); }).filter(Boolean);
+      if (b.length) { o.age_min = Math.min.apply(null, b.map(function (m) { return +m[1]; })); o.age_max = Math.max.apply(null, b.map(function (m) { return +m[2]; })); }
+    }
+    return o;
+  }
+  // le « type » d'avant, gardé pour les pages et les filtres : déduit de ce qu'elle organise
+  function typeDe(d) {
+    var a = d.accueils || [];
+    if (a.indexOf("extrascolaire") >= 0) return "accueil-de-loisirs";
+    if (a.indexOf("periscolaire") >= 0) return "periscolaire";
+    if (a.indexOf("accueil-de-jeunes") >= 0) return "accueil-de-jeunes";
+    if (a.indexOf("sejours") >= 0 || a.indexOf("mini-camps") >= 0) return "sejours";
+    return ["association", "collectivite"].indexOf(d.statut) >= 0 ? d.statut : "autre";
+  }
+  // au moins un accueil coché, et des âges dans l'ordre
+  function controlerStructure() {
+    var f = $("f-structure"), cases = f.querySelectorAll('[name="accueils"]'), une = Array.prototype.some.call(cases, function (c) { return c.checked; });
+    cases[0].setCustomValidity(une ? "" : "Cochez au moins ce que vous organisez.");
+    var a = f.age_min.value, b = f.age_max.value;
+    f.age_max.setCustomValidity(a !== "" && b !== "" && +b < +a ? "L'âge maximum doit être plus grand que l'âge minimum." : "");
+    Array.prototype.forEach.call(f.querySelectorAll("[data-ages]"), function (x) { x.setAttribute("aria-pressed", x.dataset.ages === a + "-" + b ? "true" : "false"); });
+  }
+  $("f-structure").addEventListener("change", controlerStructure);
+  Array.prototype.forEach.call($("f-structure").querySelectorAll("[data-ages]"), function (x) {
+    x.addEventListener("click", function () {
+      var f = $("f-structure"), v = x.dataset.ages.split("-");
+      f.age_min.value = v[0]; f.age_max.value = v[1];
+      f.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  });
   function lireStructure() {
     var d = lire($("f-structure"), CHAMPS_STRUCTURE);
+    d.accueils = d.accueils || [];
+    d.type = typeDe(d);
+    d.age_min = d.age_min == null ? null : +d.age_min;
+    d.age_max = d.age_max == null ? null : +d.age_max;
+    // les tranches d'âge d'avant, déduites (filtres et pages déjà en ligne)
+    var tranches = [[3, 5], [6, 11], [12, 14], [15, 17], [18, 25]];
+    d.publics = (d.age_min == null || d.age_max == null ? [] : tranches.filter(function (t) { return t[0] <= d.age_max && t[1] >= d.age_min; }).map(function (t) { return t[0] + "-" + t[1]; }))
+      .concat((d.publics || []).filter(function (p) { return p === "handicap" || p === "familles"; }));
     d.couleur = d.couleur || "rouge";
     d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 12);
     d.slug = enSlug(d.slug || d.nom);
@@ -1010,12 +1193,13 @@
     var ini = ap("initiale");
     ini.textContent = "";
     if (d.logo) { var im = el("img"); im.src = urlPhoto(d.logo); im.alt = ""; ini.appendChild(im); } else ini.textContent = d.nom ? initiales(d.nom) : "?";
-    ap("badge").textContent = d.type ? libelle("types", d.type) : "Structure";
+    var nat = d.accueils.filter(function (a) { return a !== "autre"; }).map(function (a) { return libelle("accueils_st", a); });
+    ap("badge").textContent = nat.length ? nat.slice(0, 2).join(" · ") + (nat.length > 2 ? " +" + (nat.length - 2) : "") : "Structure";
     ap("nom").textContent = d.nom || "Votre structure";
     ap("lieu").textContent = d.ville ? d.ville + (d.departement ? " (" + d.departement + ")" : "") : "Votre ville";
-    ap("detail").textContent = (d.publics || []).map(function (x) { return libelle("publics", x); }).join(" · ") || "Vos publics";
+    ap("detail").textContent = d.age_min != null && d.age_max != null ? (d.age_min === d.age_max ? d.age_min + " ans" : "De " + d.age_min + " à " + d.age_max + " ans") : "L'âge de vos publics";
     ap("note").textContent = d.page_publique ? "filrouganim.fr/…/" + (d.slug || "votre-page") : "Page cachée";
-    var points = [d.type, d.nom, d.ville, d.departement, d.accroche, (d.publics || []).length, d.activites.length, d.lieux, d.presentation, d.projet,
+    var points = [d.accueils.length, d.statut, d.nom, d.ville, d.departement, d.accroche, d.age_min != null, d.activites.length, d.lieux, d.presentation, d.projet,
                   d.photos.length, d.logo, d.avantages, d.site, d.email_contact, d.identifiant];
     var p = Math.round(points.filter(Boolean).length / points.length * 100);
     ap("pourcent").textContent = p + " %";
@@ -1368,12 +1552,15 @@
     var f = el("div", "fp theme-" + (d.couleur || "rouge")), c = el("div", "cadre");
     f.appendChild(c);
     c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre page telle qu'elle sera en ligne une fois la structure vérifiée."));
-    var type = d.type ? libelle("types", d.type) : "Structure d'animation";
+    var nat = (d.accueils || []).filter(function (a) { return a !== "autre"; }).map(function (a) { return libelle("accueils_st", a); });
+    var type = nat.length ? nat.slice(0, 3).join(" · ") : d.type ? libelle("types", d.type) : "Structure d'animation";
+    var ages = d.age_min != null && d.age_max != null;
     entete(c, { photos: d.photos, logo: d.logo, banniere: type, initiale: initiales(d.nom), nom: d.nom || "Votre structure",
                 sous: type + (d.ville ? " à " + d.ville : ""), badges: ["Vérifiée par Fil Roug'Anim"].concat(d.offres.length ? ["Recrute en ce moment"] : []).concat(d.fondatrice ? ["Structure fondatrice"] : []).concat(["Sans commission"]) });
     var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
     grille.appendChild(pr); c.appendChild(grille);
     pr.appendChild(chiffres([[String(d.offres.length), d.offres.length === 1 ? "offre en ce moment" : "offres en ce moment"],
+      ages ? [d.age_min === d.age_max ? String(d.age_min) : d.age_min + "-" + d.age_max, "ans, les publics"] :
       [(d.publics || []).length ? libelle("publics", d.publics[0]).replace(" ans", "") + (d.publics.length > 1 ? " et +" : "") : "Tous", (d.publics || []).length ? "ans, les publics" : "les publics"],
       [d.departement || "—", nomDep(d.departement) || "le département"]]));
     var s1 = bloc(d.offres.length ? "Ses offres" : "Pas d'offre en ce moment");
@@ -1402,7 +1589,10 @@
     if (d.avantages || (d.publics || []).length || d.activites.length) {
       var s3 = bloc("Ce que la structure propose");
       if (d.avantages) { s3.appendChild(el("p", "fp-sous-titre", "À l'équipe")); s3.appendChild(coches(d.avantages.split("\n").map(function (x) { return x.trim().replace(/\.$/, ""); }).filter(Boolean))); }
-      if ((d.publics || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Aux enfants et aux jeunes")); s3.appendChild(coches(d.publics.map(function (x) { return libelle("publics", x); }), true)); }
+      if (nat.length) { s3.appendChild(el("p", "fp-sous-titre", "Ce que nous organisons")); s3.appendChild(coches(nat, true)); }
+      var pub = ages ? ["De " + d.age_min + " à " + d.age_max + " ans"].concat((d.publics || []).filter(function (x) { return x === "handicap" || x === "familles"; }).map(function (x) { return libelle("publics", x); }))
+                     : (d.publics || []).map(function (x) { return libelle("publics", x); });
+      if (pub.length) { s3.appendChild(el("p", "fp-sous-titre", "Aux enfants et aux jeunes")); s3.appendChild(coches(pub, true)); }
       if (d.activites.length) { s3.appendChild(el("p", "fp-sous-titre", "Les activités")); s3.appendChild(coches(d.activites.map(majuscule), true)); }
       pr.appendChild(s3);
     }

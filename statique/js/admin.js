@@ -337,7 +337,9 @@
 
   /* -- modifier une fiche -- */
   var CHAMPS = {
-    structures: [["nom", "Nom"], ["type", "Type", "types"], ["ville", "Ville"], ["departement", "Département (code)"], ["email_contact", "E-mail de contact"], ["site", "Site"],
+    structures: [["nom", "Nom"], ["type", "Type", "types"], ["statut", "Statut (association, collectivite, entreprise, autre)"],
+      ["accueils", "Organise (periscolaire, extrascolaire, accueil-de-jeunes, sejours, mini-camps, autre)", "liste"], ["age_min", "Âge de", "nombre"], ["age_max", "Âge jusqu'à", "nombre"],
+      ["ville", "Ville"], ["departement", "Département (code)"], ["email_contact", "E-mail de contact"], ["site", "Site"],
       ["accroche", "Accroche"], ["presentation", "Présentation", "texte"], ["projet", "Projet", "texte"], ["avantages", "Avantages", "texte"], ["publics", "Publics (séparés par des virgules)", "liste"],
       ["activites", "Activités (séparées par des virgules)", "liste"], ["slug", "Adresse de la page (slug)"], ["page_publique", "Page publique", "oui"], ["verifiee", "Vérifiée", "oui"],
       ["fondatrice", "Tarif fondateur", "oui"], ["abonnement_fin", "Abonnement payé jusqu'au", "date"], ["centres_payes", "Centres payés", "nombre"]],

@@ -111,8 +111,34 @@ TYPES_STRUCTURE = {"accueil-de-loisirs": "Accueil de loisirs", "sejours": "Organ
 # les trois familles de structures (accueil, onglets) : des mots qui se distinguent vraiment
 FAMILLES_STRUCTURE = [("periscolaire", "Périscolaire"), ("extrascolaire", "Extrascolaire"), ("sejours", "Séjours")]
 FAMILLE_DE = {"periscolaire": "periscolaire", "accueil-de-loisirs": "extrascolaire", "accueil-de-jeunes": "extrascolaire", "sejours": "sejours"}
+# ce qu'organise une structure (plusieurs choix possibles) et son statut (version 14 du schéma)
+ACCUEILS = {"periscolaire": "Périscolaire", "extrascolaire": "Extrascolaire", "accueil-de-jeunes": "Accueil de jeunes", "sejours": "Séjours",
+            "mini-camps": "Mini-camps", "autre": "Autre accueil"}
+STATUTS = {"association": "Association", "collectivite": "Collectivité", "entreprise": "Entreprise", "autre": "Autre"}
+FAMILLE_ACCUEIL = {"periscolaire": "periscolaire", "extrascolaire": "extrascolaire", "accueil-de-jeunes": "extrascolaire", "sejours": "sejours",
+                   "mini-camps": "sejours"}
+
+
+def familles_structure(st):
+    """Les familles (périscolaire, extrascolaire, séjours) d'une structure, séparées par des espaces (filtre de l'annuaire)."""
+    f = [FAMILLE_ACCUEIL[a] for a in (st.get("accueils") or []) if a in FAMILLE_ACCUEIL] or [FAMILLE_DE.get(st.get("type"), st.get("type") or "")]
+    return " ".join(dict.fromkeys(f))
+
+
+def nature_structure(st):
+    """Ce qu'organise la structure, en mots : « Périscolaire · Extrascolaire », sinon son type."""
+    a = [ACCUEILS[x] for x in (st.get("accueils") or []) if x in ACCUEILS and x != "autre"]
+    return " · ".join(a[:3]) if a else TYPES_STRUCTURE.get(st.get("type"), "Structure d'animation")
+
+
+def ages_structure(st):
+    """« 3 à 11 ans » (âges libres), sinon None."""
+    a, b = st.get("age_min"), st.get("age_max")
+    if a is None or b is None:
+        return None
+    return f"{a} an{'s' if a > 1 else ''}" if a == b else f"{a} à {b} ans"
 PUBLICS = {"3-5": "3-5 ans", "6-11": "6-11 ans", "12-14": "12-14 ans", "15-17": "15-17 ans", "handicap": "Enfants en situation de handicap",
-           "familles": "Familles"}
+           "familles": "Familles", "18-25": "18-25 ans"}
 DIPLOMES_PROFIL = {"stagiaire-bafa": "Stagiaire BAFA", "bafa": "BAFA", "stagiaire-bafd": "Stagiaire BAFD", "bafd": "BAFD", "psc1": "PSC1",
                    "surveillant-baignade": "Surveillant de baignade", "cqp-ap": "CQP animateur périscolaire", "cpjeps": "CPJEPS",
                    "bpjeps": "BPJEPS", "dejeps": "DEJEPS", "desjeps": "DESJEPS", "autre": "Autre diplôme"}
@@ -278,7 +304,7 @@ class Site:
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes)
         self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
-                                PUBLICS=PUBLICS, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
+                                PUBLICS=PUBLICS, ACCUEILS_ST=list(ACCUEILS.items()), STATUTS=STATUTS, familles_structure=familles_structure, nature_structure=nature_structure, ages_structure=ages_structure, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
         self.pages = []
 
@@ -449,7 +475,9 @@ class Site:
         champs = "id,nom,type,ville,departement,site,presentation,fondatrice,slug,accroche,couleur,publics,activites,lieux,projet,avantages"
         filtre = "&page_publique=is.true&slug=not.is.null&order=nom"
         # le logo et les photos (version 4 du schéma) ; sans eux si la base n'a pas encore ces colonnes
-        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
+        # le statut, les accueils et les âges (version 14) ; le logo et les photos (version 4)
+        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max{filtre}", "accueils des structures")
+                  or self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
                   or self.lire_supabase(f"structures?select={champs}{filtre}", "pages des structures"))
         return [dict(l, exemple=False) for l in lignes if l.get("departement") in self.departements]
 

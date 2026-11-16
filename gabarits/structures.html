@@ -3,13 +3,13 @@
 {# L'annuaire des structures vérifiées : une recherche, puis des cartes (comme un annuaire de pros) #}
 {% macro carte(st, url, exemple=False) %}
 {% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
-<li class="ac theme-{{ st.couleur or 'rouge' }}" data-type="{{ FAMILLE_DE.get(st.type, st.type) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }}">
+<li class="ac theme-{{ st.couleur or 'rouge' }}" data-type="{{ familles_structure(st) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }} {{ nature_structure(st) }}">
   <a href="{{ url }}">
-    <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ TYPES_STRUCTURE.get(st.type, "structure") }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
+    <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ nature_structure(st) }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
     <span class="ac-corps">
       <b class="ac-nom">{{ st.nom }}</b>
       <span class="ac-lieu">{{ st.ville }} · {{ departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first }}</span>
-      <span class="ac-details">{% if st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
+      <span class="ac-details">{% if ages_structure(st) %}{{ ages_structure(st) | capitalize }}{% for p in st.publics or [] if p in ["handicap", "familles"] %} · {{ PUBLICS.get(p, p) }}{% endfor %}{% elif st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
     </span>
     <span class="ac-pied"><span>{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Pas d'offre en ce moment{% endif %}</span><span class="ac-voir">Voir la fiche <span aria-hidden="true">→</span></span></span>
   </a>
@@ -47,7 +47,7 @@
     var mots = sa(q.value).replace(/[(),]/g, " ").split(/\s+/).filter(Boolean), n = 0;
     Array.prototype.forEach.call(cartes, function (c) {
       if (c.querySelector(".ac-exemple")) return;   // l'exemple reste visible tant qu'il n'y a pas de vraie structure
-      var ok = (!type || c.dataset.type === type) && mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; });
+      var ok = (!type || (" " + c.dataset.type + " ").indexOf(" " + type + " ") !== -1) && mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; });
       c.hidden = !ok; if (ok) n++;
     });
     vide.hidden = n > 0 || !(mots.length || type);

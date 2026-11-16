@@ -762,3 +762,8 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v12 : evenements_admin, remplie par la base à chaque fiche animateur, structure, paiement ou demande ;
 --       outils/abonnements.py en envoie le résumé à l'adresse du site toutes les 15 minutes.
 -- v13 : structure_payee() ; une structure n'écrit ses offres et ses centres qu'avec un abonnement en cours.
+
+-- v14 (16/11/2026) : structures.statut (association, collectivite, entreprise, autre), structures.accueils text[]
+-- (periscolaire, extrascolaire, accueil-de-jeunes, sejours, mini-camps, autre), structures.age_min / age_max (0 à 30),
+-- code_commune (code INSEE de la liste officielle) sur structures, centres et profils, public « 18-25 ».
+-- Le « type » reste rempli (déduit des accueils) pour les pages et filtres d'avant.
