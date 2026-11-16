@@ -1356,6 +1356,8 @@ class Site:
             cartes.append(("Vus dans Google", fr(a["impressions_28j"]), evo(a.get("impressions_evolution")) or "sur 28 jours"))
         if a.get("clics_28j") is not None:
             cartes.append(("Clics depuis Google", fr(a["clics_28j"]), evo(a.get("clics_evolution")) or "sur 28 jours"))
+        if a.get("recherches_premiere_page") is not None:
+            cartes.append(("Recherches en 1re page", fr(a["recherches_premiere_page"]), "dans Google, sur 28 jours"))
         if a.get("comptes"):
             cartes.append(("Comptes créés", fr(a["comptes"]), "animateurs et structures"))
         titre_barres = "Affichages Google par mois"
