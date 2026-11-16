@@ -454,6 +454,8 @@
     D = r.data;
     ["comptes", "structures", "profils", "offres", "centres", "demandes", "candidatures", "vues", "vues_structures", "ressources", "admins"].forEach(function (k) { D[k] = D[k] || []; });
     stats(); aFaire(); listes();
+    // les pages « pro » (vue d'ensemble, QG demandes, état de santé, ventes) : admin-pro.js
+    if (window.FRA_ADMIN_PRO) window.FRA_ADMIN_PRO.rendre(D, { modifier: modifier, supprimer: supprimer, recharger: charger, editeur: editeur });
   }
   window.FRA_ADMIN = { charger: charger };
   // l'espace a pu s'ouvrir avant que ce fichier ne soit lu : on charge tout de suite dans ce cas

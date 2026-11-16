@@ -776,3 +776,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v16 (16/11/2026) : l'administration (est_admin()) lit et modifie structures, offres, centres et profils de tous les
 -- comptes, et lit candidatures, demandes et favoris (« Ouvrir son espace » depuis l'admin). insert (structure_id) sur
 -- offres et centres : les règles des autres comptes imposent toujours leur propre identifiant.
+
+-- v17 (16/11/2026) : demandes.suivi (a_traiter, en_cours, traitee) et demandes.note_admin (QG demandes) ;
+-- table admin_audience (audience détaillée écrite par outils/audience.py avec la clé secrète, lisible par l'admin seul) ;
+-- admin_modifier accepte demandes (suivi, note_admin, destinataires) ; admin_sante() (e-mails, stockage, base, alertes).

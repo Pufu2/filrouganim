@@ -53,26 +53,60 @@ def evolution(maintenant, avant):
     return round(100 * (maintenant - avant) / avant)
 
 
+DETAIL = {}  # l'audience détaillée, pour l'administration (table admin_audience)
+
+
+def ecrire_detail_admin():
+    """Le détail de l'audience dans la base (table admin_audience), que seule l'administration peut lire."""
+    cle = (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()
+    url = (CONFIG.get("supabase") or {}).get("url")
+    if not cle or not url or not DETAIL:
+        return
+    try:
+        req = urllib.request.Request(f"{url}/rest/v1/admin_audience?on_conflict=id", method="POST",
+                                     data=json.dumps({"id": 1, "maj": dt.datetime.now(dt.timezone.utc).isoformat(), "donnees": DETAIL}).encode(),
+                                     headers={"apikey": cle, "Authorization": f"Bearer {cle}", "Content-Type": "application/json",
+                                              "Prefer": "resolution=merge-duplicates,return=minimal", "User-Agent": AGENT})
+        urllib.request.urlopen(req, timeout=60).read()
+        print("Audience détaillée écrite pour l'administration")
+    except Exception as e:
+        print(f"Audience détaillée non écrite ({e})")
+
+
 def goatcounter(aujourdhui):
     code, jeton = CONFIG.get("goatcounter"), (os.environ.get("GOATCOUNTER_TOKEN") or "").strip()
     if not code or not jeton:
         print("GoatCounter : pas de code ou pas de jeton, sauté")
         return None
-    def total(debut, fin):
+    def appel(chemin, debut, fin, **plus):
         # l'API veut des dates complètes (RFC 3339, à l'heure ronde) : du début du premier jour à la fin du dernier
-        q = urllib.parse.urlencode({"start": f"{debut.isoformat()}T00:00:00Z", "end": f"{fin.isoformat()}T23:00:00Z"})
+        q = urllib.parse.urlencode({"start": f"{debut.isoformat()}T00:00:00Z", "end": f"{fin.isoformat()}T23:00:00Z", **plus})
         try:
-            d, _ = lire_json(f"https://{code}.goatcounter.com/api/v0/stats/total?{q}", {"Authorization": f"Bearer {jeton}"})
+            d, _ = lire_json(f"https://{code}.goatcounter.com/api/v0/{chemin}?{q}", {"Authorization": f"Bearer {jeton}"})
         except urllib.error.HTTPError as e:
             # le message de GoatCounter, sans le HTML autour, pour savoir ce qui ne va pas
             texte = re.sub(r"<[^>]+>", " ", e.read().decode("utf-8", "ignore"))
             texte = " ".join(texte.split())
             raise RuntimeError(f"GoatCounter {e.code} sur {e.url.split('?')[0]} : {texte[-300:]}") from None
-        return int(d.get("total") or 0)
+        return d
+    def total(debut, fin):
+        return int(appel("stats/total", debut, fin).get("total") or 0)
     fin = aujourdhui - dt.timedelta(days=1)
     v30 = total(fin - dt.timedelta(days=29), fin)
     v30_avant = total(fin - dt.timedelta(days=59), fin - dt.timedelta(days=30))
     print(f"GoatCounter : {v30} visiteurs sur 30 jours (avant : {v30_avant})")
+    # le détail, pour l'administration seulement (écrit dans la base, pas sur le site) : jour par jour,
+    # les pages lues et d'où viennent les visiteurs, sur 30 jours
+    try:
+        jours = appel("stats/total", aujourdhui - dt.timedelta(days=60), aujourdhui).get("stats") or []
+        DETAIL["visiteurs_par_jour"] = [[x.get("day"), int(x.get("daily") or 0)] for x in jours if x.get("day")]
+        pages = appel("stats/hits", fin - dt.timedelta(days=29), fin, limit=15).get("hits") or []
+        DETAIL["pages_lues"] = [[x.get("path"), x.get("title") or "", int(x.get("count") or 0)] for x in pages]
+        refs = appel("stats/toprefs", fin - dt.timedelta(days=29), fin, limit=15).get("stats") or []
+        DETAIL["provenances"] = [[x.get("name") or "Accès direct", int(x.get("count") or 0)] for x in refs]
+        print(f"GoatCounter : détail lu ({len(DETAIL['visiteurs_par_jour'])} jours, {len(pages)} pages, {len(refs)} provenances)")
+    except Exception as e:  # le détail est un plus : les totaux restent
+        print(f"GoatCounter : détail non lu ({e})")
     return {"visiteurs_30j": v30, "visiteurs_evolution": evolution(v30, v30_avant)}
 
 
@@ -203,6 +237,8 @@ def main():
             continue
         if nouveau:
             chiffres.update(nouveau)
+    if not args.essai:
+        ecrire_detail_admin()
     if args.essai:
         print(json.dumps(chiffres, ensure_ascii=False, indent=1))
         return

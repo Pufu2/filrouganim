@@ -269,7 +269,7 @@
   function voirAdmin() {
     montrer("v-admin", "v-session");
     $("chapo-compte").textContent = "L'administration de Fil Roug'Anim : les chiffres, ce qu'il reste à traiter, et toutes les fiches.";
-    ongletDepart("v-admin", "stats");
+    ongletDepart("v-admin", "accueil");
     if (window.FRA_ADMIN) window.FRA_ADMIN.charger();
   }
   var VUES_AUTH = ["v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription"];
