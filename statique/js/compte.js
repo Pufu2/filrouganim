@@ -14,6 +14,9 @@
   });
   var params = new URLSearchParams(location.search);
   var utilisateur = null, profil = null, structure = null, offreEnCours = null;
+  // l'administration peut ouvrir l'espace d'un autre compte (?compte=…) : tout se lit et s'enregistre alors pour ce compte
+  var espaceDe = null;
+  function idEspace() { return espaceDe || utilisateur.id; }
   var MEMOIRE = "fra-inscription";
 
   function $(id) { return document.getElementById(id); }
@@ -246,6 +249,35 @@
   var CONNEXION_SEULE = "fra-connexion-seule";
   var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-admin", "v-session"];
   var estAdmin = false;
+  function choisirEspace(role) {
+    voirAdmin();
+    Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (x) { if (x.dataset.bascule === "admin") x.setAttribute("aria-current", "page"); else x.removeAttribute("aria-current"); });
+    montrerOnglet("v-admin", role === "structure" ? "structures" : "animateurs");
+    var m = $("message"); m.textContent = "";
+    m.appendChild(document.createTextNode(role === "structure"
+      ? "Vous n'avez pas de structure à vous : choisissez-en une ci-dessous et cliquez « Ouvrir son espace » (vous y voyez et modifiez tout). "
+      : "Vous n'avez pas de profil d'animateur à vous : choisissez-en un ci-dessous et cliquez « Ouvrir son espace ». "));
+    var a = el("a", null, role === "structure" ? "Ou créer une structure à votre nom" : "Ou créer votre propre profil");
+    a.href = "?role=" + role + "&creer=1"; m.appendChild(a);
+    m.hidden = false; m.classList.remove("erreur");
+  }
+  // l'administration : un bandeau qui reste toujours visible hors de l'admin, pour savoir où l'on est et y revenir
+  function bandeauAdmin(ids) {
+    var b = $("bandeau-admin");
+    if (!estAdmin || ids.indexOf("v-admin") >= 0 || !(ids.indexOf("v-structure") >= 0 || ids.indexOf("v-candidat") >= 0)) { if (b) b.hidden = true; return; }
+    if (!b) {
+      b = el("div", "bandeau-admin"); b.id = "bandeau-admin"; b.setAttribute("role", "status");
+      b.appendChild(el("span", "ba-sur", "Administration"));
+      b.appendChild(el("span", "ba-t"));
+      var r = el("a", "ba-retour", "← Revenir à l'admin"); r.href = "?role=admin"; b.appendChild(r);
+      document.body.appendChild(b);
+    }
+    var st = ids.indexOf("v-structure") >= 0;
+    b.querySelector(".ba-t").textContent = espaceDe
+      ? (st ? "Espace de la structure « " + ((structure && structure.nom) || "sans nom") + " »" : "Espace de l'animateur « " + ((profil && profil.prenom) || "sans prénom") + " »") + " : vous voyez et modifiez tout"
+      : (st ? "Votre espace structure" : "Votre espace animateur");
+    b.hidden = false;
+  }
   function voirAdmin() {
     montrer("v-admin", "v-session");
     $("chapo-compte").textContent = "L'administration de Fil Roug'Anim : les chiffres, ce qu'il reste à traiter, et toutes les fiches.";
@@ -264,6 +296,7 @@
     document.body.classList.toggle("admin-large", ids.indexOf("v-admin") >= 0);
     majParcours();
     majApp(ids);
+    bandeauAdmin(ids);
   }
   /* -- « Mon espace » en application : menu fixe à gauche, barre du haut, carte du compte en bas du menu -- */
   var vueApp = null;
@@ -542,6 +575,14 @@
     // l'administration : la base dit si ce compte en fait partie ; il passe d'un espace à l'autre
     var ad = await sb.rpc("est_admin");
     estAdmin = !!(ad && ad.data === true);
+    if (estAdmin && params.get("compte") && params.get("compte") !== utilisateur.id) {
+      espaceDe = params.get("compte");
+      var autre = await Promise.all([
+        sb.from("profils").select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").eq("id", espaceDe).maybeSingle(),
+        sb.from("structures").select("*").eq("id", espaceDe).maybeSingle()
+      ]);
+      profil = autre[0].data; structure = autre[1].data;
+    }
     // « Mon espace » n'ouvre pas de compte : un compte que Google vient de créer depuis la connexion est retiré,
     // et la personne passe par « Commencer » (où elle choisit animateur ou structure)
     var connexionSeule = false;
@@ -560,8 +601,9 @@
       var voulu = params.get("role") || "admin";
       Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (a) { if (a.dataset.bascule === voulu) a.setAttribute("aria-current", "page"); });
       if (voulu === "admin") return voirAdmin();
-      if (voulu === "structure") return voirStructure();
-      if (voulu === "candidat") return voirCandidat();
+      // sans structure ni profil à soi : on choisit dans l'administration l'espace à ouvrir (ou on crée le sien avec &creer=1)
+      if (voulu === "structure") return structure || params.get("creer") ? voirStructure() : choisirEspace("structure");
+      if (voulu === "candidat") return profil || params.get("creer") ? voirCandidat() : choisirEspace("candidat");
     }
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
@@ -943,12 +985,12 @@
     cvAEnvoyer = f;
     montrerCv(); apercuProfil();
   });
-  $("cv-voir").addEventListener("click", function () { ouvrirCv(utilisateur.id); });
+  $("cv-voir").addEventListener("click", function () { ouvrirCv(idEspace()); });
   $("cv-retirer").addEventListener("click", async function () {
     if (cvAEnvoyer) { cvAEnvoyer = null; montrerCv(); apercuProfil(); return; }
     if (!confirm("Retirer votre CV ? Les structures ne le verront plus.")) return;
     var r = await sb.storage.from("cv").remove([utilisateur.id + "/cv.pdf"]);
-    var u = r.error ? r : await sb.from("profils").update({ cv_nom: null }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
+    var u = r.error ? r : await sb.from("profils").update({ cv_nom: null }).eq("id", idEspace()).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     if (u.error) { message(erreurLisible(u.error), true); return; }
     profil = u.data;
     message("CV retiré.");
@@ -967,12 +1009,12 @@
     if (d.dispo_fin && d.dispo_debut && d.dispo_fin < d.dispo_debut) { message("La fin de vos disponibilités est avant le début.", true); return; }
     occupe(form, true);
     var r = profil
-      ? await sb.from("profils").update(d).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single()
+      ? await sb.from("profils").update(d).eq("id", idEspace()).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single()
       : await sb.from("profils").insert(d).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     if (!r.error && cvAEnvoyer) {
       var u = await sb.storage.from("cv").upload(utilisateur.id + "/cv.pdf", cvAEnvoyer, { upsert: true, contentType: "application/pdf", cacheControl: "60" });
       if (u.error) { occupe(form, false); profil = r.data; message("Profil enregistré, mais le CV n'est pas parti : " + erreurLisible(u.error), true); voirCandidat(); return; }
-      r = await sb.from("profils").update({ cv_nom: cvAEnvoyer.name.slice(0, 120) }).eq("id", utilisateur.id).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
+      r = await sb.from("profils").update({ cv_nom: cvAEnvoyer.name.slice(0, 120) }).eq("id", idEspace()).select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").single();
     }
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
@@ -1014,7 +1056,7 @@
     f.accord.required = nouveau;
     assistantStructure.ouvrir(nouveau);
     // tant que l'abonnement n'est pas réglé : seulement « Ma page » et « Abonnement », le reste est fermé
-    var ferme = !paye(structure);
+    var ferme = !paye(structure) && !estAdmin;
     Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
       var verrou = ferme && ["page", "abonnement"].indexOf(b.dataset.ongletVers) < 0;
       b.classList.toggle("co-ferme", verrou);
@@ -1075,7 +1117,7 @@
     var r = await sb.from("profils").select(CHAMPS_VUS).eq("id", id).eq("publie", true).maybeSingle();
     if (r.error || !r.data) { message("Ce profil n'est plus en ligne.", true); return; }
     var p = r.data;
-    if (!favoris.length) { var fav = await sb.from("favoris").select("profil_id"); favoris = (fav.data || []).map(function (x) { return x.profil_id; }); }
+    if (!favoris.length) { var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace()); favoris = (fav.data || []).map(function (x) { return x.profil_id; }); }
     ouvrirFiche(ficheProfil(p, { ecrire: true, cvId: p.cv_nom ? p.id : null, favori: boutonFavori(p, "fp-bouton-second") }));
   }
 
@@ -1115,12 +1157,12 @@
     function maj() {
       var nb = Math.max(1, Math.min(30, parseInt(champ.value, 10) || 1));
       $("abo-total").textContent = nb > 1 ? "Total : " + euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (à indiquer en « quantité » sur la page de paiement)." : "Total : " + euros(p1) + " par an.";
-      var q = new URLSearchParams({ client_reference_id: utilisateur.id, prefilled_email: utilisateur.email, locale: "fr" });
+      var q = new URLSearchParams({ client_reference_id: idEspace(), prefilled_email: utilisateur.email, locale: "fr" });
       $("abo-payer").href = (fond ? A.paiement_fondateur : A.paiement) + "?" + q.toString();
       var corps = "Bonjour,\n\nNous souhaitons régler l'abonnement Fil Roug'Anim sur facture.\n\n" +
         "Structure : " + (structure.nom || "") + "\nSIRET, RNA ou n° de déclaration : " + (structure.identifiant || "") +
         "\nNombre de centres : " + nb + "\nAdresse de facturation : \nService et n° d'engagement (Chorus Pro, si besoin) : \n" +
-        "Mode de paiement (virement, mandat administratif) : \n\nRéférence du compte : " + utilisateur.id + "\n";
+        "Mode de paiement (virement, mandat administratif) : \n\nRéférence du compte : " + idEspace() + "\n";
       $("abo-facture").href = "mailto:" + L.email_site + "?subject=" + encodeURIComponent("Abonnement sur facture : " + (structure.nom || "")) + "&body=" + encodeURIComponent(corps);
     }
     if (!champ.dataset.ecoute) { champ.dataset.ecoute = "1"; champ.addEventListener("input", function () { champ.dataset.touche = "1"; maj(); }); }
@@ -1131,7 +1173,7 @@
   var mesCentres = [], centreEnCours = null;
   var CHAMPS_CENTRE = ["nom", "type", "ville", "departement", "code_commune", "accroche", "presentation", "publics", "activites"];
   async function chargerCentres() {
-    var r = await sb.from("centres").select("*").eq("structure_id", utilisateur.id).order("cree_le");
+    var r = await sb.from("centres").select("*").eq("structure_id", idEspace()).order("cree_le");
     mesCentres = r.error ? [] : (r.data || []);
     var liste = $("liste-centres");
     liste.textContent = "";
@@ -1192,6 +1234,7 @@
     while (mesCentres.some(function (c) { return c.slug === slug && (!centreEnCours || c.id !== centreEnCours.id); })) slug = base + "-" + n++;
     d.slug = centreEnCours && centreEnCours.nom === d.nom ? centreEnCours.slug : slug;
     occupe(form, true);
+    if (espaceDe && !centreEnCours) d.structure_id = espaceDe;
     var r = centreEnCours ? await sb.from("centres").update(d).eq("id", centreEnCours.id) : await sb.from("centres").insert(d);
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
@@ -1341,7 +1384,7 @@
     var form = this, d = lireStructure();
     occupe(form, true);
     var r = structure
-      ? await sb.from("structures").update(d).eq("id", utilisateur.id).select().single()
+      ? await sb.from("structures").update(d).eq("id", idEspace()).select().single()
       : await sb.from("structures").insert(d).select().single();
     occupe(form, false);
     if (r.error) { message(erreurLisible(r.error), true); return; }
@@ -1358,7 +1401,7 @@
                       "remuneration_montant", "remuneration_unite", "candidater", "expire_le", "texte", "loge", "publiee"];
   var mesOffres = [];
   async function chargerOffres() {
-    var r = await sb.from("offres").select("*").eq("structure_id", utilisateur.id).order("debut");
+    var r = await sb.from("offres").select("*").eq("structure_id", idEspace()).order("debut");
     mesOffres = r.data || [];
     var liste = $("liste-offres");
     liste.textContent = "";
@@ -1414,6 +1457,7 @@
     if (d.fin && d.fin < d.debut) { message("La date de fin est avant la date de début.", true); return; }
     if (d.age_min && d.age_max && +d.age_max < +d.age_min) { message("L'âge maximum des enfants est plus petit que l'âge minimum.", true); return; }
     occupe(form, true);
+    if (espaceDe && !offreEnCours) d.structure_id = espaceDe;
     var r = offreEnCours
       ? await sb.from("offres").update(d).eq("id", offreEnCours.id)
       : await sb.from("offres").insert(d);
@@ -1778,7 +1822,7 @@
                    "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le,cv_nom,annee_naissance,qualifications";
   async function chargerCandidats() {
     var f = $("f-candidats");
-    var fav = await sb.from("favoris").select("profil_id");
+    var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace());
     favoris = (fav.data || []).map(function (x) { return x.profil_id; });
     var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).order("maj_le", { ascending: false }).limit(100);
     if (f.dep.value) q = q.or("departement.eq." + f.dep.value + ",mobilite.cs.{" + f.dep.value + "}");
@@ -1803,7 +1847,7 @@
     var blocR = $("bloc-candidatures-recues"), liste = $("liste-candidatures-recues");
     if (!ids.length) { blocR.hidden = true; recues = []; return; }
     if (actif(structure) && !favoris.length) {
-      var fav = await sb.from("favoris").select("profil_id");
+      var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace());
       favoris = (fav.data || []).map(function (x) { return x.profil_id; });
     }
     var r = await sb.from("candidatures").select("id,offre_id,message,statut,cree_le,profils(" + CHAMPS_VUS + ")")
@@ -2151,7 +2195,7 @@
       (q.length ? " · " + q.join(", ") : "");
   }
   async function mesDemandes() {
-    var r = await sb.from("demandes").select("id,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,destinataires,cree_le").order("cree_le", { ascending: false });
+    var r = await sb.from("demandes").select("id,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,destinataires,cree_le").eq("candidat_id", idEspace()).order("cree_le", { ascending: false });
     var liste = $("liste-mes-demandes"); liste.textContent = "";
     var d = r.data || [];
     $("bloc-mes-demandes").hidden = false;
@@ -2179,7 +2223,7 @@
     var blocD = $("bloc-demandes-recues");
     if (!actif(structure)) { blocD.hidden = true; return; }
     var r = await sb.from("demandes").select("id,prenom,annee_naissance,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
-      .contains("destinataires", [utilisateur.id]).order("cree_le", { ascending: false }).limit(50);
+      .contains("destinataires", [idEspace()]).order("cree_le", { ascending: false }).limit(50);
     demandesRecues = r.data || [];
     try { aFaireStructure(); } catch (e) {}
     blocD.hidden = false;
@@ -2258,7 +2302,7 @@
   async function tableauCandidat() {
     var deps = [profil.departement].concat(profil.mobilite || []).filter(function (d) { return d !== "france"; });
     var rep = await Promise.all([
-      sb.from("candidatures").select("id,offre_id,statut,cree_le,offres(intitule,ville,departement,debut,structures(nom))").order("cree_le", { ascending: false }),
+      sb.from("candidatures").select("id,offre_id,statut,cree_le,offres(intitule,ville,departement,debut,structures(nom))").eq("candidat_id", idEspace()).order("cree_le", { ascending: false }),
       sb.from("offres").select("id,intitule,ville,departement,debut,fin,contrat,poste,structures(nom)").in("departement", deps).order("debut").limit(30)
     ]);
     mesCandidatures = rep[0].data || [];

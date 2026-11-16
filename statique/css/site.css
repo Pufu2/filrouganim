@@ -3089,3 +3089,24 @@ body.en-app #co-bascule a[aria-current] { color: var(--fil-fonce); background: #
 .cb-e-dir { background: #f0e8f5; color: #5b3a73; } .cb-e-autre { background: #efe9e1; color: #5d5456; }
 .cb-liste .cb-vide { color: var(--doux); font-size: .9rem; }
 .cb-deux { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+/* l'administration : les étapes de la mise en ligne d'une structure */
+.ad-etapes { list-style: none; margin: 10px 0 6px; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; width: 100%; }
+.ad-etapes li { position: relative; display: flex; gap: 8px; align-items: flex-start; padding: 9px 10px; border-radius: 12px; background: #faf6f1; border: 1px solid var(--trait); font-size: .82rem; }
+.ad-etapes i { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1.5px solid #d9cdbf; color: var(--doux); font-style: normal; font-weight: 700; font-size: .72rem; }
+.ad-etapes li.fait { background: #eef6f0; border-color: #cfe5d6; } .ad-etapes li.fait i { background: #3f7d58; border-color: #3f7d58; color: #fff; }
+.ad-etapes li.en-cours { background: #fff6f4; border-color: #f1c9c4; } .ad-etapes li.en-cours i { border-color: var(--fil); color: var(--fil-fonce); }
+.ad-etapes div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ad-etapes b { font-size: .84rem; }
+.ad-etapes small { color: var(--doux); overflow-wrap: anywhere; }
+.ad-etapes button, .ad-etapes a { align-self: flex-start; margin-top: 3px; padding: 0; border: 0; background: none; font: 700 .8rem var(--texte); color: var(--fil-fonce); cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+@media (max-width: 900px) { .ad-etapes { grid-template-columns: 1fr 1fr; } }
+.ad-ligne .ad-etapes { grid-column: 1 / -1; }
+/* l'administration : le bandeau qui permet toujours de revenir */
+.bandeau-admin { position: fixed; z-index: 3000; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; max-width: calc(100% - 24px); box-sizing: border-box;
+  padding: 8px 8px 8px 14px; border-radius: 99px; background: var(--encre); color: #fff; box-shadow: 0 18px 40px -14px rgba(0, 0, 0, .5); font-size: .88rem; }
+.bandeau-admin[hidden] { display: none; }
+.ba-sur { flex: none; padding: 3px 9px; border-radius: 99px; background: var(--fil); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.ba-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ba-retour { flex: none; padding: 7px 14px; border-radius: 99px; background: #fff; color: var(--encre); font-weight: 700; text-decoration: none; }
+.ba-retour:hover { color: var(--fil-fonce); }
+@media (max-width: 600px) { .ba-t { display: none; } }

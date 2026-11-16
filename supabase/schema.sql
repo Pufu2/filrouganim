@@ -772,3 +772,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- les demandes de l'annuaire inversé et les candidatures (poste, département, ville éventuelle, mois, état, source :
 -- jamais de nom, de message ni de coordonnées), sans les comptes de l'administration ; et le nombre de structures
 -- en ligne par département.
+
+-- v16 (16/11/2026) : l'administration (est_admin()) lit et modifie structures, offres, centres et profils de tous les
+-- comptes, et lit candidatures, demandes et favoris (« Ouvrir son espace » depuis l'admin). insert (structure_id) sur
+-- offres et centres : les règles des autres comptes imposent toujours leur propre identifiant.

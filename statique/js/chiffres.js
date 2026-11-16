@@ -139,7 +139,7 @@
     box.appendChild(ol);
     if (note) box.appendChild(el("p", "cj-s-note", note));
     if (!v) return;
-    [v.p ? String(v.p).replace(".", ",") : "—", "place moyenne"], [nb(v.i), v.i > 1 ? "affichages" : "affichage"], [nb(v.c), v.c > 1 ? "clics" : "clic"]].forEach(function (x) {
+    [[v.p ? String(v.p).replace(".", ",") : "—", "place moyenne"], [nb(v.i), v.i > 1 ? "affichages" : "affichage"], [nb(v.c), v.c > 1 ? "clics" : "clic"]].forEach(function (x) {
       var c = el("div"); c.appendChild(el("b", null, x[0])); c.appendChild(el("span", null, x[1])); trois.appendChild(c);
     });
     var l1 = el("a", "cj-lien", "Voir la page " + v.t + " →"); l1.href = v.u; liens.appendChild(l1);

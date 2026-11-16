@@ -226,15 +226,50 @@
     t.appendChild(el("span", null, [lib("types", x.type), (x.ville || "") + (x.departement ? " (" + x.departement + ")" : ""), x.email_contact].filter(Boolean).join(" · ")));
     l.appendChild(t);
     var nbO = compte(D.offres, function (o) { return o.structure_id === x.id && enLigne(o); });
+    l.appendChild(etapesMiseEnLigne(x));
     pastilles(l, [[paye(x) ? "payée jusqu'au " + E.dateFr(x.abonnement_fin) : "non payée", paye(x) ? "ok" : "non"], [x.verifiee ? "vérifiée" : "à vérifier", x.verifiee ? "ok" : "non"],
       x.fondatrice ? ["fondatrice", "neutre"] : null, [nbO + " offre" + (nbO > 1 ? "s" : "") + " en ligne", "neutre"]]);
     boutons(l, [
       [x.verifiee ? "Retirer la vérification" : "Vérifier", function () { modifier("structures", x.id, { verifiee: !x.verifiee }); }, null, x.verifiee ? "" : "ad-fort"],
-      ["Modifier", function () { editeur("structures", x); }],
+      ["Ouvrir son espace", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); }, null, "ad-fort"],
+      ["Modifier les champs", function () { editeur("structures", x); }],
       x.slug && x.page_publique && x.verifiee && paye(x) ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"] : null,
       verifier ? null : ["Supprimer", function () { supprimer("structures", x.id, x.nom); }, null, "bouton-danger"]
     ]);
     return l;
+  }
+  // les cinq étapes de la mise en ligne d'une structure, avec ce qu'on peut faire à chacune
+  function etapesMiseEnLigne(x) {
+    var compteX = (D.comptes || []).filter(function (c) { return c.id === x.id; })[0];
+    var champs = [x.nom, x.ville, x.presentation, x.projet, (x.photos || []).length, x.logo, (x.accueils || []).length || x.type, x.age_min != null || (x.publics || []).length, x.email_contact, x.identifiant];
+    var rempli = Math.round(champs.filter(Boolean).length / champs.length * 100);
+    var dansUnAn = new Date(auj); dansUnAn.setFullYear(dansUnAn.getFullYear() + 1);
+    var etapes = [
+      ["Compte créé", true, compteX ? "le " + E.dateFr(iso(compteX.cree_le)) : "", null],
+      ["Fiche remplie", rempli >= 70, rempli + " %", ["Ouvrir sa fiche", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id) + "&onglet=page"; }]],
+      ["Abonnement", paye(x), paye(x) ? "jusqu'au " + E.dateFr(x.abonnement_fin) : "non réglé",
+        paye(x) ? ["Retirer", function () { if (confirm("Retirer l'abonnement de « " + x.nom + " » ?")) modifier("structures", x.id, { abonnement_fin: null }); }]
+                : ["Marquer payé 1 an", function () { if (confirm("Marquer « " + x.nom + " » comme payée jusqu'au " + E.dateFr(dansUnAn.toISOString().slice(0, 10)) + " (paiement sur facture, geste…) ?")) modifier("structures", x.id, { abonnement_fin: dansUnAn.toISOString().slice(0, 10) }); }]],
+      ["Vérifiée", !!x.verifiee, x.verifiee ? "oui" : x.identifiant ? "SIRET/RNA : " + x.identifiant : "pas d'identifiant",
+        [x.verifiee ? "Retirer" : "Vérifier", function () { modifier("structures", x.id, { verifiee: !x.verifiee }); }]],
+      ["En ligne", !!(x.verifiee && paye(x) && x.page_publique && x.slug), x.verifiee && paye(x) ? (x.page_publique && x.slug ? "page publique" : "page cachée") : "pas encore",
+        x.verifiee && paye(x) && x.slug && x.page_publique ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"]
+          : x.slug ? [x.page_publique ? "Cacher la page" : "Rendre la page publique", function () { modifier("structures", x.id, { page_publique: !x.page_publique }); }] : null]
+    ];
+    var premiere = etapes.findIndex(function (e) { return !e[1]; });
+    var ol = el("ol", "ad-etapes");
+    etapes.forEach(function (e, i) {
+      var li = el("li", e[1] ? "fait" : i === premiere ? "en-cours" : "");
+      li.appendChild(el("i", null, e[1] ? "✓" : String(i + 1)));
+      var t = el("div"); t.appendChild(el("b", null, e[0])); if (e[2]) t.appendChild(el("small", null, e[2]));
+      if (e[3]) {
+        var a = e[3][2] ? el("a", null, e[3][0]) : el("button", null, e[3][0]);
+        if (e[3][2]) { a.href = e[3][2]; a.target = "_blank"; a.rel = "noopener"; } else { a.type = "button"; a.addEventListener("click", e[3][1]); }
+        t.appendChild(a);
+      }
+      li.appendChild(t); ol.appendChild(li);
+    });
+    return ol;
   }
   function ligneProfil(x) {
     var l = el("div", "ad-ligne");
@@ -243,7 +278,7 @@
     l.appendChild(t);
     pastilles(l, [[x.publie ? "visible" : "caché", x.publie ? "ok" : "non"], x.resume_public ? ["résumé public", "neutre"] : null, x.cv_nom ? ["CV", "neutre"] : null,
       [(x.diplomes || []).map(function (d) { return lib("diplomes", d); }).join(", ") || "sans diplôme indiqué", "neutre"]]);
-    boutons(l, [["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(x, {})); }], ["Modifier", function () { editeur("profils", x); }],
+    boutons(l, [["Ouvrir son espace", function () { location.href = "/compte/?role=candidat&compte=" + encodeURIComponent(x.id); }, null, "ad-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(x, {})); }], ["Modifier les champs", function () { editeur("profils", x); }],
       [x.publie ? "Cacher" : "Rendre visible", function () { modifier("profils", x.id, { publie: !x.publie }); }], ["Supprimer", function () { supprimer("profils", x.id, x.prenom); }, null, "bouton-danger"]]);
     return l;
   }
@@ -276,6 +311,8 @@
     l.appendChild(t);
     pastilles(l, [[x.fournisseur === "google" ? "Google" : "E-mail", "neutre"], p ? ["animateur : " + p.prenom, "ok"] : null, s ? ["structure : " + s.nom, "ok"] : null,
       !p && !s ? ["sans profil", "non"] : null, D.admins.indexOf(x.id) >= 0 ? ["admin", "accent"] : null, x.confirme ? null : ["e-mail non confirmé", "non"]]);
+    boutons(l, [s ? ["Espace structure", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); }] : null,
+      p ? ["Espace animateur", function () { location.href = "/compte/?role=candidat&compte=" + encodeURIComponent(x.id); }] : null]);
     return l;
   }
   function ligneRessource(x) {
