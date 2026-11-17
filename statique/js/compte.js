@@ -293,7 +293,6 @@
   function majApp(ids) {
     vueApp = ["v-structure", "v-candidat", "v-admin"].filter(function (v) { return ids.indexOf(v) >= 0; })[0] || null;
     document.body.classList.toggle("en-app", !!vueApp);
-    document.body.classList.toggle("admin-g", vueApp === "v-admin");
     if (!vueApp) return;
     var nav = $(vueApp).querySelector(".co-nav");
     // l'administration a sa barre du haut (façon accueil) : la bascule et le compte y vont
