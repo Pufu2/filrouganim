@@ -4,7 +4,7 @@
 {% set a = page.audience or {} %}
 {% block tete_note %}<p class="tp-sur">Organismes de formation · BAFA, BAFD, BSB, PSC</p>{% endblock %}
 {% block h1 %}Vos sessions, là où les jeunes <em>choisissent</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Chaque mois, des jeunes comparent sur Fil Roug'Anim les dates et les prix des sessions BAFA, BAFD et PSC près de chez eux. Vos sessions y sont déjà, gratuitement. La formule partenaire vous donne vos départements en exclusivité, et vous dit ce qu'ils vous rapportent.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Chaque mois, des jeunes comparent sur Fil Roug'Anim les dates et les prix des sessions BAFA, BAFD et PSC près de chez eux. Vos sessions y sont déjà, gratuitement. La formule partenaire vous donne vos départements en exclusivité, et vous ne payez que les vrais clics qu'ils vous envoient, jamais plus qu'un plafond.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
 <div class="tp-recherche"><div class="cadre">
@@ -34,13 +34,13 @@
 
 <section class="bande bande-papier" aria-labelledby="t-prix">
   <div class="cadre">
-    <h2 id="t-prix" class="rc-titre-cartes">Le prix d'un département, <em>selon ce qu'il pèse</em></h2>
-    <p class="pa-texte">Un département de 360 000 jeunes ne vaut pas un département de 8 000. Le prix suit le nombre de jeunes de 15 à 24 ans qui y vivent (INSEE, 2025), le nombre de sessions et les recherches Google. Un seul partenaire par département ; deux dans les six plus grands, pour éviter le monopole.</p>
+    <h2 id="t-prix" class="rc-titre-cartes">Payé au clic, <em>plafonné</em> selon le département</h2>
+    <p class="pa-texte">Vous payez <b>1 € par clic</b> venu de vos départements vers vos sessions ou votre site (<b>0,50 €</b> au tarif de lancement), facturé chaque mois pour le mois écoulé. Rien à payer d'avance, et jamais plus que le plafond annuel du département, qui suit le nombre de jeunes de 15 à 24 ans qui y vivent (INSEE, 2025), le nombre de sessions et les recherches Google. Un seul partenaire par département ; deux dans les six plus grands, pour éviter le monopole.</p>
     <ul class="pa-paliers">
       {% for p in page.paliers %}
       <li class="pa-palier pa-palier-{{ p.n }}">
         <p class="pa-palier-t">{{ ["", "Très grands départements", "Grands départements", "Départements moyens", "Départements ruraux"][p.n] }}</p>
-        <p class="pa-palier-prix"><b>{{ p.prix }} €</b> par an</p>
+        <p class="pa-palier-prix"><small>au plus</small> <b>{{ p.prix }} €</b> par an</p>
         <p class="pa-palier-lanc">{{ ((p.prix + 1) // 2) }} € au tarif de lancement</p>
         <p class="pa-palier-ex">{{ p.nb }} départements, dont {{ p.exemples | join(', ') }}{{ '…' if p.nb > 5 }}</p>
         <p class="pa-palier-places">{{ p.places }} place{{ 's' if p.places > 1 }} par département</p>
@@ -49,14 +49,29 @@
     </ul>
     <div class="pa-prix">
       <div>
-        <p><b class="pa-prix-n">Tarif de lancement : moitié prix</b> pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, gardé tant que vous restez partenaire. Sans commission sur vos inscriptions : une seule inscription de plus dans l'année rembourse un département.</p>
-        <p class="pa-petit">Créez votre espace, choisissez vos départements sur la carte de France (vous voyez le prix et ce qui est encore libre), et payez sur facture, par carte ou virement. Un an, que vous arrêtez quand vous voulez.</p>
+        <p><b class="pa-prix-n">Tarif de lancement : 0,50 € le clic</b> et plafonds à moitié prix pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, gardés tant que vous restez partenaire. Sans commission sur vos inscriptions.</p>
+        <p class="pa-petit">Créez votre espace, choisissez vos départements sur la carte de France (vous voyez le plafond et ce qui est encore libre). Facture chaque début de mois, par carte ou virement ; moins de 10 € dans le mois, rien à payer. Sans engagement : vous arrêtez un département en un clic.</p>
       </div>
       <div class="pa-prix-boutons">
         <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1&amp;role=organisme">Créer mon espace organisme <span aria-hidden="true">→</span></a>
         <a class="pa-lien-ex" href="{{ lien('/organismes-partenaires/exemple/') }}">Voir une fiche partenaire d'exemple</a>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="bande bande-papier" aria-labelledby="t-proteges">
+  <div class="cadre">
+    <h2 id="t-proteges" class="rc-titre-cartes">Des clics <em>protégés</em> : personne ne peut gonfler votre facture</h2>
+    <p class="pa-texte">Un concurrent qui clique cent fois sur vos sessions ? Un robot qui parcourt le site ? Cela ne vous coûte rien. Seuls les clics de vraies personnes, une fois par jour, sont comptés.</p>
+    <ul class="pa-proteges">
+      <li><b>Une personne, un clic par jour</b><span>Cliquer 50 fois sur vos sessions dans la journée ne compte qu'un clic. Nous ne gardons aucune adresse IP : seulement une empreinte chiffrée, qui change chaque jour.</span></li>
+      <li><b>Pas de robots</b><span>Moteurs de recherche, aspirateurs de sites, aperçus automatiques : jamais comptés.</span></li>
+      <li><b>Pas de cliqueurs en série</b><span>Quelqu'un qui clique sur plus de 5 organismes dans la même journée n'est plus compté du tout.</span></li>
+      <li><b>Les pics anormaux écartés</b><span>Un jour avec beaucoup plus de clics que d'habitude n'est pas facturé au-delà de votre niveau habituel : le surplus est mis de côté et vérifié à la main.</span></li>
+      <li><b>Un plafond qui ne bouge pas</b><span>Quoi qu'il arrive, vous ne payez jamais plus que le plafond annuel de vos départements.</span></li>
+      <li><b>Tout est visible</b><span>Dans votre espace, chaque clic compté, jour par jour et département par département. Une ligne vous paraît douteuse ? Vous la contestez, on la retire.</span></li>
+    </ul>
   </div>
 </section>
 
@@ -87,7 +102,7 @@
 (function () {
   var f = document.getElementById("pa-form"), r = document.getElementById("pa-retour");
   if (!f) return;
-  if (/paiement=ok/.test(location.search)) { r.hidden = false; r.className = "pa-retour pa-ok"; r.textContent = "Merci, votre formule partenaire est réglée ! Nous vous écrivons sous 2 jours ouvrés pour la mettre en place (vos régions, votre lien d'inscription)."; setTimeout(function () { r.scrollIntoView({ block: "center" }); }, 200); }
+  if (/paiement=ok/.test(location.search)) { r.hidden = false; r.className = "pa-retour pa-ok"; r.textContent = "Merci, votre facture est réglée !"; setTimeout(function () { r.scrollIntoView({ block: "center" }); }, 200); }
   f.addEventListener("submit", function (e) {
     e.preventDefault();
     var b = f.querySelector("button"), d = {};

@@ -811,3 +811,9 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- ------------------------------------------------------------------ version 22 (17/11/2026)
 -- organismes_inscrits() (page « Les organismes », fiches vérifiées seulement) ; stats_organismes.departement
 -- (clics comptés département par département, compter_organisme(o, t, d)).
+
+-- v23 (appliquée par migration) : formule partenaire au clic. secret_interne (sel des empreintes), clics_facturables
+-- (une personne = un hachage IP + navigateur + jour + sel ; un clic par personne, par organisme et par jour ; robots exclus ;
+-- plus de 5 organismes cliqués dans la journée = plus compté), partenariats.prix_clic / arrete_le, factures_clics (mois échus),
+-- mes_clics() (le détail pour l'organisme), arreter_partenariat(), reserver_zones() sans paiement d'avance (actif dès la
+-- vérification), admin_organisme() active les départements réservés. v23b : clics_par_jour() pour le relevé (rôle serveur).

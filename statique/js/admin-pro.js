@@ -780,14 +780,14 @@
                  [String(compte(PROS || [], function (p) { return p.type === "organisme" && p.statut !== "a_contacter"; })), "contactés"], [String(clients), "clients", "rouge"]]);
     // les comptes organismes : les relier à un organisme du site, les vérifier, suivre leurs départements
     var s9 = el("p", "ap-titre-s"); s9.appendChild(el("i", "ap-dot")); s9.appendChild(document.createTextNode("Comptes organismes · " + COMPTES_ORG.length)); c.appendChild(s9);
-    c.appendChild(el("p", "ap-petit", "Reliez chaque compte à son organisme du site (ses sessions), puis vérifiez-le : sa fiche et ses statistiques s'ouvrent. Ses départements s'activent tout seuls au paiement de la facture."));
+    c.appendChild(el("p", "ap-petit", "Reliez chaque compte à son organisme du site (ses sessions), puis vérifiez-le : sa fiche, ses statistiques et ses départements s'activent. Il paie au clic (clics protégés : une personne par jour, sans robots, pics écartés), facturé chaque début de mois par le relevé ; un pic écarté apparaît dans le QG."));
     var opts = (o.suivis || []).map(function (x) { return [x.id, x.nom]; });
     tableau(c, ["Organisme", "Relié à", "Départements", "État", ""], COMPTES_ORG.map(function (x) {
       var sel = el("select", "ap-select"); var vide = el("option", null, "— choisir —"); vide.value = ""; sel.appendChild(vide);
       opts.forEach(function (op) { var e = el("option", null, op[1]); e.value = op[0]; if (x.organisme_id === op[0]) e.selected = true; sel.appendChild(e); });
       var ps = PARTS.filter(function (p) { return p.compte === x.id && p.statut !== "annule"; });
-      var dz = el("div", "ap-cel"); ps.forEach(function (p) { var l = el("small", null, p.departement + " · " + p.prix + " € · " + p.statut + (p.fin ? " → " + E.dateFr(p.fin) : ""));
-        if (p.statut === "facture" || p.statut === "reserve") { var bA = el("button", "ap-lien-b", "Activer"); bA.type = "button"; bA.title = "Payé sur facture à part : activer un an"; bA.addEventListener("click", async function () { var q = await E.sb.rpc("admin_partenariat", { pid: p.id, st: "actif" }); if (q.error) return E.message(E.erreur(q.error), true); E.message("Activé pour un an."); await toutLire(); organismes(); }); l.appendChild(bA); }
+      var dz = el("div", "ap-cel"); ps.forEach(function (p) { var l = el("small", null, p.departement + " · " + String(p.prix_clic || 1).replace(".", ",") + " €/clic, plafond " + p.prix + " € · " + p.statut + (p.fin ? " → " + E.dateFr(p.fin) : ""));
+        if (p.statut === "facture" || p.statut === "reserve") { var bA = el("button", "ap-lien-b", "Activer"); bA.type = "button"; bA.title = "Activer un an sans attendre la vérification"; bA.addEventListener("click", async function () { var q = await E.sb.rpc("admin_partenariat", { pid: p.id, st: "actif" }); if (q.error) return E.message(E.erreur(q.error), true); E.message("Activé pour un an."); await toutLire(); organismes(); }); l.appendChild(bA); }
         dz.appendChild(l); });
       if (!ps.length) dz.appendChild(el("small", null, "aucun"));
       return [cellule(x.nom, [x.email_contact, x.telephone].filter(Boolean).join(" · ")), sel, dz, etiquette(x.verifie ? "vérifié" : "à vérifier", x.verifie ? "ok" : "jaune"),

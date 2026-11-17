@@ -3575,7 +3575,15 @@ body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static
 .og-liste { margin: 0; padding-left: 18px; } .og-liste li { margin: 6px 0; }
 .og-vide { color: var(--doux); font-size: .92rem; }
 .og-etiq { display: inline-block; padding: 2px 10px; border-radius: 99px; font: 700 .76rem var(--texte); background: var(--sable); color: #7a5b2e; white-space: nowrap; }
-.og-actif { background: #e3ece4; color: var(--sauge); } .og-facture { background: #fdeceb; color: var(--fil-fonce); } .og-annule, .og-expire { background: #eee; color: #777; }
+.og-etiq.og-actif, .og-etiq.og-payee { background: #e3ece4; color: var(--sauge); } .og-etiq.og-facture { background: #fdeceb; color: var(--fil-fonce); } .og-etiq.og-annule, .og-etiq.og-expire, .og-etiq.og-annulee, .og-etiq.og-offerte { background: #eee; color: #666; }
+.og-table-boite { overflow-x: auto; max-height: 420px; overflow-y: auto; border: 1px solid #f3ece4; border-radius: 12px; margin: 8px 0 4px; }
+.og-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.og-table th, .og-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #f3ece4; white-space: nowrap; }
+.og-table th { position: sticky; top: 0; background: #fffaf4; font-weight: 700; color: var(--doux); }
+.og-table td:nth-child(3) { font-weight: 700; }
+.og-protege { margin-top: 16px; padding: 12px 16px; border-radius: 14px; background: #f4f8f4; border: 1px solid #dfe9df; }
+.og-protege summary { cursor: pointer; font-weight: 700; color: var(--sauge); }
+.og-protege ul { margin-top: 10px; font-size: .9rem; }
 .og-zones-tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 24px; margin-bottom: 14px; }
 .og-zones-tete h2 { margin: 0 0 6px; } .og-zones-tete .petit { margin: 0; max-width: 720px; }
 .og-lancement { margin: 0; padding: 8px 14px; border-radius: 12px; background: #fff7e8; border: 1px solid #f1dcae; color: #6d4c12; font-size: .88rem; font-weight: 700; }
@@ -3653,3 +3661,11 @@ body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static
 .org-zones .org-mini-carte { width: 70px; flex: none; }
 @media (max-width: 760px) { .org-exemple { grid-template-columns: 1fr; padding: 20px 16px; } .org-exemple-visuel { max-width: 200px; } }
 .org-carte-partenaire .org-liens { flex-wrap: wrap; gap: 10px; }
+
+/* page partenaires : les clics protégés */
+.pa-proteges { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.pa-proteges li { background: #fff; border: 1px solid #eadfd2; border-radius: 16px; padding: 16px 18px; }
+.pa-proteges li b { display: block; margin-bottom: 4px; padding-left: 26px; position: relative; }
+.pa-proteges li b::before { content: "✓"; position: absolute; left: 0; top: -1px; width: 19px; height: 19px; border-radius: 50%; background: #e3ece4; color: var(--sauge); font-size: .75rem; display: grid; place-items: center; }
+.pa-proteges li span { font-size: .92rem; color: var(--doux); }
+.pa-palier-prix small { font-size: .8rem; font-weight: 400; color: var(--doux); }

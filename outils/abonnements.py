@@ -51,71 +51,124 @@ def stripe_post(chemin, cle, donnees):
         return json.loads(r.read().decode("utf-8"))
 
 
+SEUIL_FACTURE = 10   # en dessous de 10 € dans le mois, rien à payer
+PIC_MIN = 20         # un jour compte comme « pic anormal » au-delà de 20 clics et de 3 fois la médiane des 28 jours d'avant
+
+
+def clics_du_mois(cle_sb, organisme, mois_debut, mois_fin):
+    """Les clics facturables d'un organisme pour le mois, par département : {dep: (clics retenus, clics écartés, jours écartés)}.
+    Un jour anormal (pic) n'est pas facturé au-delà du niveau habituel : les clics en trop sont écartés et signalés."""
+    avant = (mois_debut - dt.timedelta(days=28)).isoformat()
+    lignes = supabase("POST", "rpc/clics_par_jour", cle_sb, {"o": organisme, "de": avant, "a": mois_fin.isoformat()}) or []
+    par_jour = {(l["departement"], l["jour"]): l["n"] for l in lignes}
+    res = {}
+    for (dep, jour), n in sorted(par_jour.items()):
+        if jour < mois_debut.isoformat():
+            continue
+        j = dt.date.fromisoformat(jour)
+        prec = sorted(par_jour.get((dep, (j - dt.timedelta(days=k)).isoformat()), 0) for k in range(1, 29))
+        mediane = (prec[13] + prec[14]) / 2
+        limite = max(PIC_MIN, round(3 * mediane))
+        garde, ecarte = min(n, limite), max(0, n - limite)
+        r = res.setdefault(dep, [0, 0, []])
+        r[0] += garde
+        r[1] += ecarte
+        if ecarte:
+            r[2].append(jour)
+    return res
+
+
 def partenariats(cle_stripe, cle_sb, essai):
-    """Les zones des organismes : une facture Stripe par réservation, l'activation au paiement (un an), la fin à échéance.
-    La facture est envoyée par Stripe à l'organisme, et son lien de paiement s'affiche dans son espace."""
+    """La formule partenaire au clic : une facture par mois échu, d'après les clics facturables (comptés une fois par
+    personne, par organisme et par jour, robots exclus, pics anormaux écartés), au prix du clic, plafonnée au prix annuel
+    du département. Rien à payer d'avance ; en dessous de 10 € dans le mois, rien à payer du tout."""
     auj = dt.date.today()
-    lignes = supabase("GET", "partenariats?select=id,compte,departement,prix,lancement,statut,facture_id,cree_le,fin"
-                             "&statut=in.(reserve,facture,actif)", cle_sb) or []
-    if not lignes:
-        return
-    comptes = {c["id"]: c for c in supabase("GET", "comptes_organismes?select=id,nom,email_contact", cle_sb) or []}
     noms = {z["departement"]: z["nom"] for z in supabase("GET", "zones_tarifs?select=departement,nom", cle_sb) or []}
-    # 1. les réservations : une facture par organisme
+    comptes = {c["id"]: c for c in supabase("GET", "comptes_organismes?select=id,nom,email_contact,organisme_id", cle_sb) or []}
+    # 1. le mois qui vient de finir
+    fin_mois = auj.replace(day=1) - dt.timedelta(days=1)
+    debut_mois = fin_mois.replace(day=1)
+    lignes = supabase("GET", "partenariats?select=id,compte,departement,prix,prix_clic,lancement,statut,debut,fin"
+                             f"&statut=in.(actif,expire)&debut=lte.{fin_mois.isoformat()}&fin=gte.{debut_mois.isoformat()}", cle_sb) or []
+    deja = {(f["compte"], f["mois"]) for f in supabase("GET", f"factures_clics?select=compte,mois&mois=eq.{debut_mois.isoformat()}", cle_sb) or []}
+    anciennes = supabase("GET", "factures_clics?select=compte,detail&statut=in.(facture,payee,a_facturer)", cle_sb) or []
     par_compte = {}
     for l in lignes:
-        if l["statut"] == "reserve":
-            par_compte.setdefault(l["compte"], []).append(l)
+        par_compte.setdefault(l["compte"], []).append(l)
     for cid, ls in par_compte.items():
         c = comptes.get(cid) or {}
-        print(f"Facture à créer : {c.get('nom')} · " + ", ".join(l["departement"] for l in ls))
+        if (cid, debut_mois.isoformat()) in deja or not c.get("organisme_id"):
+            continue
+        clics = clics_du_mois(cle_sb, c["organisme_id"], debut_mois, fin_mois)
+        detail, total, n_total, n_ecartes = [], 0.0, 0, 0
+        for l in ls:
+            garde, ecarte, jours = clics.get(l["departement"], [0, 0, []])
+            # ce qui a déjà été facturé pour ce département depuis le début de la formule : le plafond ne se dépasse jamais
+            paye = sum(float(d.get("montant", 0)) for f in anciennes if f["compte"] == cid
+                       for d in (f.get("detail") or []) if d.get("partenariat") == l["id"])
+            reste = max(0.0, l["prix"] - paye)
+            montant = round(min(garde * float(l["prix_clic"]), reste), 2)
+            detail.append({"partenariat": l["id"], "departement": l["departement"], "nom": noms.get(l["departement"], l["departement"]),
+                           "clics": garde, "ecartes": ecarte, "jours_ecartes": jours, "prix_clic": float(l["prix_clic"]),
+                           "montant": montant, "plafond": l["prix"], "deja": round(paye, 2)})
+            total += montant
+            n_total += garde
+            n_ecartes += ecarte
+        total = round(total, 2)
+        statut = "a_facturer" if total >= SEUIL_FACTURE else "offerte"
+        print(f"Clics de {debut_mois:%m/%Y} · {c.get('nom')} : {n_total} clics, {n_ecartes} écartés, {total:.2f} € ({statut})")
         if essai:
             continue
+        ligne = supabase("POST", "factures_clics", cle_sb, {"compte": cid, "mois": debut_mois.isoformat(), "clics": n_total,
+                                                            "clics_ecartes": n_ecartes, "montant": total, "detail": detail, "statut": statut})
+        if n_ecartes:
+            supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Pic de clics écarté · {c.get('nom')} · "
+                     + ", ".join(f"{d['departement']} : {d['ecartes']} ({', '.join(j[8:10] + '/' + j[5:7] for j in d['jours_ecartes'])})" for d in detail if d["ecartes"])
+                     + " · non facturés"})
+        if statut != "a_facturer":
+            continue
+        fid = ligne[0]["id"]
         try:
             client = stripe_post("customers", cle_stripe, {"name": c.get("nom") or "Organisme", "email": c.get("email_contact") or "",
                                                          "metadata[site]": "filrouganim-organisme", "metadata[compte]": cid})
             facture = stripe_post("invoices", cle_stripe, {"customer": client["id"], "collection_method": "send_invoice", "days_until_due": 30,
-                                                          "description": "Fil Roug'Anim : formule partenaire, un an, départements en exclusivité",
+                                                          "description": f"Fil Roug'Anim : clics de {debut_mois:%m/%Y} (formule partenaire, détail jour par jour dans votre espace)",
                                                           "metadata[site]": "filrouganim-organisme", "metadata[compte]": cid})
-            for l in ls:
-                stripe_post("invoiceitems", cle_stripe, {"customer": client["id"], "invoice": facture["id"], "currency": "eur",
-                                                         "amount": l["prix"] * 100,
-                                                         "description": f"Partenaire · {noms.get(l['departement'], l['departement'])} ({l['departement']}) · 12 mois"
-                                                                        + (" · tarif de lancement" if l["lancement"] else "")})
+            for d in detail:
+                if d["montant"] > 0:
+                    stripe_post("invoiceitems", cle_stripe, {"customer": client["id"], "invoice": facture["id"], "currency": "eur",
+                                                             "amount": round(d["montant"] * 100),
+                                                             "description": f"{d['nom']} ({d['departement']}) · {d['clics']} clics à {d['prix_clic']:.2f} €".replace(".", ",")
+                                                                            + (" · plafond atteint" if d["montant"] < d["clics"] * d["prix_clic"] else "")})
             facture = stripe_post(f"invoices/{facture['id']}/finalize", cle_stripe, {})
             try:
                 stripe_post(f"invoices/{facture['id']}/send", cle_stripe, {})
             except Exception as e:
                 print(f"  envoi de la facture par e-mail impossible ({e}) : le lien reste dans l'espace de l'organisme")
-            for l in ls:
-                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "facture", "facture_id": facture["id"], "facture_url": facture.get("hosted_invoice_url")})
+            supabase("PATCH", f"factures_clics?id=eq.{fid}", cle_sb, {"statut": "facture", "facture_id": facture["id"], "facture_url": facture.get("hosted_invoice_url")})
         except urllib.error.HTTPError as e:
-            raison = e.read().decode(errors="ignore")[:200]
-            print(f"  Stripe refuse la facture ({e.code}) : {raison}")
-            marque = f"[facture-{ls[0]['id']}]"
-            if not supabase("GET", f"evenements_admin?select=id&resume=like.*{urllib.parse.quote(marque)}*", cle_sb):
-                supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Facture à faire à la main · {c.get('nom')} · "
-                         + ", ".join(l["departement"] + " " + str(l["prix"]) + " €" for l in ls) + f" (Stripe : {e.code}) {marque}"})
-    # 2. les factures envoyées : payée -> active un an ; annulée ou impayée 45 jours -> la place se libère
-    vues = {}
-    for l in lignes:
-        if l["statut"] != "facture" or not l.get("facture_id"):
+            print(f"  Stripe refuse la facture ({e.code}) : {e.read().decode(errors='ignore')[:200]}")
+            supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Facture de clics à faire à la main · {c.get('nom')} · {total:.2f} € (Stripe : {e.code}) [clics-{fid}]"})
+    # 2. les factures envoyées : payée ; impayée 45 jours -> les départements sont suspendus
+    for f in supabase("GET", "factures_clics?select=id,compte,facture_id,cree_le&statut=eq.facture", cle_sb) or []:
+        if not f.get("facture_id"):
             continue
-        f = vues.get(l["facture_id"]) or stripe(f"invoices/{l['facture_id']}", cle_stripe)
-        vues[l["facture_id"]] = f
-        if f.get("status") == "paid":
-            fin = dt.date(auj.year + 1, auj.month, min(auj.day, 28)).isoformat()
-            print(f"Payé : {comptes.get(l['compte'], {}).get('nom')} · {l['departement']} jusqu'au {fin}")
+        s = stripe(f"invoices/{f['facture_id']}", cle_stripe)
+        if s.get("status") == "paid":
+            print(f"Facture de clics payée : {comptes.get(f['compte'], {}).get('nom')}")
             if not essai:
-                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "actif", "debut": auj.isoformat(), "fin": fin})
-                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"Partenaire payé · {comptes.get(l['compte'], {}).get('nom')} · {l['departement']} jusqu'au {fin[8:10]}/{fin[5:7]}/{fin[:4]}"})
-        elif f.get("status") in ("void", "uncollectible") or (dt.datetime.fromtimestamp(f.get("created", 0)).date() < auj - dt.timedelta(days=45) and f.get("status") != "paid"):
-            print(f"Facture non payée : {l['departement']} libéré")
+                supabase("PATCH", f"factures_clics?id=eq.{f['id']}", cle_sb, {"statut": "payee"})
+                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"Clics payés · {comptes.get(f['compte'], {}).get('nom')}"})
+        elif s.get("status") in ("void", "uncollectible"):
             if not essai:
-                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "annule"})
-    # 3. les partenariats arrivés à échéance
-    for l in lignes:
-        if l["statut"] == "actif" and l.get("fin") and l["fin"] < auj.isoformat() and not essai:
+                supabase("PATCH", f"factures_clics?id=eq.{f['id']}", cle_sb, {"statut": "annulee"})
+        elif dt.date.fromisoformat(f["cree_le"][:10]) < auj - dt.timedelta(days=45):
+            print(f"Facture impayée depuis 45 jours : {comptes.get(f['compte'], {}).get('nom')}, départements suspendus")
+            if not essai:
+                supabase("PATCH", f"partenariats?compte=eq.{f['compte']}&statut=eq.actif", cle_sb, {"statut": "annule", "fin": auj.isoformat()})
+    # 3. les partenariats arrivés à échéance (un an, renouvelable depuis l'espace)
+    for l in supabase("GET", f"partenariats?select=id&statut=eq.actif&fin=lt.{auj.isoformat()}", cle_sb) or []:
+        if not essai:
             supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "expire"})
 
 
