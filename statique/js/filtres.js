@@ -59,7 +59,7 @@
   }
   var listes = Array.prototype.map.call(document.querySelectorAll(".sessions[data-par-page]"), function (conteneur) {
     var bouton = conteneur.nextElementSibling && conteneur.nextElementSibling.querySelector(".voir-plus");
-    var liste = { el: conteneur, items: Array.prototype.map.call(conteneur.querySelectorAll(".session"), depuisCarte),
+    var liste = { el: conteneur, items: Array.prototype.map.call(conteneur.querySelectorAll(".session"), function (c, k) { var i = depuisCarte(c); i.rang = k; i.pz = c.dataset.pz === "1"; return i; }),
                   par: parseInt(conteneur.dataset.parPage, 10) || 10, bouton: bouton };
     liste.limite = liste.par;
     if (bouton) bouton.addEventListener("click", function () {
@@ -226,6 +226,9 @@
       i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
     });
+    // formule partenaire : dans un lieu choisi, les sessions d'un organisme partenaire de ce département passent en premier
+    liste.items.forEach(function (i, k) { if (i.rang == null) i.rang = k; });
+    liste.items.sort(function (a, b) { return ((dep && b.pz) ? 1 : 0) - ((dep && a.pz) ? 1 : 0) || a.rang - b.rang; });
     liste.limite = liste.par;
     var n = afficher(liste);
     var nEcoles = afficherEcoles(dip, type, dep);
@@ -450,8 +453,8 @@
   compte.textContent = "Chargement des sessions…";
   fetch(source).then(function (r) { return r.json(); }).then(function (donnees) {
     liste.items.forEach(function (i) { if (i.el) i.el.remove(); });
-    liste.items = donnees.map(function (x) {
-      return { x: x, el: null, ok: true, okSansLieu: true, d: {
+    liste.items = donnees.map(function (x, rang) {
+      return { x: x, el: null, ok: true, okSansLieu: true, rang: rang, pz: !!x.pz, d: {
         dep: x.d, ville: x.v, region: x.r, periode: x.p, mois: x.m, diplome: x.di, type: x.di + "-" + (x.sp || x.t),
         prix: x.px === null ? "" : x.px, formule: x.fo || "",
         texte: sansAccents([x.v, x.dn2, x.d, x.th || "", x.o, x.tn, x.dl, x.spn || "", x.spg || ""].join(" ")) } };

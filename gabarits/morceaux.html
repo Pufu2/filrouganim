@@ -333,7 +333,7 @@
 <article class="session{% if s.complet %} session-complete{% endif %}"
   data-dep="{{ s.departement }}" data-ville="{{ s.ville }}" data-region="{{ s.dep.region }}" data-periode="{{ s.periode.id if s.periode else 'autre' }}" data-mois="{{ s.mois }}" data-diplome="{{ s.diplome }}"
   data-type="{{ s.diplome }}-{{ s.specialite or s.type }}" data-formule="{{ s.formule or '' }}"
-  data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"
+  data-prix="{{ s.prix if s.prix is not none else '' }}" data-complet="{{ 'oui' if s.complet else 'non' }}"{% if s.org.partenaire and s.departement in (s.org.zones or []) %} data-pz="1"{% endif %}
   data-texte="{{ s.ville }} {{ s.dep.nom }} {{ s.departement }} {{ s.theme or '' }} {{ s.org.nom }} {{ s.type_nom }} {{ s.dipl.long }} {{ s.sp.nom if s.sp else '' }} {{ s.sp.groupe if s.sp else '' }}">
   <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
   <div class="s-corps">

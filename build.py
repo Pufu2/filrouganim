@@ -877,12 +877,28 @@ class Site:
                            "villes_n": len({(s["departement"], s["ville"]) for s in liste}),
                            "logo": f"logos/{logo.name}" if logo else None,
                            "initiales": ("".join(m[0] for m in mots[:3]) if len(mots) > 1 else o["nom"][:3]).upper()})
-        cartes.sort(key=lambda c: (-c["n"], c["nom"]))
+        # les organismes inscrits sur le site (fiche créée dans leur espace) : reliés à leur carte, ou une carte à eux
+        par_id = {c["id"]: c for c in cartes}
+        for x in self.lire_supabase("rpc/organismes_inscrits", "organismes inscrits") or []:
+            c = par_id.get(x.get("organisme_id"))
+            if c:
+                c["inscrit"] = True
+                if x.get("presentation"):
+                    c["presentation"] = x["presentation"]
+                continue
+            mots = [m for m in re.split(r"[\s'-]+", x["nom"]) if m and m[0].isupper()]
+            cartes.append({"id": None, "nom": x["nom"], "n": 0, "prix_min": None, "diplomes": [], "villes_n": 0, "logo": None, "en_ligne": False,
+                           "site": x.get("site"), "page_sessions": x.get("inscription"), "habilitation": x.get("habilitation"),
+                           "presentation": x.get("presentation") or "Organisme de formation inscrit sur Fil Roug'Anim.", "inscrit": True,
+                           "partenaire": bool(x.get("zones")), "zones": x.get("zones") or [],
+                           "initiales": ("".join(m[0] for m in mots[:3]) if len(mots) > 1 else x["nom"][:3]).upper()})
+        # d'abord les partenaires (ils paient : mis en avant), puis les autres par nombre de sessions
+        cartes.sort(key=lambda c: (not c.get("partenaire"), -c["n"], c["nom"]))
         autres = collections.Counter(s["org"]["nom"] for s in S if not s["organisme"] and s["diplome"] in ("BAFA", "BAFD", "BSB"))
         # pour l'administration (prospection des organismes) : ce que le site montre déjà de chacun
         self.organismes_admin = {"suivis": [{"id": c["id"], "nom": c["nom"], "habilitation": c.get("habilitation"), "site": c.get("site"), "n": c["n"],
                                              "villes": c["villes_n"], "diplomes": c["diplomes"], "prix_min": c["prix_min"],
-                                             "page": f"/se-former/sessions/organismes/{c['id']}/" if c.get("en_ligne") else None} for c in cartes],
+                                             "page": f"/se-former/sessions/organismes/{c['id']}/" if c.get("en_ligne") else None} for c in cartes if c["id"]],
                                  "autres": [{"nom": n, "n": k} for n, k in autres.most_common()]}
         self.ajouter("/se-former/sessions/organismes/", "organismes.html", titre="Organismes de formation BAFA, BAFD, BSB et PSC : la liste",
                      h1="Les organismes de formation",
@@ -2130,6 +2146,7 @@ class Site:
                 "fo": s.get("formule"),
                 "o": s["org"]["nom"], "oi": s["org"]["id"] if s["org"].get("en_ligne") else None, "ok": s["org_cle"],
                 "pa": bool(s["org"].get("partenaire")),
+                "pz": bool(s["org"].get("partenaire") and s["departement"] in [str(z) for z in (s["org"].get("zones") or [])]),
                 "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"],
                 "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",
