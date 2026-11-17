@@ -789,3 +789,12 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- actualites (écrites par l'admin, lues par les membres connectés quand elles sont publiées),
 -- admin_posts (posts publiés sur les réseaux), et l'admin peut créer ou supprimer des guides et conseils.
 -- Voir la migration v19_indexation_actualites_posts dans Supabase pour le détail.
+
+-- ------------------------------------------------------------------ version 20 (17/11/2026)
+-- Nouveau modèle. Organismes : stats_organismes (vues de leur page, clics vers leurs sessions et leur site,
+-- via compter_organisme(o, t), appelable par tous) et contacts_organismes (formulaire « Organismes partenaires »,
+-- noté dans evenements_admin type 'organisme'). Structures : la page et UNE offre en ligne gratuites dès la
+-- vérification (est_verifiee, règle « structures vérifiées visibles », compter) ; peut_publier_offre() refuse une
+-- 2e offre publiée sans abonnement. structures_abonnees() (étiquette « Partenaire ») et demandes_du_secteur().
+-- L'abonnement garde : les demandes de l'annuaire inversé, les profils complets, les centres, la boîte à outils.
+-- Voir les migrations v19b_droits_releve et v20_modele_gratuit_organismes dans Supabase.

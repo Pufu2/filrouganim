@@ -113,6 +113,7 @@
           <h2 class="ft-cat-t">Fil Roug'Anim</h2>
           <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
           <a href="{{ lien('/recruter/') }}">Structures : recruter et se faire connaître</a>
+          <a href="{{ lien('/organismes-partenaires/') }}">Organismes de formation : devenir partenaire</a>
           <a href="{{ lien('/contact/') }}">Contact</a>
           <a href="{{ lien('/classement-des-sessions/') }}">Classement des sessions</a>
           {% if site.comptes_ouverts %}<a href="{{ lien('/compte/') }}">Mon espace</a>{% endif %}
@@ -176,6 +177,7 @@ try { if (!localStorage.getItem("fra-provenance")) {
 <script type="application/json" id="villes-populaires">{{ stats.villes | tojson }}</script>
 <script src="{{ statique('js/villes.js') }}" defer></script>
 <script src="{{ statique('js/menu.js') }}" defer></script>
+{% if site.supabase and site.supabase.url %}<script src="{{ statique('js/clics.js') }}" defer data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></script>{% endif %}
 <script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>=e.offsetHeight);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
 </body>
 </html>

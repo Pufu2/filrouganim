@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Organismes de formation : ce que le site leur apporte, la formule partenaire, et un formulaire pour la demander. #}
+{% set a = page.audience or {} %}
+{% block tete_note %}<p class="tp-sur">Organismes de formation · BAFA, BAFD, BSB, PSC</p>{% endblock %}
+{% block h1 %}Vos sessions, là où les jeunes <em>choisissent</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Chaque mois, des jeunes comparent sur Fil Roug'Anim les dates et les prix des sessions BAFA, BAFD et PSC près de chez eux. Vos sessions y sont déjà, gratuitement. La formule partenaire les met en avant, et vous dit ce qu'elles vous rapportent.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="tp-recherche"><div class="cadre">
+  <ul class="pa-chiffres">
+    <li><b>{{ page.nb_sessions | milliers }}</b><span>sessions comparées</span></li>
+    <li><b>{{ page.nb_organismes }}</b><span>organismes présents</span></li>
+    {% if a.visiteurs_30j %}<li><b>{{ a.visiteurs_30j | milliers }}</b><span>visiteurs sur 30 jours</span></li>{% endif %}
+    {% if a.impressions_28j %}<li><b>{{ a.impressions_28j | milliers }}</b><span>apparitions dans Google sur 28 jours</span></li>{% endif %}
+  </ul>
+  <p class="pa-source">Les chiffres publics du site, mis à jour chaque jour : <a href="{{ lien('/chiffres/') }}">tous les chiffres</a>.</p>
+</div></div>
+
+<section class="bande bande-papier rc-infos" aria-labelledby="t-gratuit">
+  <div class="cadre">
+    <h2 id="t-gratuit" class="rc-titre-cartes">Ce qui reste <em>gratuit</em>, pour tous</h2>
+    <p class="pa-texte">Le comparateur est neutre : toutes les sessions relevées restent sur le site, avec le lien vers votre page d'inscription, sans rien payer. Aucune commission sur vos inscriptions.</p>
+
+    <h2 class="rc-titre-cartes rc-titre-etapes">La formule <em>partenaire</em></h2>
+    <ul class="rc-atouts">
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>Vos statistiques chaque mois</b><span>Combien de fois vos sessions et votre page ont été vues, combien de personnes sont allées sur votre site, ville par ville.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span><b>Vos sessions mises en avant</b><span>En tête des pages de vos régions, avec l'étiquette « Partenaire » : la mise en avant est toujours signalée aux visiteurs.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><b>Une page organisme soignée</b><span>Votre présentation, votre habilitation, toutes vos sessions et le lien direct vers vos inscriptions.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h18v10H3z"/><path d="M3 7l9 6 9-6"/></svg></span><b>Vos sessions toujours à jour</b><span>Une nouvelle session, une session complète : vous nous écrivez, c'est corrigé dans la journée.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="bande bande-papier" aria-labelledby="t-contact">
+  <div class="cadre">
+    <div class="pa-contact">
+      <div class="pa-contact-texte">
+        <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Sans engagement</p>
+        <h2 id="t-contact">Recevez d'abord <em>vos statistiques</em></h2>
+        <p>Laissez-nous vos coordonnées : nous vous envoyons ce que vos sessions ont reçu sur Fil Roug'Anim ces dernières semaines (vues et clics vers votre site), puis le détail et le tarif de la formule partenaire. Vous décidez ensuite.</p>
+      </div>
+      <form class="pa-form" id="pa-form" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
+        <label>Organisme<input name="organisme" required maxlength="160" autocomplete="organization"></label>
+        <label>Votre nom <small>(facultatif)</small><input name="nom" maxlength="120" autocomplete="name"></label>
+        <label>E-mail<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+        <label>Téléphone <small>(facultatif)</small><input name="telephone" maxlength="40" autocomplete="tel"></label>
+        <label class="pa-large">Un message ? <small>(facultatif)</small><textarea name="message" rows="3" maxlength="2000"></textarea></label>
+        <button type="submit" class="tp-appel-bouton">Recevoir mes statistiques <span aria-hidden="true">→</span></button>
+        <p class="pa-petit">Vos coordonnées servent seulement à vous répondre. Voir la <a href="{{ lien('/confidentialite/') }}">politique de confidentialité</a>.</p>
+        <p class="pa-retour" id="pa-retour" role="status" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var f = document.getElementById("pa-form"), r = document.getElementById("pa-retour");
+  if (!f) return;
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var b = f.querySelector("button"), d = {};
+    ["organisme", "nom", "email", "telephone", "message"].forEach(function (k) { var v = f[k].value.trim(); if (v) d[k] = v; });
+    b.disabled = true; r.hidden = false; r.textContent = "Envoi…";
+    fetch(f.dataset.url + "/rest/v1/contacts_organismes", { method: "POST",
+      headers: { "Content-Type": "application/json", apikey: f.dataset.cle, Prefer: "return=minimal" }, body: JSON.stringify(d) })
+      .then(function (x) { if (!x.ok) throw new Error(x.status); f.reset(); r.textContent = "Merci ! Nous vous écrivons très vite avec vos statistiques."; r.className = "pa-retour pa-ok"; })
+      .catch(function () { r.textContent = "L'envoi n'a pas marché. Réessayez, ou écrivez-nous à {{ site.email }}."; r.className = "pa-retour pa-ko"; })
+      .then(function () { b.disabled = false; });
+  });
+})();
+</script>
+{% endblock %}

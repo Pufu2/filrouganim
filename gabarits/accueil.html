@@ -52,7 +52,7 @@
       <span class="note-main">recruter et se faire connaître</span>
       <span class="pa-t">Structures</span>
       <span class="pa-x">Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils de votre secteur.</span>
-      <span class="pa-ch">{% if restantes > 0 %}<b>{{ site.abonnement.prix_fondateur }}</b> par an · <b>{{ restantes }}</b> place{{ 's' if restantes > 1 }} fondatrice{{ 's' if restantes > 1 }}{% else %}<b>{{ site.abonnement.prix }}</b> par an, sans commission{% endif %}</span>
+      <span class="pa-ch"><b>Gratuit</b> : votre page et une offre · abonnement dès <b>{{ site.abonnement.prix_fondateur if restantes > 0 else site.abonnement.prix }}</b> par an</span>
     </span>
     <span class="pa-pied">Voir l'espace structures <span aria-hidden="true">→</span></span>
   </a>
@@ -75,7 +75,7 @@
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/></svg></span><b>Là où l'on cherche</b><span>Vos offres sur les pages des sessions BAFA de votre département.</span></li>
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg></span><b>Les profils des candidats</b><span>Stagiaires BAFA, animateurs, directeurs : filtrez, lisez leur CV, écrivez-leur.</span></li>
     </ul>
-    <p class="ac-st-prix">{% if restantes > 0 %}<b>Offre fondateurs</b> : {{ site.abonnement.prix_fondateur }} par an, à vie, pour les {{ site.fondateurs.places }} premières structures ({{ restantes }} place{{ 's' if restantes > 1 }}) · {% else %}<b>{{ site.abonnement.prix }}</b> par an · {% endif %}sans commission · arrêt à tout moment</p>
+    <p class="ac-st-prix"><b>Gratuit</b> : votre page et une offre en ligne · <b>Abonnement</b> (demandes des animateurs, profils, offres illimitées) : {% if restantes > 0 %}{{ site.abonnement.prix_fondateur }} par an, à vie, pour les {{ site.fondateurs.places }} premières structures ({{ restantes }} place{{ 's' if restantes > 1 }}){% else %}{{ site.abonnement.prix }} par an{% endif %} · sans commission</p>
   </div>
 </section>
 {% endblock %}

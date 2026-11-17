@@ -302,7 +302,8 @@ class Site:
         self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
-                                markdown=convertir_markdown, paragraphes=paragraphes)
+                                markdown=convertir_markdown, paragraphes=paragraphes,
+                                milliers=lambda n: f"{int(n or 0):,}".replace(",", "\u202f"))
         self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
                                 PUBLICS=PUBLICS, ACCUEILS_ST=list(ACCUEILS.items()), STATUTS=STATUTS, familles_structure=familles_structure, nature_structure=nature_structure, ages_structure=ages_structure, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
@@ -347,6 +348,8 @@ class Site:
             if (s["fin"] or s["debut"]) < self.aujourdhui:
                 continue  # session passée : elle disparaît du site
             s["org"] = self.organismes.get(s["organisme"]) or {"id": None, "nom": s["organisme_nom"], "site": s["url"], "en_ligne": False}
+            # la clé de l'organisme pour compter les clics vers lui (son identifiant, ou son nom simplifié)
+            s["org_cle"] = (s["org"]["id"] or ("x-" + slug(s["org"]["nom"] or "inconnu")))[:80]
             s["sp"] = self.specialites.get(s["diplome"], {}).get(s.get("specialite"))
             s["source_nom"] = SOURCES.get(s.get("source"))
             s["ville"] = ville_propre(s["ville"])
@@ -479,7 +482,10 @@ class Site:
         lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max{filtre}", "accueils des structures")
                   or self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
                   or self.lire_supabase(f"structures?select={champs}{filtre}", "pages des structures"))
-        return [dict(l, exemple=False) for l in lignes if l.get("departement") in self.departements]
+        # les structures abonnées : l'étiquette « Partenaire » et la tête de l'annuaire
+        abonnees = {x if isinstance(x, str) else (x.get("structures_abonnees") or x.get("id")) for x in (self.lire_supabase("rpc/structures_abonnees", "structures abonnées") or [])}
+        sortie = [dict(l, exemple=False, abonnee=l.get("id") in abonnees) for l in lignes if l.get("departement") in self.departements]
+        return sorted(sortie, key=lambda l: not l["abonnee"])
 
     def schema_offre(self, o):
         """Données structurées JobPosting (Google pour l'emploi)."""
@@ -834,6 +840,11 @@ class Site:
                      h1="Les organismes de formation",
                      description="Les organismes de formation au BAFA, au BAFD, au BSB et au PSC présents sur le site : leurs prochaines sessions, leurs diplômes, leurs prix et le lien vers leur site.",
                      organismes=cartes, autres=autres.most_common(), fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/")])
+        self.ajouter("/organismes-partenaires/", "partenaires.html", titre="Organismes de formation BAFA : la formule partenaire de Fil Roug'Anim",
+                     h1="Vos sessions, là où les jeunes choisissent",
+                     description="Organismes de formation BAFA, BAFD, BSB et PSC : vos sessions sont déjà comparées gratuitement sur Fil Roug'Anim. Recevez vos statistiques (vues, clics vers votre site) et découvrez la formule partenaire.",
+                     audience=self.audience(), nb_sessions=len(S), nb_organismes=len(cartes) + len(autres),
+                     fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/"), ("Partenaires", "/organismes-partenaires/")])
         for o in en_ligne:
             liste = [s for s in S if s["organisme"] == o["id"]]
             self.ajouter(f"/se-former/sessions/organismes/{o['id']}/", "liste.html",
@@ -1933,6 +1944,11 @@ class Site:
             extra["bref"], extra["faq_page"] = self.synthese(extra["sessions"], *extra.pop("sujet"))
             if extra["faq_page"]:
                 extra["schema_faq"] = self.schema_faq(extra["faq_page"])
+        if gabarit == "liste.html" and extra.get("sessions") and not extra.get("organisme"):
+            # formule partenaire : jusqu'à 3 sessions d'organismes partenaires en tête (toujours avec l'étiquette « Partenaire »)
+            avant = [x for x in extra["sessions"] if x["org"].get("partenaire") and not x.get("complet")][:3]
+            if avant:
+                extra["sessions"] = avant + [x for x in extra["sessions"] if x not in avant]
         if gabarit == "liste.html" and len(extra.get("sessions") or []) > LIMITE_LISTE:
             # une liste très longue : les plus proches ici, toutes les autres dans la recherche avec filtres
             extra["sessions_total"] = len(extra["sessions"])
@@ -2035,7 +2051,8 @@ class Site:
                 "p": s["periode"]["id"] if s["periode"] else "autre",
                 "f": FORMULES[s["formule"]].lower() if s.get("formule") else None,
                 "fo": s.get("formule"),
-                "o": s["org"]["nom"], "oi": s["org"]["id"] if s["org"].get("en_ligne") else None,
+                "o": s["org"]["nom"], "oi": s["org"]["id"] if s["org"].get("en_ligne") else None, "ok": s["org_cle"],
+                "pa": bool(s["org"].get("partenaire")),
                 "px": s["prix"], "c": bool(s["complet"]), "n": notes, "vf": verif, "u": s["url"],
                 "sp": s.get("specialite"), "spn": s["sp"]["nom"] if s["sp"] else None, "spg": s["sp"]["groupe"] if s["sp"] else None,
                 "app": s.get("formule") == "apprentissage", "lba": s.get("source") == "catalogue-apprentissage",

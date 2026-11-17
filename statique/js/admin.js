@@ -136,7 +136,7 @@
       ["Avec CV", compte(p, function (x) { return x.cv_nom; })], ["Ont postulé", Object.keys(ontPostule).length], ["Ont envoyé une demande", Object.keys(ontDemande).length]]);
     var avecOffre = {}; o.filter(enLigne).forEach(function (x) { avecOffre[x.structure_id] = 1; });
     entonnoir(g3, "Structures", [["Inscrites", s.length], ["Abonnement payé", payees.length], ["Vérifiées", verif.length],
-      ["Page publique", compte(s, function (x) { return x.verifiee && paye(x) && x.page_publique && x.slug; })], ["Avec une offre en ligne", Object.keys(avecOffre).length]]);
+      ["Page publique", compte(s, function (x) { return x.verifiee && x.page_publique && x.slug; })], ["Avec une offre en ligne", Object.keys(avecOffre).length]]);
 
     var s4 = section(c, "Les animateurs");
     var g4 = grille(s4);
@@ -184,7 +184,7 @@
   function aFaire() {
     var c = $("ad-afaire"); c.textContent = "";
     c.appendChild(el("h2", null, "À traiter"));
-    var aVerifier = D.structures.filter(function (x) { return paye(x) && !x.verifiee; });
+    var aVerifier = D.structures.filter(function (x) { return !x.verifiee; });
     var nonPayees = D.structures.filter(function (x) { return !paye(x); });
     var attente = D.demandes.filter(function (x) { return !(x.destinataires || []).length; });
     var expirent = D.offres.filter(function (x) { return enLigne(x) && x.expire_le <= jours(-7); });
@@ -196,7 +196,7 @@
       if (!items.length) { s.appendChild(el("p", "ad-rien", "Rien à faire ici.")); return; }
       items.forEach(function (x) { s.appendChild(ligne(x)); });
     }
-    liste("Structures à vérifier", "Elles ont payé : vérifiez qu'elles existent (SIRET, site, déclaration d'accueil), puis mettez-les en ligne.", aVerifier, function (x) {
+    liste("Structures à vérifier", "Vérifiez qu'elles existent (SIRET, site, déclaration d'accueil), puis mettez-les en ligne : leur page et une offre paraissent gratuitement.", aVerifier, function (x) {
       return ligneStructure(x, true);
     });
     liste("Demandes sans structure", "Aucune structure abonnée dans leur zone : elles partiront dès qu'une s'inscrit. Une bonne liste de structures à démarcher.", attente, ligneDemande);
@@ -227,13 +227,13 @@
     l.appendChild(t);
     var nbO = compte(D.offres, function (o) { return o.structure_id === x.id && enLigne(o); });
     l.appendChild(etapesMiseEnLigne(x));
-    pastilles(l, [[paye(x) ? "payée jusqu'au " + E.dateFr(x.abonnement_fin) : "non payée", paye(x) ? "ok" : "non"], [x.verifiee ? "vérifiée" : "à vérifier", x.verifiee ? "ok" : "non"],
+    pastilles(l, [[paye(x) ? "abonnée jusqu'au " + E.dateFr(x.abonnement_fin) : "formule gratuite", paye(x) ? "ok" : "neutre"], [x.verifiee ? "vérifiée" : "à vérifier", x.verifiee ? "ok" : "non"],
       x.fondatrice ? ["fondatrice", "neutre"] : null, [nbO + " offre" + (nbO > 1 ? "s" : "") + " en ligne", "neutre"]]);
     boutons(l, [
       [x.verifiee ? "Retirer la vérification" : "Vérifier", function () { modifier("structures", x.id, { verifiee: !x.verifiee }); }, null, x.verifiee ? "" : "ad-fort"],
       ["Ouvrir son espace", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); }, null, "ad-fort"],
       ["Modifier les champs", function () { editeur("structures", x); }],
-      x.slug && x.page_publique && x.verifiee && paye(x) ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"] : null,
+      x.slug && x.page_publique && x.verifiee ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"] : null,
       verifier ? null : ["Supprimer", function () { supprimer("structures", x.id, x.nom); }, null, "bouton-danger"]
     ]);
     return l;
@@ -247,14 +247,14 @@
     var etapes = [
       ["Compte créé", true, compteX ? "le " + E.dateFr(iso(compteX.cree_le)) : "", null],
       ["Fiche remplie", rempli >= 70, rempli + " %", ["Ouvrir sa fiche", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id) + "&onglet=page"; }]],
-      ["Abonnement", paye(x), paye(x) ? "jusqu'au " + E.dateFr(x.abonnement_fin) : "non réglé",
-        paye(x) ? ["Retirer", function () { if (confirm("Retirer l'abonnement de « " + x.nom + " » ?")) modifier("structures", x.id, { abonnement_fin: null }); }]
-                : ["Marquer payé 1 an", function () { if (confirm("Marquer « " + x.nom + " » comme payée jusqu'au " + E.dateFr(dansUnAn.toISOString().slice(0, 10)) + " (paiement sur facture, geste…) ?")) modifier("structures", x.id, { abonnement_fin: dansUnAn.toISOString().slice(0, 10) }); }]],
       ["Vérifiée", !!x.verifiee, x.verifiee ? "oui" : x.identifiant ? "SIRET/RNA : " + x.identifiant : "pas d'identifiant",
         [x.verifiee ? "Retirer" : "Vérifier", function () { modifier("structures", x.id, { verifiee: !x.verifiee }); }]],
-      ["En ligne", !!(x.verifiee && paye(x) && x.page_publique && x.slug), x.verifiee && paye(x) ? (x.page_publique && x.slug ? "page publique" : "page cachée") : "pas encore",
-        x.verifiee && paye(x) && x.slug && x.page_publique ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"]
-          : x.slug ? [x.page_publique ? "Cacher la page" : "Rendre la page publique", function () { modifier("structures", x.id, { page_publique: !x.page_publique }); }] : null]
+      ["En ligne (gratuit)", !!(x.verifiee && x.page_publique && x.slug), x.verifiee ? (x.page_publique && x.slug ? "page + 1 offre" : "page cachée") : "après la vérification",
+        x.verifiee && x.slug && x.page_publique ? ["Voir la page", null, "/trouver-un-poste/structures/" + x.slug + "/"]
+          : x.slug ? [x.page_publique ? "Cacher la page" : "Rendre la page publique", function () { modifier("structures", x.id, { page_publique: !x.page_publique }); }] : null],
+      ["Abonnée", paye(x), paye(x) ? "jusqu'au " + E.dateFr(x.abonnement_fin) : "formule gratuite",
+        paye(x) ? ["Retirer", function () { if (confirm("Retirer l'abonnement de « " + x.nom + " » ?")) modifier("structures", x.id, { abonnement_fin: null }); }]
+                : ["Marquer payé 1 an", function () { if (confirm("Marquer « " + x.nom + " » comme payée jusqu'au " + E.dateFr(dansUnAn.toISOString().slice(0, 10)) + " (paiement sur facture, geste…) ?")) modifier("structures", x.id, { abonnement_fin: dansUnAn.toISOString().slice(0, 10) }); }]]
     ];
     var premiere = etapes.findIndex(function (e) { return !e[1]; });
     var ol = el("ol", "ad-etapes");
@@ -353,7 +353,7 @@
   function tout() { return true; }
   function listes() {
     liste("ad-structures", "Structures", "Vérifier, modifier ou supprimer une structure. Une modification paraît sur le site à la prochaine mise à jour (toutes les heures).", D.structures, function (x) { return ligneStructure(x, false); },
-      [["toutes", "Toutes", tout], ["averifier", "À vérifier", function (x) { return paye(x) && !x.verifiee; }], ["enligne", "En ligne", function (x) { return paye(x) && x.verifiee; }], ["nonpayees", "Non payées", function (x) { return !paye(x); }], ["fondatrices", "Fondatrices", function (x) { return x.fondatrice; }]],
+      [["toutes", "Toutes", tout], ["averifier", "À vérifier", function (x) { return !x.verifiee; }], ["enligne", "En ligne", function (x) { return x.verifiee; }], ["nonpayees", "Non payées", function (x) { return !paye(x); }], ["fondatrices", "Fondatrices", function (x) { return x.fondatrice; }]],
       function (x) { return [x.nom, x.ville, x.departement, x.email_contact, x.slug].join(" "); });
     liste("ad-animateurs", "Animateurs", null, D.profils, ligneProfil,
       [["tous", "Tous", tout], ["visibles", "Visibles", function (x) { return x.publie; }], ["caches", "Cachés", function (x) { return !x.publie; }], ["cv", "Avec CV", function (x) { return x.cv_nom; }], ["mineurs", "Mineurs", function (x) { return x.annee_naissance && auj.getFullYear() - x.annee_naissance < 18; }]],

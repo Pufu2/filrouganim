@@ -13,13 +13,19 @@ L'abonnement est vendu par {{ site.editeur.nom }}, {{ site.editeur.statut }}, {{
 
 Ces conditions s'appliquent aux structures (accueils de loisirs, organisateurs de séjours, associations, collectivités, entreprises) qui s'abonnent sur {{ site.url }}. Les animateurs et les directeurs ne paient jamais rien.
 
+## Ce qui est gratuit
+
+Une fois vérifiée, toute structure a gratuitement, sans limite de durée : sa page sur Fil Roug'Anim (présentation, projet, publics, activités, photos), **une offre en ligne à la fois** et la réception des candidatures à cette offre.
+
 ## Ce que comprend l'abonnement
 
-Pour chaque centre payé, pendant toute la durée de l'abonnement :
+Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce qui est gratuit :
 
-- la page de la structure (ou du centre) sur Fil Roug'Anim : présentation, projet, publics, activités, photos, offres ;
 - la publication d'offres d'emploi et de stages, sans limite de nombre, affichées aussi sur les pages des sessions BAFA du département ;
-- l'accès aux profils des candidats qui les rendent visibles, avec leur CV s'ils l'ont ajouté, et la réception des candidatures.
+- la réception des demandes des animateurs de son secteur (« Décrivez ce que vous cherchez ») ;
+- l'accès aux profils des candidats qui les rendent visibles, avec leur CV s'ils l'ont ajouté ;
+- l'étiquette « Partenaire » sur sa page, et sa place en tête de l'annuaire des structures ;
+- la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus.
 
 Fil Roug'Anim ne prend aucune commission sur les recrutements et n'intervient pas dans le contrat entre la structure et le candidat.
 
@@ -33,7 +39,7 @@ Le prix affiché au moment de la commande est celui qui s'applique pour l'année
 
 ## Commande et paiement
 
-La structure crée son compte, remplit sa fiche, puis règle l'abonnement :
+La structure crée son compte et remplit sa fiche, gratuitement. Si elle le souhaite, elle règle ensuite l'abonnement :
 
 - **par carte bancaire**, sur la page de paiement sécurisée de Stripe (Fil Roug'Anim ne voit jamais les numéros de carte) ;
 - **sur facture**, pour les collectivités et les associations qui le préfèrent : sur demande à {{ site.email }}, nous envoyons une facture payable par virement, mandat administratif ou Chorus Pro, sous 30 jours.
@@ -42,7 +48,7 @@ Une facture est émise pour chaque paiement et reste disponible dans l'espace ab
 
 ## Mise en ligne et vérification
 
-Chaque structure est vérifiée à la main (SIRET, numéro RNA ou numéro de déclaration de l'accueil), en général sous 2 jours ouvrés après le paiement. La page, les offres et l'accès aux profils sont ouverts une fois la structure vérifiée. Si la structure ne peut pas être vérifiée, elle est **remboursée en totalité**.
+Chaque structure est vérifiée à la main (SIRET, numéro RNA ou numéro de déclaration de l'accueil), en général sous 2 jours ouvrés après l'enregistrement de sa fiche. La page, les offres et, avec l'abonnement, l'accès aux profils sont ouverts une fois la structure vérifiée. Si une structure abonnée ne peut pas être vérifiée, elle est **remboursée en totalité**.
 
 ## Durée, renouvellement et arrêt
 

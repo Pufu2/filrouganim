@@ -34,7 +34,7 @@
     <div class="fp-identite">
       {{ avatar() }}
       <div>
-        <h1>{{ st.nom }}</h1>
+        <h1>{{ st.nom }}</h1>{% if st.abonnee %}<p class="fp-partenaire"><span class="s-partenaire">Partenaire</span> Structure partenaire de Fil Roug'Anim</p>{% endif %}
         <p class="fp-sous">{{ type_nom }} à {{ st.ville }}{% if st.parent %} · un centre de <a href="{{ lien(st.parent.url) }}">{{ st.parent.nom }}</a>{% endif %}</p>
         <ul class="fp-badges">
           <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>

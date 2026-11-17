@@ -7,7 +7,7 @@
   <a href="{{ url }}">
     <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ nature_structure(st) }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% endif %}</span>
     <span class="ac-corps">
-      <b class="ac-nom">{{ st.nom }}</b>
+      <b class="ac-nom">{{ st.nom }}{% if st.abonnee %} <span class="s-partenaire">Partenaire</span>{% endif %}</b>
       <span class="ac-lieu">{{ st.ville }} · {{ departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first }}</span>
       <span class="ac-details">{% if ages_structure(st) %}{{ ages_structure(st) | capitalize }}{% for p in st.publics or [] if p in ["handicap", "familles"] %} · {{ PUBLICS.get(p, p) }}{% endfor %}{% elif st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
     </span>

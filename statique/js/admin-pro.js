@@ -115,10 +115,10 @@
   function aTraiter() {
     var l = [];
     var dem = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
-    var verif = compte(D.structures, function (s) { return paye(s) && !s.verifiee; });
+    var verif = compte(D.structures, function (s) { return !s.verifiee; });
     var cand = compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); });
     if (dem) l.push([dem, dem > 1 ? "demandes d'animateurs à traiter" : "demande d'animateur à traiter", "qg"]);
-    if (verif) l.push([verif, verif > 1 ? "structures payées à vérifier" : "structure payée à vérifier", "afaire"]);
+    if (verif) l.push([verif, verif > 1 ? "structures à vérifier" : "structure à vérifier", "afaire"]);
     if (cand) l.push([cand, cand > 1 ? "candidatures sans réponse depuis 3 jours" : "candidature sans réponse depuis 3 jours", "afaire"]);
     if (S && S.emails && S.emails.en_attente && S.emails.plus_ancien && (Date.now() - new Date(S.emails.plus_ancien)) > 3 * 3600e3) l.push([S.emails.en_attente, "e-mails d'alerte pas encore partis", "sante"]);
     if (S && S.offres_expirees_publiees) l.push([S.offres_expirees_publiees, "offres expirées encore publiées", "offres"]);
@@ -298,7 +298,7 @@
     var corps = el("div", "ap-qg"); c.appendChild(corps);
     // à gauche : les boîtes
     var boites = el("div", "ap-qg-boites"); corps.appendChild(boites);
-    [["Demandes d'animateurs", "Envoyées aux structures", nb.a_traiter, null, "avion"], ["Structures à vérifier", "Payées, pas encore en ligne", compte(D.structures, function (s) { return paye(s) && !s.verifiee; }), "afaire", "maison"],
+    [["Demandes d'animateurs", "Envoyées aux structures", nb.a_traiter, null, "avion"], ["Structures à vérifier", "Fiches pas encore en ligne", compte(D.structures, function (s) { return !s.verifiee; }), "afaire", "maison"],
      ["Candidatures", "Sans réponse depuis 3 jours", compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); }), "afaire", "offre"],
      ["Comptes sans fiche", "Inscrits, rien rempli", compte(types(), function (t) { return t.type === "aucun"; }), "comptes", "personne"]].forEach(function (x, i) {
       var b = x[3] ? vers(x[3]) : el("button"); b.type = "button"; b.className = "ap-boite" + (i === 0 ? " on" : "");
@@ -589,7 +589,18 @@
      Partie 2 : membres, annuaires (structures, animateurs, organismes), visibilité,
      provenance et prospection
      ==================================================================================== */
-  var G = null, ORG = null, PROS = null;   // Google (chiffres/google.json), organismes (compte/organismes.json), prospects
+  var G = null, ORG = null, PROS = null, SORG = {}, CORG = [];
+  function slugOrg(t) { return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+  function statsOrg(cle) { return SORG[cle] || { vue_page: 0, clic_session: 0, clic_site: 0 }; }
+  function clicsOrg(cle) { var x = statsOrg(cle); return x.clic_session + x.clic_site; }
+  function rapportOrg(nom, cle, email) {
+    var x = statsOrg(cle);
+    var corps = "Bonjour,\n\nVoici ce que vos sessions ont reçu sur Fil Roug'Anim (filrouganim.fr) ces 30 derniers jours :\n\n"
+      + "- " + x.clic_session + " clics vers vos pages de sessions\n- " + x.clic_site + " clics vers votre site\n- " + x.vue_page + " vues de votre page organisme\n\n"
+      + "Ces visiteurs sont des jeunes qui comparent les sessions BAFA, BAFD et PSC près de chez eux. La formule partenaire met vos sessions en avant dans vos régions et vous envoie ces chiffres chaque mois.\n\n"
+      + "Le détail : https://filrouganim.fr/organismes-partenaires/\n\nBonne journée,\nRafael · Fil Roug'Anim";
+    return "mailto:" + (email || "") + "?subject=" + encodeURIComponent(nom + " sur Fil Roug'Anim : vos chiffres du mois") + "&body=" + encodeURIComponent(corps);
+  }   // Google (chiffres/google.json), organismes (compte/organismes.json), prospects
   function tableau(c, entetes, lignes) {
     var t = el("table", "ap-table"), th = el("thead"), tr = el("tr");
     entetes.forEach(function (h) { tr.appendChild(el("th", null, h)); }); th.appendChild(tr); t.appendChild(th);
@@ -695,31 +706,28 @@
   function enteteStructures() {
     var c = $("ad-structures"); if (!c) return;
     var w = el("div", "ap-entete-annuaire"), st = D.structures;
-    var enLigne = st.filter(function (s) { return paye(s) && s.verifiee; }), aVerif = st.filter(function (s) { return paye(s) && !s.verifiee; }), sans = st.filter(function (s) { return !paye(s); });
+    var enLigne = st.filter(function (s) { return s.verifiee; }), aVerif = st.filter(function (s) { return !s.verifiee; }), abonnees = enLigne.filter(paye);
+    enLigne.sort(function (a, b) { return paye(b) - paye(a); });
     hero(w, "Annuaire des structures", "Les structures ", "de l'annuaire",
-      "Une structure paie, vous la vérifiez, elle est en ligne. Ici : celles qui sont en ligne, celles qui attendent votre vérification, et celles qui n'ont pas encore payé.", [bouton("← Vue d'ensemble", "accueil")]);
-    chiffres(w, [[String(enLigne.length), "en ligne"], [compte(st, function (s) { return s.fondatrice && paye(s); }) + "/10", "fondatrices", "rouge"], [String(aVerif.length), "à vérifier"],
-                 [String(sans.length), "sans abonnement"], [String(compte(enLigne, function (s) { return !s.page_publique; })), "pages cachées"]]);
-    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("En ligne dans l'annuaire · " + enLigne.length)); w.appendChild(s1);
+      "Une structure remplit sa fiche, vous la vérifiez, elle est en ligne gratuitement (sa page et une offre). L'abonnement ajoute les demandes, les profils et les offres illimitées. Ici : celles à vérifier, celles en ligne, et les abonnées.", [bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(w, [[String(aVerif.length), "à vérifier", aVerif.length ? "rouge" : null], [String(enLigne.length), "en ligne"], [String(abonnees.length), "abonnées"],
+                 [compte(st, function (s) { return s.fondatrice && paye(s); }) + "/10", "fondatrices"], [String(compte(enLigne, function (s) { return !s.page_publique; })), "pages cachées"]]);
+    var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-surveiller")); s2.appendChild(document.createTextNode("À vérifier · " + aVerif.length)); w.appendChild(s2);
+    w.appendChild(el("p", "ap-petit", "Vérifiez le SIRET, le RNA ou la déclaration d'accueil, puis mettez en ligne : la page et l'offre paraissent à la publication suivante. Une fiche vide ou douteuse : écrivez à la structure avant."));
+    tableau(w, ["Structure", "Ville", "Identifiant", "Inscrite", ""], aVerif.map(function (s) {
+      return [cellule(s.nom || "Sans nom", s.email_contact), cellule(s.ville, s.departement), cellule(s.identifiant || "non donné", s.site || ""), cellule(depuis(s.cree_le), paye(s) ? "abonnée jusqu'au " + E.dateFr(s.abonnement_fin) : "formule gratuite"),
+        actions([["✓ Vérifier", function () { A.modifier("structures", s.id, { verifiee: true }); }, null, "ap-fort"], ["Espace", function () { ouvrirEspace("structure", s.id); }],
+                 s.email_contact ? ["✉ Écrire", null, "mailto:" + s.email_contact + "?subject=" + encodeURIComponent("Votre page sur Fil Roug'Anim")] : null,
+                 ["Supprimer", function () { A.supprimer("structures", s.id, s.nom); }, null, "ap-danger"]])];
+    }));
+    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("En ligne dans l'annuaire · " + enLigne.length + " dont " + abonnees.length + " abonnée" + (abonnees.length > 1 ? "s" : ""))); w.appendChild(s1);
     tableau(w, ["Structure", "Ville", "Accueils · âges", "Stats 30 jours", ""], enLigne.map(function (s) {
       var v = vues30(s.id);
       return [cellule((s.fondatrice ? "★ " : "") + s.nom, s.email_contact), cellule(s.ville, s.departement ? nomDep(s.departement) : ""),
         cellule((s.accueils || []).map(function (x) { return lib("accueils_st", x); }).join(", ") || lib("types", s.type), s.age_min != null ? s.age_min + " à " + s.age_max + " ans" : ""),
-        cellule("👁 " + v[0] + " · ↗ " + v[1], "jusqu'au " + E.dateFr(s.abonnement_fin)),
+        cellule("👁 " + v[0] + " · ↗ " + v[1], paye(s) ? "abonnée jusqu'au " + E.dateFr(s.abonnement_fin) : "formule gratuite"),
         actions([["Espace", function () { ouvrirEspace("structure", s.id); }], s.slug && s.page_publique ? ["Page", null, "/trouver-un-poste/structures/" + s.slug + "/"] : null,
                  [s.page_publique ? "Masquer" : "Afficher", function () { A.modifier("structures", s.id, { page_publique: !s.page_publique }); }]])];
-    }));
-    var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-surveiller")); s2.appendChild(document.createTextNode("Payées, à vérifier · " + aVerif.length)); w.appendChild(s2);
-    w.appendChild(el("p", "ap-petit", "Vérifiez le SIRET, le RNA ou la déclaration d'accueil, puis mettez en ligne : la page et les offres paraissent à la publication suivante."));
-    tableau(w, ["Structure", "Ville", "Identifiant", "Payée", ""], aVerif.map(function (s) {
-      return [cellule(s.nom, s.email_contact), cellule(s.ville, s.departement), cellule(s.identifiant || "non donné", s.site || ""), cellule("jusqu'au " + E.dateFr(s.abonnement_fin), depuis(s.cree_le)),
-        actions([["✓ Vérifier", function () { A.modifier("structures", s.id, { verifiee: true }); }, null, "ap-fort"], ["Espace", function () { ouvrirEspace("structure", s.id); }]])];
-    }));
-    var s3 = el("p", "ap-titre-s"); s3.appendChild(el("i", "ap-dot ap-dot-neutre")); s3.appendChild(document.createTextNode("Fiches sans abonnement · " + sans.length)); w.appendChild(s3);
-    tableau(w, ["Structure", "Ville", "E-mail", "Inscrite", ""], sans.map(function (s) {
-      return [cellule(s.nom || "Sans nom"), cellule(s.ville, s.departement), cellule(s.email_contact), cellule(depuis(s.cree_le), E.dateFr(iso(s.cree_le))),
-        actions([s.email_contact ? ["✉ Écrire", null, "mailto:" + s.email_contact + "?subject=" + encodeURIComponent("Votre page sur Fil Roug'Anim")] : null, ["Espace", function () { ouvrirEspace("structure", s.id); }],
-                 ["Supprimer", function () { A.supprimer("structures", s.id, s.nom); }, null, "ap-danger"]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Toutes les fiches, étape par étape"));
     c.insertBefore(w, c.firstChild);
@@ -767,19 +775,33 @@
     var clients = compte(PROS || [], function (p) { return p.type === "organisme" && p.statut === "client"; });
     hero(c, "Organismes de formation", "Les organismes, ", "vos futurs clients",
       "Les organismes du BAFA, du BAFD, du BSB et du PSC dont le site compare les sessions. Le projet : une formule payante pour eux (mise en avant, page soignée, statistiques). Suivez ici qui vous avez contacté.", [bouton("Prospection", "prospection", true, "avion"), bouton("← Vue d'ensemble", "accueil")]);
-    chiffres(c, [[String(o.suivis.length), "organismes suivis"], [fr(sessions), "sessions comparées"], [String(o.autres.length), "autres repérés"],
+    var totalClics = Object.keys(SORG).reduce(function (a, k) { return a + clicsOrg(k); }, 0);
+    chiffres(c, [[fr(totalClics), "clics envoyés · 30 j", "rouge"], [String(CORG.length), "demandes reçues"], [String(o.suivis.length), "organismes suivis"], [fr(sessions), "sessions comparées"], [String(o.autres.length), "autres repérés"],
                  [String(compte(PROS || [], function (p) { return p.type === "organisme" && p.statut !== "a_contacter"; })), "contactés"], [String(clients), "clients", "rouge"]]);
-    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Organismes avec leur page sur le site · " + o.suivis.length)); c.appendChild(s1);
-    tableau(c, ["Organisme", "Sessions", "Diplômes", "Prix dès", "Prospection", ""], o.suivis.map(function (x) {
-      var cle = "org:" + x.id, p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] };
-      return [cellule(x.nom, (x.habilitation ? "habilitation " + x.habilitation : "")), cellule(fr(x.n), x.villes + " villes"), cellule(x.diplomes.join(", ")), cellule(x.prix_min ? x.prix_min + " €" : "–"),
-        selectStatut(p), actions([x.page ? ["Sa page", null, x.page] : null, x.site ? ["Son site", null, x.site] : null])];
+    if (CORG.length) {
+      var s0 = el("p", "ap-titre-s"); s0.appendChild(el("i", "ap-dot")); s0.appendChild(document.createTextNode("Demandes reçues par la page « Organismes partenaires » · " + CORG.length)); c.appendChild(s0);
+      tableau(c, ["Organisme", "Contact", "Message", "Reçue", ""], CORG.map(function (x) {
+        var cle = SORG[x.organisme.toLowerCase()] ? x.organisme.toLowerCase() : "x-" + slugOrg(x.organisme);
+        var connu = (o.suivis || []).filter(function (y) { return slugOrg(y.nom) === slugOrg(x.organisme); })[0];
+        if (connu) cle = connu.id;
+        return [cellule(x.organisme), cellule(x.nom || "–", [x.email, x.telephone].filter(Boolean).join(" · ")), cellule((x.message || "–").slice(0, 140)), cellule(depuis(x.cree_le)),
+          actions([["✉ Envoyer ses chiffres", null, rapportOrg(x.organisme, cle, x.email)]])];
+      }));
+    }
+    var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Organismes avec leur page sur le site · " + o.suivis.length + " · triés par clics reçus")); c.appendChild(s1);
+    c.appendChild(el("p", "ap-petit", "Les clics comptent depuis la mise en place du compteur. « Ses chiffres » prépare un e-mail avec ses vues et ses clics des 30 derniers jours : votre meilleur argument pour la formule partenaire."));
+    var tri = o.suivis.slice().sort(function (a, b) { return clicsOrg(b.id) - clicsOrg(a.id) || b.n - a.n; });
+    tableau(c, ["Organisme", "Sessions", "30 jours", "Prix dès", "Prospection", ""], tri.map(function (x) {
+      var cle = "org:" + x.id, p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] }, st = statsOrg(x.id);
+      return [cellule(x.nom, (x.habilitation ? "habilitation " + x.habilitation : "")), cellule(fr(x.n), x.villes + " villes · " + x.diplomes.join(", ")),
+        cellule(fr(st.clic_session + st.clic_site) + " clics", fr(st.vue_page) + " vues de sa page"), cellule(x.prix_min ? x.prix_min + " €" : "–"),
+        selectStatut(p), actions([["✉ Ses chiffres", null, rapportOrg(x.nom, x.id, p.email)], x.page ? ["Sa page", null, x.page] : null, x.site ? ["Son site", null, x.site] : null])];
     }));
     var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-neutre")); s2.appendChild(document.createTextNode("Autres organismes repérés dans les sessions · " + o.autres.length)); c.appendChild(s2);
     c.appendChild(el("p", "ap-petit", "Ils ont des sessions sur le site sans page à eux : des clients possibles aussi."));
-    tableau(c, ["Organisme", "Sessions", "Prospection"], o.autres.slice(0, 60).map(function (x) {
-      var cle = "org-autre:" + x.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-"), p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] };
-      return [cellule(x.nom), cellule(fr(x.n)), selectStatut(p)];
+    tableau(c, ["Organisme", "Sessions", "30 jours", "Prospection", ""], o.autres.slice(0, 60).map(function (x) {
+      var cle = "org-autre:" + x.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-"), p = prospect(cle) || { cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [] }, k = ("x-" + slugOrg(x.nom)).slice(0, 80);
+      return [cellule(x.nom), cellule(fr(x.n)), cellule(fr(clicsOrg(k)) + " clics"), selectStatut(p), actions([["✉ Ses chiffres", null, rapportOrg(x.nom, k, p.email)]])];
     }));
   }
 
@@ -907,13 +929,13 @@
       ["Dernière relance (14 jours)", "Dernière question",
       "Bonjour,\n\nDernier message de ma part : souhaitez-vous que je vous tienne au courant de la formule organismes quand elle sera prête ? Un simple oui ou non me suffit.\n\nMerci et bonne journée,\nRafael"]],
     structure: [["Premier contact", "Votre page sur Fil Roug'Anim",
-      "Bonjour,\n\nMerci d'avoir créé la page de {nom} sur Fil Roug'Anim. Il ne reste qu'une étape pour la mettre en ligne avec vos offres : l'abonnement (39,50 € par an au tarif fondateur, à vie, sans commission).\n\nUne question ? Répondez simplement à ce message.\n\nBonne journée,\nRafael · Fil Roug'Anim"],
-      ["Relance (7 jours)", "Votre page n'attend plus que vous",
-      "Bonjour,\n\nLes animateurs de votre secteur cherchent déjà : des demandes arrivent chaque semaine sur Fil Roug'Anim. Votre page {nom} peut être en ligne dès aujourd'hui.\n\nJe peux vous aider à la terminer si besoin.\n\nBonne journée,\nRafael"],
+      "Bonjour,\n\nMerci d'avoir créé la page de {nom} sur Fil Roug'Anim. Elle est en ligne gratuitement, avec une offre à la fois.\n\nSi vous recrutez pour les vacances, l'abonnement vous envoie directement les demandes des animateurs de votre secteur (ils décrivent le poste qu'ils cherchent), vous ouvre leurs profils complets et rend vos offres illimitées : 39,50 € par an au tarif fondateur, à vie, sans commission.\n\nUne question ? Répondez simplement à ce message.\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Des animateurs cherchent dans votre secteur",
+      "Bonjour,\n\nDes animateurs de votre secteur décrivent chaque semaine le poste qu'ils cherchent sur Fil Roug'Anim. Avec l'abonnement, leurs demandes arrivent directement chez {nom}.\n\nJe peux vous montrer comment ça marche en 5 minutes si vous voulez.\n\nBonne journée,\nRafael"],
       ["Dernière relance (14 jours)", "On garde votre place de fondateur ?",
-      "Bonjour,\n\nIl reste quelques places au tarif fondateur (39,50 € par an, à vie). Voulez-vous que je vous en garde une ?\n\nBonne journée,\nRafael"]],
+      "Bonjour,\n\nIl reste quelques places au tarif fondateur (39,50 € par an, à vie). Voulez-vous que je vous en garde une ? Votre page reste gratuite dans tous les cas.\n\nBonne journée,\nRafael"]],
     contact: [["Premier contact", "Fil Roug'Anim : vos recrutements d'animateurs",
-      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr) : les animateurs et les stagiaires BAFA de votre secteur y décrivent le poste qu'ils cherchent, et leur demande arrive chez les 3 structures les plus proches.\n\nCréer la page de {nom} prend 6 minutes : https://filrouganim.fr/recruter/\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr) : les animateurs et les stagiaires BAFA de votre secteur y décrivent le poste qu'ils cherchent, et leur demande arrive chez les structures les plus proches.\n\nCréer la page de {nom} prend 6 minutes et c'est gratuit (la page et une offre) : https://filrouganim.fr/recruter/\n\nBonne journée,\nRafael · Fil Roug'Anim"],
       ["Relance (7 jours)", "Re : vos recrutements d'animateurs", "Bonjour,\n\nJe reviens vers vous : avez-vous pu jeter un œil ? Je peux créer la page avec vous au téléphone si c'est plus simple.\n\nBonne journée,\nRafael"],
       ["Dernière relance (14 jours)", "Dernière question", "Bonjour,\n\nDernier message : est-ce que vos recrutements de l'été sont déjà bouclés ? Un oui ou un non me suffit.\n\nMerci,\nRafael"]]
   };
@@ -1234,11 +1256,14 @@
     var lireJson = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
     var r = await Promise.all([E.sb.rpc("admin_sante"), lireGithub(), lireJson("/chiffres/google.json"), lireJson("/compte/organismes.json"),
                                E.sb.from("admin_prospects").select("*"), lireIndexation(), lireJson("/compte/contenus.json"), lireJson("/compte/posts.json"),
-                               lirePosts(), lireActualites(), fetch("/sitemap.xml").then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; })]);
+                               lirePosts(), lireActualites(), E.sb.from("stats_organismes").select("organisme,type,n,jour").gte("jour", joursAvant(29)).limit(5000),
+                               E.sb.from("contacts_organismes").select("*").order("cree_le", { ascending: false }), fetch("/sitemap.xml").then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; })]);
     S = (r[0] && !r[0].error && r[0].data) || {};
     G = r[2] || {}; ORG = r[3] || { suivis: [], autres: [] }; PROS = (r[4] && !r[4].error && r[4].data) || [];
     CONT = r[6] || []; POSTS = r[7] || { idees: [] };
-    PLAN = (r[10] || "").match(/<loc>[^<]+<\/loc>/g); PLAN = (PLAN || []).map(function (x) { return x.slice(5, -6); });
+    SORG = {}; ((r[10] && !r[10].error && r[10].data) || []).forEach(function (x) { var o = SORG[x.organisme] = SORG[x.organisme] || { vue_page: 0, clic_session: 0, clic_site: 0 }; o[x.type] = (o[x.type] || 0) + x.n; });
+    CORG = (r[11] && !r[11].error && r[11].data) || [];
+    PLAN = (r[12] || "").match(/<loc>[^<]+<\/loc>/g); PLAN = (PLAN || []).map(function (x) { return x.slice(5, -6); });
     verifieA = new Date();
   }
   async function lireIndexation() {

@@ -13,6 +13,7 @@
 #   page_sessions page où l'organisme publie ses sessions (null : à trouver)
 #   prix_en_ligne true si l'organisme affiche ses prix sur ses pages de sessions
 #   en_ligne      true : une page est créée sur le site pour cet organisme
+#   partenaire    true : formule partenaire payée (étiquette « Partenaire », jusqu'à 3 sessions en tête des listes)
 # Le texte de présentation est écrit par nous (jamais copié du site de l'organisme).
 
 organismes:

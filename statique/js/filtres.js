@@ -32,6 +32,7 @@
     infos.appendChild(document.createTextNode(" (" + x.d + ")" + (x.f ? " · " + x.f : "") + " · "));
     if (x.oi) { var lo = el("a", null, x.o); lo.href = lienOrganismes + x.oi + "/"; infos.appendChild(lo); }
     else infos.appendChild(document.createTextNode(x.o));
+    if (x.pa) { infos.appendChild(document.createTextNode(" ")); var pa = el("span", "s-partenaire", "Partenaire"); pa.title = "Organisme partenaire de Fil Roug'Anim"; infos.appendChild(pa); }
     corps.appendChild(infos);
     var verif = el("p", "s-verif");
     if (x.c) { verif.appendChild(el("b", "s-complet", "Complet")); verif.appendChild(document.createTextNode(" · ")); }
@@ -43,7 +44,7 @@
     else if (x.px !== null && x.px !== undefined) prix.textContent = euros(x.px); else prix.appendChild(el("span", null, "prix à voir"));
     a.appendChild(prix);
     var lien = el("a", "s-lien", "Voir");
-    lien.href = x.u; lien.rel = "noopener nofollow"; lien.target = "_blank";
+    lien.href = x.u; lien.rel = "noopener nofollow"; lien.target = "_blank"; if (x.ok) { lien.dataset.org = x.ok; lien.dataset.orgT = "clic_session"; }
     lien.appendChild(el("span", "sr", (x.lba ? " la formation sur La bonne alternance" : x.site ? " le site de " + x.o : " la session chez " + x.o) + " (nouvel onglet)"));
     lien.appendChild(document.createTextNode(" →"));
     a.appendChild(lien);

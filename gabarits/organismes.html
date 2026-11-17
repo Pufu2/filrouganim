@@ -23,13 +23,14 @@
   <p class="org-texte">{{ o.presentation | resume(170) }}</p>
   <div class="org-liens">
     {% if o.en_ligne and o.n %}<a class="bouton-r" href="{{ lien('/se-former/sessions/organismes/' ~ o.id ~ '/') }}">Ses sessions <span aria-hidden="true">→</span></a>{% endif %}
-    <a class="org-site" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank">Son site <span aria-hidden="true">↗</span><span class="sr"> (nouvel onglet)</span></a>
+    <a class="org-site" href="{{ o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank" data-org="{{ o.id }}" data-org-t="clic_site">Son site <span aria-hidden="true">↗</span><span class="sr"> (nouvel onglet)</span></a>
   </div>
 </li>
 {% endmacro %}
 {% block contenu %}
 <section class="bande bande-papier">
   <div class="cadre">
+    <p class="org-pro">Vous êtes un organisme de formation ? Vos sessions sont déjà ici, gratuitement. <a href="{{ lien('/organismes-partenaires/') }}">Recevez vos statistiques et découvrez la formule partenaire →</a></p>
     <ul class="org-grille">{% for o in page.organismes %}{{ carte(o) }}{% endfor %}</ul>
   </div>
 </section>

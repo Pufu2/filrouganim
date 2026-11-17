@@ -194,7 +194,7 @@
       <a class="ro-famille ro-famille-{{ v }}" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type={{ v }}"><span class="ro-famille-ic"><svg viewBox="0 0 24 24" aria-hidden="true">{{ ic | safe }}</svg></span><span class="ro-famille-t"><b>{{ l }}</b><span>{{ d }}</span></span><span class="ro-famille-go" aria-hidden="true">→</span></a>
       {% endfor %}
     </div>
-    <p class="ro-plus">Votre page, vos offres et les profils des animateurs : {{ site.abonnement.prix_fondateur }} par an pour les structures fondatrices. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
+    <p class="ro-plus">Votre page et une offre, gratuitement. Les demandes et les profils des animateurs avec l'abonnement, dès {{ site.abonnement.prix_fondateur }} par an. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
   </div>
   <script>
   (function () {
@@ -338,11 +338,11 @@
   <p class="s-date" aria-hidden="true"><b>{{ s.debut.day }}</b><span>{{ s.debut | mois_court }}</span></p>
   <div class="s-corps">
     <h3 class="s-titre">{{ s.dipl.nom }}{% if s.sp %} · {{ s.sp.nom }}{% elif s.type != "parcours" %} · {{ s.type_nom | lower }}{% endif %}{% if s.theme and s.type != "parcours" %} <span class="s-theme">{{ s.theme }}</span>{% endif %}</h3>
-    <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/se-former/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}</p>
+    <p class="s-infos">{{ dates_fr(s.debut, s.fin) | majuscule }} · <b>{{ s.ville }}</b> ({{ s.departement }}){% if s.formule %} · {{ FORMULES[s.formule] | lower }}{% endif %} · {% if s.org.en_ligne %}<a href="{{ lien('/se-former/sessions/organismes/' ~ s.org.id ~ '/') }}">{{ s.org.nom }}</a>{% else %}{{ s.org.nom }}{% endif %}{% if s.org.partenaire %} <span class="s-partenaire" title="Organisme partenaire de Fil Roug'Anim">Partenaire</span>{% endif %}</p>
     <p class="s-verif">{% if s.complet %}<b class="s-complet">Complet</b> · {% endif %}{% if s.prix_note %}{{ s.prix_note | majuscule }} · {% endif %}{% if s.aides %}{{ s.aides | join(", ") | majuscule }} · {% endif %}{% if s.source_nom %}{{ s.source_nom }}, relevé le {{ (s.verifie_le or s.releve_le) | date_fr }}, à confirmer auprès de l'organisme{% elif s.verifie_le %}Vérifié le {{ s.verifie_le | date_fr }}, à confirmer chez l'organisme{% else %}Relevé le {{ s.releve_le | date_fr }}, à confirmer chez l'organisme{% endif %}</p>
   </div>
   <p class="s-prix">{% if s.prix == 0 and s.formule == "apprentissage" %}Gratuit<span class="s-prix-sous">en apprentissage</span>{% elif s.prix is not none %}{{ s.prix | euros }}{% else %}<span>prix à voir</span>{% endif %}</p>
-  <a class="s-lien" href="{{ s.url }}" rel="noopener nofollow" target="_blank">Voir<span class="sr">{% if s.source == "catalogue-apprentissage" %} la formation sur La bonne alternance{% elif s.source == "ministere" %} le site de {{ s.org.nom }}{% else %} la session chez {{ s.org.nom }}{% endif %} (nouvel onglet)</span> <span aria-hidden="true">→</span></a>
+  <a class="s-lien" href="{{ s.url }}" rel="noopener nofollow" target="_blank" data-org="{{ s.org_cle }}" data-org-t="clic_session">Voir<span class="sr">{% if s.source == "catalogue-apprentissage" %} la formation sur La bonne alternance{% elif s.source == "ministere" %} le site de {{ s.org.nom }}{% else %} la session chez {{ s.org.nom }}{% endif %} (nouvel onglet)</span> <span aria-hidden="true">→</span></a>
 </article>
 {% endmacro %}
 

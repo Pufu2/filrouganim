@@ -25,7 +25,7 @@
 
   /* -- les onglets de « Mon espace » : un menu à gauche (en haut sur téléphone), une partie à la fois -- */
   var VIDES = {
-    "v-structure": { candidats: "Les profils des candidats et les candidatures à vos offres s'ouvrent ici dès que votre page est en ligne (abonnement réglé et structure vérifiée).",
+    "v-structure": { candidats: "Les profils complets des animateurs de votre secteur s'ouvrent avec l'abonnement. Les candidatures à vos offres arrivent dans « Mes offres ».",
                      demandes: "Les demandes de l'annuaire inversé arrivent ici dès que votre page est en ligne : les animateurs de votre secteur décrivent le poste qu'ils cherchent.",
                      offres: "Enregistrez d'abord votre page (onglet « Ma page ») : vous pourrez ensuite publier vos offres.",
                      abonnement: "Enregistrez d'abord votre page (onglet « Ma page ») : l'abonnement se règle juste après.",
@@ -69,7 +69,6 @@
       var bientot = enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(auj)) / 864e5 <= 7; }).length;
       var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
       var afaire = [];
-      if (structure && !paye(structure)) afaire.push(["!", "abonnement à régler", "abonnement"]);
       if (nouvelles) afaire.push([nouvelles, pl(nouvelles, "nouvelle candidature", "nouvelles candidatures"), "candidats"]);
       if (demandesRecues.length) afaire.push([demandesRecues.length, pl(demandesRecues.length, "demande reçue", "demandes reçues").replace(/^\d+ /, ""), "demandes"]);
       if (bientot) afaire.push([bientot, (bientot > 1 ? "offres expirent" : "offre expire") + " cette semaine", "offres"]);
@@ -79,7 +78,7 @@
                    actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "#guide-reussir-son-recrutement"],
                    resume: { t: "En ce moment", grands: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
         page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
-                actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(actif(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
+                actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(pageEnLigne(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
                 resume: { t: "Votre page", jauge: true } },
         offres: { sur: "Mes offres", t: "Vos offres, ", em: "là où les jeunes cherchent", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
@@ -92,7 +91,7 @@
                     resume: { t: "Demandes", mini: [[demandesRecues.length, demandesRecues.length > 1 ? "reçues" : "reçue"]] } },
         abonnement: { sur: "Abonnement et centres", t: "Votre abonnement, ", em: "sans commission", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
                       actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
-                      resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["!", "à régler pour être en ligne", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
+                      resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["+", "demandes, profils, offres illimitées", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
         outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
                   actions: [], guide: null, resume: null }
       }[nom];
@@ -174,8 +173,8 @@
     var cible = nav.querySelector('[data-onglet-vers="' + nom + '"]');
     if (cible && cible.classList.contains("co-ferme")) {
       nom = structure ? "abonnement" : "page";
-      message(structure ? "Cette partie s'ouvre dès que l'abonnement est réglé : votre page, vos offres, les profils des candidats et les demandes de votre secteur."
-                        : "Commencez par enregistrer votre page ; vous réglerez ensuite l'abonnement, et tout votre espace s'ouvrira.");
+      message(structure ? "Cette partie fait partie de l'abonnement : les demandes des animateurs de votre secteur, leurs profils complets et la boîte à outils. Votre page et une offre restent gratuites."
+                        : "Commencez par enregistrer votre page : ensuite votre espace s'ouvre.");
     }
     ongletActuel[vue] = nom;
     Array.prototype.forEach.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) {
@@ -322,7 +321,7 @@
     var nom = vueApp === "v-structure" ? (structure && structure.nom) || "Ma structure" : vueApp === "v-candidat" ? (profil && profil.prenom) || "Mon profil" : "Administration";
     moi.querySelector(".co-moi-av").textContent = initiales(nom) || "?";
     moi.querySelector(".co-moi-t b").textContent = nom;
-    moi.querySelector(".co-moi-t small").textContent = vueApp === "v-structure" ? (actif(structure) ? "Structure · en ligne" : paye(structure) ? "Structure · en vérification" : "Structure · sans abonnement")
+    moi.querySelector(".co-moi-t small").textContent = vueApp === "v-structure" ? (actif(structure) ? "Structure · abonnée" : pageEnLigne(structure) ? "Structure · en ligne, gratuite" : "Structure · en vérification")
       : vueApp === "v-candidat" ? "Animateur · " + (profil && profil.publie ? "profil visible" : "profil caché") : (utilisateur && utilisateur.email || "");
     // la barre du haut
     var barre = $("app-barre");
@@ -347,7 +346,7 @@
       var voile = el("div", "app-voile"); voile.addEventListener("click", function () { document.body.classList.remove("menu-ouvert"); }); ec.appendChild(voile);
     }
     var mp2 = $("app-ma-page");
-    mp2.hidden = !(vueApp === "v-structure" && actif(structure) && structure.slug && structure.page_publique);
+    mp2.hidden = !(vueApp === "v-structure" && pageEnLigne(structure) && structure.slug && structure.page_publique);
     if (!mp2.hidden) mp2.href = L.lien_structures + structure.slug + "/";
     majTitreApp();
   }
@@ -1047,37 +1046,39 @@
     aSupprimer = [];
     montrerPhotos();
     var voir = $("voir-ma-page");
-    voir.hidden = !(actif(structure) && structure.slug && structure.page_publique);
+    voir.hidden = !(pageEnLigne(structure) && structure.slug && structure.page_publique);
     if (!voir.hidden) voir.href = L.lien_structures + structure.slug + "/";
     $("accord-structure").hidden = !nouveau;
     f.accord.required = nouveau;
     // l'administration sans fiche à elle : l'espace complet, ouvert, sans le parcours d'inscription
     var apercu = nouveau && estAdmin && !espaceDe;
     assistantStructure.ouvrir(nouveau && !apercu);
-    // tant que l'abonnement n'est pas réglé : seulement « Ma page » et « Abonnement », le reste est fermé
+    // gratuit : le tableau de bord, la page, les offres (une en ligne à la fois) ; avec l'abonnement : les candidats,
+    // les demandes de l'annuaire inversé et la boîte à outils. Sans fiche : seulement « Ma page ».
     var ferme = !paye(structure) && !estAdmin;
     Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
-      var verrou = ferme && ["page", "abonnement"].indexOf(b.dataset.ongletVers) < 0;
+      var verrou = !estAdmin && (nouveau ? b.dataset.ongletVers !== "page" : ferme && ["demandes", "outils"].indexOf(b.dataset.ongletVers) >= 0);
       b.classList.toggle("co-ferme", verrou);
+      b.classList.toggle("co-premium", !nouveau && ferme && verrou);
       b.setAttribute("aria-disabled", verrou ? "true" : "false");
-      b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page, puis réglez l'abonnement" : "S'ouvre avec l'abonnement") : "";
+      b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page" : "Avec l'abonnement") : "";
     });
-    ongletDepart("v-structure", apercu ? "candidats" : nouveau ? "page" : ferme ? "abonnement" : "tableau", nouveau || ferme);
+    ongletDepart("v-structure", apercu ? "candidats" : nouveau ? "page" : "tableau", nouveau);
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
-    $("chapo-compte").textContent = nouveau ? "Présentez votre structure, étape par étape. Votre page est en ligne une fois l'abonnement réglé et la structure vérifiée." : "Votre espace structure.";
+    $("chapo-compte").textContent = nouveau ? "Présentez votre structure, étape par étape. Après notre vérification, votre page et une offre sont en ligne gratuitement." : "Votre espace structure.";
     if (apercu) {
       st.textContent = "Aperçu administrateur : tous les onglets sont ouverts. « Candidats » montre tous les profils, « Boîte à outils » les guides et les outils. Pour voir les vraies offres et les vrais chiffres d'une structure, ouvrez son espace depuis l'admin (Structures, « Ouvrir son espace »).";
       st.className = "statut statut-attente";
     }
     else if (nouveau) st.hidden = true;
-    else if (!paye(structure)) {
-      st.textContent = "Votre fiche est enregistrée. Dernière étape : l'abonnement. Nous vérifions ensuite la structure, et votre page et vos offres sont en ligne.";
+    else if (!structure.verifiee) {
+      st.textContent = "Votre fiche est enregistrée. Nous vérifions la structure (en général sous 2 jours ouvrés) : ensuite votre page et une offre sont en ligne, gratuitement. Préparez déjà votre offre.";
       st.className = "statut statut-attente";
-    } else if (!structure.verifiee) {
-      st.textContent = "Abonnement réglé, merci ! Nous vérifions la structure (en général sous 2 jours ouvrés). Vous pouvez déjà préparer vos offres : elles seront en ligne dès la vérification.";
-      st.className = "statut statut-attente";
+    } else if (!paye(structure)) {
+      st.textContent = "Votre page est en ligne, gratuitement, avec une offre à la fois. L'abonnement ajoute les demandes des animateurs de votre secteur, leurs profils complets et les offres illimitées.";
+      st.className = "statut statut-ok";
     } else {
       st.textContent = "Structure en ligne : votre page et vos offres sont visibles par tous, et vous voyez les profils des candidats.";
       st.className = "statut statut-ok";
@@ -1085,8 +1086,10 @@
     if (st.classList.contains("statut-ok")) st.dataset.onglet = "aucun"; else { delete st.dataset.onglet; st.classList.remove("hors-onglet"); }
     montrerOnglet("v-structure", ongletActuel["v-structure"]);
     $("bloc-offres").hidden = nouveau;
+    $("offres-gratuit").hidden = nouveau || paye(structure) || estAdmin;
     $("bloc-centres").hidden = nouveau;
     $("bloc-candidats").hidden = !(actif(structure) || estAdmin);
+    $("bloc-candidats-verrou").hidden = nouveau || actif(structure) || estAdmin;
     $("tuiles-structure").hidden = nouveau;
     if (structure) chargerCentres().then(montrerAbonnement);
     else $("bloc-abonnement").hidden = true;
@@ -1112,7 +1115,7 @@
     if (!/^[0-9a-f-]{36}$/.test(id)) return;
     if (!actif(structure)) {
       message(!structure ? "Créez l'espace de votre structure : la fiche complète des animateurs est réservée aux structures vérifiées et abonnées."
-        : !paye(structure) ? "La fiche complète des animateurs est réservée aux structures abonnées : réglez l'abonnement ci-dessous, puis vous verrez tous les profils."
+        : !paye(structure) ? "La fiche complète des animateurs fait partie de l'abonnement : passez à l'abonnement (onglet « Abonnement »), puis vous verrez tous les profils."
         : "Abonnement réglé : la fiche complète s'ouvre dès que nous avons vérifié votre structure (en général sous 2 jours ouvrés).");
       var ab = $("bloc-abonnement");
       if (structure && ab) allerA("bloc-abonnement");
@@ -1127,7 +1130,8 @@
 
   /* -- l'abonnement (Stripe) : payé si la fin de période n'est pas passée ; en ligne si payé ET vérifié -- */
   function paye(s) { return !!(s && s.abonnement_fin && s.abonnement_fin >= aujourdhui()); }
-  function actif(s) { return !!(s && s.verifiee && paye(s)); }
+  function actif(s) { return !!(s && s.verifiee && paye(s)); }   // abonnée : demandes, profils complets, offres illimitées
+  function pageEnLigne(s) { return !!(s && s.verifiee); }               // vérifiée : la page et une offre en ligne, gratuitement
   var placesFondatrices = null;
   function euros(n) { return n.toLocaleString("fr-FR", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }) + " €"; }
   async function montrerAbonnement() {
@@ -1153,9 +1157,9 @@
     }
     var fond = placesFondatrices > 0;
     var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
-    $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Mettre votre structure en ligne";
+    $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Passer à l'abonnement";
     $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
-    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils des candidats. Chaque centre en plus : " + euros(p2) + " par an. Sans commission, arrêt à tout moment.";
+    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé), leurs profils complets, les offres illimitées, l'étiquette « Partenaire » en tête de l'annuaire, la boîte à outils et vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
     var champ = $("abo-nb");
     if (!champ.dataset.touche) champ.value = nbCentres;
     function maj() {
@@ -1396,7 +1400,7 @@
     var nouveau = !structure;
     structure = r.data;
     memoire(null);
-    message(nouveau || !paye(structure) ? "Fiche enregistrée. Dernière étape : réglez l'abonnement, et tout votre espace s'ouvre (nous vérifions ensuite la structure)." : "Fiche enregistrée.");
+    message(nouveau ? "Fiche enregistrée. Nous vérifions la structure (en général sous 2 jours ouvrés) : ensuite votre page et une offre sont en ligne, gratuitement." : "Fiche enregistrée.");
     voirStructure();
   });
 
@@ -1419,7 +1423,7 @@
       var etat, classe;
       if (o.expire_le < aujourdhui()) { etat = "Expirée le " + dateFr(o.expire_le); classe = "etat etat-off"; }
       else if (!o.publiee) { etat = "En pause"; classe = "etat etat-off"; }
-      else if (!actif(structure)) { etat = paye(structure) ? "En attente de la vérification" : "En attente de l'abonnement"; classe = "etat etat-attente"; }
+      else if (!pageEnLigne(structure)) { etat = "En ligne après la vérification"; classe = "etat etat-attente"; }
       else { etat = "En ligne jusqu'au " + dateFr(o.expire_le); classe = "etat etat-ok"; }
       corps.appendChild(el("p", classe, etat));
       item.appendChild(corps);
@@ -1466,9 +1470,13 @@
       ? await sb.from("offres").update(d).eq("id", offreEnCours.id)
       : await sb.from("offres").insert(d);
     occupe(form, false);
-    if (r.error) { message(erreurLisible(r.error), true); return; }
+    if (r.error) {
+      var gratuite = !paye(structure) && /row-level security|42501/i.test((r.error.message || "") + " " + (r.error.code || ""));
+      message(gratuite ? "Sans abonnement, une seule offre en ligne à la fois : mettez l'autre en pause, ou passez à l'abonnement pour des offres illimitées. Vous pouvez aussi enregistrer celle-ci en pause." : erreurLisible(r.error), true);
+      return;
+    }
     form.hidden = true; offreEnCours = null;
-    message(actif(structure) ? "Offre enregistrée. Elle apparaît sur le site dans l'heure." : "Offre enregistrée. Elle sera en ligne dès que l'abonnement sera réglé et la structure vérifiée.");
+    message(pageEnLigne(structure) ? "Offre enregistrée. Elle apparaît sur le site dans l'heure." : "Offre enregistrée. Elle sera en ligne dès que nous aurons vérifié la structure.");
     chargerOffres().then(tableauStructure);
   });
 
@@ -1912,7 +1920,7 @@
     pastille("offres", enLigne);
     pastille("candidats", nouvelles);
     pastille("demandes", demandesRecues.length);
-    pastille("abonnement", !paye(structure));
+    pastille("abonnement", false);   // la formule gratuite n'est pas une alerte
     majVide("v-structure");
     apercuStructure();
     try { majEntete("v-structure"); } catch (err) {}
@@ -1960,8 +1968,8 @@
     tuileApp(box, "demandes", "Demandes", demandesRecues.length, demandesRecues.length ? "Répondez vite : vous êtes 3 au plus" : "Aucune demande", "demandes", demandesRecues.length ? "chaud" : null);
     tuileApp(box, "offres", "Offres en ligne", enLigne.length, bientot ? bientot + (bientot > 1 ? " expirent" : " expire") + " cette semaine" : enLigne.length ? "Rien n'expire cette semaine" : "Publiez votre première offre", "offres", bientot ? "alerte" : null);
     var reste = (nouvelles ? 1 : 0) + (demandesRecues.length ? 1 : 0) + (bientot ? 1 : 0);
-    if (!paye(structure)) etatApp($("tb-etat"), false, "Abonnement à régler : votre page et vos offres seront en ligne juste après la vérification.");
-    else if (!structure.verifiee) etatApp($("tb-etat"), false, "Nous vérifions votre structure (en général sous 2 jours ouvrés). Vos offres seront en ligne juste après.");
+    if (!structure.verifiee) etatApp($("tb-etat"), false, "Nous vérifions votre structure (en général sous 2 jours ouvrés). Votre page et votre offre seront en ligne juste après.");
+    else if (!paye(structure)) etatApp($("tb-etat"), true, "Votre page est en ligne, gratuitement. Passez à l'abonnement pour recevoir les demandes des animateurs de votre secteur.");
     else etatApp($("tb-etat"), !reste, reste ? "Quelques réponses vous attendent : un candidat contacté vite accepte plus souvent." : "Rien en attente : votre page et vos offres sont en ligne, tout est à jour.");
   }
   async function tableauDeBord() {
@@ -2005,9 +2013,9 @@
       g.appendChild(barre);
     }
     g.setAttribute("aria-label", "Vues par jour sur " + J + " jours : " + somme(["page", "offre"], d0) + " au total");
-    var enLigne = actif(structure);
-    $("tb-sous").textContent = enLigne ? "Les vues de votre page et de vos offres, et les clics des candidats, sur " + J + " jours." :
-      "Les chiffres commencent dès que votre page est en ligne (abonnement réglé et structure vérifiée).";
+    var estEnLigne = pageEnLigne(structure);
+    $("tb-sous").textContent = estEnLigne ? "Les vues de votre page et de vos offres, et les clics des candidats, sur " + J + " jours." :
+      "Les chiffres commencent dès que votre page est en ligne (après notre vérification).";
     // les offres les plus vues
     var ol = $("tb-offres"); ol.textContent = "";
     var vuesOffre = {};
@@ -2024,7 +2032,18 @@
     sec.appendChild(p1);
     var p2 = el("p"); p2.appendChild(el("b", null, String(demandesRecues.length))); p2.appendChild(el("span", null, " demande" + (demandesRecues.length > 1 ? "s" : "") + " de l'annuaire inversé reçue" + (demandesRecues.length > 1 ? "s" : "")));
     sec.appendChild(p2);
-    if (enLigne) { var a = el("button", "tb-lien", "Voir les profils →"); a.type = "button"; a.dataset.ongletVers = "candidats"; sec.appendChild(a); }
+    if (actif(structure)) { var a = el("button", "tb-lien", "Voir les profils →"); a.type = "button"; a.dataset.ongletVers = "candidats"; sec.appendChild(a); }
+    else if (!estAdmin) {
+      // formule gratuite : ce que l'abonnement apporterait, avec le vrai nombre de demandes du secteur
+      p2.remove();
+      var rd = await sb.rpc("demandes_du_secteur"), nd = (rd && !rd.error && rd.data) || 0;
+      var pr = el("div", "tb-premium");
+      pr.appendChild(el("p", "tb-premium-n", String(nd)));
+      pr.appendChild(el("p", null, nd ? (nd > 1 ? "animateurs ont décrit" : "animateur a décrit") + " le poste qu'ils cherchent dans votre secteur ces 2 derniers mois. Avec l'abonnement, leurs demandes arrivent chez vous, avec leur profil complet."
+                                       : "Avec l'abonnement, les demandes des animateurs de votre secteur arrivent chez vous, avec leur profil complet, et vos offres sont illimitées."));
+      var bp = el("button", "tb-lien", "Voir l'abonnement →"); bp.type = "button"; bp.dataset.ongletVers = "abonnement"; pr.appendChild(bp);
+      sec.appendChild(pr);
+    }
     conseilsStructure();
   }
   function conseilsStructure() {

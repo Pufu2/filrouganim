@@ -3492,3 +3492,38 @@ body.admin-g .ag-droite .co-moi-menu { left: auto; right: 0; bottom: auto; top: 
 .ap-carte { border-radius: 22px; box-shadow: 0 14px 30px -26px rgba(35, 31, 32, .4); }
 body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] { border-radius: 99px; box-shadow: none; background: #fbe3e1; }
 body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(--fil); }
+
+/* Organismes partenaires : une étiquette discrète, toujours signalée */
+.s-partenaire { display: inline-block; padding: 1px 8px; border-radius: 99px; background: #fdeceb; color: var(--fil-fonce); font: 700 .72rem/1.6 var(--texte); vertical-align: 1px; }
+.org-partenaire { display: flex; align-items: center; gap: 8px; font-size: .92rem; }
+/* La page des organismes partenaires */
+.pa-chiffres { list-style: none; margin: 0; padding: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; border-radius: 22px; background: #fdf0ee; border: 1px solid #f2d3cf; }
+.pa-chiffres li { display: flex; flex-direction: column; gap: 2px; padding: 16px 18px; border-radius: 16px; background: #fff; }
+.pa-chiffres li:first-child { background: var(--nuit); color: #fff; } .pa-chiffres li:first-child b { color: var(--fil-clair); } .pa-chiffres li:first-child span { color: #d9d0cb; }
+.pa-chiffres b { font: 500 2rem/1.05 var(--titres); color: var(--fil-fonce); }
+.pa-chiffres span { font-size: .9rem; color: #4a4142; }
+.pa-source { margin: 10px 4px 0; font-size: .88rem; color: var(--doux); }
+.pa-texte { max-width: 760px; font-size: 1.05rem; margin: 0 0 8px; }
+.pa-contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; padding: 32px; border-radius: 24px; background: var(--nuit); color: #fff; }
+.pa-contact h2 { color: #fff; margin: 6px 0 10px; } .pa-contact h2 em { color: var(--fil-clair); }
+.pa-contact-texte p { color: #d9d0cb; }
+.pa-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 22px; border-radius: 18px; background: #fff; color: var(--encre); }
+.pa-form label { display: flex; flex-direction: column; gap: 4px; font: 700 .85rem var(--texte); }
+.pa-form label small { font-weight: 400; color: var(--doux); }
+.pa-form input, .pa-form textarea { font: 400 1rem var(--texte); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--trait); background: var(--creme); }
+.pa-large, .pa-form button, .pa-petit, .pa-retour { grid-column: 1 / -1; }
+.pa-form button { justify-self: start; border: 0; cursor: pointer; }
+.pa-petit { margin: 0; font-size: .82rem; color: var(--doux); }
+.pa-retour { margin: 0; padding: 10px 12px; border-radius: 10px; font-weight: 700; }
+.pa-ok { background: #e6efe7; color: var(--sauge); } .pa-ko { background: #fdeceb; color: var(--fil-fonce); }
+.org-pro { margin: 0 0 18px; padding: 14px 18px; border-radius: 14px; background: #fdf0ee; border: 1px solid #f2d3cf; font-size: .95rem; }
+@media (max-width: 800px) { .pa-contact { grid-template-columns: 1fr; padding: 22px 16px; } .pa-form { grid-template-columns: 1fr; } }
+/* Structures : formule gratuite, ce que l'abonnement ajoute */
+.offres-gratuit { margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: #fdf0ee; border: 1px solid #f2d3cf; font-size: .92rem; }
+.offres-gratuit .bouton-texte { font-weight: 700; color: var(--fil-fonce); }
+.tb-premium { margin-top: 12px; padding: 14px 16px; border-radius: 14px; background: #fdf0ee; border: 1px solid #f2d3cf; }
+.tb-premium p { margin: 0 0 6px; font-size: .9rem; }
+.tb-premium .tb-premium-n { font: 500 2rem/1 var(--titres); color: var(--fil-fonce); }
+body.en-app .co-nav .co-premium, .co-nav button.co-ferme.co-premium { opacity: 1; color: var(--encre); }
+body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static; width: auto; height: auto; margin-left: auto; padding: 1px 7px; border-radius: 99px; background: #fdeceb; color: var(--fil-fonce); font-size: .66rem; font-weight: 700; -webkit-mask: none; mask: none; }
+.fp-partenaire { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-size: .9rem; color: var(--doux); }
