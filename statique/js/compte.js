@@ -58,7 +58,9 @@
     candidats: '<circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/>',
     demandes: '<path d="M4 12l16-8-6 16-2-6z"/>',
     abonnement: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>',
-    outils: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>'
+    outils: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+    sejours: '<path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/>',
+    familles: '<circle cx="8" cy="7" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c.7-3.6 3-5.5 6-5.5s5.3 1.9 6 5.5M14 20c.4-2.4 1.6-3.8 3-3.8s2.6 1.4 3 3.8"/>'
   };
   function iconeOnglet(nom) { var sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("viewBox", "0 0 24 24"); sv.setAttribute("aria-hidden", "true"); sv.innerHTML = ICO[nom] || ICO.page; return sv; }
   function enteteDonnees(vue, nom) {
@@ -92,6 +94,10 @@
         abonnement: { sur: "Abonnement et centres", t: "Votre abonnement, ", em: "sans commission", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
                       actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
                       resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["+", "demandes, profils, offres illimitées", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
+        sejours: { sur: "Mes séjours", t: "Vos séjours et accueils, ", em: "là où les familles cherchent", p: "Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : publiez-les gratuitement, les familles vous demandent une place.",
+                   actions: [], guide: null, resume: null },
+        familles: { sur: "Demandes des familles", t: "Les familles ", em: "vous demandent une place", p: "Chaque demande arrive ici et par e-mail. Les 2 premières sont complètes gratuitement ; ensuite, l'abonnement ou le Pass recrutement affiche les coordonnées.",
+                    actions: [], guide: null, resume: null },
         outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
                   actions: [], guide: null, resume: null }
       }[nom];
@@ -1085,6 +1091,7 @@
       b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page" : "Avec l'abonnement") : "";
     });
     ongletDepart("v-structure", apercu ? "candidats" : nouveau ? "page" : "tableau", nouveau);
+    if (!nouveau && window.FRA_SEJOURS && utilisateur) window.FRA_SEJOURS.ouvrir({ id: espaceDe || structure.id }).then(function () { majVide("v-structure"); });
     var st = $("statut-structure");
     st.hidden = false;
     st.className = "statut";
@@ -2507,6 +2514,7 @@
 
   // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace
   window.FRA_ESPACE = { sb: sb, el: el, ouvrirFiche: ouvrirFiche, fermerFiche: fermerFiche, message: message, erreur: erreurLisible,
-                        montrerOnglet: montrerOnglet, dateFr: dateFr, libelle: libelle, nomDep: nomDep, age: age, L: L, ficheProfil: ficheProfil };
+                        montrerOnglet: montrerOnglet, dateFr: dateFr, libelle: libelle, nomDep: nomDep, age: age, L: L, ficheProfil: ficheProfil,
+                        reduireImage: reduireImage, structure: function () { return structure; } };
   demarrer().catch(function (e) { montrer("v-connexion"); message(erreurLisible(e), true); });
 })();
