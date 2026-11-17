@@ -993,7 +993,7 @@
               [/crawled/i, "Explorée, pas encore indexée"], [/unknown/i, "Inconnue de Google"], [/duplicate|canonical/i, "Doublon d'une autre page"],
               [/noindex/i, "Exclue (noindex)"], [/redirect/i, "Redirection"], [/not found|404/i, "Introuvable (404)"], [/soft 404/i, "Page jugée vide"], [/blocked/i, "Bloquée"]];
   function couv(x) { if (!x) return "Pas encore vérifiée"; for (var i = 0; i < COUV.length; i++) if (COUV[i][0].test(x)) return COUV[i][1]; return x; }
-  function indexee(r) { return !!(r && r.couverture && /indexed/i.test(r.couverture) && !/not indexed|currently/i.test(r.couverture)); }
+  function indexee(r) { return !!(r && r.couverture && /indexed|indexée/i.test(r.couverture) && !/not indexed|currently|non indexée/i.test(r.couverture)); }
   function rubrique(u) { var p = u.replace(/^https:\/\/[^/]+/, "").split("/").filter(Boolean); if (!p.length) return "Accueil"; if (p[0] === "se-former" && p[1] === "sessions") return "Sessions"; if (p[0] === "se-former" && p[1] === "ecoles") return "Écoles"; return { "se-former": "Se former", "trouver-un-poste": "Postes et structures", blog: "Blog", lexique: "Lexique", chiffres: "Chiffres" }[p[0]] || "Autres pages"; }
   function lienGsc(u) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u); }
   function indexation() {
