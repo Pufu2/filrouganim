@@ -29,6 +29,7 @@ from pathlib import Path
 
 import markdown
 import yaml
+from markupsafe import Markup
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 RACINE = Path(__file__).resolve().parent
@@ -253,6 +254,23 @@ def slug(texte):
     return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
 
 
+_CARTE = None
+
+
+def carte_deps(zones, classe="carte-deps"):
+    """La carte de France des départements, ceux de « zones » en couleur (SVG en ligne, sans script)."""
+    global _CARTE
+    if _CARTE is None:
+        f = RACINE / "statique" / "carte-departements.json"
+        _CARTE = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+    if not _CARTE:
+        return ""
+    z = {str(d) for d in zones or []}
+    chemins = "".join(f'<path class="{"on" if code in z else ""}" d="{v["d"]}"><title>{html.escape(v["nom"])} ({code})</title></path>'
+                      for code, v in _CARTE["departements"].items())
+    return Markup(f'<svg class="{classe}" viewBox="0 0 {_CARTE["largeur"]} {_CARTE["hauteur"]}" role="img" aria-label="Départements : {", ".join(sorted(z))}">{chemins}</svg>')
+
+
 def json_ld(objet):
     """JSON-LD sûr à placer dans une balise <script>."""
     return json.dumps(objet, ensure_ascii=False, indent=1).replace("<", "\\u003c").replace(">", "\\u003e")
@@ -286,15 +304,27 @@ class Site:
         for o in self.organismes.values():
             fin = en_date(o.get("partenaire_jusqu")) if o.get("partenaire_jusqu") else None
             o["partenaire"] = bool(o.get("partenaire")) and (fin is None or fin >= self.aujourdhui)
-        # un seul organisme partenaire par département : le premier de la liste qui l'a pris
+        # les organismes partenaires inscrits sur le site (comptes vérifiés, départements payés) : leur fiche et leurs zones
+        for x in self.lire_supabase("rpc/partenaires_publics", "organismes partenaires") or []:
+            o = self.organismes.get(x.get("organisme_id"))
+            if not o:
+                continue
+            for k in ("inscription", "habilitation"):
+                if x.get(k) and not o.get(k):
+                    o[k] = x[k]
+            if x.get("presentation"):
+                o["presentation_partenaire"] = x["presentation"]
+            if x.get("zones"):
+                o["partenaire"], o["zones"] = True, list(x["zones"])
+                o["partenaire_jusqu"] = x.get("fin")
+        # les partenaires de chaque département (un, ou deux dans les plus grands départements)
         self.zone_partenaire = {}
         for o in self.organismes.values():
             for d in (o.get("zones") or []) if o["partenaire"] else []:
                 d = str(d).zfill(2) if str(d).isdigit() else str(d)
-                if d in self.zone_partenaire:
-                    print(f"Attention : le département {d} est déjà pris par {self.zone_partenaire[d]['nom']} (pas par {o['nom']})")
-                    continue
-                self.zone_partenaire[d] = o
+                self.zone_partenaire.setdefault(d, [])
+                if o not in self.zone_partenaire[d]:
+                    self.zone_partenaire[d].append(o)
         self.geo = (self.donnees.get("geo-communes") or {}).get("communes") or {}
         # centre de chaque département (moyenne de ses communes connues) : cartes des fiches, jamais une adresse
         _somme = {}
@@ -319,7 +349,7 @@ class Site:
                                 milliers=lambda n: f"{int(n or 0):,}".replace(",", "\u202f"))
         self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
                                 PUBLICS=PUBLICS, ACCUEILS_ST=list(ACCUEILS.items()), STATUTS=STATUTS, familles_structure=familles_structure, nature_structure=nature_structure, ages_structure=ages_structure, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
-                                mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}")
+                                mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}", carte_deps=carte_deps)
         self.pages = []
 
     # -- sessions
@@ -858,10 +888,31 @@ class Site:
                      h1="Les organismes de formation",
                      description="Les organismes de formation au BAFA, au BAFD, au BSB et au PSC présents sur le site : leurs prochaines sessions, leurs diplômes, leurs prix et le lien vers leur site.",
                      organismes=cartes, autres=autres.most_common(), fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/")])
+        tarifs = self.lire_supabase("zones_tarifs?select=departement,nom,palier,prix,places,rang&order=rang", "tarifs des départements") or []
+        paliers = []
+        for n in (1, 2, 3, 4):
+            ds = [t for t in tarifs if t["palier"] == n]
+            if ds:
+                paliers.append({"n": n, "prix": ds[0]["prix"], "places": ds[0]["places"], "nb": len(ds), "exemples": [t["nom"] for t in ds[:5]],
+                                "codes": [t["departement"] for t in ds]})
+        # la fiche d'exemple : un organisme fictif, avec de vraies sessions d'Île-de-France prêtées pour l'occasion
+        ex_org = {"id": "", "nom": "Les Ateliers du Fil", "partenaire": True, "zones": ["75", "92", "93"], "habilitation": "régionale",
+                  "inscription": "#", "en_ligne": False,
+                  "presentation": "Organisme de formation fictif, pour montrer une fiche partenaire.",
+                  "presentation_partenaire": "Nous formons chaque année plus de 600 animateurs en Île-de-France, en externat comme en internat. Nos formateurs sont tous en poste dans des accueils de loisirs : vous apprenez avec des situations réelles.\n\nAprès la formation générale, nous vous aidons à trouver votre stage pratique grâce à notre réseau de structures partenaires, et nous montons avec vous votre dossier d'aide CAF."}
+        ex_sessions = []
+        for x in S:
+            if x["departement"] in ("75", "92", "93") and x["diplome"] == "BAFA" and not x.get("complet") and len(ex_sessions) < 6:
+                y = dict(x, org=ex_org, org_cle="", url="#", organisme="exemple")
+                ex_sessions.append(y)
+        self.ajouter("/organismes-partenaires/exemple/", "exemple-organisme.html", titre="Exemple de fiche d'organisme partenaire",
+                     description="À quoi ressemble la fiche d'un organisme de formation partenaire de Fil Roug'Anim : présentation, départements, sessions mises en avant, bouton d'inscription, statistiques.",
+                     indexer=False, organisme_ex=ex_org, sessions=ex_sessions, schema="",
+                     fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/"), ("Partenaires", "/organismes-partenaires/"), ("Exemple", "/organismes-partenaires/exemple/")])
         self.ajouter("/organismes-partenaires/", "partenaires.html", titre="Organismes de formation BAFA : la formule partenaire de Fil Roug'Anim",
                      h1="Vos sessions, là où les jeunes choisissent",
                      description="Organismes de formation BAFA, BAFD, BSB et PSC : vos sessions sont déjà comparées gratuitement sur Fil Roug'Anim. Recevez vos statistiques (vues, clics vers votre site) et découvrez la formule partenaire.",
-                     audience=self.audience(), nb_sessions=len(S), nb_organismes=len(cartes) + len(autres),
+                     audience=self.audience(), nb_sessions=len(S), nb_organismes=len(cartes) + len(autres), paliers=paliers,
                      fil=[SF, RUB, ("Organismes", "/se-former/sessions/organismes/"), ("Partenaires", "/organismes-partenaires/")])
         for o in en_ligne:
             liste = [s for s in S if s["organisme"] == o["id"]]
@@ -1966,13 +2017,15 @@ class Site:
         if gabarit == "liste.html" and extra.get("sessions") and isinstance(dep_page, dict) and not extra.get("organisme"):
             # formule partenaire : dans un département qu'il a pris, l'organisme partenaire est le seul mis en avant ;
             # les sessions des autres organismes restent consultables, repliées en dessous (et c'est dit sur la page)
-            part = self.zone_partenaire.get(dep_page.get("code"))
-            if part:
+            blocs = []
+            for part in self.zone_partenaire.get(dep_page.get("code")) or []:
                 a_lui = [x for x in extra["sessions"] if x["organisme"] == part["id"]]
                 if a_lui:
-                    extra["partenaire_zone"] = part
-                    extra["sessions_partenaire"] = a_lui
-                    extra["sessions"] = [x for x in extra["sessions"] if x["organisme"] != part["id"]]
+                    blocs.append({"org": part, "sessions": a_lui})
+            if blocs:
+                ids = {b_["org"]["id"] for b_ in blocs}
+                extra["zone_partenaires"] = blocs
+                extra["sessions"] = [x for x in extra["sessions"] if x["organisme"] not in ids]
         if gabarit == "liste.html" and len(extra.get("sessions") or []) > LIMITE_LISTE:
             # une liste très longue : les plus proches ici, toutes les autres dans la recherche avec filtres
             extra["sessions_total"] = len(extra["sessions"])

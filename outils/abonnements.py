@@ -41,6 +41,84 @@ def stripe(chemin, cle, **params):
         return json.loads(r.read().decode("utf-8"))
 
 
+def stripe_post(chemin, cle, donnees):
+    """Une écriture dans Stripe (création d'une facture, d'un client…)."""
+    req = urllib.request.Request(f"https://api.stripe.com/v1/{chemin}", method="POST",
+                                 data=urllib.parse.urlencode(donnees, doseq=True).encode(),
+                                 headers={"Authorization": "Basic " + base64.b64encode(f"{cle}:".encode()).decode(),
+                                          "Content-Type": "application/x-www-form-urlencoded"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def partenariats(cle_stripe, cle_sb, essai):
+    """Les zones des organismes : une facture Stripe par réservation, l'activation au paiement (un an), la fin à échéance.
+    La facture est envoyée par Stripe à l'organisme, et son lien de paiement s'affiche dans son espace."""
+    auj = dt.date.today()
+    lignes = supabase("GET", "partenariats?select=id,compte,departement,prix,lancement,statut,facture_id,cree_le,fin"
+                             "&statut=in.(reserve,facture,actif)", cle_sb) or []
+    if not lignes:
+        return
+    comptes = {c["id"]: c for c in supabase("GET", "comptes_organismes?select=id,nom,email_contact", cle_sb) or []}
+    noms = {z["departement"]: z["nom"] for z in supabase("GET", "zones_tarifs?select=departement,nom", cle_sb) or []}
+    # 1. les réservations : une facture par organisme
+    par_compte = {}
+    for l in lignes:
+        if l["statut"] == "reserve":
+            par_compte.setdefault(l["compte"], []).append(l)
+    for cid, ls in par_compte.items():
+        c = comptes.get(cid) or {}
+        print(f"Facture à créer : {c.get('nom')} · " + ", ".join(l["departement"] for l in ls))
+        if essai:
+            continue
+        try:
+            client = stripe_post("customers", cle_stripe, {"name": c.get("nom") or "Organisme", "email": c.get("email_contact") or "",
+                                                         "metadata[site]": "filrouganim-organisme", "metadata[compte]": cid})
+            facture = stripe_post("invoices", cle_stripe, {"customer": client["id"], "collection_method": "send_invoice", "days_until_due": 30,
+                                                          "description": "Fil Roug'Anim : formule partenaire, un an, départements en exclusivité",
+                                                          "metadata[site]": "filrouganim-organisme", "metadata[compte]": cid})
+            for l in ls:
+                stripe_post("invoiceitems", cle_stripe, {"customer": client["id"], "invoice": facture["id"], "currency": "eur",
+                                                         "amount": l["prix"] * 100,
+                                                         "description": f"Partenaire · {noms.get(l['departement'], l['departement'])} ({l['departement']}) · 12 mois"
+                                                                        + (" · tarif de lancement" if l["lancement"] else "")})
+            facture = stripe_post(f"invoices/{facture['id']}/finalize", cle_stripe, {})
+            try:
+                stripe_post(f"invoices/{facture['id']}/send", cle_stripe, {})
+            except Exception as e:
+                print(f"  envoi de la facture par e-mail impossible ({e}) : le lien reste dans l'espace de l'organisme")
+            for l in ls:
+                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "facture", "facture_id": facture["id"], "facture_url": facture.get("hosted_invoice_url")})
+        except urllib.error.HTTPError as e:
+            raison = e.read().decode(errors="ignore")[:200]
+            print(f"  Stripe refuse la facture ({e.code}) : {raison}")
+            marque = f"[facture-{ls[0]['id']}]"
+            if not supabase("GET", f"evenements_admin?select=id&resume=like.*{urllib.parse.quote(marque)}*", cle_sb):
+                supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Facture à faire à la main · {c.get('nom')} · "
+                         + ", ".join(l["departement"] + " " + str(l["prix"]) + " €" for l in ls) + f" (Stripe : {e.code}) {marque}"})
+    # 2. les factures envoyées : payée -> active un an ; annulée ou impayée 45 jours -> la place se libère
+    vues = {}
+    for l in lignes:
+        if l["statut"] != "facture" or not l.get("facture_id"):
+            continue
+        f = vues.get(l["facture_id"]) or stripe(f"invoices/{l['facture_id']}", cle_stripe)
+        vues[l["facture_id"]] = f
+        if f.get("status") == "paid":
+            fin = dt.date(auj.year + 1, auj.month, min(auj.day, 28)).isoformat()
+            print(f"Payé : {comptes.get(l['compte'], {}).get('nom')} · {l['departement']} jusqu'au {fin}")
+            if not essai:
+                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "actif", "debut": auj.isoformat(), "fin": fin})
+                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"Partenaire payé · {comptes.get(l['compte'], {}).get('nom')} · {l['departement']} jusqu'au {fin[8:10]}/{fin[5:7]}/{fin[:4]}"})
+        elif f.get("status") in ("void", "uncollectible") or (dt.datetime.fromtimestamp(f.get("created", 0)).date() < auj - dt.timedelta(days=45) and f.get("status") != "paid"):
+            print(f"Facture non payée : {l['departement']} libéré")
+            if not essai:
+                supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "annule"})
+    # 3. les partenariats arrivés à échéance
+    for l in lignes:
+        if l["statut"] == "actif" and l.get("fin") and l["fin"] < auj.isoformat() and not essai:
+            supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "expire"})
+
+
 def tout(chemin, cle, **params):
     """Toutes les pages d'une liste Stripe."""
     apres = None
@@ -170,6 +248,10 @@ def main():
             supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, nouveau)
         structures[sid].update(nouveau)
     print(f"{vus} abonnement(s) Fil Roug'Anim relevé(s).")
+    try:
+        partenariats(cle_stripe, cle_sb, essai)
+    except Exception as e:
+        print(f"Partenariats des organismes : {e}")
 
 
 POSTES = {"animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur ou animatrice", "directeur": "Direction ou adjoint",

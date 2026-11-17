@@ -13,7 +13,7 @@
     auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true }
   });
   var params = new URLSearchParams(location.search);
-  var utilisateur = null, profil = null, structure = null, offreEnCours = null;
+  var utilisateur = null, profil = null, structure = null, organisme = null, offreEnCours = null;
   // l'administration peut ouvrir l'espace d'un autre compte (?compte=…) : tout se lit et s'enregistre alors pour ce compte
   var espaceDe = null;
   function idEspace() { return espaceDe || utilisateur.id; }
@@ -248,7 +248,7 @@
   }
 
   var CONNEXION_SEULE = "fra-connexion-seule";
-  var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-admin", "v-session"];
+  var VUES = ["v-chargement", "v-connexion", "v-lien", "v-mdp-oublie", "v-nouveau-mdp", "v-inscription", "v-choix", "v-candidat", "v-structure", "v-organisme", "v-admin", "v-session"];
   var estAdmin = false;
   // l'administration : un bandeau qui reste toujours visible hors de l'admin, pour savoir où l'on est et y revenir
   function bandeauAdmin(ids) {
@@ -290,7 +290,7 @@
   /* -- « Mon espace » en application : menu fixe à gauche, barre du haut, carte du compte en bas du menu -- */
   var vueApp = null;
   function majApp(ids) {
-    vueApp = ["v-structure", "v-candidat", "v-admin"].filter(function (v) { return ids.indexOf(v) >= 0; })[0] || null;
+    vueApp = ["v-structure", "v-candidat", "v-organisme", "v-admin"].filter(function (v) { return ids.indexOf(v) >= 0; })[0] || null;
     document.body.classList.toggle("en-app", !!vueApp);
     if (!vueApp) return;
     var nav = $(vueApp).querySelector(".co-nav");
@@ -318,11 +318,11 @@
     }
     if (droite && moi.parentNode !== droite) droite.appendChild(moi);
     else if (!droite && moi.parentNode !== nav) nav.appendChild(moi);
-    var nom = vueApp === "v-structure" ? (structure && structure.nom) || "Ma structure" : vueApp === "v-candidat" ? (profil && profil.prenom) || "Mon profil" : "Administration";
+    var nom = vueApp === "v-structure" ? (structure && structure.nom) || "Ma structure" : vueApp === "v-candidat" ? (profil && profil.prenom) || "Mon profil" : vueApp === "v-organisme" ? (organisme && organisme.nom) || "Mon organisme" : "Administration";
     moi.querySelector(".co-moi-av").textContent = initiales(nom) || "?";
     moi.querySelector(".co-moi-t b").textContent = nom;
     moi.querySelector(".co-moi-t small").textContent = vueApp === "v-structure" ? (actif(structure) ? "Structure · abonnée" : pageEnLigne(structure) ? "Structure · en ligne, gratuite" : "Structure · en vérification")
-      : vueApp === "v-candidat" ? "Animateur · " + (profil && profil.publie ? "profil visible" : "profil caché") : (utilisateur && utilisateur.email || "");
+      : vueApp === "v-candidat" ? "Animateur · " + (profil && profil.publie ? "profil visible" : "profil caché") : vueApp === "v-organisme" ? "Organisme de formation" : (utilisateur && utilisateur.email || "");
     // la barre du haut
     var barre = $("app-barre");
     if (!barre) {
@@ -562,8 +562,10 @@
     if (recuperation) { montrer("v-nouveau-mdp"); $("f-nouveau-mdp").mdp.focus(); return; }
     var rep = await Promise.all([
       sb.from("profils").select(CHAMPS_VUS + ",publie,resume_public,seize_ans,alertes").eq("id", utilisateur.id).maybeSingle(),
-      sb.from("structures").select("*").eq("id", utilisateur.id).maybeSingle()
+      sb.from("structures").select("*").eq("id", utilisateur.id).maybeSingle(),
+      sb.from("comptes_organismes").select("id,nom").eq("id", utilisateur.id).maybeSingle()
     ]);
+    organisme = rep[2] && rep[2].data;
     if (rep[0].error || rep[1].error) { montrer("v-session"); message(erreurLisible(rep[0].error || rep[1].error), true); return; }
     profil = rep[0].data; structure = rep[1].data;
     // l'administration : la base dit si ce compte en fait partie ; il passe d'un espace à l'autre
@@ -576,13 +578,15 @@
         sb.from("structures").select("*").eq("id", espaceDe).maybeSingle()
       ]);
       profil = autre[0].data; structure = autre[1].data;
+      var ao = await sb.from("comptes_organismes").select("id,nom").eq("id", espaceDe).maybeSingle();
+      organisme = ao.data;
     }
     // « Mon espace » n'ouvre pas de compte : un compte que Google vient de créer depuis la connexion est retiré,
     // et la personne passe par « Commencer » (où elle choisit animateur ou structure)
     var connexionSeule = false;
     try { connexionSeule = localStorage.getItem(CONNEXION_SEULE) === "1"; localStorage.removeItem(CONNEXION_SEULE); } catch (e) {}
     var toutNeuf = utilisateur.created_at && (Date.now() - new Date(utilisateur.created_at).getTime()) < 15 * 60 * 1000;
-    if (connexionSeule && toutNeuf && !profil && !structure && !estAdmin) {
+    if (connexionSeule && toutNeuf && !profil && !structure && !organisme && !estAdmin) {
       await sb.rpc("supprimer_mon_compte");
       await sb.auth.signOut();
       utilisateur = null; memoire(null);
@@ -598,13 +602,16 @@
       // sans structure ni profil à soi : on choisit dans l'administration l'espace à ouvrir (ou on crée le sien avec &creer=1)
       if (voulu === "structure") return voirStructure();
       if (voulu === "candidat") return voirCandidat();
+      if (voulu === "organisme") return voirOrganisme();
     }
     if (profil) return voirCandidat();
     if (structure) return voirStructure();
+    if (organisme) return voirOrganisme();
     var m = memoire() || {};
     var role = params.get("role") || (params.get("postuler") ? "candidat" : m.role);
     if (role === "candidat") return voirCandidat();
     if (role === "structure") return voirStructure();
+    if (role === "organisme") return voirOrganisme();
     montrer("v-choix", "v-session");
   }
 
@@ -672,7 +679,10 @@
                "Les structures de votre secteur vous trouvent."],
     structure: ["Votre fiche en 3 étapes", "Votre fiche", "Photos, projet, publics, activités : un aperçu de votre page se met à jour pendant que vous écrivez.",
                 "La vérification", "Nous vérifions la structure (en général sous 2 jours ouvrés), puis vos offres et votre page sont en ligne.",
-                "Les animateurs de votre secteur vous trouvent."]
+                "Les animateurs de votre secteur vous trouvent."],
+    organisme: ["Votre espace en 3 étapes", "Votre fiche et vos départements", "Votre présentation, puis vos départements sur la carte de France, avec le prix de chacun.",
+                "En avant", "Dès le paiement, vos sessions passent en premier dans vos départements, avec un bouton vers vos inscriptions.",
+                "Les jeunes de vos départements vous choisissent."]
   };
   function etapeInscription(n) {
     [1, 2, 3].forEach(function (i) {
@@ -735,7 +745,7 @@
   Array.prototype.forEach.call(document.querySelectorAll(".role"), function (b) {
     b.addEventListener("click", function () {
       message("");
-      if (b.dataset.role === "candidat") voirCandidat(); else voirStructure();
+      if (b.dataset.role === "candidat") voirCandidat(); else if (b.dataset.role === "organisme") voirOrganisme(); else voirStructure();
     });
   });
 
@@ -866,6 +876,17 @@
                        "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "resume_public", "seize_ans", "alertes"];
   var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
   var cvAEnvoyer = null;
+  // l'espace des organismes de formation : tout est dans statique/js/organisme.js
+  async function voirOrganisme() {
+    montrer("v-organisme", "v-session");
+    memoire({ role: "organisme" });
+    $("chapo-compte").textContent = "Votre espace organisme de formation.";
+    for (var i = 0; i < 100 && !window.FRA_ORGANISME; i++) await new Promise(function (r) { setTimeout(r, 30); });
+    window.FRA_ORGANISME.apres = function (c) { organisme = c; majApp(["v-organisme"]); };
+    var c = await window.FRA_ORGANISME.ouvrir({ id: idEspace(), email: utilisateur.email });
+    organisme = c;
+    ongletDepart("v-organisme", c ? "tableau" : "fiche", !c);
+  }
   function voirCandidat() {
     montrer("v-candidat", "v-session");
     var nouveau = !profil, m = memoire() || {};

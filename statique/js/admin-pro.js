@@ -589,7 +589,7 @@
      Partie 2 : membres, annuaires (structures, animateurs, organismes), visibilité,
      provenance et prospection
      ==================================================================================== */
-  var G = null, ORG = null, PROS = null, SORG = {}, CORG = [];
+  var G = null, ORG = null, PROS = null, SORG = {}, CORG = [], COMPTES_ORG = [], PARTS = [];
   function slugOrg(t) { return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
   function statsOrg(cle) { return SORG[cle] || { vue_page: 0, clic_session: 0, clic_site: 0 }; }
   function clicsOrg(cle) { var x = statsOrg(cle); return x.clic_session + x.clic_site; }
@@ -778,6 +778,22 @@
     var totalClics = Object.keys(SORG).reduce(function (a, k) { return a + clicsOrg(k); }, 0);
     chiffres(c, [[fr(totalClics), "clics envoyés · 30 j", "rouge"], [String(CORG.length), "demandes reçues"], [String(o.suivis.length), "organismes suivis"], [fr(sessions), "sessions comparées"], [String(o.autres.length), "autres repérés"],
                  [String(compte(PROS || [], function (p) { return p.type === "organisme" && p.statut !== "a_contacter"; })), "contactés"], [String(clients), "clients", "rouge"]]);
+    // les comptes organismes : les relier à un organisme du site, les vérifier, suivre leurs départements
+    var s9 = el("p", "ap-titre-s"); s9.appendChild(el("i", "ap-dot")); s9.appendChild(document.createTextNode("Comptes organismes · " + COMPTES_ORG.length)); c.appendChild(s9);
+    c.appendChild(el("p", "ap-petit", "Reliez chaque compte à son organisme du site (ses sessions), puis vérifiez-le : sa fiche et ses statistiques s'ouvrent. Ses départements s'activent tout seuls au paiement de la facture."));
+    var opts = (o.suivis || []).map(function (x) { return [x.id, x.nom]; });
+    tableau(c, ["Organisme", "Relié à", "Départements", "État", ""], COMPTES_ORG.map(function (x) {
+      var sel = el("select", "ap-select"); var vide = el("option", null, "— choisir —"); vide.value = ""; sel.appendChild(vide);
+      opts.forEach(function (op) { var e = el("option", null, op[1]); e.value = op[0]; if (x.organisme_id === op[0]) e.selected = true; sel.appendChild(e); });
+      var ps = PARTS.filter(function (p) { return p.compte === x.id && p.statut !== "annule"; });
+      var dz = el("div", "ap-cel"); ps.forEach(function (p) { var l = el("small", null, p.departement + " · " + p.prix + " € · " + p.statut + (p.fin ? " → " + E.dateFr(p.fin) : ""));
+        if (p.statut === "facture" || p.statut === "reserve") { var bA = el("button", "ap-lien-b", "Activer"); bA.type = "button"; bA.title = "Payé sur facture à part : activer un an"; bA.addEventListener("click", async function () { var q = await E.sb.rpc("admin_partenariat", { pid: p.id, st: "actif" }); if (q.error) return E.message(E.erreur(q.error), true); E.message("Activé pour un an."); await toutLire(); organismes(); }); l.appendChild(bA); }
+        dz.appendChild(l); });
+      if (!ps.length) dz.appendChild(el("small", null, "aucun"));
+      return [cellule(x.nom, [x.email_contact, x.telephone].filter(Boolean).join(" · ")), sel, dz, etiquette(x.verifie ? "vérifié" : "à vérifier", x.verifie ? "ok" : "jaune"),
+        actions([[x.verifie ? "Retirer" : "✓ Vérifier", async function () { var q = await E.sb.rpc("admin_organisme", { cid: x.id, oid: sel.value, ok: !x.verifie }); if (q.error) return E.message(E.erreur(q.error), true); E.message(x.verifie ? "Vérification retirée." : "Compte vérifié."); await toutLire(); organismes(); }, null, x.verifie ? "" : "ap-fort"],
+                 ["Espace", function () { ouvrirEspace("organisme", x.id); }]])];
+    }));
     if (CORG.length) {
       var s0 = el("p", "ap-titre-s"); s0.appendChild(el("i", "ap-dot")); s0.appendChild(document.createTextNode("Demandes reçues par la page « Organismes partenaires » · " + CORG.length)); c.appendChild(s0);
       tableau(c, ["Organisme", "Contact", "Message", "Reçue", ""], CORG.map(function (x) {
@@ -1257,12 +1273,14 @@
     var r = await Promise.all([E.sb.rpc("admin_sante"), lireGithub(), lireJson("/chiffres/google.json"), lireJson("/compte/organismes.json"),
                                E.sb.from("admin_prospects").select("*"), lireIndexation(), lireJson("/compte/contenus.json"), lireJson("/compte/posts.json"),
                                lirePosts(), lireActualites(), E.sb.from("stats_organismes").select("organisme,type,n,jour").gte("jour", joursAvant(29)).limit(5000),
-                               E.sb.from("contacts_organismes").select("*").order("cree_le", { ascending: false }), fetch("/sitemap.xml").then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; })]);
+                               E.sb.from("contacts_organismes").select("*").order("cree_le", { ascending: false }), fetch("/sitemap.xml").then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; }),
+                               E.sb.from("comptes_organismes").select("*").order("cree_le", { ascending: false }), E.sb.from("partenariats").select("*").order("cree_le", { ascending: false })]);
     S = (r[0] && !r[0].error && r[0].data) || {};
     G = r[2] || {}; ORG = r[3] || { suivis: [], autres: [] }; PROS = (r[4] && !r[4].error && r[4].data) || [];
     CONT = r[6] || []; POSTS = r[7] || { idees: [] };
     SORG = {}; ((r[10] && !r[10].error && r[10].data) || []).forEach(function (x) { var o = SORG[x.organisme] = SORG[x.organisme] || { vue_page: 0, clic_session: 0, clic_site: 0 }; o[x.type] = (o[x.type] || 0) + x.n; });
     CORG = (r[11] && !r[11].error && r[11].data) || [];
+    COMPTES_ORG = (r[13] && !r[13].error && r[13].data) || []; PARTS = (r[14] && !r[14].error && r[14].data) || [];
     PLAN = (r[12] || "").match(/<loc>[^<]+<\/loc>/g); PLAN = (PLAN || []).map(function (x) { return x.slice(5, -6); });
     verifieA = new Date();
   }

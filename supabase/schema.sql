@@ -798,3 +798,12 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- 2e offre publiée sans abonnement. structures_abonnees() (étiquette « Partenaire ») et demandes_du_secteur().
 -- L'abonnement garde : les demandes de l'annuaire inversé, les profils complets, les centres, la boîte à outils.
 -- Voir les migrations v19b_droits_releve et v20_modele_gratuit_organismes dans Supabase.
+
+-- ------------------------------------------------------------------ version 21 (17/11/2026)
+-- Organismes de formation : zones_tarifs (prix de chaque département selon les 15-24 ans INSEE 2025, les sessions et les
+-- recherches : 490 / 290 / 190 / 90 € par an ; deux places dans les six plus grands), comptes_organismes (leur fiche,
+-- reliée par l'admin à un organisme du site et vérifiée via admin_organisme()), partenariats (réservation -> facture ->
+-- actif un an ; une place par département, index unique), zones_disponibles(), reserver_zones() (moitié prix pour les
+-- 10 premiers organismes : lancement_ouvert()), annuler_reservation(), admin_partenariat(), partenaires_publics()
+-- (lu à la publication). Les factures sont créées et suivies par outils/abonnements.py.
+-- Voir les migrations v21a, v21b et v21c dans Supabase.

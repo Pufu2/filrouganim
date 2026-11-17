@@ -25,7 +25,7 @@
     <h2 class="rc-titre-cartes rc-titre-etapes">La formule <em>partenaire</em></h2>
     <ul class="rc-atouts">
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>Vos statistiques chaque mois</b><span>Combien de fois vos sessions et votre page ont été vues, combien de personnes sont allées sur votre site, ville par ville.</span></li>
-      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span><b>Vos départements, en exclusivité</b><span>Un seul partenaire par département. Sur les pages de vos départements et de leurs villes, vos sessions sont les seules présentées d'entrée, avec un bouton vers vos inscriptions ; celles des autres organismes sont repliées en dessous. La mise en avant est toujours signalée aux visiteurs.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span><b>Vos départements, en exclusivité</b><span>Un seul partenaire par département (deux dans les six plus grands). Sur les pages de vos départements et de leurs villes, vos sessions sont les seules présentées d'entrée, avec un bouton vers vos inscriptions ; celles des autres organismes sont repliées en dessous. La mise en avant est toujours signalée aux visiteurs.</span></li>
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><b>Une page organisme soignée</b><span>Votre présentation, votre habilitation, toutes vos sessions et le lien direct vers vos inscriptions.</span></li>
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h18v10H3z"/><path d="M3 7l9 6 9-6"/></svg></span><b>Vos sessions toujours à jour</b><span>Une nouvelle session, une session complète : vous nous écrivez, c'est corrigé dans la journée.</span></li>
     </ul>
@@ -34,13 +34,28 @@
 
 <section class="bande bande-papier" aria-labelledby="t-prix">
   <div class="cadre">
+    <h2 id="t-prix" class="rc-titre-cartes">Le prix d'un département, <em>selon ce qu'il pèse</em></h2>
+    <p class="pa-texte">Un département de 360 000 jeunes ne vaut pas un département de 8 000. Le prix suit le nombre de jeunes de 15 à 24 ans qui y vivent (INSEE, 2025), le nombre de sessions et les recherches Google. Un seul partenaire par département ; deux dans les six plus grands, pour éviter le monopole.</p>
+    <ul class="pa-paliers">
+      {% for p in page.paliers %}
+      <li class="pa-palier pa-palier-{{ p.n }}">
+        <p class="pa-palier-t">{{ ["", "Très grands départements", "Grands départements", "Départements moyens", "Départements ruraux"][p.n] }}</p>
+        <p class="pa-palier-prix"><b>{{ p.prix }} €</b> par an</p>
+        <p class="pa-palier-lanc">{{ ((p.prix + 1) // 2) }} € au tarif de lancement</p>
+        <p class="pa-palier-ex">{{ p.nb }} départements, dont {{ p.exemples | join(', ') }}{{ '…' if p.nb > 5 }}</p>
+        <p class="pa-palier-places">{{ p.places }} place{{ 's' if p.places > 1 }} par département</p>
+      </li>
+      {% endfor %}
+    </ul>
     <div class="pa-prix">
       <div>
-        <h2 id="t-prix" class="rc-titre-cartes">Le <em>tarif</em></h2>
-        <p><b class="pa-prix-n">{{ site.partenaires.prix }} par département et par an</b> pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires (tarif de lancement, gardé tant que vous restez partenaire), puis {{ site.partenaires.prix_ensuite }}. Premier arrivé, premier servi : un département déjà pris ne peut pas l'être par un autre organisme. Sans commission sur vos inscriptions : une seule inscription de plus dans l'année rembourse un département.</p>
-        <p class="pa-petit">Par carte, ou sur facture (virement, mandat administratif) : écrivez-nous. Sans engagement au-delà de l'année en cours.</p>
+        <p><b class="pa-prix-n">Tarif de lancement : moitié prix</b> pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, gardé tant que vous restez partenaire. Sans commission sur vos inscriptions : une seule inscription de plus dans l'année rembourse un département.</p>
+        <p class="pa-petit">Créez votre espace, choisissez vos départements sur la carte de France (vous voyez le prix et ce qui est encore libre), et payez sur facture, par carte ou virement. Un an, que vous arrêtez quand vous voulez.</p>
       </div>
-      <a class="tp-appel-bouton" href="{{ site.partenaires.paiement }}" rel="noopener" target="_blank">Devenir partenaire <span aria-hidden="true">→</span></a>
+      <div class="pa-prix-boutons">
+        <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1&amp;role=organisme">Créer mon espace organisme <span aria-hidden="true">→</span></a>
+        <a class="pa-lien-ex" href="{{ lien('/organismes-partenaires/exemple/') }}">Voir une fiche partenaire d'exemple</a>
+      </div>
     </div>
   </div>
 </section>

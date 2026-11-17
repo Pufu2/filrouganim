@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Fiche d'un organisme de formation partenaire (exemple fictif) : ce que voient les jeunes, et ce que l'organisme obtient.
+   Les vraies fiches sont les pages « Sessions › Organismes » (liste.html), avec les mêmes éléments. #}
+{% set o = page.organisme_ex %}
+{% block tete_note %}<p class="tp-sur">Exemple fictif · fiche d'un organisme partenaire</p>{% endblock %}
+{% block h1 %}{{ o.nom }} <span class="s-partenaire">Partenaire</span>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Voici ce que voient les jeunes qui cherchent leur BAFA dans les départements d'un organisme partenaire. L'organisme et ses chiffres sont fictifs ; les sessions sont de vraies sessions d'Île-de-France prêtées pour l'exemple.</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier">
+  <div class="cadre">
+    <div class="ox-grille">
+      <article class="ox-carte ox-identite">
+        <div class="ox-tete">
+          <span class="ox-logo" aria-hidden="true">AF</span>
+          <div><h2>{{ o.nom }}</h2><p class="ox-sous">Organisme de formation BAFA · habilitation {{ o.habilitation }}</p></div>
+        </div>
+        <div class="ox-texte">{{ o.presentation_partenaire | paragraphes | safe }}</div>
+        <div class="ox-boutons">
+          <a class="bouton-r" href="#sessions">S'inscrire chez {{ o.nom }} <span aria-hidden="true">→</span></a>
+          <a class="bouton-blanc" href="#sessions">Voir ses sessions</a>
+        </div>
+        <ul class="ox-atouts">
+          <li><b>Externat et internat</b><span>selon les sessions</span></li>
+          <li><b>Aide au stage pratique</b><span>son réseau de structures</span></li>
+          <li><b>Dossier CAF</b><span>monté avec vous</span></li>
+        </ul>
+      </article>
+      <aside class="ox-cote">
+        <article class="ox-carte">
+          <h3>Ses départements</h3>
+          {{ carte_deps(o.zones, "carte-deps ox-carte-deps") }}
+          <p class="ox-petit">Partenaire à Paris, dans les Hauts-de-Seine et en Seine-Saint-Denis : sur les pages de ces départements et de leurs villes, ses sessions passent en premier, avec ce bouton d'inscription.</p>
+        </article>
+        <article class="ox-carte ox-stats">
+          <h3>Ce que l'organisme voit chaque mois <span class="ox-ex">exemple</span></h3>
+          <p><b>1 240</b><span>vues de ses sessions</span></p>
+          <p><b>186</b><span>clics vers ses sessions</span></p>
+          <p><b>42</b><span>clics vers son site</span></p>
+          <p class="ox-petit">Dans son espace organisme, avec le détail département par département.</p>
+        </article>
+      </aside>
+    </div>
+
+    <div class="zone-partenaire" id="sessions">
+      <div class="zone-partenaire-tete">
+        <p class="zone-partenaire-sur"><span class="s-partenaire">Partenaire</span> Organisme partenaire dans ce département</p>
+        <h2>Les sessions de {{ o.nom }}</h2>
+        <a class="bouton-r" href="#sessions">S'inscrire chez {{ o.nom }} <span aria-hidden="true">→</span></a>
+      </div>
+      {{ m.liste_sessions(page.sessions, lien) }}
+      <p class="zone-partenaire-note">C'est ainsi que ses sessions apparaissent en tête des pages de ses départements. Les sessions des autres organismes restent consultables en dessous, repliées : la mise en avant est toujours signalée.</p>
+    </div>
+
+    <div class="tp-appel">
+      <div>
+        <p class="tp-appel-sur">Organismes de formation</p>
+        <h2>Votre fiche, <em>vos départements</em></h2>
+        <p>Créez votre espace, choisissez vos départements sur la carte de France, payez sur facture : vos sessions passent en premier.</p>
+      </div>
+      <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1&amp;role=organisme">Créer mon espace organisme <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+{% endblock %}
