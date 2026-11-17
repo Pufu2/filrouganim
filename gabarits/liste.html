@@ -17,7 +17,10 @@
 <section class="bande bande-blanc">
   <div class="cadre texte">
     {% if page.organisme %}{% set o = page.organisme %}<span id="org-vue" hidden data-org="{{ o.id }}"></span>
-    {% if o.partenaire %}<p class="org-partenaire"><span class="s-partenaire">Partenaire</span> {{ o.nom }} est partenaire de Fil Roug'Anim.</p>{% endif %}
+    {% if o.partenaire %}<div class="org-partenaire-bloc">
+      <p class="org-partenaire"><span class="s-partenaire">Partenaire</span> {{ o.nom }} est partenaire de Fil Roug'Anim : ses sessions ci-dessous sont à jour.</p>
+      <a class="bouton-r" href="{{ o.inscription or o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank" data-org="{{ o.id }}" data-org-t="clic_site">S'inscrire chez {{ o.nom }} <span aria-hidden="true">→</span></a>
+    </div>{% endif %}
     <p>{{ o.presentation }}</p>
     <p class="petit">{% if o.habilitation in ('nationale', 'régionale') %}Habilitation BAFA-BAFD {{ o.habilitation }} (arrêté du 4 septembre 2026). {% endif %}<a href="{{ o.site }}" rel="noopener nofollow" target="_blank" data-org="{{ o.id }}" data-org-t="clic_site">Le BAFA sur le site de {{ o.nom }} ↗</a>{% if o.page_sessions %} · <a href="{{ o.page_sessions }}" rel="noopener nofollow" target="_blank" data-org="{{ o.id }}" data-org-t="clic_site">toutes ses sessions ↗</a>{% endif %}</p>
     {% elif page.diplome_page %}

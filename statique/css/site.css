@@ -3527,3 +3527,18 @@ body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(-
 body.en-app .co-nav .co-premium, .co-nav button.co-ferme.co-premium { opacity: 1; color: var(--encre); }
 body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static; width: auto; height: auto; margin-left: auto; padding: 1px 7px; border-radius: 99px; background: #fdeceb; color: var(--fil-fonce); font-size: .66rem; font-weight: 700; -webkit-mask: none; mask: none; }
 .fp-partenaire { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-size: .9rem; color: var(--doux); }
+/* Réponses toutes prêtes aux candidats (abonnement) */
+.reponses-types { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--trait); }
+.reponses-t { font-size: .85rem; font-weight: 700; color: var(--doux); margin-right: 4px; }
+.reponse-type { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--trait); background: #fff; font: 700 .82rem var(--texte); color: var(--encre); text-decoration: none; cursor: pointer; }
+.reponse-type:hover { border-color: var(--fil); color: var(--fil-fonce); }
+.reponse-verrou { color: #a89c95; }
+.reponses-abo { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #fdeceb; color: var(--fil-fonce); }
+.abo-ete { display: block; margin-top: 4px; padding: 10px 14px; border-radius: 12px; background: #fff7e8; border: 1px solid #f1dcae; color: #6d4c12; font-size: .88rem; text-decoration: none; }
+.abo-ete b { color: #4d3509; }
+.abo-ete:hover { border-color: #d9b25a; color: #4d3509; }
+.pa-prix { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 28px; border-radius: 22px; background: #fff; border: 1px solid var(--trait); }
+.pa-prix p { margin: 6px 0; max-width: 680px; } .pa-prix-n { font: 600 1.3rem var(--titres); color: var(--fil-fonce); }
+.org-partenaire-bloc { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 14px 18px; border-radius: 16px; background: #fdf0ee; border: 1px solid #f2d3cf; }
+.org-partenaire-bloc .org-partenaire { margin: 0; }
+@media (max-width: 800px) { .pa-prix { flex-direction: column; align-items: flex-start; padding: 20px 16px; } }

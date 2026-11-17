@@ -81,6 +81,8 @@ def main():
     offres = lire(f"{base}/offres?select=id,intitule,ville,departement,debut,contrat,type_accueil,structures!inner(nom,verifiee)"
                   f"&publiee=is.true&expire_le=gte.{aujourdhui}&cree_le=gte.{urllib.parse.quote(depuis)}"
                   f"&structures.verifiee=is.true&order=debut", cle)
+    # pour les structures abonnées : les nouveaux animateurs de leur secteur (une fonction de l'abonnement)
+    alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourdhui)
     if not offres:
         print("Alertes : aucune nouvelle offre cette semaine.")
         return
@@ -118,6 +120,46 @@ def main():
             except Exception as e:  # une adresse refusée n'arrête pas les autres
                 print(f"Alertes : un envoi a échoué ({e})", file=sys.stderr)
     print(f"Alertes : {len(offres)} nouvelles offres, {envoyes} e-mails envoyés.")
+
+
+POSTES = {"animateur-stagiaire": "stage pratique BAFA", "animateur": "animateur ou animatrice", "directeur": "direction",
+          "directeur-adjoint": "direction adjointe", "surveillant-baignade": "surveillance de baignade", "coordinateur": "coordination"}
+
+
+def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourdhui):
+    """Chaque lundi, aux structures abonnées : les animateurs qui ont publié leur profil dans leur secteur cette semaine."""
+    structures = lire(f"{base}/structures?select=nom,departement,email_contact&verifiee=is.true&abonnement_fin=gte.{aujourdhui}&email_contact=not.is.null", cle)
+    if not structures:
+        print("Alertes structures : aucune structure abonnée.")
+        return
+    profils = lire(f"{base}/profils?select=prenom,departement,mobilite,diplomes,poste_recherche,ville&publie=is.true"
+                   f"&cree_le=gte.{urllib.parse.quote(depuis)}", cle)
+    envoyes = 0
+    for st in structures:
+        pour = [p for p in profils if p.get("departement") == st["departement"] or st["departement"] in (p.get("mobilite") or [])]
+        if not pour:
+            continue
+        lien = f"{site}/compte/?role=structure"
+        lignes = [f"- {p['prenom']}, {POSTES.get(p.get('poste_recherche'), p.get('poste_recherche') or 'animation')}"
+                  f"{', ' + p['ville'] if p.get('ville') else ''} ({p['departement']}){' · ' + ', '.join(p['diplomes'][:3]) if p.get('diplomes') else ''}" for p in pour[:20]]
+        n = len(pour)
+        sujet = f"{n} nouve{'aux' if n > 1 else 'l'} animateur{'s' if n > 1 else ''} dans votre secteur"
+        texte = (f"Bonjour,\n\nCette semaine, {n} animateur{'s ont' if n > 1 else ' a'} publié son profil près de {st['nom']} :\n\n" + "\n".join(lignes) +
+                 f"\n\nLeurs profils complets (diplômes, expériences, disponibilités, CV) sont dans votre espace, onglet « Candidats » : {lien}\n\n"
+                 f"Vous recevez cet e-mail avec l'abonnement {config['nom']}. Pour ne plus le recevoir, répondez simplement « stop ».\n")
+        corps = (f"<p>Bonjour,</p><p>Cette semaine, {n} animateur{'s ont' if n > 1 else ' a'} publié son profil près de {html.escape(st['nom'])} :</p>"
+                 f"<ul>{''.join('<li>' + html.escape(l[2:]) + '</li>' for l in lignes)}</ul>"
+                 f'<p><a href="{html.escape(lien)}">Voir leurs profils complets dans votre espace</a> (onglet « Candidats »).</p>'
+                 f'<p style="font-size:13px;color:#6e655d">Vous recevez cet e-mail avec l\'abonnement {html.escape(config["nom"])}. Pour ne plus le recevoir, répondez « stop ».</p>')
+        if args.essai:
+            print(f"(essai) {n} profil(s) pour une structure du {st['departement']}")
+            continue
+        try:
+            envoyer(cle_brevo, config["email_alertes"], config["nom"], st["email_contact"], sujet, texte, corps)
+            envoyes += 1
+        except Exception as e:
+            print(f"Alertes structures : un envoi a échoué ({e})", file=sys.stderr)
+    print(f"Alertes structures : {len(profils)} nouveaux profils, {envoyes} e-mails envoyés.")
 
 
 if __name__ == "__main__":

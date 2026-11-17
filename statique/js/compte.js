@@ -1147,7 +1147,7 @@
       var n = structure.centres_payes || 1;
       $("abo-detail").textContent = n + (n > 1 ? " centres payés" : " centre payé (votre structure)") + (structure.fondatrice ? " · tarif fondateur, à vie" : "") +
         (nbCentres > n ? ". Vous avez " + nbCentres + " centres : ajoutez-en " + (nbCentres - n) + " à l'abonnement depuis l'espace abonnés (quantité), ou écrivez-nous." : ".");
-      ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture"].forEach(function (id) { $(id).hidden = true; });
+      ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture", "abo-ete"].forEach(function (id) { $(id).hidden = true; });
       return;
     }
     ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture"].forEach(function (id) { $(id).hidden = false; });
@@ -1159,7 +1159,7 @@
     var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
     $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Passer à l'abonnement";
     $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
-    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé), leurs profils complets, les offres illimitées, l'étiquette « Partenaire » en tête de l'annuaire, la boîte à outils et vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
+    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
     var champ = $("abo-nb");
     if (!champ.dataset.touche) champ.value = nbCentres;
     function maj() {
@@ -1167,6 +1167,7 @@
       $("abo-total").textContent = nb > 1 ? "Total : " + euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (à indiquer en « quantité » sur la page de paiement)." : "Total : " + euros(p1) + " par an.";
       var q = new URLSearchParams({ client_reference_id: idEspace(), prefilled_email: utilisateur.email, locale: "fr" });
       $("abo-payer").href = (fond ? A.paiement_fondateur : A.paiement) + "?" + q.toString();
+      if (A.pack_ete) { $("abo-ete").href = A.pack_ete + "?" + q.toString(); $("abo-ete").hidden = false; }
       var corps = "Bonjour,\n\nNous souhaitons régler l'abonnement Fil Roug'Anim sur facture.\n\n" +
         "Structure : " + (structure.nom || "") + "\nSIRET, RNA ou n° de déclaration : " + (structure.identifiant || "") +
         "\nNombre de centres : " + nb + "\nAdresse de facturation : \nService et n° d'engagement (Chorus Pro, si besoin) : \n" +
@@ -1887,12 +1888,39 @@
       bloc1.appendChild(tete);
       if (c.message) bloc1.appendChild(el("p", "presentation message-candidat", "« " + c.message + " »"));
       if (c.profils) bloc1.appendChild(carteProfil(c.profils, actif(structure)));
+      bloc1.appendChild(reponsesTypes(c, offre));
       liste.appendChild(bloc1);
       if (c.statut === "envoyee") {
         // ouverte par la structure : le candidat voit « vue »
         sb.from("candidatures").update({ statut: "vue" }).eq("id", c.id).then(function () { c.statut = "vue"; });
       }
     });
+  }
+
+  // les réponses toutes prêtes aux candidats (avec l'abonnement) : un clic ouvre la messagerie, le message est prêt
+  var REPONSES = [
+    ["Proposer un entretien", "Votre candidature : on se rencontre ?",
+     "Bonjour {prenom},\n\nMerci pour votre candidature au poste « {poste} » chez {structure}. Votre profil nous intéresse : seriez-vous disponible pour un entretien (sur place ou par téléphone) dans les prochains jours ?\n\nVoici nos disponibilités : \n\nÀ très vite,\n{structure}", "retenue"],
+    ["Confirmer le stage pratique", "Votre stage pratique BAFA chez {structure}",
+     "Bonjour {prenom},\n\nBonne nouvelle : nous vous accueillons pour votre stage pratique BAFA ({poste}).\n\nPour préparer votre arrivée, pouvez-vous nous envoyer : votre numéro d'inscription BAFA (jeunes.gouv.fr), une pièce d'identité et vos disponibilités exactes ?\n\nNous vous enverrons ensuite le projet pédagogique et le planning.\n\nÀ bientôt,\n{structure}", "retenue"],
+    ["Demander des précisions", "Votre candidature : une question",
+     "Bonjour {prenom},\n\nMerci pour votre candidature au poste « {poste} ». Avant d'aller plus loin, pouvez-vous nous préciser vos disponibilités exactes et votre expérience avec ce public ?\n\nMerci et à bientôt,\n{structure}", null],
+    ["Répondre non, poliment", "Votre candidature chez {structure}",
+     "Bonjour {prenom},\n\nMerci pour l'intérêt que vous portez à {structure} et pour votre candidature au poste « {poste} ». Nous avons retenu un autre profil pour cette fois.\n\nVotre profil reste sur Fil Roug'Anim : nous n'hésiterons pas à revenir vers vous pour une prochaine saison.\n\nBonne continuation,\n{structure}", "non-retenue"]];
+  function reponsesTypes(c, offre) {
+    var d = el("div", "reponses-types");
+    d.appendChild(el("span", "reponses-t", "Répondre avec un modèle :"));
+    var p = c.profils || {}, email = p.email_contact || "";
+    REPONSES.forEach(function (r) {
+      var rempl = function (t) { return t.replace(/\{prenom\}/g, p.prenom || "").replace(/\{poste\}/g, offre ? offre.intitule : "").replace(/\{structure\}/g, (structure && structure.nom) || ""); };
+      if (!actif(structure) && !estAdmin) { var b = el("button", "reponse-type reponse-verrou", r[0]); b.type = "button"; b.title = "Avec l'abonnement"; b.dataset.ongletVers = "abonnement"; d.appendChild(b); return; }
+      var a = el("a", "reponse-type", r[0]);
+      a.href = "mailto:" + email + "?subject=" + encodeURIComponent(rempl(r[1])) + "&body=" + encodeURIComponent(rempl(r[2]));
+      if (r[3]) a.addEventListener("click", function () { sb.from("candidatures").update({ statut: r[3] }).eq("id", c.id).then(function () { c.statut = r[3]; }); });
+      d.appendChild(a);
+    });
+    if (!actif(structure) && !estAdmin) d.appendChild(el("span", "reponses-abo", "avec l'abonnement"));
+    return d;
   }
 
   /* -- tableaux de bord -- */

@@ -441,7 +441,7 @@
   <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
   <div class="s-corps">
     <h3 class="s-titre"><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
-    <p class="s-infos"><b>{{ o.structure.nom }}</b>{% if o.structure.fondatrice %} <span class="mini-fondatrice">fondatrice</span>{% endif %} · {{ o.ville }} ({{ o.departement }}){% if o.age_min and o.age_max %} · {{ o.age_min }}-{{ o.age_max }} ans{% elif o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
+    <p class="s-infos"><b>{{ o.structure.nom }}</b>{% if o.une %} <span class="s-partenaire" title="Structure partenaire de Fil Roug'Anim : son offre est à la une">À la une</span>{% elif o.structure.fondatrice %} <span class="mini-fondatrice">fondatrice</span>{% endif %} · {{ o.ville }} ({{ o.departement }}){% if o.age_min and o.age_max %} · {{ o.age_min }}-{{ o.age_max }} ans{% elif o.public %} · {{ o.public }}{% endif %}{% if o.loge %} · logé{% endif %}</p>
     <p class="s-verif">{{ CONTRATS.get(o.contrat, o.contrat) }} · à partir du {{ o.debut | date_fr }} · en ligne jusqu'au {{ o.expire_le | date_fr }}</p>
   </div>
   <p class="s-prix">{% if o.remuneration and o.remuneration.montant %}{{ o.remuneration.montant | euros }}<span> / {{ o.remuneration.unite }}</span>{% endif %}</p>

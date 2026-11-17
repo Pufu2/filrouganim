@@ -55,6 +55,14 @@ fondateurs:
 # Abonnement des structures : Stripe, compte « Fil Roug'Anim » (même micro-entreprise que Jeuphorie, compte séparé).
 # Un seul tarif dégressif par formule : la quantité payée est le nombre de centres (la structure comprise).
 # Les paiements sont relevés par outils/abonnements.py (GitHub Actions, toutes les 15 minutes).
+# formule partenaire des organismes de formation (abonnement annuel ; l'organisme passe « partenaire: true » dans organismes.yml)
+partenaires:
+  prix: "190 €"
+  prix_ensuite: "390 €"
+  places_lancement: 10
+  paiement: https://buy.stripe.com/00w4gAdeO544h0p1SOe7m04
+  lien_stripe: plink_1UcoB5KIAmufAQXGGLMMmmh9
+
 abonnement:
   prix: "79 €"
   prix_fondateur: "39,50 €"
@@ -64,6 +72,10 @@ abonnement:
   # le lien fondateur se ferme tout seul après 10 paiements
   paiement_fondateur: https://buy.stripe.com/dRmdRafmW6886lL7d8e7m02
   liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMzrKIAmufAQXGhXgOnrPD]
+  # Pack été : paiement unique, toutes les fonctions de l'abonnement jusqu'au 31 août (outils/abonnements.py)
+  pack_ete_prix: "29 €"
+  pack_ete: https://buy.stripe.com/eVq5kE2Aa7cc11rbtoe7m03
+  lien_pack_ete: plink_1UcoAUKIAmufAQXGbse2NWxt
   # espace des abonnés Stripe (factures, carte, nombre de centres, arrêt) : lien de connexion du portail client
   # (Stripe → Paramètres → Facturation → Portail client → « Lien de connexion »)
   portail: https://billing.stripe.com/p/login/eVq28s8Yy40011rfJEe7m00

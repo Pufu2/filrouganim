@@ -23,9 +23,15 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 
 - la publication d'offres d'emploi et de stages, sans limite de nombre, affichées aussi sur les pages des sessions BAFA du département ;
 - la réception des demandes des animateurs de son secteur (« Décrivez ce que vous cherchez ») ;
-- l'accès aux profils des candidats qui les rendent visibles, avec leur CV s'ils l'ont ajouté ;
+- l'accès aux profils des candidats qui les rendent visibles, avec leur CV s'ils l'ont ajouté, et chaque lundi un e-mail avec les nouveaux profils de son secteur ;
+- ses offres « à la une », en tête des listes d'offres ;
+- des réponses toutes prêtes aux candidats ;
 - l'étiquette « Partenaire » sur sa page, et sa place en tête de l'annuaire des structures ;
 - la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus.
+
+## Pack été
+
+Le **Pack été** ({{ site.abonnement.pack_ete_prix }}, paiement unique par carte) donne tout ce que comprend l'abonnement, pour un centre, **jusqu'au 31 août** de la saison en cours (ou de la saison suivante s'il est acheté après le 31 août). Il ne se renouvelle pas. Les conditions de vérification et de remboursement sont les mêmes que pour l'abonnement.
 
 Fil Roug'Anim ne prend aucune commission sur les recrutements et n'intervient pas dans le contrat entre la structure et le candidat.
 
@@ -49,6 +55,10 @@ Une facture est émise pour chaque paiement et reste disponible dans l'espace ab
 ## Mise en ligne et vérification
 
 Chaque structure est vérifiée à la main (SIRET, numéro RNA ou numéro de déclaration de l'accueil), en général sous 2 jours ouvrés après l'enregistrement de sa fiche. La page, les offres et, avec l'abonnement, l'accès aux profils sont ouverts une fois la structure vérifiée. Si une structure abonnée ne peut pas être vérifiée, elle est **remboursée en totalité**.
+
+## Formule partenaire des organismes de formation
+
+Les organismes de formation (BAFA, BAFD, BSB, PSC) peuvent souscrire la **formule partenaire** : l'étiquette « Partenaire » sur leurs sessions et leur page, jusqu'à trois de leurs sessions en tête des listes de sessions (toujours signalées comme telles), un bouton d'inscription sur leur page et leurs statistiques (vues, clics vers leur site) chaque mois. Prix : **{{ site.partenaires.prix }} par an** pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, tant qu'ils restent partenaires, puis **{{ site.partenaires.prix_ensuite }} par an**. La durée, le renouvellement et l'arrêt suivent les règles de l'abonnement ci-dessous. Les sessions de tous les organismes restent sur le site gratuitement, partenaires ou non.
 
 ## Durée, renouvellement et arrêt
 

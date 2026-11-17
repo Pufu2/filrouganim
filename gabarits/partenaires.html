@@ -32,6 +32,19 @@
   </div>
 </section>
 
+<section class="bande bande-papier" aria-labelledby="t-prix">
+  <div class="cadre">
+    <div class="pa-prix">
+      <div>
+        <h2 id="t-prix" class="rc-titre-cartes">Le <em>tarif</em></h2>
+        <p><b class="pa-prix-n">{{ site.partenaires.prix }} par an</b> pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires (tarif de lancement, gardé tant que vous restez partenaire), puis {{ site.partenaires.prix_ensuite }} par an. Toutes vos régions, sans commission sur vos inscriptions. Une seule inscription de plus dans l'année suffit à le rembourser.</p>
+        <p class="pa-petit">Par carte, ou sur facture (virement, mandat administratif) : écrivez-nous. Sans engagement au-delà de l'année en cours.</p>
+      </div>
+      <a class="tp-appel-bouton" href="{{ site.partenaires.paiement }}" rel="noopener" target="_blank">Devenir partenaire <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
 <section class="bande bande-papier" aria-labelledby="t-contact">
   <div class="cadre">
     <div class="pa-contact">
@@ -59,6 +72,7 @@
 (function () {
   var f = document.getElementById("pa-form"), r = document.getElementById("pa-retour");
   if (!f) return;
+  if (/paiement=ok/.test(location.search)) { r.hidden = false; r.className = "pa-retour pa-ok"; r.textContent = "Merci, votre formule partenaire est réglée ! Nous vous écrivons sous 2 jours ouvrés pour la mettre en place (vos régions, votre lien d'inscription)."; setTimeout(function () { r.scrollIntoView({ block: "center" }); }, 200); }
   f.addEventListener("submit", function (e) {
     e.preventDefault();
     var b = f.querySelector("button"), d = {};

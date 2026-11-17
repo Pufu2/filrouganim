@@ -109,6 +109,34 @@ def main():
             continue
         par_abonnement[session["subscription"]] = sid
 
+    # 1 bis. le Pack été (paiement unique) : toutes les fonctions de l'abonnement jusqu'au 31 août de la saison
+    #        et la formule partenaire d'un organisme : on prévient l'administration (l'activation se fait dans organismes.yml)
+    pack = (CONFIG.get("abonnement") or {}).get("lien_pack_ete")
+    lien_partenaire = (CONFIG.get("partenaires") or {}).get("lien_stripe")
+    auj = dt.date.today()
+    fin_ete = dt.date(auj.year if auj.month <= 8 else auj.year + 1, 8, 31).isoformat()
+    for session in tout("checkout/sessions", cle_stripe, status="complete", **{"created[gte]": depuis}):
+        if pack and session.get("payment_link") == pack and session.get("payment_status") == "paid":
+            sid = (session.get("client_reference_id") or "").strip()
+            if not UUID.match(sid) or sid not in structures:
+                print(f"Pack été {session['id']} sans structure reconnue : à rattacher à la main.")
+                continue
+            if (structures[sid].get("abonnement_fin") or "") >= fin_ete:
+                continue
+            print(f"{structures[sid]['nom']} : Pack été jusqu'au {fin_ete}")
+            if not essai:
+                supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, {"abonnement_fin": fin_ete})
+                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"{structures[sid]['nom']} · Pack été jusqu'au {fin_ete[8:10]}/{fin_ete[5:7]}/{fin_ete[:4]}"})
+            structures[sid]["abonnement_fin"] = fin_ete
+        elif lien_partenaire and session.get("payment_link") == lien_partenaire:
+            nom = next((c.get("text", {}).get("value") for c in session.get("custom_fields") or [] if c.get("key") == "organisme"), None) or "organisme"
+            marque = f"[{session['id'][-10:]}]"
+            if supabase("GET", f"evenements_admin?select=id&resume=like.*{urllib.parse.quote(marque)}*", cle_sb):
+                continue
+            print(f"Formule partenaire payée : {nom}")
+            if not essai:
+                supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Formule partenaire PAYÉE · {nom} · {(session.get('customer_details') or {}).get('email') or ''} · à activer dans organismes.yml {marque}"})
+
     # 2. tous les abonnements Fil Roug'Anim : fin de période, centres payés, tarif fondateur
     vus = 0
     for abo in tout("subscriptions", cle_stripe, status="all", **{"expand[]": "data.items"}):

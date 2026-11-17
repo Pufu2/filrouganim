@@ -282,6 +282,10 @@ class Site:
         # spécialités (mentions) des diplômes professionnels : {"BPJEPS": {"asec": {...}}}
         self.specialites = {di: {sp["id"]: sp for sp in liste} for di, liste in self.donnees.get("specialites", {}).items()}
         self.organismes = {o["id"]: o for o in self.donnees["organismes"]["organismes"]}
+        # formule partenaire : active tant que « partenaire_jusqu » n'est pas passé
+        for o in self.organismes.values():
+            fin = en_date(o.get("partenaire_jusqu")) if o.get("partenaire_jusqu") else None
+            o["partenaire"] = bool(o.get("partenaire")) and (fin is None or fin >= self.aujourdhui)
         self.geo = (self.donnees.get("geo-communes") or {}).get("communes") or {}
         # centre de chaque département (moyenne de ses communes connues) : cartes des fiches, jamais une adresse
         _somme = {}
@@ -392,7 +396,7 @@ class Site:
             if o["expire_le"] >= self.aujourdhui and o["departement"] in self.departements:
                 o["dep"] = self.departements[o["departement"]]
                 offres.append(o)
-        offres.sort(key=lambda o: (o["debut"], o["id"]))
+        offres.sort(key=lambda o: (not o.get("une"), o["debut"], o["id"]))   # les offres « à la une » (structures abonnées) d'abord
         return offres
 
     def lire_supabase(self, chemin, quoi):
@@ -445,7 +449,12 @@ class Site:
                 "age_min": l.get("age_min"), "age_max": l.get("age_max"),
                 "texte": l["texte"], "brut": True, "candidater": l["candidater"],
                 "publiee_le": en_date(l["cree_le"][:10]), "expire_le": en_date(l["expire_le"])})
-        return offres
+        # les offres des structures abonnées : « à la une », en tête des listes, avec l'étiquette « Partenaire »
+        abonnees = {x if isinstance(x, str) else (x.get("structures_abonnees") or x.get("id")) for x in (self.lire_supabase("rpc/structures_abonnees", "structures abonnées") or [])}
+        for o in offres:
+            o["une"] = o["structure"]["id"] in abonnees
+            o["structure"]["abonnee"] = o["une"]
+        return sorted(offres, key=lambda o: not o["une"])
 
     def point_structure(self, st):
         """Où placer la structure sur la carte de sa fiche : sa ville si on la connaît, sinon le centre du département."""
