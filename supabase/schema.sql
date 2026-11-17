@@ -817,3 +817,9 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- plus de 5 organismes cliqués dans la journée = plus compté), partenariats.prix_clic / arrete_le, factures_clics (mois échus),
 -- mes_clics() (le détail pour l'organisme), arreter_partenariat(), reserver_zones() sans paiement d'avance (actif dès la
 -- vérification), admin_organisme() active les départements réservés. v23b : clics_par_jour() pour le relevé (rôle serveur).
+
+-- v24 / v24b / v24c (appliquées par migration) : « Trouver un séjour », semaine 1. Tables sejours, sejours_dates,
+-- demandes_sejour (lue seulement par fonctions), alertes_sejour, stats_sejours ; structures.demandes_gratuites_utilisees
+-- et banniere ; type d'événement 'sejour'. Fonctions : demander_place() (2 demandes gratuites complètes, puis coordonnées
+-- masquées), mes_demandes_sejour(), ouvrir_demandes() (relevé des paiements ou admin), repondre_demande(),
+-- creer_alerte() / confirmer_alerte() / desinscrire_alerte(), compter_sejour(), structure_en_ligne(). Stockage « sejours ».

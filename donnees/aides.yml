@@ -1,0 +1,43 @@
+# Les aides pour partir en séjour, affichées sur les fiches séjours et la page « Les aides pour partir ».
+# Clés = valeurs de sejours.aides. Textes à vérifier chaque année (montants et conditions changent) :
+# date de dernière vérification dans « verifie_le ».
+pass_colo:
+  nom: Pass Colo
+  court: "Jusqu'à 350 € pour la colo de l'année des 11 ans"
+  texte: >-
+    Une aide de l'État pour les enfants qui ont 11 ans dans l'année (ou qui sont en CM2), dans les familles au
+    quotient familial modeste : de 200 à 350 € selon le quotient, pour un séjour collectif d'au moins 5 jours en
+    France, chez un organisateur partenaire. La demande se fait auprès de la CAF ou de la MSA.
+  lien: https://www.service-public.fr/particuliers/vosdroits/F36553
+  verifie_le: 2026-11-17
+vacaf:
+  nom: VACAF (aide aux vacances enfants)
+  court: "L'aide de votre CAF, déduite directement du prix"
+  texte: >-
+    Beaucoup de CAF aident les enfants à partir en séjour (aide aux vacances enfants, souvent appelée AVE ou
+    VACAF). Le montant et les conditions dépendent de votre CAF et de votre quotient ; l'aide est déduite du prix
+    quand l'organisateur est conventionné VACAF.
+  lien: https://www.vacaf.org/
+  verifie_le: 2026-11-17
+cheques_vacances:
+  nom: Chèques-Vacances
+  court: "Acceptés en paiement de tout ou partie du séjour"
+  texte: >-
+    Les Chèques-Vacances (ANCV), papier ou en ligne, peuvent payer tout ou partie du séjour quand l'organisateur
+    les accepte.
+  lien: https://www.ancv.com/
+  verifie_le: 2026-11-17
+ce:
+  nom: Comité d'entreprise (CSE)
+  court: "Votre CSE peut prendre en charge une partie du prix"
+  texte: >-
+    De nombreux comités sociaux et économiques (CSE) participent aux séjours des enfants des salariés. Demandez
+    une attestation ou une facture à l'organisateur.
+  verifie_le: 2026-11-17
+mairie:
+  nom: Aide de la mairie
+  court: "Certaines communes et départements aident aussi"
+  texte: >-
+    Certaines communes (souvent via le CCAS) et certains départements aident au départ en séjour, en particulier
+    pour les familles au quotient modeste. Renseignez-vous auprès de votre mairie.
+  verifie_le: 2026-11-17

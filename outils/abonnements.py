@@ -305,6 +305,18 @@ def main():
         partenariats(cle_stripe, cle_sb, essai)
     except Exception as e:
         print(f"Partenariats des organismes : {e}")
+    # les demandes de séjour masquées (au-delà des 2 gratuites) s'ouvrent dès que la structure est abonnée ou a pris le Pass
+    try:
+        fermees = {d["structure_id"] for d in supabase("GET", "demandes_sejour?select=structure_id&ouverte=eq.false", cle_sb) or []}
+        auj = dt.date.today().isoformat()
+        for sid in fermees:
+            fin = (structures.get(sid) or {}).get("abonnement_fin")
+            if fin and fin >= auj:
+                print(f"Demandes de séjour ouvertes : {structures[sid].get('nom')}")
+                if not essai:
+                    supabase("POST", "rpc/ouvrir_demandes", cle_sb, {"sid": sid})
+    except Exception as e:
+        print(f"Demandes de séjour : {e}")
 
 
 POSTES = {"animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur ou animatrice", "directeur": "Direction ou adjoint",
@@ -366,7 +378,8 @@ def demandes(cle_sb):
 
 TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
              "paiement": ("Abonnement payé", "Abonnements payés"), "demande": ("Nouvelle demande (annuaire inversé)", "Nouvelles demandes (annuaire inversé)"),
-             "organisme": ("Organisme intéressé par la formule partenaire", "Organismes intéressés par la formule partenaire")}
+             "organisme": ("Organisme intéressé par la formule partenaire", "Organismes intéressés par la formule partenaire"),
+             "sejour": ("Demande de place en séjour", "Demandes de place en séjour")}
 
 
 def prevenir_admin(cle_sb):

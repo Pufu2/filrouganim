@@ -42,6 +42,7 @@
 | Ce qui est gratuit pour une structure | Publier ses séjours, et **recevoir 2 demandes de familles complètes**. À partir de la 3e, la demande arrive mais **les coordonnées de la famille sont masquées** tant que la structure n'a pas l'abonnement (ou le Pass recrutement) |
 | Quelles offres | **Les séjours avec nuitées et les accueils de loisirs à la journée** (vacances et mercredis) |
 | Alertes aux parents | **Oui** (avec double confirmation de l'adresse et désinscription en un clic) |
+| Ce qui existe déjà | **On ne remplace rien, on ajoute.** Les onglets de l'accueil gardent leur ordre, les pages structures gardent tout leur contenu, les menus gardent leurs entrées : les séjours viennent en plus, à côté |
 
 **Ce que change la décision n° 3** : le bouton de la fiche n'envoie plus chez l'organisateur, il ouvre une **demande sur Fil Roug'Anim**. C'est ce qui rend le blocage possible : si la famille partait directement sur le site de la structure, on ne pourrait rien lui faire payer. Le lien vers le site de la structure reste visible, plus discret, sur la page de la structure.
 
@@ -76,8 +77,8 @@ Chaque offre a **une ou plusieurs dates** (sessions) : un même séjour peut par
 ## 3. Le parcours des familles, écran par écran
 
 ### 3.1 Entrée
-- **Accueil** : un 4e onglet dans la grande recherche, **« Trouver un séjour »**, placé **en premier** pendant la saison (janvier à juin, puis septembre à octobre pour la Toussaint) et en deuxième le reste de l'année.
-- **Menu du haut** : une nouvelle rubrique **« Séjours »**, avec un volet comme les autres :
+- **Accueil** : un onglet **« Trouver un séjour »** ajouté **à la fin** des onglets de la grande recherche. Les onglets actuels gardent leur ordre et leur onglet par défaut ; rien ne bascule selon la saison.
+- **Menu du haut** : une rubrique **« Séjours »** ajoutée après les rubriques actuelles (qui ne bougent pas), avec un volet comme les autres :
   - à gauche, le grand cadre « Trouver un séjour » ;
   - à droite, les entrées par âge, par période, les aides et le lien « Vous organisez des séjours ? ».
 - **Pages de sessions BAFA** : un petit encart « Vos enfants partent cet été ? » (sur les pages de ville et de département), pour croiser les publics.
@@ -228,7 +229,15 @@ Toutes ces pages sont générées à chaque publication, comme les pages de sess
 
 ---
 
-## 8. La nouvelle page structure
+## 8. La page structure : des séjours en plus
+
+**Règle : la page structure actuelle reste telle quelle** (en-tête, présentation, accueils, offres d'emploi, contact). Rien n'est retiré ni réordonné. Quand la structure a publié au moins un séjour, on **ajoute** :
+- un badge « Séjours » et un bouton « Voir nos séjours » à côté des boutons existants ;
+- une **section « Nos séjours »** insérée sous la présentation, avec ce qui suit ;
+- une photo de bannière **facultative** : si la structure n'en met pas, l'en-tête reste exactement celui d'aujourd'hui.
+
+Ce qui suit décrit le contenu de cette section ajoutée (les « onglets » ci-dessous sont des onglets **internes à la section séjours**, pas une refonte de la page).
+
 
 **Le haut, plus visuel :**
 - une bannière photo pleine largeur (la photo choisie par la structure), avec dessus le logo, le nom, et 3 chiffres (« 12 séjours · 6 à 17 ans · depuis 1998 ») ;
@@ -236,14 +245,14 @@ Toutes ces pages sont générées à chaque publication, comme les pages de sess
 - deux boutons : « **Voir nos séjours** » (principal) et « Nous écrire ».
 
 **Des onglets sous la bannière :**
-1. **Nos séjours**, l'onglet par défaut s'il y a des séjours :
+1. **Nos séjours**, ouvert en premier dans la section :
    - des **pastilles de filtre** (âge, période, envie, type) ;
    - des **cartes**, comme dans les résultats ;
    - une **frise de la saison** : les semaines de juillet et d'août, avec les séjours placés dessus, pour voir d'un coup d'œil ce qui tombe pendant les congés des parents ;
    - s'il n'y a qu'un séjour, on va directement à sa fiche résumée.
 2. **Nos accueils** (s'ils existent) : les accueils de loisirs, avec horaires, tarifs (au quotient si c'est le cas) et inscriptions.
 3. **Qui sommes-nous** : projet éducatif, valeurs, l'équipe, les lieux (carte), photos, « Ce que disent les familles » (version 2, avis modérés).
-4. **On recrute** : les offres d'emploi, comme aujourd'hui, avec un lien vers « Trouver un poste ».
+4. **On recrute** : rien à faire, les offres d'emploi restent où elles sont aujourd'hui sur la page.
 
 **Sur téléphone**, les onglets deviennent une barre qui défile horizontalement, et le bouton « Voir nos séjours » reste en bas de l'écran.
 
@@ -252,17 +261,19 @@ Toutes ces pages sont générées à chaque publication, comme les pages de sess
 ## 9. L'accueil, le menu et le pied de page
 
 - **Accueil** :
-  - l'onglet « Trouver un séjour » (voir 3.1) ;
-  - une nouvelle bande « **Les séjours de l'été** », avec 6 cartes à la une (structures abonnées d'abord, signalées) et le lien « Tous les séjours » ;
+  - l'onglet « Trouver un séjour » ajouté en dernier (voir 3.1) ;
+  - une nouvelle bande « **Les séjours de l'été** », **ajoutée sous les blocs actuels** (aucun bloc n'est retiré ni déplacé), avec 6 cartes à la une (structures abonnées d'abord, signalées) et le lien « Tous les séjours » ;
   - un bloc « Les aides pour partir » (Pass Colo, VACAF) ;
-  - le bloc chiffres ajoute « séjours publiés » et « demandes de familles ».
+  - le bloc chiffres garde ses chiffres ; « séjours publiés » s'y ajoute seulement quand il y en a au moins 50.
 - **Menu** : la rubrique « Séjours » (voir 3.1).
-- **Pied de page** : une colonne « Séjours » (par âge, par période, les aides, Vous organisez des séjours ?) et un onglet « Séjours » dans « Trouver sa formation près de chez soi ».
-- **La page Recruter** gagne un bloc : « Vous organisez des séjours ? Publiez-les gratuitement, recevez les demandes des familles. »
+- **Pied de page** : les colonnes actuelles restent ; on ajoute une colonne « Séjours » (par âge, par période, les aides, Vous organisez des séjours ?) et un onglet « Séjours » dans « Trouver sa formation près de chez soi ».
+- **La page Recruter** garde tout son contenu et gagne un bloc en plus : « Vous organisez des séjours ? Publiez-les gratuitement, recevez les demandes des familles. »
 
 ---
 
 ## 10. L'espace structure
+
+Les onglets actuels de l'espace (tableau de bord, fiche, offres, candidats, outils, abonnement…) restent à leur place ; « Mes séjours » et « Demandes des familles » **s'ajoutent** à la barre latérale, après eux.
 
 ### 10.1 Onglet « Mes séjours »
 **Une liste en cartes** : chaque offre avec ses dates, ses places, son état (brouillon, en ligne, complet, terminé), et ses chiffres sur 30 jours (vues, demandes).
@@ -498,7 +509,7 @@ Chaque e-mail :
 | **2** | Espace structure, onglet « Mes séjours » : liste, assistant en 10 étapes, aperçu, duplication, places. | Une structure crée un séjour avec 2 dates et 5 photos, et le voit en aperçu. |
 | **3** | Fiche séjour publique, calculateur, formulaire « Demander une place », e-mails famille et structure. Fiche d'exemple. | Une demande de test arrive à la structure, la famille reçoit l'accusé de réception. |
 | **4** | Catalogue `/sejours/` et recherche en gros boutons (`sejours.js`), cartes, tri, aucune réponse → alerte. | La recherche « 9-11 ans, juillet, mer » filtre sans recharger, et l'adresse se partage. |
-| **5** | Nouvelle page structure à onglets (bannière, séjours, accueils, qui sommes-nous, on recrute, frise de l'été). | Une structure avec 6 séjours et un accueil s'affiche proprement, sur téléphone aussi. |
+| **5** | Section « Nos séjours » ajoutée à la page structure existante (bannière facultative, cartes, frise de l'été). | La page d'une structure sans séjour est identique à aujourd'hui ; avec 6 séjours, la section s'ajoute proprement, sur téléphone aussi. |
 | **6** | Onglet « Demandes des familles » (boîte de réception, réponses toutes prêtes, blocage et déblocage). Relevé Stripe → `ouvrir_demandes()`. | Payer le Pass ouvre toutes les demandes masquées. |
 | **7** | Pages Google (périodes, âges, envies, départs, destinations, accueils par ville), plan du site, pied de page, accueil (onglet + bande), menu. | Les pages se génèrent ; seules celles qui ont au moins 3 offres sont indexées. |
 | **8** | Alertes parents (création, double confirmation, envoi du jeudi, désinscription), e-mails de relance, admin « Séjours », Prospection « Organisateurs de séjours ». Guides. Textes légaux. | Une alerte confirmée reçoit l'e-mail du jeudi ; la désinscription marche en un clic. |
