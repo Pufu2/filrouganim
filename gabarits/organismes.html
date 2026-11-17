@@ -3,7 +3,7 @@
 {% block tete_plus %}{% set actifs = page.organismes | selectattr("n") | list %}<ul class="chiffres"><li><b>{{ actifs | length + page.autres | length }}</b> organismes</li><li><b>{{ toutes_sessions | length }}</b> sessions à venir</li></ul>{% endblock %}
 {% macro carte(o) %}
 <li class="org-carte{% if not o.n %} org-carte-bientot{% endif %}{% if o.partenaire %} org-carte-partenaire{% endif %}">
-  {% if o.partenaire %}<span class="org-ruban">Partenaire</span>{% elif o.inscrit %}<span class="org-ruban org-ruban-inscrit">Inscrit sur Fil Roug'Anim</span>{% endif %}
+  {% if o.partenaire %}<span class="org-ruban">Partenaire</span>{% elif o.inscrit %}<span class="org-ruban org-ruban-inscrit">Inscrit et vérifié</span>{% endif %}
   <div class="org-tete">
     <span class="org-logo">{% if o.logo %}<img src="{{ statique(o.logo) }}" alt="" loading="lazy">{% else %}<span class="org-initiales" aria-hidden="true">{{ o.initiales }}</span>{% endif %}</span>
     <div class="org-nom">

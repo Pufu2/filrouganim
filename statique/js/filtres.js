@@ -44,7 +44,7 @@
     else if (x.px !== null && x.px !== undefined) prix.textContent = euros(x.px); else prix.appendChild(el("span", null, "prix à voir"));
     a.appendChild(prix);
     var lien = el("a", "s-lien", "Voir");
-    lien.href = x.u; lien.rel = "noopener nofollow"; lien.target = "_blank"; if (x.ok) { lien.dataset.org = x.ok; lien.dataset.orgT = "clic_session"; }
+    lien.href = x.u; lien.rel = "noopener nofollow"; lien.target = "_blank"; if (x.ok) { lien.dataset.org = x.ok; lien.dataset.orgT = "clic_session"; lien.dataset.orgD = x.d || ""; }
     lien.appendChild(el("span", "sr", (x.lba ? " la formation sur La bonne alternance" : x.site ? " le site de " + x.o : " la session chez " + x.o) + " (nouvel onglet)"));
     lien.appendChild(document.createTextNode(" →"));
     a.appendChild(lien);

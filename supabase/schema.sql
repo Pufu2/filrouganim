@@ -807,3 +807,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- 10 premiers organismes : lancement_ouvert()), annuler_reservation(), admin_partenariat(), partenaires_publics()
 -- (lu à la publication). Les factures sont créées et suivies par outils/abonnements.py.
 -- Voir les migrations v21a, v21b et v21c dans Supabase.
+
+-- ------------------------------------------------------------------ version 22 (17/11/2026)
+-- organismes_inscrits() (page « Les organismes », fiches vérifiées seulement) ; stats_organismes.departement
+-- (clics comptés département par département, compter_organisme(o, t, d)).

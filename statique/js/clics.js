@@ -4,18 +4,18 @@
   "use strict";
   var s = document.currentScript, url = s && s.dataset.url, cle = s && s.dataset.cle;
   if (!url || !cle || navigator.webdriver) return;
-  function compter(o, t) {
+  function compter(o, t, d) {
     if (!o) return;
     try {
       fetch(url + "/rest/v1/rpc/compter_organisme", { method: "POST", keepalive: true,
-        headers: { "Content-Type": "application/json", apikey: cle }, body: JSON.stringify({ o: o, t: t }) }).catch(function () {});
+        headers: { "Content-Type": "application/json", apikey: cle }, body: JSON.stringify({ o: o, t: t, d: d || "" }) }).catch(function () {});
     } catch (e) {}
   }
   var v = document.getElementById("org-vue");
   if (v) { var k = "fra-org-vu:" + location.pathname, deja = false;
     try { deja = sessionStorage.getItem(k) === "1"; sessionStorage.setItem(k, "1"); } catch (e) {}
-    if (!deja) compter(v.dataset.org, "vue_page"); }
-  function clic(e) { var a = e.target.closest && e.target.closest("[data-org-t]"); if (a) compter(a.dataset.org, a.dataset.orgT); }
+    if (!deja) compter(v.dataset.org, "vue_page", v.dataset.orgD); }
+  function clic(e) { var a = e.target.closest && e.target.closest("[data-org-t]"); if (a) compter(a.dataset.org, a.dataset.orgT, a.dataset.orgD); }
   document.addEventListener("click", clic);
   document.addEventListener("auxclick", function (e) { if (e.button === 1) clic(e); });
 })();

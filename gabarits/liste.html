@@ -46,7 +46,7 @@
       <div class="zone-partenaire-tete">
         <p class="zone-partenaire-sur"><span class="s-partenaire">Partenaire</span> Organisme partenaire dans ce département</p>
         <h2>Les sessions de <a href="{{ lien('/se-former/sessions/organismes/' ~ pz.id ~ '/') }}">{{ pz.nom }}</a></h2>
-        {% if pz.inscription or pz.page_sessions %}<a class="bouton-r" href="{{ pz.inscription or pz.page_sessions }}" rel="noopener nofollow" target="_blank" data-org="{{ pz.id }}" data-org-t="clic_site">S'inscrire chez {{ pz.nom }} <span aria-hidden="true">→</span></a>{% endif %}
+        {% if pz.inscription or pz.page_sessions %}<a class="bouton-r" href="{{ pz.inscription or pz.page_sessions }}" rel="noopener nofollow" target="_blank" data-org="{{ pz.id }}" data-org-t="clic_site" data-org-d="{{ page.departement.code if page.departement else '' }}">S'inscrire chez {{ pz.nom }} <span aria-hidden="true">→</span></a>{% endif %}
       </div>
       {{ m.liste_sessions(bloc.sessions, lien) }}
     </div>
