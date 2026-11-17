@@ -348,7 +348,7 @@
         <p class="abo-total" id="abo-total"></p>
         <a class="bouton-r" id="abo-payer" href="#">Payer par carte <span aria-hidden="true">→</span></a>
         <a class="abo-facture" id="abo-facture" href="#">Payer sur facture (virement, mandat administratif, Chorus Pro)</a>
-        <a class="abo-ete" id="abo-ete" href="#" hidden><b>Pack été · {{ site.abonnement.pack_ete_prix }}</b> une seule fois : tout l'abonnement jusqu'au 31 août, sans renouvellement <span aria-hidden="true">→</span></a>
+        <a class="abo-ete" id="abo-ete" href="#" hidden><b>Juste pour une saison ? Pass recrutement · {{ site.abonnement.pass_mois_prix }} par mois</b>, de 1 à {{ site.abonnement.pass_mois_max }} mois au choix : tout l'abonnement dès aujourd'hui, une seule fois, sans renouvellement <span aria-hidden="true">→</span></a>
         <a class="abo-cgv" href="{{ lien('/conditions-de-vente/') }}" target="_blank" rel="noopener">Conditions de vente</a>
         <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span>{% else %}Factures, nombre de centres, arrêt : écrivez-nous{% endif %}</a>
       </div>

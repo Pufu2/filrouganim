@@ -1167,7 +1167,7 @@
       $("abo-total").textContent = nb > 1 ? "Total : " + euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (à indiquer en « quantité » sur la page de paiement)." : "Total : " + euros(p1) + " par an.";
       var q = new URLSearchParams({ client_reference_id: idEspace(), prefilled_email: utilisateur.email, locale: "fr" });
       $("abo-payer").href = (fond ? A.paiement_fondateur : A.paiement) + "?" + q.toString();
-      if (A.pack_ete) { $("abo-ete").href = A.pack_ete + "?" + q.toString(); $("abo-ete").hidden = false; }
+      if (A.pass_mois) { $("abo-ete").href = A.pass_mois + "?" + q.toString(); $("abo-ete").hidden = false; }
       var corps = "Bonjour,\n\nNous souhaitons régler l'abonnement Fil Roug'Anim sur facture.\n\n" +
         "Structure : " + (structure.nom || "") + "\nSIRET, RNA ou n° de déclaration : " + (structure.identifiant || "") +
         "\nNombre de centres : " + nb + "\nAdresse de facturation : \nService et n° d'engagement (Chorus Pro, si besoin) : \n" +

@@ -15,7 +15,10 @@
 #   en_ligne      true : une page est créée sur le site pour cet organisme
 #   partenaire    true : formule partenaire payée (étiquette « Partenaire », jusqu'à 3 sessions en tête des listes)
 #   partenaire_jusqu  date de fin de la formule (AAAA-MM-JJ) : passée, l'organisme redevient un organisme comme les autres
+#   zones         (partenaires) départements pris, ex. ["75", "92"] : dans chacun, il est le seul organisme mis en avant
+#                 (ses sessions en premier, les autres repliées) ; un seul partenaire par département
 #   inscription   (partenaires) lien direct vers les inscriptions, affiché en bouton sur sa page
+#   presentation_partenaire  (partenaires) un texte plus long, écrit avec l'organisme, affiché sur sa page
 # Le texte de présentation est écrit par nous (jamais copié du site de l'organisme).
 
 organismes:

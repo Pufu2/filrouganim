@@ -109,33 +109,44 @@ def main():
             continue
         par_abonnement[session["subscription"]] = sid
 
-    # 1 bis. le Pack été (paiement unique) : toutes les fonctions de l'abonnement jusqu'au 31 août de la saison
-    #        et la formule partenaire d'un organisme : on prévient l'administration (l'activation se fait dans organismes.yml)
-    pack = (CONFIG.get("abonnement") or {}).get("lien_pack_ete")
+    # 1 bis. le Pass recrutement (paiement unique) : toutes les fonctions de l'abonnement pendant 1 à 5 mois,
+    #        à partir d'aujourd'hui ou de la fin de ce qui est déjà payé ; et la formule partenaire d'un organisme :
+    #        on prévient l'administration (l'activation se fait dans organismes.yml). Chaque paiement n'est compté
+    #        qu'une fois : sa marque [fin de l'identifiant Stripe] est gardée dans evenements_admin.
+    abonnement = CONFIG.get("abonnement") or {}
+    lien_pass, prix_mois = abonnement.get("lien_pass_mois"), 1500
     lien_partenaire = (CONFIG.get("partenaires") or {}).get("lien_stripe")
-    auj = dt.date.today()
-    fin_ete = dt.date(auj.year if auj.month <= 8 else auj.year + 1, 8, 31).isoformat()
+    def deja(marque):
+        return bool(supabase("GET", f"evenements_admin?select=id&resume=like.*{urllib.parse.quote(marque)}*", cle_sb))
+    def plus_mois(d, n):
+        a, m = d.year + (d.month - 1 + n) // 12, (d.month - 1 + n) % 12 + 1
+        jours = [31, 29 if a % 4 == 0 and (a % 100 or a % 400 == 0) else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
+        return dt.date(a, m, min(d.day, jours))
     for session in tout("checkout/sessions", cle_stripe, status="complete", **{"created[gte]": depuis}):
-        if pack and session.get("payment_link") == pack and session.get("payment_status") == "paid":
+        marque = f"[{session['id'][-10:]}]"
+        if lien_pass and session.get("payment_link") == lien_pass and session.get("payment_status") == "paid":
             sid = (session.get("client_reference_id") or "").strip()
             if not UUID.match(sid) or sid not in structures:
-                print(f"Pack été {session['id']} sans structure reconnue : à rattacher à la main.")
+                print(f"Pass {session['id']} sans structure reconnue : à rattacher à la main.")
                 continue
-            if (structures[sid].get("abonnement_fin") or "") >= fin_ete:
+            if deja(marque):
                 continue
-            print(f"{structures[sid]['nom']} : Pack été jusqu'au {fin_ete}")
+            mois = max(1, round((session.get("amount_total") or prix_mois) / prix_mois))
+            depart = max(dt.date.today(), dt.date.fromisoformat(structures[sid]["abonnement_fin"]) if structures[sid].get("abonnement_fin") else dt.date.today())
+            fin = plus_mois(depart, mois).isoformat()
+            print(f"{structures[sid]['nom']} : Pass {mois} mois, jusqu'au {fin}")
             if not essai:
-                supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, {"abonnement_fin": fin_ete})
-                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"{structures[sid]['nom']} · Pack été jusqu'au {fin_ete[8:10]}/{fin_ete[5:7]}/{fin_ete[:4]}"})
-            structures[sid]["abonnement_fin"] = fin_ete
+                supabase("PATCH", f"structures?id=eq.{sid}", cle_sb, {"abonnement_fin": fin})
+                supabase("POST", "evenements_admin", cle_sb, {"type": "paiement", "resume": f"{structures[sid]['nom']} · Pass {mois} mois, jusqu'au {fin[8:10]}/{fin[5:7]}/{fin[:4]} {marque}"})
+            structures[sid]["abonnement_fin"] = fin
         elif lien_partenaire and session.get("payment_link") == lien_partenaire:
-            nom = next((c.get("text", {}).get("value") for c in session.get("custom_fields") or [] if c.get("key") == "organisme"), None) or "organisme"
-            marque = f"[{session['id'][-10:]}]"
-            if supabase("GET", f"evenements_admin?select=id&resume=like.*{urllib.parse.quote(marque)}*", cle_sb):
+            if deja(marque):
                 continue
+            champs = {c.get("key"): (c.get("text") or {}).get("value") for c in session.get("custom_fields") or []}
+            nom = champs.get("organisme") or "organisme"
             print(f"Formule partenaire payée : {nom}")
             if not essai:
-                supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Formule partenaire PAYÉE · {nom} · {(session.get('customer_details') or {}).get('email') or ''} · à activer dans organismes.yml {marque}"})
+                supabase("POST", "evenements_admin", cle_sb, {"type": "organisme", "resume": f"Formule partenaire PAYÉE · {nom} · départements {champs.get('departements') or '?'} · {(session.get('customer_details') or {}).get('email') or ''} · à activer dans organismes.yml {marque}"})
 
     # 2. tous les abonnements Fil Roug'Anim : fin de période, centres payés, tarif fondateur
     vus = 0

@@ -29,9 +29,9 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 - l'étiquette « Partenaire » sur sa page, et sa place en tête de l'annuaire des structures ;
 - la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus.
 
-## Pack été
+## Pass recrutement
 
-Le **Pack été** ({{ site.abonnement.pack_ete_prix }}, paiement unique par carte) donne tout ce que comprend l'abonnement, pour un centre, **jusqu'au 31 août** de la saison en cours (ou de la saison suivante s'il est acheté après le 31 août). Il ne se renouvelle pas. Les conditions de vérification et de remboursement sont les mêmes que pour l'abonnement.
+Le **Pass recrutement** ({{ site.abonnement.pass_mois_prix }} par mois, de 1 à {{ site.abonnement.pass_mois_max }} mois au choix, paiement unique par carte) donne tout ce que comprend l'abonnement, pour un centre, pendant le nombre de mois choisi, à partir du jour du paiement (ou de la fin de la période déjà payée). Il ne se renouvelle pas. Les conditions de vérification et de remboursement sont les mêmes que pour l'abonnement.
 
 Fil Roug'Anim ne prend aucune commission sur les recrutements et n'intervient pas dans le contrat entre la structure et le candidat.
 
@@ -58,7 +58,7 @@ Chaque structure est vérifiée à la main (SIRET, numéro RNA ou numéro de dé
 
 ## Formule partenaire des organismes de formation
 
-Les organismes de formation (BAFA, BAFD, BSB, PSC) peuvent souscrire la **formule partenaire** : l'étiquette « Partenaire » sur leurs sessions et leur page, jusqu'à trois de leurs sessions en tête des listes de sessions (toujours signalées comme telles), un bouton d'inscription sur leur page et leurs statistiques (vues, clics vers leur site) chaque mois. Prix : **{{ site.partenaires.prix }} par an** pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, tant qu'ils restent partenaires, puis **{{ site.partenaires.prix_ensuite }} par an**. La durée, le renouvellement et l'arrêt suivent les règles de l'abonnement ci-dessous. Les sessions de tous les organismes restent sur le site gratuitement, partenaires ou non.
+Les organismes de formation (BAFA, BAFD, BSB, PSC) peuvent souscrire la **formule partenaire**, par département : l'étiquette « Partenaire » sur leurs sessions et leur page ; dans chaque département choisi, leurs sessions seules présentées d'entrée sur les pages du département et de ses villes, avec un bouton vers leurs inscriptions, les sessions des autres organismes restant consultables en dessous (la mise en avant est toujours signalée comme référencement payant) ; et leurs statistiques (vues, clics vers leur site) chaque mois. **Un seul partenaire par département**, dans l'ordre des paiements ; si un département demandé est déjà pris, il est remboursé. Prix : **{{ site.partenaires.prix }} par département et par an** pour les {{ site.partenaires.places_lancement }} premiers organismes partenaires, tant qu'ils restent partenaires, puis **{{ site.partenaires.prix_ensuite }}**. La durée, le renouvellement et l'arrêt suivent les règles de l'abonnement ci-dessous. Les sessions de tous les organismes restent sur le site gratuitement, partenaires ou non.
 
 ## Durée, renouvellement et arrêt
 

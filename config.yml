@@ -60,8 +60,9 @@ partenaires:
   prix: "190 €"
   prix_ensuite: "390 €"
   places_lancement: 10
-  paiement: https://buy.stripe.com/00w4gAdeO544h0p1SOe7m04
-  lien_stripe: plink_1UcoB5KIAmufAQXGGLMMmmh9
+  # par département et par an ; un seul partenaire par département (zones dans organismes.yml)
+  paiement: https://buy.stripe.com/fZufZieiSbssaC1dBwe7m06
+  lien_stripe: plink_1UcoSCKIAmufAQXG0c8aUh3V
 
 abonnement:
   prix: "79 €"
@@ -72,10 +73,11 @@ abonnement:
   # le lien fondateur se ferme tout seul après 10 paiements
   paiement_fondateur: https://buy.stripe.com/dRmdRafmW6886lL7d8e7m02
   liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMzrKIAmufAQXGhXgOnrPD]
-  # Pack été : paiement unique, toutes les fonctions de l'abonnement jusqu'au 31 août (outils/abonnements.py)
-  pack_ete_prix: "29 €"
-  pack_ete: https://buy.stripe.com/eVq5kE2Aa7cc11rbtoe7m03
-  lien_pack_ete: plink_1UcoAUKIAmufAQXGbse2NWxt
+  # Pass recrutement : paiement unique, toutes les fonctions de l'abonnement pendant 1 à 5 mois (outils/abonnements.py)
+  pass_mois_prix: "15 €"
+  pass_mois_max: 5
+  pass_mois: https://buy.stripe.com/aFa28sgr08gg8tT1SOe7m05
+  lien_pass_mois: plink_1UcoRtKIAmufAQXGGbhTWC07
   # espace des abonnés Stripe (factures, carte, nombre de centres, arrêt) : lien de connexion du portail client
   # (Stripe → Paramètres → Facturation → Portail client → « Lien de connexion »)
   portail: https://billing.stripe.com/p/login/eVq28s8Yy40011rfJEe7m00

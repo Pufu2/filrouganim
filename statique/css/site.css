@@ -3542,3 +3542,15 @@ body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static
 .org-partenaire-bloc { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 14px 18px; border-radius: 16px; background: #fdf0ee; border: 1px solid #f2d3cf; }
 .org-partenaire-bloc .org-partenaire { margin: 0; }
 @media (max-width: 800px) { .pa-prix { flex-direction: column; align-items: flex-start; padding: 20px 16px; } }
+/* Département pris par un organisme partenaire : ses sessions d'abord, les autres repliées */
+.zone-partenaire { padding: 20px 22px; border-radius: 22px; background: #fdf0ee; border: 1px solid #f2d3cf; margin-bottom: 18px; }
+.zone-partenaire-tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; margin-bottom: 12px; }
+.zone-partenaire-tete h2 { margin: 2px 0 0; font-size: 1.35rem; }
+.zone-partenaire-sur { display: flex; align-items: center; gap: 8px; margin: 0; font-size: .85rem; font-weight: 700; color: var(--fil-fonce); }
+.zone-partenaire-tete > div, .zone-partenaire-tete > p { flex-basis: 100%; }
+.zone-partenaire-note { margin: 12px 0 0; font-size: .82rem; color: var(--doux); }
+.zone-autres { margin: 0 0 14px; border-radius: 16px; border: 1px solid var(--trait); background: #fff; }
+.zone-autres > summary { cursor: pointer; padding: 14px 18px; font-weight: 700; }
+.zone-autres[open] > summary { border-bottom: 1px solid var(--trait); margin-bottom: 10px; }
+.zone-autres > .sessions, .zone-autres > div { padding: 0 12px 12px; }
+.org-partenaire-texte { flex-basis: 100%; font-size: .95rem; } .org-partenaire-texte p { margin: 6px 0; }

@@ -286,6 +286,15 @@ class Site:
         for o in self.organismes.values():
             fin = en_date(o.get("partenaire_jusqu")) if o.get("partenaire_jusqu") else None
             o["partenaire"] = bool(o.get("partenaire")) and (fin is None or fin >= self.aujourdhui)
+        # un seul organisme partenaire par département : le premier de la liste qui l'a pris
+        self.zone_partenaire = {}
+        for o in self.organismes.values():
+            for d in (o.get("zones") or []) if o["partenaire"] else []:
+                d = str(d).zfill(2) if str(d).isdigit() else str(d)
+                if d in self.zone_partenaire:
+                    print(f"Attention : le département {d} est déjà pris par {self.zone_partenaire[d]['nom']} (pas par {o['nom']})")
+                    continue
+                self.zone_partenaire[d] = o
         self.geo = (self.donnees.get("geo-communes") or {}).get("communes") or {}
         # centre de chaque département (moyenne de ses communes connues) : cartes des fiches, jamais une adresse
         _somme = {}
@@ -1953,11 +1962,17 @@ class Site:
             extra["bref"], extra["faq_page"] = self.synthese(extra["sessions"], *extra.pop("sujet"))
             if extra["faq_page"]:
                 extra["schema_faq"] = self.schema_faq(extra["faq_page"])
-        if gabarit == "liste.html" and extra.get("sessions") and not extra.get("organisme"):
-            # formule partenaire : jusqu'à 3 sessions d'organismes partenaires en tête (toujours avec l'étiquette « Partenaire »)
-            avant = [x for x in extra["sessions"] if x["org"].get("partenaire") and not x.get("complet")][:3]
-            if avant:
-                extra["sessions"] = avant + [x for x in extra["sessions"] if x not in avant]
+        dep_page = extra.get("departement")
+        if gabarit == "liste.html" and extra.get("sessions") and isinstance(dep_page, dict) and not extra.get("organisme"):
+            # formule partenaire : dans un département qu'il a pris, l'organisme partenaire est le seul mis en avant ;
+            # les sessions des autres organismes restent consultables, repliées en dessous (et c'est dit sur la page)
+            part = self.zone_partenaire.get(dep_page.get("code"))
+            if part:
+                a_lui = [x for x in extra["sessions"] if x["organisme"] == part["id"]]
+                if a_lui:
+                    extra["partenaire_zone"] = part
+                    extra["sessions_partenaire"] = a_lui
+                    extra["sessions"] = [x for x in extra["sessions"] if x["organisme"] != part["id"]]
         if gabarit == "liste.html" and len(extra.get("sessions") or []) > LIMITE_LISTE:
             # une liste très longue : les plus proches ici, toutes les autres dans la recherche avec filtres
             extra["sessions_total"] = len(extra["sessions"])

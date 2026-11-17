@@ -18,7 +18,8 @@
   <div class="cadre texte">
     {% if page.organisme %}{% set o = page.organisme %}<span id="org-vue" hidden data-org="{{ o.id }}"></span>
     {% if o.partenaire %}<div class="org-partenaire-bloc">
-      <p class="org-partenaire"><span class="s-partenaire">Partenaire</span> {{ o.nom }} est partenaire de Fil Roug'Anim : ses sessions ci-dessous sont à jour.</p>
+      <p class="org-partenaire"><span class="s-partenaire">Partenaire</span> {{ o.nom }} est partenaire de Fil Roug'Anim : ses sessions ci-dessous sont à jour.{% if o.zones %} Organisme partenaire {{ 'des départements' if o.zones | length > 1 else 'du département' }} {{ o.zones | join(', ') }}.{% endif %}</p>
+      {% if o.presentation_partenaire %}<div class="org-partenaire-texte">{{ o.presentation_partenaire | paragraphes }}</div>{% endif %}
       <a class="bouton-r" href="{{ o.inscription or o.page_sessions or o.site }}" rel="noopener nofollow" target="_blank" data-org="{{ o.id }}" data-org-t="clic_site">S'inscrire chez {{ o.nom }} <span aria-hidden="true">→</span></a>
     </div>{% endif %}
     <p>{{ o.presentation }}</p>
@@ -38,7 +39,20 @@
 
 <section class="bande bande-papier">
   <div class="cadre">
-    {% if page.sessions %}
+    {% if page.sessions_partenaire %}{% set pz = page.partenaire_zone %}
+    <div class="zone-partenaire">
+      <div class="zone-partenaire-tete">
+        <p class="zone-partenaire-sur"><span class="s-partenaire">Partenaire</span> Organisme partenaire dans ce département</p>
+        <h2>Les sessions de <a href="{{ lien('/se-former/sessions/organismes/' ~ pz.id ~ '/') }}">{{ pz.nom }}</a></h2>
+        {% if pz.inscription or pz.page_sessions %}<a class="bouton-r" href="{{ pz.inscription or pz.page_sessions }}" rel="noopener nofollow" target="_blank" data-org="{{ pz.id }}" data-org-t="clic_site">S'inscrire chez {{ pz.nom }} <span aria-hidden="true">→</span></a>{% endif %}
+      </div>
+      {{ m.liste_sessions(page.sessions_partenaire, lien) }}
+      <p class="zone-partenaire-note">{{ pz.nom }} a choisi la formule partenaire de Fil Roug'Anim pour ce département : ses sessions sont présentées en premier (référencement payant). Les sessions des autres organismes restent consultables ci-dessous, aux mêmes conditions.</p>
+    </div>
+    {% if page.sessions %}<details class="zone-autres"><summary>Voir les sessions des autres organismes ({{ page.sessions | length }}{% if page.sessions_total %} sur {{ page.sessions_total }}{% endif %})</summary>
+    {{ m.liste_sessions(page.sessions, lien) }}
+    </details>{% endif %}
+    {% elif page.sessions %}
     {{ m.liste_sessions(page.sessions, lien) }}
     {% if page.sessions_total %}<p class="liste-suite">Les {{ page.sessions | length }} sessions les plus proches sur {{ page.sessions_total }}. <a href="{{ lien('/se-former/sessions/') }}{{ page.lien_tout[20:] if page.lien_tout else '' }}">Voir les {{ page.sessions_total }} avec les filtres <span aria-hidden="true">→</span></a></p>{% endif %}
     <p class="petit">Classement par date puis par prix. <a href="{{ lien('/se-former/sessions/') }}{{ page.lien_tout[20:] if page.lien_tout else '' }}">Chercher avec les filtres</a></p>
