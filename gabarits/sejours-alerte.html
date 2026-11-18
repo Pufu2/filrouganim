@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {# Le lien des e-mails d'alerte séjours : ?confirmer=<jeton> (double confirmation) ou ?arreter=<jeton> (désinscription). #}
-{% block tete_note %}<p class="tp-sur">Trouver un séjour</p>{% endblock %}
+{% block tete_note %}<p class="tp-sur">Inscrire mon enfant</p>{% endblock %}
 {% block h1 %}Votre <em>alerte</em> séjours{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
@@ -9,7 +9,7 @@
     <p class="sjc-ap-ic" aria-hidden="true">…</p>
     <h2 id="sjc-ap-t">Un instant…</h2>
     <p id="sjc-ap-p"></p>
-    <a class="bouton-r" href="{{ lien('/sejours/') }}">Voir les séjours</a>
+    <a class="bouton-r" href="{{ lien('/enfants/') }}">Voir les séjours</a>
   </div>
 </div>
 {% endblock %}

@@ -394,7 +394,7 @@ def periode_fr(d, f):
 
 
 def demandes_sejours(cle_sb):
-    """« Trouver un séjour » : à chaque demande de place, un accusé de réception à la famille et un e-mail à la
+    """« Inscrire mon enfant » : à chaque demande de place, un accusé de réception à la famille et un e-mail à la
     structure. Les coordonnées de la famille ne sont jamais dans l'e-mail d'une structure qui n'a pas débloqué la demande."""
     try:
         # gardées un an au plus (politique de confidentialité)
@@ -417,7 +417,7 @@ def demandes_sejours(cle_sb):
             "Fil Roug'Anim transmet la demande, sans commission ; l'inscription se fait directement avec l'organisateur.</p>")
     for d in lignes:
         quand = periode_fr(d.get("debut"), d.get("fin"))
-        url_sj = f"{site}/sejours/{d['structure_slug']}/{d['sejour_slug']}/"
+        url_sj = f"{site}/enfants/{d['structure_slug']}/{d['sejour_slug']}/"
         enfant = (d.get("enfant_prenom") or "votre enfant") + f" ({d['enfant_age']} ans)" + (f", {d['nb_enfants']} enfants" if (d.get("nb_enfants") or 1) > 1 else "")
         maj = {}
         if d["famille"]:
@@ -501,8 +501,8 @@ def alertes_sejours(cle_sb):
         if c.get("departement"):
             resume.append("département " + str(c["departement"]))
         resume = " · ".join(resume) or "tous les nouveaux séjours"
-        lien = f"{site}/sejours/alerte/?confirmer={a['jeton']}"
-        arret = f"{site}/sejours/alerte/?arreter={a['jeton']}"
+        lien = f"{site}/enfants/alerte/?confirmer={a['jeton']}"
+        arret = f"{site}/enfants/alerte/?arreter={a['jeton']}"
         texte = (f"Bonjour,\n\nVous avez demandé à être prévenu des nouveaux séjours sur Fil Roug'Anim ({resume}).\n\n"
                  f"Confirmez votre adresse : {lien}\n\nSans confirmation, rien ne vous sera envoyé et l'alerte sera effacée dans 7 jours. "
                  f"Ce n'était pas vous ? Ignorez cet e-mail, ou arrêtez tout de suite : {arret}\n\nL'équipe Fil Roug'Anim")
@@ -536,12 +536,12 @@ def sejours_publies(cle_sb):
                          + ",".join(str(x["id"]) for x in sj) + ")", cle_sb) or []
     for x in sj:
         x["dates"] = [d for d in ds if d["sejour_id"] == x["id"]]
-        x["url"] = CONFIG["url"].rstrip("/") + f"/sejours/{x['structures']['slug']}/{x['slug']}/"
+        x["url"] = CONFIG["url"].rstrip("/") + f"/enfants/{x['structures']['slug']}/{x['slug']}/"
     return [x for x in sj if x["dates"]]
 
 
 def sejour_convient(x, c):
-    """Le même filtre que la recherche de /sejours/ (statique/js/sejours.js), côté serveur."""
+    """Le même filtre que la recherche de /enfants/ (statique/js/sejours.js), côté serveur."""
     if c.get("age") and not any(x["age_min"] <= BANDES_SJ[b][1] and x["age_max"] >= BANDES_SJ[b][0] for b in c["age"] if b in BANDES_SJ):
         return False
     journee = x["type"].startswith("accueil")
@@ -603,14 +603,14 @@ def sejours_relances(cle_sb):
             nouveaux = [x for x in sejours if x["cree_le"] > depuis and sejour_convient(x, a.get("criteres") or {})][:6]
             if not nouveaux:
                 continue
-            arret = f"{site}/sejours/alerte/?arreter={a['jeton']}"
+            arret = f"{site}/enfants/alerte/?arreter={a['jeton']}"
             marque = f"alerte={a['jeton']}"
             cartes = [carte_mail(x) for x in nouveaux]
             cartes = [(t.replace(x["url"], x["url"] + "?" + marque), h.replace(x["url"], x["url"] + "?" + marque)) for (t, h), x in zip(cartes, nouveaux)]
             sujet = f"{len(nouveaux)} nouveau{'x' if len(nouveaux) > 1 else ''} séjour{'s' if len(nouveaux) > 1 else ''} pour vous"
-            texte = "Bonjour,\n\nDe nouveaux séjours correspondent à votre alerte :\n\n" + "\n\n".join(c[0] for c in cartes) + f"\n\nTous les séjours : {site}/sejours/?{marque}\n\nArrêter cette alerte : {arret}"
+            texte = "Bonjour,\n\nDe nouveaux séjours correspondent à votre alerte :\n\n" + "\n\n".join(c[0] for c in cartes) + f"\n\nTous les séjours : {site}/enfants/?{marque}\n\nArrêter cette alerte : {arret}"
             html_c = ("<p>Bonjour,</p><p>De nouveaux séjours correspondent à votre alerte :</p>" + "".join(c[1] for c in cartes)
-                      + f"<p><a href=\"{site}/sejours/?{marque}\" style=\"{BOUTON}\">Voir tous les séjours</a></p>"
+                      + f"<p><a href=\"{site}/enfants/?{marque}\" style=\"{BOUTON}\">Voir tous les séjours</a></p>"
                       + f"<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail parce que vous avez créé et confirmé une alerte sur filrouganim.fr. <a href=\"{arret}\">Arrêter cette alerte</a> en un clic.</p>")
             try:
                 envoyer(cle_brevo, exp, CONFIG["nom"], a["email"], sujet, texte, html_c)
@@ -643,7 +643,7 @@ def sejours_relances(cle_sb):
             proches.sort(key=lambda x: (x.get("departement") != demande.get("departement"), abs((dt.date.fromisoformat(x["dates"][0]["debut"]) - dt.date.fromisoformat(demande["dates"][0]["debut"])).days)))
         proches = proches[:3]
         titre = demande["titre"] if demande else "votre séjour"
-        lien_age = f"{site}/sejours/?age=" + next((b for b, r in BANDES_SJ.items() if r[0] <= d["enfant_age"] <= r[1]), "")
+        lien_age = f"{site}/enfants/?age=" + next((b for b, r in BANDES_SJ.items() if r[0] <= d["enfant_age"] <= r[1]), "")
         texte = (f"Bonjour {d['parent_nom']},\n\nVotre demande pour « {titre} » n'a pas encore reçu de réponse. L'organisateur vous répondra sûrement, "
                  "mais en attendant, voici d'autres séjours pour le même âge :\n\n" + "\n\n".join(carte_mail(x)[0] for x in proches) + f"\n\nTous les séjours pour cet âge : {lien_age}")
         html_c = (f"<p>Bonjour {html.escape(d['parent_nom'])},</p><p>Votre demande pour « <b>{html.escape(titre)}</b> » n'a pas encore reçu de réponse. "

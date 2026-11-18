@@ -3987,3 +3987,13 @@ body.sjf-ouvert { overflow: hidden; }
 .sja-bareme th { color: var(--doux); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
 .fp-banniere-photo { height: clamp(160px, 26vw, 300px); border-radius: 22px; background: var(--sable) center / cover no-repeat; margin-bottom: 18px; }
 .sj-banniere-apercu { height: 120px; border-radius: 14px; background: var(--sable) center / cover no-repeat; margin: 12px 0 6px; }
+
+/* « Inscrire mon enfant » : la liste simple (type + lieu) */
+.sjc-filtres { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 20px; padding: 16px 18px; border: 1px solid var(--trait); border-radius: 20px; background: #fff; }
+.sjc-types { display: flex; flex-wrap: wrap; gap: 8px; }
+.sjc-types button { border: 1.5px solid var(--trait); background: var(--papier); border-radius: 99px; padding: 10px 16px; font: 700 .95rem var(--texte); color: var(--encre); cursor: pointer; }
+.sjc-types button.sjc-on { border-color: var(--fil); background: #fff1ef; color: var(--fil-fonce); }
+.sjc-filtres .sjc-ou { flex: 1 1 240px; max-width: 360px; display: block; }
+.sjc-besoin { display: block; margin-top: 12px; padding: 14px 18px; border-radius: 16px; background: #fff1ef; border: 1px solid #f3cfcb; color: var(--encre); text-decoration: none; }
+.sjc-besoin b { color: var(--fil-fonce); }
+.sjc-besoin:hover { border-color: var(--fil); }

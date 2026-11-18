@@ -1,53 +1,34 @@
 {% extends "base.html" %}
-{# « Trouver un séjour » : la recherche en gros boutons (Pour qui ? Quand ? Quel genre ? Où ?), les résultats en
-   cartes sans recharger la page (statique/js/sejours.js), l'alerte quand rien ne correspond, et les aides.
+{# « Inscrire mon enfant » : toutes les offres des structures (séjours, accueils de loisirs, périscolaire) en cartes, avec
+   le type et le lieu pour filtrer (statique/js/sejours.js), « Décrire mon besoin » (l'annuaire inversé des parents),
+   l'alerte quand rien ne correspond, et les aides. Les questions par âge et par période sont en réserve (sejours-questions.js).
    Les séjours viennent de la base à chaque publication (build.py, carte_sejour). #}
-{% block tete_note %}<p class="tp-sur">Colos, mini-séjours et accueils de loisirs · 3 à 17 ans</p>{% endblock %}
-{% block h1 %}Trouver un <em>séjour</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Les séjours et les accueils de loisirs publiés par des structures vérifiées. Choisissez l'âge, la période et ce que votre enfant aime : vous demandez une place en ligne, gratuitement, et l'organisateur vous répond directement.</p>{% endblock %}
+{% block tete_note %}<p class="tp-sur">Colos, accueils de loisirs, périscolaire · 3 à 17 ans</p>{% endblock %}
+{% block h1 %}Inscrire mon <em>enfant</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Les colos, les accueils de loisirs et le périscolaire proposés par des structures vérifiées. Demandez une place en ligne, gratuitement : la structure vous répond directement.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
 <div class="sjc" id="sjc" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}" data-photos="{{ site.supabase.url }}/storage/v1/object/public/sejours/">
   <div class="cadre">
-    <form class="sjc-questions" id="sjc-questions" aria-label="Rechercher un séjour" onsubmit="return false">
-      <fieldset class="sjc-q"><legend><span>1</span>Pour qui ?</legend>
-        <div class="sjc-choix" data-q="age" data-multi>{% for a in ["3-5", "6-8", "9-11", "12-14", "15-17"] %}<button type="button" data-v="{{ a }}">{{ a }} ans</button>{% endfor %}</div>
-      </fieldset>
-      <fieldset class="sjc-q"><legend><span>2</span>Quand ?</legend>
-        <div class="sjc-choix" data-q="quand" data-multi>{% for k, l in [("hiver", "Hiver"), ("printemps", "Printemps"), ("juillet", "Juillet"), ("aout", "Août"), ("toussaint", "Toussaint"), ("noel", "Noël"), ("mercredis", "Les mercredis")] %}<button type="button" data-v="{{ k }}">{{ l }}</button>{% endfor %}</div>
-      </fieldset>
-      <fieldset class="sjc-q"><legend><span>3</span>Quel genre ?</legend>
-        <div class="sjc-choix sjc-genre" data-q="genre">
-          <button type="button" data-v="sejour"><b>Séjour avec nuits</b><small>colo, mini-séjour</small></button>
-          <button type="button" data-v="journee"><b>À la journée</b><small>accueil de loisirs près de chez moi</small></button>
-        </div>
-        <p class="sjc-sous">Il ou elle aime…</p>
-        <div class="sjc-choix sjc-petits" data-q="envie" data-multi>{% for k, l in SEJ_ENVIES.items() %}<button type="button" data-v="{{ k }}">{{ l }}</button>{% endfor %}</div>
-      </fieldset>
-      <fieldset class="sjc-q"><legend><span>4</span>Où ?</legend>
-        <div class="sjc-ou">
-          <label>Département<select name="dep"><option value="">Partout</option>{% for d in departements | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.code }} · {{ d.nom }}</option>{% endfor %}</select></label>
-          <label class="sjc-ou-depart">Départ près de chez moi<input name="depart" list="sjc-villes" placeholder="Ville de départ" autocomplete="off"></label>
-          <label class="sjc-ou-dest">Destination<select name="dest"><option value="">France et étranger</option><option value="fr">En France</option><option value="etranger">À l'étranger</option></select></label>
-          <datalist id="sjc-villes"></datalist>
-        </div>
-      </fieldset>
-      <details class="sjc-plus">
-        <summary>Plus de critères</summary>
-        <div class="sjc-ou">
-          <label>Budget maximum (€)<input name="budget" type="number" min="0" step="10" inputmode="numeric" placeholder="ex. 600"></label>
-          <label class="sjc-case"><input type="checkbox" name="passcolo"> Éligible au Pass Colo</label>
-          <label class="sjc-case"><input type="checkbox" name="vacaf"> Accepte VACAF</label>
-          <label class="sjc-case"><input type="checkbox" name="places"> Places disponibles seulement</label>
-        </div>
-      </details>
+    <form class="sjc-filtres" id="sjc-filtres" aria-label="Filtrer les offres" onsubmit="return false">
+      <div class="sjc-types" role="group" aria-label="Type d'offre">
+        <button type="button" data-type="" class="sjc-on">Tout</button>
+        <button type="button" data-type="sejours">Séjours et colos</button>
+        <button type="button" data-type="accueils">Accueils de loisirs</button>
+        <button type="button" data-type="periscolaire">Périscolaire</button>
+      </div>
+      <div class="sjc-ou">
+        <label>Où ?<input name="ou" list="sjc-lieux" placeholder="Ville ou département" autocomplete="off"></label>
+        <datalist id="sjc-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist>
+      </div>
     </form>
+    <a class="sjc-besoin" href="{{ lien('/enfants/demande/') }}"><b>Vous ne trouvez pas ?</b> Décrivez ce que vous cherchez pour votre enfant : votre demande part chez les structures les plus proches de chez vous, qui vous répondent. <span aria-hidden="true">→</span></a>
 
     <div class="sjc-barre">
       <p class="sjc-nb" id="sjc-nb" role="status" aria-live="polite"></p>
       <div class="sjc-barre-d">
         <button type="button" class="bouton-texte" id="sjc-effacer" hidden>Tout effacer</button>
-        <label class="sjc-tri">Trier<select id="sjc-tri"><option value="date">par date de départ</option><option value="prix">par prix</option></select></label>
+        <label class="sjc-tri">Trier<select id="sjc-tri"><option value="date">par date</option><option value="prix">par prix</option></select></label>
       </div>
     </div>
     <div class="sjc-resultats" id="sjc-resultats"></div>
@@ -77,16 +58,16 @@
     <section class="sjc-aides" aria-labelledby="t-sjc-aides">
       <h2 id="t-sjc-aides">Les aides pour <em>partir</em></h2>
       <ul>{% for k, a in AIDES.items() %}<li><b>{{ a.nom }}</b><span>{{ a.texte }}</span>{% if a.lien %}<a href="{{ a.lien }}" target="_blank" rel="noopener">En savoir plus ↗</a>{% endif %}</li>{% endfor %}</ul>
-      <p class="fp-note">Sur chaque fiche, un calculateur estime ce qu'il vous restera à payer. <a href="{{ lien('/sejours/aides/') }}">Le guide des aides et le calculateur →</a></p>
+      <p class="fp-note">Sur chaque fiche, un calculateur estime ce qu'il vous restera à payer. <a href="{{ lien('/enfants/aides/') }}">Le guide des aides et le calculateur →</a></p>
     </section>
 
     <section class="sjc-structures">
       <div><h2>Vous organisez des séjours ou un accueil de loisirs ?</h2>
         <p>Publiez-les gratuitement : les familles vous demandent une place, et vos 2 premières demandes sont complètes sans rien payer.</p></div>
-      <div class="sjc-structures-b"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Publier mes séjours</a><a class="bouton-blanc" href="{{ lien('/sejours/exemple/') }}">Voir une fiche d'exemple</a></div>
+      <div class="sjc-structures-b"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Publier mes séjours</a><a class="bouton-blanc" href="{{ lien('/enfants/exemple/') }}">Voir une fiche d'exemple</a></div>
     </section>
   </div>
 </div>
-<script type="application/json" id="sjc-donnees">{{ {"cartes": page.cartes, "exemple": page.exemple, "envies": SEJ_ENVIES, "types": SEJ_TYPES} | tojson }}</script>
+<script type="application/json" id="sjc-donnees">{{ {"cartes": page.cartes, "exemple": page.exemple, "envies": SEJ_ENVIES, "types": SEJ_TYPES, "deps": page.deps_noms} | tojson }}</script>
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/sejours.js') }}" defer></script>{% endblock %}

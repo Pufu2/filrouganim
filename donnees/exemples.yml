@@ -53,7 +53,7 @@ profil:
     J'ai fait ma formation générale BAFA en février. J'ai été bénévole deux ans dans un club de foot pour les 8-10 ans, et j'adore inventer des grands jeux.
   maj_le: 2026-10-20
 
-# la fiche séjour d'exemple (/sejours/exemple/) : la structure fictive ci-dessus, un mini-camp de l'été
+# la fiche séjour d'exemple (/enfants/exemple/) : la structure fictive ci-dessus, un mini-camp de l'été
 sejour:
   type: mini_sejour
   slug: exemple

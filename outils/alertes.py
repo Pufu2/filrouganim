@@ -87,7 +87,7 @@ def main():
         print("Alertes : aucune nouvelle offre cette semaine.")
         return
     profils = lire(f"{base}/profils?select=prenom,email_contact,departement,mobilite,jeton_alertes&alertes=is.true", cle)
-    # au printemps, une ligne pour « Trouver un séjour » (les animateurs ont souvent des enfants ou des proches qui partent)
+    # au printemps, une ligne pour « Inscrire mon enfant » (les animateurs ont souvent des enfants ou des proches qui partent)
     sejour_t, sejour_h = "", ""
     if 3 <= dt.date.today().month <= 6:
         try:
@@ -95,9 +95,9 @@ def main():
         except Exception:
             nb_sj = 0
         if nb_sj >= 3:
-            sejour_t = f"\n\nVos enfants ou vos proches partent cet été ? {nb_sj} séjours et accueils de loisirs sur {config['nom']} : {site}/sejours/"
+            sejour_t = f"\n\nVos enfants ou vos proches partent cet été ? {nb_sj} séjours et accueils de loisirs sur {config['nom']} : {site}/enfants/"
             sejour_h = (f'<p style="padding:10px 14px;background:#fbf8f2;border-radius:10px">Vos enfants ou vos proches partent cet été ? '
-                        f'<a href="{site}/sejours/">{nb_sj} séjours et accueils de loisirs</a> pour les 3-17 ans.</p>')
+                        f'<a href="{site}/enfants/">{nb_sj} séjours et accueils de loisirs</a> pour les 3-17 ans.</p>')
     envoyes = 0
     for p in profils:
         deps = {p["departement"], *[m for m in p["mobilite"] if m != "france"]}

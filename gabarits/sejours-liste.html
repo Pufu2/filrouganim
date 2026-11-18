@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Une page « Trouver un séjour » pour Google : une période, un âge, une envie, une ville de départ, une destination,
+{# Une page « Inscrire mon enfant » pour Google : une période, un âge, une envie, une ville de départ, une destination,
    ou les accueils de loisirs d'une ville (build.py, pages_sejours_google). Les offres en cartes, puis les pages voisines. #}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block tete_note %}<p class="tp-sur">Trouver un séjour · 3 à 17 ans</p>{% endblock %}
+{% block tete_note %}<p class="tp-sur">Inscrire mon enfant · 3 à 17 ans</p>{% endblock %}
 {% block h1 %}{{ page.h1 }}{% endblock %}
 {% block tete_chapo %}<p class="chapo">{{ page.intro }} Demandez une place en ligne, gratuitement : l'organisateur vous répond directement.</p>{% endblock %}
 {% block tete_plus %}<ul class="chiffres"><li><b>{{ page.sejours_page | length }}</b> offre{{ 's' if page.sejours_page | length > 1 }}</li></ul>{% endblock %}
@@ -12,7 +12,7 @@
   <div class="cadre">
     <div class="sjc-grille">{% for x in page.sejours_page %}{{ m.carte_sejour(x, True) }}{% endfor %}</div>
     {% if page.sejours_page | selectattr("structure.abonnee") | list %}<p class="fp-note">« Partenaire » : structure abonnée à Fil Roug'Anim, mise en avant dans les résultats.</p>{% endif %}
-    <p class="sjc-affiner"><a class="bouton-r" href="{{ lien('/sejours/') }}">Affiner la recherche : âge, période, budget, aides <span aria-hidden="true">→</span></a></p>
+    <p class="sjc-affiner"><a class="bouton-r" href="{{ lien('/enfants/') }}">Affiner la recherche : âge, période, budget, aides <span aria-hidden="true">→</span></a></p>
 
     {% set v = page.voisines or {} %}
     <nav class="sjc-voisines" aria-label="Autres recherches de séjours">

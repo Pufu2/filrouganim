@@ -114,7 +114,7 @@
     <button type="button" role="tab" id="ro-t2" aria-selected="true" aria-controls="ro-p2">{{ icone("cherche") }}Trouver une structure</button>
     <button type="button" role="tab" id="ro-t1" aria-selected="false" aria-controls="ro-p1" tabindex="-1">{{ icone("diplome") }}Se former</button>
     <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je suis une structure</button>
-    <button type="button" role="tab" id="ro-t4" aria-selected="false" aria-controls="ro-p4" tabindex="-1">{{ icone("date") }}Trouver un séjour</button>
+    <button type="button" role="tab" id="ro-t4" aria-selected="false" aria-controls="ro-p4" tabindex="-1">{{ icone("date") }}Inscrire mon enfant</button>
   </div>{% endif %}
   <div class="ro-p" id="ro-p1"{% if onglets %} role="tabpanel" aria-labelledby="ro-t1" hidden{% endif %}>
   <form class="ro-panneau" action="{{ lien('/se-former/sessions/') }}" method="get">
@@ -198,7 +198,7 @@
     <p class="ro-plus">Votre page et une offre, gratuitement. Les demandes et les profils des animateurs avec l'abonnement, dès {{ site.abonnement.prix_fondateur }} par an. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
   </div>
   <div class="ro-p" id="ro-p4" role="tabpanel" aria-labelledby="ro-t4" hidden>
-  <form class="ro-panneau" action="{{ lien('/sejours/') }}" method="get">
+  <form class="ro-panneau" action="{{ lien('/enfants/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Pour qui ?</legend>
       <div class="ro-puces">
@@ -212,7 +212,7 @@
         <span class="ro-champ">{{ icone("date") }}<select id="ro-sj-quand" name="quand"><option value="">Toute l'année</option>{% for k, l in [("hiver", "Vacances d'hiver"), ("printemps", "Vacances de printemps"), ("juillet", "Juillet"), ("aout", "Août"), ("toussaint", "Toussaint"), ("noel", "Noël"), ("mercredis", "Les mercredis")] %}<option value="{{ k }}">{{ l }}</option>{% endfor %}</select></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les séjours</button>
       </div>
-      <p class="ro-plus">Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. <a href="{{ lien('/sejours/aides/') }}">Les aides pour partir (Pass Colo, VACAF)</a></p>
+      <p class="ro-plus">Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. <a href="{{ lien('/enfants/aides/') }}">Les aides pour partir (Pass Colo, VACAF)</a></p>
     </div>
   </form>
   <script>
@@ -500,7 +500,7 @@
 </li>
 {% endmacro %}
 
-{# une carte séjour (page structure, pages « Trouver un séjour ») ; même dessin que les cartes de /sejours/ (sejours.js) #}
+{# une carte séjour (page structure, pages « Inscrire mon enfant ») ; même dessin que les cartes de /enfants/ (sejours.js) #}
 {% macro carte_sejour(x, avec_structure=False) %}{% set base_sj = site.supabase.url ~ "/storage/v1/object/public/sejours/" %}{% set d = x.a_venir[0] %}{% set journee = x.type.startswith("accueil") %}{% set ferme = x.a_venir | rejectattr("complet") | rejectattr("places_restantes", "equalto", 0) | list | length == 0 %}
             <a class="sjc-carte" href="{{ lien(x.url) }}" data-sj="{{ 'journee' if journee else 'nuits' }}" data-a="{{ x.age_min }}-{{ x.age_max }}">
               <span class="sjc-photo sjc-b-{{ (x.envies or ['decouverte'])[0] }}"{% if x.photos %} style="background-image:url('{{ base_sj ~ x.photos[0] }}')"{% endif %}>

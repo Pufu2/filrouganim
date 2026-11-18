@@ -111,29 +111,29 @@
     </div>
   </div>
   <div class="mm-item">
-    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-sejours"{% if page.url.startswith('/sejours/') %} data-actif{% endif %}>Séjours<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
+    <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-sejours"{% if page.url.startswith('/enfants/') %} data-actif{% endif %}>Séjours<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-sejours" hidden>
       <div class="cadre mm-grille">
-        <a class="mm-une" href="{{ lien('/sejours/') }}">
+        <a class="mm-une" href="{{ lien('/enfants/') }}">
           <span class="mm-une-sur">Pour les familles</span>
-          <b>Trouver un séjour</b>
+          <b>Inscrire mon enfant</b>
           <span>Colos, mini-séjours et accueils de loisirs pour les 3-17 ans, publiés par des structures vérifiées. Demande de place en ligne, sans frais.</span>
           <span class="mm-une-aller">Chercher un séjour <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("profil") }}Par âge</p>
-          {% for a in ["3-5", "6-8", "9-11", "12-14", "15-17"] %}<a href="{{ lien('/sejours/') }}?age={{ a }}">{{ ico("fleche") }}<span class="mm-lien-texte"><b>{{ a }} ans</b></span></a>{% endfor %}
+          {% for a in ["3-5", "6-8", "9-11", "12-14", "15-17"] %}<a href="{{ lien('/enfants/') }}?age={{ a }}">{{ ico("fleche") }}<span class="mm-lien-texte"><b>{{ a }} ans</b></span></a>{% endfor %}
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("calendrier") }}Par période</p>
-          {% for k, l in [("juillet", "Juillet"), ("aout", "Août"), ("hiver", "Vacances d'hiver"), ("printemps", "Vacances de printemps"), ("toussaint", "Toussaint"), ("mercredis", "Les mercredis")] %}<a href="{{ lien('/sejours/') }}?quand={{ k }}">{{ ico("fleche") }}<span class="mm-lien-texte"><b>{{ l }}</b></span></a>{% endfor %}
+          {% for k, l in [("juillet", "Juillet"), ("aout", "Août"), ("hiver", "Vacances d'hiver"), ("printemps", "Vacances de printemps"), ("toussaint", "Toussaint"), ("mercredis", "Les mercredis")] %}<a href="{{ lien('/enfants/') }}?quand={{ k }}">{{ ico("fleche") }}<span class="mm-lien-texte"><b>{{ l }}</b></span></a>{% endfor %}
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("euro") }}Les aides</p>
-          <a href="{{ lien('/sejours/aides/') }}">{{ ico("euro") }}<span class="mm-lien-texte"><b>Les aides pour partir</b><small>Pass Colo, VACAF, CSE</small></span></a>
+          <a href="{{ lien('/enfants/aides/') }}">{{ ico("euro") }}<span class="mm-lien-texte"><b>Les aides pour partir</b><small>Pass Colo, VACAF, CSE</small></span></a>
           <p class="mm-titre mm-titre-2">{{ ico("structure") }}Organisateurs</p>
           <a href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">{{ ico("structure") }}<span class="mm-lien-texte"><b>Publier mes séjours</b><small>Gratuit</small></span></a>
-          <a href="{{ lien('/sejours/exemple/') }}">{{ ico("etoile") }}<span class="mm-lien-texte"><b>Un exemple de fiche séjour</b></span></a>
+          <a href="{{ lien('/enfants/exemple/') }}">{{ ico("etoile") }}<span class="mm-lien-texte"><b>Un exemple de fiche séjour</b></span></a>
           <a href="{{ lien('/recruter/sejours/') }}">{{ ico("fleche") }}<span class="mm-lien-texte"><b>Comment ça marche</b></span></a>
         </div>
       </div>

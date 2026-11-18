@@ -110,7 +110,7 @@
           <div class="fp-sj-filtres" role="group" aria-label="Filtrer les séjours">
             <button type="button" class="fp-sj-on" data-sj-f="">Tous</button>
             {% if st.sejours | selectattr("type", "in", ["sejour", "mini_sejour"]) | list %}<button type="button" data-sj-f="nuits">Avec nuits</button>{% endif %}
-            {% if st.sejours | selectattr("type", "in", ["accueil_vacances", "accueil_mercredis"]) | list %}<button type="button" data-sj-f="journee">À la journée</button>{% endif %}
+            {% if st.sejours | selectattr("type", "in", ["accueil_vacances", "accueil_mercredis", "accueil_periscolaire"]) | list %}<button type="button" data-sj-f="journee">À la journée</button>{% endif %}
             {% for b, r in [("3-5", [3, 5]), ("6-8", [6, 8]), ("9-11", [9, 11]), ("12-14", [12, 14]), ("15-17", [15, 17])] %}{% if st.sejours | selectattr("age_min", "le", r[1]) | selectattr("age_max", "ge", r[0]) | list %}<button type="button" data-sj-f="a{{ b }}">{{ b }} ans</button>{% endif %}{% endfor %}
           </div>
           {% endif %}
@@ -128,7 +128,7 @@
             </div>
           </div>
           {% endif %}
-          <p class="fp-liens"><a class="fp-lien-bouton" href="{{ lien('/sejours/') }}">Tous les séjours sur Fil Roug'Anim <span aria-hidden="true">→</span></a></p>
+          <p class="fp-liens"><a class="fp-lien-bouton" href="{{ lien('/enfants/') }}">Tous les séjours sur Fil Roug'Anim <span aria-hidden="true">→</span></a></p>
         </section>
         {% endif %}
 

@@ -7,7 +7,8 @@
   "use strict";
   var E = null, C = null, sejours = [], dates = {}, stats = {}, demandes = [], brouillon = null, etape = 0, filtre = "tout", envoiPhotos = 0;
   var TYPES = { sejour: ["Séjour", "Une colo avec nuitées, 5 jours ou plus"], mini_sejour: ["Mini-séjour", "2 à 4 nuits, souvent rattaché à un accueil"],
-                accueil_vacances: ["Accueil de loisirs · vacances", "À la journée, pendant les vacances scolaires"], accueil_mercredis: ["Accueil de loisirs · mercredis", "À la journée, les mercredis de l'année"] };
+                accueil_vacances: ["Accueil de loisirs · vacances", "À la journée, pendant les vacances scolaires"], accueil_mercredis: ["Accueil de loisirs · mercredis", "À la journée, les mercredis de l'année"],
+                accueil_periscolaire: ["Périscolaire", "Matins, midis et soirs, autour de l'école"] };
   var ENVIES = { nature: "Nature et animaux", mer: "Mer et plage", montagne: "Montagne", sports: "Sports", equitation: "Équitation", nautique: "Sports nautiques",
                  arts: "Arts, cirque et spectacle", sciences: "Sciences et numérique", langues: "Langues et étranger", itinerance: "Itinérance et aventure", decouverte: "Découverte" };
   var HEBERG = { centre: "Centre de vacances", camping: "Camping, sous tente", gite: "Gîte", auberge: "Auberge de jeunesse", famille: "En famille d'accueil", aucun: "Sans hébergement (à la journée)" };
@@ -52,7 +53,7 @@
     if (brouillon) { editeur(c); return; }
     var tete = el("div", "sj-tete");
     var t = el("div"); t.appendChild(el("h2", null, "Mes séjours et accueils"));
-    t.appendChild(el("p", "petit", "Publiez vos séjours et vos accueils de loisirs, gratuitement : les familles les trouvent dans « Trouver un séjour » et vous demandent une place." + (E.structure() && !E.structure().verifiee ? " Ils seront visibles dès que nous aurons vérifié votre structure." : "")));
+    t.appendChild(el("p", "petit", "Publiez vos séjours, vos accueils de loisirs et votre périscolaire, gratuitement : les familles les trouvent dans « Inscrire mon enfant » et vous demandent une place." + (E.structure() && !E.structure().verifiee ? " Ils seront visibles dès que nous aurons vérifié votre structure." : "")));
     tete.appendChild(t);
     var b = el("button", "bouton-r", "+ Créer un séjour ou un accueil"); b.type = "button"; b.addEventListener("click", function () { nouveau(); }); tete.appendChild(b);
     c.appendChild(tete);
