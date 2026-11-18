@@ -1182,7 +1182,7 @@
         var d = el("div"); d.appendChild(etiquette(couv(x.couverture), t)); if (x.demandee_le && x.etatIx !== "indexee") d.appendChild(el("small", "ap-petit", " demandée " + depuis(x.demandee_le)));
         return [cellule(chemin, rubrique(x.url) + (imp[x.url] ? " · " + fr(imp[x.url]) + " affichages" : "")), d,
           cellule(x.dernier_passage ? E.dateFr(iso(x.dernier_passage)) : "–", x.verifie_le ? "vérifiée " + depuis(x.verifie_le) : null),
-          actions([["Inspecter", function () { inspecter(x.url); }], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
+          actions([x.lien ? ["Inspecter", null, x.lien] : ["Inspecter", function () { inspecter(x.url); }], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
       }));
       if (l.length > 150) zone.appendChild(el("p", "ap-petit", "Les 150 premières sur " + fr(l.length) + " : affinez avec la recherche ou la rubrique."));
     }

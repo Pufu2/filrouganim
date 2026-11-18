@@ -58,7 +58,7 @@ def main():
     connus = {}
     debut = 0
     while True:  # la base renvoie 1 000 lignes au plus par appel
-        lot = appel(f"{base}/rest/v1/admin_indexation?select=url,couverture,verifie_le&order=url&offset={debut}&limit=1000", entetes=sb) or []
+        lot = appel(f"{base}/rest/v1/admin_indexation?select=url,couverture,verifie_le,lien&order=url&offset={debut}&limit=1000", entetes=sb) or []
         connus.update({x["url"]: x for x in lot})
         if len(lot) < 1000:
             break
@@ -71,6 +71,8 @@ def main():
             return (0, 0)
         age = (maintenant - dt.datetime.fromisoformat(x["verifie_le"].replace("Z", "+00:00"))).days
         indexee = (x.get("couverture") or "").lower().startswith(("submitted and indexed", "indexed", "envoyée et indexée", "indexée"))
+        if not x.get("lien"):
+            return (2, -age)  # pas encore de lien direct vers la page d'inspection de la Search Console
         if indexee:
             return (3, -age) if age >= 21 else (9, 0)
         return (1, -age) if age >= 3 else (9, 0)
@@ -91,9 +93,12 @@ def main():
         try:
             r = appel("https://searchconsole.googleapis.com/v1/urlInspection/index:inspect", "POST",
                       {"Authorization": f"Bearer {cred.token}"}, {"inspectionUrl": u, "siteUrl": propriete, "languageCode": "fr-FR"})
-            i = (r or {}).get("inspectionResult", {}).get("indexStatusResult", {})
+            res = (r or {}).get("inspectionResult", {})
+            i = res.get("indexStatusResult", {})
+            # inspectionResultLink : le lien direct vers la page d'inspection de cette adresse dans la Search Console
             return {"url": u, "etat": i.get("verdict"), "couverture": i.get("coverageState"),
-                    "dernier_passage": i.get("lastCrawlTime"), "verifie_le": maintenant.isoformat()}
+                    "dernier_passage": i.get("lastCrawlTime"), "verifie_le": maintenant.isoformat(),
+                    "lien": res.get("inspectionResultLink")}
         except urllib.error.HTTPError as e:
             print(f"  {u} : erreur {e.code} {e.read()[:200]!r}")
             return {"erreur": e.code}

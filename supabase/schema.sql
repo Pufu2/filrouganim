@@ -871,3 +871,4 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v36 (appliquée par migration) : les structures abonnées ne lisent que les profils publiés ET vérifiés par l'admin ;
 -- cv_lisible() : l'admin lit tous les CV, les structures abonnées ceux des profils publiés et vérifiés (et de leurs candidats).
+-- v37 (appliquée par migration) : admin_indexation.lien (inspectionResultLink de l'API Search Console : lien direct vers l'inspection).
