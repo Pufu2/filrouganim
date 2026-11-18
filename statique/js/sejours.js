@@ -45,6 +45,16 @@
   });
   form.addEventListener("input", maj); tri.addEventListener("change", maj);
   effacer.addEventListener("click", function () { type = ""; form.reset(); tri.value = "date"; maj(); });
+  // la fenêtre « Filtres » (comme sur la page des animateurs)
+  var voile = document.getElementById("sjc-ff");
+  if (voile) {
+    var ouvrir = function (oui) { voile.hidden = !oui; document.documentElement.classList.toggle("ff-ouverte", oui); if (oui) voile.querySelector("[data-sjc-fermer]").focus(); };
+    form.querySelector(".tp-filtres").addEventListener("click", function () { ouvrir(true); });
+    Array.prototype.forEach.call(voile.querySelectorAll("[data-sjc-fermer]"), function (b) { b.addEventListener("click", function () { ouvrir(false); }); });
+    voile.addEventListener("click", function (e) { if (e.target === voile) ouvrir(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !voile.hidden) ouvrir(false); });
+    voile.querySelector("[data-sjc-effacer]").addEventListener("click", function () { type = ""; maj(); });
+  }
 
   function filtrer() {
     var ou = sansAccent(form.elements.ou.value), dep = (ou.match(/\(([0-9ab]{2,3})\)\s*$/) || ou.match(/^([0-9]{2,3}|2a|2b)$/) || [])[1];
@@ -92,6 +102,7 @@
   function maj() {
     Array.prototype.forEach.call(form.querySelectorAll("[data-type]"), function (b) { var on = b.dataset.type === type; b.classList.toggle("sjc-on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
     ecrireAdresse();
+    var pn = form.querySelector("[data-sjc-nb]"); if (pn) { pn.hidden = !type; pn.textContent = "1"; }
     var r = filtrer();
     r.sort(function (x, y) {
       if (tri.value === "prix") return (x.c.px == null) - (y.c.px == null) || (x.c.px || 0) - (y.c.px || 0);

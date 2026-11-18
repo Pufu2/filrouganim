@@ -77,13 +77,13 @@
       var nomSt = st.nom || "votre structure";
       return {
         tableau: { sur: "Tableau de bord", t: "Bonjour, ", em: nomSt, p: "Votre recrutement en un coup d'œil : les vues de votre page, les candidats et ce qu'il reste à faire.",
-                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "#guide-reussir-son-recrutement"],
+                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Publier un séjour ou un accueil", "sejours"], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "#guide-reussir-son-recrutement"],
                    resume: { t: "En ce moment", grands: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
         page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
                 actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(pageEnLigne(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
                 resume: { t: "Votre page", jauge: true } },
         offres: { sur: "Mes offres", t: "Vos offres, ", em: "là où les jeunes cherchent", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
-                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
+                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2], ["Publier un séjour ou un accueil", "sejours"]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
                   resume: { t: "Vos offres", lignes: bientot ? [[bientot, (bientot > 1 ? "expirent" : "expire") + " dans 7 jours", "offres"]] : [], mini: [[enLigne.length, "en ligne"], [mesOffres.length - enLigne.length, "hors ligne"]] } },
         candidats: { sur: "Candidats", t: "Les animateurs ", em: "de votre secteur", p: "Les candidatures à vos offres, et les profils des animateurs qui cherchent près de chez vous. Mettez les meilleurs en favoris.",
                      actions: [], guide: ["Accueillir un stagiaire BAFA", "#guide-accueillir-un-stagiaire-bafa"],

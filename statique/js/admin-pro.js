@@ -1095,15 +1095,34 @@
   function couv(x) { if (!x) return "Pas encore vérifiée"; for (var i = 0; i < COUV.length; i++) if (COUV[i][0].test(x)) return COUV[i][1]; return x; }
   function indexee(r) { return !!(r && r.couverture && /indexed|indexée/i.test(r.couverture) && !/not indexed|currently|non indexée/i.test(r.couverture)); }
   function rubrique(u) { var p = u.replace(/^https:\/\/[^/]+/, "").split("/").filter(Boolean); if (!p.length) return "Accueil"; if (p[0] === "se-former" && p[1] === "sessions") return "Sessions"; if (p[0] === "se-former" && p[1] === "ecoles") return "Écoles"; return { "se-former": "Se former", "trouver-un-poste": "Postes et structures", blog: "Blog", lexique: "Lexique", chiffres: "Chiffres" }[p[0]] || "Autres pages"; }
-  // « Inspecter » : l'adresse de la page est copiée, et la Search Console s'ouvre sur le site (avec le compte Google
-  // propriétaire). Le lien direct vers l'inspection échoue quand le navigateur est connecté avec un autre compte Google :
-  // il suffit alors de coller l'adresse dans la barre « Inspecter n'importe quelle URL » en haut de la Search Console.
+  // « Inspecter » : ce que Google sait déjà de la page (relevé par outils/indexation.py), puis la Search Console ouverte avec le
+  // bon compte Google (authuser) : la page d'erreur venait d'un autre compte Google connecté en premier dans le navigateur
+  function compteGoogle() { try { return localStorage.getItem("fra-gsc-compte") || "0"; } catch (e) { return "0"; } }
   function inspecter(u) {
-    var ouvrir = function () { window.open(lienGsc(u), "_blank", "noopener"); };
-    if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { E.message("Adresse copiée. Si Google affiche une erreur : vérifiez le compte Google (en haut à droite, celui qui gère filrouganim.fr), puis collez l'adresse dans la barre « Inspecter » en haut de la Search Console."); ouvrir(); }, ouvrir);
-    else ouvrir();
+    var r = (IDX || []).filter(function (x) { return x.url === u; })[0] || {};
+    var f = el("div", "ap-inspect");
+    f.appendChild(el("p", "ap-sur", "Inspection de l'URL"));
+    f.appendChild(el("h2", null, u.replace(/^https?:\/\/[^/]+/, "") || "/"));
+    var dl = el("dl", "ap-dl");
+    [["Dans Google", r.couverture ? couv(r.couverture) : "pas encore vérifiée"], ["Verdict", r.etat === "PASS" ? "valide" : r.etat === "NEUTRAL" ? "exclue ou pas encore indexée" : r.etat === "FAIL" ? "erreur" : "–"],
+     ["Dernier passage de Google", r.dernier_passage ? E.dateFr(iso(r.dernier_passage)) : "–"], ["Vérifiée par le site", r.verifie_le ? depuis(r.verifie_le) : "jamais"],
+     ["Indexation demandée", r.demandee_le ? depuis(r.demandee_le) : "non"]].forEach(function (x) { dl.appendChild(el("dt", null, x[0])); dl.appendChild(el("dd", null, x[1])); });
+    f.appendChild(dl);
+    f.appendChild(el("p", "ap-petit", "Pour demander l'indexation : ouvrez la page dans la Search Console avec le compte Google qui gère filrouganim.fr, puis « Demander une indexation ». Si Google affiche une erreur, choisissez un autre compte ci-dessous (l'ordre est celui des comptes connectés dans votre navigateur)."));
+    var ch = el("label", "ap-compte-g"); ch.appendChild(document.createTextNode("Compte Google "));
+    var sel = el("select"); ["1er compte", "2e compte", "3e compte", "4e compte"].forEach(function (t, i) { var o = el("option", null, t); o.value = String(i); sel.appendChild(o); });
+    sel.value = compteGoogle(); ch.appendChild(sel); f.appendChild(ch);
+    var bs = el("div", "ap-boutons");
+    var ouv = el("a", "ap-bouton", "Ouvrir dans la Search Console ↗"); ouv.target = "_blank"; ouv.rel = "noopener";
+    function maj() { ouv.href = lienGsc(u, sel.value); try { localStorage.setItem("fra-gsc-compte", sel.value); } catch (e) {} }
+    sel.addEventListener("change", maj); maj();
+    var cp = el("button", "ap-lien-b", "Copier l'adresse"); cp.type = "button";
+    cp.addEventListener("click", function () { if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { cp.textContent = "Copiée !"; }); });
+    var fait = el("button", "ap-lien-b", "C'est demandé"); fait.type = "button"; fait.addEventListener("click", function () { demandee(u); E.fermerFiche(); });
+    bs.appendChild(ouv); bs.appendChild(cp); if (!indexee(r)) bs.appendChild(fait); f.appendChild(bs);
+    E.ouvrirFiche(f);
   }
-  function lienGsc(u) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u); }
+  function lienGsc(u, compte) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u) + "&authuser=" + (compte || compteGoogle()); }
   function indexation() {
     var c = $("ad-indexation"); if (!c) return; c.textContent = "";
     var parUrl = {}; (IDX || []).forEach(function (r) { parUrl[r.url] = r; });

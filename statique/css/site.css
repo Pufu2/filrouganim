@@ -814,7 +814,7 @@ html { scroll-padding-top: 90px; }
 .recherche-une { margin-top: -96px; }
 .tete-accueil .cadre { padding-bottom: 128px; }
 .ro { width: 100%; max-width: 1000px; }
-.ro-onglets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ro-onglets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .ro-onglets [role=tab] { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 0 14px; border: 0; border-radius: 16px 16px 0 0;
   font: 700 1rem var(--texte); cursor: pointer; background: rgba(255, 255, 255, .08); color: #f1e9e4; }
 .ro-onglets [role=tab]:hover { background: rgba(255, 255, 255, .14); }
@@ -4102,3 +4102,12 @@ body.sjf-ouvert { overflow: hidden; }
 /* menu Inscrire mon enfant : la colonne « Sur mesure » assez large pour le bouton « Décrire mon besoin » (le même que dans Structures) */
 #mm-sejours .mm-grille { grid-template-columns: minmax(0, 1.2fr) minmax(0, .95fr) minmax(0, 1.35fr) minmax(0, .9fr); }
 #mm-sejours .mm-colonne a.mm-bouton-plus { margin-top: 62px; }
+
+/* accueil, « Trouver une structure » : « Où ? » puis le bouton, l'un sous l'autre (le champ garde toute sa largeur) */
+#ro-p2 .ro-ligne { flex-direction: column; }
+#ro-p2 .ro-champ { min-width: 0; flex: none; }
+#ro-p2 .ro-aller { width: 100%; justify-content: center; }
+.ap-inspect { padding: 8px 4px; max-width: 560px; }
+.ap-inspect h2 { margin: 4px 0 14px; word-break: break-all; }
+.ap-compte-g { display: flex; align-items: center; gap: 10px; margin: 10px 0 14px; font-weight: 700; }
+.ap-compte-g select { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--trait); font: inherit; }

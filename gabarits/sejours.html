@@ -8,22 +8,36 @@
 {% block tete_chapo %}<p class="chapo">Les colos, les accueils de loisirs et le périscolaire proposés par des structures vérifiées. Demandez une place en ligne, gratuitement : la structure vous répond directement.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
+{% import "morceaux.html" as m with context %}
+<div class="tp-recherche"><div class="cadre">
+  <form class="tp-barre" id="sjc-filtres" role="search" aria-label="Chercher une offre pour mon enfant" onsubmit="return false">
+    <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="sjc-ou">Où cherchez-vous ?</label>
+      <input id="sjc-ou" name="ou" type="search" list="sjc-lieux" placeholder="Où cherchez-vous ? Ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
+      <datalist id="sjc-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist>
+    </div>
+    <button class="tp-filtres" type="button" aria-haspopup="dialog" aria-controls="sjc-ff">{{ m.icone("reglages") }}Filtres <span class="pastille-n" data-sjc-nb hidden></span></button>
+    <div class="tp-voile" id="sjc-ff" hidden>
+      <div class="ff" role="dialog" aria-modal="true" aria-labelledby="sjc-ff-t">
+        <div class="ff-tete"><h2 id="sjc-ff-t">Filtres</h2><button class="ff-fermer" type="button" data-sjc-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="ff-corps">
+          <div class="ff-groupe"><h3>Le type d'offre</h3><div class="ff-puces">
+            <button class="ff-puce" type="button" data-type="" aria-pressed="true">Tout</button>
+            <button class="ff-puce" type="button" data-type="sejours" aria-pressed="false">Séjours et colos</button>
+            <button class="ff-puce" type="button" data-type="accueils" aria-pressed="false">Accueils de loisirs</button>
+            <button class="ff-puce" type="button" data-type="periscolaire" aria-pressed="false">Périscolaire</button>
+          </div></div>
+        </div>
+        <div class="ff-pied"><button class="lien-effacer" type="button" data-sjc-effacer>Tout effacer</button><button class="bouton-r" type="button" data-sjc-fermer>Voir les offres <span aria-hidden="true">→</span></button></div>
+      </div>
+    </div>
+  </form>
+  <div class="tp-bande">
+    <p><b>Vous ne trouvez pas ?</b> Décrivez ce que vous cherchez pour votre enfant : votre demande part chez les structures les plus proches de chez vous, qui vous répondent.</p>
+    <a class="tp-bande-bouton" href="{{ lien('/enfants/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Décrire mon besoin</a>
+  </div>
+</div></div>
 <div class="sjc" id="sjc" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}" data-photos="{{ site.supabase.url }}/storage/v1/object/public/sejours/">
   <div class="cadre">
-    <form class="sjc-filtres" id="sjc-filtres" aria-label="Filtrer les offres" onsubmit="return false">
-      <div class="sjc-types" role="group" aria-label="Type d'offre">
-        <button type="button" data-type="" class="sjc-on">Tout</button>
-        <button type="button" data-type="sejours">Séjours et colos</button>
-        <button type="button" data-type="accueils">Accueils de loisirs</button>
-        <button type="button" data-type="periscolaire">Périscolaire</button>
-      </div>
-      <div class="sjc-ou">
-        <label>Où ?<input name="ou" list="sjc-lieux" placeholder="Ville ou département" autocomplete="off"></label>
-        <datalist id="sjc-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist>
-      </div>
-    </form>
-    <a class="sjc-besoin" href="{{ lien('/enfants/demande/') }}"><b>Vous ne trouvez pas ?</b> Décrivez ce que vous cherchez pour votre enfant : votre demande part chez les structures les plus proches de chez vous, qui vous répondent. <span aria-hidden="true">→</span></a>
-
     <div class="sjc-barre">
       <p class="sjc-nb" id="sjc-nb" role="status" aria-live="polite"></p>
       <div class="sjc-barre-d">
