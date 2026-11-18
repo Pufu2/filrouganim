@@ -57,14 +57,15 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-poste"{% if page.url.startswith('/trouver-un-poste/') %} data-actif{% endif %}>Animateurs &amp; directeurs<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-poste" hidden>
       <div class="cadre mm-grille">
-        <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}">
+        <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}#animateurs">
           <span class="mm-une-sur">L'essentiel</span>
-          <b>Les offres de stages et de jobs</b>
-          <span>Stage pratique BAFA, colo l'été, centre de loisirs, poste à l'année : les offres des structures vérifiées.</span>
-          <span class="mm-une-aller">Voir les offres <span aria-hidden="true">→</span></span>
+          <b>Les animateurs et directeurs qui cherchent</b>
+          <span>Stage pratique BAFA, colo l'été, centre de loisirs, poste à l'année : ce que cherchent les animateurs inscrits, et les offres des structures vérifiées.</span>
+          <span class="mm-une-aller">Voir les demandes <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico(ICONES_TITRES.get("Être trouvé", "fleche")) }}Être trouvé</p>
+          {{ lien_menu('/trouver-un-poste/offres/', 'Les offres de stages et de jobs') }}
           {{ lien_menu('/compte/?inscription=1', 'Créer mon profil gratuit', 'Les structures vous écrivent') }}
           {{ lien_menu('/trouver-un-poste/exemple-de-profil/', 'Un exemple de profil', 'Ce que voit une structure') }}
         </div>
@@ -88,14 +89,15 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-recruter"{% if page.url.startswith('/recruter/') or page.url.startswith('/outils/') or page.url == '/chiffres/' %} data-actif{% endif %}>Structures<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-recruter" hidden>
       <div class="cadre mm-grille">
-        <a class="mm-une" href="{{ lien('/recruter/') }}">
+        <a class="mm-une" href="{{ lien('/trouver-un-poste/structures/') }}">
           <span class="mm-une-sur">L'essentiel</span>
-          <b>Publier une offre</b>
-          <span>Vos offres là où les jeunes cherchent leur BAFA, et les profils des animateurs de votre secteur. Votre page et une offre, gratuitement.</span>
-          <span class="mm-une-aller">Voir l'offre fondateurs <span aria-hidden="true">→</span></span>
+          <b>Les structures d'animation</b>
+          <span>Centres de loisirs, mairies, associations, organisateurs de colos : les structures vérifiées, leur projet et leurs offres. La vôtre peut y être, gratuitement.</span>
+          <span class="mm-une-aller">Voir les structures <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico(ICONES_TITRES.get("Votre structure", "fleche")) }}Votre structure</p>
+          {{ lien_menu('/recruter/', 'Publier une offre', "L'offre fondateurs") }}
           {{ lien_menu('/compte/?inscription=1', 'Créer mon espace structure') }}
           {{ lien_menu('/recruter/exemple-de-page-structure/', 'Un exemple de fiche structure') }}
           {{ lien_menu('/chiffres/', 'Les chiffres du site', 'Qui vous verra') }}
@@ -128,8 +130,8 @@
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("profil") }}Sur mesure</p>
-          <a href="{{ lien('/enfants/demande/') }}">{{ ico("cible") }}<span class="mm-lien-texte"><b>Décrire mon besoin</b><small>Les structures proches vous répondent</small></span></a>
           <a href="{{ lien('/enfants/aides/') }}">{{ ico("euro") }}<span class="mm-lien-texte"><b>Les aides pour partir</b><small>Pass Colo, CAF, CSE</small></span></a>
+          <a class="mm-bouton-plus" href="{{ lien('/enfants/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Décrire mon besoin</b><small>Les structures viennent à vous</small></span></a>
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("structure") }}Organisateurs</p>

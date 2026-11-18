@@ -114,7 +114,6 @@
     <button type="button" role="tab" id="ro-t2" aria-selected="true" aria-controls="ro-p2">{{ icone("cherche") }}Trouver une structure</button>
     <button type="button" role="tab" id="ro-t1" aria-selected="false" aria-controls="ro-p1" tabindex="-1">{{ icone("diplome") }}Se former</button>
     <button type="button" role="tab" id="ro-t3" aria-selected="false" aria-controls="ro-p3" tabindex="-1">{{ icone("etape") }}Je suis une structure</button>
-    <button type="button" role="tab" id="ro-t4" aria-selected="false" aria-controls="ro-p4" tabindex="-1">{{ icone("date") }}Inscrire mon enfant</button>
   </div>{% endif %}
   <div class="ro-p" id="ro-p1"{% if onglets %} role="tabpanel" aria-labelledby="ro-t1" hidden{% endif %}>
   <form class="ro-panneau" action="{{ lien('/se-former/sessions/') }}" method="get">
@@ -140,6 +139,10 @@
   </div>
   {% if onglets %}
   <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2">
+  <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
+    <button type="button" role="radio" aria-checked="false" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
+    <button type="button" role="radio" aria-checked="true" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
+  </div>
   <form class="ro-panneau" id="ro-demande" action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Quelle structure ?</legend>
@@ -185,20 +188,7 @@
     window.addEventListener("pageshow", function () { Array.prototype.forEach.call(f.querySelectorAll("[disabled]"), function (e) { e.disabled = false; }); });
   })();
   </script>
-  </div>
-  <div class="ro-panneau ro-structure" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
-    <p class="ro-titre">Votre structure ?</p>
-    <div class="ro-familles">
-      {% for v, l, d, ic in [("periscolaire", "Périscolaire", "Matins, midis, soirs : autour de l'école", '<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/>'),
-                            ("extrascolaire", "Extrascolaire", "Mercredis et vacances : accueil de loisirs, de jeunes", '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'),
-                            ("sejours", "Séjours", "Colos, camps, séjours de vacances", '<path d="M3 20h18L12 5z"/><path d="M12 5v15M9 20l3-6 3 6"/>')] %}
-      <a class="ro-famille ro-famille-{{ v }}" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type={{ v }}"><span class="ro-famille-ic"><svg viewBox="0 0 24 24" aria-hidden="true">{{ ic | safe }}</svg></span><span class="ro-famille-t"><b>{{ l }}</b><span>{{ d }}</span></span><span class="ro-famille-go" aria-hidden="true">→</span></a>
-      {% endfor %}
-    </div>
-    <p class="ro-plus">Votre page et une offre, gratuitement. Les demandes et les profils des animateurs avec l'abonnement, dès {{ site.abonnement.prix_fondateur }} par an. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
-  </div>
-  <div class="ro-p" id="ro-p4" role="tabpanel" aria-labelledby="ro-t4" hidden>
-  <form class="ro-panneau" action="{{ lien('/enfants/') }}" method="get">
+  <form class="ro-panneau" id="ro-enfant" hidden action="{{ lien('/enfants/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Vous cherchez…</legend>
       <div class="ro-puces">
@@ -219,10 +209,32 @@
     </div>
   </form>
   <script>
-  (function () { var f = document.querySelector('#ro-p4 form'); if (!f) return;
+  (function () { var f = document.getElementById('ro-enfant'); if (!f) return;
     f.addEventListener("submit", function () { Array.prototype.forEach.call(f.querySelectorAll("[name]"), function (x) { if ((x.type === "radio" && x.checked && !x.value) || (x.tagName === "SELECT" && !x.value)) x.disabled = true; }); });
     window.addEventListener("pageshow", function () { Array.prototype.forEach.call(f.querySelectorAll("[disabled]"), function (e) { e.disabled = false; }); }); })();
   </script>
+  <script>
+  (function () {
+    // « Pour mon enfant » ou « Pour les animateurs et directeurs » : chaque bouton montre la bonne recherche
+    var bs = document.querySelectorAll(".ro-pourqui [data-pour]"), fa = document.getElementById("ro-demande"), fe = document.getElementById("ro-enfant");
+    function pour(v) { Array.prototype.forEach.call(bs, function (b) { b.setAttribute("aria-checked", b.dataset.pour === v ? "true" : "false"); });
+      fe.hidden = v !== "enfant"; fa.hidden = v === "enfant"; try { sessionStorage.setItem("fra-pour", v); } catch (e) {} }
+    Array.prototype.forEach.call(bs, function (b) { b.addEventListener("click", function () { pour(b.dataset.pour); }); });
+    var m = null; try { m = sessionStorage.getItem("fra-pour"); } catch (e) {}
+    if (/[?&]pour=enfant/.test(location.search) || m === "enfant") pour("enfant");
+  })();
+  </script>
+  </div>
+  <div class="ro-panneau ro-structure" id="ro-p3" role="tabpanel" aria-labelledby="ro-t3" hidden>
+    <p class="ro-titre">Votre structure ?</p>
+    <div class="ro-familles">
+      {% for v, l, d, ic in [("periscolaire", "Périscolaire", "Matins, midis, soirs : autour de l'école", '<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/>'),
+                            ("extrascolaire", "Extrascolaire", "Mercredis et vacances : accueil de loisirs, de jeunes", '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'),
+                            ("sejours", "Séjours", "Colos, camps, séjours de vacances", '<path d="M3 20h18L12 5z"/><path d="M12 5v15M9 20l3-6 3 6"/>')] %}
+      <a class="ro-famille ro-famille-{{ v }}" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type={{ v }}"><span class="ro-famille-ic"><svg viewBox="0 0 24 24" aria-hidden="true">{{ ic | safe }}</svg></span><span class="ro-famille-t"><b>{{ l }}</b><span>{{ d }}</span></span><span class="ro-famille-go" aria-hidden="true">→</span></a>
+      {% endfor %}
+    </div>
+    <p class="ro-plus">Votre page et une offre, gratuitement. Les demandes et les profils des animateurs avec l'abonnement, dès {{ site.abonnement.prix_fondateur }} par an. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
   </div>
   <script>
   (function () {

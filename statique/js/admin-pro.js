@@ -119,10 +119,32 @@
     var cand = compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); });
     if (dem) l.push([dem, dem > 1 ? "demandes d'animateurs à traiter" : "demande d'animateur à traiter", "qg"]);
     if (verif) l.push([verif, verif > 1 ? "structures à vérifier" : "structure à vérifier", "afaire"]);
+    var fiches = aVerifierProfils().length;
+    if (fiches) l.push([fiches, fiches > 1 ? "fiches d'animateurs à vérifier" : "fiche d'animateur à vérifier", "animateurs"]);
     if (cand) l.push([cand, cand > 1 ? "candidatures sans réponse depuis 3 jours" : "candidature sans réponse depuis 3 jours", "afaire"]);
     if (S && S.emails && S.emails.en_attente && S.emails.plus_ancien && (Date.now() - new Date(S.emails.plus_ancien)) > 3 * 3600e3) l.push([S.emails.en_attente, "e-mails d'alerte pas encore partis", "sante"]);
     if (S && S.offres_expirees_publiees) l.push([S.offres_expirees_publiees, "offres expirées encore publiées", "offres"]);
     return l;
+  }
+  function aVerifierProfils() { return D.profils.filter(function (p) { return p.publie && !p.verifie && D.admins.indexOf(p.id) < 0; }); }
+  async function verifierProfil(p, ok) {
+    var q = await E.sb.rpc("admin_verifier_profil", { pid: p.id, ok: ok });
+    if (q.error) return E.message(E.erreur(q.error), true);
+    p.verifie = ok; E.message(ok ? (p.prenom || "Le profil") + " est vérifié : sa fiche apparaît sur le site." : "Profil retiré du site.");
+    accueil(); enteteAnimateurs(); QG(); pastillesAdmin();
+  }
+  // la carte « Fiches à vérifier » : chaque animateur ou directeur inscrit attend votre accord avant d'apparaître
+  function fichesAVerifier(c) {
+    var l = aVerifierProfils(); if (!l.length) return;
+    var k = carte(c, "Fiches d'animateurs à vérifier", "elles n'apparaissent sur le site qu'après votre accord", "ap-verif");
+    l.slice(0, 12).forEach(function (p) {
+      var r = el("div", "ap-verif-l");
+      r.appendChild(cellule((p.prenom || "Sans prénom") + (p.annee_naissance ? ", " + (new Date().getFullYear() - p.annee_naissance) + " ans" : ""),
+        [p.poste_recherche, (p.ville || nomDep(p.departement)) + (p.departement ? " (" + p.departement + ")" : ""), (p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ")].filter(Boolean).join(" · ")));
+      r.appendChild(actions([["✓ Accepter", function () { verifierProfil(p, true); }, null, "ap-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], ["Cacher", function () { A.modifier("profils", p.id, { publie: false }); }]]));
+      k.appendChild(r);
+    });
+    if (l.length > 12) { var v = vers("animateurs"); v.className = "ap-lien-b"; v.textContent = "Les " + l.length + " fiches →"; k.appendChild(v); }
   }
   function boiteATraiter(titre) {
     var b = el("div", "ap-hero-cote"); b.appendChild(el("p", "ap-cote-t", titre || "À traiter"));
@@ -144,6 +166,7 @@
     hero(c, date, "Bonjour, ", nAt ? nAt + " demande" + (nAt > 1 ? "s" : "") + " à traiter" : "tout est à jour",
       fr(D.comptes.length) + " comptes (le vôtre compris) : " + compte(T, function (t) { return t.type === "animateur"; }) + " animateurs, " + st.length + " structures dont " + payees.length + " payée" + (payees.length > 1 ? "s" : "") + ", +" + ceMois + " ce mois-ci.",
       [bouton("Ouvrir le QG demandes", "qg", true, "boite"), bouton("Structures", "structures"), bouton("Ventes", "ventes")], boiteATraiter());
+    fichesAVerifier(c);
     // les revenus
     var g = grille(c, "ap-g4");
     kpi(g, "euro", "Revenu mensuel", euros(an / 12), payees.length + " abonnement" + (payees.length > 1 ? "s" : "") + " · " + compte(payees, function (s) { return s.fondatrice; }) + " au tarif fondateur");
@@ -176,8 +199,8 @@
     var vues30 = D.vues.filter(function (v) { return v.jour >= joursAvant(29) && (v.type === "page" || v.type === "offre"); }).reduce(function (a, v) { return a + v.n; }, 0);
     [["Pilotage", [["qg", "boite", "QG demandes", aTraiter().length ? aTraiter().length + " point" + (aTraiter().length > 1 ? "s" : "") + " à traiter" : "Rien en attente"],
                    ["ventes", "courbe", "Ventes", euros(an / 12) + " par mois"], ["sante", "coeur", "État de santé", "Relevés, e-mails, base, stockage"], ["afaire", "coche", "À traiter", "Structures, demandes, offres"]]],
-     ["Utilisateurs", [["comptes", "personne", "Membres", fr(D.comptes.length) + " comptes, +" + ceMois + " ce mois-ci"], ["structures", "maison", "Structures", st.length + " fiches, " + payees.length + " payées"],
-                       ["animateurs", "groupe", "Animateurs", D.profils.length + " profils, " + compte(D.profils, function (p) { return p.publie; }) + " visibles"]]],
+     ["Utilisateurs", [["annuaires", "avion", "Annuaires inversés", "Animateurs et familles → structures"], ["comptes", "personne", "Membres", fr(D.comptes.length) + " comptes, +" + ceMois + " ce mois-ci"], ["structures", "maison", "Structures", st.length + " fiches, " + payees.length + " payées"],
+                       ["animateurs", "groupe", "Animateurs", D.profils.length + " profils" + (aVerifierProfils().length ? ", " + aVerifierProfils().length + " à vérifier" : ", " + compte(D.profils, function (p) { return p.publie && p.verifie; }) + " visibles")]]],
      ["Acquisition", [["stats", "courbe", "Statistiques détaillées", "Vues, clics, entonnoirs, trafic"], ["stats", "oeil", "Vues des pages structures", fr(vues30) + " sur 30 jours"],
                       ["visibilite", "google", "Visibilité", "Google, page par page"], ["provenance", "lien", "Provenance", "Canaux, liens suivis, inscrits"], ["prospection", "avion", "Prospection", "Organismes, structures, contacts"]]],
      ["Contenu", [["offres", "offre", "Offres", compte(D.offres, function (o) { return o.publiee && o.expire_le >= AUJ; }) + " en ligne"], ["demandes", "avion", "Toutes les demandes", D.demandes.length + " reçues"],
@@ -769,7 +792,7 @@
       return [cellule(p.prenom + (p.annee_naissance ? ", " + (auj.getFullYear() - p.annee_naissance) + " ans" : ""), p.email_contact), cellule(p.ville || nomDep(p.departement), p.departement),
         cellule((p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ") || "–", p.poste_recherche || ""),
         cellule((post[p.id] || 0) + " candidature" + ((post[p.id] || 0) > 1 ? "s" : "") + " · " + (dem[p.id] || 0) + " demande" + ((dem[p.id] || 0) > 1 ? "s" : ""), (p.publie ? "visible" : "caché") + " · maj " + depuis(p.maj_le)),
-        actions([[p.verifie ? "Retirer la vérification" : "✓ Vérifier", async function () { var q = await E.sb.rpc("admin_verifier_profil", { pid: p.id, ok: !p.verifie }); if (q.error) return E.message(E.erreur(q.error), true); p.verifie = !p.verifie; E.message(p.verifie ? "Profil vérifié : il apparaît sur le site." : "Profil retiré du site."); enteteAnimateurs(); }, null, p.verifie ? "" : "ap-fort"],
+        actions([[p.verifie ? "Retirer du site" : "✓ Accepter", function () { verifierProfil(p, !p.verifie); }, null, p.verifie ? "" : "ap-fort"],
           ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
@@ -1340,6 +1363,58 @@
     }
     IDX = tout;
   }
+  /* ---------- Les deux annuaires inversés : animateurs → structures, familles → structures ---------- */
+  var ANN = null, annVue = "anim";
+  async function annuaires(recharger) {
+    var c = $("ad-annuaires"); if (!c) return;
+    if (!ANN || recharger) {
+      var r = await Promise.all([E.sb.from("besoins_familles").select("*").order("cree_le", { ascending: false }).limit(500),
+                                 E.sb.from("besoins_destinataires").select("besoin_id,structure_id,ouverte,statut,cree_le").limit(5000)]);
+      ANN = { besoins: (r[0] && r[0].data) || [], dest: (r[1] && r[1].data) || [] };
+    }
+    c.textContent = "";
+    var noms = {}; D.structures.forEach(function (st) { noms[st.id] = st.nom; });
+    var d30 = joursAvant(29), B = ANN.besoins, De = D.demandes;
+    var dests = {}; ANN.dest.forEach(function (x) { (dests[x.besoin_id] = dests[x.besoin_id] || []).push(x); });
+    hero(c, "Annuaires inversés", "Ceux qui cherchent, ", "les structures qui répondent",
+      "Deux annuaires inversés : les animateurs et directeurs décrivent le poste qu'ils cherchent, les parents décrivent ce qu'il leur faut pour leur enfant. Chaque demande part chez les structures vérifiées les plus proches.",
+      [bouton("← Vue d'ensemble", "accueil"), bouton("Ouvrir le QG", "qg")]);
+    chiffres(c, [[String(De.length), "demandes d'animateurs"], [String(compte(De, function (d) { return iso(d.cree_le) >= d30; })), "sur 30 jours"],
+                 [String(B.length), "besoins de familles"], [String(compte(B, function (b) { return iso(b.cree_le) >= d30; })), "sur 30 jours"],
+                 [String(compte(B, function (b) { return !(dests[b.id] || []).length; })), "familles sans structure", compte(B, function (b) { return !(dests[b.id] || []).length; }) ? "rouge" : null]]);
+    var pu = el("div", "ap-puces");
+    [["anim", "Animateurs et directeurs · " + De.length], ["fam", "Familles · " + B.length]].forEach(function (x) {
+      var b = el("button", null, x[1]); b.type = "button"; b.setAttribute("aria-pressed", annVue === x[0] ? "true" : "false");
+      b.addEventListener("click", function () { annVue = x[0]; annuaires(); }); pu.appendChild(b); });
+    c.appendChild(pu);
+    if (annVue === "anim") {
+      c.appendChild(el("p", "ap-petit", "« Décrire ce que je cherche » (/trouver-un-poste/demande/) : le poste, la période, le lieu, et les structures qui l'ont reçue."));
+      if (!De.length) { c.appendChild(el("p", "ap-vide", "Aucune demande pour l'instant.")); return; }
+      tableau(c, ["Animateur", "Poste et période", "Lieu", "Structures", ""], De.slice(0, 100).map(function (d) {
+        var n = (d.destinataires || []).length;
+        return [cellule(d.prenom || "Sans prénom", depuis(d.cree_le)), cellule(POSTES[d.poste] || d.poste || "–", (d.periodes || []).map(function (p) { return PERIODES[p] || p; }).join(", ")),
+          cellule(lieuDe(d)), etiquette(n ? n + " structure" + (n > 1 ? "s" : "") : "aucune", n ? "ok" : "rouge"),
+          actions([["Ouvrir", function () { qg.filtre = "toutes"; qg.sel = d.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"]])];
+      }));
+    } else {
+      c.appendChild(el("p", "ap-petit", "« Décrire mon besoin » (/enfants/demande/) : ce que cherche la famille, et les structures qui l'ont reçue. Les coordonnées sont celles que la famille a données."));
+      if (!B.length) { c.appendChild(el("p", "ap-vide", "Aucun besoin décrit pour l'instant.")); return; }
+      var TY = { accueils: "accueil de loisirs", periscolaire: "périscolaire", sejours: "séjour" };
+      tableau(c, ["Famille", "Ce qu'elle cherche", "Lieu", "Structures", ""], B.slice(0, 150).map(function (b) {
+        var ds = dests[b.id] || [];
+        var st = ds.map(function (x) { return (noms[x.structure_id] || "structure") + (x.statut && x.statut !== "nouvelle" ? " (" + x.statut + ")" : ""); }).join(", ");
+        return [cellule(b.parent_nom || "Sans nom", [b.email, b.telephone, depuis(b.cree_le)].filter(Boolean).join(" · ")),
+          cellule((b.types || []).map(function (t) { return TY[t] || t; }).join(", ") || "–", [(b.ages || []).length ? (b.ages || []).join(", ") + " ans" : "", b.quand, b.message ? "« " + String(b.message).slice(0, 120) + " »" : ""].filter(Boolean).join(" · ")),
+          cellule(b.ville || nomDep(b.departement), b.departement), etiquette(ds.length ? ds.length + " structure" + (ds.length > 1 ? "s" : "") : "aucune", ds.length ? "ok" : "rouge"),
+          cellule(st || "–")];
+      }));
+    }
+  }
+  function pastillesAdmin() {
+    var p = document.querySelector('[data-pastille-admin="animateurs"]'), n = aVerifierProfils().length;
+    if (p) { p.hidden = !n; p.textContent = n; }
+  }
+
   /* ---------- Séjours : ce que publient les structures, les demandes des familles, les alertes ---------- */
   var SJ = null;
   async function sejoursAdmin(recharger) {
@@ -1412,6 +1487,7 @@
       accueil(); QG(); sante(); ventes();
       membresPage(); enteteStructures(); enteteAnimateurs(); organismes(); visibilite(); provenance(); prospection();
       sejoursAdmin().catch(function (e) { console.error(e); });
+      annuaires().catch(function (e) { console.error(e); }); pastillesAdmin();
       indexation(); actualites(); contenusSite(); reseaux(); enteteGuides();
       var p = document.querySelector('[data-pastille-admin="qg"]'); var n = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
       if (p) { p.hidden = !n; p.textContent = n; }
