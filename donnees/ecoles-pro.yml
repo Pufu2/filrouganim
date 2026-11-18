@@ -199,7 +199,6 @@ ecoles:
   - {organisme_nom: "L'ADAPT Val d'Oise", diplome: BPJEPS, specialite: "asec", ville: "Sarcelles", departement: "95", derniere_rentree: 2026-01-05}
   - {organisme_nom: "Les Francas", diplome: CC-ACM, specialite: null, ville: "Montluçon", departement: "03", derniere_rentree: 2026-03-23}
   - {organisme_nom: "Horizon", diplome: CC-ACM, specialite: null, ville: "Antibes", departement: "06", derniere_rentree: 2026-09-21}
-  - {organisme_nom: "Union régionale des Francas du Grand Est", diplome: CC-ACM, specialite: null, ville: "Sainte-Savine", departement: "10", derniere_rentree: 2026-04-03}
   - {organisme_nom: "Adequations", diplome: CC-ACM, specialite: null, ville: "Aix-en-Provence", departement: "13", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Formatic Association", diplome: CC-ACM, specialite: null, ville: "Arles", departement: "13", derniere_rentree: 2026-09-21}
   - {organisme_nom: "CEMEA PACA", diplome: CC-ACM, specialite: null, ville: "Marseille", departement: "13", derniere_rentree: 2026-10-05}
@@ -261,7 +260,9 @@ ecoles:
   - {organisme_nom: "Ligue de l'enseignement de la région Ile-de-France", diplome: CC-ACM, specialite: null, ville: "Paris", departement: "75", derniere_rentree: 2026-02-12}
   - {organisme_nom: "UNION REGIONALE DES FRANCAS D'ILE DE France", diplome: CC-ACM, specialite: null, ville: "Paris", departement: "75", derniere_rentree: 2026-05-04}
   - {organisme_nom: "Union Francaise Centre Vacances Loisirs", diplome: CC-ACM, specialite: null, ville: "Paris", departement: "75", derniere_rentree: 2026-10-16}
+  - {organisme_nom: "Profession Sport et Loisirs 76", diplome: CC-ACM, specialite: null, ville: "Le Havre", departement: "76", derniere_rentree: 2026-11-20}
   - {organisme_nom: "CEMEA de Normandie", diplome: CC-ACM, specialite: null, ville: "Rouen", departement: "76", derniere_rentree: 2026-03-03}
+  - {organisme_nom: "Profession Sport et Loisirs 76", diplome: CC-ACM, specialite: null, ville: "Rouen", departement: "76", derniere_rentree: 2026-11-20}
   - {organisme_nom: "IFAC 92", diplome: CC-ACM, specialite: null, ville: "Voisins-le-Bretonneux", departement: "78", derniere_rentree: 2026-11-02}
   - {organisme_nom: "Union Régionale des Francas d'Occitanie", diplome: CC-ACM, specialite: null, ville: "Albi", departement: "81", derniere_rentree: 2026-04-14}
   - {organisme_nom: "Ligue de l'enseignement LA FOL DU VAR", diplome: CC-ACM, specialite: null, ville: "Brignoles", departement: "83", derniere_rentree: 2026-11-16}
