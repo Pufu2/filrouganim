@@ -549,7 +549,7 @@ class Site:
         """« Inscrire mon enfant » : la fiche de chaque séjour publié par une structure vérifiée (les règles d'accès ne
         montrent que ceux-là), et la fiche d'exemple. Indexée seulement si une date est à venir. Voir docs/PLAN-SEJOURS.md."""
         par_id = {st.get("id"): st for st in structures if st.get("id")}
-        lignes = self.lire_supabase("sejours?select=*&statut=eq.publie&order=cree_le", "séjours") or []
+        lignes = self.lire_supabase("sejours?select=id,structure_id,type,slug,titre,accroche,description,programme,vie_sur_place,encadrement_texte,infos_pratiques,envies,age_min,age_max,capacite,taux_encadrement,pays,region_dest,ville,departement,hebergement,transport,horaires,prix_min,prix_unite,prix_texte,inclus,aides,pass_colo,numero_declaration,photos,statut,cree_le,maj_le&statut=eq.publie&order=cree_le", "séjours") or []
         ids = ",".join(str(l["id"]) for l in lignes)
         dates = self.lire_supabase(f"sejours_dates?select=*&sejour_id=in.({ids})&order=debut", "dates des séjours") if ids else []
         auj = dt.date.today()
@@ -752,6 +752,8 @@ class Site:
         self.ajouter("/recruter/sejours/", "recruter-sejours.html", titre="Publiez vos séjours et accueils de loisirs gratuitement",
                      description="Colos, mini-séjours, accueils de loisirs : publiez-les gratuitement sur Fil Roug'Anim. Les familles cherchent par âge et par période et vous demandent une place en ligne. Sans commission.",
                      fil=[("Structures", "/recruter/"), ("Vos séjours", "/recruter/sejours/")])
+        self.ajouter("/enfants/carnet/", "enfants-carnet.html", titre="Carnet de séjour : la nouvelle du jour", indexer=False,
+                     description="Pour l'équipe d'un séjour : écrire la nouvelle du jour aux familles.", fil=[("Inscrire mon enfant", "/enfants/"), ("Carnet de séjour", "/enfants/carnet/")])
         self.ajouter("/enfants/alerte/", "sejours-alerte.html", titre="Votre alerte séjours", indexer=False,
                      description="Confirmer ou arrêter une alerte de nouveaux séjours.", fil=[("Inscrire mon enfant", "/enfants/"), ("Alerte", "/enfants/alerte/")])
 

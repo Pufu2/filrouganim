@@ -4022,3 +4022,31 @@ body.sjf-ouvert { overflow: hidden; }
 .cj-comm b { font: 600 2.4rem/1 var(--titres); color: var(--fil-fonce); }
 .cj-comm span { font-weight: 700; } .cj-comm small { color: var(--doux); } .cj-comm a { margin-top: 6px; font-weight: 700; color: var(--fil-fonce); font-size: .9rem; }
 .ap-clics-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 14px 22px; } .ap-clics-b .ap-cote-l { display: flex; justify-content: space-between; gap: 10px; margin: 4px 0; font-size: .9rem; }
+
+/* ---------- l'espace parent et le carnet de séjour ---------- */
+.sjf-garder { color: var(--doux); margin-top: 0; font-weight: 600; }
+.sjf-garder[aria-pressed="true"] { color: var(--rouge); }
+.sjf-merci-parent { font-size: .92rem; color: var(--doux); background: #fbf8f2; border-radius: 12px; padding: 10px 14px; margin: 10px auto 14px; max-width: 460px; }
+.pa-depart { margin-top: 16px; }
+.pa-j { font-size: 2rem; font-weight: 800; color: var(--rouge); margin: 4px 0; }
+.pa-enfants { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 8px; }
+.pa-enfants li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 14px; border: 1px solid var(--ligne, #e8e2da); border-radius: 12px; }
+.pa-enfants li > span { color: var(--doux); font-size: .9rem; flex: 1; }
+.pa-ajout { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.pa-ajout input { flex: 1 1 140px; min-width: 0; padding: 10px 12px; border: 1px solid var(--ligne, #e8e2da); border-radius: 10px; font: inherit; }
+.pa-carnet { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 12px; }
+.pa-carnet li { padding: 14px 16px; border-left: 3px solid var(--rouge); background: #fbf8f2; border-radius: 0 12px 12px 0; }
+.pa-carnet h3 { margin: 2px 0 6px; font-size: 1.05rem; }
+.pa-c-sur { margin: 0; font-size: .82rem; color: var(--doux); }
+.pa-c-sur::first-letter { text-transform: uppercase; }
+.pa-c-texte { margin: 0; white-space: pre-line; }
+.sj-carnet { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.sj-carnet-fil { margin-top: 16px; }
+.sj-lien { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sj-lien input { flex: 1 1 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--ligne, #e8e2da); border-radius: 10px; font: inherit; font-size: .85rem; }
+@media (max-width: 760px) { .sj-carnet { grid-template-columns: minmax(0, 1fr); } }
+.cj-carnet { max-width: 640px; }
+.cj-etat { padding: 20px; background: #fbf8f2; border-radius: 14px; }
+.cj-sejour { font-weight: 700; font-size: 1.1rem; margin: 0 0 8px; }
+.cj-retour { margin-top: 10px; }
+.cj-fil { margin-top: 28px; }

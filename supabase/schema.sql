@@ -860,3 +860,11 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v34 (appliquée par migration) : chiffres_publics() ajoute familles (besoins et demandes de place, sans rien sur la personne),
 -- fiches_animateurs (vérifiées), structures_verifiees, offres_enfants.
+
+-- v35 (appliquée par migration) : comptes_parents, enfants (prénom, année de naissance), demandes_sejour.parent_id et
+-- besoins_familles.parent_id (rattachés par l'adresse e-mail : trigger rattacher_demandes, lier_mes_demandes()),
+-- mes_inscriptions(), carnet_sejour (les nouvelles de l'équipe), ecrire_carnet(sid, j, did, titre, texte, auteur)
+-- (structure, admin ou lien d'équipe sejours.jeton_carnet), carnet_equipe(j), mon_carnet(), e-mail aux parents
+-- dont la demande est acceptée (prevenir_carnet), est_parent().
+-- v35b : jeton_carnet privé (select par colonnes sur sejours pour anon/authenticated, sans jeton_carnet),
+-- lien_carnet(sid, nouveau) pour la structure ou l'admin.

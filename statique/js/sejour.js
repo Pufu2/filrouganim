@@ -96,6 +96,20 @@
     });
   });
 
+  // « Garder pour plus tard » : l'offre est mise de côté dans ce navigateur (espace parent, « Offres gardées »)
+  Array.prototype.forEach.call(racine.querySelectorAll("[data-garder]"), function (b) {
+    var u = location.pathname;
+    function lire() { try { return JSON.parse(localStorage.getItem("fra-favoris") || "[]"); } catch (e) { return []; } }
+    function maj() { var on = lire().some(function (x) { return x.u === u; }); b.setAttribute("aria-pressed", on ? "true" : "false"); b.textContent = on ? "♥ Gardé" : "♡ Garder pour plus tard"; }
+    b.addEventListener("click", function () {
+      var l = lire(), on = l.some(function (x) { return x.u === u; });
+      l = on ? l.filter(function (x) { return x.u !== u; }) : [{ u: u, t: b.dataset.titre, s: b.dataset.sous }].concat(l).slice(0, 40);
+      try { localStorage.setItem("fra-favoris", JSON.stringify(l)); } catch (e) {}
+      maj();
+    });
+    maj();
+  });
+
   // le calculateur de reste à charge
   var calc = document.getElementById("sjf-calcul");
   if (calc) {

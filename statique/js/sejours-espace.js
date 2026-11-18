@@ -6,7 +6,9 @@
 (function () {
   "use strict";
   var besoins = [], candidats = [];
-  var E = null, C = null, sejours = [], dates = {}, stats = {}, demandes = [], brouillon = null, etape = 0, filtre = "tout", envoiPhotos = 0;
+  // toutes les colonnes lisibles (le lien secret du carnet ne se lit que par lien_carnet())
+  var COLONNES = "id,structure_id,type,slug,titre,accroche,description,programme,vie_sur_place,encadrement_texte,infos_pratiques,envies,age_min,age_max,capacite,taux_encadrement,pays,region_dest,ville,departement,hebergement,transport,horaires,prix_min,prix_unite,prix_texte,inclus,aides,pass_colo,numero_declaration,photos,statut,cree_le,maj_le";
+  var E = null, C = null, sejours = [], dates = {}, stats = {}, demandes = [], brouillon = null, carnetDe = null, etape = 0, filtre = "tout", envoiPhotos = 0;
   var TYPES = { sejour: ["Séjour", "Une colo avec nuitées, 5 jours ou plus"], mini_sejour: ["Mini-séjour", "2 à 4 nuits, souvent rattaché à un accueil"],
                 accueil_vacances: ["Accueil de loisirs · vacances", "À la journée, pendant les vacances scolaires"], accueil_mercredis: ["Accueil de loisirs · mercredis", "À la journée, les mercredis de l'année"],
                 accueil_periscolaire: ["Périscolaire", "Matins, midis et soirs, autour de l'école"] };
@@ -29,7 +31,7 @@
   function periode(d) { return d.debut === d.fin ? E.dateFr(d.debut) : "du " + E.dateFr(d.debut) + " au " + E.dateFr(d.fin); }
 
   async function charger() {
-    var r = await E.sb.from("sejours").select("*").eq("structure_id", C.id).order("cree_le", { ascending: false });
+    var r = await E.sb.from("sejours").select(COLONNES).eq("structure_id", C.id).order("cree_le", { ascending: false });
     sejours = r.data || [];
     dates = {}; stats = {};
     var ids = sejours.map(function (s) { return s.id; });
@@ -56,6 +58,7 @@
   function liste() {
     var c = $("sj-liste"); c.textContent = "";
     if (brouillon) { editeur(c); return; }
+    if (carnetDe) { pageCarnet(c, carnetDe); return; }
     var tete = el("div", "sj-tete");
     var t = el("div"); t.appendChild(el("h2", null, "Mes séjours et accueils"));
     t.appendChild(el("p", "petit", "Publiez vos séjours, vos accueils de loisirs et votre périscolaire, gratuitement : les familles les trouvent dans « Inscrire mon enfant » et vous demandent une place." + (E.structure() && !E.structure().verifiee ? " Ils seront visibles dès que nous aurons vérifié votre structure." : "")));
@@ -158,11 +161,72 @@
     corps.appendChild(ul);
     var acts = el("div", "sj-actions");
     [["Modifier", function () { modifier(s); }, "bouton-blanc"],
+     ["Carnet de séjour", function () { carnetDe = s; liste(); window.scrollTo(0, 0); }, "bouton-texte"],
      ["Dupliquer", function () { dupliquer(s); }, "bouton-texte"],
      [s.statut === "publie" ? "Mettre en pause" : "Publier", function () { basculer(s); }, "bouton-texte"],
      ["Supprimer", function () { supprimer(s); }, "bouton-texte sj-suppr"]].forEach(function (a) { var b = el("button", a[2], a[0]); b.type = "button"; b.addEventListener("click", a[1]); acts.appendChild(b); });
     corps.appendChild(acts);
     return k;
+  }
+  /* ---------- le carnet de séjour : les nouvelles de la journée, envoyées par e-mail aux familles qui ont une place ---------- */
+  async function pageCarnet(c, s) {
+    var tete = el("div", "sj-tete"), t = el("div");
+    var ret = el("button", "bouton-texte", "← Mes séjours"); ret.type = "button"; ret.addEventListener("click", function () { carnetDe = null; liste(); }); t.appendChild(ret);
+    t.appendChild(el("h2", null, "Carnet de séjour · " + s.titre));
+    var nb = demandes.filter(function (d) { return d.sejour_id === s.id && d.statut === "acceptee"; }).length;
+    t.appendChild(el("p", "petit", "Racontez la journée en quelques lignes : activités, sorties, veillée, la météo… Chaque nouvelle part par e-mail aux familles dont l'enfant a une place confirmée (« Accepter » dans les demandes), et s'affiche dans leur espace parent. " +
+      (nb ? nb + " famille" + (nb > 1 ? "s" : "") + " recevr" + (nb > 1 ? "ont" : "a") + " la nouvelle." : "Aucune place confirmée pour l'instant : acceptez les demandes pour que les familles reçoivent le carnet.")));
+    tete.appendChild(t); c.appendChild(tete);
+    var cols = el("div", "sj-carnet"); c.appendChild(cols);
+    // écrire
+    var k = el("div", "carte-compte"); cols.appendChild(k); k.appendChild(el("h3", null, "La nouvelle du jour"));
+    var f = el("form", "formulaire"), auj = aujourdhui();
+    var ds = (dates[s.id] || []).filter(function (d) { return d.fin >= auj && d.debut <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); });
+    if ((dates[s.id] || []).length > 1) {
+      var ld = el("label", "champ"); ld.appendChild(el("span", null, "Session"));
+      var sd = el("select"); sd.name = "date_id"; var o0 = el("option", null, "Toutes les sessions"); o0.value = ""; sd.appendChild(o0);
+      (dates[s.id] || []).forEach(function (d) { var o = el("option", null, periode(d)); o.value = d.id; if (ds[0] && ds[0].id === d.id) o.selected = true; sd.appendChild(o); });
+      ld.appendChild(sd); f.appendChild(ld);
+    }
+    [["titre", "Titre (facultatif)", "input", "Ex. Journée au lac"], ["texte", "La journée", "textarea", "Ce matin, grand jeu dans la forêt…"], ["auteur", "Signé (facultatif)", "input", "Ex. Léa, directrice"]].forEach(function (x) {
+      var l = el("label", "champ"); l.appendChild(el("span", null, x[1])); var i = el(x[2]); i.name = x[0]; i.placeholder = x[3];
+      if (x[2] === "textarea") { i.rows = 6; i.required = true; i.maxLength = 4000; } else i.maxLength = x[0] === "titre" ? 120 : 80;
+      l.appendChild(i); f.appendChild(l); });
+    f.appendChild(el("p", "petit", "Pas de nom de famille ni d'information de santé. Les photos arriveront bientôt."));
+    var env = el("button", "bouton-r", "Envoyer aux familles"); env.type = "submit"; f.appendChild(env);
+    f.addEventListener("submit", async function (e) {
+      e.preventDefault(); env.disabled = true;
+      var r = await E.sb.rpc("ecrire_carnet", { sid: s.id, j: null, did: f.date_id && f.date_id.value ? parseInt(f.date_id.value, 10) : null, titre: f.titre.value, texte: f.texte.value, auteur: f.auteur.value });
+      env.disabled = false; if (r.error) return E.message(E.erreur(r.error), true);
+      E.message("C'est envoyé : les familles reçoivent la nouvelle."); liste();
+    });
+    k.appendChild(f);
+    // le lien pour l'équipe
+    var kl = el("div", "carte-compte"); cols.appendChild(kl); kl.appendChild(el("h3", null, "Le lien pour l'équipe"));
+    kl.appendChild(el("p", "petit", "Le directeur ou un animateur écrit le carnet depuis son téléphone, sans compte : donnez-lui ce lien. Changez-le après le séjour."));
+    var zl = el("div", "sj-lien"); kl.appendChild(zl);
+    async function montrerLien(nouveau) {
+      var r = await E.sb.rpc("lien_carnet", { sid: s.id, nouveau: !!nouveau });
+      if (r.error) return E.message(E.erreur(r.error), true);
+      zl.textContent = ""; var u = location.origin + "/enfants/carnet/?j=" + r.data;
+      var ip = el("input"); ip.readOnly = true; ip.value = u; ip.addEventListener("focus", function () { ip.select(); }); zl.appendChild(ip);
+      var cp = el("button", "bouton-blanc", "Copier"); cp.type = "button"; cp.addEventListener("click", function () { (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { cp.textContent = "Copié !"; }, function () { ip.select(); }); }); zl.appendChild(cp);
+      var ch = el("button", "bouton-texte", "Changer le lien"); ch.type = "button"; ch.addEventListener("click", function () { if (confirm("L'ancien lien ne marchera plus. Continuer ?")) montrerLien(true); }); zl.appendChild(ch);
+    }
+    var vl = el("button", "bouton-blanc", "Afficher le lien"); vl.type = "button"; vl.addEventListener("click", function () { montrerLien(false); }); zl.appendChild(vl);
+    // les nouvelles déjà envoyées
+    var kh = el("div", "carte-compte sj-carnet-fil"); c.appendChild(kh); kh.appendChild(el("h3", null, "Déjà envoyées"));
+    var r = await E.sb.from("carnet_sejour").select("id,jour,titre,texte,auteur,cree_le").eq("sejour_id", s.id).order("cree_le", { ascending: false }).limit(60);
+    var l = r.data || [];
+    if (!l.length) kh.appendChild(el("p", "og-vide", "Rien pour l'instant."));
+    var ol = el("ol", "pa-carnet"); kh.appendChild(ol);
+    l.forEach(function (x) {
+      var li = el("li"); li.appendChild(el("p", "pa-c-sur", E.dateFr(x.jour) + (x.auteur ? " · " + x.auteur : "")));
+      if (x.titre) li.appendChild(el("h3", null, x.titre)); li.appendChild(el("p", "pa-c-texte", x.texte));
+      var sp = el("button", "bouton-texte sj-suppr", "Retirer"); sp.type = "button";
+      sp.addEventListener("click", async function () { if (!confirm("Retirer cette nouvelle de l'espace des familles ? (l'e-mail est déjà parti)")) return; await E.sb.from("carnet_sejour").delete().eq("id", x.id); liste(); });
+      li.appendChild(sp); ol.appendChild(li);
+    });
   }
   async function places(d, n) {
     var v = Math.max(0, (d.places_restantes == null ? (d.places || 0) : d.places_restantes) + n);
@@ -414,12 +478,12 @@
     ligne.statut = publier ? "publie" : (b.statut === "publie" ? "publie" : "brouillon");
     ligne.maj_le = new Date().toISOString();
     var r;
-    if (b.id) r = await E.sb.from("sejours").update(ligne).eq("id", b.id).select().single();
+    if (b.id) r = await E.sb.from("sejours").update(ligne).eq("id", b.id).select(COLONNES).single();
     else {
       var pris = sejours.map(function (s) { return s.slug; }), base = slugifier(b.titre), slug = base, n = 2;
       while (pris.indexOf(slug) >= 0) slug = base + "-" + n++;
       ligne.slug = slug; ligne.structure_id = C.id;
-      r = await E.sb.from("sejours").insert(ligne).select().single();
+      r = await E.sb.from("sejours").insert(ligne).select(COLONNES).single();
     }
     if (r.error) { E.message(E.erreur(r.error), true); return; }
     var id = r.data.id, garder = [];
