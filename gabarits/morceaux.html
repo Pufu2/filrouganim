@@ -212,7 +212,7 @@
         <span class="ro-champ">{{ icone("date") }}<select id="ro-sj-quand" name="quand"><option value="">Toute l'année</option>{% for k, l in [("hiver", "Vacances d'hiver"), ("printemps", "Vacances de printemps"), ("juillet", "Juillet"), ("aout", "Août"), ("toussaint", "Toussaint"), ("noel", "Noël"), ("mercredis", "Les mercredis")] %}<option value="{{ k }}">{{ l }}</option>{% endfor %}</select></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les séjours</button>
       </div>
-      <p class="ro-plus">Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. <a href="{{ lien('/sejours/') }}#t-sjc-aides">Les aides pour partir (Pass Colo, VACAF)</a></p>
+      <p class="ro-plus">Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. <a href="{{ lien('/sejours/aides/') }}">Les aides pour partir (Pass Colo, VACAF)</a></p>
     </div>
   </form>
   <script>

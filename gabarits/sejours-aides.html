@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{# /sejours/aides/ : les aides pour partir en colo ou en accueil de loisirs (donnees/aides.yml), et un calculateur du reste
+   à payer, sans rien envoyer. Les montants et les règles sont revus chaque année dans donnees/aides.yml. #}
+{% set pc = AIDES_REGLES.pass_colo or {} %}
+{% block tete_note %}<p class="tp-sur">Trouver un séjour · les aides</p>{% endblock %}
+{% block h1 %}Les aides pour <em>partir</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Pass Colo, aide de la CAF, Chèques-Vacances, comité d'entreprise, mairie : une colo coûte souvent bien moins cher qu'on ne le pense. Voici qui peut en profiter, combien, et comment les demander.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="sjc">
+  <div class="cadre">
+    <section class="sja-calcul" aria-labelledby="t-sja-calc">
+      <h2 id="t-sja-calc">Combien il vous restera à payer ?</h2>
+      <div class="sjf-calcul-champs" id="sja-calcul" data-regles='{{ AIDES_REGLES | tojson }}'>
+        <label>Prix du séjour (€)<input type="number" name="prix" min="0" step="1" inputmode="numeric" placeholder="ex. 600"></label>
+        <label>Année du séjour<input type="number" name="annee" min="2026" max="2035" inputmode="numeric" value="{{ aujourdhui.year + (1 if aujourdhui.month >= 9 else 0) }}"></label>
+        <label>Année de naissance de l'enfant<input type="number" name="naissance" min="2005" max="2025" inputmode="numeric" placeholder="ex. 2016"></label>
+        <label>Votre quotient familial CAF<input type="number" name="qf" min="0" max="5000" inputmode="numeric" placeholder="ex. 650"></label>
+        <label>Séjour d'au moins 5 jours ?<select name="duree"><option value="1">Oui</option><option value="0">Non</option></select></label>
+        <label>Autres aides (CAF, CSE, mairie…) en €<input type="number" name="autres" min="0" max="5000" inputmode="numeric" placeholder="0"></label>
+      </div>
+      <p class="sjf-calcul-res" id="sja-res" aria-live="polite">Remplissez les cases : le calcul se fait ici, rien n'est envoyé.</p>
+      <p class="fp-note">Estimation : le montant exact des aides de la CAF est sur votre compte CAF. Le Pass Colo ne vaut que chez un organisateur conventionné.</p>
+    </section>
+
+    <div class="sja-liste">
+      {% for k, a in AIDES.items() %}
+      <section class="sja-aide" id="{{ k }}" aria-labelledby="t-sja-{{ k }}">
+        <h2 id="t-sja-{{ k }}">{{ a.nom }}</h2>
+        <p class="sja-court">{{ a.court }}</p>
+        <p>{{ a.texte }}</p>
+        {% if k == "pass_colo" and pc.baremes %}
+        <table class="sja-bareme"><caption>Le montant selon le quotient familial</caption>
+          <thead><tr><th>Quotient familial CAF</th><th>Aide</th></tr></thead>
+          <tbody>{% set ns = namespace(avant=0) %}{% for b in pc.baremes %}<tr><td>{% if ns.avant == 0 %}jusqu'à {{ b.qf_max }} €{% else %}de {{ ns.avant + 1 }} à {{ b.qf_max }} €{% endif %}</td><td><b>{{ b.montant }} €</b></td></tr>{% set ns.avant = b.qf_max %}{% endfor %}</tbody>
+        </table>
+        {% endif %}
+        {% if a.lien %}<p><a href="{{ a.lien }}" target="_blank" rel="noopener">La page officielle ↗</a></p>{% endif %}
+        <p class="fp-note">Vérifié le {{ a.verifie_le.day if a.verifie_le.day is defined else a.verifie_le }}{% if a.verifie_le.month is defined %}/{{ '%02d' | format(a.verifie_le.month) }}/{{ a.verifie_le.year }}{% endif %}.</p>
+      </section>
+      {% endfor %}
+    </div>
+
+    <p class="sjc-affiner"><a class="bouton-r" href="{{ lien('/sejours/') }}?passcolo=1">Voir les séjours éligibles au Pass Colo <span aria-hidden="true">→</span></a></p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+(function () {
+  var c = document.getElementById("sja-calcul"), res = document.getElementById("sja-res"); if (!c) return;
+  var pc = {}; try { pc = (JSON.parse(c.dataset.regles) || {}).pass_colo || {}; } catch (e) {}
+  function v(n) { return parseFloat(c.querySelector("[name=" + n + "]").value); }
+  function euros(n) { return Math.round(n).toLocaleString("fr-FR") + " €"; }
+  c.addEventListener("input", calc); c.addEventListener("change", calc);
+  function calc() {
+    var prix = v("prix"), an = v("annee"), nai = v("naissance"), qf = v("qf"), autres = v("autres") || 0, duree = c.querySelector("[name=duree]").value === "1";
+    if (isNaN(prix)) { res.textContent = "Indiquez au moins le prix du séjour."; return; }
+    var pass = 0, note = "", age = nai ? an - nai : null;
+    if (age === pc.age || age === pc.age + 1) {
+      if (!duree) note = "Le Pass Colo demande un séjour d'au moins 5 jours. ";
+      else if (isNaN(qf)) note = "Votre enfant peut avoir droit au Pass Colo" + (age === pc.age + 1 ? " (en report, s'il ne l'a pas utilisé l'an dernier)" : "") + " : indiquez votre quotient. ";
+      else { var b = (pc.baremes || []).filter(function (x) { return qf <= x.qf_max; })[0]; pass = b ? b.montant : 0;
+        note = b ? "Pass Colo : " + euros(pass) + (age === pc.age + 1 ? " (en report)" : "") + ". " : "Avec ce quotient (plus de 1 500 €), pas de Pass Colo. "; }
+    } else if (nai) note = "Le Pass Colo concerne les enfants qui ont " + pc.age + " ans dans l'année (ou " + (pc.age + 1) + " ans en report). ";
+    res.textContent = note + "Reste à payer estimé : ";
+    var bb = document.createElement("b"); bb.textContent = euros(Math.max(0, prix - pass - autres)); res.appendChild(bb);
+    res.appendChild(document.createTextNode(" (sur " + euros(prix) + ")."));
+  }
+})();
+</script>{% endblock %}

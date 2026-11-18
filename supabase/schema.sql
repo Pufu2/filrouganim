@@ -842,3 +842,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v29 (appliquée par migration) : e-mails immédiats. pg_net ; ranger_cle_envoi() (le relevé GitHub dépose la clé Brevo
 -- dans le coffre-fort chiffré) ; envoyer_mail() ; déclencheurs prevenir_demande (accusé famille + demande à la structure,
 -- coordonnées seulement si la demande est ouverte) et confirmer_alerte_mail. Le relevé reste le filet de sécurité.
+
+-- v29b / v29c (appliquées par migration) : alertes_sejour.vu_le et alerte_vue() (un clic depuis l'e-mail du jeudi garde
+-- l'alerte ; sans clic depuis un an, elle est effacée) ; structures.banniere (photo facultative en haut de la page).

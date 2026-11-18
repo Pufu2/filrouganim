@@ -92,7 +92,7 @@ def partenariats(cle_stripe, cle_sb, essai):
     lignes = supabase("GET", "partenariats?select=id,compte,departement,prix,prix_clic,lancement,statut,debut,fin"
                              f"&statut=in.(actif,expire)&debut=lte.{fin_mois.isoformat()}&fin=gte.{debut_mois.isoformat()}", cle_sb) or []
     deja = {(f["compte"], f["mois"]) for f in supabase("GET", f"factures_clics?select=compte,mois&mois=eq.{debut_mois.isoformat()}", cle_sb) or []}
-    anciennes = supabase("GET", "factures_clics?select=compte,detail&statut=in.(facture,payee,a_facturer)", cle_sb) or []
+    anciennes = supabase("GET", "factures_clics?select=compte,mois,detail&statut=in.(facture,payee,a_facturer)", cle_sb) or []
     par_compte = {}
     for l in lignes:
         par_compte.setdefault(l["compte"], []).append(l)
@@ -104,8 +104,9 @@ def partenariats(cle_stripe, cle_sb, essai):
         detail, total, n_total, n_ecartes = [], 0.0, 0, 0
         for l in ls:
             garde, ecarte, jours = clics.get(l["departement"], [0, 0, []])
-            # ce qui a déjà été facturé pour ce département depuis le début de la formule : le plafond ne se dépasse jamais
-            paye = sum(float(d.get("montant", 0)) for f in anciennes if f["compte"] == cid
+            # ce qui a déjà été facturé pour ce département depuis le début de l'année en cours : le plafond ne se dépasse jamais
+            debut_annee = (l.get("debut") or "0000-01-01")[:7] + "-01"
+            paye = sum(float(d.get("montant", 0)) for f in anciennes if f["compte"] == cid and f["mois"] >= debut_annee
                        for d in (f.get("detail") or []) if d.get("partenariat") == l["id"])
             reste = max(0.0, l["prix"] - paye)
             montant = round(min(garde * float(l["prix_clic"]), reste), 2)
@@ -167,10 +168,14 @@ def partenariats(cle_stripe, cle_sb, essai):
             print(f"Facture impayée depuis 45 jours : {comptes.get(f['compte'], {}).get('nom')}, départements suspendus")
             if not essai:
                 supabase("PATCH", f"partenariats?compte=eq.{f['compte']}&statut=eq.actif", cle_sb, {"statut": "annule", "fin": auj.isoformat()})
-    # 3. les partenariats arrivés à échéance (un an, renouvelable depuis l'espace)
-    for l in supabase("GET", f"partenariats?select=id&statut=eq.actif&fin=lt.{auj.isoformat()}", cle_sb) or []:
+    # 3. les partenariats arrivés au bout de l'année : renouvelés d'un an, tant que l'organisme ne les a pas arrêtés
+    #    (rien n'est payé d'avance : seuls les clics comptés sont facturés ; le plafond repart pour la nouvelle année)
+    for l in supabase("GET", f"partenariats?select=id,compte,departement,fin&statut=eq.actif&fin=lt.{auj.isoformat()}", cle_sb) or []:
+        f = dt.date.fromisoformat(l["fin"])
+        nouvelle = dt.date(f.year + 1, f.month, min(f.day, 28))
+        print(f"Partenariat {l['departement']} renouvelé jusqu'au {nouvelle}")
         if not essai:
-            supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"statut": "expire"})
+            supabase("PATCH", f"partenariats?id=eq.{l['id']}", cle_sb, {"debut": (f + dt.timedelta(days=1)).isoformat(), "fin": nouvelle.isoformat()})
 
 
 def tout(chemin, cle, **params):
@@ -469,6 +474,8 @@ def alertes_sejours(cle_sb):
     il_y_a_7j = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     try:
         supabase("DELETE", f"alertes_sejour?confirme_le=is.null&cree_le=lt.{il_y_a_7j}", cle_sb)
+        il_y_a_un_an = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        supabase("DELETE", f"alertes_sejour?confirme_le=lt.{il_y_a_un_an}&or=(vu_le.is.null,vu_le.lt.{il_y_a_un_an})", cle_sb)
         lignes = supabase("GET", "alertes_sejour?select=id,email,jeton,criteres&confirme_le=is.null&confirmation_envoyee_le=is.null&order=cree_le&limit=200", cle_sb) or []
     except urllib.error.HTTPError as e:
         print(f"Alertes séjours : non lues ({e.code})")
@@ -597,11 +604,13 @@ def sejours_relances(cle_sb):
             if not nouveaux:
                 continue
             arret = f"{site}/sejours/alerte/?arreter={a['jeton']}"
+            marque = f"alerte={a['jeton']}"
             cartes = [carte_mail(x) for x in nouveaux]
+            cartes = [(t.replace(x["url"], x["url"] + "?" + marque), h.replace(x["url"], x["url"] + "?" + marque)) for (t, h), x in zip(cartes, nouveaux)]
             sujet = f"{len(nouveaux)} nouveau{'x' if len(nouveaux) > 1 else ''} séjour{'s' if len(nouveaux) > 1 else ''} pour vous"
-            texte = "Bonjour,\n\nDe nouveaux séjours correspondent à votre alerte :\n\n" + "\n\n".join(c[0] for c in cartes) + f"\n\nTous les séjours : {site}/sejours/\n\nArrêter cette alerte : {arret}"
+            texte = "Bonjour,\n\nDe nouveaux séjours correspondent à votre alerte :\n\n" + "\n\n".join(c[0] for c in cartes) + f"\n\nTous les séjours : {site}/sejours/?{marque}\n\nArrêter cette alerte : {arret}"
             html_c = ("<p>Bonjour,</p><p>De nouveaux séjours correspondent à votre alerte :</p>" + "".join(c[1] for c in cartes)
-                      + f"<p><a href=\"{site}/sejours/\" style=\"{BOUTON}\">Voir tous les séjours</a></p>"
+                      + f"<p><a href=\"{site}/sejours/?{marque}\" style=\"{BOUTON}\">Voir tous les séjours</a></p>"
                       + f"<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail parce que vous avez créé et confirmé une alerte sur filrouganim.fr. <a href=\"{arret}\">Arrêter cette alerte</a> en un clic.</p>")
             try:
                 envoyer(cle_brevo, exp, CONFIG["nom"], a["email"], sujet, texte, html_c)

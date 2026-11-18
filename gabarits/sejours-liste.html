@@ -16,7 +16,7 @@
 
     {% set v = page.voisines or {} %}
     <nav class="sjc-voisines" aria-label="Autres recherches de séjours">
-      {% for fam, titre in [("periode", "Par période"), ("age", "Par âge"), ("envie", "Par envie"), ("depart", "Au départ de"), ("destination", "Par destination"), ("accueil", "Accueils de loisirs")] if v.get(fam) %}
+      {% for fam, titre in [("periode", "Par période"), ("age", "Par âge"), ("envie", "Par envie"), ("depart", "Au départ de"), ("destination", "Par destination"), ("accueil", "Accueils de loisirs"), ("croise", "Pour aller plus loin")] if v.get(fam) %}
       <div><p class="sjc-v-t">{{ titre }}</p><ul>{% for x in v[fam][:14] %}<li><a href="{{ lien(x.url) }}"{% if x.url == page.url %} aria-current="page"{% endif %}>{{ x.nom }}</a></li>{% endfor %}</ul></div>
       {% endfor %}
     </nav>

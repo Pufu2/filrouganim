@@ -63,6 +63,28 @@
     }
     var g = el("div", "sj-grille"); c.appendChild(g);
     sejours.forEach(function (s) { g.appendChild(carte(s)); });
+    // la photo de bannière (facultative) en haut de la page structure
+    var bn = el("details", "sj-badge"); bn.appendChild(el("summary", null, "Une photo de bannière en haut de votre page (facultatif)"));
+    var stb = E.structure() || {};
+    if (stb.banniere) { var ap0 = el("div", "sj-banniere-apercu"); ap0.style.backgroundImage = "url(" + JSON.stringify(E.L.photos + stb.banniere) + ")"; bn.appendChild(ap0); }
+    bn.appendChild(el("p", "petit", "Une grande photo de vos séjours ou de votre centre, en largeur. Sans photo, votre page reste comme aujourd'hui."));
+    var dep = el("label", "depot depot-petit"), fi = el("input"); fi.type = "file"; fi.accept = "image/jpeg,image/png,image/webp"; dep.appendChild(fi); dep.appendChild(el("span", "depot-texte", stb.banniere ? "Changer la photo" : "Choisir une photo")); bn.appendChild(dep);
+    fi.addEventListener("change", async function () {
+      var f = fi.files[0]; fi.value = ""; if (!f) return;
+      try {
+        var blob = await E.reduireImage(f, 2000); if (blob.size > 2 * 1024 * 1024) throw new Error("exceeded");
+        var chemin = C.id + "/banniere-" + Date.now().toString(36) + ".jpg";
+        var r = await E.sb.storage.from("structures").upload(chemin, blob, { contentType: "image/jpeg", cacheControl: "31536000" }); if (r.error) throw r.error;
+        var q = await E.sb.from("structures").update({ banniere: chemin }).eq("id", C.id); if (q.error) throw q.error;
+        if (stb.banniere) E.sb.storage.from("structures").remove([stb.banniere]);
+        stb.banniere = chemin; E.message("Bannière enregistrée : elle apparaît sur votre page à la prochaine mise à jour du site."); liste();
+      } catch (e) { E.message(E.erreur(e), true); }
+    });
+    if (stb.banniere) { var rb = el("button", "bouton-texte", "Retirer la bannière"); rb.type = "button"; rb.addEventListener("click", async function () {
+      var q = await E.sb.from("structures").update({ banniere: null }).eq("id", C.id); if (q.error) return E.message(E.erreur(q.error), true);
+      E.sb.storage.from("structures").remove([stb.banniere]); stb.banniere = null; E.message("Bannière retirée."); liste(); }); bn.appendChild(rb); }
+    c.appendChild(bn);
+
     // le badge pour le site de la structure : un lien vers sa page, avec ses séjours
     var st = E.structure() || {};
     if (st.slug && sejours.some(function (s) { return s.statut === "publie"; })) {

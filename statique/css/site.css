@@ -3973,3 +3973,17 @@ body.sjf-ouvert { overflow: hidden; }
 .sj-badge a { display: inline-block; margin: 12px 0 4px; }
 .sj-badge-code { width: 100%; box-sizing: border-box; font: .8rem/1.4 ui-monospace, Menlo, monospace; padding: 10px; border: 1px solid var(--trait); border-radius: 10px; background: var(--papier); }
 .sjf-partager { color: var(--doux); margin-top: 0; font-weight: 600; }
+
+/* /sejours/aides/ */
+.sja-calcul { padding: 22px 24px; border-radius: 20px; background: #fffaf4; border: 1px solid #eadfd2; margin-bottom: 28px; }
+.sja-calcul h2 { margin: 0 0 14px; font: 600 1.5rem var(--titres); }
+.sja-liste { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; }
+.sja-aide { background: #fff; border: 1px solid var(--trait); border-radius: 20px; padding: 20px 22px; }
+.sja-aide h2 { margin: 0 0 4px; font: 600 1.3rem var(--titres); color: var(--sauge); }
+.sja-court { margin: 0 0 10px; font-weight: 700; }
+.sja-bareme { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: .92rem; }
+.sja-bareme caption { text-align: left; font-weight: 700; margin-bottom: 6px; color: var(--doux); }
+.sja-bareme th, .sja-bareme td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #f3ece4; }
+.sja-bareme th { color: var(--doux); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.fp-banniere-photo { height: clamp(160px, 26vw, 300px); border-radius: 22px; background: var(--sable) center / cover no-repeat; margin-bottom: 18px; }
+.sj-banniere-apercu { height: 120px; border-radius: 14px; background: var(--sable) center / cover no-repeat; margin: 12px 0 6px; }

@@ -536,7 +536,8 @@ class Site:
         filtre = "&page_publique=is.true&slug=not.is.null&order=nom"
         # le logo et les photos (version 4 du schéma) ; sans eux si la base n'a pas encore ces colonnes
         # le statut, les accueils et les âges (version 14) ; le logo et les photos (version 4)
-        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max{filtre}", "accueils des structures")
+        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max,banniere{filtre}", "bannières des structures")
+                  or self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max{filtre}", "accueils des structures")
                   or self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
                   or self.lire_supabase(f"structures?select={champs}{filtre}", "pages des structures"))
         # les structures abonnées : l'étiquette « Partenaire » et la tête de l'annuaire
@@ -671,6 +672,17 @@ class Site:
         for (dep, v), ls in sorted(par_ville.items()):
             familles[("accueil", f"/sejours/accueils-de-loisirs/{dep}/{slug(v)}/")] = (f"Accueils de loisirs à {v} : vacances et mercredis",
                 f"Accueils de loisirs à {v}", f"Les accueils de loisirs de {v} ({dep}) pour les vacances et les mercredis : horaires, prix et demande de place en ligne.", ls, v)
+        # les croisements utiles (période × âge, période × envie), seulement à partir de 5 offres
+        periodes_f = [(url, v) for (fam, url), v in familles.items() if fam == "periode"]
+        autres_f = [(fam, url, v) for (fam, url), v in familles.items() if fam in ("age", "envie")]
+        for purl, pv in periodes_f:
+            ids_p = {id(x) for x in pv[3]}
+            for fam, aurl, av in autres_f:
+                ls = [x for x in av[3] if id(x) in ids_p]
+                if len(ls) >= 5:
+                    sous = aurl.rstrip("/").split("/")[-1]
+                    familles[("croise", f"{purl}{sous}/")] = (f"{av[1]} · {pv[4]}", f"{av[1]}, {pv[4].lower()}",
+                        av[2].rstrip(".") + f", pour {pv[4].lower()}.", ls, f"{pv[4]} · {av[4]}")
         # les pages
         self.familles_sejours = collections.defaultdict(list)
         for (fam, url), (titre, h1, intro, ls, court) in familles.items():
@@ -731,6 +743,9 @@ class Site:
                      h1="Trouver un séjour", indexer=len(cartes) >= 3, cartes=cartes, exemple=self.carte_sejour(ex) if ex else None,
                      description="Colos, mini-séjours et accueils de loisirs pour les 3-17 ans : cherchez par âge, période et envies, voyez les aides (Pass Colo, VACAF) et demandez une place en ligne, sans frais.",
                      fil=[("Trouver un séjour", "/sejours/")])
+        self.ajouter("/sejours/aides/", "sejours-aides.html", titre="Pass Colo, CAF, VACAF : les aides pour partir en colo",
+                     description="Pass Colo (jusqu'à 350 € pour les 11 ans), aide aux vacances de la CAF, Chèques-Vacances, CSE, mairie : qui y a droit, combien, et un calculateur du reste à payer.",
+                     fil=[("Trouver un séjour", "/sejours/"), ("Les aides", "/sejours/aides/")])
         self.ajouter("/recruter/sejours/", "recruter-sejours.html", titre="Publiez vos séjours et accueils de loisirs gratuitement",
                      description="Colos, mini-séjours, accueils de loisirs : publiez-les gratuitement sur Fil Roug'Anim. Les familles cherchent par âge et par période et vous demandent une place en ligne. Sans commission.",
                      fil=[("Structures", "/recruter/"), ("Vos séjours", "/recruter/sejours/")])
@@ -1592,6 +1607,22 @@ class Site:
         idees.append({"cle": f"demande-{cle}", "titre": "Pour les animateurs qui cherchent un poste", "pour": "animateurs",
                       "texte": "✋ Animateur, stagiaire BAFA ou directeur ? Décrivez en 2 minutes le poste que vous cherchez (quand, où, quel public) : votre demande part chez les structures les plus proches de chez vous. Gratuit 👉",
                       "lien": "/trouver-un-poste/demande/"})
+        # les séjours : pour les familles (dès 3 séjours à venir), et toujours pour les organisateurs
+        sj = [x for x in getattr(self, "sejours", []) if x.get("a_venir")]
+        if len(sj) >= 3:
+            pc = [x for x in sj if "pass_colo" in (x.get("aides") or [])]
+            envie = collections.Counter(e for x in sj for e in (x.get("envies") or [])).most_common(1)
+            texte = (f"☀️ {len(sj)} séjours et accueils de loisirs pour les 3-17 ans sur Fil Roug'Anim"
+                     + (f", dont {len(pc)} avec le Pass Colo (jusqu'à 350 € d'aide pour les 11 ans)" if pc else "")
+                     + (f". Le plus demandé en ce moment : {SEJ_ENVIES.get(envie[0][0], envie[0][0]).lower()}" if envie else "")
+                     + ".\n\nCherchez par âge et par période, et demandez une place en ligne, sans frais 👉")
+            idees.append({"cle": f"sejours-{cle}", "titre": "Les séjours du moment", "pour": "familles", "texte": texte, "lien": "/sejours/"})
+            idees.append({"cle": f"aides-{cle}", "titre": "Les aides pour partir en colo", "pour": "familles",
+                          "texte": "💶 Pass Colo, aide de la CAF, Chèques-Vacances, CSE : une colo coûte souvent bien moins cher qu'on ne le pense. Calculez ce qu'il vous restera à payer 👉",
+                          "lien": "/sejours/aides/"})
+        idees.append({"cle": f"organisateurs-{cle}", "titre": "Pour les organisateurs de séjours", "pour": "structures",
+                      "texte": "🏕️ Vous organisez des colos ou un accueil de loisirs ? Publiez vos séjours gratuitement sur Fil Roug'Anim : les familles les trouvent par âge et par période, et vous demandent une place en ligne. Sans commission 👉",
+                      "lien": "/recruter/sejours/"})
         return {"semaine": cle, "idees": idees}
 
     def lieux_google(self):

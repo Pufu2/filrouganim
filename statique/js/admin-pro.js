@@ -1242,7 +1242,7 @@
     idees.forEach(function (i) {
       var fait = pub.filter(function (p) { return p.cle === i.cle + ":" + rs.reseau.toLowerCase(); })[0];
       var k = el("section", "ap-carte ap-post" + (fait ? " ap-post-fait" : ""));
-      var h = el("div", "ap-carte-h"); h.appendChild(el("h3", null, i.titre)); h.appendChild(etiquette({ jeunes: "jeunes en formation", structures: "structures", animateurs: "animateurs" }[i.pour] || i.pour, "neutre")); k.appendChild(h);
+      var h = el("div", "ap-carte-h"); h.appendChild(el("h3", null, i.titre)); h.appendChild(etiquette({ jeunes: "jeunes en formation", structures: "structures", animateurs: "animateurs", familles: "familles" }[i.pour] || i.pour, "neutre")); k.appendChild(h);
       var texte = i.texte + "\n" + lienPost(i);
       var t = el("p", "ap-post-t", texte); k.appendChild(t);
       var b = el("div", "ap-boutons");

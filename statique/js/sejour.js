@@ -3,6 +3,11 @@
    n'est envoyé), la galerie en plein écran et le compteur de vues (un par visite). */
 (function () {
   "use strict";
+  // arrivé depuis un e-mail d'alerte : on note que l'alerte sert encore (sinon elle est effacée au bout d'un an)
+  (function () { var m = location.search.match(/[?&]alerte=([0-9a-f]{20,64})/); var r = document.querySelector("[data-cle][data-url]");
+    if (!m || !r) return;
+    try { fetch(r.dataset.url + "/rest/v1/rpc/alerte_vue", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", apikey: r.dataset.cle }, body: JSON.stringify({ j: m[1] }) }).catch(function () {}); } catch (e) {}
+    history.replaceState(null, "", location.pathname + location.search.replace(/[?&]alerte=[0-9a-f]+/, "").replace(/^&/, "?") + location.hash); })();
   var racine = document.getElementById("sjf");
   if (!racine) return;
   var id = racine.dataset.sejour, exemple = !!racine.dataset.exemple;

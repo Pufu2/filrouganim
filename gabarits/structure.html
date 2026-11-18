@@ -24,6 +24,7 @@
     </nav>
     {% if st.exemple %}<p class="fp-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
 
+    {% if st.banniere %}<div class="fp-banniere-photo" style="background-image:url('{{ base_photos ~ st.banniere }}')" role="img" aria-label="{{ st.nom }}"></div>{% endif %}
     {% if photos %}
     <div class="fp-galerie fp-galerie-{{ [photos | length, 5] | min }}">
       {% for ph in photos[:5] %}<a href="{{ base_photos ~ ph }}" class="fp-photo" target="_blank" rel="noopener"><img src="{{ base_photos ~ ph }}" alt="Photo {{ loop.index }} de {{ st.nom }}" loading="{{ 'eager' if loop.first else 'lazy' }}"></a>{% endfor %}

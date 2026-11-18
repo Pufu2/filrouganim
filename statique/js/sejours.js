@@ -3,6 +3,11 @@
    correspond (creer_alerte, avec double confirmation par e-mail). Les séjours sont dans la page (build.py, carte_sejour). */
 (function () {
   "use strict";
+  // arrivé depuis un e-mail d'alerte : on note que l'alerte sert encore (sinon elle est effacée au bout d'un an)
+  (function () { var m = location.search.match(/[?&]alerte=([0-9a-f]{20,64})/); var r = document.querySelector("[data-cle][data-url]");
+    if (!m || !r) return;
+    try { fetch(r.dataset.url + "/rest/v1/rpc/alerte_vue", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", apikey: r.dataset.cle }, body: JSON.stringify({ j: m[1] }) }).catch(function () {}); } catch (e) {}
+    history.replaceState(null, "", location.pathname + location.search.replace(/[?&]alerte=[0-9a-f]+/, "").replace(/^&/, "?") + location.hash); })();
   var racine = document.getElementById("sjc"), brut = document.getElementById("sjc-donnees");
   if (!racine || !brut) return;
   var D = JSON.parse(brut.textContent), cartes = D.cartes || [];
