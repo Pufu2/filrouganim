@@ -399,6 +399,7 @@ def demandes_sejours(cle_sb):
     try:
         # gardées un an au plus (politique de confidentialité)
         supabase("DELETE", "demandes_sejour?cree_le=lt." + (dt.date.today() - dt.timedelta(days=365)).isoformat(), cle_sb)
+        supabase("DELETE", "besoins_familles?cree_le=lt." + (dt.date.today() - dt.timedelta(days=365)).isoformat(), cle_sb)
         lignes = supabase("POST", "rpc/demandes_a_prevenir", cle_sb, {}) or []
     except urllib.error.HTTPError as e:
         print(f"Demandes de séjour : non lues ({e.code})")

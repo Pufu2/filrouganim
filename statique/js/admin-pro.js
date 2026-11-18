@@ -1327,8 +1327,10 @@
         E.sb.from("sejours_dates").select("sejour_id,debut,fin,places_restantes,complet").gte("fin", new Date().toISOString().slice(0, 10)).order("debut"),
         E.sb.from("demandes_sejour").select("id,sejour_id,structure_id,statut,ouverte,cree_le,relance_famille_le").order("cree_le", { ascending: false }).limit(1000),
         E.sb.from("alertes_sejour").select("id,confirme_le,dernier_envoi,criteres").limit(5000),
-        E.sb.from("stats_sejours").select("sejour_id,type,n").gte("jour", j30)]);
-      SJ = { sejours: r[0].data || [], dates: r[1].data || [], demandes: r[2].data || [], alertes: r[3].data || [], stats: r[4].data || [] };
+        E.sb.from("stats_sejours").select("sejour_id,type,n").gte("jour", j30),
+        E.sb.from("besoins_familles").select("id,departement,ages,types,quand,cree_le").order("cree_le", { ascending: false }).limit(1000),
+        E.sb.from("besoins_destinataires").select("besoin_id,structure_id,ouverte,statut").limit(5000)]);
+      SJ = { sejours: r[0].data || [], dates: r[1].data || [], demandes: r[2].data || [], alertes: r[3].data || [], stats: r[4].data || [], besoins: r[5].data || [], dest: r[6].data || [] };
     }
     c.textContent = "";
     var noms = {}; (D.structures || []).forEach(function (st) { noms[st.id] = st; });
@@ -1344,6 +1346,7 @@
       [bouton("Prospection : organisateurs", "prospection", true, "avion")]);
     chiffres(c, [[fr(enLigne.length), "séjours en ligne", "rouge"], [fr(SJ.sejours.filter(function (x) { return x.statut === "brouillon"; }).length), "brouillons"],
                  [fr(dem30.length), "demandes · 30 j"], [fr(masquees.length), "demandes masquées", masquees.length ? "rouge" : null], [fr(sansReponse.length), "sans réponse depuis 5 j"],
+                 [fr(SJ.besoins.length), "besoins de familles", "rouge"], [fr(SJ.besoins.filter(function (b) { return !SJ.dest.some(function (d) { return d.besoin_id === b.id; }); }).length), "besoins sans structure"],
                  [fr(confirmees.length), "alertes confirmées"], [fr(SJ.alertes.length - confirmees.length), "alertes à confirmer"]]);
     // les structures qui ont des demandes masquées : de futures clientes
     var parSt = {}; masquees.forEach(function (d) { parSt[d.structure_id] = (parSt[d.structure_id] || 0) + 1; });

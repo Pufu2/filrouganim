@@ -743,6 +743,9 @@ class Site:
                      h1="Inscrire mon enfant", indexer=len(cartes) >= 3, cartes=cartes, deps_noms={c: d["nom"] for c, d in self.departements.items()}, exemple=self.carte_sejour(ex) if ex else None,
                      description="Colos, mini-séjours et accueils de loisirs pour les 3-17 ans : cherchez par âge, période et envies, voyez les aides (Pass Colo, VACAF) et demandez une place en ligne, sans frais.",
                      fil=[("Inscrire mon enfant", "/enfants/")])
+        self.ajouter("/enfants/demande/", "enfants-demande.html", titre="Décrivez ce que vous cherchez pour votre enfant",
+                     description="Accueil de loisirs, périscolaire, colo : décrivez ce que vous cherchez pour votre enfant, votre demande part chez les structures vérifiées de votre secteur, qui vous répondent. Gratuit, sans compte.",
+                     fil=[("Inscrire mon enfant", "/enfants/"), ("Décrire mon besoin", "/enfants/demande/")])
         self.ajouter("/enfants/aides/", "sejours-aides.html", titre="Pass Colo, CAF, VACAF : les aides pour partir en colo",
                      description="Pass Colo (jusqu'à 350 € pour les 11 ans), aide aux vacances de la CAF, Chèques-Vacances, CSE, mairie : qui y a droit, combien, et un calculateur du reste à payer.",
                      fil=[("Inscrire mon enfant", "/enfants/"), ("Les aides", "/enfants/aides/")])

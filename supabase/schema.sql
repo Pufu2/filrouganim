@@ -848,3 +848,8 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v30 (appliquée par migration) : profils.verifie ; un profil n'apparaît dans l'annuaire public (profils_resume) qu'une
 -- fois vérifié par l'administration (admin_verifier_profil).
+
+-- v31 / v31b / v32 (appliquées par migration) : « Inscrire mon enfant » (adresses /enfants/ dans les e-mails), type
+-- accueil_periscolaire ; besoins_familles + besoins_destinataires (l'annuaire inversé des parents : deposer_besoin(),
+-- mes_besoins_familles(), repondre_besoin(), e-mails immédiats prevenir_besoin / accuse_besoin), ouvrir_demandes() ouvre
+-- aussi les besoins masqués au paiement.

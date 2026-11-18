@@ -200,19 +200,22 @@
   <div class="ro-p" id="ro-p4" role="tabpanel" aria-labelledby="ro-t4" hidden>
   <form class="ro-panneau" action="{{ lien('/enfants/') }}" method="get">
     <fieldset class="ro-quoi">
-      <legend class="ro-titre">Pour qui ?</legend>
+      <legend class="ro-titre">Vous cherchez…</legend>
       <div class="ro-puces">
-        <label class="ro-puce"><input type="radio" name="age" value="" checked><span>Tous les âges</span></label>
-        {% for a in ["3-5", "6-8", "9-11", "12-14", "15-17"] %}<label class="ro-puce"><input type="radio" name="age" value="{{ a }}"><span>{{ a }} ans</span></label>{% endfor %}
+        <label class="ro-puce"><input type="radio" name="type" value="" checked><span>Tout</span></label>
+        <label class="ro-puce"><input type="radio" name="type" value="accueils"><span>Accueil de loisirs</span></label>
+        <label class="ro-puce"><input type="radio" name="type" value="periscolaire"><span>Périscolaire</span></label>
+        <label class="ro-puce"><input type="radio" name="type" value="sejours"><span>Séjour, colo</span></label>
       </div>
     </fieldset>
     <div class="ro-ou">
-      <label class="ro-titre" for="ro-sj-quand">Quand ?</label>
+      <label class="ro-titre" for="ro-sj-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("date") }}<select id="ro-sj-quand" name="quand"><option value="">Toute l'année</option>{% for k, l in [("hiver", "Vacances d'hiver"), ("printemps", "Vacances de printemps"), ("juillet", "Juillet"), ("aout", "Août"), ("toussaint", "Toussaint"), ("noel", "Noël"), ("mercredis", "Les mercredis")] %}<option value="{{ k }}">{{ l }}</option>{% endfor %}</select></span>
-        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les séjours</button>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-sj-ou" name="ou" type="search" list="ro-sj-lieux" placeholder="Ville ou département" autocomplete="off">
+          <datalist id="ro-sj-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist></span>
+        <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les offres</button>
       </div>
-      <p class="ro-plus">Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. <a href="{{ lien('/enfants/aides/') }}">Les aides pour partir (Pass Colo, VACAF)</a></p>
+      <p class="ro-plus">Colos, accueils de loisirs et périscolaire proposés par des structures vérifiées. Vous ne trouvez pas ? <a href="{{ lien('/enfants/demande/') }}">Décrivez votre besoin</a> : les structures proches vous répondent.</p>
     </div>
   </form>
   <script>

@@ -5,6 +5,7 @@
    2 demandes gratuites tant que la structure n'a pas l'abonnement ou le Pass recrutement (docs/PLAN-SEJOURS.md). */
 (function () {
   "use strict";
+  var besoins = [];
   var E = null, C = null, sejours = [], dates = {}, stats = {}, demandes = [], brouillon = null, etape = 0, filtre = "tout", envoiPhotos = 0;
   var TYPES = { sejour: ["Séjour", "Une colo avec nuitées, 5 jours ou plus"], mini_sejour: ["Mini-séjour", "2 à 4 nuits, souvent rattaché à un accueil"],
                 accueil_vacances: ["Accueil de loisirs · vacances", "À la journée, pendant les vacances scolaires"], accueil_mercredis: ["Accueil de loisirs · mercredis", "À la journée, les mercredis de l'année"],
@@ -41,9 +42,11 @@
     }
     var m = await E.sb.rpc("mes_demandes_sejour");
     demandes = (m && m.data) || [];
+    var bf = await E.sb.rpc("mes_besoins_familles");
+    besoins = (bf && bf.data) || [];
   }
   function pastilles() {
-    var n = demandes.filter(function (d) { return d.statut === "nouvelle"; }).length, p = document.querySelector('[data-pastille="familles"]');
+    var n = demandes.filter(function (d) { return d.statut === "nouvelle"; }).length + besoins.filter(function (d) { return d.statut === "nouvelle"; }).length, p = document.querySelector('[data-pastille="familles"]');
     if (p) { p.hidden = !n; p.textContent = n; }
   }
 
@@ -464,6 +467,39 @@
     var liste_d = demandes.filter(function (d) { return filtre === "tout" || d.statut === filtre; });
     if (!liste_d.length) k.appendChild(el("p", "og-vide", demandes.length ? "Rien dans ce filtre." : "Pas encore de demande. Elles arrivent ici (et par e-mail) dès qu'une famille demande une place sur l'un de vos séjours publiés."));
     liste_d.forEach(function (d) { k.appendChild(demande(d)); });
+    // l'annuaire inversé des parents : les familles de votre secteur qui décrivent ce qu'elles cherchent
+    var kb = el("div", "carte-compte"); c.appendChild(kb);
+    kb.appendChild(el("h2", null, "Familles de votre secteur qui cherchent une place"));
+    kb.appendChild(el("p", "petit", "Des parents décrivent ce qu'ils cherchent (âge, accueil de loisirs, périscolaire, séjour) ; leur demande part chez 5 structures au plus de leur département. Répondez vite."));
+    if (!besoins.length) kb.appendChild(el("p", "og-vide", "Pas encore de demande. Elles arrivent ici et par e-mail dès qu'une famille de votre département décrit son besoin."));
+    var TYP = { sejours: "séjour", accueils: "accueil de loisirs", periscolaire: "périscolaire" };
+    besoins.forEach(function (d) {
+      var a = el("article", "sj-demande" + (d.ouverte ? "" : " sj-masquee") + (d.statut === "nouvelle" ? " sj-neuve" : ""));
+      var h = el("div", "sj-d-tete"); h.appendChild(el("b", null, "Enfant" + (d.ages.length > 1 ? "s" : "") + " de " + d.ages.join(", ") + " ans" + ((d.types || []).length ? " · " + d.types.map(function (t) { return TYP[t] || t; }).join(", ") : "")));
+      h.appendChild(el("span", "sj-etat sj-d-" + d.statut, { nouvelle: "Nouvelle", en_cours: "En cours", acceptee: "Place proposée", refusee: "Pas de place" }[d.statut] || d.statut)); a.appendChild(h);
+      a.appendChild(el("p", "sj-d-infos", [d.quand, d.ville ? d.ville + " (" + d.departement + ")" : d.departement, "reçue le " + E.dateFr(String(d.cree_le).slice(0, 10))].filter(Boolean).join(" · ")));
+      var co = el("p", "sj-d-contact"); co.appendChild(el("b", null, d.parent_nom));
+      if (d.ouverte) {
+        co.appendChild(document.createTextNode(" · ")); var ml = el("a", null, d.email); ml.href = "mailto:" + d.email; co.appendChild(ml);
+        if (d.telephone) { co.appendChild(document.createTextNode(" · ")); var tl = el("a", null, d.telephone); tl.href = "tel:" + d.telephone.replace(/[^0-9+]/g, ""); co.appendChild(tl); }
+        a.appendChild(co);
+        if (d.message) a.appendChild(el("blockquote", "sj-d-message", d.message));
+        var acts = el("div", "sj-actions");
+        [["acceptee", "J'ai une place", "Bonjour " + d.parent_nom + ",\n\nSuite à votre demande sur Fil Roug'Anim, nous avons une place pour votre enfant. Voici comment l'inscrire : "],
+         ["en_cours", "Demander des précisions", "Bonjour " + d.parent_nom + ",\n\nSuite à votre demande sur Fil Roug'Anim, pourriez-vous nous préciser : "]].forEach(function (x) {
+          var r = el("a", x[0] === "acceptee" ? "bouton-r" : "bouton-blanc", x[1]);
+          r.href = "mailto:" + d.email + "?subject=" + encodeURIComponent("Votre demande sur Fil Roug'Anim") + "&body=" + encodeURIComponent(x[2] + "\n\nBien cordialement,\n" + ((E.structure() || {}).nom || ""));
+          r.addEventListener("click", function () { E.sb.rpc("repondre_besoin", { bid: d.id, st: x[0] }).then(function () { d.statut = x[0]; pastilles(); }); });
+          acts.appendChild(r);
+        });
+        var rf = el("button", "bouton-texte", "Pas de place"); rf.type = "button"; rf.addEventListener("click", async function () { await E.sb.rpc("repondre_besoin", { bid: d.id, st: "refusee" }); d.statut = "refusee"; pastilles(); boite(); }); acts.appendChild(rf);
+        a.appendChild(acts);
+      } else {
+        co.appendChild(document.createTextNode(" · coordonnées masquées"));
+        var u = el("button", "bouton-texte", "Débloquer →"); u.type = "button"; u.dataset.ongletVers = "abonnement"; co.appendChild(u); a.appendChild(co);
+      }
+      kb.appendChild(a);
+    });
   }
   function demande(d) {
     var b = el("article", "sj-demande" + (d.ouverte ? "" : " sj-masquee") + (d.statut === "nouvelle" ? " sj-neuve" : ""));
