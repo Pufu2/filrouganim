@@ -77,6 +77,17 @@
     }).then(function () { b.disabled = false; });
   });
 
+  // partager le séjour (le menu de partage du téléphone, sinon le lien copié)
+  Array.prototype.forEach.call(racine.querySelectorAll("[data-partager]"), function (b) {
+    b.addEventListener("click", function () {
+      var url = location.href.split("#")[0], fait = function (t) { var x = b.textContent; b.textContent = t; setTimeout(function () { b.textContent = x; }, 2500); };
+      if (id && !navigator.webdriver) rpc("compter_sejour", { i: parseInt(id, 10), t: "partage" }).catch(function () {});
+      if (navigator.share) navigator.share({ title: b.dataset.titre, url: url }).catch(function () {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { fait("Lien copié !"); }, function () { fait(url); });
+      else fait(url);
+    });
+  });
+
   // le calculateur de reste à charge
   var calc = document.getElementById("sjf-calcul");
   if (calc) {

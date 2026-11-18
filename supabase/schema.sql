@@ -835,3 +835,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v27 / v27b (appliquées par migration) : structures.rappel_demandes_le (rappel du lundi), stats_sejours.type 'alerte'
 -- (envois du jeudi), admin_prospects.type 'organisateur' (prospection des organisateurs de séjours). Les e-mails :
 -- outils/abonnements.py (sejours_relances : alertes du jeudi, relance des familles à 5 jours, rappel du lundi).
+
+-- v28 (appliquée par migration) : l'administration peut créer un séjour (et ses photos) dans l'espace d'une structure,
+-- pour l'offre « nous publions votre premier séjour pour vous ».

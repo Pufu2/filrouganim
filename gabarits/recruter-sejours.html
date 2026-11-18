@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Pour les organisateurs : pourquoi et comment publier ses séjours et accueils de loisirs sur Fil Roug'Anim.
+   C'est la page vers laquelle pointent les messages de la prospection « Organisateurs de séjours ». #}
+{% set creer = lien('/compte/') ~ '?inscription=1&role=structure&type=sejours' %}
+{% block tete_note %}<p class="tp-sur">Organisateurs de séjours et accueils de loisirs</p>{% endblock %}
+{% block h1 %}Vos séjours, là où les familles <em>cherchent</em>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Colos, mini-séjours, accueils de loisirs des vacances et du mercredi : publiez-les gratuitement sur Fil Roug'Anim. Les familles cherchent par âge, par période et par envie, voient les aides (Pass Colo, VACAF) et vous demandent une place en ligne. Aucune commission.</p>{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="tp-recherche"><div class="cadre">
+  <div class="rc-fondateurs">
+    <div class="rc-fondateurs-texte">
+      <p class="rc-fondateurs-sur">{{ m.icone("etape") }}Gratuit, sans carte bancaire</p>
+      <p><b>Publiez tous vos séjours gratuitement</b>, et recevez vos <b>2 premières demandes de familles en entier</b>. Ensuite, les demandes continuent d'arriver ; l'abonnement ou le Pass recrutement ({{ site.abonnement.pass_mois_prix }} par mois, sans engagement) affiche leurs coordonnées.</p>
+    </div>
+    <a class="tp-bande-bouton rc-creer" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Publier mes séjours</a>
+  </div>
+</div></div>
+
+<section class="bande bande-papier rc-infos" aria-labelledby="t-rs-pourquoi">
+  <div class="cadre">
+    <h2 id="t-rs-pourquoi" class="rc-titre-cartes">Ce que Fil Roug'Anim vous <em>apporte</em></h2>
+    <ul class="rc-atouts">
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></span><b>Trouvé par les familles</b><span>Une recherche en gros boutons (âge, période, envies, départ) et des pages Google par période, âge, envie, ville de départ et destination.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><b>Une fiche complète</b><span>Photos, programme, équipe, départs, prix, places restantes, et un calculateur du reste à payer avec le Pass Colo. <a href="{{ lien('/sejours/exemple/') }}">Voir un exemple</a></span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-6z"/></svg></span><b>Des demandes, pas des clics</b><span>Les familles vous demandent une place avec l'âge, la date et leurs aides. Vous recevez un e-mail, et des réponses toutes prêtes dans votre espace.</span></li>
+      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18L12 5z"/></svg></span><b>Votre page structure</b><span>Vos séjours s'ajoutent à votre page, avec la frise de l'été, à côté de vos offres d'emploi pour recruter vos animateurs.</span></li>
+    </ul>
+
+    <h2 class="rc-titre-cartes rc-titre-etapes">En ligne en <em>3 étapes</em></h2>
+    <ol class="rc-etapes">
+      <li><b>Le compte</b><span>Avec Google, ou une adresse e-mail. Puis la fiche de votre structure, étape par étape.</span></li>
+      <li><b>Vos séjours</b><span>« Mes séjours » : un assistant en 10 étapes, avec l'aperçu. Comptez 10 minutes pour le premier ; « Dupliquer » fait les suivants.</span></li>
+      <li><b>En ligne</b><span>Nous vérifions la structure (SIRET, RNA ou n° de déclaration) sous 2 jours ouvrés, puis vos séjours sont visibles par les familles.</span></li>
+    </ol>
+    <p class="rs-pour-vous">Pas le temps ? <b>Envoyez-nous votre brochure ou le lien de votre site</b> : nous publions votre premier séjour pour vous, gratuitement. <a href="mailto:{{ site.email }}?subject=Publier%20mes%20s%C3%A9jours%20sur%20Fil%20Roug%27Anim">Écrivez-nous</a></p>
+
+    <ul class="rc-engagements" aria-label="Nos engagements">
+      <li>Aucune commission sur vos inscriptions</li>
+      <li>L'inscription et le paiement restent chez vous</li>
+      <li>Chaque structure vérifiée à la main</li>
+      <li>Les familles ne sont jamais revendues</li>
+      <li>Sans engagement</li>
+    </ul>
+  </div>
+</section>
+
+<section class="bande bande-papier" aria-labelledby="t-rs-prix">
+  <div class="cadre">
+    <h2 id="t-rs-prix" class="rc-titre-cartes">Gratuit, puis <em>si vous voulez</em></h2>
+    <div class="rs-formules">
+      <div class="rs-formule"><p class="rs-f-t">Gratuit</p><p class="rs-f-prix">0 €</p>
+        <ul><li>Tous vos séjours et accueils de loisirs</li><li>Votre page structure et une offre d'emploi</li><li>Les 2 premières demandes des familles, en entier</li><li>Ensuite, les demandes arrivent avec les coordonnées masquées</li></ul></div>
+      <div class="rs-formule rs-formule-une"><p class="rs-f-t">Abonnement ou Pass</p><p class="rs-f-prix">{{ site.abonnement.pass_mois_prix }}<small> / mois avec le Pass</small></p>
+        <ul><li>Toutes les demandes des familles, en entier, anciennes comprises</li><li>Vos offres d'emploi illimitées et les profils des animateurs</li><li>L'étiquette « Partenaire » et vos séjours en tête</li><li>Abonnement à l'année : voir <a href="{{ lien('/recruter/') }}">l'offre structures</a></li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="bande bande-papier">
+  <div class="cadre">
+    <div class="tp-appel">
+      <div>
+        <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l7-12 4 6 2-3 5 9z"/></svg>Trouver un séjour</p>
+        <h2>Vos séjours, <em>dès cet été</em></h2>
+        <p>Les familles préparent l'été dès l'hiver. Publiez maintenant : vos séjours sont prêts quand elles cherchent. Une question ? <a href="{{ lien('/contact/') }}">Écrivez-nous</a>.</p>
+      </div>
+      <a class="tp-appel-bouton" href="{{ creer }}">Publier mes séjours <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+{% endblock %}

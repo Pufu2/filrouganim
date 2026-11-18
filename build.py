@@ -731,6 +731,9 @@ class Site:
                      h1="Trouver un séjour", indexer=len(cartes) >= 3, cartes=cartes, exemple=self.carte_sejour(ex) if ex else None,
                      description="Colos, mini-séjours et accueils de loisirs pour les 3-17 ans : cherchez par âge, période et envies, voyez les aides (Pass Colo, VACAF) et demandez une place en ligne, sans frais.",
                      fil=[("Trouver un séjour", "/sejours/")])
+        self.ajouter("/recruter/sejours/", "recruter-sejours.html", titre="Publiez vos séjours et accueils de loisirs gratuitement",
+                     description="Colos, mini-séjours, accueils de loisirs : publiez-les gratuitement sur Fil Roug'Anim. Les familles cherchent par âge et par période et vous demandent une place en ligne. Sans commission.",
+                     fil=[("Structures", "/recruter/"), ("Vos séjours", "/recruter/sejours/")])
         self.ajouter("/sejours/alerte/", "sejours-alerte.html", titre="Votre alerte séjours", indexer=False,
                      description="Confirmer ou arrêter une alerte de nouveaux séjours.", fil=[("Trouver un séjour", "/sejours/"), ("Alerte", "/sejours/alerte/")])
 

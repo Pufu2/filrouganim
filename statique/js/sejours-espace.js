@@ -63,6 +63,18 @@
     }
     var g = el("div", "sj-grille"); c.appendChild(g);
     sejours.forEach(function (s) { g.appendChild(carte(s)); });
+    // le badge pour le site de la structure : un lien vers sa page, avec ses séjours
+    var st = E.structure() || {};
+    if (st.slug && sejours.some(function (s) { return s.statut === "publie"; })) {
+      var bd = el("details", "sj-badge"); bd.appendChild(el("summary", null, "Un badge pour votre site : « Nos séjours sont sur Fil Roug'Anim »"));
+      var url = location.origin + (E.L.lien_structures || "/trouver-un-poste/structures/") + st.slug + "/#sejours", img = location.origin + E.L.badge_sejours;
+      var ap = el("a"); ap.href = url; ap.target = "_blank"; ap.rel = "noopener"; var im = el("img"); im.src = E.L.badge_sejours; im.alt = "Nos séjours sont sur Fil Roug'Anim"; im.width = 220; im.height = 64; ap.appendChild(im); bd.appendChild(ap);
+      bd.appendChild(el("p", "petit", "Copiez ce code dans votre site (ou envoyez-le à la personne qui s'en occupe) : les familles arrivent sur votre page et vous demandent une place."));
+      var ta = el("textarea", "sj-badge-code"); ta.readOnly = true; ta.rows = 3;
+      ta.value = '<a href="' + url + '"><img src="' + img + '" alt="Nos séjours sont sur Fil Roug\'Anim" width="220" height="64"></a>';
+      ta.addEventListener("focus", function () { ta.select(); }); bd.appendChild(ta);
+      c.appendChild(bd);
+    }
   }
   function etatDe(s) {
     if (s.statut === "brouillon") return ["brouillon", "Brouillon"];

@@ -3959,3 +3959,17 @@ body.sjf-ouvert { overflow: hidden; }
 .ro-champ select { flex: 1; min-width: 0; border: 0; background: none; font: inherit; color: var(--encre); padding: 0; outline: none; }
 .ac-sj { padding: 46px 0; }
 .sjc-affiner .bouton-r { white-space: normal; max-width: 100%; box-sizing: border-box; display: inline-block; }
+
+/* /recruter/sejours/ : pour les organisateurs */
+.rs-pour-vous { margin: 18px 0 0; padding: 14px 18px; border-radius: 14px; background: #fff; border: 1px dashed #d9cbb9; }
+.rs-formules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; margin-top: 14px; }
+.rs-formule { background: #fff; border: 1px solid var(--trait); border-radius: 20px; padding: 20px 22px; }
+.rs-formule-une { border: 2px solid var(--fil); }
+.rs-f-t { margin: 0; font: 700 .8rem var(--texte); letter-spacing: .05em; text-transform: uppercase; color: var(--fil-fonce); }
+.rs-f-prix { margin: 4px 0 10px; font: 600 2rem var(--titres); } .rs-f-prix small { font: 400 .9rem var(--texte); color: var(--doux); }
+.rs-formule ul { margin: 0; padding-left: 18px; } .rs-formule li { margin: 6px 0; }
+.sj-badge { margin-top: 18px; padding: 14px 18px; border-radius: 16px; background: #fff; border: 1px solid var(--trait); }
+.sj-badge summary { cursor: pointer; font-weight: 700; }
+.sj-badge a { display: inline-block; margin: 12px 0 4px; }
+.sj-badge-code { width: 100%; box-sizing: border-box; font: .8rem/1.4 ui-monospace, Menlo, monospace; padding: 10px; border: 1px solid var(--trait); border-radius: 10px; background: var(--papier); }
+.sjf-partager { color: var(--doux); margin-top: 0; font-weight: 600; }
