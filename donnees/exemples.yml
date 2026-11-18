@@ -52,3 +52,56 @@ profil:
   presentation: |-
     J'ai fait ma formation générale BAFA en février. J'ai été bénévole deux ans dans un club de foot pour les 8-10 ans, et j'adore inventer des grands jeux.
   maj_le: 2026-10-20
+
+# la fiche séjour d'exemple (/sejours/exemple/) : la structure fictive ci-dessus, un mini-camp de l'été
+sejour:
+  type: mini_sejour
+  slug: exemple
+  titre: "Mini-camp nature en forêt de Fontainebleau"
+  accroche: "Tu vas dormir sous tente, construire une cabane et suivre les traces des animaux de la forêt."
+  envies: [nature, itinerance]
+  age_min: 7
+  age_max: 11
+  capacite: 24
+  taux_encadrement: "1 animateur pour 8 enfants"
+  pays: FR
+  ville: Fontainebleau
+  departement: "77"
+  hebergement: camping
+  transport:
+    - {ville: "Créteil", mode: car, prix: 0}
+    - {ville: "Paris (gare de Lyon)", mode: train, prix: 25}
+  prix_min: 340
+  prix_unite: sejour
+  prix_texte: "Tarif au quotient familial pour les familles de Créteil : de 120 € à 340 €. Réduction de 10 % pour le deuxième enfant."
+  inclus: |-
+    Hébergement sous tente, en camping aménagé
+    Tous les repas, préparés avec les enfants
+    Les activités et le matériel
+    L'assurance
+  aides: [pass_colo, vacaf, cheques_vacances, ce]
+  pass_colo: true
+  numero_declaration: "077-ORG-0000-0000 (exemple)"
+  description: |-
+    Cinq jours au cœur de la forêt de Fontainebleau, pour des enfants qui aiment être dehors.
+
+    Les journées alternent grands jeux, construction de cabanes, balades avec un animateur nature et veillées autour du feu. Les enfants participent à la vie du camp : cuisine, vaisselle, choix des activités.
+  programme: |-
+    Jour 1 : arrivée en car, montage du camp, jeux pour se connaître
+    Jour 2 : balade nature avec un guide, empreintes et traces d'animaux
+    Jour 3 : grand jeu dans les rochers, construction des cabanes
+    Jour 4 : journée escalade sur bloc (moniteur diplômé), veillée contes
+    Jour 5 : rangement du camp, bilan, retour à Créteil
+  vie_sur_place: |-
+    Tentes de 3 ou 4 enfants, du même âge, filles et garçons séparés. Sanitaires en dur au camping.
+    Repas cuisinés sur place, menus sans porc et végétariens sur demande.
+    Pas de téléphone pour les enfants : un petit journal du camp est publié chaque soir pour les parents.
+  encadrement_texte: |-
+    Une directrice titulaire du BAFD, 3 animateurs BAFA dont un assistant sanitaire, et un moniteur diplômé pour l'escalade.
+  infos_pratiques: |-
+    Trousseau : sac de couchage, lampe de poche, gourde, chaussures de marche, vêtements de pluie.
+    Documents : fiche sanitaire, copie du carnet de vaccination, attestation d'assurance.
+  dates:
+    - {debut: 2027-07-12, fin: 2027-07-16, places: 24, places_restantes: 3}
+    - {debut: 2027-07-19, fin: 2027-07-23, places: 24, places_restantes: 11}
+    - {debut: 2027-08-16, fin: 2027-08-20, places: 24, places_restantes: 0, complet: true}

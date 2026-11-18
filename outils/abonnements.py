@@ -376,6 +376,92 @@ def demandes(cle_sb):
         supabase("PATCH", f"demandes?id=eq.{d['id']}", cle_sb, {"notifiees": d["destinataires"]})
 
 
+AIDES_NOMS = {"pass_colo": "Pass Colo", "vacaf": "VACAF", "cheques_vacances": "Chèques-Vacances", "ce": "CSE", "mairie": "aide de la mairie"}
+BOUTON = "display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold"
+
+
+def periode_fr(d, f):
+    if not d:
+        return ""
+    a, b = dt.date.fromisoformat(d), dt.date.fromisoformat(f or d)
+    return f"le {a:%d/%m/%Y}" if a == b else f"du {a:%d/%m} au {b:%d/%m/%Y}"
+
+
+def demandes_sejours(cle_sb):
+    """« Trouver un séjour » : à chaque demande de place, un accusé de réception à la famille et un e-mail à la
+    structure. Les coordonnées de la famille ne sont jamais dans l'e-mail d'une structure qui n'a pas débloqué la demande."""
+    try:
+        # gardées un an au plus (politique de confidentialité)
+        supabase("DELETE", "demandes_sejour?cree_le=lt." + (dt.date.today() - dt.timedelta(days=365)).isoformat(), cle_sb)
+        lignes = supabase("POST", "rpc/demandes_a_prevenir", cle_sb, {}) or []
+    except urllib.error.HTTPError as e:
+        print(f"Demandes de séjour : non lues ({e.code})")
+        return
+    if not lignes:
+        return
+    cle_brevo = os.environ.get("BREVO_API_KEY", "").strip()
+    if not cle_brevo:
+        print(f"{len(lignes)} demande(s) de séjour à prévenir, mais BREVO_API_KEY est absente : rien n'est envoyé.")
+        return
+    sys.path.insert(0, str(RACINE / "outils"))
+    from alertes import envoyer
+    site = CONFIG["url"].rstrip("/")
+    exp = CONFIG.get("email_alertes") or CONFIG["email"]
+    pied = ("<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail parce qu'une demande de place a été faite sur filrouganim.fr. "
+            "Fil Roug'Anim transmet la demande, sans commission ; l'inscription se fait directement avec l'organisateur.</p>")
+    for d in lignes:
+        quand = periode_fr(d.get("debut"), d.get("fin"))
+        url_sj = f"{site}/sejours/{d['structure_slug']}/{d['sejour_slug']}/"
+        enfant = (d.get("enfant_prenom") or "votre enfant") + f" ({d['enfant_age']} ans)" + (f", {d['nb_enfants']} enfants" if (d.get("nb_enfants") or 1) > 1 else "")
+        maj = {}
+        if d["famille"]:
+            sujet = f"Votre demande pour « {d['sejour']} » est bien partie"
+            texte = (f"Bonjour {d['parent_nom']},\n\nVotre demande de place est bien arrivée chez {d['structure_nom']} :\n\n{d['sejour']}{' · ' + quand if quand else ''}\n{enfant}\n\n"
+                     f"L'organisateur vous répond directement, en général sous quelques jours. Le séjour : {url_sj}\n\nL'équipe Fil Roug'Anim")
+            html_c = (f"<p>Bonjour {html.escape(d['parent_nom'])},</p><p>Votre demande de place est bien arrivée chez <b>{html.escape(d['structure_nom'])}</b> :</p>"
+                      f"<p style=\"padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2\"><b>{html.escape(d['sejour'])}</b>{'<br>' + html.escape(quand) if quand else ''}<br>{html.escape(enfant)}</p>"
+                      f"<p>L'organisateur vous répond directement, en général sous quelques jours.</p><p><a href=\"{url_sj}\" style=\"{BOUTON}\">Revoir le séjour</a></p>" + pied)
+            try:
+                envoyer(cle_brevo, exp, CONFIG["nom"], d["parent_email"], sujet, texte, html_c)
+                maj["famille_prevenue_le"] = dt.datetime.now(dt.timezone.utc).isoformat()
+            except Exception as e:
+                print(f"Demande de séjour {d['id']} : accusé non parti ({e}).")
+        if d["structure"] and d.get("structure_email"):
+            espace = f"{site}/compte/?onglet=familles"
+            aides = ", ".join(AIDES_NOMS.get(a, a) for a in d.get("aides") or [])
+            sujet = f"Nouvelle demande pour « {d['sejour']} »"
+            details = [f"{d['sejour']}{' · ' + quand if quand else ''}", f"Enfant de {d['enfant_age']} ans" + (f", {d['nb_enfants']} enfants" if (d.get("nb_enfants") or 1) > 1 else ""),
+                       d.get("ville") or "", ("Aides : " + aides) if aides else ""]
+            details = [x for x in details if x]
+            if d["ouverte"]:
+                contact = [d["parent_nom"], d["parent_email"], d.get("parent_telephone") or ""]
+                fin_t = "Coordonnées : " + " · ".join(x for x in contact if x) + ("\nMessage : " + d["message"] if d.get("message") else "") + f"\n\nRépondez-lui directement, et retrouvez la demande dans votre espace : {espace}"
+                fin_h = ("<p><b>" + html.escape(d["parent_nom"]) + "</b> · <a href=\"mailto:" + html.escape(d["parent_email"]) + "\">" + html.escape(d["parent_email"]) + "</a>"
+                         + (" · " + html.escape(d["parent_telephone"]) if d.get("parent_telephone") else "") + "</p>"
+                         + ("<blockquote style=\"margin:8px 0;padding:8px 12px;border-left:3px solid #ebe3d8\">" + html.escape(d["message"]) + "</blockquote>" if d.get("message") else "")
+                         + f"<p>Répondez-lui directement (des réponses toutes prêtes sont dans votre espace).</p><p><a href=\"{espace}\" style=\"{BOUTON}\">Voir la demande</a></p>")
+            else:
+                fin_t = ("Vos 2 demandes gratuites sont utilisées : les coordonnées de cette famille sont masquées. "
+                         f"Débloquez-les avec l'abonnement ou le Pass recrutement, sans engagement : {site}/compte/?onglet=abonnement")
+                fin_h = ("<p>Vos 2 demandes gratuites sont utilisées : <b>les coordonnées de cette famille sont masquées</b>. Débloquez-les, avec toutes les demandes suivantes, "
+                         "grâce à l'abonnement ou au Pass recrutement (sans engagement).</p>"
+                         f"<p><a href=\"{site}/compte/?onglet=abonnement\" style=\"{BOUTON}\">Débloquer les demandes</a></p>")
+            texte = f"Bonjour,\n\nUne famille demande une place sur Fil Roug'Anim :\n\n" + "\n".join(details) + "\n\n" + fin_t + "\n\nL'équipe Fil Roug'Anim"
+            html_c = ("<p>Bonjour,</p><p>Une famille demande une place sur Fil Roug'Anim :</p><p style=\"padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2\">"
+                      + "<br>".join(html.escape(x) for x in details) + "</p>" + fin_h
+                      + "<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail parce que vous publiez vos séjours sur filrouganim.fr.</p>")
+            try:
+                envoyer(cle_brevo, exp, CONFIG["nom"], d["structure_email"], sujet, texte, html_c)
+                maj["structure_prevenue_le"] = dt.datetime.now(dt.timezone.utc).isoformat()
+            except Exception as e:
+                print(f"Demande de séjour {d['id']} : e-mail à la structure non parti ({e}).")
+        elif d["structure"]:
+            maj["structure_prevenue_le"] = dt.datetime.now(dt.timezone.utc).isoformat()
+        if maj:
+            supabase("PATCH", f"demandes_sejour?id=eq.{d['id']}", cle_sb, maj)
+            print(f"Demande de séjour {d['id']} : " + ", ".join(k.split("_")[0] for k in maj) + " prévenue(s).")
+
+
 TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
              "paiement": ("Abonnement payé", "Abonnements payés"), "demande": ("Nouvelle demande (annuaire inversé)", "Nouvelles demandes (annuaire inversé)"),
              "organisme": ("Organisme intéressé par la formule partenaire", "Organismes intéressés par la formule partenaire"),
@@ -432,6 +518,7 @@ if __name__ == "__main__":
     erreurs = []
     cle = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
     for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
+                  lambda: None if "--essai" in sys.argv or not cle else demandes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else prevenir_admin(cle)):
         try:
             etape()

@@ -41,3 +41,14 @@ mairie:
     Certaines communes (souvent via le CCAS) et certains départements aident au départ en séjour, en particulier
     pour les familles au quotient modeste. Renseignez-vous auprès de votre mairie.
   verifie_le: 2026-11-17
+
+# les règles du calculateur de reste à charge (fiche séjour). À revoir chaque année.
+regles:
+  pass_colo:
+    age: 11            # l'enfant a 11 ans dans l'année du séjour (ou est en CM2)
+    duree_min: 5       # séjour collectif d'au moins 5 jours
+    baremes:           # quotient familial CAF maximum -> montant
+      - {qf_max: 200, montant: 350}
+      - {qf_max: 500, montant: 300}
+      - {qf_max: 700, montant: 250}
+      - {qf_max: 1500, montant: 200}

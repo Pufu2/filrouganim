@@ -271,6 +271,15 @@ def carte_deps(zones, classe="carte-deps"):
     return Markup(f'<svg class="{classe}" viewBox="0 0 {_CARTE["largeur"]} {_CARTE["hauteur"]}" role="img" aria-label="Départements : {", ".join(sorted(z))}">{chemins}</svg>')
 
 
+SEJ_TYPES = {"sejour": ("Séjour", "nuits"), "mini_sejour": ("Mini-séjour", "nuits"), "accueil_vacances": ("Accueil de loisirs (vacances)", "journee"),
+             "accueil_mercredis": ("Accueil de loisirs (mercredis)", "journee")}
+SEJ_ENVIES = {"nature": "Nature et animaux", "mer": "Mer et plage", "montagne": "Montagne", "sports": "Sports", "equitation": "Équitation", "nautique": "Sports nautiques",
+              "arts": "Arts, cirque et spectacle", "sciences": "Sciences et numérique", "langues": "Langues et étranger", "itinerance": "Itinérance et aventure", "decouverte": "Découverte"}
+SEJ_HEBERG = {"centre": "Centre de vacances", "camping": "Camping, sous tente", "gite": "Gîte", "auberge": "Auberge de jeunesse", "famille": "En famille d'accueil", "aucun": "À la journée"}
+SEJ_UNITES = {"sejour": "le séjour", "jour": "la journée", "semaine": "la semaine", "quotient": "selon le quotient"}
+SEJ_TRANSPORT = {"train": "train", "car": "car", "avion": "avion", "autre": "transport"}
+
+
 def json_ld(objet):
     """JSON-LD sûr à placer dans une balise <script>."""
     return json.dumps(objet, ensure_ascii=False, indent=1).replace("<", "\\u003c").replace(">", "\\u003e")
@@ -347,7 +356,7 @@ class Site:
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
                                 markdown=convertir_markdown, paragraphes=paragraphes,
                                 milliers=lambda n: f"{int(n or 0):,}".replace(",", "\u202f"))
-        self.env.globals.update(EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
+        self.env.globals.update(AIDES={k: v for k, v in (self.donnees.get('aides') or {}).items() if k != 'regles'}, AIDES_REGLES=(self.donnees.get('aides') or {}).get('regles') or {}, SEJ_TYPES=SEJ_TYPES, SEJ_ENVIES=SEJ_ENVIES, SEJ_HEBERG=SEJ_HEBERG, SEJ_UNITES=SEJ_UNITES, SEJ_TRANSPORT=SEJ_TRANSPORT, EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
                                 PUBLICS=PUBLICS, ACCUEILS_ST=list(ACCUEILS.items()), STATUTS=STATUTS, familles_structure=familles_structure, nature_structure=nature_structure, ages_structure=ages_structure, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,
                                 mois_nom=lambda m: f"{MOIS[int(m[5:7]) - 1]} {m[:4]}", carte_deps=carte_deps)
         self.pages = []
@@ -534,6 +543,73 @@ class Site:
         abonnees = {x if isinstance(x, str) else (x.get("structures_abonnees") or x.get("id")) for x in (self.lire_supabase("rpc/structures_abonnees", "structures abonnées") or [])}
         sortie = [dict(l, exemple=False, abonnee=l.get("id") in abonnees) for l in lignes if l.get("departement") in self.departements]
         return sorted(sortie, key=lambda l: not l["abonnee"])
+
+    def pages_sejours(self, structures):
+        """« Trouver un séjour » : la fiche de chaque séjour publié par une structure vérifiée (les règles d'accès ne
+        montrent que ceux-là), et la fiche d'exemple. Indexée seulement si une date est à venir. Voir docs/PLAN-SEJOURS.md."""
+        par_id = {st.get("id"): st for st in structures if st.get("id")}
+        lignes = self.lire_supabase("sejours?select=*&statut=eq.publie&order=cree_le", "séjours") or []
+        ids = ",".join(str(l["id"]) for l in lignes)
+        dates = self.lire_supabase(f"sejours_dates?select=*&sejour_id=in.({ids})&order=debut", "dates des séjours") if ids else []
+        auj = dt.date.today()
+        self.sejours = []
+        for l in lignes:
+            st = par_id.get(l.get("structure_id"))
+            if not st:
+                continue  # structure sans page publique : sa fiche séjour viendra avec sa page
+            sj = dict(l, structure=st, exemple=False, url=f"/sejours/{st['slug']}/{l['slug']}/",
+                      dates=[dict(d, debut=en_date(d["debut"]), fin=en_date(d["fin"])) for d in dates or [] if d["sejour_id"] == l["id"]])
+            sj["a_venir"] = [d for d in sj["dates"] if d["fin"] >= auj]
+            self.sejours.append(sj)
+        for sj in self.sejours:
+            sj["proches"] = sorted([x for x in self.sejours if x is not sj and x["a_venir"] and x["age_min"] <= sj["age_max"] and x["age_max"] >= sj["age_min"]],
+                                   key=lambda x: (x["structure"]["id"] == sj["structure"]["id"], x["departement"] != sj["departement"], x["a_venir"][0]["debut"]))[:4]
+            self.ajouter(sj["url"], "sejour.html", titre=self.titre_sejour(sj), description=self.desc_sejour(sj), indexer=bool(sj["a_venir"]),
+                         sejour=sj, schema=self.schema_sejour(sj),
+                         fil=[("Trouver un séjour", "/sejours/"), (sj["structure"]["nom"], f"/trouver-un-poste/structures/{sj['structure']['slug']}/"), (sj["titre"], sj["url"])])
+        ex = (self.donnees.get("exemples") or {})
+        if ex.get("sejour") and ex.get("structure"):
+            sj = dict(ex["sejour"], exemple=True, id=None, url="/sejours/exemple/", proches=[], photos=[],
+                      structure=dict(ex["structure"], exemple=True, url="/recruter/exemple-de-page-structure/"))
+            sj["dates"] = [dict(d, debut=en_date(d["debut"]), fin=en_date(d["fin"])) for d in sj["dates"]]
+            sj["a_venir"] = sj["dates"]
+            self.ajouter("/sejours/exemple/", "sejour.html", titre="Exemple de fiche séjour", indexer=False, sejour=sj, schema="",
+                         description="À quoi ressemble la fiche d'un séjour sur Fil Roug'Anim : un exemple fictif.",
+                         fil=[("Trouver un séjour", "/sejours/"), ("Exemple de fiche séjour", "/sejours/exemple/")])
+
+    def titre_sejour(self, sj):
+        lieu = sj.get("ville") or sj.get("region_dest") or ""
+        return f"{sj['titre']} : {SEJ_TYPES[sj['type']][0].lower()} {sj['age_min']}-{sj['age_max']} ans" + (f" à {lieu}" if lieu else "")
+
+    def desc_sejour(self, sj):
+        d = sj["a_venir"][0] if sj.get("a_venir") else None
+        morceaux = [f"{SEJ_TYPES[sj['type']][0]} pour les {sj['age_min']}-{sj['age_max']} ans"]
+        if d:
+            morceaux.append(f"du {d['debut'].day}/{d['debut'].month:02d} au {d['fin'].day}/{d['fin'].month:02d}/{d['fin'].year}")
+        if sj.get("prix_min") is not None:
+            morceaux.append(f"dès {sj['prix_min']:g} €")
+        tete = (sj.get("accroche").rstrip(".") + ". ") if sj.get("accroche") else ""
+        return (tete + ", ".join(morceaux) + f", par {sj['structure']['nom']}. Demandez une place en ligne.")[:300]
+
+    def schema_sejour(self, sj):
+        """Données structurées Event, une par date à venir (Google)."""
+        url = self.config["url"].rstrip("/") + sj["url"]
+        lieu = {"@type": "Place", "name": sj.get("ville") or sj.get("region_dest") or sj["structure"]["ville"],
+                "address": {"@type": "PostalAddress", "addressLocality": sj.get("ville") or sj.get("region_dest") or "", "addressCountry": sj.get("pays") or "FR"}}
+        evts = []
+        for d in sj["a_venir"][:6]:
+            e = {"@context": "https://schema.org", "@type": "Event", "name": sj["titre"], "description": (sj.get("accroche") or sj.get("description") or "")[:300],
+                 "startDate": d["debut"].isoformat(), "endDate": d["fin"].isoformat(), "eventStatus": "https://schema.org/EventScheduled",
+                 "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode", "location": lieu, "url": url,
+                 "typicalAgeRange": f"{sj['age_min']}-{sj['age_max']}",
+                 "organizer": {"@type": "Organization", "name": sj["structure"]["nom"], "url": self.config["url"].rstrip("/") + f"/trouver-un-poste/structures/{sj['structure']['slug']}/"}}
+            if sj.get("photos"):
+                e["image"] = [self.config["supabase"]["url"] + "/storage/v1/object/public/sejours/" + x for x in sj["photos"][:3]]
+            if sj.get("prix_min") is not None:
+                e["offers"] = {"@type": "Offer", "price": f"{sj['prix_min']:g}", "priceCurrency": "EUR", "url": url,
+                               "availability": "https://schema.org/SoldOut" if d.get("complet") or d.get("places_restantes") == 0 else "https://schema.org/InStock"}
+            evts.append(e)
+        return json_ld(evts) if evts else ""
 
     def schema_offre(self, o):
         """Données structurées JobPosting (Google pour l'emploi)."""
@@ -1046,6 +1122,7 @@ class Site:
             self.ajouter("/recruter/exemple-de-page-structure/", "structure.html", titre="Exemple de page structure",
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
+        self.pages_sejours(structures)
         for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'declarer-son-accueil', 'reussir-son-recrutement']]:
             self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/")
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")

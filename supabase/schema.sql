@@ -823,3 +823,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- et banniere ; type d'événement 'sejour'. Fonctions : demander_place() (2 demandes gratuites complètes, puis coordonnées
 -- masquées), mes_demandes_sejour(), ouvrir_demandes() (relevé des paiements ou admin), repondre_demande(),
 -- creer_alerte() / confirmer_alerte() / desinscrire_alerte(), compter_sejour(), structure_en_ligne(). Stockage « sejours ».
+
+-- v25 (appliquée par migration) : demandes_sejour.famille_prevenue_le / structure_prevenue_le, et demandes_a_prevenir()
+-- (rôle serveur) pour les e-mails : accusé de réception à la famille, nouvelle demande à la structure (coordonnées
+-- seulement si la demande est ouverte). Envoyés par outils/abonnements.py (demandes_sejours), toutes les 15 minutes.

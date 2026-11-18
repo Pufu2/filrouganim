@@ -3755,3 +3755,92 @@ body.en-app .co-nav .co-premium::after { content: "Abonnement"; position: static
   .sj-apercu { position: static; }
   .sj-ligne { grid-template-columns: 1fr 1fr; }
 }
+
+/* la fiche d'un séjour (gabarits/sejour.html, statique/js/sejour.js) */
+.sjf-banniere { position: relative; height: 220px; border-radius: 22px; overflow: hidden; display: flex; align-items: flex-end; padding: 22px 26px; color: #fff; font: 600 1.6rem var(--titres);
+  background: linear-gradient(135deg, #3f5b4b, #7a9a6e); }
+.sjf-banniere svg { position: absolute; left: 0; right: 0; bottom: 18px; width: 100%; height: 60px; fill: none; stroke: rgba(255,255,255,.35); stroke-width: 3; }
+.sjf-banniere span { position: relative; }
+.sjf-b-mer, .sjf-b-nautique { background: linear-gradient(135deg, #1f5f7a, #5fa8c4); }
+.sjf-b-montagne { background: linear-gradient(135deg, #4b5563, #8aa1b5); }
+.sjf-b-arts, .sjf-b-sciences { background: linear-gradient(135deg, #5b3f86, #a07cc5); }
+.sjf-b-sports, .sjf-b-equitation { background: linear-gradient(135deg, #a8162a, #e0645a); }
+.sjf-b-langues, .sjf-b-decouverte { background: linear-gradient(135deg, #8a5a2b, #d1a46a); }
+.sjf-identite { margin: 22px 0 18px; }
+.sjf-identite h1 { margin: 8px 0 6px; font: 600 clamp(1.8rem, 4vw, 2.6rem)/1.1 var(--titres); }
+.sjf-accroche { margin: 0 0 8px; font-size: 1.15rem; color: var(--encre); max-width: 720px; }
+.sjf-puces { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.sjf-puces li { padding: 3px 11px; border-radius: 99px; background: var(--sable); font: 700 .78rem var(--texte); color: #7a5b2e; }
+.sjf-puces li:first-child { background: var(--encre); color: #fff; }
+.fp-badges .sjf-badge-aide { background: #e3ece4; color: var(--sauge); }
+.sjf-bref { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.sjf-bref li { background: #fff; border: 1px solid var(--trait); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.sjf-bref b { font-size: .98rem; } .sjf-bref span { color: var(--doux); font-size: .8rem; }
+.sjf-points { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--trait); }
+.sjf-points li { position: relative; padding: 6px 0 6px 18px; }
+.sjf-points li::before { content: ""; position: absolute; left: -6px; top: 13px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid var(--fil); }
+.sjf-points b { color: var(--fil-fonce); }
+.sjf-departs { list-style: none; margin: 0 0 10px; padding: 0; }
+.sjf-departs li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f3ece4; }
+.sjf-departs span { color: var(--doux); }
+.sjf-prix-grand { font-size: 1.05rem; margin: 0 0 8px; } .sjf-prix-grand b { font: 600 1.6rem var(--titres); color: var(--fil-fonce); }
+.sjf-aides { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.sjf-aides li { padding: 10px 12px; border-radius: 12px; background: #f4f8f4; border: 1px solid #dfe9df; display: flex; flex-direction: column; }
+.sjf-aides b { color: var(--sauge); } .sjf-aides span { font-size: .86rem; color: var(--doux); }
+.sjf-calcul { margin-top: 16px; padding: 16px 18px; border-radius: 16px; background: #fffaf4; border: 1px solid #eadfd2; }
+.sjf-calcul-t { margin: 0 0 10px; font-weight: 700; }
+.sjf-calcul-champs { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.sjf-calcul-champs label { display: flex; flex-direction: column; gap: 4px; font-size: .84rem; color: var(--doux); }
+.sjf-calcul-champs input { padding: 9px 11px; border: 1px solid var(--trait); border-radius: 10px; font: inherit; color: var(--encre); background: #fff; }
+.sjf-calcul-res { margin: 12px 0 0; font-size: 1rem; } .sjf-calcul-res b { font: 600 1.3rem var(--titres); color: var(--fil-fonce); }
+.sjf-st { display: flex; gap: 14px; align-items: flex-start; } .sjf-st small { display: block; color: var(--doux); } .sjf-st p { margin: 6px 0; }
+.sjf-proches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+.sjf-proche { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--encre); background: #fff; border: 1px solid var(--trait); border-radius: 14px; overflow: hidden; padding-bottom: 10px; }
+.sjf-proche b, .sjf-proche small { padding: 0 12px; } .sjf-proche small { color: var(--doux); }
+.sjf-proche-photo { aspect-ratio: 16 / 9; background: var(--sable) center / cover no-repeat; }
+/* le cadre « Demander une place » */
+.sjf-r-prix { margin: 0 0 10px; } .sjf-r-prix b { font: 600 1.7rem var(--titres); color: var(--fil-fonce); } .sjf-r-prix small { color: var(--doux); }
+.sjf-r-t { margin: 0 0 6px; font-weight: 700; font-size: .9rem; }
+.sjf-dates { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.sjf-date { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid var(--trait); border-radius: 12px; background: #fff; font: inherit; text-align: left; cursor: pointer; }
+.sjf-date small { display: block; color: var(--doux); font-size: .78rem; }
+.sjf-date em { font-style: normal; font-size: .78rem; font-weight: 700; color: var(--sauge); white-space: nowrap; }
+.sjf-date em.sjf-p-peu { color: var(--fil-fonce); } .sjf-date em.sjf-p-complet { color: #888; }
+.sjf-date-choisie { border-color: var(--fil); background: #fff6f4; }
+.sjf-date-complet { opacity: .6; cursor: not-allowed; } .sjf-date-complet > span { text-decoration: line-through; }
+.sjf-question { display: block; width: 100%; margin-top: 8px; padding: 10px; border: 0; background: none; color: var(--fil-fonce); font: 700 .92rem var(--texte); cursor: pointer; text-decoration: underline; }
+.sjf-reserver { position: sticky; top: 90px; }
+.sjf-barre { display: none; }
+/* la fenêtre de demande */
+.sjf-voile { position: fixed; inset: 0; z-index: 200; background: rgba(35,31,32,.55); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.sjf-voile[hidden] { display: none; }
+.sjf-fenetre { position: relative; width: min(640px, 100%); background: #fff; border-radius: 22px; padding: 26px 24px 22px; max-height: calc(100vh - 32px); overflow-y: auto; }
+.sjf-fenetre .ff-fermer { position: absolute; top: 12px; right: 12px; }
+.sjf-f-sur { margin: 0; font: 700 .76rem var(--texte); letter-spacing: .05em; text-transform: uppercase; color: var(--fil-fonce); }
+.sjf-fenetre h2 { margin: 4px 0 14px; font: 600 1.6rem var(--titres); }
+.sjf-fenetre .champ { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-weight: 700; font-size: .88rem; }
+.sjf-fenetre .champ small { font-weight: 400; color: var(--doux); }
+.sjf-fenetre input:not([type=checkbox]), .sjf-fenetre select, .sjf-fenetre textarea { padding: 10px 12px; border: 1px solid var(--trait); border-radius: 10px; font: 400 1rem var(--texte); background: var(--papier); color: var(--encre); width: 100%; box-sizing: border-box; }
+.sjf-f-aides { border: 0; padding: 0; margin: 4px 0 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .9rem; }
+.sjf-f-aides legend { font-weight: 700; font-size: .88rem; margin-bottom: 6px; padding: 0; }
+.sjf-piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.sjf-fenetre .case-accord { display: block; margin: 6px 0 14px; font-size: .88rem; }
+.sjf-fenetre .fp-bouton-principal { width: 100%; border: 0; cursor: pointer; font-size: 1rem; }
+.sjf-f-retour { margin: 10px 0 0; font-size: .92rem; } .sjf-ko { color: var(--fil-fonce); } .sjf-ok { color: var(--sauge); }
+.sjf-merci { text-align: center; padding: 16px 0 6px; }
+.sjf-merci-ic { width: 56px; height: 56px; margin: 0 auto 8px; border-radius: 50%; background: #e3ece4; color: var(--sauge); display: grid; place-items: center; font-size: 1.6rem; }
+body.sjf-ouvert { overflow: hidden; }
+.sjf-plein { position: fixed; inset: 0; z-index: 210; background: rgba(20,18,18,.92); display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; }
+.sjf-plein[hidden] { display: none; }
+.sjf-plein img { max-width: 100%; max-height: 90vh; margin: auto; border-radius: 8px; }
+.sjf-plein button { background: none; border: 0; color: #fff; font-size: 2.4rem; cursor: pointer; }
+.sjf-p-x { position: absolute; top: 10px; right: 16px; }
+@media (max-width: 900px) {
+  .sjf-reserver { position: static; }
+  .sjf-barre { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 150; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: #fff; border-top: 1px solid var(--trait); box-shadow: 0 -6px 20px rgba(35,31,32,.08); }
+  .sjf-barre b { font: 600 1.25rem var(--titres); color: var(--fil-fonce); }
+  .sjf-barre .fp-bouton-principal { width: auto; margin: 0; border: 0; padding: 12px 18px; }
+  .sjf { padding-bottom: 70px; }
+  .sjf-banniere { height: 150px; font-size: 1.3rem; }
+}
