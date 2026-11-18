@@ -814,7 +814,7 @@ html { scroll-padding-top: 90px; }
 .recherche-une { margin-top: -96px; }
 .tete-accueil .cadre { padding-bottom: 128px; }
 .ro { width: 100%; max-width: 1000px; }
-.ro-onglets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ro-onglets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .ro-onglets [role=tab] { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 0 14px; border: 0; border-radius: 16px 16px 0 0;
   font: 700 1rem var(--texte); cursor: pointer; background: rgba(255, 255, 255, .08); color: #f1e9e4; }
 .ro-onglets [role=tab]:hover { background: rgba(255, 255, 255, .14); }
@@ -1238,7 +1238,7 @@ html { scroll-padding-top: 90px; }
 .ft .ft-brand-logo .logo-titre { height: 30px; color: var(--creme); }
 .ft-brand-desc { font-size: 14.5px; color: rgba(255,255,255,.66); line-height: 1.7; margin: 0; max-width: 340px; }
 .ft-brand-note { font-size: 12.5px; color: rgba(255,255,255,.45); line-height: 1.6; margin: 0; max-width: 340px; }
-.ft-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(24px, 3vw, 40px); }
+.ft-cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(24px, 3vw, 40px); }
 .ft-cat { display: flex; flex-direction: column; gap: 13px; }
 .ft .ft-cat-t { font: 700 11px/1.3 var(--texte); letter-spacing: 1.6px; text-transform: uppercase; color: var(--fil-clair); margin: 0 0 4px; }
 .ft .ft-cat a { color: rgba(255,255,255,.78); text-decoration: none; font-size: 14.5px; line-height: 1.55; width: fit-content; position: relative; transition: color .2s; }
@@ -3947,3 +3947,15 @@ body.sjf-ouvert { overflow: hidden; }
 .fp-frise-ligne:hover span { color: var(--theme-fonce, var(--fil-fonce)); }
 .fp-frise-complet .fp-frise-barre { background: #c9c2bb; } .fp-frise-complet span { color: var(--doux); }
 .fp-bouton-sejours small { display: block; }
+
+/* pages « Trouver un séjour » par période, âge, envie… (gabarits/sejours-liste.html) */
+.sjc-affiner { margin: 22px 0 0; text-align: center; }
+.sjc-voisines { margin-top: 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 18px; padding: 20px 22px; background: #fff; border: 1px solid var(--trait); border-radius: 20px; }
+.sjc-v-t { margin: 0 0 8px; font: 700 .78rem var(--texte); letter-spacing: .05em; text-transform: uppercase; color: var(--doux); }
+.sjc-voisines ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.sjc-voisines a { display: inline-block; padding: 5px 11px; border-radius: 99px; background: var(--papier); border: 1px solid var(--trait); color: var(--encre); text-decoration: none; font-size: .86rem; }
+.sjc-voisines a:hover, .sjc-voisines a[aria-current] { border-color: var(--fil); color: var(--fil-fonce); }
+
+.ro-champ select { flex: 1; min-width: 0; border: 0; background: none; font: inherit; color: var(--encre); padding: 0; outline: none; }
+.ac-sj { padding: 46px 0; }
+.sjc-affiner .bouton-r { white-space: normal; max-width: 100%; box-sizing: border-box; display: inline-block; }

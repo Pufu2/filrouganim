@@ -102,7 +102,6 @@
         {% endif %}
 
         {% if st.sejours %}
-        {% set base_sj = site.supabase.url ~ "/storage/v1/object/public/sejours/" %}
         <section class="fp-bloc fp-sejours" id="sejours" aria-labelledby="t-sejours">
           <h2 id="t-sejours">{% if _nj and _nn %}Nos séjours et accueils{% elif _nj %}Nos accueils de loisirs{% else %}Nos séjours{% endif %}</h2>
           <p class="fp-sous-titre">Demandez une place en ligne, sans frais : {{ st.nom }} vous répond directement.</p>
@@ -115,20 +114,7 @@
           </div>
           {% endif %}
           <div class="sjc-grille fp-sj-grille">
-          {% for x in st.sejours %}{% set d = x.a_venir[0] %}{% set journee = x.type.startswith("accueil") %}{% set ferme = x.a_venir | rejectattr("complet") | rejectattr("places_restantes", "equalto", 0) | list | length == 0 %}
-            <a class="sjc-carte" href="{{ lien(x.url) }}" data-sj="{{ 'journee' if journee else 'nuits' }}" data-a="{{ x.age_min }}-{{ x.age_max }}">
-              <span class="sjc-photo sjc-b-{{ (x.envies or ['decouverte'])[0] }}"{% if x.photos %} style="background-image:url('{{ base_sj ~ x.photos[0] }}')"{% endif %}>
-                {% if not x.photos %}<span class="sjc-photo-t">{{ SEJ_TYPES[x.type][0] }}</span>{% endif %}
-                <span class="sjc-etiquettes">{% if x.exemple %}<span class="sjc-et-ex">Exemple</span>{% endif %}{% if ferme %}<span class="sjc-et-complet">Complet</span>{% elif d.places_restantes is not none and d.places_restantes <= 5 %}<span class="sjc-et-peu">Plus que {{ d.places_restantes }} place{{ 's' if d.places_restantes > 1 }}</span>{% endif %}{% if "pass_colo" in (x.aides or []) %}<span class="sjc-et-aide">Pass Colo</span>{% elif "vacaf" in (x.aides or []) %}<span class="sjc-et-aide">VACAF</span>{% endif %}</span>
-              </span>
-              <span class="sjc-corps">
-                <span class="sjc-sur">{{ x.age_min }}-{{ x.age_max }} ans · {% if journee %}À la journée{% else %}{{ SEJ_TYPES[x.type][0] }} {{ (d.fin - d.debut).days + 1 }} jours{% endif %}</span>
-                <b class="sjc-titre">{{ x.titre }}</b>
-                <span class="sjc-ligne sjc-lieu">{% if x.ville %}{{ x.ville }}{% if x.departement %} ({{ x.departement }}){% endif %}{% else %}{{ x.region_dest or x.pays }}{% endif %}{% if x.transport %} · départ de {{ x.transport | map(attribute="ville") | list | first }}{% endif %}</span>
-                <span class="sjc-ligne sjc-quand">{% for dd in x.a_venir[:2] %}{{ dd.debut.day }} {{ dd.debut | mois_court }} → {{ dd.fin.day }} {{ dd.fin | mois_court }}{% if not loop.last %} · {% endif %}{% endfor %}{% if x.a_venir | length > 2 %} · +{{ x.a_venir | length - 2 }}{% endif %}</span>
-                <span class="sjc-pied"><span class="sjc-prix">{% if x.prix_min is not none %}dès <b>{{ '%g' | format(x.prix_min) }} €</b>{% if x.prix_unite == "jour" %} la journée{% endif %}{% else %}Prix sur demande{% endif %}</span></span>
-              </span>
-            </a>
+          {% for x in st.sejours %}{{ m.carte_sejour(x) }}
           {% endfor %}
           </div>
           {% if st.frise %}

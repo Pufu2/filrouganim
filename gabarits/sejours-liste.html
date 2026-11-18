@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Une page « Trouver un séjour » pour Google : une période, un âge, une envie, une ville de départ, une destination,
+   ou les accueils de loisirs d'une ville (build.py, pages_sejours_google). Les offres en cartes, puis les pages voisines. #}
+{% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block tete_note %}<p class="tp-sur">Trouver un séjour · 3 à 17 ans</p>{% endblock %}
+{% block h1 %}{{ page.h1 }}{% endblock %}
+{% block tete_chapo %}<p class="chapo">{{ page.intro }} Demandez une place en ligne, gratuitement : l'organisateur vous répond directement.</p>{% endblock %}
+{% block tete_plus %}<ul class="chiffres"><li><b>{{ page.sejours_page | length }}</b> offre{{ 's' if page.sejours_page | length > 1 }}</li></ul>{% endblock %}
+{% block contenu %}
+<div class="sjc">
+  <div class="cadre">
+    <div class="sjc-grille">{% for x in page.sejours_page %}{{ m.carte_sejour(x, True) }}{% endfor %}</div>
+    {% if page.sejours_page | selectattr("structure.abonnee") | list %}<p class="fp-note">« Partenaire » : structure abonnée à Fil Roug'Anim, mise en avant dans les résultats.</p>{% endif %}
+    <p class="sjc-affiner"><a class="bouton-r" href="{{ lien('/sejours/') }}">Affiner la recherche : âge, période, budget, aides <span aria-hidden="true">→</span></a></p>
+
+    {% set v = page.voisines or {} %}
+    <nav class="sjc-voisines" aria-label="Autres recherches de séjours">
+      {% for fam, titre in [("periode", "Par période"), ("age", "Par âge"), ("envie", "Par envie"), ("depart", "Au départ de"), ("destination", "Par destination"), ("accueil", "Accueils de loisirs")] if v.get(fam) %}
+      <div><p class="sjc-v-t">{{ titre }}</p><ul>{% for x in v[fam][:14] %}<li><a href="{{ lien(x.url) }}"{% if x.url == page.url %} aria-current="page"{% endif %}>{{ x.nom }}</a></li>{% endfor %}</ul></div>
+      {% endfor %}
+    </nav>
+
+    <section class="sjc-structures">
+      <div><h2>Vous organisez des séjours ou un accueil de loisirs ?</h2>
+        <p>Publiez-les gratuitement : les familles vous demandent une place, et vos 2 premières demandes sont complètes sans rien payer.</p></div>
+      <div class="sjc-structures-b"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Publier mes séjours</a></div>
+    </section>
+  </div>
+</div>
+{% endblock %}

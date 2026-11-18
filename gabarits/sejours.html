@@ -65,6 +65,15 @@
       </form>
     </div>
 
+    {% set v = page.voisines or {} %}
+    {% if v %}
+    <nav class="sjc-voisines" aria-label="Les séjours par période, âge et envie">
+      {% for fam, titre in [("periode", "Par période"), ("age", "Par âge"), ("envie", "Par envie"), ("depart", "Au départ de"), ("destination", "Par destination"), ("accueil", "Accueils de loisirs")] if v.get(fam) %}
+      <div><p class="sjc-v-t">{{ titre }}</p><ul>{% for x in v[fam][:14] %}<li><a href="{{ lien(x.url) }}">{{ x.nom }}</a></li>{% endfor %}</ul></div>
+      {% endfor %}
+    </nav>
+    {% endif %}
+
     <section class="sjc-aides" aria-labelledby="t-sjc-aides">
       <h2 id="t-sjc-aides">Les aides pour <em>partir</em></h2>
       <ul>{% for k, a in AIDES.items() %}<li><b>{{ a.nom }}</b><span>{{ a.texte }}</span>{% if a.lien %}<a href="{{ a.lien }}" target="_blank" rel="noopener">En savoir plus ↗</a>{% endif %}</li>{% endfor %}</ul>

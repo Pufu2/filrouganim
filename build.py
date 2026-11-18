@@ -588,6 +588,109 @@ class Site:
                          description="À quoi ressemble la fiche d'un séjour sur Fil Roug'Anim : un exemple fictif.",
                          fil=[("Trouver un séjour", "/sejours/"), ("Exemple de fiche séjour", "/sejours/exemple/")])
 
+    def pages_sejours_google(self):
+        """Les pages « Trouver un séjour » pour Google (docs/PLAN-SEJOURS.md, partie 6) : par période, par âge, par envie,
+        au départ d'une ville, par destination, et les accueils de loisirs par ville. Une page n'existe que si elle a au
+        moins une offre (3 pour les départs et les destinations) ; elle n'est montrée à Google qu'à partir de 3 offres."""
+        a_venir = [sj for sj in self.sejours if sj["a_venir"]]
+        self.familles_sejours = {}
+        if not a_venir:
+            return
+        nuits = [sj for sj in a_venir if not sj["type"].startswith("accueil")]
+        familles = collections.OrderedDict()   # (famille, url) -> (titre, h1, intro, séjours)
+        # les périodes : d'après les dates à venir de chaque séjour
+        def saisons(sj):
+            out = set()
+            for d in sj["a_venir"]:
+                for x in (d["debut"], d["fin"]):
+                    m, an = x.month, x.year
+                    if m in (7, 8): out.add(("ete", an))
+                    elif m in (2, 3): out.add(("hiver", an))
+                    elif m in (4, 5): out.add(("printemps", an))
+                    elif m in (10, 11): out.add(("toussaint", an))
+                    elif m == 12: out.add(("noel", an))
+                    elif m == 1: out.add(("noel", an - 1))
+            return out
+        NOMS_P = {"ete": ("l'été", "Été"), "hiver": ("les vacances d'hiver", "Hiver"), "printemps": ("les vacances de printemps", "Printemps"),
+                  "toussaint": ("la Toussaint", "Toussaint"), "noel": ("Noël", "Noël")}
+        par_p = collections.defaultdict(list)
+        for sj in a_venir:
+            if sj["type"] != "accueil_mercredis":
+                for k in saisons(sj):
+                    par_p[k].append(sj)
+        for (k, an), ls in sorted(par_p.items(), key=lambda x: (x[0][1], ["hiver", "printemps", "ete", "toussaint", "noel"].index(x[0][0]))):
+            familles[("periode", f"/sejours/{k}-{an}/")] = (f"Colonies de vacances {NOMS_P[k][1].lower()} {an} : séjours pour enfants et ados",
+                f"Séjours et colos, {NOMS_P[k][1].lower()} {an}", f"Les séjours et les accueils de loisirs pour {NOMS_P[k][0]} {an}, publiés par des structures vérifiées.", ls, f"{NOMS_P[k][1]} {an}")
+        # les âges
+        for b, (a0, a1) in [("3-5", (3, 5)), ("6-8", (6, 8)), ("9-11", (9, 11)), ("12-14", (12, 14)), ("15-17", (15, 17)), ("ados", (12, 17))]:
+            ls = [sj for sj in a_venir if sj["age_min"] <= a1 and sj["age_max"] >= a0]
+            if ls:
+                nom = "les ados" if b == "ados" else f"les {b} ans"
+                familles[("age", f"/sejours/{b if b == 'ados' else b + '-ans'}/")] = (f"Colo pour {nom} : séjours et accueils de loisirs",
+                    f"Séjours pour {nom}", f"Colos, mini-séjours et accueils de loisirs adaptés à {nom}.", ls, "Ados" if b == "ados" else f"{b} ans")
+        # les envies (et l'étranger)
+        ENV = [("mer", "mer", "à la mer", "Mer et plage"), ("montagne", "montagne", "à la montagne", "Montagne"), ("equitation", "equitation", "équitation", "Équitation"),
+               ("nautique", "sports-nautiques", "sports nautiques", "Sports nautiques"), ("langues", "linguistique", "linguistique", "Linguistique"),
+               ("nature", "nature", "nature et animaux", "Nature"), ("arts", "arts-cirque", "arts et cirque", "Arts et cirque"), ("sciences", "sciences", "sciences et numérique", "Sciences"),
+               ("itinerance", "itinerance", "itinérante", "Itinérance"), ("sports", "sports", "sportive", "Sports"), ("decouverte", "decouverte", "découverte", "Découverte")]
+        for cle, sl, mot, court in ENV:
+            ls = [sj for sj in a_venir if cle in (sj.get("envies") or [])]
+            if ls:
+                familles[("envie", f"/sejours/{sl}/")] = (f"Colo {mot} : séjours pour enfants et ados", f"Colo {mot}",
+                    f"Les séjours et accueils de loisirs « {SEJ_ENVIES[cle].lower()} », pour les 3-17 ans.", ls, court)
+        etr = [sj for sj in nuits if (sj.get("pays") or "FR") != "FR"]
+        if etr:
+            familles[("envie", "/sejours/etranger/")] = ("Séjours à l'étranger pour enfants et ados", "Séjours à l'étranger",
+                "Séjours linguistiques et colos à l'étranger. Pensez à la pièce d'identité et à l'autorisation de sortie du territoire.", etr, "Étranger")
+        # les départs (villes avec au moins 3 séjours au départ)
+        par_v = collections.defaultdict(list)
+        for sj in nuits:
+            for v in {t.get("ville") for t in sj.get("transport") or [] if t.get("ville")}:
+                par_v[v.split("(")[0].strip()].append(sj)
+        for v, ls in sorted(par_v.items()):
+            if len(ls) >= 3:
+                familles[("depart", f"/sejours/depart-{slug(v)}/")] = (f"Colonies de vacances au départ de {v}", f"Séjours au départ de {v}",
+                    f"Les colos et séjours avec un départ organisé depuis {v}.", ls, v)
+        # les destinations : la région en France, le pays à l'étranger
+        PAYS = {"ES": "Espagne", "GB": "Angleterre", "IE": "Irlande", "IT": "Italie", "DE": "Allemagne", "MT": "Malte", "US": "États-Unis", "CA": "Canada", "PT": "Portugal", "GR": "Grèce", "CH": "Suisse", "BE": "Belgique", "NL": "Pays-Bas"}
+        par_d = collections.defaultdict(list)
+        for sj in nuits:
+            if (sj.get("pays") or "FR") == "FR" and sj.get("departement") in self.departements:
+                r = self.departements[sj["departement"]]["reg"]
+                par_d[(r["slug"], r["nom"], r["a"])].append(sj)
+            elif sj.get("pays") in PAYS:
+                par_d[(slug(PAYS[sj["pays"]]), PAYS[sj["pays"]], "en " + PAYS[sj["pays"]])].append(sj)
+        for (sl, nom, a_), ls in sorted(par_d.items()):
+            if len(ls) >= 3:
+                familles[("destination", f"/sejours/{sl}/")] = (f"Colos {a_} : séjours pour enfants et ados", f"Séjours {a_}", f"Les colos et séjours {a_}.", ls, nom)
+        # les accueils de loisirs, par ville
+        par_ville = collections.defaultdict(list)
+        for sj in a_venir:
+            if sj["type"].startswith("accueil") and sj.get("ville") and sj.get("departement"):
+                par_ville[(sj["departement"], sj["ville"])].append(sj)
+        for (dep, v), ls in sorted(par_ville.items()):
+            familles[("accueil", f"/sejours/accueils-de-loisirs/{dep}/{slug(v)}/")] = (f"Accueils de loisirs à {v} : vacances et mercredis",
+                f"Accueils de loisirs à {v}", f"Les accueils de loisirs de {v} ({dep}) pour les vacances et les mercredis : horaires, prix et demande de place en ligne.", ls, v)
+        # les pages
+        self.familles_sejours = collections.defaultdict(list)
+        for (fam, url), (titre, h1, intro, ls, court) in familles.items():
+            self.familles_sejours[fam].append({"url": url, "nom": court, "n": len(ls)})
+        for (fam, url), (titre, h1, intro, ls, court) in familles.items():
+            ls = sorted(ls, key=lambda x: (not x["structure"].get("abonnee"), x["a_venir"][0]["debut"]))
+            schema = [json.loads(self.schema_sejour(x)) for x in ls[:10] if x["a_venir"]]
+            self.ajouter(url, "sejours-liste.html", titre=titre, h1=h1, intro=intro, indexer=len(ls) >= 3, sejours_page=ls, famille_sj=fam,
+                         description=(intro + f" {len(ls)} offre{'s' if len(ls) > 1 else ''}, demande de place en ligne et sans frais.")[:300],
+                         schema=json_ld([e for x in schema for e in x]) if schema else "",
+                         voisines=self.familles_sejours, fil=[("Trouver un séjour", "/sejours/"), (court, url)])
+        for pg in self.pages:
+            if pg["url"] == "/sejours/":
+                pg["voisines"] = self.familles_sejours
+        # l'accueil : la bande « Les séjours à venir » (structures abonnées d'abord, signalées), à partir de 3 offres
+        une = sorted(a_venir, key=lambda x: (not x["structure"].get("abonnee"), x["a_venir"][0]["debut"]))[:6]
+        for pg in self.pages:
+            if pg["url"] == "/":
+                pg["sejours_une"] = une if len(a_venir) >= 3 else []
+
     def frise_ete(self, sejours):
         """La frise de l'été sur la page structure : juillet et août, chaque date placée en pourcentage de la largeur."""
         dates = [(sj, d) for sj in sejours if not sj["type"] == "accueil_mercredis" for d in sj["a_venir"] if d["debut"].month in (7, 8) or d["fin"].month in (7, 8)]
@@ -1178,6 +1281,7 @@ class Site:
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         self.pages_sejours(structures)
         self.page_catalogue_sejours()
+        self.pages_sejours_google()
         for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'declarer-son-accueil', 'reussir-son-recrutement']]:
             self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/")
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")

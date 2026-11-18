@@ -78,4 +78,19 @@
     <p class="ac-st-prix"><b>Gratuit</b> : votre page et une offre en ligne · <b>Abonnement</b> (demandes des animateurs, profils, offres illimitées) : {% if restantes > 0 %}{{ site.abonnement.prix_fondateur }} par an, à vie, pour les {{ site.fondateurs.places }} premières structures ({{ restantes }} place{{ 's' if restantes > 1 }}){% else %}{{ site.abonnement.prix }} par an{% endif %} · sans commission</p>
   </div>
 </section>
+{% if page.sejours_une %}
+<section class="bande ac-sj" aria-labelledby="t-ac-sj">
+  <div class="cadre">
+    <div class="ac-st-tete">
+      <div>
+        <p class="cb-sur">Pour les familles</p>
+        <h2 id="t-ac-sj">Les séjours <em>à venir</em></h2>
+        <p>Colos, mini-séjours et accueils de loisirs publiés par des structures vérifiées : demandez une place en ligne, sans frais. Pass Colo et VACAF acceptés chez beaucoup d'organisateurs.</p>
+      </div>
+      <a class="ac-st-bouton" href="{{ lien('/sejours/') }}">Tous les séjours <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="sjc-grille">{% for x in page.sejours_une %}{{ m.carte_sejour(x, True) }}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}
