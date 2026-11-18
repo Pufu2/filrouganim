@@ -462,6 +462,55 @@ def demandes_sejours(cle_sb):
             print(f"Demande de séjour {d['id']} : " + ", ".join(k.split("_")[0] for k in maj) + " prévenue(s).")
 
 
+def alertes_sejours(cle_sb):
+    """Les alertes séjours des parents : l'e-mail « Confirmez votre alerte » (double confirmation) ; les alertes non
+    confirmées sont effacées au bout de 7 jours. (L'envoi des nouveautés, le jeudi, viendra avec les pages Google.)"""
+    il_y_a_7j = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).isoformat()
+    try:
+        supabase("DELETE", f"alertes_sejour?confirme_le=is.null&cree_le=lt.{il_y_a_7j}", cle_sb)
+        lignes = supabase("GET", "alertes_sejour?select=id,email,jeton,criteres&confirme_le=is.null&confirmation_envoyee_le=is.null&order=cree_le&limit=200", cle_sb) or []
+    except urllib.error.HTTPError as e:
+        print(f"Alertes séjours : non lues ({e.code})")
+        return
+    if not lignes:
+        return
+    cle_brevo = os.environ.get("BREVO_API_KEY", "").strip()
+    if not cle_brevo:
+        print(f"{len(lignes)} alerte(s) séjours à confirmer, mais BREVO_API_KEY est absente.")
+        return
+    sys.path.insert(0, str(RACINE / "outils"))
+    from alertes import envoyer
+    site = CONFIG["url"].rstrip("/")
+    for a in lignes:
+        c = a.get("criteres") or {}
+        resume = []
+        if c.get("age"):
+            resume.append(", ".join(x + " ans" for x in c["age"]))
+        if c.get("periode"):
+            resume.append(", ".join(c["periode"]).replace("aout", "août").replace("noel", "Noël"))
+        if c.get("type"):
+            resume.append("à la journée" if c["type"] == "journee" else "séjours avec nuits")
+        if c.get("departement"):
+            resume.append("département " + str(c["departement"]))
+        resume = " · ".join(resume) or "tous les nouveaux séjours"
+        lien = f"{site}/sejours/alerte/?confirmer={a['jeton']}"
+        arret = f"{site}/sejours/alerte/?arreter={a['jeton']}"
+        texte = (f"Bonjour,\n\nVous avez demandé à être prévenu des nouveaux séjours sur Fil Roug'Anim ({resume}).\n\n"
+                 f"Confirmez votre adresse : {lien}\n\nSans confirmation, rien ne vous sera envoyé et l'alerte sera effacée dans 7 jours. "
+                 f"Ce n'était pas vous ? Ignorez cet e-mail, ou arrêtez tout de suite : {arret}\n\nL'équipe Fil Roug'Anim")
+        html_c = (f"<p>Bonjour,</p><p>Vous avez demandé à être prévenu des nouveaux séjours sur Fil Roug'Anim :</p>"
+                  f"<p style=\"padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2\">{html.escape(resume)}</p>"
+                  f"<p><a href=\"{lien}\" style=\"{BOUTON}\">Confirmer mon alerte</a></p>"
+                  f"<p>Un e-mail le jeudi au plus, seulement s'il y a du nouveau. Sans confirmation, rien ne vous sera envoyé et l'alerte sera effacée dans 7 jours.</p>"
+                  f"<p style=\"color:#6b6264;font-size:13px\">Ce n'était pas vous ? Ignorez cet e-mail, ou <a href=\"{arret}\">arrêtez cette alerte</a>.</p>")
+        try:
+            envoyer(cle_brevo, CONFIG.get("email_alertes") or CONFIG["email"], CONFIG["nom"], a["email"], "Confirmez votre alerte séjours", texte, html_c)
+            supabase("PATCH", f"alertes_sejour?id=eq.{a['id']}", cle_sb, {"confirmation_envoyee_le": dt.datetime.now(dt.timezone.utc).isoformat()})
+        except Exception as e:
+            print(f"Alerte séjours {a['id']} : confirmation non partie ({e}).")
+    print(f"{len(lignes)} alerte(s) séjours : confirmation envoyée.")
+
+
 TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
              "paiement": ("Abonnement payé", "Abonnements payés"), "demande": ("Nouvelle demande (annuaire inversé)", "Nouvelles demandes (annuaire inversé)"),
              "organisme": ("Organisme intéressé par la formule partenaire", "Organismes intéressés par la formule partenaire"),
@@ -519,6 +568,7 @@ if __name__ == "__main__":
     cle = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
     for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
                   lambda: None if "--essai" in sys.argv or not cle else demandes_sejours(cle),
+                  lambda: None if "--essai" in sys.argv or not cle else alertes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else prevenir_admin(cle)):
         try:
             etape()

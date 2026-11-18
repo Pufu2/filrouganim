@@ -88,11 +88,13 @@
       var nai = parseInt(calc.querySelector("[name=naissance]").value, 10), qf = parseInt(calc.querySelector("[name=qf]").value, 10),
           autres = parseFloat(calc.querySelector("[name=autres]").value) || 0, annee = parseInt(calc.dataset.annee, 10) || new Date().getFullYear();
       var pass = 0, note = "";
-      if (calc.dataset.pass === "1" && nai && annee - nai === pc.age) {
+      var ageAnnee = nai ? annee - nai : null;
+      if (calc.dataset.pass === "1" && nai && (ageAnnee === pc.age || ageAnnee === pc.age + 1)) {
+        if (ageAnnee === pc.age + 1) note = "Votre enfant a " + ageAnnee + " ans en " + annee + " : le Pass Colo est possible s'il ne l'a pas utilisé l'an dernier. ";
         if (!isNaN(qf)) { var bar = (pc.baremes || []).filter(function (x) { return qf <= x.qf_max; })[0]; pass = bar ? bar.montant : 0;
-          note = bar ? "Votre enfant peut avoir droit au Pass Colo : " + euros(pass) + ". " : "Avec ce quotient, le Pass Colo ne s'applique pas. "; }
-        else note = "Votre enfant a " + pc.age + " ans en " + annee + " : il peut avoir droit au Pass Colo. Indiquez votre quotient. ";
-      } else if (nai && calc.dataset.pass === "1") note = "Le Pass Colo concerne les enfants qui ont " + pc.age + " ans dans l'année du séjour. ";
+          note += bar ? "Votre enfant peut avoir droit au Pass Colo : " + euros(pass) + ". " : "Avec ce quotient (plus de 1 500 €), le Pass Colo ne s'applique pas. "; }
+        else note += (ageAnnee === pc.age ? "Votre enfant a " + pc.age + " ans en " + annee + " : il peut avoir droit au Pass Colo. " : "") + "Indiquez votre quotient. ";
+      } else if (nai && calc.dataset.pass === "1") note = "Le Pass Colo concerne les enfants qui ont " + pc.age + " ans dans l'année du séjour (ou 12 ans, en report). ";
       if (!nai && !autres) { res.textContent = "Remplissez les cases : le calcul se fait ici, rien n'est envoyé."; return; }
       var reste = Math.max(0, prix - pass - autres);
       res.textContent = "";

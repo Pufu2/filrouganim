@@ -577,6 +577,29 @@ class Site:
                          description="À quoi ressemble la fiche d'un séjour sur Fil Roug'Anim : un exemple fictif.",
                          fil=[("Trouver un séjour", "/sejours/"), ("Exemple de fiche séjour", "/sejours/exemple/")])
 
+    def carte_sejour(self, sj):
+        """Ce que la recherche de /sejours/ garde d'un séjour (statique/js/sejours.js) : de quoi filtrer et dessiner la carte."""
+        pc = (((self.donnees.get("aides") or {}).get("regles") or {}).get("pass_colo") or {})
+        d0 = sj["a_venir"][0] if sj.get("a_venir") else None
+        pass_ok = "pass_colo" in (sj.get("aides") or []) and not sj["type"].startswith("accueil") and d0 and (d0["fin"] - d0["debut"]).days + 1 >= pc.get("duree_min", 5)
+        return {"u": sj["url"], "t": sj["titre"], "ty": sj["type"], "a": [sj["age_min"], sj["age_max"]], "e": sj.get("envies") or [],
+                "d": [[x["debut"].isoformat(), x["fin"].isoformat(), x.get("places_restantes"), bool(x.get("complet"))] for x in sj["a_venir"][:12]],
+                "v": sj.get("ville") or "", "dep": sj.get("departement") or "", "p": sj.get("pays") or "FR", "r": sj.get("region_dest") or "",
+                "tr": [t.get("ville") for t in sj.get("transport") or [] if t.get("ville")], "px": sj.get("prix_min"), "pu": sj.get("prix_unite") or "sejour",
+                "ai": sj.get("aides") or [], "pc": (max([b["montant"] for b in pc.get("baremes", [])] or [0]) if pass_ok else None),
+                "ph": (sj.get("photos") or [None])[0], "s": sj["structure"]["nom"], "une": bool(sj["structure"].get("abonnee")), "ex": bool(sj.get("exemple"))}
+
+    def page_catalogue_sejours(self):
+        """/sejours/ : la recherche en gros boutons, sur tous les séjours à venir. Indexée à partir de 3 offres."""
+        cartes = [self.carte_sejour(sj) for sj in self.sejours if sj["a_venir"]]
+        ex = next((p["sejour"] for p in self.pages if p["url"] == "/sejours/exemple/"), None)
+        self.ajouter("/sejours/", "sejours.html", titre="Séjours de vacances et colos pour enfants et ados",
+                     h1="Trouver un séjour", indexer=len(cartes) >= 3, cartes=cartes, exemple=self.carte_sejour(ex) if ex else None,
+                     description="Colos, mini-séjours et accueils de loisirs pour les 3-17 ans : cherchez par âge, période et envies, voyez les aides (Pass Colo, VACAF) et demandez une place en ligne, sans frais.",
+                     fil=[("Trouver un séjour", "/sejours/")])
+        self.ajouter("/sejours/alerte/", "sejours-alerte.html", titre="Votre alerte séjours", indexer=False,
+                     description="Confirmer ou arrêter une alerte de nouveaux séjours.", fil=[("Trouver un séjour", "/sejours/"), ("Alerte", "/sejours/alerte/")])
+
     def titre_sejour(self, sj):
         lieu = sj.get("ville") or sj.get("region_dest") or ""
         return f"{sj['titre']} : {SEJ_TYPES[sj['type']][0].lower()} {sj['age_min']}-{sj['age_max']} ans" + (f" à {lieu}" if lieu else "")
@@ -1123,6 +1146,7 @@ class Site:
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         self.pages_sejours(structures)
+        self.page_catalogue_sejours()
         for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'declarer-son-accueil', 'reussir-son-recrutement']]:
             self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/")
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")

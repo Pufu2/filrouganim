@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{# Le lien des e-mails d'alerte séjours : ?confirmer=<jeton> (double confirmation) ou ?arreter=<jeton> (désinscription). #}
+{% block tete_note %}<p class="tp-sur">Trouver un séjour</p>{% endblock %}
+{% block h1 %}Votre <em>alerte</em> séjours{% endblock %}
+{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block contenu %}
+<div class="cadre">
+  <div class="sjc-alerte-page" id="sjc-ap" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
+    <p class="sjc-ap-ic" aria-hidden="true">…</p>
+    <h2 id="sjc-ap-t">Un instant…</h2>
+    <p id="sjc-ap-p"></p>
+    <a class="bouton-r" href="{{ lien('/sejours/') }}">Voir les séjours</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+(function () {
+  var c = document.getElementById("sjc-ap"), q = new URLSearchParams(location.search), t = document.getElementById("sjc-ap-t"), p = document.getElementById("sjc-ap-p"), ic = c.querySelector(".sjc-ap-ic");
+  var conf = q.get("confirmer"), arr = q.get("arreter"), jeton = conf || arr;
+  if (!jeton || !/^[0-9a-f]{20,64}$/.test(jeton)) { t.textContent = "Ce lien n'est pas complet"; p.textContent = "Ouvrez-le directement depuis l'e-mail reçu, ou créez une nouvelle alerte depuis la recherche des séjours."; ic.textContent = "?"; return; }
+  fetch(c.dataset.url + "/rest/v1/rpc/" + (conf ? "confirmer_alerte" : "desinscrire_alerte"), { method: "POST", headers: { "Content-Type": "application/json", apikey: c.dataset.cle }, body: JSON.stringify({ j: jeton }) })
+    .then(function (r) { return r.json(); })
+    .then(function (ok) {
+      if (ok === true) { ic.textContent = "✓"; t.textContent = conf ? "Alerte confirmée !" : "Alerte arrêtée";
+        p.textContent = conf ? "Vous recevrez un e-mail le jeudi, seulement quand de nouveaux séjours correspondent à vos critères. Chaque e-mail permet d'arrêter en un clic." : "Vous ne recevrez plus d'e-mail pour cette alerte. Vos données sont effacées."; }
+      else { ic.textContent = "?"; t.textContent = conf ? "Cette alerte n'existe plus" : "Rien à arrêter"; p.textContent = conf ? "Elle a peut-être expiré (7 jours sans confirmation). Créez-en une nouvelle depuis la recherche." : "Cette alerte est déjà arrêtée."; }
+    })
+    .catch(function () { ic.textContent = "!"; t.textContent = "Ça n'a pas marché"; p.textContent = "Vérifiez votre connexion et rechargez la page."; });
+})();
+</script>{% endblock %}

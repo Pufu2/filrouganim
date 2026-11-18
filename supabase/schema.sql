@@ -827,3 +827,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v25 (appliquée par migration) : demandes_sejour.famille_prevenue_le / structure_prevenue_le, et demandes_a_prevenir()
 -- (rôle serveur) pour les e-mails : accusé de réception à la famille, nouvelle demande à la structure (coordonnées
 -- seulement si la demande est ouverte). Envoyés par outils/abonnements.py (demandes_sejours), toutes les 15 minutes.
+
+-- v26 (appliquée par migration) : alertes_sejour.confirmation_envoyee_le ; creer_alerte() ne garde que les critères connus
+-- (âge, période, département, envie, type) et freine les envois en masse. Confirmation par e-mail et effacement des
+-- alertes non confirmées après 7 jours : outils/abonnements.py (alertes_sejours). Page de lien : /sejours/alerte/.

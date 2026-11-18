@@ -5,11 +5,12 @@ pass_colo:
   nom: Pass Colo
   court: "Jusqu'à 350 € pour la colo de l'année des 11 ans"
   texte: >-
-    Une aide de l'État pour les enfants qui ont 11 ans dans l'année (ou qui sont en CM2), dans les familles au
-    quotient familial modeste : de 200 à 350 € selon le quotient, pour un séjour collectif d'au moins 5 jours en
-    France, chez un organisateur partenaire. La demande se fait auprès de la CAF ou de la MSA.
-  lien: https://www.service-public.fr/particuliers/vosdroits/F36553
-  verifie_le: 2026-11-17
+    Une aide de l'État et de la CAF pour les enfants qui ont 11 ans dans l'année (report possible l'année de leurs
+    12 ans s'ils ne l'ont pas utilisée), dans les familles au quotient familial de 1 500 € au plus : de 200 à 350 €
+    selon le quotient, pour une colo d'au moins 5 jours (4 nuits) pendant les vacances scolaires, chez un
+    organisateur conventionné Pass Colo. Une seule aide par enfant.
+  lien: https://www.service-public.gouv.fr/particuliers/vosdroits/F36553
+  verifie_le: 2026-11-18
 vacaf:
   nom: VACAF (aide aux vacances enfants)
   court: "L'aide de votre CAF, déduite directement du prix"
@@ -45,10 +46,10 @@ mairie:
 # les règles du calculateur de reste à charge (fiche séjour). À revoir chaque année.
 regles:
   pass_colo:
-    age: 11            # l'enfant a 11 ans dans l'année du séjour (ou est en CM2)
+    age: 11            # l'enfant a 11 ans dans l'année du séjour (report possible l'année de ses 12 ans)
     duree_min: 5       # séjour collectif d'au moins 5 jours
-    baremes:           # quotient familial CAF maximum -> montant
+    baremes:           # quotient familial CAF maximum -> montant (barème 2026, vérifié le 18/11/2026 : caf.fr, guide partenaires Pass Colo 2026)
       - {qf_max: 200, montant: 350}
-      - {qf_max: 500, montant: 300}
-      - {qf_max: 700, montant: 250}
+      - {qf_max: 700, montant: 300}
+      - {qf_max: 1200, montant: 250}
       - {qf_max: 1500, montant: 200}
