@@ -145,6 +145,10 @@
         <button type="button" class="fp-bouton-principal" data-ouvrir-demande>Demander une place</button>
         <button type="button" class="sjf-question" data-ouvrir-demande="question">Poser une question</button>
         <button type="button" class="sjf-question sjf-partager" data-partager data-titre="{{ sj.titre }}">Partager ce séjour</button>
+        {% if not sj.exemple %}<div class="sjf-anim" data-anim hidden>
+          <p><b>Vous êtes animateur ou directeur ?</b> Postulez pour encadrer {{ "ce séjour" if not jour else "cet accueil" }} : la structure reçoit votre profil.</p>
+          <a class="fp-bouton-second" href="{{ lien('/compte/') }}?postuler_sejour={{ sj.id }}&amp;titre={{ sj.titre | urlencode }}">Postuler pour encadrer</a>
+        </div>{% endif %}
         <p class="fp-contact-note">Gratuit et sans engagement : votre demande part chez {{ st.nom }}, qui vous répond directement.</p>
       </aside>
     </div>

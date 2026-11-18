@@ -853,3 +853,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- accueil_periscolaire ; besoins_familles + besoins_destinataires (l'annuaire inversé des parents : deposer_besoin(),
 -- mes_besoins_familles(), repondre_besoin(), e-mails immédiats prevenir_besoin / accuse_besoin), ouvrir_demandes() ouvre
 -- aussi les besoins masqués au paiement.
+
+-- v33 (appliquée par migration) : candidatures_sejour (un animateur postule pour encadrer un séjour ou un accueil) :
+-- postuler_sejour(), mes_candidatures_sejour() (structure), mes_postulations_sejour() (animateur), repondre_candidature_sejour(),
+-- e-mail immédiat à la structure (prevenir_candidature_sejour).

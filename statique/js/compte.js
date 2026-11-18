@@ -543,7 +543,7 @@
   function adresseRetour(role) {
     var garder = new URLSearchParams();
     if (role) garder.set("role", role);
-    ["role", "postuler", "profil", "type"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
+    ["role", "postuler", "postuler_sejour", "titre", "profil", "type"].forEach(function (k) { if (params.get(k) && !garder.get(k)) garder.set(k, params.get(k)); });
     return location.origin + location.pathname + (garder.toString() ? "?" + garder.toString() : "");
   }
 
@@ -594,7 +594,7 @@
     var toutNeuf = utilisateur.created_at && (Date.now() - new Date(utilisateur.created_at).getTime()) < 15 * 60 * 1000;
     if (connexionSeule && toutNeuf && !profil && !structure && !organisme && !estAdmin) {
       await sb.rpc("supprimer_mon_compte");
-      await sb.auth.signOut();
+      try { localStorage.removeItem("fra-role"); } catch (e) {} await sb.auth.signOut();
       utilisateur = null; memoire(null);
       montrer("v-inscription"); preparerInscription();
       message("Vous n'avez pas encore de compte avec cette adresse. Créez-le ici : choisissez « Animateur » ou « Structure », puis continuez avec Google.");
@@ -614,7 +614,7 @@
     if (structure) return voirStructure();
     if (organisme) return voirOrganisme();
     var m = memoire() || {};
-    var role = params.get("role") || (params.get("postuler") ? "candidat" : m.role);
+    var role = params.get("role") || (params.get("postuler") || params.get("postuler_sejour") ? "candidat" : m.role);
     if (role === "candidat") return voirCandidat();
     if (role === "structure") return voirStructure();
     if (role === "organisme") return voirOrganisme();
@@ -895,6 +895,7 @@
   }
   function voirCandidat() {
     montrer("v-candidat", "v-session");
+    try { if (!espaceDe) localStorage.setItem("fra-role", "candidat"); } catch (e) {}
     var nouveau = !profil, m = memoire() || {};
     $("chapo-compte").textContent = nouveau ? "Votre profil en quelques minutes. C'est gratuit, et ça le restera." : "Votre espace : vos candidatures, les offres pour vous et votre profil.";
     var depart = profil || { email_contact: utilisateur.email, publie: true, resume_public: true, prenom: (utilisateur.user_metadata && (utilisateur.user_metadata.given_name || "")) || "" };
@@ -912,7 +913,7 @@
     $("bloc-mes-candidatures").hidden = $("bloc-offres-pour-toi").hidden = nouveau;
     $("tuiles-candidat").hidden = nouveau;
     if (nouveau) {
-      if (params.get("postuler")) message("Créez d'abord votre profil : votre candidature partira juste après.");
+      if (params.get("postuler") || params.get("postuler_sejour")) message("Créez d'abord votre profil : vous pourrez postuler juste après.");
       // une demande déjà envoyée sans profil : on la montre, pour la suivre ou la retirer
       mesDemandes().then(function (d) { $("bloc-mes-demandes").hidden = !d.length; });
       return;
@@ -920,6 +921,40 @@
     tableauCandidat();
     mesDemandes();
     if (params.get("postuler")) ouvrirPostuler(params.get("postuler"));
+    if (params.get("postuler_sejour")) ouvrirPostulerSejour(params.get("postuler_sejour"), params.get("titre") || "");
+    mesPostulationsSejour();
+  }
+  // postuler pour encadrer un séjour ou un accueil (depuis le bouton de la fiche, visible des seuls animateurs)
+  function ouvrirPostulerSejour(id, titre) {
+    var k = el("div", "carte-compte pj-sejour");
+    k.appendChild(el("h2", null, "Encadrer « " + titre.slice(0, 80) + " »"));
+    k.appendChild(el("p", "petit", "La structure reçoit votre candidature avec votre profil (et votre CV si vous l'avez ajouté), et vous répond directement."));
+    var f = el("form", "formulaire"), lp = el("label", "champ"); lp.appendChild(el("span", null, "Vous postulez comme"));
+    var sel = el("select"); [["animateur", "Animateur ou animatrice"], ["animateur-stagiaire", "Stagiaire BAFA"], ["directeur", "Directeur ou directrice"], ["directeur-adjoint", "Directeur adjoint"],
+      ["assistant-sanitaire", "Assistant sanitaire"], ["surveillant-baignade", "Surveillant de baignade"], ["autre", "Autre"]].forEach(function (x) { var o = el("option", null, x[1]); o.value = x[0]; sel.appendChild(o); });
+    lp.appendChild(sel); f.appendChild(lp);
+    var lm = el("label", "champ"); lm.appendChild(el("span", null, "Un mot pour la structure (facultatif)")); var ta = el("textarea"); ta.rows = 4; ta.maxLength = 1000; lm.appendChild(ta); f.appendChild(lm);
+    var b = el("button", "bouton-r", "Envoyer ma candidature"); b.type = "submit"; f.appendChild(b);
+    f.addEventListener("submit", async function (e) {
+      e.preventDefault(); b.disabled = true;
+      var r = await sb.rpc("postuler_sejour", { sid: parseInt(id, 10), poste: sel.value, message: ta.value });
+      b.disabled = false;
+      if (r.error) { message(erreurLisible(r.error), true); return; }
+      fermerFiche(); message("Candidature envoyée ! La structure la reçoit tout de suite par e-mail, avec votre profil."); mesPostulationsSejour();
+    });
+    k.appendChild(f); ouvrirFiche(k);
+  }
+  async function mesPostulationsSejour() {
+    var r = await sb.rpc("mes_postulations_sejour"), l = (r && r.data) || [], bloc = $("bloc-mes-candidatures");
+    var ancien = $("pj-sejours"); if (ancien) ancien.remove();
+    if (!bloc) return;
+    if (!l.length) { var t = el("p", "rs-pour-vous pj-sejours"); t.id = "pj-sejours"; t.appendChild(el("b", null, "Encadrer un séjour ou un accueil : ")); t.appendChild(document.createTextNode("sur chaque fiche de « Inscrire mon enfant », le bouton « Postuler pour encadrer » envoie votre profil à la structure. "));
+      var a0 = el("a", null, "Voir les séjours et accueils →"); a0.href = "/enfants/"; t.appendChild(a0); bloc.appendChild(t); return; }
+    var d = el("div", "pj-sejours"); d.id = "pj-sejours"; d.appendChild(el("h3", null, "Mes candidatures aux séjours et accueils"));
+    var ul = el("ul", "pj-liste");
+    l.forEach(function (x) { var li = el("li"); var a = el("a", null, x.sejour); a.href = x.url; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a);
+      li.appendChild(el("small", null, " · " + x.structure + " · " + ({ envoyee: "envoyée", vue: "vue", retenue: "retenue 🎉", "non-retenue": "non retenue" }[x.statut] || x.statut) + " · " + dateFr(String(x.cree_le).slice(0, 10)))); ul.appendChild(li); });
+    d.appendChild(ul); bloc.appendChild(d);
   }
   // « Je peux aussi travailler… » : les départements de la région du candidat (et ceux déjà cochés)
   function montrerMobilite() {
@@ -1062,6 +1097,7 @@
   function urlPhoto(chemin) { return L.photos + chemin; }
   function voirStructure() {
     montrer("v-structure", "v-session");
+    try { if (!espaceDe) localStorage.setItem("fra-role", "structure"); } catch (e) {}
     var f = $("f-structure"), nouveau = !structure;
     f.reset();
     var voulu = ["periscolaire", "extrascolaire", "sejours"].indexOf(params.get("type")) >= 0 ? [params.get("type")] : [];
@@ -2488,7 +2524,7 @@
 
   /* -- session -- */
   $("deconnexion").addEventListener("click", async function () {
-    await sb.auth.signOut();
+    try { localStorage.removeItem("fra-role"); } catch (e) {} await sb.auth.signOut();
     memoire(null);
     location.href = location.pathname;
   });
@@ -2505,7 +2541,7 @@
     try { await supprimerMesFichiers(); } catch (e) { /* on supprime le compte quand même */ }
     var r = await sb.rpc("supprimer_mon_compte");
     if (r.error) { message(erreurLisible(r.error) + " Écrivez-nous pour que nous le supprimions.", true); return; }
-    await sb.auth.signOut();
+    try { localStorage.removeItem("fra-role"); } catch (e) {} await sb.auth.signOut();
     memoire(null);
     profil = structure = utilisateur = null;
     montrer("v-connexion");

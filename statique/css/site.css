@@ -4011,3 +4011,7 @@ body.sjf-ouvert { overflow: hidden; }
 .enf-merci { max-width: 560px; margin: 20px auto 40px; text-align: center; background: #fff; border: 1px solid var(--trait); border-radius: 22px; padding: 30px 24px; }
 .enf-form .sjc-q { overflow: hidden; }
 .enf-form .enf-2, .enf-form .enf-champ, .enf-form .case-accord, .enf-form .sjc-choix, .enf-form .sjc-sous { clear: both; }
+.sjf-anim { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: #f4f8f4; border: 1px solid #dfe9df; font-size: .9rem; }
+.sjf-anim p { margin: 0 0 8px; }
+.pj-sejours { margin-top: 18px; } .pj-liste { margin: 6px 0 0; padding-left: 18px; } .pj-liste li { margin: 6px 0; } .pj-liste small { color: var(--doux); }
+.sj-candidats { margin-top: 18px; }

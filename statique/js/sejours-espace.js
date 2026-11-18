@@ -5,7 +5,7 @@
    2 demandes gratuites tant que la structure n'a pas l'abonnement ou le Pass recrutement (docs/PLAN-SEJOURS.md). */
 (function () {
   "use strict";
-  var besoins = [];
+  var besoins = [], candidats = [];
   var E = null, C = null, sejours = [], dates = {}, stats = {}, demandes = [], brouillon = null, etape = 0, filtre = "tout", envoiPhotos = 0;
   var TYPES = { sejour: ["Séjour", "Une colo avec nuitées, 5 jours ou plus"], mini_sejour: ["Mini-séjour", "2 à 4 nuits, souvent rattaché à un accueil"],
                 accueil_vacances: ["Accueil de loisirs · vacances", "À la journée, pendant les vacances scolaires"], accueil_mercredis: ["Accueil de loisirs · mercredis", "À la journée, les mercredis de l'année"],
@@ -42,6 +42,8 @@
     }
     var m = await E.sb.rpc("mes_demandes_sejour");
     demandes = (m && m.data) || [];
+    var cs = await E.sb.rpc("mes_candidatures_sejour");
+    candidats = (cs && cs.data) || [];
     var bf = await E.sb.rpc("mes_besoins_familles");
     besoins = (bf && bf.data) || [];
   }
@@ -67,6 +69,24 @@
     }
     var g = el("div", "sj-grille"); c.appendChild(g);
     sejours.forEach(function (s) { g.appendChild(carte(s)); });
+    // les animateurs qui veulent encadrer vos séjours (bouton « Postuler pour encadrer » des fiches)
+    var kc = el("div", "carte-compte sj-candidats"); kc.appendChild(el("h2", null, "Animateurs qui veulent encadrer vos séjours"));
+    if (!candidats.length) kc.appendChild(el("p", "og-vide", "Pas encore de candidature. Sur chaque fiche, les animateurs connectés voient « Postuler pour encadrer » ; vous recevez leur profil par e-mail et ici."));
+    var POSTES = { animateur: "animateur", "animateur-stagiaire": "stagiaire BAFA", directeur: "direction", "directeur-adjoint": "direction adjointe", "assistant-sanitaire": "assistant sanitaire", "surveillant-baignade": "surveillant de baignade", autre: "autre" };
+    candidats.forEach(function (x) {
+      var a = el("article", "sj-demande" + (x.statut === "envoyee" ? " sj-neuve" : ""));
+      var h = el("div", "sj-d-tete"); h.appendChild(el("b", null, x.prenom + " · " + (POSTES[x.poste] || x.poste) + " · " + x.sejour));
+      h.appendChild(el("span", "sj-etat sj-d-" + (x.statut === "retenue" ? "acceptee" : x.statut === "non-retenue" ? "refusee" : "nouvelle"), { envoyee: "Nouvelle", vue: "Vue", retenue: "Retenue", "non-retenue": "Non retenue" }[x.statut])); a.appendChild(h);
+      a.appendChild(el("p", "sj-d-infos", [x.ville ? x.ville + " (" + x.departement + ")" : x.departement, (x.diplomes || []).join(", ").toUpperCase(), "reçue le " + E.dateFr(String(x.cree_le).slice(0, 10))].filter(Boolean).join(" · ")));
+      if (x.message) a.appendChild(el("blockquote", "sj-d-message", x.message));
+      var acts = el("div", "sj-actions");
+      var m = el("a", "bouton-r", "Lui écrire"); m.href = "mailto:" + x.email + "?subject=" + encodeURIComponent("Votre candidature : " + x.sejour); acts.appendChild(m);
+      [["retenue", "Retenir"], ["non-retenue", "Pas retenu"]].forEach(function (y) { var b = el("button", "bouton-texte", y[1]); b.type = "button";
+        b.addEventListener("click", async function () { await E.sb.rpc("repondre_candidature_sejour", { cid: x.id, st: y[0] }); x.statut = y[0]; liste(); }); acts.appendChild(b); });
+      a.appendChild(acts); kc.appendChild(a);
+    });
+    c.appendChild(kc);
+
     // la photo de bannière (facultative) en haut de la page structure
     var bn = el("details", "sj-badge"); bn.appendChild(el("summary", null, "Une photo de bannière en haut de votre page (facultatif)"));
     var stb = E.structure() || {};

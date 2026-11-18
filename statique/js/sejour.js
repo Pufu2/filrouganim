@@ -26,6 +26,9 @@
     if (!deja) rpc("compter_sejour", { i: parseInt(id, 10), t: "vue" }).catch(function () {});
   }
 
+  // « Postuler pour encadrer » : seulement pour les comptes animateur (le rôle est retenu par Mon espace)
+  try { if (localStorage.getItem("fra-role") === "candidat") Array.prototype.forEach.call(racine.querySelectorAll("[data-anim]"), function (x) { x.hidden = false; }); } catch (e) {}
+
   // le choix de la date dans le cadre « Réserver »
   Array.prototype.forEach.call(racine.querySelectorAll(".sjf-date"), function (b) {
     b.addEventListener("click", function () {
