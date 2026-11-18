@@ -738,15 +738,16 @@
     var post = {}; D.candidatures.forEach(function (x) { post[x.candidat_id] = (post[x.candidat_id] || 0) + 1; });
     var dem = {}; D.demandes.forEach(function (x) { if (x.candidat_id) dem[x.candidat_id] = (dem[x.candidat_id] || 0) + 1; });
     hero(w, "Annuaire des animateurs", "Les animateurs ", "de l'annuaire",
-      "Inscription libre et gratuite : vous n'intervenez que pour cacher un profil, ou aider quelqu'un qui n'a pas fini le sien.", [bouton("← Vue d'ensemble", "accueil")]);
-    chiffres(w, [[String(P.length), "profils"], [String(compte(P, function (p) { return p.publie; })), "visibles", "rouge"], [String(compte(P, function (p) { return p.cv_nom; })), "avec CV"],
+      "Inscription libre et gratuite. Un profil n'apparaît sur le site qu'après votre vérification (« ✓ Vérifier ») : relisez le prénom, la présentation et les diplômes.", [bouton("← Vue d'ensemble", "accueil")]);
+    chiffres(w, [[String(P.length), "profils"], [String(compte(P, function (p) { return p.publie && !p.verifie; })), "à vérifier", "rouge"], [String(compte(P, function (p) { return p.publie && p.verifie; })), "visibles"], [String(compte(P, function (p) { return p.cv_nom; })), "avec CV"],
                  [String(Object.keys(post).length), "ont postulé"], [String(Object.keys(dem).length), "ont envoyé une demande"], [String(compte(P, function (p) { return p.annee_naissance && auj.getFullYear() - p.annee_naissance < 18; })), "mineurs"]]);
     var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Les derniers profils · " + Math.min(P.length, 25) + " sur " + P.length)); w.appendChild(s1);
-    tableau(w, ["Animateur", "Lieu", "Diplômes", "Activité", ""], P.slice().sort(function (a, b) { return (b.maj_le || "").localeCompare(a.maj_le || ""); }).slice(0, 25).map(function (p) {
+    tableau(w, ["Animateur", "Lieu", "Diplômes", "Activité", ""], P.slice().sort(function (a, b) { return ((a.publie && !a.verifie) ? 0 : 1) - ((b.publie && !b.verifie) ? 0 : 1) || (b.maj_le || "").localeCompare(a.maj_le || ""); }).slice(0, 25).map(function (p) {
       return [cellule(p.prenom + (p.annee_naissance ? ", " + (auj.getFullYear() - p.annee_naissance) + " ans" : ""), p.email_contact), cellule(p.ville || nomDep(p.departement), p.departement),
         cellule((p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ") || "–", p.poste_recherche || ""),
         cellule((post[p.id] || 0) + " candidature" + ((post[p.id] || 0) > 1 ? "s" : "") + " · " + (dem[p.id] || 0) + " demande" + ((dem[p.id] || 0) > 1 ? "s" : ""), (p.publie ? "visible" : "caché") + " · maj " + depuis(p.maj_le)),
-        actions([["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
+        actions([[p.verifie ? "Retirer la vérification" : "✓ Vérifier", async function () { var q = await E.sb.rpc("admin_verifier_profil", { pid: p.id, ok: !p.verifie }); if (q.error) return E.message(E.erreur(q.error), true); p.verifie = !p.verifie; E.message(p.verifie ? "Profil vérifié : il apparaît sur le site." : "Profil retiré du site."); enteteAnimateurs(); }, null, p.verifie ? "" : "ap-fort"],
+          ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
     c.insertBefore(w, c.firstChild);
@@ -1048,6 +1049,14 @@
   function couv(x) { if (!x) return "Pas encore vérifiée"; for (var i = 0; i < COUV.length; i++) if (COUV[i][0].test(x)) return COUV[i][1]; return x; }
   function indexee(r) { return !!(r && r.couverture && /indexed|indexée/i.test(r.couverture) && !/not indexed|currently|non indexée/i.test(r.couverture)); }
   function rubrique(u) { var p = u.replace(/^https:\/\/[^/]+/, "").split("/").filter(Boolean); if (!p.length) return "Accueil"; if (p[0] === "se-former" && p[1] === "sessions") return "Sessions"; if (p[0] === "se-former" && p[1] === "ecoles") return "Écoles"; return { "se-former": "Se former", "trouver-un-poste": "Postes et structures", blog: "Blog", lexique: "Lexique", chiffres: "Chiffres" }[p[0]] || "Autres pages"; }
+  // « Inspecter » : l'adresse de la page est copiée, et la Search Console s'ouvre sur le site (avec le compte Google
+  // propriétaire). Le lien direct vers l'inspection échoue quand le navigateur est connecté avec un autre compte Google :
+  // il suffit alors de coller l'adresse dans la barre « Inspecter n'importe quelle URL » en haut de la Search Console.
+  function inspecter(u) {
+    var ouvrir = function () { window.open(lienGsc(u), "_blank", "noopener"); };
+    if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { E.message("Adresse copiée. Si Google affiche une erreur : vérifiez le compte Google (en haut à droite, celui qui gère filrouganim.fr), puis collez l'adresse dans la barre « Inspecter » en haut de la Search Console."); ouvrir(); }, ouvrir);
+    else ouvrir();
+  }
   function lienGsc(u) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u); }
   function indexation() {
     var c = $("ad-indexation"); if (!c) return; c.textContent = "";
@@ -1101,7 +1110,7 @@
         var d = el("div"); d.appendChild(etiquette(couv(x.couverture), t)); if (x.demandee_le && x.etatIx !== "indexee") d.appendChild(el("small", "ap-petit", " demandée " + depuis(x.demandee_le)));
         return [cellule(chemin, rubrique(x.url) + (imp[x.url] ? " · " + fr(imp[x.url]) + " affichages" : "")), d,
           cellule(x.dernier_passage ? E.dateFr(iso(x.dernier_passage)) : "–", x.verifie_le ? "vérifiée " + depuis(x.verifie_le) : null),
-          actions([["Inspecter", null, lienGsc(x.url)], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
+          actions([["Inspecter", function () { inspecter(x.url); }], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
       }));
       if (l.length > 150) zone.appendChild(el("p", "ap-petit", "Les 150 premières sur " + fr(l.length) + " : affinez avec la recherche ou la rubrique."));
     }

@@ -845,3 +845,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v29b / v29c (appliquées par migration) : alertes_sejour.vu_le et alerte_vue() (un clic depuis l'e-mail du jeudi garde
 -- l'alerte ; sans clic depuis un an, elle est effacée) ; structures.banniere (photo facultative en haut de la page).
+
+-- v30 (appliquée par migration) : profils.verifie ; un profil n'apparaît dans l'annuaire public (profils_resume) qu'une
+-- fois vérifié par l'administration (admin_verifier_profil).

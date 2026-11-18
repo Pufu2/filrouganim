@@ -1044,7 +1044,7 @@
     var nouveau = !profil;
     profil = r.data;
     memoire(null);
-    message(nouveau ? "Votre profil est créé. Les structures vérifiées de votre secteur peuvent maintenant vous écrire."
+    message(nouveau ? "Votre profil est créé. Nous le relisons (en général sous 2 jours ouvrés), puis il apparaît dans l'annuaire : les structures de votre secteur pourront vous écrire. Vous pouvez déjà postuler aux offres."
                     : (profil.publie ? "Profil enregistré." : "Profil enregistré. Il est caché : les structures ne le voient plus (sauf celles à qui vous avez postulé)."));
     voirCandidat();
   });
@@ -2363,7 +2363,7 @@
     tuileApp(tu, "offres", "Offres pour vous", offres.length, offres.length ? "Dans votre secteur" : "Revenez bientôt", "offres", null);
     tuileApp(tu, "demandes", "Mes demandes", "→", "Décrivez ce que vous cherchez", "demandes", null);
     var et = el("p"); c1.appendChild(et);
-    etatApp(et, !!profil.publie, profil.publie ? "Votre profil est visible : les structures vérifiées de votre secteur peuvent vous écrire." : "Votre profil est caché : les structures ne le voient pas. Rendez-le visible dans « Mon profil ».");
+    etatApp(et, !!(profil.publie && profil.verifie !== false), !profil.publie ? "Votre profil est caché : les structures ne le voient pas. Rendez-le visible dans « Mon profil »." : profil.verifie === false ? "Votre profil est enregistré : nous le relisons (en général sous 2 jours ouvrés), puis il apparaît dans l'annuaire des animateurs. Vous pouvez déjà postuler aux offres." : "Votre profil est visible : les structures vérifiées de votre secteur peuvent vous écrire.");
     g.appendChild(c1);
     var c2 = carteApp("Offres près de chez vous", "Toutes", "offres"), ul = el("ul", "tb-liste-offres");
     offres.slice(0, 4).forEach(function (o) {
