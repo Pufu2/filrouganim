@@ -838,3 +838,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v28 (appliquée par migration) : l'administration peut créer un séjour (et ses photos) dans l'espace d'une structure,
 -- pour l'offre « nous publions votre premier séjour pour vous ».
+
+-- v29 (appliquée par migration) : e-mails immédiats. pg_net ; ranger_cle_envoi() (le relevé GitHub dépose la clé Brevo
+-- dans le coffre-fort chiffré) ; envoyer_mail() ; déclencheurs prevenir_demande (accusé famille + demande à la structure,
+-- coordonnées seulement si la demande est ouverte) et confirmer_alerte_mail. Le relevé reste le filet de sécurité.

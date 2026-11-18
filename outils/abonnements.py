@@ -730,7 +730,13 @@ if __name__ == "__main__":
     # les demandes partent même si Stripe ne répond pas (clé expirée, panne) : les relevés sont indépendants
     erreurs = []
     cle = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
-    for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
+    def ranger_cle():
+        # la clé d'envoi des e-mails, rangée dans le coffre-fort de la base : les e-mails des séjours partent alors tout de
+        # suite (accusé de réception, demande à la structure, confirmation d'alerte) au lieu d'attendre ce relevé
+        k = os.environ.get("BREVO_API_KEY", "").strip()
+        if k and cle and "--essai" not in sys.argv:
+            supabase("POST", "rpc/ranger_cle_envoi", cle, {"k": k})
+    for etape in (ranger_cle, main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
                   lambda: None if "--essai" in sys.argv or not cle else demandes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else alertes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else sejours_relances(cle),
