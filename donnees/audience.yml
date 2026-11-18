@@ -13,18 +13,24 @@ chiffres:
     n: 5827
   visiteurs_30j: 1009
   visiteurs_evolution: null
-  animateurs: 1
+  animateurs: 2
   structures: 0
   offres: 0
   dernieres_inscriptions:
+  - role: animateur
+    departement: '93'
+    mois: 2026-11
   - role: animateur
     departement: '78'
     mois: 2026-11
   inscriptions_par_mois:
   - mois: 2026-11
-    animateurs: 1
+    animateurs: 2
     structures: 0
   inscriptions_par_departement:
+  - departement: '93'
+    animateurs: 1
+    structures: 0
   - departement: '78'
     animateurs: 1
     structures: 0
