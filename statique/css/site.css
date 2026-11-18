@@ -2254,7 +2254,7 @@ html.fiche-ouverte { overflow: hidden; }
 .mm-bouton-plus > span:nth-of-type(1) { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .mm-bouton-plus b { font-size: .88rem; font-weight: 700; color: var(--fil-fonce); }
 .an-compte { margin: -10px 0 18px; }
-.mm-bouton-plus small { white-space: normal; font-size: .72rem; color: var(--doux); line-height: 1.35; }
+.mm-bouton-plus small { white-space: nowrap; font-size: .72rem; color: var(--doux); line-height: 1.35; }
 .an-titre { margin-top: 44px; scroll-margin-top: 90px; }
 
 /* accueil, onglet « Je suis une structure » : trois cartes, comme « Je suis un pro » sur jasonmarinho.com */
@@ -4079,16 +4079,18 @@ body.sjf-ouvert { overflow: hidden; }
 .lc-voisins ul { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 4px; }
 @media (max-width: 760px) { .lc .cadre { grid-template-columns: minmax(0, 1fr); } .lc-bloc { padding: 18px 16px; } .lc-vacances th { white-space: normal; } }
 
-/* ---------- accueil : « Pour mon enfant » ou « Pour les animateurs et directeurs », en haut du cadre blanc ---------- */
-.ro-pourqui { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 20px 22px 0; background: var(--blanc, #fff); }
-.ro-pourqui + .ro-panneau, .ro-pourqui ~ .ro-panneau { border-radius: 0 0 18px 18px; }
-.ro-pourqui button { display: flex; align-items: center; gap: 12px; text-align: left; padding: 11px 14px; border-radius: 14px; border: 1.5px solid #e8e2da; background: #fff; font: inherit; color: #231f20; cursor: pointer; }
-.ro-pourqui button:hover { border-color: #d61f35; }
-.ro-pourqui button svg { width: 28px; height: 28px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.ro-pourqui button span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+/* ---------- accueil : « Pour qui ? » (mon enfant / animateurs et directeurs), à gauche du cadre « Trouver une structure » ---------- */
+.ro-pourqui { display: grid; gap: 10px; }
+.ro-pourqui button { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 12px 16px; border-radius: 16px; border: 1.5px solid #e8e2da; background: #fff; font: inherit; color: #231f20; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+.ro-pourqui button:hover { border-color: #d61f35; transform: translateY(-1px); }
+.ro-pourqui button svg { width: 40px; height: 40px; flex: none; padding: 8px; border-radius: 12px; background: #f6f1ea; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; box-sizing: border-box; }
+.ro-pourqui button span { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.ro-pourqui button b { font-size: 1rem; }
 .ro-pourqui button small { color: #6b6264; font-size: .82rem; }
-.ro-pourqui button[aria-checked="true"] { border-color: #d61f35; background: #fdf1f2; color: #b3162b; box-shadow: inset 0 0 0 1px #d61f35; }
-@media (max-width: 560px) { .ro-pourqui { grid-template-columns: minmax(0, 1fr); padding: 16px 16px 0; } }
+.ro-pourqui button::after { content: ""; width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid #d9d1c7; box-sizing: border-box; }
+.ro-pourqui button[aria-checked="true"] { border-color: #d61f35; background: #fdf1f2; color: #b3162b; }
+.ro-pourqui button[aria-checked="true"] svg { background: #d61f35; color: #fff; stroke: #fff; }
+.ro-pourqui button[aria-checked="true"]::after { border: 5px solid #d61f35; background: #fff; }
 /* l'annuaire des animateurs : créer sa fiche */
 .an-creer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin: 22px 0; padding: 20px 22px; border-radius: 18px; background: #fdf1f2; border: 1px solid #f3cdd2; }
 .an-creer div { display: flex; flex-direction: column; gap: 4px; flex: 1 1 320px; }
@@ -4096,3 +4098,11 @@ body.sjf-ouvert { overflow: hidden; }
 /* admin : les fiches à vérifier */
 .ap-verif-l { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 0; border-top: 1px solid var(--trait); }
 .ap-verif-l:first-of-type { border-top: 0; }
+
+/* menu Inscrire mon enfant : « Décrire mon besoin » sur une ligne, sous les colonnes */
+.mm-grille > a.mm-bouton-plus { grid-column: 2 / -1; justify-self: start; width: max-content; max-width: 100%; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; margin-top: -8px; padding: 8px 14px; border-radius: 12px;
+  background: #fbecee; border: 1px solid #f2cdd2; color: var(--encre); text-decoration: none; }
+.mm-grille > a.mm-bouton-plus:hover { background: #f8e0e3; }
+.mm-grille > a.mm-bouton-plus > span { flex-direction: row !important; align-items: baseline; gap: 10px !important; flex: none !important; }
+.mm-grille > a.mm-bouton-plus b { white-space: nowrap; }
+@media (max-width: 900px) { .mm-grille > a.mm-bouton-plus { grid-column: 1 / -1; } .mm-grille > a.mm-bouton-plus small { white-space: normal; } }

@@ -139,16 +139,12 @@
   </div>
   {% if onglets %}
   <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2">
-  <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
-    <button type="button" role="radio" aria-checked="false" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
-    <button type="button" role="radio" aria-checked="true" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
-  </div>
   <form class="ro-panneau" id="ro-demande" action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
     <fieldset class="ro-quoi">
-      <legend class="ro-titre">Quelle structure ?</legend>
-      <div class="ro-puces">
-        <label class="ro-puce"><input type="radio" name="type" value="" checked><span>Toutes</span></label>
-        {% for v, l in FAMILLES_STRUCTURE %}<label class="ro-puce"><input type="radio" name="type" value="{{ v }}"><span>{{ l }}</span></label>{% endfor %}
+      <legend class="ro-titre">Pour qui ?</legend>
+      <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
+        <button type="button" role="radio" aria-checked="false" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
+        <button type="button" role="radio" aria-checked="true" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
       </div>
     </fieldset>
     <div class="ro-ou">
@@ -190,12 +186,10 @@
   </script>
   <form class="ro-panneau" id="ro-enfant" hidden action="{{ lien('/enfants/') }}" method="get">
     <fieldset class="ro-quoi">
-      <legend class="ro-titre">Vous cherchez…</legend>
-      <div class="ro-puces">
-        <label class="ro-puce"><input type="radio" name="type" value="" checked><span>Tout</span></label>
-        <label class="ro-puce"><input type="radio" name="type" value="accueils"><span>Accueil de loisirs</span></label>
-        <label class="ro-puce"><input type="radio" name="type" value="periscolaire"><span>Périscolaire</span></label>
-        <label class="ro-puce"><input type="radio" name="type" value="sejours"><span>Séjour, colo</span></label>
+      <legend class="ro-titre">Pour qui ?</legend>
+      <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
+        <button type="button" role="radio" aria-checked="true" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
+        <button type="button" role="radio" aria-checked="false" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
       </div>
     </fieldset>
     <div class="ro-ou">
