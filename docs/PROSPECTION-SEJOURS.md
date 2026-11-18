@@ -56,3 +56,24 @@ France (à vérifier une par une avant de les écrire : adresse de contact de la
 - Seulement des adresses e-mail **publiées par l'organisme lui-même** (page contact, brochure) ; pas d'achat de fichiers.
 - Un message professionnel, la mention claire de qui écrit, et l'arrêt dès qu'on nous le demande (le statut « pas intéressé » existe dans l'admin).
 - Ne jamais publier un séjour sans l'accord écrit de l'organisateur.
+
+## 6. Île-de-France : la première liste (18 novembre 2026)
+
+35 organisateurs ajoutés dans **Prospection › Organisateurs de séjours**, tous « à contacter ». Les adresses sont celles
+que les organismes publient eux-mêmes (leur site, leur brochure) ; la source est notée sous chaque nom.
+
+- **12 organisateurs qui font déjà des séjours pour la Ville de Paris** (catalogue « Vacances Arc-en-ciel 2026 » et
+  Caisse des écoles du 19e) : ODCVL, OUL, ADN Découverte, Aventures Vacances Énergie, UCPA Tootazimut, AEP Volcana,
+  Thalie, Poney des 4 Saisons, séjours Prémonval (Meaux), Loisirs Club 4/80, Loisirs Mer Découverte, VELS Voyages.
+  **À écrire en premier** : ils ont des séjours prêts, avec des départs de Paris.
+- **12 mairies** qui publient des séjours pour l'été 2026 (Charenton, Fontenay-sous-Bois, Le Kremlin-Bicêtre, Champigny,
+  Évry-Courcouronnes, Sainte-Geneviève-des-Bois, Juvisy, Massy, Aubergenville ; La Courneuve, Épinay et Le Blanc-Mesnil
+  par téléphone). Leurs séjours sont souvent réservés aux habitants : leur proposer surtout leurs **accueils de loisirs**
+  (pages « Accueils de loisirs à … ») et la visibilité de leurs séjours auprès des familles de la ville.
+- **Associations et organisateurs** : Le Temps des Copains, Croq'Vacances, Cap Monde, L'Envol (public fragile : avec tact),
+  la Fédération des Aroéven ; et, sans e-mail public (formulaire à remplir) : UFCV, Telligo, Ligue de l'enseignement de Paris.
+- **Un relais** : ResoColo, le réseau des professionnels des colos, pour faire connaître le site à ses membres.
+- **La Caisse des écoles du 19e** et **les PEP 75** : acheteurs ou partenaires de la Ville, à voir après les premiers résultats.
+
+À compléter : les organisateurs du catalogue Pass Colo (jeunes.gouv.fr/passcolo) qui partent d'Île-de-France, et les
+autres mairies (une recherche « séjours été 2026 » + nom de la ville suffit).
