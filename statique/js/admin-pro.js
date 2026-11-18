@@ -956,6 +956,12 @@
       "Bonjour,\n\nJe reviens vers vous : publier un séjour prend une dizaine de minutes, et « Dupliquer » sert pour les suivants. Les familles qui cherchent dans votre secteur le trouvent ensuite par âge et par période, et Google aussi.\n\nPour commencer : https://filrouganim.fr/compte/?inscription=1&role=structure\n\nBonne journée,\nRafael"],
       ["Dernière relance (14 jours)", "Dernière question",
       "Bonjour,\n\nDernier message de ma part : préférez-vous que je publie votre premier séjour pour vous, à partir de votre brochure ou de votre site ? Il suffit de me répondre avec le lien.\n\nBonne journée,\nRafael"]],
+    mairie: [["Premier contact", "Les accueils de loisirs de votre ville, visibles par les familles",
+      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr), le site de l'animation : formations BAFA, offres d'emploi pour les animateurs, et maintenant « Trouver un séjour » pour les familles.\n\nLes parents y cherchent un accueil de loisirs pour les vacances ou les mercredis, et une colo pour l'été, par âge et par période. Le service enfance de votre ville peut y présenter gratuitement ses accueils de loisirs (horaires, tarifs au quotient, inscriptions) et ses séjours : chaque ville a sa page « Accueils de loisirs à … », lisible par Google.\n\nLes familles vous demandent une place en ligne ; l'inscription reste chez vous, sans commission. Vous pouvez aussi y publier vos offres pour recruter vos animateurs et vos stagiaires BAFA.\n\nComment ça marche : https://filrouganim.fr/recruter/sejours/\n\nPuis-je vous aider à mettre en ligne votre premier accueil ? Il me suffit de votre brochure de l'été.\n\nBien cordialement,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Re : vos accueils de loisirs sur Fil Roug'Anim",
+      "Bonjour,\n\nJe me permets de revenir vers vous. Pour préparer les inscriptions de l'été et des mercredis, Fil Roug'Anim peut présenter gratuitement vos accueils de loisirs et vos séjours aux familles de la ville.\n\nSi c'est plus simple, envoyez-moi votre brochure (le PDF suffit) : je prépare la fiche, vous la relisez et la validez avant toute mise en ligne.\n\nBien cordialement,\nRafael · Fil Roug'Anim"],
+      ["Dernière relance (14 jours)", "Dernière question",
+      "Bonjour,\n\nDernier message de ma part : à qui puis-je m'adresser, dans vos services, pour les accueils de loisirs et les séjours de vacances ? Je transmettrai directement.\n\nBien cordialement,\nRafael · Fil Roug'Anim"]],
     contact: [["Premier contact", "Fil Roug'Anim : vos recrutements d'animateurs",
       "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr) : les animateurs et les stagiaires BAFA de votre secteur y décrivent le poste qu'ils cherchent, et leur demande arrive chez les structures les plus proches.\n\nCréer la page de {nom} prend 6 minutes et c'est gratuit (la page et une offre) : https://filrouganim.fr/recruter/\n\nBonne journée,\nRafael · Fil Roug'Anim"],
       ["Relance (7 jours)", "Re : vos recrutements d'animateurs", "Bonjour,\n\nJe reviens vers vous : avez-vous pu jeter un œil ? Je peux créer la page avec vous au téléphone si c'est plus simple.\n\nBonne journée,\nRafael"],
@@ -986,6 +992,7 @@
     // à gauche : la séquence de messages
     var seq = carte(g, "La séquence", "3 messages");
     MODELES[pr.onglet].forEach(function (m, i) { var d = el("div", "ap-etape-m"); d.appendChild(el("span", "ap-pastille ap-zero", String(i + 1))); var t = el("div"); t.appendChild(el("b", null, m[0])); t.appendChild(el("small", null, m[1])); d.appendChild(t); seq.appendChild(d); });
+    if (pr.onglet === "organisateur") seq.appendChild(el("p", "ap-petit", "Les mairies reçoivent leur propre séquence, centrée sur leurs accueils de loisirs : « " + MODELES.mairie.map(function (m) { return m[1]; }).join(" », « ") + " »."));
     seq.appendChild(el("p", "ap-petit", "{nom}, {sessions} et {page} se remplacent tout seuls. Vous pouvez retoucher le message dans votre messagerie avant de l'envoyer."));
     // à droite : les contacts
     var droite = el("div", "ap-col"); g.appendChild(droite);
@@ -1014,7 +1021,7 @@
         var mail = el("input", "ap-recherche ap-mail"); mail.type = "email"; mail.placeholder = "E-mail"; mail.value = p.email || "";
         mail.addEventListener("change", function () { enregistrerProspect(Object.assign({}, p, { email: mail.value.trim() || null })); });
         r.appendChild(mail);
-        var n = Math.min(e.length, 2), mod = MODELES[pr.onglet][n];
+        var n = Math.min(e.length, 2), mod = (pr.onglet === "organisateur" && /^orga:mairie-/.test(p.cle) ? MODELES.mairie : MODELES[pr.onglet])[n];
         var corps = mod[2].replace(/\{nom\}/g, p.nom).replace(/\{sessions\}/g, p.sessions || "").replace(/\{page\}/g, p.page || "https://filrouganim.fr");
         var ecrire = el("a", "ap-bouton", "✉ " + mod[0]); ecrire.href = "mailto:" + (p.email || "") + "?subject=" + encodeURIComponent(mod[1]) + "&body=" + encodeURIComponent(corps);
         ecrire.addEventListener("click", function () {

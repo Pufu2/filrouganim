@@ -77,3 +77,15 @@ que les organismes publient eux-mêmes (leur site, leur brochure) ; la source es
 
 À compléter : les organisateurs du catalogue Pass Colo (jeunes.gouv.fr/passcolo) qui partent d'Île-de-France, et les
 autres mairies (une recherche « séjours été 2026 » + nom de la ville suffit).
+
+### Ajouts du 18 novembre (deuxième passage) : 46 au total
+
+- **5 organisateurs de plus** : Eole Loisirs (Paris 10e), Temps Jeunes, Colo Farwest, LPM (Loisirs Provence Méditerranée),
+  Sport Mer Nature (les trois derniers font aussi des séjours pour les caisses des écoles de Paris).
+- **5 mairies de plus** : Puteaux et Bagneux (e-mail dans leur brochure) ; Romainville, Bois-Colombes et Villemomble
+  (pas d'e-mail de service publié : passer par le site ou le standard).
+- **La Caisse des écoles du 9e** (acheteur de séjours, comme celle du 19e).
+- Écarté : ASF Vacances (réservé aux agents des ministères économiques et financiers).
+
+**Les messages** : les contacts « mairie » reçoivent automatiquement leur propre séquence (accueils de loisirs, « je prépare
+la fiche à partir de votre brochure », puis « à qui m'adresser ? ») ; les autres, la séquence organisateurs.
