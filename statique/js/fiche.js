@@ -19,6 +19,23 @@
       });
     });
   }
+  // la section « Nos séjours » : les pastilles filtrent les cartes (type, âge)
+  function filtresSejours(racine) {
+    Array.prototype.forEach.call(racine.querySelectorAll(".fp-sj-filtres"), function (g) {
+      if (g.dataset.pret) return; g.dataset.pret = "1";
+      var cartes = g.parentNode.querySelectorAll(".fp-sj-grille [data-sj]");
+      g.addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        Array.prototype.forEach.call(g.querySelectorAll("button"), function (x) { x.classList.toggle("fp-sj-on", x === b); });
+        var f = b.dataset.sjF;
+        Array.prototype.forEach.call(cartes, function (c) {
+          var ok = !f || c.dataset.sj === f;
+          if (f && f[0] === "a") { var r = f.slice(1).split("-").map(Number), a = c.dataset.a.split("-").map(Number); ok = a[0] <= r[1] && a[1] >= r[0]; }
+          c.hidden = !ok;
+        });
+      });
+    });
+  }
   // une petite carte de France, dans un coin, qui montre où se trouve l'endroit (contour simplifié, projection simple)
   var FRANCE = "M53.3 2.1 L57.8 5.0 L64.7 10.0 L69.5 12.0 L75.7 17.5 L79.8 18.5 L88.1 22.5 L92.2 23.3 L88.1 37.0 L84.0 38.0 L83.3 41.0 L77.8 47.0 L78.5 49.0 L82.6 49.0 L84.0 54.0 L82.6 56.0 L84.7 61.0 L81.2 62.0 L84.0 70.5 L88.8 75.0 L86.7 76.0 L81.9 81.0 L76.4 82.0 L70.2 79.5 L64.7 78.5 L58.5 80.5 L56.4 87.0 L49.6 89.0 L40.6 85.0 L33.7 84.5 L26.2 80.5 L23.4 79.0 L27.2 67.0 L27.5 55.0 L25.5 49.0 L21.3 44.0 L18.6 40.0 L11.7 36.0 L5.5 35.0 L2.8 29.0 L8.3 26.0 L15.1 25.0 L24.8 26.5 L22.7 16.0 L27.2 16.5 L28.2 19.5 L37.2 18.5 L36.5 16.0 L46.1 11.0 L46.8 4.0Z" +
                "M100.5 83.0 L101.5 87.0 L100.5 99.0 L99.1 99.3 L95.7 96.0 L95.0 90.0 L98.4 85.5Z";
@@ -59,6 +76,7 @@
   function preparer(racine) {
     racine = racine || document;
     replier(racine);
+    filtresSejours(racine);
     var cartes = racine.querySelectorAll("[data-fp-carte]");
     if (!cartes.length) return;
     if (window.L) { Array.prototype.forEach.call(cartes, carte); return; }

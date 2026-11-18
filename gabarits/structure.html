@@ -10,6 +10,8 @@
 {% set photos = st.photos or [] %}
 {% set base_photos = site.supabase.url ~ "/storage/v1/object/public/structures/" %}
 {% set point = page.point %}
+{% set _nn = (st.sejours or []) | selectattr("type", "in", ["sejour", "mini_sejour"]) | list | length %}{% set _nj = (st.sejours or []) | length - _nn %}
+{% set compte_sejours = ([(_nn ~ " séjour" ~ ("s" if _nn > 1 else "")) if _nn else None, (_nj ~ " accueil" ~ ("s" if _nj > 1 else "") ~ " de loisirs") if _nj else None] | select | join(" · ")) %}
 {% macro avatar(classe="") %}<span class="fp-avatar {{ classe }}" aria-hidden="true">{% if st.logo %}<img src="{{ base_photos ~ st.logo }}" alt="" loading="lazy">{% else %}{{ initiales }}{% endif %}</span>{% endmacro %}
 {% block tete %}{% endblock %}
 {% block contenu %}
@@ -40,6 +42,7 @@
           <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>
           {% if st.offres %}<li>{{ m.icone("date") }}Recrute en ce moment</li>{% endif %}
           {% if st.fondatrice %}<li>{{ m.icone("etape") }}Structure fondatrice</li>{% endif %}
+          {% if st.sejours %}<li class="fp-badge-sejours"><a href="#sejours">{{ m.icone("date") }}{{ compte_sejours }}</a></li>{% endif %}
           <li>{{ m.icone("lieu") }}Sans commission</li>
         </ul>
       </div>
@@ -98,6 +101,50 @@
         </section>
         {% endif %}
 
+        {% if st.sejours %}
+        {% set base_sj = site.supabase.url ~ "/storage/v1/object/public/sejours/" %}
+        <section class="fp-bloc fp-sejours" id="sejours" aria-labelledby="t-sejours">
+          <h2 id="t-sejours">{% if _nj and _nn %}Nos séjours et accueils{% elif _nj %}Nos accueils de loisirs{% else %}Nos séjours{% endif %}</h2>
+          <p class="fp-sous-titre">Demandez une place en ligne, sans frais : {{ st.nom }} vous répond directement.</p>
+          {% if st.sejours | length >= 4 %}
+          <div class="fp-sj-filtres" role="group" aria-label="Filtrer les séjours">
+            <button type="button" class="fp-sj-on" data-sj-f="">Tous</button>
+            {% if st.sejours | selectattr("type", "in", ["sejour", "mini_sejour"]) | list %}<button type="button" data-sj-f="nuits">Avec nuits</button>{% endif %}
+            {% if st.sejours | selectattr("type", "in", ["accueil_vacances", "accueil_mercredis"]) | list %}<button type="button" data-sj-f="journee">À la journée</button>{% endif %}
+            {% for b, r in [("3-5", [3, 5]), ("6-8", [6, 8]), ("9-11", [9, 11]), ("12-14", [12, 14]), ("15-17", [15, 17])] %}{% if st.sejours | selectattr("age_min", "le", r[1]) | selectattr("age_max", "ge", r[0]) | list %}<button type="button" data-sj-f="a{{ b }}">{{ b }} ans</button>{% endif %}{% endfor %}
+          </div>
+          {% endif %}
+          <div class="sjc-grille fp-sj-grille">
+          {% for x in st.sejours %}{% set d = x.a_venir[0] %}{% set journee = x.type.startswith("accueil") %}{% set ferme = x.a_venir | rejectattr("complet") | rejectattr("places_restantes", "equalto", 0) | list | length == 0 %}
+            <a class="sjc-carte" href="{{ lien(x.url) }}" data-sj="{{ 'journee' if journee else 'nuits' }}" data-a="{{ x.age_min }}-{{ x.age_max }}">
+              <span class="sjc-photo sjc-b-{{ (x.envies or ['decouverte'])[0] }}"{% if x.photos %} style="background-image:url('{{ base_sj ~ x.photos[0] }}')"{% endif %}>
+                {% if not x.photos %}<span class="sjc-photo-t">{{ SEJ_TYPES[x.type][0] }}</span>{% endif %}
+                <span class="sjc-etiquettes">{% if x.exemple %}<span class="sjc-et-ex">Exemple</span>{% endif %}{% if ferme %}<span class="sjc-et-complet">Complet</span>{% elif d.places_restantes is not none and d.places_restantes <= 5 %}<span class="sjc-et-peu">Plus que {{ d.places_restantes }} place{{ 's' if d.places_restantes > 1 }}</span>{% endif %}{% if "pass_colo" in (x.aides or []) %}<span class="sjc-et-aide">Pass Colo</span>{% elif "vacaf" in (x.aides or []) %}<span class="sjc-et-aide">VACAF</span>{% endif %}</span>
+              </span>
+              <span class="sjc-corps">
+                <span class="sjc-sur">{{ x.age_min }}-{{ x.age_max }} ans · {% if journee %}À la journée{% else %}{{ SEJ_TYPES[x.type][0] }} {{ (d.fin - d.debut).days + 1 }} jours{% endif %}</span>
+                <b class="sjc-titre">{{ x.titre }}</b>
+                <span class="sjc-ligne sjc-lieu">{% if x.ville %}{{ x.ville }}{% if x.departement %} ({{ x.departement }}){% endif %}{% else %}{{ x.region_dest or x.pays }}{% endif %}{% if x.transport %} · départ de {{ x.transport | map(attribute="ville") | list | first }}{% endif %}</span>
+                <span class="sjc-ligne sjc-quand">{% for dd in x.a_venir[:2] %}{{ dd.debut.day }} {{ dd.debut | mois_court }} → {{ dd.fin.day }} {{ dd.fin | mois_court }}{% if not loop.last %} · {% endif %}{% endfor %}{% if x.a_venir | length > 2 %} · +{{ x.a_venir | length - 2 }}{% endif %}</span>
+                <span class="sjc-pied"><span class="sjc-prix">{% if x.prix_min is not none %}dès <b>{{ '%g' | format(x.prix_min) }} €</b>{% if x.prix_unite == "jour" %} la journée{% endif %}{% else %}Prix sur demande{% endif %}</span></span>
+              </span>
+            </a>
+          {% endfor %}
+          </div>
+          {% if st.frise %}
+          <div class="fp-frise" aria-label="Les séjours de l'été {{ st.frise.an }}">
+            <p class="fp-sous-titre">L'été {{ st.frise.an }} d'un coup d'œil</p>
+            <div class="fp-frise-axe"><span style="left:0">Juillet</span><span style="left:{{ 100 - st.frise.aout }}%">Août</span></div>
+            <div class="fp-frise-zone">
+              {% for w in st.frise.semaines %}<i class="fp-frise-sem" style="left:{{ w.g }}%"><small>{{ w.t }}</small></i>{% endfor %}
+              {% for l in st.frise.lignes %}{% set droite = l.g + l.l > 55 %}<a class="fp-frise-ligne{% if l.complet %} fp-frise-complet{% endif %}{% if droite %} fp-frise-g{% endif %}" href="{{ lien(l.url) }}" style="{% if droite %}padding-right:{{ (100 - l.g - l.l) | round(2) }}%{% else %}padding-left:{{ l.g }}%{% endif %}"><i class="fp-frise-barre" style="width:{{ l.l }}%"></i><span>{{ l.titre }} <small>{{ l.dates }} · {{ l.age }}{% if l.complet %} · complet{% endif %}</small></span></a>{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <p class="fp-liens"><a class="fp-lien-bouton" href="{{ lien('/sejours/') }}">Tous les séjours sur Fil Roug'Anim <span aria-hidden="true">→</span></a></p>
+        </section>
+        {% endif %}
+
         {% if st.avantages or st.activites or st.publics %}
         <section class="fp-bloc" aria-labelledby="t-propose">
           <h2 id="t-propose">Ce que la structure propose</h2>
@@ -132,6 +179,7 @@
         <p class="fp-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
         {% if st.offres %}<ul class="fp-contact-liste">{% for o in st.offres[:3] %}<li><span>{{ o.intitule }}</span><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b></li>{% endfor %}</ul>{% endif %}
         <a class="fp-bouton-principal" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
+        {% if st.sejours %}<a class="fp-bouton-second fp-bouton-sejours" href="#sejours">Voir nos séjours<small>{{ compte_sejours }} · demande de place en ligne</small></a>{% endif %}
         {% if st.site %}<a class="fp-bouton-second" data-stat="clic_site" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
         <p class="fp-contact-note">Profil gratuit, vu en entier par les seules structures vérifiées : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
       </aside>

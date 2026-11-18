@@ -561,6 +561,12 @@ class Site:
                       dates=[dict(d, debut=en_date(d["debut"]), fin=en_date(d["fin"])) for d in dates or [] if d["sejour_id"] == l["id"]])
             sj["a_venir"] = [d for d in sj["dates"] if d["fin"] >= auj]
             self.sejours.append(sj)
+            if sj["a_venir"]:
+                st.setdefault("sejours", []).append(sj)
+        for st in structures:
+            if st.get("sejours"):
+                st["sejours"].sort(key=lambda x: x["a_venir"][0]["debut"])
+                st["frise"] = self.frise_ete(st["sejours"])
         for sj in self.sejours:
             sj["proches"] = sorted([x for x in self.sejours if x is not sj and x["a_venir"] and x["age_min"] <= sj["age_max"] and x["age_max"] >= sj["age_min"]],
                                    key=lambda x: (x["structure"]["id"] == sj["structure"]["id"], x["departement"] != sj["departement"], x["a_venir"][0]["debut"]))[:4]
@@ -573,9 +579,34 @@ class Site:
                       structure=dict(ex["structure"], exemple=True, url="/recruter/exemple-de-page-structure/"))
             sj["dates"] = [dict(d, debut=en_date(d["debut"]), fin=en_date(d["fin"])) for d in sj["dates"]]
             sj["a_venir"] = sj["dates"]
+            # la page structure d'exemple montre aussi sa section « Nos séjours »
+            for pg in self.pages:
+                if pg["url"] == "/recruter/exemple-de-page-structure/":
+                    pg["structure"]["sejours"] = [sj]
+                    pg["structure"]["frise"] = self.frise_ete([sj])
             self.ajouter("/sejours/exemple/", "sejour.html", titre="Exemple de fiche séjour", indexer=False, sejour=sj, schema="",
                          description="À quoi ressemble la fiche d'un séjour sur Fil Roug'Anim : un exemple fictif.",
                          fil=[("Trouver un séjour", "/sejours/"), ("Exemple de fiche séjour", "/sejours/exemple/")])
+
+    def frise_ete(self, sejours):
+        """La frise de l'été sur la page structure : juillet et août, chaque date placée en pourcentage de la largeur."""
+        dates = [(sj, d) for sj in sejours if not sj["type"] == "accueil_mercredis" for d in sj["a_venir"] if d["debut"].month in (7, 8) or d["fin"].month in (7, 8)]
+        if not dates:
+            return None
+        an = dates[0][1]["debut"].year
+        debut, fin = dt.date(an, 7, 1), dt.date(an, 8, 31)
+        total = (fin - debut).days + 1
+        lignes = []
+        for sj, d in dates:
+            if d["debut"].year != an:
+                continue
+            a, b = max(d["debut"], debut), min(d["fin"], fin)
+            lignes.append({"titre": sj["titre"], "url": sj["url"], "age": f"{sj['age_min']}-{sj['age_max']} ans",
+                           "g": round((a - debut).days / total * 100, 2), "l": max(2.5, round(((b - a).days + 1) / total * 100, 2)),
+                           "complet": bool(d.get("complet") or d.get("places_restantes") == 0), "dates": f"{d['debut'].day}/{d['debut'].month:02d} → {d['fin'].day}/{d['fin'].month:02d}"})
+        semaines = [{"g": round(((dt.date(an, 7, 1) + dt.timedelta(days=7 * i)) - debut).days / total * 100, 2),
+                     "t": f"{(dt.date(an, 7, 1) + dt.timedelta(days=7 * i)).day}/{(dt.date(an, 7, 1) + dt.timedelta(days=7 * i)).month:02d}"} for i in range(9)]
+        return {"an": an, "lignes": lignes[:16], "semaines": semaines, "aout": round(31 / total * 100, 2)} if lignes else None
 
     def carte_sejour(self, sj):
         """Ce que la recherche de /sejours/ garde d'un séjour (statique/js/sejours.js) : de quoi filtrer et dessiner la carte."""
