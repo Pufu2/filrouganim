@@ -831,3 +831,7 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v26 (appliquée par migration) : alertes_sejour.confirmation_envoyee_le ; creer_alerte() ne garde que les critères connus
 -- (âge, période, département, envie, type) et freine les envois en masse. Confirmation par e-mail et effacement des
 -- alertes non confirmées après 7 jours : outils/abonnements.py (alertes_sejours). Page de lien : /sejours/alerte/.
+
+-- v27 / v27b (appliquées par migration) : structures.rappel_demandes_le (rappel du lundi), stats_sejours.type 'alerte'
+-- (envois du jeudi), admin_prospects.type 'organisateur' (prospection des organisateurs de séjours). Les e-mails :
+-- outils/abonnements.py (sejours_relances : alertes du jeudi, relance des familles à 5 jours, rappel du lundi).

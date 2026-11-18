@@ -15,7 +15,7 @@ Ces conditions s'appliquent aux structures (accueils de loisirs, organisateurs d
 
 ## Ce qui est gratuit
 
-Une fois vérifiée, toute structure a gratuitement, sans limite de durée : sa page sur Fil Roug'Anim (présentation, projet, publics, activités, photos), **une offre en ligne à la fois** et la réception des candidatures à cette offre.
+Une fois vérifiée, toute structure a gratuitement, sans limite de durée : sa page sur Fil Roug'Anim (présentation, projet, publics, activités, photos), **une offre en ligne à la fois** et la réception des candidatures à cette offre. Elle peut aussi publier **ses séjours et ses accueils de loisirs** (« Trouver un séjour »), sans limite de nombre, et recevoir **ses 2 premières demandes de place des familles en entier** (nom, e-mail, téléphone, message).
 
 ## Ce que comprend l'abonnement
 
@@ -27,7 +27,8 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 - ses offres « à la une », en tête des listes d'offres ;
 - des réponses toutes prêtes aux candidats ;
 - l'étiquette « Partenaire » sur sa page, et sa place en tête de l'annuaire des structures ;
-- la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus.
+- la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus ;
+- **toutes les demandes de place des familles en entier**, sans limite : à partir de la 3e demande, sans abonnement ni Pass, les demandes continuent d'arriver mais les coordonnées de la famille restent masquées ; elles s'affichent toutes, anciennes comprises, dès le paiement.
 
 ## Pass recrutement
 
@@ -77,6 +78,8 @@ Pour ajouter ou retirer des centres en cours d'année, la structure modifie la q
 Les structures qui s'abonnent pour leur activité professionnelle n'ont pas de droit de rétractation. Une association ou une personne qui s'abonne hors de toute activité professionnelle dispose de 14 jours après le paiement pour changer d'avis : il suffit d'écrire à {{ site.email }}, et elle est remboursée au prorata des jours déjà utilisés.
 
 ## Engagements de la structure
+
+Pour ses séjours et accueils de loisirs, la structure s'engage à publier des informations exactes (dates, prix, âges, encadrement, aides acceptées), à n'indiquer « Pass Colo » ou « VACAF » que si elle est conventionnée, à tenir les places à jour, à déclarer ses accueils de mineurs auprès des services de l'État comme la loi le demande, et à n'utiliser les coordonnées des familles que pour répondre à leur demande. L'inscription, le paiement et le contrat se font directement entre la famille et la structure : Fil Roug'Anim transmet la demande, sans commission, et n'est pas partie au contrat. Fil Roug'Anim peut retirer un séjour inexact ou non conforme.
 
 La structure s'engage à publier des offres réelles et conformes à la loi (en français, sans critère discriminatoire, sans limite d'âge supérieure, sans information trompeuse) et à n'utiliser les profils des candidats que pour recruter, sans les copier ni les transmettre. Fil Roug'Anim peut retirer une offre ou suspendre une page qui ne respecte pas ces règles ou les [conditions d'utilisation](/conditions-utilisation/), après avoir prévenu la structure ; en cas de manquement grave (usage des profils à d'autres fins, offre frauduleuse), l'abonnement peut être arrêté sans remboursement.
 

@@ -14,6 +14,7 @@ et SUPABASE_SECRET_KEY (déjà utilisée pour les chiffres).
 Usage : python3 outils/abonnements.py [--essai]   (--essai affiche ce qui serait écrit, sans rien écrire)
 """
 import base64
+import collections
 import datetime as dt
 import html
 import json
@@ -465,7 +466,7 @@ def demandes_sejours(cle_sb):
 def alertes_sejours(cle_sb):
     """Les alertes séjours des parents : l'e-mail « Confirmez votre alerte » (double confirmation) ; les alertes non
     confirmées sont effacées au bout de 7 jours. (L'envoi des nouveautés, le jeudi, viendra avec les pages Google.)"""
-    il_y_a_7j = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).isoformat()
+    il_y_a_7j = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     try:
         supabase("DELETE", f"alertes_sejour?confirme_le=is.null&cree_le=lt.{il_y_a_7j}", cle_sb)
         lignes = supabase("GET", "alertes_sejour?select=id,email,jeton,criteres&confirme_le=is.null&confirmation_envoyee_le=is.null&order=cree_le&limit=200", cle_sb) or []
@@ -509,6 +510,169 @@ def alertes_sejours(cle_sb):
         except Exception as e:
             print(f"Alerte séjours {a['id']} : confirmation non partie ({e}).")
     print(f"{len(lignes)} alerte(s) séjours : confirmation envoyée.")
+
+
+PERIODES_SJ = {"hiver": [("02-01", "03-15")], "printemps": [("04-01", "05-15")], "juillet": [("07-01", "07-31")], "aout": [("08-01", "08-31")],
+               "toussaint": [("10-15", "11-10")], "noel": [("12-18", "12-31"), ("01-01", "01-06")]}
+BANDES_SJ = {"3-5": (3, 5), "6-8": (6, 8), "9-11": (9, 11), "12-14": (12, 14), "15-17": (15, 17)}
+
+
+def sejours_publies(cle_sb):
+    """Les séjours en ligne (structure vérifiée), avec leurs dates à venir et leur structure."""
+    auj = dt.date.today().isoformat()
+    sj = supabase("GET", "sejours?select=id,slug,titre,type,age_min,age_max,envies,ville,departement,pays,region_dest,prix_min,prix_unite,aides,cree_le,"
+                         "structure_id,structures(nom,slug,verifiee)&statut=eq.publie", cle_sb) or []
+    sj = [x for x in sj if (x.get("structures") or {}).get("verifiee")]
+    if not sj:
+        return []
+    ds = supabase("GET", f"sejours_dates?select=sejour_id,debut,fin,places_restantes,complet&fin=gte.{auj}&order=debut&sejour_id=in.("
+                         + ",".join(str(x["id"]) for x in sj) + ")", cle_sb) or []
+    for x in sj:
+        x["dates"] = [d for d in ds if d["sejour_id"] == x["id"]]
+        x["url"] = CONFIG["url"].rstrip("/") + f"/sejours/{x['structures']['slug']}/{x['slug']}/"
+    return [x for x in sj if x["dates"]]
+
+
+def sejour_convient(x, c):
+    """Le même filtre que la recherche de /sejours/ (statique/js/sejours.js), côté serveur."""
+    if c.get("age") and not any(x["age_min"] <= BANDES_SJ[b][1] and x["age_max"] >= BANDES_SJ[b][0] for b in c["age"] if b in BANDES_SJ):
+        return False
+    journee = x["type"].startswith("accueil")
+    if c.get("type") == "sejour" and journee or c.get("type") == "journee" and not journee:
+        return False
+    if c.get("envie") and not set(c["envie"]) & set(x.get("envies") or []):
+        return False
+    if c.get("departement") and x.get("departement") != c["departement"]:
+        return False
+    per = [k for k in c.get("periode") or [] if k != "mercredis"]
+    if c.get("periode"):
+        if x["type"] == "accueil_mercredis":
+            return "mercredis" in c["periode"]
+        def dedans(d):
+            a_, b_ = d["debut"][5:], d["fin"][5:]
+            return any((a_ <= pl[1] and b_ >= pl[0]) or (a_ > b_ and (pl[0] <= b_ or pl[1] >= a_)) for k in per for pl in PERIODES_SJ.get(k, []))
+        if not any(dedans(d) for d in x["dates"]):
+            return False
+    return True
+
+
+def carte_mail(x):
+    d = x["dates"][0]
+    prix = f" · dès {x['prix_min']:g} €" if x.get("prix_min") is not None else ""
+    lieu = x.get("ville") or x.get("region_dest") or x.get("pays") or ""
+    ligne = f"{x['age_min']}-{x['age_max']} ans · {lieu} · {periode_fr(d['debut'], d['fin'])}{prix}"
+    return (f"{x['titre']} ({x['structures']['nom']})\n{ligne}\n{x['url']}",
+            f"<p style=\"margin:0 0 14px;padding:12px 16px;border:1px solid #ebe3d8;border-radius:12px\"><a href=\"{x['url']}\" style=\"color:#a8162a;font-weight:bold;font-size:16px\">{html.escape(x['titre'])}</a><br>"
+            f"<span style=\"color:#6b6264\">{html.escape(x['structures']['nom'])} · {html.escape(ligne)}</span></p>")
+
+
+def sejours_relances(cle_sb):
+    """Lot 8 des séjours (docs/PLAN-SEJOURS.md, parties 5 et 15) :
+    - le jeudi, les nouveaux séjours aux parents qui ont une alerte confirmée (6 au plus, seulement s'il y a du nouveau) ;
+    - 5 jours sans réponse à une demande : la famille reçoit 3 séjours proches ;
+    - le lundi, les structures sans abonnement qui ont des demandes masquées reçoivent un rappel."""
+    cle_brevo = os.environ.get("BREVO_API_KEY", "").strip()
+    if not cle_brevo:
+        return
+    sys.path.insert(0, str(RACINE / "outils"))
+    from alertes import envoyer
+    site = CONFIG["url"].rstrip("/")
+    exp = CONFIG.get("email_alertes") or CONFIG["email"]
+    maintenant = dt.datetime.now(dt.timezone.utc)
+    auj = dt.date.today()
+    try:
+        sejours = sejours_publies(cle_sb)
+    except urllib.error.HTTPError as e:
+        print(f"Séjours : non lus ({e.code})")
+        return
+    # 1. le jeudi : les alertes des parents
+    if auj.weekday() == 3 and sejours:
+        il_y_a_6j = (maintenant - dt.timedelta(days=6)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        alertes = supabase("GET", "alertes_sejour?select=id,email,jeton,criteres,confirme_le,dernier_envoi&confirme_le=not.is.null"
+                                  f"&or=(dernier_envoi.is.null,dernier_envoi.lt.{il_y_a_6j})&limit=1000", cle_sb) or []
+        envois_par_sejour = collections.Counter()
+        for a in alertes:
+            depuis = a.get("dernier_envoi") or a["confirme_le"]
+            nouveaux = [x for x in sejours if x["cree_le"] > depuis and sejour_convient(x, a.get("criteres") or {})][:6]
+            if not nouveaux:
+                continue
+            arret = f"{site}/sejours/alerte/?arreter={a['jeton']}"
+            cartes = [carte_mail(x) for x in nouveaux]
+            sujet = f"{len(nouveaux)} nouveau{'x' if len(nouveaux) > 1 else ''} séjour{'s' if len(nouveaux) > 1 else ''} pour vous"
+            texte = "Bonjour,\n\nDe nouveaux séjours correspondent à votre alerte :\n\n" + "\n\n".join(c[0] for c in cartes) + f"\n\nTous les séjours : {site}/sejours/\n\nArrêter cette alerte : {arret}"
+            html_c = ("<p>Bonjour,</p><p>De nouveaux séjours correspondent à votre alerte :</p>" + "".join(c[1] for c in cartes)
+                      + f"<p><a href=\"{site}/sejours/\" style=\"{BOUTON}\">Voir tous les séjours</a></p>"
+                      + f"<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail parce que vous avez créé et confirmé une alerte sur filrouganim.fr. <a href=\"{arret}\">Arrêter cette alerte</a> en un clic.</p>")
+            try:
+                envoyer(cle_brevo, exp, CONFIG["nom"], a["email"], sujet, texte, html_c)
+                supabase("PATCH", f"alertes_sejour?id=eq.{a['id']}", cle_sb, {"dernier_envoi": maintenant.isoformat()})
+                for x in nouveaux:
+                    envois_par_sejour[x["id"]] += 1
+            except Exception as e:
+                print(f"Alerte séjours {a['id']} : envoi raté ({e}).")
+        for sid, n in envois_par_sejour.items():
+            try:
+                deja = supabase("GET", f"stats_sejours?select=n&jour=eq.{auj.isoformat()}&sejour_id=eq.{sid}&type=eq.alerte", cle_sb) or []
+                if deja:
+                    supabase("PATCH", f"stats_sejours?jour=eq.{auj.isoformat()}&sejour_id=eq.{sid}&type=eq.alerte", cle_sb, {"n": deja[0]["n"] + n})
+                else:
+                    supabase("POST", "stats_sejours", cle_sb, {"jour": auj.isoformat(), "sejour_id": sid, "type": "alerte", "n": n})
+            except urllib.error.HTTPError as e:
+                print(f"Statistiques d'alerte du séjour {sid} : non écrites ({e.code}).")
+        if envois_par_sejour:
+            print(f"Alertes séjours du jeudi : {sum(envois_par_sejour.values())} séjour(s) envoyé(s).")
+    # 2. 5 jours sans réponse : 3 séjours proches à la famille (une seule fois)
+    il_y_a_5j = (maintenant - dt.timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    il_y_a_20j = (maintenant - dt.timedelta(days=20)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    attente = supabase("GET", "demandes_sejour?select=id,sejour_id,parent_nom,parent_email,enfant_age,cree_le&statut=eq.nouvelle&relance_famille_le=is.null"
+                              f"&cree_le=lt.{il_y_a_5j}&cree_le=gt.{il_y_a_20j}&limit=200", cle_sb) or []
+    for d in attente:
+        demande = next((x for x in sejours if x["id"] == d["sejour_id"]), None)
+        proches = [x for x in sejours if x["id"] != d["sejour_id"] and x["age_min"] <= d["enfant_age"] <= x["age_max"]
+                   and (not demande or (x["type"].startswith("accueil") == demande["type"].startswith("accueil")))]
+        if demande:
+            proches.sort(key=lambda x: (x.get("departement") != demande.get("departement"), abs((dt.date.fromisoformat(x["dates"][0]["debut"]) - dt.date.fromisoformat(demande["dates"][0]["debut"])).days)))
+        proches = proches[:3]
+        titre = demande["titre"] if demande else "votre séjour"
+        lien_age = f"{site}/sejours/?age=" + next((b for b, r in BANDES_SJ.items() if r[0] <= d["enfant_age"] <= r[1]), "")
+        texte = (f"Bonjour {d['parent_nom']},\n\nVotre demande pour « {titre} » n'a pas encore reçu de réponse. L'organisateur vous répondra sûrement, "
+                 "mais en attendant, voici d'autres séjours pour le même âge :\n\n" + "\n\n".join(carte_mail(x)[0] for x in proches) + f"\n\nTous les séjours pour cet âge : {lien_age}")
+        html_c = (f"<p>Bonjour {html.escape(d['parent_nom'])},</p><p>Votre demande pour « <b>{html.escape(titre)}</b> » n'a pas encore reçu de réponse. "
+                  "L'organisateur vous répondra sûrement ; en attendant, voici d'autres séjours pour le même âge :</p>"
+                  + ("".join(carte_mail(x)[1] for x in proches) or "<p>Pas d'autre séjour pour cet âge en ce moment.</p>")
+                  + f"<p><a href=\"{lien_age}\" style=\"{BOUTON}\">Voir les séjours pour cet âge</a></p>"
+                  + "<p style=\"color:#6b6264;font-size:13px\">Vous recevez cet e-mail une seule fois, à la suite de votre demande de place sur filrouganim.fr.</p>")
+        try:
+            envoyer(cle_brevo, exp, CONFIG["nom"], d["parent_email"], f"Pas encore de réponse pour « {titre} » ?", texte, html_c)
+        except Exception as e:
+            print(f"Relance famille {d['id']} : non partie ({e}).")
+            continue
+        supabase("PATCH", f"demandes_sejour?id=eq.{d['id']}", cle_sb, {"relance_famille_le": maintenant.isoformat()})
+    # 3. le lundi : les structures sans abonnement qui ont des demandes masquées
+    if auj.weekday() == 0:
+        fermees = supabase("GET", "demandes_sejour?select=structure_id&ouverte=eq.false", cle_sb) or []
+        nb = collections.Counter(x["structure_id"] for x in fermees)
+        if nb:
+            sts = supabase("GET", "structures?select=id,nom,email_contact,abonnement_fin,rappel_demandes_le&id=in.(" + ",".join(nb) + ")", cle_sb) or []
+            for st in sts:
+                if (st.get("abonnement_fin") or "") >= auj.isoformat() or st.get("rappel_demandes_le") == auj.isoformat() or not st.get("email_contact"):
+                    continue
+                n = nb[st["id"]]
+                lien = f"{site}/compte/?onglet=abonnement"
+                sujet = f"{n} famille{'s' if n > 1 else ''} vous {'attendent' if n > 1 else 'attend'} sur Fil Roug'Anim"
+                texte = (f"Bonjour,\n\n{n} demande{'s' if n > 1 else ''} de place pour vos séjours {'attendent' if n > 1 else 'attend'} votre réponse, avec les coordonnées masquées. "
+                         f"Débloquez-les avec l'abonnement ou le Pass recrutement (sans engagement) : {lien}\n\nL'équipe Fil Roug'Anim")
+                html_c = (f"<p>Bonjour,</p><p><b>{n} demande{'s' if n > 1 else ''} de place</b> pour vos séjours {'attendent' if n > 1 else 'attend'} votre réponse. "
+                          "Les familles ne savent pas encore si vous avez de la place : leurs coordonnées sont masquées tant que les demandes ne sont pas débloquées.</p>"
+                          f"<p><a href=\"{lien}\" style=\"{BOUTON}\">Débloquer les demandes</a></p>"
+                          "<p>L'abonnement, ou le Pass recrutement au mois sans engagement, affiche toutes les demandes, les nouvelles comme les anciennes.</p>"
+                          "<p style=\"color:#6b6264;font-size:13px\">Vous recevez ce rappel le lundi, tant que des demandes vous attendent. Il s'arrête dès qu'elles sont débloquées.</p>")
+                try:
+                    envoyer(cle_brevo, exp, CONFIG["nom"], st["email_contact"], sujet, texte, html_c)
+                    supabase("PATCH", f"structures?id=eq.{st['id']}", cle_sb, {"rappel_demandes_le": auj.isoformat()})
+                    print(f"Rappel du lundi : {st['nom']} ({n} demande(s) masquée(s)).")
+                except Exception as e:
+                    print(f"Rappel du lundi à {st['nom']} : non parti ({e}).")
 
 
 TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
@@ -569,6 +733,7 @@ if __name__ == "__main__":
     for etape in (main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
                   lambda: None if "--essai" in sys.argv or not cle else demandes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else alertes_sejours(cle),
+                  lambda: None if "--essai" in sys.argv or not cle else sejours_relances(cle),
                   lambda: None if "--essai" in sys.argv or not cle else prevenir_admin(cle)):
         try:
             etape()

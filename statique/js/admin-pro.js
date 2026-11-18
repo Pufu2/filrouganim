@@ -950,6 +950,12 @@
       "Bonjour,\n\nDes animateurs de votre secteur décrivent chaque semaine le poste qu'ils cherchent sur Fil Roug'Anim. Avec l'abonnement, leurs demandes arrivent directement chez {nom}.\n\nJe peux vous montrer comment ça marche en 5 minutes si vous voulez.\n\nBonne journée,\nRafael"],
       ["Dernière relance (14 jours)", "On garde votre place de fondateur ?",
       "Bonjour,\n\nIl reste quelques places au tarif fondateur (39,50 € par an, à vie). Voulez-vous que je vous en garde une ? Votre page reste gratuite dans tous les cas.\n\nBonne journée,\nRafael"]],
+    organisateur: [["Premier contact", "Vos séjours sur Fil Roug'Anim, gratuitement",
+      "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr). Le site ouvre « Trouver un séjour » : les familles cherchent une colo ou un accueil de loisirs par âge, période et envies, et demandent une place en ligne.\n\nVous pouvez y publier vos séjours gratuitement, avec photos, dates, places et aides acceptées (Pass Colo, VACAF). Vos 2 premières demandes de familles sont complètes sans rien payer.\n\nVoici à quoi ressemble une fiche : https://filrouganim.fr/sejours/exemple/\n\nVoulez-vous que je vous aide à publier le premier ?\n\nBonne journée,\nRafael · Fil Roug'Anim"],
+      ["Relance (7 jours)", "Re : vos séjours sur Fil Roug'Anim",
+      "Bonjour,\n\nJe reviens vers vous : publier un séjour prend une dizaine de minutes, et « Dupliquer » sert pour les suivants. Les familles qui cherchent dans votre secteur le trouvent ensuite par âge et par période, et Google aussi.\n\nPour commencer : https://filrouganim.fr/compte/?inscription=1&role=structure\n\nBonne journée,\nRafael"],
+      ["Dernière relance (14 jours)", "Dernière question",
+      "Bonjour,\n\nDernier message de ma part : préférez-vous que je publie votre premier séjour pour vous, à partir de votre brochure ou de votre site ? Il suffit de me répondre avec le lien.\n\nBonne journée,\nRafael"]],
     contact: [["Premier contact", "Fil Roug'Anim : vos recrutements d'animateurs",
       "Bonjour,\n\nJe suis Rafael, de Fil Roug'Anim (filrouganim.fr) : les animateurs et les stagiaires BAFA de votre secteur y décrivent le poste qu'ils cherchent, et leur demande arrive chez les structures les plus proches.\n\nCréer la page de {nom} prend 6 minutes et c'est gratuit (la page et une offre) : https://filrouganim.fr/recruter/\n\nBonne journée,\nRafael · Fil Roug'Anim"],
       ["Relance (7 jours)", "Re : vos recrutements d'animateurs", "Bonjour,\n\nJe reviens vers vous : avez-vous pu jeter un œil ? Je peux créer la page avec vous au téléphone si c'est plus simple.\n\nBonne journée,\nRafael"],
@@ -959,12 +965,14 @@
     if (type === "organisme") return ((ORG && ORG.suivis) || []).map(function (x) { var p = prospect("org:" + x.id); return Object.assign({ cle: "org:" + x.id, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [], infos: x.n + " sessions · " + x.villes + " villes", sessions: x.n, page: "https://filrouganim.fr" + (x.page || "/se-former/sessions/organismes/"), site: x.site }, p || {}); })
       .concat(((ORG && ORG.autres) || []).slice(0, 40).map(function (x) { var cle = "org-autre:" + x.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-"), p = prospect(cle); return Object.assign({ cle: cle, type: "organisme", nom: x.nom, statut: "a_contacter", etapes: [], infos: x.n + " sessions (sans page)", sessions: x.n, page: "https://filrouganim.fr/se-former/sessions/" }, p || {}); }));
     if (type === "structure") return D.structures.filter(function (s) { return !paye(s); }).map(function (s) { var cle = "st:" + s.id, p = prospect(cle); return Object.assign({ cle: cle, type: "structure", nom: s.nom || "Sans nom", email: s.email_contact, ville: s.ville, statut: "a_contacter", etapes: [], infos: (s.ville || "") + " · inscrite " + depuis(s.cree_le) }, p || {}); });
+    if (type === "organisateur") return D.structures.filter(function (s) { return s.type === "sejours" || (s.accueils || []).indexOf("sejours") >= 0; }).map(function (s) { var cle = "orga:" + s.id, p = prospect(cle); return Object.assign({ cle: cle, type: "organisateur", nom: s.nom || "Sans nom", email: s.email_contact, ville: s.ville, statut: "a_contacter", etapes: [], infos: (s.ville || "") + " · inscrite, organise des séjours" }, p || {}); })
+      .concat((PROS || []).filter(function (p) { return p.type === "organisateur"; }).map(function (p) { return Object.assign({ infos: p.ville || "" }, p); }));
     return (PROS || []).filter(function (p) { return p.type === "contact"; }).map(function (p) { return Object.assign({ infos: p.ville || "" }, p); });
   }
   function aRelancer(p) { var e = p.etapes || []; return p.statut === "contacte" && e.length && e.length < 3 && (Date.now() - new Date(e[e.length - 1].date)) > 7 * 864e5; }
   function prospection() {
     var c = $("ad-prospection"); if (!c) return; c.textContent = "";
-    var tous = contactsDe("organisme").concat(contactsDe("structure"), contactsDe("contact"));
+    var tous = contactsDe("organisme").concat(contactsDe("structure"), contactsDe("contact"), contactsDe("organisateur"));
     var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "À relancer"));
     cote.appendChild(el("p", "ap-cote-gros", String(compte(tous, aRelancer))));
     [["Contactés", compte(tous, function (p) { return p.statut !== "a_contacter"; })], ["Ont répondu", compte(tous, function (p) { return ["repondu", "interesse", "client"].indexOf(p.statut) >= 0; })], ["Clients", compte(tous, function (p) { return p.statut === "client"; })]].forEach(function (x) {
@@ -972,7 +980,7 @@
     hero(c, "Prospection", "Trouvez vos clients, ", "écrivez-leur au bon moment",
       "Les organismes de formation, les structures qui n'ont pas payé, et les contacts que vous ajoutez. Trois messages prêts par type (premier contact, relance à 7 jours, dernière relance) : un clic ouvre votre messagerie, et l'étape est notée.", [bouton("← Vue d'ensemble", "accueil")], cote);
     var on = el("div", "ap-puces ap-onglets-p"); c.appendChild(on);
-    [["organisme", "Organismes de formation"], ["structure", "Structures sans abonnement"], ["contact", "Contacts ajoutés"]].forEach(function (x) {
+    [["organisme", "Organismes de formation"], ["structure", "Structures sans abonnement"], ["organisateur", "Organisateurs de séjours"], ["contact", "Contacts ajoutés"]].forEach(function (x) {
       var b = el("button", null, x[1] + " " + contactsDe(x[0]).length); b.type = "button"; b.setAttribute("aria-pressed", pr.onglet === x[0] ? "true" : "false"); b.addEventListener("click", function () { pr.onglet = x[0]; prospection(); }); on.appendChild(b); });
     var g = el("div", "ap-pros"); c.appendChild(g);
     // à gauche : la séquence de messages
@@ -981,14 +989,14 @@
     seq.appendChild(el("p", "ap-petit", "{nom}, {sessions} et {page} se remplacent tout seuls. Vous pouvez retoucher le message dans votre messagerie avant de l'envoyer."));
     // à droite : les contacts
     var droite = el("div", "ap-col"); g.appendChild(droite);
-    if (pr.onglet === "contact") {
+    if (pr.onglet === "contact" || pr.onglet === "organisateur") {
       var ajout = carte(droite, "Ajouter un contact", "une structure repérée, un accueil de loisirs, une mairie…");
       var f = el("form", "ap-form"); [["nom", "Nom de la structure"], ["email", "E-mail"], ["ville", "Ville"]].forEach(function (x) { var i = el("input", "ap-recherche"); i.name = x[0]; i.placeholder = x[1]; if (x[0] === "email") i.type = "email"; f.appendChild(i); });
       var bt = el("button", "ap-bouton", "Ajouter"); bt.type = "submit"; f.appendChild(bt);
-      f.addEventListener("submit", function (e) { e.preventDefault(); if (!f.nom.value.trim()) return; enregistrerProspect({ cle: "contact:" + Date.now(), type: "contact", nom: f.nom.value.trim(), email: f.email.value.trim() || null, ville: f.ville.value.trim() || null, statut: "a_contacter", etapes: [] }); });
+      f.addEventListener("submit", function (e) { e.preventDefault(); if (!f.nom.value.trim()) return; enregistrerProspect({ cle: pr.onglet + ":" + Date.now(), type: pr.onglet, nom: f.nom.value.trim(), email: f.email.value.trim() || null, ville: f.ville.value.trim() || null, statut: "a_contacter", etapes: [] }); });
       ajout.appendChild(f);
     }
-    var lc = carte(droite, pr.onglet === "organisme" ? "Organismes de formation" : pr.onglet === "structure" ? "Structures sans abonnement" : "Vos contacts");
+    var lc = carte(droite, pr.onglet === "organisateur" ? "Organisateurs de séjours" : pr.onglet === "organisme" ? "Organismes de formation" : pr.onglet === "structure" ? "Structures sans abonnement" : "Vos contacts");
     var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Chercher…"; q.value = pr.q; lc.appendChild(q);
     var zone = el("div", "ap-pros-l"); lc.appendChild(zone);
     function remplir() {
@@ -1293,6 +1301,67 @@
     }
     IDX = tout;
   }
+  /* ---------- Séjours : ce que publient les structures, les demandes des familles, les alertes ---------- */
+  var SJ = null;
+  async function sejoursAdmin(recharger) {
+    var c = $("ad-sejours"); if (!c) return;
+    if (!SJ || recharger) {
+      var d30 = new Date(); d30.setDate(d30.getDate() - 30); var j30 = d30.toISOString().slice(0, 10);
+      var r = await Promise.all([E.sb.from("sejours").select("id,structure_id,slug,titre,type,age_min,age_max,statut,ville,departement,pays,cree_le,photos").order("cree_le", { ascending: false }),
+        E.sb.from("sejours_dates").select("sejour_id,debut,fin,places_restantes,complet").gte("fin", new Date().toISOString().slice(0, 10)).order("debut"),
+        E.sb.from("demandes_sejour").select("id,sejour_id,structure_id,statut,ouverte,cree_le,relance_famille_le").order("cree_le", { ascending: false }).limit(1000),
+        E.sb.from("alertes_sejour").select("id,confirme_le,dernier_envoi,criteres").limit(5000),
+        E.sb.from("stats_sejours").select("sejour_id,type,n").gte("jour", j30)]);
+      SJ = { sejours: r[0].data || [], dates: r[1].data || [], demandes: r[2].data || [], alertes: r[3].data || [], stats: r[4].data || [] };
+    }
+    c.textContent = "";
+    var noms = {}; (D.structures || []).forEach(function (st) { noms[st.id] = st; });
+    var auj = new Date().toISOString().slice(0, 10), d30 = new Date(Date.now() - 30 * 864e5).toISOString();
+    var enLigne = SJ.sejours.filter(function (x) { return x.statut === "publie" && SJ.dates.some(function (d) { return d.sejour_id === x.id; }); });
+    var dem30 = SJ.demandes.filter(function (d) { return d.cree_le >= d30; });
+    var masquees = SJ.demandes.filter(function (d) { return !d.ouverte; });
+    var sansReponse = SJ.demandes.filter(function (d) { return d.statut === "nouvelle" && (Date.now() - new Date(d.cree_le)) > 5 * 864e5; });
+    var confirmees = SJ.alertes.filter(function (a) { return a.confirme_le; });
+    var st30 = {}; SJ.stats.forEach(function (x) { var o = st30[x.sejour_id] = st30[x.sejour_id] || {}; o[x.type] = (o[x.type] || 0) + x.n; });
+    hero(c, "Séjours", "Les séjours, ", "côté familles",
+      "Ce que publient les structures (colos, mini-séjours, accueils de loisirs), les demandes de place des familles (sans leurs coordonnées) et les alertes. Les e-mails partent tout seuls : accusé de réception, nouvelle demande, alerte du jeudi, relance à 5 jours, rappel du lundi aux structures qui ont des demandes masquées.",
+      [bouton("Prospection : organisateurs", "prospection", true, "avion")]);
+    chiffres(c, [[fr(enLigne.length), "séjours en ligne", "rouge"], [fr(SJ.sejours.filter(function (x) { return x.statut === "brouillon"; }).length), "brouillons"],
+                 [fr(dem30.length), "demandes · 30 j"], [fr(masquees.length), "demandes masquées", masquees.length ? "rouge" : null], [fr(sansReponse.length), "sans réponse depuis 5 j"],
+                 [fr(confirmees.length), "alertes confirmées"], [fr(SJ.alertes.length - confirmees.length), "alertes à confirmer"]]);
+    // les structures qui ont des demandes masquées : de futures clientes
+    var parSt = {}; masquees.forEach(function (d) { parSt[d.structure_id] = (parSt[d.structure_id] || 0) + 1; });
+    var ids = Object.keys(parSt).sort(function (a, b) { return parSt[b] - parSt[a]; });
+    if (ids.length) {
+      var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Structures avec des demandes masquées · " + ids.length)); c.appendChild(s1);
+      c.appendChild(el("p", "ap-petit", "Elles ont utilisé leurs 2 demandes gratuites : le rappel du lundi leur propose l'abonnement ou le Pass. Un petit mot de vous en plus fait souvent la différence."));
+      tableau(c, ["Structure", "Masquées", ""], ids.map(function (id) { var st = noms[id] || {};
+        return [cellule(st.nom || id, [st.ville, st.email_contact].filter(Boolean).join(" · ")), String(parSt[id]),
+          actions([st.email_contact ? ["Écrire", null, "mailto:" + st.email_contact + "?subject=" + encodeURIComponent(parSt[id] + " familles vous attendent sur Fil Roug'Anim")] : null, ["Espace", function () { ouvrirEspace("structure", id); }]])]; }));
+    }
+    // tous les séjours
+    var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot")); s2.appendChild(document.createTextNode("Tous les séjours · " + SJ.sejours.length)); c.appendChild(s2);
+    tableau(c, ["Séjour", "Structure", "Prochaine date", "30 jours", "État", ""], SJ.sejours.map(function (x) {
+      var st = noms[x.structure_id] || {}, d = SJ.dates.filter(function (y) { return y.sejour_id === x.id; })[0], o = st30[x.id] || {};
+      var nd = SJ.demandes.filter(function (y) { return y.sejour_id === x.id; }).length;
+      var url = st.slug ? "/sejours/" + st.slug + "/" + x.slug + "/" : null;
+      var etat = x.statut === "publie" ? (d ? (st.verifiee ? ["en ligne", "ok"] : ["structure à vérifier", "jaune"]) : ["sans date à venir", ""]) : x.statut === "pause" ? ["en pause", ""] : ["brouillon", ""];
+      return [cellule(x.titre, x.age_min + "-" + x.age_max + " ans · " + (x.ville || x.pays) + (x.photos && x.photos.length ? "" : " · sans photo")), cellule(st.nom || "–", st.ville),
+        d ? E.dateFr(d.debut) + (d.complet || d.places_restantes === 0 ? " (complet)" : "") : "–",
+        cellule((o.vue || 0) + " vues", (o.demande || 0) + " demandes · " + (o.alerte || 0) + " envois d'alerte · " + nd + " au total"), etiquette(etat[0], etat[1]),
+        actions([url && x.statut === "publie" ? ["Voir", null, url] : null,
+          x.statut === "brouillon" ? null : [x.statut === "publie" ? "Mettre en pause" : "Remettre en ligne", async function () { var q = await E.sb.from("sejours").update({ statut: x.statut === "publie" ? "pause" : "publie" }).eq("id", x.id); if (q.error) return E.message(E.erreur(q.error), true); E.message("C'est fait. La page publique suit à la prochaine mise à jour du site."); sejoursAdmin(true); }],
+          ["Espace", function () { ouvrirEspace("structure", x.structure_id); }]])];
+    }));
+    // ce que cherchent les parents (les alertes)
+    if (SJ.alertes.length) {
+      var s3 = el("p", "ap-titre-s"); s3.appendChild(el("i", "ap-dot")); s3.appendChild(document.createTextNode("Ce que cherchent les parents (alertes)")); c.appendChild(s3);
+      var cpt = {}; SJ.alertes.forEach(function (a) { var k = a.criteres || {}; (k.age || []).forEach(function (v) { cpt[v + " ans"] = (cpt[v + " ans"] || 0) + 1; }); (k.periode || []).forEach(function (v) { cpt[v] = (cpt[v] || 0) + 1; }); (k.envie || []).forEach(function (v) { cpt[v] = (cpt[v] || 0) + 1; }); if (k.departement) cpt["dép. " + k.departement] = (cpt["dép. " + k.departement] || 0) + 1; });
+      var pu = el("div", "ap-puces"); Object.keys(cpt).sort(function (a, b) { return cpt[b] - cpt[a]; }).slice(0, 24).forEach(function (k) { pu.appendChild(el("span", "ap-etiq", k + " · " + cpt[k])); }); c.appendChild(pu);
+      c.appendChild(el("p", "ap-petit", "Utile pour la prospection : démarchez en priorité les organisateurs qui proposent ce que les parents attendent."));
+    }
+  }
+
   window.FRA_ADMIN_PRO = {
     rendre: async function (donnees, actions) {
       D = donnees; A = actions; E = window.FRA_ESPACE;
@@ -1300,6 +1369,7 @@
       if (!S) { S = {}; QG(); ventes(); accueil(); await toutLire(); }
       accueil(); QG(); sante(); ventes();
       membresPage(); enteteStructures(); enteteAnimateurs(); organismes(); visibilite(); provenance(); prospection();
+      sejoursAdmin().catch(function (e) { console.error(e); });
       indexation(); actualites(); contenusSite(); reseaux(); enteteGuides();
       var p = document.querySelector('[data-pastille-admin="qg"]'); var n = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
       if (p) { p.hidden = !n; p.textContent = n; }
