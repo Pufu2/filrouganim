@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# Les pages locales pour Google (build.py, pages_locales) : une page par public, par sujet et par lieu
+   (département, région, grande ville), avec les vraies données du lieu : offres, structures vérifiées, sessions
+   de formation proches, dates des vacances de la zone, départements voisins. Trois publics :
+   « anim » (animateurs et directeurs), « struct » (structures qui recrutent), « parent » (inscrire son enfant). #}
+{% set L = page.local %}
+{% block tete_note %}<p class="tp-sur">{{ L.sur }}</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">{{ page.intro }}</p>
+{% if L.chiffres %}<ul class="lc-chiffres">{% for n, t in L.chiffres %}<li><b>{{ n }}</b><span>{{ t }}</span></li>{% endfor %}</ul>{% endif %}
+<p class="lc-actions">{% for t, u, fort in L.actions %}<a class="{{ 'bouton-r' if fort else 'bouton-blanc' }}" href="{{ lien(u) if u.startswith('/') else u }}">{{ t }}</a>{% endfor %}</p>{% endblock %}
+{% block contenu %}
+<div class="lc lc-{{ L.public }}">
+  <div class="cadre">
+    {% for b in L.blocs %}
+    <section class="lc-bloc{% if b.large %} lc-large{% endif %}" aria-labelledby="lc-t{{ loop.index }}">
+      <h2 id="lc-t{{ loop.index }}">{{ b.titre }}</h2>
+      {% for p in b.paras or [] %}<p>{{ p }}</p>{% endfor %}
+      {% if b.points %}<ul class="lc-points">{% for p in b.points %}<li>{% if p is string %}{{ p }}{% else %}<b>{{ p[0] }}</b> {{ p[1] }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+      {% if b.offres %}<div class="sessions">{% for o in b.offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
+      {% if b.sessions %}<div class="sessions">{% for s in b.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}</div>{% endif %}
+      {% if b.structures %}<ul class="lc-structures">{% for st in b.structures %}<li><a href="{{ lien(st.url) }}"><b>{{ st.nom }}</b><span>{{ st.sous }}</span></a></li>{% endfor %}</ul>{% endif %}
+      {% if b.sejours %}<ul class="lc-structures">{% for sj in b.sejours %}<li><a href="{{ lien(sj.url) }}"><b>{{ sj.titre }}</b><span>{{ sj.sous }}</span></a></li>{% endfor %}</ul>{% endif %}
+      {% if b.vacances %}<table class="lc-vacances"><caption class="sr-only">Les dates des vacances scolaires</caption><tbody>{% for nom, dates in b.vacances %}<tr><th scope="row">{{ nom }}</th><td>{{ dates }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+      {% if b.vide %}<p class="lc-vide">{{ b.vide }}</p>{% endif %}
+      {% if b.lien %}<p class="lc-lien"><a href="{{ lien(b.lien[1]) }}">{{ b.lien[0] }} <span aria-hidden="true">→</span></a></p>{% endif %}
+    </section>
+    {% endfor %}
+
+    {% if page.faq_page %}<section class="lc-bloc lc-large" aria-labelledby="lc-faq"><h2 id="lc-faq">Questions fréquentes</h2>{{ m.faq(page.faq_page, lien) }}</section>{% endif %}
+
+    <nav class="lc-voisins" aria-label="Pages proches">
+      {% for titre, liens in L.voisins if liens %}
+      <div><p class="sjc-v-t">{{ titre }}</p><ul>{% for t, u in liens %}<li><a href="{{ lien(u) }}">{{ t }}</a></li>{% endfor %}</ul></div>
+      {% endfor %}
+    </nav>
+  </div>
+</div>
+{% endblock %}

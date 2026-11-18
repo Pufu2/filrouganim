@@ -15,6 +15,7 @@ import datetime as dt
 import hashlib
 import html
 import json
+import math
 import os
 import posixpath
 import re
@@ -703,6 +704,438 @@ class Site:
             if pg["url"] == "/":
                 pg["sejours_une"] = une if len(a_venir) >= 3 else []
 
+    # ------------------------------------------------------------------------------------------------------------
+    def pages_locales(self, structures):
+        """Les pages locales pour Google : pour chaque département, région et grande ville, une page par public et par
+        sujet (emploi d'animateur, stage pratique, direction ; recruter des animateurs, un directeur, un stagiaire ;
+        centre de loisirs, colo, périscolaire). Chaque page est remplie avec les vraies données du lieu : offres,
+        structures vérifiées, séjours, sessions de formation proches, vacances de la zone, départements voisins."""
+        auj = self.aujourdhui
+        deps = list(self.departements.values())
+        par_reg = collections.defaultdict(list)
+        for d in deps:
+            par_reg[d["reg"]["id"]].append(d)
+        bafa = [s for s in self.sessions if s["diplome"] == "BAFA"]
+        bafd = [s for s in self.sessions if s["diplome"] == "BAFD"]
+        pros = [s for s in self.sessions if s["diplome"] in ("BPJEPS", "CPJEPS", "DEJEPS", "DESJEPS")]
+        st_url = {st["slug"]: f"/trouver-un-poste/structures/{st['slug']}/" for st in structures}
+        sej = [x for x in getattr(self, "sejours", []) if x.get("a_venir")]
+
+        def dist(a, b):
+            if not a or not b:
+                return 9999
+            la1, lo1, la2, lo2 = map(math.radians, (a[0], a[1], b[0], b[1]))
+            h = math.sin((la2 - la1) / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
+            return 6371 * 2 * math.asin(math.sqrt(h))
+        voisins = {}
+        for d in deps:
+            c = self.centres_dep.get(d["code"])
+            voisins[d["code"]] = sorted([x for x in deps if x is not d], key=lambda x: dist(c, self.centres_dep.get(x["code"])))[:5]
+        def vacances(dep):
+            out = []
+            for p in self.periodes:
+                if (p["zones"][dep["zone"]]["fin"] if p["zones"] else p["fin"]) >= auj:
+                    out.append((p["court"], self.dates_vacances(p, dep)))
+            return out[:5]
+        def un(n, mot, pl=None):
+            return f"{n} {mot if n <= 1 else (pl or mot + 's')}"
+        def var(cle, choix):
+            return choix[sum(ord(c) for c in cle) % len(choix)]
+        def carte_st(st):
+            acc = ", ".join(ACCUEILS.get(a, a).lower() for a in (st.get("accueils") or [])[:3] if a != "autre")
+            return {"nom": st["nom"], "url": st_url[st["slug"]], "sous": f"{TYPES_STRUCTURE.get(st['type'], 'Structure')} · {st['ville']}" + (f" · {acc}" if acc else "")}
+        def carte_sj(x):
+            return {"titre": x["titre"], "url": x["url"], "sous": f"{SEJ_TYPES.get(x['type'], ('Séjour',))[0]} · {x['age_min']}-{x['age_max']} ans · {x['structure']['nom']}" + (f" · dès {int(x['prix_min'])} €" if x.get("prix_min") else "")}
+        def fg(ls):
+            return [s for s in ls if s["type"] in ("formation-generale", "parcours")]
+        def prix_min(ls):
+            p = [s["prix"] for s in ls if s.get("prix")]
+            return f"{int(min(p))} €" if p else None
+
+        familles = collections.defaultdict(list)   # (public, sujet) -> [(nom, url)]
+        a_faire = []                                # (url, titre, h1, description, intro, local, faq, fil, indexer)
+        TP, REC, ENF = ("Animateurs & directeurs", "/trouver-un-poste/"), ("Structures", "/recruter/"), ("Inscrire mon enfant", "/enfants/")
+        cee = "Un animateur en colo ou en accueil de loisirs pendant les vacances est le plus souvent embauché en contrat d'engagement éducatif (CEE) : au moins 2,20 fois le SMIC horaire par jour travaillé, 80 jours au plus sur 12 mois, et un repos quotidien et hebdomadaire encadré par la loi. À l'année (périscolaire, mercredis), c'est un CDD ou un CDI à temps partiel, souvent dans une mairie ou une association."
+        stage = "Le stage pratique du BAFA dure au moins 14 jours effectifs, dans un accueil collectif de mineurs déclaré (colo, accueil de loisirs, périscolaire, en une ou deux parties). Il doit commencer dans les 18 mois qui suivent la formation générale, et tout le BAFA se termine en 30 mois au plus. Le stage peut être rémunéré : en pratique, la plupart des stagiaires en colo sont payés en CEE."
+        direction = "Un séjour de vacances ou un accueil de loisirs est dirigé par un titulaire du BAFD (ou stagiaire BAFD), ou d'un diplôme professionnel de l'animation. Pour un accueil de loisirs de plus de 80 mineurs ouvert plus de 80 jours par an, un diplôme professionnel est demandé (BPJEPS, DEJEPS…)."
+        taux = ["En accueil de loisirs et en séjour de vacances : un animateur pour 8 enfants de moins de 6 ans, un pour 12 enfants de 6 ans et plus.",
+                "En périscolaire : un pour 10 enfants de moins de 6 ans et un pour 14 de 6 ans et plus (un pour 14 et un pour 18 avec un projet éducatif territorial).",
+                "Dans l'équipe : au moins la moitié de diplômés BAFA (ou équivalent), au plus 20 % sans qualification."]
+
+        for d in deps:
+            code, nom, a_, de = d["code"], d["nom"], d["a"], d["de"]
+            v_liens = voisins[code]
+            s_dep, f_dep = [s for s in bafa if s["departement"] == code], fg([s for s in bafa if s["departement"] == code])
+            ap_dep = [s for s in s_dep if s["type"] == "approfondissement"]
+            d_dep = [s for s in bafd if s["departement"] == code]
+            p_dep = [s for s in pros if s["departement"] == code]
+            o_dep = [o for o in self.offres if o["departement"] == code]
+            o_stage = [o for o in o_dep if o["poste"] in ("stagiaire-bafa", "stagiaire_bafa") or "stag" in (o["poste"] or "") or "stage" in (o["intitule"] or "").lower()]
+            o_dir = [o for o in o_dep if "direct" in (o["poste"] or "") or "direct" in (o["intitule"] or "").lower()]
+            st_dep = [st for st in structures if st["departement"] == code]
+            st_acc = [st for st in st_dep if set(st.get("accueils") or []) & {"periscolaire", "extrascolaire", "accueil-de-jeunes"}]
+            sj_depart = [x for x in sej if x.get("departement") == code or any((t.get("ville") or "") and self.geo.get(f"{code}|{t.get('ville')}") for t in (x.get("transport") or []))]
+            sj_acc = [x for x in sej if x["type"].startswith("accueil") and x.get("departement") == code]
+            vac = vacances(d)
+            villes_s = [v for v, _ in collections.Counter(s["ville"] for s in f_dep).most_common(6)]
+            ville_txt = (", ".join(villes_s[:-1]) + " et " + villes_s[-1]) if len(villes_s) > 1 else (villes_s[0] if villes_s else "")
+            org_n = len({s["org"]["nom"] for s in s_dep})
+
+            # ---------------- animateurs : emploi d'animateur
+            url = f"/trouver-un-poste/emploi-animateur/{d['slug']}/"
+            blocs = []
+            blocs.append({"titre": f"Les offres d'animation {a_}", "offres": o_dep[:8], "large": True,
+                          "vide": None if o_dep else f"Pas d'offre en ligne {a_} en ce moment. Les structures vérifiées publient au fil de l'année, surtout de janvier à mai pour l'été : créez votre profil, elles peuvent vous écrire avant même de publier.",
+                          "lien": ("Toutes les offres, avec les filtres", "/trouver-un-poste/offres/")})
+            blocs.append({"titre": f"Les structures qui recrutent {a_}", "structures": [carte_st(x) for x in st_dep[:12]],
+                          "paras": [f"Centres de loisirs, mairies, associations et organisateurs de colos : {un(len(st_dep), 'structure vérifiée')} {a_} sur Fil Roug'Anim." if st_dep else
+                                    var(code, [f"Les premières structures {de} arrivent sur le site. En attendant, décrivez le poste que vous cherchez : votre demande part chez les structures les plus proches de chez vous.",
+                                               f"Aucune structure {de} n'a encore sa page ici. Décrivez ce que vous cherchez : les structures vérifiées les plus proches reçoivent votre demande et vous répondent."])],
+                          "lien": ("Décrire le poste que je cherche", "/trouver-un-poste/demande/")})
+            blocs.append({"titre": "Le contrat et la paie", "paras": [cee]})
+            blocs.append({"titre": f"Pas encore le BAFA ? Les sessions {a_}", "sessions": f_dep[:5],
+                          "paras": [f"{un(len(f_dep), 'session')} de formation générale à venir {a_}" + (f", surtout à {ville_txt}" if ville_txt else "") + (f", à partir de {prix_min(f_dep)}" if prix_min(f_dep) else "") + "." if f_dep else f"Pas de session de formation générale relevée {a_} pour l'instant : regardez les départements voisins plus bas."],
+                          "lien": (f"Toutes les sessions BAFA {a_}", f"/se-former/sessions/{d['slug']}/")})
+            if vac:
+                blocs.append({"titre": f"Quand on recrute {a_}", "paras": [f"Le département est en zone {d['zone']} des vacances scolaires. Les structures cherchent leurs équipes 2 à 4 mois avant chaque période : pour l'été, dès janvier."], "vacances": vac})
+            faq = [{"q": f"Combien gagne un animateur {a_} ?", "r": "En contrat d'engagement éducatif, au moins 2,20 fois le SMIC horaire par jour travaillé, souvent davantage en colo (nourri, logé). En périscolaire, la paie est horaire, selon la grille de la mairie ou de l'association."},
+                   {"q": "Faut-il le BAFA pour être animateur ?", "r": "Non, pas toujours : une équipe peut compter jusqu'à 20 % d'animateurs sans qualification. Mais le BAFA (ou un équivalent) est demandé pour la plupart des postes, et au moins la moitié de l'équipe doit l'avoir."},
+                   {"q": f"Où trouver un stage pratique BAFA {a_} ?", "r": "Dans les centres de loisirs de votre ville, les colos et le périscolaire. Créez votre profil sur Fil Roug'Anim et décrivez ce que vous cherchez : les structures de votre secteur reçoivent votre demande."}]
+            a_faire.append((url, f"Emploi animateur {nom} ({code}) : offres, structures et BAFA", f"Emploi d'animateur {a_}",
+                            f"Travailler comme animateur {a_} ({code}) : les offres en ligne, les structures vérifiées qui recrutent, le contrat CEE et la paie, les sessions BAFA proches et les vacances de la zone {d['zone']}.",
+                            f"Colos, centres de loisirs, périscolaire : tout pour trouver un poste d'animateur {a_}, avec les offres, les structures du département et les sessions BAFA proches.",
+                            {"public": "anim", "sur": f"Animateurs · {nom} ({code})", "chiffres": [(len(o_dep), "offres en ligne"), (len(st_dep), "structures vérifiées"), (len(f_dep), "sessions BAFA à venir")],
+                             "actions": [("Créer mon profil", "/compte/?inscription=1&role=candidat", True), ("Décrire ce que je cherche", "/trouver-un-poste/demande/", False)], "blocs": blocs},
+                            faq, [TP, ("Emploi animateur", "/trouver-un-poste/emploi-animateur/"), (nom, url)], True, ("anim", "emploi"), nom))
+
+            # ---------------- animateurs : stage pratique BAFA
+            url = f"/trouver-un-poste/stage-pratique-bafa/{d['slug']}/"
+            blocs = [{"titre": f"Les offres de stage pratique {a_}", "offres": (o_stage or o_dep)[:8], "large": True,
+                      "vide": None if (o_stage or o_dep) else f"Aucune offre de stage en ligne {a_} aujourd'hui. Le plus efficace : décrire ce que vous cherchez (dates, type d'accueil, âge des enfants). Votre demande part chez les structures les plus proches.",
+                      "lien": ("Décrire le stage que je cherche", "/trouver-un-poste/demande/")},
+                     {"titre": "Les règles du stage pratique", "paras": [stage]},
+                     {"titre": f"Où faire son stage {a_}", "structures": [carte_st(x) for x in st_dep[:10]],
+                      "points": [("Accueils de loisirs :", f"les centres des mairies {de}, les mercredis et pendant les vacances : le plus simple pour un premier stage, sans dormir sur place."),
+                                 ("Colos et séjours :", "souvent logé et nourri, au départ de votre ville ou ailleurs en France."),
+                                 ("Périscolaire :", "le matin, le midi et le soir, en semaine : le stage se fait alors en plusieurs parties.")]},
+                     {"titre": f"Après le stage : l'approfondissement {a_}", "sessions": ap_dep[:4],
+                      "paras": [f"{un(len(ap_dep), 'session')} d'approfondissement ou de qualification à venir {a_}." if ap_dep else f"Pas d'approfondissement relevé {a_} pour l'instant : les sessions des départements voisins sont plus bas."],
+                      "lien": ("Les approfondissements BAFA", "/se-former/sessions/approfondissement/")}]
+            if vac:
+                blocs.append({"titre": "Les vacances de la zone, pour caler votre stage", "vacances": vac})
+            faq = [{"q": "Le stage pratique BAFA est-il payé ?", "r": "Souvent oui, en contrat d'engagement éducatif, surtout en colo. Ce n'est pas obligatoire : certaines structures proposent un stage non rémunéré, mais c'est de plus en plus rare."},
+                   {"q": "Combien de temps dure le stage pratique ?", "r": "14 jours effectifs au minimum, en une ou deux parties, dans un accueil collectif de mineurs déclaré."},
+                   {"q": "Dans quel délai faire le stage après la formation générale ?", "r": "Il doit commencer dans les 18 mois qui suivent la formation générale ; l'ensemble du BAFA se termine en 30 mois au plus."}]
+            a_faire.append((url, f"Stage pratique BAFA {nom} ({code}) : offres et structures", f"Trouver son stage pratique BAFA {a_}",
+                            f"Stage pratique BAFA {a_} ({code}) : les offres de stage, les structures vérifiées qui accueillent des stagiaires, les règles (14 jours, 18 mois) et les approfondissements proches.",
+                            f"Accueil de loisirs, colo ou périscolaire : les pistes concrètes pour trouver votre stage pratique BAFA {a_}, et les règles à connaître.",
+                            {"public": "anim", "sur": f"Stage pratique BAFA · {nom}", "chiffres": [(len(o_stage or o_dep), "offres de stage"), (len(st_dep), "structures vérifiées"), (len(ap_dep), "approfondissements à venir")],
+                             "actions": [("Décrire le stage que je cherche", "/trouver-un-poste/demande/", True), ("Créer mon profil", "/compte/?inscription=1&role=candidat", False)], "blocs": blocs},
+                            faq, [TP, ("Stage pratique BAFA", "/trouver-un-poste/stage-pratique-bafa/"), (nom, url)], True, ("anim", "stage"), nom))
+
+            # ---------------- animateurs : direction
+            url = f"/trouver-un-poste/emploi-directeur/{d['slug']}/"
+            blocs = [{"titre": f"Les postes de direction {a_}", "offres": o_dir[:8], "large": True,
+                      "vide": None if o_dir else f"Pas d'offre de direction en ligne {a_} aujourd'hui. Les postes de directeur se pourvoient souvent par le bouche-à-oreille : un profil complet (BAFD, expériences, disponibilités) permet aux structures de vous trouver.",
+                      "lien": ("Créer mon profil de directeur", "/compte/?inscription=1&role=candidat")},
+                     {"titre": "Ce qu'il faut pour diriger", "paras": [direction]},
+                     {"titre": f"Le BAFD {a_}", "sessions": d_dep[:5],
+                      "paras": [f"{un(len(d_dep), 'session')} BAFD à venir {a_}." if d_dep else f"Pas de session BAFD relevée {a_} pour l'instant."] + ([f"Et {un(len(p_dep), 'formation professionnelle')} (BPJEPS, DEJEPS…) dans le département."] if p_dep else []),
+                      "lien": ("Toutes les sessions BAFD", "/se-former/sessions/bafd/")},
+                     {"titre": f"Les structures {de}", "structures": [carte_st(x) for x in st_dep[:10]],
+                      "vide": None if st_dep else f"Les structures {de} arrivent sur le site : décrivez le poste de direction que vous cherchez, votre demande leur parvient.",
+                      "lien": ("Décrire le poste que je cherche", "/trouver-un-poste/demande/")}]
+            faq = [{"q": "Combien gagne un directeur de colo ?", "r": "En contrat d'engagement éducatif, la paie est fixée par jour et dépasse le minimum légal (2,20 SMIC horaire) ; elle dépend de l'organisateur, de la taille du séjour et de l'expérience. À l'année, un directeur d'accueil de loisirs est souvent salarié d'une mairie ou d'une association."},
+                   {"q": "Peut-on diriger en étant stagiaire BAFD ?", "r": "Oui : le stage pratique du BAFD se fait justement en situation de direction (ou d'adjoint), dans un accueil déclaré."}]
+            a_faire.append((url, f"Directeur ACM {nom} ({code}) : postes de direction, BAFD", f"Diriger un séjour ou un accueil {a_}",
+                            f"Directeur de colo ou d'accueil de loisirs {a_} ({code}) : les postes de direction, les règles (BAFD, diplômes professionnels), les sessions BAFD et les structures du département.",
+                            f"Directeur, directrice ou adjoint : les postes de direction {a_}, ce qu'il faut pour diriger et les formations proches.",
+                            {"public": "anim", "sur": f"Direction · {nom} ({code})", "chiffres": [(len(o_dir), "postes de direction"), (len(d_dep), "sessions BAFD"), (len(st_dep), "structures vérifiées")],
+                             "actions": [("Créer mon profil", "/compte/?inscription=1&role=candidat", True), ("Décrire ce que je cherche", "/trouver-un-poste/demande/", False)], "blocs": blocs},
+                            faq, [TP, ("Emploi directeur", "/trouver-un-poste/emploi-directeur/"), (nom, url)], True, ("anim", "direction"), nom))
+
+            # ---------------- structures : recruter des animateurs
+            url = f"/recruter/animateurs-bafa/{d['slug']}/"
+            blocs = [{"titre": f"Le vivier d'animateurs {a_}",
+                      "paras": [(f"{un(len(f_dep), 'session')} de formation générale BAFA à venir {a_}" + (f" (dont à {ville_txt})" if ville_txt else "") + f", par {un(org_n, 'organisme')} : autant de stagiaires qui chercheront leur stage pratique dans les 18 mois." if f_dep else f"Peu de sessions BAFA {a_} : les stagiaires viennent aussi des départements voisins.") ,
+                                "Sur Fil Roug'Anim, les animateurs et directeurs créent un profil gratuit : diplômes, disponibilités, départements où ils peuvent travailler. Les structures vérifiées les consultent et leur écrivent directement."],
+                      "sessions": f_dep[:3]},
+                     {"titre": "Publier une offre, gratuitement", "points": [("Votre page :", "votre projet, vos publics, vos photos, visibles dans l'annuaire et sur Google."),
+                                                                             ("Une offre gratuite :", "stage pratique, job d'été ou poste à l'année, avec candidature directe."),
+                                                                             ("Les demandes des animateurs :", f"ceux qui décrivent le poste qu'ils cherchent {a_} arrivent chez les structures les plus proches.")],
+                      "lien": ("Créer la page de ma structure", "/compte/?inscription=1&role=structure")},
+                     {"titre": "Les taux d'encadrement", "points": taux},
+                     {"titre": f"Les structures déjà présentes {a_}", "structures": [carte_st(x) for x in st_dep[:10]],
+                      "vide": None if st_dep else f"Aucune structure {de} n'a encore sa page : les premières sont les plus visibles."}]
+            if vac:
+                blocs.append({"titre": "Le calendrier de recrutement", "paras": [f"Zone {d['zone']} : publiez 2 à 4 mois avant chaque période, dès janvier pour l'été."], "vacances": vac})
+            faq = [{"q": f"Comment recruter un animateur BAFA {a_} ?", "r": "Publiez une offre gratuite sur Fil Roug'Anim et consultez les profils des animateurs de votre secteur. Pensez aux organismes de formation BAFA du département : leurs stagiaires cherchent un stage pratique."},
+                   {"q": "Quel contrat pour un animateur de vacances ?", "r": "Le contrat d'engagement éducatif (CEE) est fait pour les accueils collectifs de mineurs occasionnels : au moins 2,20 SMIC horaire par jour, 80 jours au plus sur 12 mois."},
+                   {"q": "Combien coûte Fil Roug'Anim ?", "r": "La page de la structure et une offre sont gratuites. L'abonnement donne accès aux profils complets et aux demandes des animateurs de votre secteur."}]
+            a_faire.append((url, f"Recruter des animateurs BAFA {nom} ({code})", f"Recruter des animateurs {a_}",
+                            f"Recruter des animateurs BAFA {a_} ({code}) : le vivier (sessions BAFA, stagiaires), l'offre gratuite, les taux d'encadrement et le calendrier de la zone {d['zone']}.",
+                            f"Centres de loisirs, mairies, associations, organisateurs de colos {de} : trouvez vos animateurs et vos stagiaires BAFA, avec une page et une offre gratuites.",
+                            {"public": "struct", "sur": f"Structures · {nom} ({code})", "chiffres": [(len(f_dep), "sessions BAFA à venir"), (org_n, "organismes de formation"), (len(st_dep), "structures déjà présentes")],
+                             "actions": [("Publier une offre gratuite", "/compte/?inscription=1&role=structure", True), ("Voir un exemple de page", "/recruter/exemple-de-page-structure/", False)], "blocs": blocs},
+                            faq, [REC, ("Recruter des animateurs", "/recruter/animateurs-bafa/"), (nom, url)], True, ("struct", "animateurs"), nom))
+
+            # ---------------- structures : recruter un directeur
+            url = f"/recruter/directeur-bafd/{d['slug']}/"
+            blocs = [{"titre": "Qui peut diriger votre accueil", "paras": [direction]},
+                     {"titre": f"Les futurs directeurs formés {a_}", "sessions": d_dep[:4],
+                      "paras": [f"{un(len(d_dep), 'session')} BAFD à venir {a_} : leurs stagiaires cherchent un stage pratique de direction ou d'adjoint." if d_dep else f"Pas de session BAFD relevée {a_} en ce moment : les stagiaires BAFD des départements voisins peuvent venir chez vous."]},
+                     {"titre": "Trouver votre directeur ou votre adjoint", "points": [("Publiez l'offre :", "gratuitement, avec les dates, le public et la paie."),
+                                                                                       ("Consultez les profils :", "les directeurs et adjoints du secteur, avec leurs diplômes et leurs disponibilités."),
+                                                                                       ("Pensez aux stagiaires BAFD :", "un adjoint aujourd'hui, un directeur demain.")],
+                      "lien": ("Créer la page de ma structure", "/compte/?inscription=1&role=structure")}]
+            faq = [{"q": "Un stagiaire BAFD peut-il diriger ?", "r": "Oui, c'est le principe du stage pratique du BAFD, dans un accueil déclaré, avec le suivi de l'organisme de formation."},
+                   {"q": "Quand faut-il un diplôme professionnel ?", "r": "Pour diriger un accueil de loisirs de plus de 80 mineurs ouvert plus de 80 jours par an : BPJEPS, DEJEPS ou équivalent."}]
+            a_faire.append((url, f"Recruter un directeur BAFD {nom} ({code})", f"Recruter un directeur ou un adjoint {a_}",
+                            f"Recruter un directeur de colo ou d'accueil de loisirs {a_} ({code}) : qui peut diriger, les stagiaires BAFD du département, publier une offre gratuite.",
+                            f"Directeur, directrice ou adjoint pour votre accueil de loisirs ou votre séjour {a_} : les règles et les pistes concrètes.",
+                            {"public": "struct", "sur": f"Structures · {nom} ({code})", "chiffres": [(len(d_dep), "sessions BAFD à venir"), (len(p_dep), "formations professionnelles"), (len(st_dep), "structures présentes")],
+                             "actions": [("Publier une offre gratuite", "/compte/?inscription=1&role=structure", True)], "blocs": blocs},
+                            faq, [REC, ("Recruter un directeur", "/recruter/directeur-bafd/"), (nom, url)], True, ("struct", "directeur"), nom))
+
+            # ---------------- structures : accueillir un stagiaire BAFA
+            url = f"/recruter/stagiaire-bafa/{d['slug']}/"
+            blocs = [{"titre": f"Les stagiaires BAFA {de}", "sessions": f_dep[:4],
+                      "paras": [f"{un(len(f_dep), 'session')} de formation générale à venir {a_}" + (f" (à {ville_txt})" if ville_txt else "") + " : chaque stagiaire doit faire 14 jours de stage pratique dans un accueil déclaré." if f_dep else "Les stagiaires viennent aussi des départements voisins : un stage en colo se fait souvent loin de chez soi."]},
+                     {"titre": "Ce que dit la règle", "paras": [stage]},
+                     {"titre": "Bien accueillir un stagiaire", "points": [("Un tuteur :", "un animateur expérimenté ou le directeur suit le stagiaire et l'évalue à la fin."),
+                                                                         ("Des missions claires :", "préparer et mener des activités, participer à la vie quotidienne et aux réunions d'équipe."),
+                                                                         ("L'appréciation :", "le directeur remplit l'appréciation du stage sur le site du BAFA à la fin.")],
+                      "lien": ("Publier une offre de stage", "/compte/?inscription=1&role=structure")}]
+            if vac:
+                blocs.append({"titre": "Les périodes où les stagiaires cherchent", "vacances": vac})
+            faq = [{"q": "Faut-il payer un stagiaire BAFA ?", "r": "Ce n'est pas obligatoire, mais c'est l'usage en colo (contrat d'engagement éducatif). Un stage non payé reste possible : dites-le clairement dans l'offre."},
+                   {"q": "Combien de stagiaires dans l'équipe ?", "r": "Les stagiaires BAFA comptent dans les animateurs qualifiés « en cours » : au moins la moitié de l'équipe doit être diplômée, et au plus 20 % sans qualification."}]
+            a_faire.append((url, f"Stagiaire BAFA {nom} ({code}) : accueillir un stagiaire", f"Accueillir un stagiaire BAFA {a_}",
+                            f"Accueillir un stagiaire BAFA {a_} ({code}) : les sessions du département, les règles du stage pratique, le tutorat et l'offre de stage gratuite.",
+                            f"Des stagiaires BAFA cherchent leur stage pratique {a_} : comment les trouver et bien les accueillir.",
+                            {"public": "struct", "sur": f"Structures · {nom} ({code})", "chiffres": [(len(f_dep), "sessions de formation générale"), (org_n, "organismes de formation")],
+                             "actions": [("Publier une offre de stage", "/compte/?inscription=1&role=structure", True)], "blocs": blocs},
+                            faq, [REC, ("Accueillir un stagiaire", "/recruter/stagiaire-bafa/"), (nom, url)], True, ("struct", "stagiaire"), nom))
+
+            # ---------------- parents : centre de loisirs
+            url = f"/enfants/centre-de-loisirs/{d['slug']}/"
+            caf = f"La CAF {de} aide souvent les familles pour les accueils de loisirs (tarif selon le quotient familial, aides aux vacances) : regardez votre compte CAF ou demandez à la mairie."
+            blocs = [{"titre": f"Les accueils de loisirs en ligne {a_}", "sejours": [carte_sj(x) for x in sj_acc[:10]], "large": True,
+                      "vide": None if sj_acc else f"Pas encore d'accueil de loisirs publié {a_}. Décrivez ce que vous cherchez (âge, mercredis ou vacances, ville) : votre demande part chez les structures les plus proches, qui vous répondent.",
+                      "lien": ("Décrire mon besoin", "/enfants/demande/")},
+                     {"titre": f"Les structures {de}", "structures": [carte_st(x) for x in (st_acc or st_dep)[:10]],
+                      "vide": None if (st_acc or st_dep) else "Les structures du département arrivent sur le site."},
+                     {"titre": "Comment ça marche", "points": [("Pour qui :", "les enfants de 3 à 17 ans, le plus souvent 3-11 ans, les mercredis et pendant les vacances."),
+                                                                ("L'inscription :", "auprès de la mairie ou de l'association, souvent par période ; les places partent vite avant l'été."),
+                                                                ("Le prix :", "selon le quotient familial dans la plupart des communes."), ("Les aides :", caf)]},
+                     {"titre": "Qui encadre vos enfants", "points": taux[:1] + taux[2:] + ["Chaque accueil est déclaré au service départemental de la jeunesse (SDJES), qui peut le contrôler."]}]
+            if vac:
+                blocs.append({"titre": f"Les vacances {a_} (zone {d['zone']})", "vacances": vac})
+            faq = [{"q": "À partir de quel âge en centre de loisirs ?", "r": "Dès 3 ans, quand l'enfant est scolarisé, et jusqu'à 17 ans selon les accueils (souvent jusqu'à 11 ou 12 ans, avec des accueils ados à part)."},
+                   {"q": "Combien coûte un centre de loisirs ?", "r": "Le prix dépend de la commune et du quotient familial : de quelques euros à une vingtaine d'euros la journée, repas compris le plus souvent."},
+                   {"q": "Comment trouver une place ?", "r": "Inscrivez-vous tôt auprès de la mairie ou de l'association. Sur Fil Roug'Anim, décrivez votre besoin : les structures proches vous répondent."}]
+            a_faire.append((url, f"Centre de loisirs {nom} ({code}) : mercredis et vacances", f"Centres de loisirs {a_}",
+                            f"Centres de loisirs {a_} ({code}) : les accueils pour les mercredis et les vacances, les structures vérifiées, le prix, les aides de la CAF et les dates des vacances de la zone {d['zone']}.",
+                            f"Les mercredis et les vacances de vos enfants {a_} : les accueils de loisirs, comment s'inscrire, les aides, et qui encadre.",
+                            {"public": "parent", "sur": f"Parents · {nom} ({code})", "chiffres": [(len(sj_acc), "accueils en ligne"), (len(st_acc or st_dep), "structures vérifiées")],
+                             "actions": [("Décrire mon besoin", "/enfants/demande/", True), ("Voir toutes les offres", "/enfants/", False)], "blocs": blocs},
+                            faq, [ENF, ("Centres de loisirs", "/enfants/centre-de-loisirs/"), (nom, url)], True, ("parent", "loisirs"), nom))
+
+            # ---------------- parents : colonies de vacances
+            url = f"/enfants/colonie-de-vacances/{d['slug']}/"
+            sj_nuits = [x for x in sj_depart if not x["type"].startswith("accueil")]
+            pc = (self.donnees.get("aides") or {}).get("pass_colo") or {}
+            blocs = [{"titre": f"Les colos au départ {de} ou {a_}", "sejours": [carte_sj(x) for x in sj_nuits[:10]], "large": True,
+                      "vide": None if sj_nuits else f"Pas encore de séjour publié au départ {de}. Toutes les colos de France sont dans « Inscrire mon enfant », et vous pouvez décrire votre besoin pour recevoir des propositions.",
+                      "lien": ("Toutes les colos", "/enfants/")},
+                     {"titre": "Les aides pour partir", "paras": [pc.get("texte") or "Le Pass Colo aide les enfants de 11 ans à partir en colo.", caf.replace("les accueils de loisirs", "les colos")],
+                      "lien": ("Le guide des aides et le calculateur", "/enfants/aides/")},
+                     {"titre": "Bien choisir une colo", "points": [("Un séjour déclaré :", "chaque colo est déclarée au service de la jeunesse ; demandez le numéro de déclaration."),
+                                                                  ("L'équipe :", "un directeur BAFD ou diplômé, un animateur pour 12 enfants de 6 ans et plus."),
+                                                                  ("Le transport :", "regardez la ville de départ et ce qui est compris dans le prix."),
+                                                                  ("Les nouvelles :", "sur Fil Roug'Anim, l'équipe peut tenir un carnet de séjour : vous recevez les nouvelles de la journée.")]}]
+            if vac:
+                blocs.append({"titre": f"Les vacances de la zone {d['zone']}", "vacances": vac})
+            faq = [{"q": "À quel âge partir en colo ?", "r": "Dès 4 ou 6 ans pour des mini-séjours, plus souvent à partir de 6 ans, et jusqu'à 17 ans avec des séjours ados."},
+                   {"q": "Combien coûte une colo ?", "r": "Selon la durée, l'activité et le transport : quelques centaines d'euros la semaine le plus souvent. Les aides (Pass Colo, CAF, CSE, mairie) réduisent beaucoup le reste à payer."},
+                   {"q": "Comment avoir des nouvelles pendant la colo ?", "r": "Demandez à l'organisateur comment il donne des nouvelles. Avec un espace parent sur Fil Roug'Anim, vous recevez le carnet de séjour écrit par l'équipe."}]
+            a_faire.append((url, f"Colonie de vacances {nom} ({code}) : colos au départ {de}", f"Colonies de vacances {a_}",
+                            f"Colonies de vacances au départ {de} ({code}) : les séjours publiés, le Pass Colo et les aides de la CAF, bien choisir, et les dates des vacances de la zone {d['zone']}.",
+                            f"Les colos pour vos enfants au départ {de} ou {a_} : les séjours, les aides pour partir et ce qu'il faut vérifier.",
+                            {"public": "parent", "sur": f"Parents · {nom} ({code})", "chiffres": [(len(sj_nuits), "séjours au départ du département"), (len(sej), "séjours en France")],
+                             "actions": [("Voir les colos", "/enfants/", True), ("Les aides pour partir", "/enfants/aides/", False)], "blocs": blocs},
+                            faq, [ENF, ("Colonies de vacances", "/enfants/colonie-de-vacances/"), (nom, url)], True, ("parent", "colo"), nom))
+
+            # ---------------- parents : périscolaire
+            url = f"/enfants/periscolaire/{d['slug']}/"
+            sj_peri = [x for x in sej if x["type"] == "accueil_periscolaire" and x.get("departement") == code]
+            blocs = [{"titre": f"Le périscolaire {a_}", "sejours": [carte_sj(x) for x in sj_peri[:10]], "large": True,
+                      "vide": None if sj_peri else "Le périscolaire est organisé par la mairie (ou une association qu'elle choisit) : l'inscription se fait auprès d'elle. Vous cherchez autre chose ? Décrivez votre besoin.",
+                      "lien": ("Décrire mon besoin", "/enfants/demande/")},
+                     {"titre": "Comment ça marche", "points": [("Les temps :", "le matin avant la classe, la pause du midi, le soir après la classe, et souvent le mercredi."),
+                                                              ("L'inscription :", "à la mairie ou sur son portail famille, en général avant la rentrée."),
+                                                              ("Le prix :", "selon le quotient familial dans la plupart des communes.")]},
+                     {"titre": "Qui encadre vos enfants", "points": [taux[1], taux[2]]},
+                     {"titre": f"Les structures {de}", "structures": [carte_st(x) for x in (st_acc or st_dep)[:8]],
+                      "vide": None if (st_acc or st_dep) else "Les structures du département arrivent sur le site."}]
+            faq = [{"q": "Qui organise le périscolaire ?", "r": "La commune, directement ou par une association ; l'accueil est déclaré au service départemental de la jeunesse quand il est un accueil collectif de mineurs."},
+                   {"q": "Le périscolaire est-il obligatoire ?", "r": "Non : c'est un service proposé aux familles, en plus du temps de classe."}]
+            a_faire.append((url, f"Périscolaire {nom} ({code}) : matin, midi, soir et mercredi", f"Le périscolaire {a_}",
+                            f"Périscolaire {a_} ({code}) : comment ça marche, l'inscription, le prix, les taux d'encadrement et les structures vérifiées du département.",
+                            f"L'accueil du matin, du midi et du soir pour vos enfants {a_} : qui l'organise, comment s'inscrire, qui encadre.",
+                            {"public": "parent", "sur": f"Parents · {nom} ({code})", "chiffres": [(len(sj_peri), "accueils périscolaires en ligne"), (len(st_acc or st_dep), "structures vérifiées")],
+                             "actions": [("Décrire mon besoin", "/enfants/demande/", True)], "blocs": blocs},
+                            faq, [ENF, ("Périscolaire", "/enfants/periscolaire/"), (nom, url)], True, ("parent", "peri"), nom))
+
+        # ---------------- les régions : job d'été (animateurs), saisonniers (structures)
+        an_ete = auj.year if auj.month <= 8 else auj.year + 1
+        for r in self.regions.values():
+            ds = par_reg.get(r["id"]) or []
+            codes = {x["code"] for x in ds}
+            o_r = [o for o in self.offres if o["departement"] in codes]
+            st_r = [st for st in structures if st["departement"] in codes]
+            f_r = fg([s for s in bafa if s["departement"] in codes])
+            url = f"/trouver-un-poste/job-ete-animateur/{r['slug']}/"
+            blocs = [{"titre": f"Les offres pour l'été {r['a']}", "offres": o_r[:10], "large": True,
+                      "vide": None if o_r else f"Les offres de l'été {an_ete} arrivent surtout de janvier à mai. Créez votre profil dès maintenant : les structures {r['a']} peuvent vous écrire.",
+                      "lien": ("Créer mon profil", "/compte/?inscription=1&role=candidat")},
+                     {"titre": "Département par département", "points": [(x["nom"], f"({x['code']}) : " + un(len([o for o in o_r if o["departement"] == x["code"]]), "offre") + ", " + un(len([st for st in st_r if st["departement"] == x["code"]]), "structure")) for x in sorted(ds, key=lambda x: x["code"])]},
+                     {"titre": "Le contrat d'un job d'été en colo", "paras": [cee]},
+                     {"titre": f"Passer le BAFA avant l'été {r['a']}", "sessions": [s for s in f_r if s["debut"] < dt.date(an_ete, 7, 1)][:5],
+                      "paras": [f"{un(len(f_r), 'session')} de formation générale à venir {r['a']}."], "lien": (f"Les sessions BAFA {r['a']}", f"/se-former/sessions/{r['slug']}/")}]
+            a_faire.append((url, f"Job d'été animateur {r['nom']} {an_ete} : colos et centres de loisirs", f"Job d'été d'animateur {r['a']}",
+                            f"Job d'été {an_ete} comme animateur {r['a']} : les offres en colo et en centre de loisirs, les structures par département, le contrat CEE et le BAFA avant l'été.",
+                            f"Colo, centre de loisirs, séjour itinérant : trouver un job d'été d'animateur {r['a']} pour l'été {an_ete}.",
+                            {"public": "anim", "sur": f"Été {an_ete} · {r['nom']}", "chiffres": [(len(o_r), "offres en ligne"), (len(st_r), "structures vérifiées"), (len(ds), "départements")],
+                             "actions": [("Créer mon profil", "/compte/?inscription=1&role=candidat", True), ("Voir les offres", "/trouver-un-poste/offres/", False)], "blocs": blocs},
+                            [], [TP, ("Job d'été animateur", "/trouver-un-poste/job-ete-animateur/"), (r["nom"], url)], True, ("anim", "ete"), r["nom"]))
+            url = f"/recruter/saisonniers-ete/{r['slug']}/"
+            blocs = [{"titre": f"Le vivier {r['a']}", "paras": [f"{un(len(f_r), 'session')} de formation générale BAFA à venir {r['a']} : autant de stagiaires à la recherche d'un stage pratique.", "Les animateurs créent leur profil gratuit avec leurs disponibilités de l'été : vous les consultez et leur écrivez directement."], "sessions": f_r[:3]},
+                     {"titre": "Le bon calendrier", "points": [("Janvier-février :", "publiez vos offres de l'été, les meilleurs profils partent tôt."), ("Mars-avril :", "entretiens, réunion de préparation avec l'équipe."), ("Mai-juin :", "derniers postes, stagiaires BAFA, remplacements.")]},
+                     {"titre": "Les taux d'encadrement", "points": taux},
+                     {"titre": "Département par département", "points": [(x["nom"], f"({x['code']}) : " + un(len(fg([s for s in bafa if s["departement"] == x["code"]])), "session BAFA") + ", " + un(len([st for st in st_r if st["departement"] == x["code"]]), "structure présente")) for x in sorted(ds, key=lambda x: x["code"])]}]
+            a_faire.append((url, f"Recruter des animateurs pour l'été {an_ete} {r['a']}", f"Recruter votre équipe d'été {r['a']}",
+                            f"Recruter des animateurs et des directeurs pour l'été {an_ete} {r['a']} : le vivier BAFA, le calendrier, les taux d'encadrement et une offre gratuite.",
+                            f"Colos et accueils de loisirs {r['a']} : constituer votre équipe d'été {an_ete} à temps.",
+                            {"public": "struct", "sur": f"Structures · été {an_ete}", "chiffres": [(len(f_r), "sessions BAFA à venir"), (len(st_r), "structures présentes")],
+                             "actions": [("Publier une offre gratuite", "/compte/?inscription=1&role=structure", True)], "blocs": blocs},
+                            [], [REC, ("Saisonniers d'été", "/recruter/saisonniers-ete/"), (r["nom"], url)], True, ("struct", "ete"), r["nom"]))
+
+        # ---------------- les villes : animateur à …, centre de loisirs à … (communes où le BAFA se forme, et grandes villes)
+        par_ville = collections.defaultdict(list)
+        for s in bafa:
+            par_ville[(s["departement"], sans_cedex(s["ville"]))].append(s)
+        cibles = {k for k, l in par_ville.items() if len(l) >= 3}
+        cibles |= {(v["dep"], v["nom"]) for v in self.donnees["territoire"].get("grandes_villes", []) if v["dep"] in self.departements}
+        vus = set()
+        for code, ville in sorted(cibles):
+            sl = slug(ville)
+            d = self.departements[code]
+            if (code, sl) in vus or sl == d["slug"]:
+                continue
+            vus.add((code, sl))
+            pt = self.geo.get(f"{code}|{ville}") or self.centres_dep.get(code)
+            proches = sorted([s for s in fg(bafa) if dist(pt, self.geo.get(f"{s['departement']}|{s['ville']}") or self.centres_dep.get(s["departement"])) <= 25], key=lambda s: s["debut"])
+            o_v = sorted([o for o in self.offres if o["departement"] == code], key=lambda o: o["ville"] != ville)
+            st_v = sorted([st for st in structures if st["departement"] == code], key=lambda st: st["ville"] != ville)
+            sj_v = [x for x in sej if x["type"].startswith("accueil") and x.get("departement") == code]
+            ici = [s for s in proches if sans_cedex(s["ville"]) == ville]
+            vac = vacances(d)
+            url = f"/trouver-un-poste/emploi-animateur/{d['slug']}/{sl}/"
+            blocs = [{"titre": f"Les offres d'animation à {ville} et {d['a']}", "offres": o_v[:8], "large": True,
+                      "vide": None if o_v else f"Pas d'offre en ligne autour de {ville} aujourd'hui. Décrivez le poste que vous cherchez : votre demande part chez les structures les plus proches.",
+                      "lien": ("Décrire ce que je cherche", "/trouver-un-poste/demande/")},
+                     {"titre": f"Les structures autour de {ville}", "structures": [carte_st(x) for x in st_v[:10]],
+                      "vide": None if st_v else f"Pensez au service enfance-jeunesse de la mairie de {ville} : c'est souvent le premier employeur d'animateurs de la commune (accueil de loisirs, périscolaire)."},
+                     {"titre": f"Passer le BAFA à {ville} ou à moins de 25 km", "sessions": proches[:6],
+                      "paras": [f"{un(len(ici), 'session')} de formation générale à {ville} même, {un(len(proches), 'session')} à moins de 25 km." if proches else f"Pas de session relevée près de {ville} pour l'instant."],
+                      "lien": (f"Les sessions BAFA {d['a']}", f"/se-former/sessions/{d['slug']}/")},
+                     {"titre": "Le contrat et la paie", "paras": [cee]}]
+            if vac:
+                blocs.append({"titre": f"Les vacances à {ville} (zone {d['zone']})", "vacances": vac})
+            a_faire.append((url, f"Animateur à {ville} ({code}) : emploi, stage BAFA, offres", f"Animateur à {ville}",
+                            f"Devenir ou travailler comme animateur à {ville} ({d['nom']}) : offres, structures du secteur, sessions BAFA à moins de 25 km, contrat et vacances de la zone {d['zone']}.",
+                            f"Centre de loisirs, périscolaire, colo : trouver un poste ou un stage d'animateur à {ville} et autour.",
+                            {"public": "anim", "sur": f"Animateurs · {ville}", "chiffres": [(len(o_v), f"offres {d['a']}"), (len(proches), "sessions BAFA à moins de 25 km")],
+                             "actions": [("Créer mon profil", "/compte/?inscription=1&role=candidat", True), ("Décrire ce que je cherche", "/trouver-un-poste/demande/", False)], "blocs": blocs},
+                            [], [TP, ("Emploi animateur", "/trouver-un-poste/emploi-animateur/"), (d["nom"], f"/trouver-un-poste/emploi-animateur/{d['slug']}/"), (ville, url)], True, ("anim", "ville:" + code), ville))
+            url = f"/enfants/centre-de-loisirs/{d['slug']}/{sl}/"
+            blocs = [{"titre": f"Les accueils de loisirs autour de {ville}", "sejours": [carte_sj(x) for x in sorted(sj_v, key=lambda x: x.get("ville") != ville)[:10]], "large": True,
+                      "vide": None if sj_v else f"Pas encore d'accueil de loisirs publié autour de {ville}. Le service enfance de la mairie de {ville} vous renseigne ; ou décrivez votre besoin ici, les structures proches vous répondent.",
+                      "lien": ("Décrire mon besoin", "/enfants/demande/")},
+                     {"titre": f"Les structures {d['de']}", "structures": [carte_st(x) for x in st_v[:8]],
+                      "vide": None if st_v else f"Les structures {d['de']} arrivent sur le site. En attendant, votre demande « Décrire mon besoin » part chez les plus proches de {ville}."},
+                     {"titre": "Les aides", "paras": [f"La CAF {d['de']} et la mairie de {ville} aident souvent les familles : tarif selon le quotient familial, aides aux vacances, parfois une participation pour les colos.",
+                                                      "Pour une colo, le Pass Colo aide les enfants de 11 ans : jusqu'à 350 € selon le quotient familial."],
+                      "lien": ("Le guide des aides et le calculateur", "/enfants/aides/")},
+                     {"titre": "Comment ça marche", "points": [("Pour qui :", "les enfants de 3 à 17 ans, les mercredis et pendant les vacances."),
+                                                              ("L'inscription :", f"auprès de la mairie de {ville} ou de l'association qui gère l'accueil, souvent par période."),
+                                                              ("Le prix :", "selon le quotient familial dans la plupart des communes ; la CAF peut aider.")]},
+                     {"titre": "Qui encadre vos enfants", "points": taux[:1] + taux[2:]}]
+            if vac:
+                blocs.append({"titre": f"Les vacances à {ville}", "vacances": vac})
+            a_faire.append((url, f"Centre de loisirs à {ville} : mercredis et vacances", f"Centre de loisirs à {ville}",
+                            f"Centre de loisirs à {ville} ({d['nom']}) : les accueils pour les mercredis et les vacances, l'inscription, le prix, l'encadrement et les vacances de la zone {d['zone']}.",
+                            f"Les mercredis et les vacances de vos enfants à {ville} : les accueils de loisirs, comment s'inscrire et qui encadre.",
+                            {"public": "parent", "sur": f"Parents · {ville}", "chiffres": [(len(sj_v), "accueils en ligne"), (len(st_v), "structures vérifiées")],
+                             "actions": [("Décrire mon besoin", "/enfants/demande/", True), ("Voir toutes les offres", "/enfants/", False)], "blocs": blocs},
+                            [], [ENF, ("Centres de loisirs", "/enfants/centre-de-loisirs/"), (d["nom"], f"/enfants/centre-de-loisirs/{d['slug']}/"), (ville, url)], True, ("parent", "ville:" + code), ville))
+
+        # ---------------- les liens entre pages : même sujet ailleurs, autres sujets ici, et les pages d'index
+        par_cle = collections.defaultdict(list)
+        for x in a_faire:
+            par_cle[x[9]].append((x[10], x[0]))
+        SUJETS = {("anim", "emploi"): "Emploi animateur", ("anim", "stage"): "Stage pratique BAFA", ("anim", "direction"): "Emploi directeur",
+                  ("struct", "animateurs"): "Recruter des animateurs", ("struct", "directeur"): "Recruter un directeur", ("struct", "stagiaire"): "Accueillir un stagiaire",
+                  ("parent", "loisirs"): "Centre de loisirs", ("parent", "colo"): "Colonie de vacances", ("parent", "peri"): "Périscolaire"}
+        BASES = {("anim", "emploi"): "/trouver-un-poste/emploi-animateur/", ("anim", "stage"): "/trouver-un-poste/stage-pratique-bafa/", ("anim", "direction"): "/trouver-un-poste/emploi-directeur/",
+                 ("struct", "animateurs"): "/recruter/animateurs-bafa/", ("struct", "directeur"): "/recruter/directeur-bafd/", ("struct", "stagiaire"): "/recruter/stagiaire-bafa/",
+                 ("parent", "loisirs"): "/enfants/centre-de-loisirs/", ("parent", "colo"): "/enfants/colonie-de-vacances/", ("parent", "peri"): "/enfants/periscolaire/",
+                 ("anim", "ete"): "/trouver-un-poste/job-ete-animateur/", ("struct", "ete"): "/recruter/saisonniers-ete/"}
+        for (url, titre, h1, desc, intro, local, faq, fil, idx, cle, nom) in a_faire:
+            pub = cle[0]
+            dslug = url.rstrip("/").split("/")[3] if len(url.rstrip("/").split("/")) > 3 else None
+            d = next((x for x in deps if x["slug"] == dslug), None)
+            vz = []
+            if d and not cle[1].startswith("ville"):
+                base = BASES[cle]
+                vz.append(("Dans les départements voisins", [(f"{x['nom']} ({x['code']})", f"{base}{x['slug']}/") for x in voisins[d["code"]]]))
+                vz.append((f"Aussi {d['a']}", [(SUJETS[k], f"{BASES[k]}{d['slug']}/") for k in SUJETS if k[0] == pub and k != cle]
+                           + ([("Les sessions BAFA", f"/se-former/sessions/{d['slug']}/")] if pub != "parent" else [("Les aides pour partir", "/enfants/aides/")])))
+                vz.append(("Les villes", [(n, u) for n, u in par_cle.get((pub, "ville:" + d["code"]), [])][:16]))
+            elif d:
+                vz.append((f"{d['nom']}", [(SUJETS[k], f"{BASES[k]}{d['slug']}/") for k in SUJETS if k[0] == pub]))
+                vz.append(("Les autres villes du département", [(n, u) for n, u in par_cle.get(cle, []) if u != url][:16]))
+            else:
+                vz.append(("Les autres régions", [(n, u) for n, u in par_cle.get(cle, []) if u != url]))
+            local["voisins"] = vz
+            for q in faq:
+                q["r_rendu"] = q["r"]
+            self.ajouter(url, "local.html", titre=titre, h1=h1, description=desc[:300], intro=intro, local=local, indexer=idx,
+                         faq_page=faq or None, schema_faq=self.schema_faq(faq) if faq else None, fil=fil)
+        # les pages d'index : un sujet, tous les départements (ou toutes les régions), rangés par région
+        for cle, base in BASES.items():
+            pub = cle[0]
+            liens = par_cle.get(cle, [])
+            if not liens:
+                continue
+            titre = SUJETS.get(cle) or ("Job d'été animateur" if cle == ("anim", "ete") else "Saisonniers d'été")
+            groupes = []
+            if cle[1] == "ete":
+                groupes = [("Par région", liens)]
+            else:
+                for r in sorted(self.regions.values(), key=lambda r: r["nom"]):
+                    ls = [(f"{x['nom']} ({x['code']})", f"{base}{x['slug']}/") for x in sorted(par_reg.get(r["id"]) or [], key=lambda x: x["code"])]
+                    if ls:
+                        groupes.append((r["nom"], ls))
+            local = {"public": pub, "sur": {"anim": "Animateurs & directeurs", "struct": "Structures", "parent": "Inscrire mon enfant"}[pub], "chiffres": [],
+                     "actions": [], "blocs": [], "voisins": groupes}
+            fil0 = {"anim": TP, "struct": REC, "parent": ENF}[pub]
+            self.ajouter(base, "local.html", titre=f"{titre} : toute la France, département par département", h1=f"{titre}, partout en France",
+                         description=f"{titre} : choisissez votre département ou votre région pour voir les offres, les structures et les informations utiles près de chez vous.",
+                         intro="Choisissez votre département : chaque page rassemble ce qui existe près de chez vous.", local=local, fil=[fil0, (titre, base)])
+        self.pages_locales_liens = {k: BASES[k] for k in BASES}
+
     def frise_ete(self, sejours):
         """La frise de l'été sur la page structure : juillet et août, chaque date placée en pourcentage de la largeur."""
         dates = [(sj, d) for sj in sejours if sj["type"] not in ("accueil_mercredis", "accueil_periscolaire") for d in sj["a_venir"] if d["debut"].month in (7, 8) or d["fin"].month in (7, 8)]
@@ -1305,6 +1738,7 @@ class Site:
         self.pages_sejours(structures)
         self.page_catalogue_sejours()
         self.pages_sejours_google()
+        self.pages_locales(structures)
         # « Trouver un séjour » est devenu « Inscrire mon enfant » : les anciennes adresses /sejours/… renvoient vers /enfants/…
         for pg in [x for x in self.pages if x["url"].startswith("/enfants/")]:
             self.ajouter("/sejours/" + pg["url"][len("/enfants/"):], "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=pg["url"])

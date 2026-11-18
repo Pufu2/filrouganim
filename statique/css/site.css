@@ -4050,3 +4050,31 @@ body.sjf-ouvert { overflow: hidden; }
 .cj-sejour { font-weight: 700; font-size: 1.1rem; margin: 0 0 8px; }
 .cj-retour { margin-top: 10px; }
 .cj-fil { margin-top: 28px; }
+
+/* ---------- les pages locales (build.py, pages_locales ; gabarits/local.html) ---------- */
+.lc-chiffres { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; padding: 0; margin: 18px 0 0; }
+.lc-chiffres li { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.22); border-radius: 14px; padding: 10px 16px; display: flex; align-items: baseline; gap: 8px; }
+.lc-chiffres b { font-size: 1.5rem; color: #fff; font-family: var(--titre, inherit); }
+.lc-chiffres span { color: rgba(255,255,255,.78); font-size: .9rem; }
+.lc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+.lc { padding: 28px 0 56px; }
+.lc .cadre { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.lc-bloc { background: #fff; border: 1px solid var(--ligne, #e8e2da); border-radius: 18px; padding: 22px 24px; min-width: 0; }
+.lc-large, .lc-voisins { grid-column: 1 / -1; }
+.lc-bloc h2 { font-size: 1.3rem; margin: 0 0 10px; }
+.lc-bloc p { margin: 0 0 10px; line-height: 1.6; }
+.lc-bloc .sessions { margin-top: 10px; }
+.lc-points { margin: 6px 0 0; padding-left: 18px; line-height: 1.6; }
+.lc-points li { margin-bottom: 6px; }
+.lc-structures { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.lc-structures a { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--ligne, #e8e2da); border-radius: 12px; text-decoration: none; color: inherit; height: 100%; }
+.lc-structures a:hover { border-color: var(--rouge); }
+.lc-structures span { color: var(--doux); font-size: .86rem; }
+.lc-vacances { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: .95rem; }
+.lc-vacances th, .lc-vacances td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--ligne, #e8e2da); vertical-align: top; }
+.lc-vacances th { white-space: nowrap; padding-right: 14px; }
+.lc-vide { background: #fbf8f2; border-radius: 12px; padding: 12px 14px; color: var(--doux); }
+.lc-lien { margin: 12px 0 0 !important; font-weight: 700; }
+.lc-voisins { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; padding: 8px 2px 0; }
+.lc-voisins ul { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 4px; }
+@media (max-width: 760px) { .lc .cadre { grid-template-columns: minmax(0, 1fr); } .lc-bloc { padding: 18px 16px; } .lc-vacances th { white-space: normal; } }
