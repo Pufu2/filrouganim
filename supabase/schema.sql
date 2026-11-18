@@ -868,3 +868,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- dont la demande est acceptée (prevenir_carnet), est_parent().
 -- v35b : jeton_carnet privé (select par colonnes sur sejours pour anon/authenticated, sans jeton_carnet),
 -- lien_carnet(sid, nouveau) pour la structure ou l'admin.
+
+-- v36 (appliquée par migration) : les structures abonnées ne lisent que les profils publiés ET vérifiés par l'admin ;
+-- cv_lisible() : l'admin lit tous les CV, les structures abonnées ceux des profils publiés et vérifiés (et de leurs candidats).

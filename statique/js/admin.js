@@ -278,7 +278,7 @@
     l.appendChild(t);
     pastilles(l, [[x.publie ? "visible" : "caché", x.publie ? "ok" : "non"], x.resume_public ? ["résumé public", "neutre"] : null, x.cv_nom ? ["CV", "neutre"] : null,
       [(x.diplomes || []).map(function (d) { return lib("diplomes", d); }).join(", ") || "sans diplôme indiqué", "neutre"]]);
-    boutons(l, [["Ouvrir son espace", function () { location.href = "/compte/?role=candidat&compte=" + encodeURIComponent(x.id); }, null, "ad-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(x, {})); }], ["Modifier les champs", function () { editeur("profils", x); }],
+    boutons(l, [["Ouvrir son espace", function () { location.href = "/compte/?role=candidat&compte=" + encodeURIComponent(x.id); }, null, "ad-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(x, { cvId: x.cv_nom ? x.id : null })); }], ["Modifier les champs", function () { editeur("profils", x); }],
       [x.publie ? "Cacher" : "Rendre visible", function () { modifier("profils", x.id, { publie: !x.publie }); }], ["Supprimer", function () { supprimer("profils", x.id, x.prenom); }, null, "bouton-danger"]]);
     return l;
   }

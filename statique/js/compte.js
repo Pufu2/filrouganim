@@ -1207,7 +1207,7 @@
       if (structure && ab) allerA("bloc-abonnement");
       return;
     }
-    var r = await sb.from("profils").select(CHAMPS_VUS).eq("id", id).eq("publie", true).maybeSingle();
+    var r = await sb.from("profils").select(CHAMPS_VUS).eq("id", id).eq("publie", true).eq("verifie", true).maybeSingle();
     if (r.error || !r.data) { message("Ce profil n'est plus en ligne.", true); return; }
     var p = r.data;
     if (!favoris.length) { var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace()); favoris = (fav.data || []).map(function (x) { return x.profil_id; }); }
@@ -1923,7 +1923,7 @@
     var f = $("f-candidats");
     var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace());
     favoris = (fav.data || []).map(function (x) { return x.profil_id; });
-    var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).order("maj_le", { ascending: false }).limit(100);
+    var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).eq("verifie", true).order("maj_le", { ascending: false }).limit(100);
     if (f.dep.value) q = q.or("departement.eq." + f.dep.value + ",mobilite.cs.{" + f.dep.value + "}");
     if (f.diplome.value) q = q.contains("diplomes", [f.diplome.value]);
     if (f.cherche.value) q = q.contains("recherche", [f.cherche.value]);

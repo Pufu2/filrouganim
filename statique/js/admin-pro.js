@@ -141,7 +141,7 @@
       var r = el("div", "ap-verif-l");
       r.appendChild(cellule((p.prenom || "Sans prénom") + (p.annee_naissance ? ", " + (new Date().getFullYear() - p.annee_naissance) + " ans" : ""),
         [p.poste_recherche, (p.ville || nomDep(p.departement)) + (p.departement ? " (" + p.departement + ")" : ""), (p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ")].filter(Boolean).join(" · ")));
-      r.appendChild(actions([["✓ Accepter", function () { verifierProfil(p, true); }, null, "ap-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], ["Cacher", function () { A.modifier("profils", p.id, { publie: false }); }]]));
+      r.appendChild(actions([["✓ Accepter", function () { verifierProfil(p, true); }, null, "ap-fort"], ["Voir la fiche", function () { E.ouvrirFiche(E.ficheProfil(p, { cvId: p.cv_nom ? p.id : null })); }], ["Cacher", function () { A.modifier("profils", p.id, { publie: false }); }]]));
       k.appendChild(r);
     });
     if (l.length > 12) { var v = vers("animateurs"); v.className = "ap-lien-b"; v.textContent = "Les " + l.length + " fiches →"; k.appendChild(v); }
@@ -732,7 +732,7 @@
         if (prov) tags.appendChild(etiquette("via " + canal(prov), "rose"));
         if (tags.children.length) k2.appendChild(tags);
         k2.appendChild(actions([t.s ? ["Espace", function () { ouvrirEspace("structure", t.c.id); }] : t.p ? ["Espace", function () { ouvrirEspace("candidat", t.c.id); }] : null,
-          t.c.email ? ["✉ Écrire", null, "mailto:" + t.c.email] : null, t.p ? ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(t.p, {})); }] : null]));
+          t.c.email ? ["✉ Écrire", null, "mailto:" + t.c.email] : null, t.p ? ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(t.p, { cvId: t.p.cv_nom ? t.p.id : null })); }] : null]));
         zone.appendChild(k2);
       });
       if (!L.length) zone.appendChild(el("p", "ap-vide", "Personne ici."));
@@ -793,7 +793,7 @@
         cellule((p.diplomes || []).map(function (x) { return lib("diplomes", x); }).join(", ") || "–", p.poste_recherche || ""),
         cellule((post[p.id] || 0) + " candidature" + ((post[p.id] || 0) > 1 ? "s" : "") + " · " + (dem[p.id] || 0) + " demande" + ((dem[p.id] || 0) > 1 ? "s" : ""), (p.publie ? "visible" : "caché") + " · maj " + depuis(p.maj_le)),
         actions([[p.verifie ? "Retirer du site" : "✓ Accepter", function () { verifierProfil(p, !p.verifie); }, null, p.verifie ? "" : "ap-fort"],
-          ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, {})); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
+          ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, { cvId: p.cv_nom ? p.id : null })); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
     c.insertBefore(w, c.firstChild);
