@@ -190,8 +190,31 @@
         k.appendChild(b);
       });
     });
+    clicsParPublic(c);
     audience(c, T);
     membres(c, T);
+  }
+  // les clics des 30 derniers jours, par public : animateurs et directeurs, structures, familles, organismes
+  async function clicsParPublic(c) {
+    var k = carte(c, "Les clics des 30 jours, par public", "ce que chaque public fait sur le site", "ap-clics"); var g = el("div", "ap-clics-g"); k.appendChild(g);
+    var d30 = joursAvant(29), som = function (l, f) { return l.filter(f).reduce(function (a, v) { return a + (v.n || 1); }, 0); };
+    var vues = D.vues.filter(function (v) { return v.jour >= d30; });
+    var r = await Promise.all([E.sb.from("stats_sejours").select("type,n").gte("jour", d30), E.sb.from("besoins_familles").select("id").gte("cree_le", d30),
+      E.sb.from("candidatures_sejour").select("id").gte("cree_le", d30), E.sb.from("demandes_sejour").select("id").gte("cree_le", d30)]).catch(function () { return [{}, {}, {}, {}]; });
+    var ss = (r[0] && r[0].data) || [];
+    var org = 0; Object.keys(SORG || {}).forEach(function (o) { org += clicsOrg(o); });
+    [["Animateurs et directeurs", [["clics « Postuler » sur les offres", som(vues, function (v) { return v.type === "clic_candidater"; })],
+        ["candidatures aux offres", compte(D.candidatures, function (x) { return iso(x.cree_le) >= d30; })], ["candidatures pour encadrer un séjour", ((r[2] && r[2].data) || []).length],
+        ["demandes « Décrire ce que je cherche »", compte(D.demandes, function (x) { return iso(x.cree_le) >= d30; })]]],
+     ["Structures", [["vues des pages structures", som(vues, function (v) { return v.type === "page"; })], ["vues des offres", som(vues, function (v) { return v.type === "offre"; })],
+        ["clics vers leur site", som(vues, function (v) { return v.type === "clic_site"; })], ["clics « e-mail »", som(vues, function (v) { return v.type === "clic_email"; })]]],
+     ["Familles (Inscrire mon enfant)", [["vues des fiches", som(ss, function (v) { return v.type === "vue"; })], ["demandes de place", ((r[3] && r[3].data) || []).length],
+        ["besoins décrits", ((r[1] && r[1].data) || []).length], ["partages", som(ss, function (v) { return v.type === "partage"; })], ["séjours envoyés par alerte", som(ss, function (v) { return v.type === "alerte"; })]]],
+     ["Organismes de formation", [["clics vers leurs sessions et leur site", org]]]].forEach(function (b) {
+      var bl = el("div", "ap-clics-b"); bl.appendChild(el("p", "ap-mini-t", b[0]));
+      b[1].forEach(function (x) { var l = el("p", "ap-cote-l"); l.appendChild(el("span", null, x[0])); l.appendChild(el("b", null, fr(x[1]))); bl.appendChild(l); });
+      g.appendChild(bl);
+    });
   }
   function audience(c, T) {
     var k = carte(c, "Audience du site", null, "ap-audience");

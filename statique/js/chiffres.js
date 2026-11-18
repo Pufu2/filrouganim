@@ -78,10 +78,20 @@
     compteur("En attente d'une structure", tout.filter(function (d) { return d.etat === "attente"; }).length, "cj-k cj-k-attente");
   }
   demandes();
+  // les familles par département (les trois premiers)
+  function famillesDeps() {
+    var z = document.getElementById("cj-familles-deps"); if (!z) return;
+    var n = {}; (D.familles || []).forEach(function (f) { if (f.dep) n[f.dep] = (n[f.dep] || 0) + 1; });
+    var top = Object.keys(n).sort(function (a, b) { return n[b] - n[a]; }).slice(0, 3);
+    z.textContent = top.length ? "Les familles cherchent surtout dans : " + top.map(function (d) { return (D.deps[d] || d) + " (" + n[d] + ")"; }).join(", ") + "." : "";
+  }
+  famillesDeps();
   // en direct : la base ne renvoie que le poste, le département, le mois et l'état
   if (window.fetch && D.sb) {
     fetch(D.sb + "/rest/v1/rpc/chiffres_publics", { headers: { apikey: D.cle } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (x) {
       if (x && x.demandes) { D.demandes = x.demandes; D.structures_dep = x.structures_par_dep || {}; demandes(); }
+      if (x) { ["fiches_animateurs", "structures_verifiees", "offres_enfants"].forEach(function (k) { var e = document.querySelector('[data-c="' + k + '"]'); if (e && x[k] != null) e.textContent = x[k]; });
+        if (x.familles) { D.familles = x.familles; var e2 = document.querySelector('[data-c="familles"]'); if (e2) e2.textContent = x.familles.length; famillesDeps(); } }
     }).catch(function () {});
   }
 

@@ -857,3 +857,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- v33 (appliquée par migration) : candidatures_sejour (un animateur postule pour encadrer un séjour ou un accueil) :
 -- postuler_sejour(), mes_candidatures_sejour() (structure), mes_postulations_sejour() (animateur), repondre_candidature_sejour(),
 -- e-mail immédiat à la structure (prevenir_candidature_sejour).
+
+-- v34 (appliquée par migration) : chiffres_publics() ajoute familles (besoins et demandes de place, sans rien sur la personne),
+-- fiches_animateurs (vérifiées), structures_verifiees, offres_enfants.

@@ -47,6 +47,21 @@
 </section>
 {% endblock %}
 {% block contenu %}
+<section class="bande cj-section" id="communaute" aria-labelledby="t-communaute">
+  <div class="cadre">
+    <p class="cj-kicker">Familles, animateurs, structures</p>
+    <h2 id="t-communaute" class="cj-h2">Qui vient sur Fil Roug'Anim, <em>en vrai</em></h2>
+    <p class="cj-intro">Les familles qui cherchent une place pour leur enfant, les animateurs et directeurs qui ont leur fiche, les structures vérifiées. Mis à jour en direct, sans rien sur les personnes.</p>
+    <ul class="cj-comm" id="cj-comm">
+      <li><b data-c="familles">{{ cp.familles | length }}</b><span>demandes de familles</span><small>besoins décrits et demandes de place</small><a href="{{ lien('/enfants/demande/') }}">Décrire mon besoin →</a></li>
+      <li><b data-c="fiches_animateurs">{{ cp.fiches_animateurs }}</b><span>animateurs et directeurs avec leur fiche</span><small>vérifiées, dans l'annuaire</small><a href="{{ lien('/compte/') }}?inscription=1">Créer ma fiche →</a></li>
+      <li><b data-c="structures_verifiees">{{ cp.structures_verifiees }}</b><span>structures vérifiées</span><small>accueils de loisirs, séjours, mairies…</small><a href="{{ lien('/trouver-un-poste/structures/') }}">Les structures →</a></li>
+      <li><b data-c="offres_enfants">{{ cp.offres_enfants }}</b><span>offres pour les enfants</span><small>colos, accueils de loisirs, périscolaire</small><a href="{{ lien('/enfants/') }}">Inscrire mon enfant →</a></li>
+    </ul>
+    <p class="cj-aide-t" id="cj-familles-deps"></p>
+  </div>
+</section>
+
 <section class="bande cj-section cj-creme" id="demandes" aria-labelledby="t-demandes">
   <div class="cadre">
     <p class="cj-kicker">Demandes d'animateurs</p>
@@ -120,6 +135,6 @@
   </div>
 </section>
 <script type="application/json" id="cj-donnees">{{ {"demandes": cp.demandes, "postes": cp.postes, "deps": cp.deps, "structures_dep": cp.structures_dep or {},
-  "onglets": cp.onglets, "lieux": lien('/chiffres/lieux.json'), "sb": site.supabase.url, "cle": site.supabase.cle} | tojson }}</script>
+  "onglets": cp.onglets, "familles": cp.familles, "lieux": lien('/chiffres/lieux.json'), "sb": site.supabase.url, "cle": site.supabase.cle} | tojson }}</script>
 {% endblock %}
 {% block scripts %}<script src="{{ statique('js/chiffres.js') }}" defer></script>{% endblock %}

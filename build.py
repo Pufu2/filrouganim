@@ -1795,6 +1795,10 @@ class Site:
         self._cp = {"serie": serie, "unite": unite, "multi": multi, "demandes": dem or [], "postes": self.POSTES_DEMANDE,
                     "deps": {d["code"]: d["nom"] for d in self.departements.values()},
                     "structures_dep": (brut or {}).get("structures_par_dep") if isinstance(brut, dict) else {},
+                    "familles": (brut or {}).get("familles") or [] if isinstance(brut, dict) else [],
+                    "fiches_animateurs": (brut or {}).get("fiches_animateurs") or 0 if isinstance(brut, dict) else 0,
+                    "structures_verifiees": (brut or {}).get("structures_verifiees") or 0 if isinstance(brut, dict) else 0,
+                    "offres_enfants": (brut or {}).get("offres_enfants") or 0 if isinstance(brut, dict) else 0,
                     "onglets": onglets, "villes_premiere": sum(len(x[2]) for x in onglets),
                     "mois_en_cours": {"nom": MOIS[cm.month - 1], "n": en_cours["n"]} if en_cours else None}
         return self._cp
