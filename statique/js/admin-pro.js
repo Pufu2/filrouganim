@@ -1108,12 +1108,17 @@
      ["Dernier passage de Google", r.dernier_passage ? E.dateFr(iso(r.dernier_passage)) : "–"], ["Vérifiée par le site", r.verifie_le ? depuis(r.verifie_le) : "jamais"],
      ["Indexation demandée", r.demandee_le ? depuis(r.demandee_le) : "non"]].forEach(function (x) { dl.appendChild(el("dt", null, x[0])); dl.appendChild(el("dd", null, x[1])); });
     f.appendChild(dl);
-    f.appendChild(el("p", "ap-petit", "Pour demander l'indexation : ouvrez la page dans la Search Console avec le compte Google qui gère filrouganim.fr, puis « Demander une indexation ». Si Google affiche une erreur, choisissez un autre compte ci-dessous (l'ordre est celui des comptes connectés dans votre navigateur)."));
+    var et = el("ol", "ap-etapes-gsc");
+    ["Cliquez sur « Copier l'adresse et ouvrir la Search Console ».", "En haut de la Search Console, cliquez dans la barre « Inspecter n'importe quelle URL de filrouganim.fr » et collez (Ctrl+V), puis Entrée.",
+     "Cliquez sur « Demander une indexation », puis revenez ici et cliquez sur « C'est demandé »."].forEach(function (t) { et.appendChild(el("li", null, t)); });
+    f.appendChild(et);
+    f.appendChild(el("p", "ap-petit", "Si Google affiche « Vous n'avez pas accès » ou une erreur, choisissez un autre compte Google ci-dessous : l'ordre est celui des comptes connectés dans votre navigateur."));
     var ch = el("label", "ap-compte-g"); ch.appendChild(document.createTextNode("Compte Google "));
     var sel = el("select"); ["1er compte", "2e compte", "3e compte", "4e compte"].forEach(function (t, i) { var o = el("option", null, t); o.value = String(i); sel.appendChild(o); });
     sel.value = compteGoogle(); ch.appendChild(sel); f.appendChild(ch);
     var bs = el("div", "ap-boutons");
-    var ouv = el("a", "ap-bouton", "Ouvrir dans la Search Console ↗"); ouv.target = "_blank"; ouv.rel = "noopener";
+    var ouv = el("a", "ap-bouton", "Copier l'adresse et ouvrir la Search Console ↗"); ouv.target = "_blank"; ouv.rel = "noopener";
+    ouv.addEventListener("click", function () { try { navigator.clipboard.writeText(u); } catch (e) {} });
     function maj() { ouv.href = lienGsc(u, sel.value); try { localStorage.setItem("fra-gsc-compte", sel.value); } catch (e) {} }
     sel.addEventListener("change", maj); maj();
     var cp = el("button", "ap-lien-b", "Copier l'adresse"); cp.type = "button";
@@ -1122,7 +1127,9 @@
     bs.appendChild(ouv); bs.appendChild(cp); if (!indexee(r)) bs.appendChild(fait); f.appendChild(bs);
     E.ouvrirFiche(f);
   }
-  function lienGsc(u, compte) { return "https://search.google.com/search-console/inspect?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&id=" + encodeURIComponent(u) + "&authuser=" + (compte || compteGoogle()); }
+  // Google n'accepte pas l'adresse de la page dans le lien d'inspection (son « id » est un code interne, sinon : 404) :
+  // on ouvre l'accueil de la propriété, et l'adresse copiée se colle dans la barre « Inspecter n'importe quelle URL »
+  function lienGsc(u, compte) { return "https://search.google.com/search-console?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&authuser=" + (compte || compteGoogle()); }
   function indexation() {
     var c = $("ad-indexation"); if (!c) return; c.textContent = "";
     var parUrl = {}; (IDX || []).forEach(function (r) { parUrl[r.url] = r; });
