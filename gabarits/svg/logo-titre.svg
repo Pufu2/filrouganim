@@ -1,1 +1,1 @@
-<svg class="logo-titre" role="img" aria-label="Fil Roug'Anim" viewBox="0 0 1120 212"><use href="{{ statique('logo-titre.svg') }}#t"/></svg>
+<span class="logo-titre logo-n" role="img" aria-label="Fil Roug'Anim"><img class="lm-c" src="{{ statique('marque-claire.png') }}" alt="" width="57" height="48"><img class="lm-s" src="{{ statique('marque-sombre.png') }}" alt="" width="57" height="48"><span class="logo-mot">Fil Roug’<em>Anim</em></span></span>

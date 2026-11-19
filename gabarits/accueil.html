@@ -6,22 +6,20 @@
 {# L'accueil suit le fil : chaque grande partie du site est un nœud sur le fil rouge, avec ses sous-parties #}
 {% block tete %}
 <section class="tete tete-accueil">
-  <div class="cadre tete-accueil-cadre">
-    <p class="note-main une-note">{{ site.accroche }}</p>
-    <h1 class="h1-accueil">Toute l'animation, sur un seul <span class="mot-fil">fil</span></h1>
-    <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe : l'animation, au même endroit. Gratuit pour les jeunes.</p>
+  <div class="cadre ac-hero">
+    <div class="ac-hero-g">
+      <p class="ac-pilule">{{ site.accroche }}</p>
+      <h1 class="h1-accueil">Toute l'animation, <em>sur un seul fil.</em></h1>
+      <p class="chapo chapo-accueil">Se former, trouver son stage ou son job, recruter son équipe, inscrire son enfant : l'animation au même endroit, avec des structures vérifiées.</p>
+      <ul class="ac-puces"><li>Gratuit pour les jeunes</li><li>Structures vérifiées</li><li>Sans intermédiaire</li></ul>
+      <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
+    </div>
+    <div class="ac-hero-d">{{ m.recherche_onglets(lien, departements) }}</div>
   </div>
-  <svg class="tete-fil" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 C 160 6, 300 38, 470 22 S 760 4, 900 24 S 1110 36, 1200 14"/></svg>
 </section>
 {% endblock %}
 
 {% block contenu %}
-<div class="recherche-une">
-  <div class="cadre">
-    {{ m.recherche_onglets(lien, departements) }}
-    <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
-  </div>
-</div>
 {# Les trois parties du site : des cartes illustrées, comme les cartes d'offres et de profils #}
 <div class="cadre">
 <div class="pa" aria-label="Les trois parties du site">

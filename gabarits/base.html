@@ -13,12 +13,14 @@
 <meta property="og:description" content="{{ page.description | resume }}">
 <meta property="og:url" content="{{ url_complete }}">
 <meta property="og:locale" content="fr_FR">
-<meta name="theme-color" content="#fbf8f2">
+<meta name="theme-color" content="#17191d">
 {% if site.google_site_verification %}<meta name="google-site-verification" content="{{ site.google_site_verification }}">{% endif %}
-<link rel="icon" href="{{ statique('favicon.svg') }}" type="image/svg+xml">
-<link rel="preload" href="{{ statique('polices/atkinson-hyperlegible-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{ statique('polices/fraunces-latin-600-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="{{ statique('favicon.png') }}" type="image/png">
+<link rel="apple-touch-icon" href="{{ statique('apple-touch-icon.png') }}">
+<link rel="preload" href="{{ statique('polices/inter-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ statique('polices/inter-latin-700-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ statique('css/site.css') }}">
+<link rel="stylesheet" href="{{ statique('css/da.css') }}">
 {% if fil_jsonld %}<script type="application/ld+json">{{ fil_jsonld | safe }}</script>{% endif %}
 {% block schema %}{% endblock %}
 <link rel="alternate" type="application/rss+xml" title="Fil Roug'Anim : le blog" href="{{ lien('/blog/rss.xml') }}">
