@@ -90,7 +90,7 @@
   if (window.fetch && D.sb) {
     fetch(D.sb + "/rest/v1/rpc/chiffres_publics", { headers: { apikey: D.cle } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (x) {
       if (x && x.demandes) { D.demandes = x.demandes; D.structures_dep = x.structures_par_dep || {}; demandes(); }
-      if (x) { ["fiches_animateurs", "structures_verifiees", "offres_enfants"].forEach(function (k) { var e = document.querySelector('[data-c="' + k + '"]'); if (e && x[k] != null) e.textContent = x[k]; });
+      if (x) { x.demandes_animateurs = (x.demandes || []).length; ["fiches_animateurs", "demandes_animateurs", "offres_enfants"].forEach(function (k) { var e = document.querySelector('[data-c="' + k + '"]'); if (e && x[k] != null) e.textContent = x[k]; });
         if (x.familles) { D.familles = x.familles; var e2 = document.querySelector('[data-c="familles"]'); if (e2) e2.textContent = x.familles.length; famillesDeps(); } }
     }).catch(function () {});
   }

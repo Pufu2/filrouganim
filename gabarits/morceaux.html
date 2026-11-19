@@ -195,7 +195,7 @@
     <div class="ro-ou">
       <label class="ro-titre" for="ro-sj-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-sj-ou" name="ou" type="search" list="ro-sj-lieux" placeholder="Ville ou département" autocomplete="off">
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-sj-ou" name="ou" type="search" placeholder="Ville ou département" autocomplete="off" data-villes>
           <datalist id="ro-sj-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les offres</button>
       </div>
@@ -401,7 +401,7 @@
     <li><span class="etape-noeud" aria-hidden="true">1</span><b>Formation générale</b><span>8 jours, dès 16 ans</span><a href="{{ lien('/se-former/sessions/formation-generale/') }}">Les sessions</a></li>
     <li><span class="etape-noeud" aria-hidden="true">2</span><b>Stage pratique</b><span>14 jours au moins, souvent payé</span><a href="{{ lien('/trouver-un-poste/trouver-son-stage-pratique/') }}">Le trouver</a></li>
     <li><span class="etape-noeud" aria-hidden="true">3</span><b>Approfondissement</b><span>6 jours (ou qualification, 8 jours)</span><a href="{{ lien('/se-former/sessions/approfondissement/') }}">Les sessions</a></li>
-    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/trouver-un-poste/') }}">Stages et jobs</a></li>
+    <li><span class="etape-noeud etape-fin" aria-hidden="true">★</span><b>Premier job d'anim</b><span>Les offres arrivent bientôt ici</span><a href="{{ lien('/trouver-un-poste/offres/') }}">Stages et jobs</a></li>
   </ol>
 </div>
 {% endmacro %}

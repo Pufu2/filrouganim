@@ -754,7 +754,7 @@ class Site:
 
         familles = collections.defaultdict(list)   # (public, sujet) -> [(nom, url)]
         a_faire = []                                # (url, titre, h1, description, intro, local, faq, fil, indexer)
-        TP, REC, ENF = ("Animateurs & directeurs", "/trouver-un-poste/"), ("Structures", "/recruter/"), ("Inscrire mon enfant", "/enfants/")
+        TP, REC, ENF = ("Animateurs & directeurs", "/trouver-un-poste/offres/"), ("Structures", "/recruter/"), ("Inscrire mon enfant", "/enfants/")
         cee = "Un animateur en colo ou en accueil de loisirs pendant les vacances est le plus souvent embauché en contrat d'engagement éducatif (CEE) : au moins 2,20 fois le SMIC horaire par jour travaillé, 80 jours au plus sur 12 mois, et un repos quotidien et hebdomadaire encadré par la loi. À l'année (périscolaire, mercredis), c'est un CDD ou un CDI à temps partiel, souvent dans une mairie ou une association."
         stage = "Le stage pratique du BAFA dure au moins 14 jours effectifs, dans un accueil collectif de mineurs déclaré (colo, accueil de loisirs, périscolaire, en une ou deux parties). Il doit commencer dans les 18 mois qui suivent la formation générale, et tout le BAFA se termine en 30 mois au plus. Le stage peut être rémunéré : en pratique, la plupart des stagiaires en colo sont payés en CEE."
         direction = "Un séjour de vacances ou un accueil de loisirs est dirigé par un titulaire du BAFD (ou stagiaire BAFD), ou d'un diplôme professionnel de l'animation. Pour un accueil de loisirs de plus de 80 mineurs ouvert plus de 80 jours par an, un diplôme professionnel est demandé (BPJEPS, DEJEPS…)."
@@ -1644,12 +1644,13 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/")}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/offres/")}
+        PREFIXES = {"se-former": "/se-former/", "trouver-un-poste": "/trouver-un-poste/"}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
             partie = PARTIES[entete["partie"]]
-            url = f"{partie[1]}{f.stem}/"
+            url = f"{PREFIXES[entete['partie']]}{f.stem}/"
             guides.append({**entete, "url": url})
             self.ajouter(url, "guide.html", titre=entete["titre"], description=entete["description"],
                          corps_md=corps, entete=entete, fil=[partie, (entete["court"], url)])
@@ -1678,25 +1679,26 @@ class Site:
         ]
         for q in faq_tp:
             q["r_rendu"] = q["r"]
+        # /trouver-un-poste/ faisait doublon avec la page des offres (et l'annuaire des animateurs) : elle y renvoie
         for pg in self.pages:
             if pg["url"] == "/trouver-un-poste/":
-                pg["faq_tp"], pg["schema_faq"] = faq_tp, self.schema_faq(faq_tp)
+                pg.update(gabarit="redirection.html", indexer=False, vers="/trouver-un-poste/offres/", titre="Cette page a changé d'adresse")
         for o in self.offres:
             self.ajouter(f"/trouver-un-poste/offres/{o['id']}/", "offre.html", titre=f"{o['intitule']} à {o['ville']}",
                          description=f"{o['intitule']} : {o['structure']['nom']}, {o['ville']} ({o['departement']}), à partir du {date_fr(o['debut'])}. Candidature directe auprès de la structure, gratuite.",
                          offre=o, schema=self.schema_offre(o),
-                         fil=[("Animateurs & directeurs", "/trouver-un-poste/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
+                         fil=[("Animateurs & directeurs", "/trouver-un-poste/offres/"), (o["intitule"], f"/trouver-un-poste/offres/{o['id']}/")])
         self.ajouter("/trouver-un-poste/offres/", "offres.html", titre="Offres de stages pratiques BAFA et de jobs d'animation",
                      description="Les offres de stages pratiques BAFA, de jobs d'été et de postes d'animation publiées par les structures vérifiées, avec des filtres par département, contrat, poste et date.",
                      h1="Les offres d'animation", indexer=bool(self.offres),
                      mois=sorted({o["debut"].strftime("%Y-%m") for o in self.offres}),
-                     fil=[("Animateurs & directeurs", "/trouver-un-poste/"), ("Les offres", "/trouver-un-poste/offres/")])
+                     fil=[("Animateurs & directeurs", "/trouver-un-poste/offres/"), ("Les offres", "/trouver-un-poste/offres/")])
         # l'annuaire inversé : le candidat décrit le poste qu'il cherche, les structures les plus proches reçoivent sa demande
         self.ajouter("/trouver-un-poste/demande/", "demande.html", titre="Trouver une structure : décrivez le poste que vous cherchez",
                      description="Stage pratique BAFA, colo, centre de loisirs, direction : décrivez le poste que vous cherchez, et votre demande part chez les 3 structures d'animation les plus proches de chez vous. Gratuit, sans intermédiaire.",
-                     fil=[("Animateurs & directeurs", "/trouver-un-poste/"), ("Décrire ce que je cherche", "/trouver-un-poste/demande/")])
+                     fil=[("Animateurs & directeurs", "/trouver-un-poste/offres/"), ("Décrire ce que je cherche", "/trouver-un-poste/demande/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
-        TP = ("Animateurs & directeurs", "/trouver-un-poste/")
+        TP = ("Animateurs & directeurs", "/trouver-un-poste/offres/")
         STR = ("Les structures", "/trouver-un-poste/structures/")
         structures = self.structures_en_ligne()
         # les places fondatrices qui restent : comptées dans la base (structures qui ont payé au tarif fondateur)

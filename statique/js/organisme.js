@@ -165,8 +165,10 @@
     }
     // à droite : la recherche, la sélection, le total
     var d2 = el("div", "og-panier"); g.appendChild(d2);
-    var q = el("input", "og-recherche"); q.type = "search"; q.placeholder = "Ajouter un département : nom ou numéro"; q.setAttribute("list", "og-deps"); d2.appendChild(q);
-    var dl = el("datalist"); dl.id = "og-deps"; zones.forEach(function (z) { var o = el("option"); o.value = z.nom + " (" + z.departement + ")"; dl.appendChild(o); }); d2.appendChild(dl);
+    var q = el("input", "og-recherche"); q.type = "search"; q.placeholder = "Ajouter un département : nom ou numéro"; q.dataset.villes = "liste"; q.dataset.villesTitre = "Départements"; q.autocomplete = "off";
+    var bq = el("span", "og-recherche-boite"); bq.appendChild(q); d2.appendChild(bq);
+    var dl = el("datalist"); dl.id = "og-deps"; zones.forEach(function (z) { var o = el("option"); o.value = z.nom + " (" + z.departement + ")"; dl.appendChild(o); }); bq.appendChild(dl);
+    if (window.FRA_VILLES) window.FRA_VILLES(q);
     q.addEventListener("change", function () { var m = q.value.match(/\(([0-9AB]{2,3})\)\s*$/) || q.value.trim().match(/^([0-9AB]{2,3})$/i); var z = m && zone(m[1].toUpperCase()); if (z && libre(z)) { choix[z.departement] = true; zonesPage(); } else if (z) E.message(z.nom + " est déjà pris.", true); });
     d2.appendChild(el("h3", null, "Votre sélection"));
     var sel = Object.keys(choix), total = 0;

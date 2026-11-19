@@ -12,7 +12,7 @@
 <div class="tp-recherche"><div class="cadre">
   <form class="tp-barre" id="sjc-filtres" role="search" aria-label="Chercher une offre pour mon enfant" onsubmit="return false">
     <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="sjc-ou">Où cherchez-vous ?</label>
-      <input id="sjc-ou" name="ou" type="search" list="sjc-lieux" placeholder="Où cherchez-vous ? Ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
+      <input id="sjc-ou" name="ou" type="search" data-villes placeholder="Où cherchez-vous ? Ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
       <datalist id="sjc-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist>
     </div>
     <button class="tp-filtres" type="button" aria-haspopup="dialog" aria-controls="sjc-ff">{{ m.icone("reglages") }}Filtres <span class="pastille-n" data-sjc-nb hidden></span></button>

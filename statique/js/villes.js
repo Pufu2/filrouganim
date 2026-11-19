@@ -8,7 +8,10 @@
   function sansAccents(t) { return (t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
   var ICONE = '<svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
 
-  Array.prototype.forEach.call(document.querySelectorAll("input[data-villes]"), function (champ, k) {
+  var compteur = 0;
+  function attacher(champ) {
+    if (champ.dataset.villesPret) return; champ.dataset.villesPret = "1";
+    var k = compteur++;
     var boite = champ.parentNode;
     var lieux = boite.querySelector("datalist") || (champ.form && champ.form.querySelector("datalist"));
     var options = lieux ? Array.prototype.map.call(lieux.options, function (o) { return { texte: o.value, cle: sansAccents(o.value), dep: o.dataset.dep || "" }; }) : [];
@@ -55,7 +58,11 @@
     }
     function ouvrir() {
       var q = sansAccents(champ.value.trim());
-      if (!q) {
+      if (!q && champ.dataset.villes === "liste") {
+        // une liste à elle (ex. les départements) : case vide, les premiers choix de la liste
+        if (!options.length) return fermer();
+        remplir(champ.dataset.villesTitre || "Suggestions", options.slice(0, 12).map(function (o) { return choix(o.texte, ""); }));
+      } else if (!q) {
         if (!villes.length) return fermer();
         remplir("Les villes les plus demandées", villes.map(function (v) {
           return choix(champ.dataset.villesValeur === "nom" ? v.nom : v.texte, v.n.toLocaleString("fr-FR") + (v.n > 1 ? " sessions" : " session"));
@@ -95,5 +102,8 @@
       if (e.key === "Escape") { fermer(); champ.focus(); }
     });
     liste.addEventListener("focusout", function (e) { if (!boite.contains(e.relatedTarget)) fermer(); });
-  });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("input[data-villes]"), attacher);
+  // pour les cases ajoutées plus tard (Mon espace) : FRA_VILLES(champ)
+  window.FRA_VILLES = attacher;
 })();
