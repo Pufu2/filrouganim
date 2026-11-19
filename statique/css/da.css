@@ -178,3 +178,67 @@ h1 em, h2 em, h3 em, .ft-explore-h em, .bo-h em { font-style: normal !important;
 .tete .tp-sur, .tete .note-main { font-size: .72rem !important; }
 .tete-accueil .h1-accueil { font-size: clamp(2rem, 4vw, 2.9rem); max-width: 14ch; }
 .tete-accueil .chapo-accueil { font-size: 1.04rem; }
+
+/* ==========================================================================================
+   Mon espace et l'administration : le menu de gauche en anthracite, les bandeaux du haut
+   anthracite avec le halo rouge, des cartes blanches sur un fond gris très clair.
+   ========================================================================================== */
+body.en-app, body.en-app .bande-papier { background: var(--papier); }
+body.en-app .co-onglets > .co-nav { background: var(--nuit); border-right: 1px solid var(--nuit-3); }
+body.en-app .co-marque { border-bottom-color: var(--nuit-3); }
+body.en-app .co-marque, body.en-app .co-marque:hover { text-decoration: none; }
+body.en-app .co-marque .logo-n .lm-c { display: block; } body.en-app .co-marque .logo-n .lm-s { display: none; }
+body.en-app .co-marque .logo-mot { color: #fff; } body.en-app .co-marque .logo-mot em { color: var(--fil-clair); }
+body.en-app .co-groupe { color: #7d818a; }
+body.en-app .co-nav [data-onglet-vers] { color: #c4c7ce; }
+body.en-app .co-nav [data-onglet-vers]:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+body.en-app .co-nav [data-onglet-vers][aria-current] { background: rgba(255, 255, 255, .09); color: #fff; box-shadow: inset 3px 0 0 var(--fil); }
+body.en-app .co-nav [data-onglet-vers][aria-current]::after { background: var(--fil-clair); }
+body.en-app .co-nav .co-ferme { color: #8a8e96; }
+body.en-app .co-pastille-neutre { background: rgba(255, 255, 255, .14); color: #fff; }
+body.en-app #co-bascule { background: rgba(255, 255, 255, .05); border-color: var(--nuit-3); color: #c4c7ce; }
+body.en-app #co-bascule span { color: #9ea2aa; } body.en-app #co-bascule a { color: #e4e4e7; }
+body.en-app #co-bascule a[aria-current] { background: var(--fil); color: #fff; }
+body.en-app .co-moi { border-top-color: var(--nuit-3); }
+body.en-app .co-moi-bouton { color: #fff; } body.en-app .co-moi-bouton:hover { background: rgba(255, 255, 255, .06); }
+body.en-app .co-moi-t small, body.en-app .co-moi-ch { color: #9ea2aa; }
+.co-moi-menu a:hover, .co-moi-menu button:hover { background: var(--papier); }
+/* la barre du haut */
+.app-titre { font: 600 1.1rem/1 var(--titres); letter-spacing: -.01em; }
+.app-ic:hover { border-color: #cfd0d4; background: var(--papier); }
+/* les bandeaux du haut de chaque partie (Mon espace, organismes, parents, admin) */
+.co-entete, .og-hero, .ap-hero { background-color: var(--nuit) !important; background-image: var(--halos) !important; border: 0 !important; color: #fff; }
+.co-entete h2, .og-hero h2, .ap-hero h2 { color: #fff; font-weight: 700; letter-spacing: -.025em; }
+.co-entete h2 em, .og-hero h2 em, .ap-hero h2 em { color: var(--fil-clair) !important; font-style: normal; }
+.co-e-sur, .ap-sur, .og-hero .og-sur { color: var(--fil-clair) !important; }
+.co-e-p, .og-hero-p, .ap-hero-p, .og-hero .og-hero-p { color: #b9bcc3 !important; }
+.co-e-guide { background: transparent; border-color: var(--nuit-3); color: #d4d6db; }
+.co-e-guide:hover { border-color: var(--fil-clair); color: #fff; }
+.co-entete .bouton-blanc, .og-hero .bouton-blanc, .ap-hero .bouton-blanc { background: transparent; color: #fff; border-color: #4a4e56; }
+.co-entete .bouton-blanc:hover, .og-hero .bouton-blanc:hover, .ap-hero .bouton-blanc:hover { border-color: #fff; color: #fff; }
+.co-e-resume, .og-hero-cote, .ap-hero-cote { color: var(--encre); box-shadow: 0 24px 48px -24px rgba(0, 0, 0, .6); }
+.co-e-jauge { background: #ececee; }
+/* les cartes */
+.carte-compte, .ap-carte, .og-carte { border-color: var(--trait); border-radius: 14px; box-shadow: none; }
+.carte-compte h2, .ap-carte h2, .ap-carte h3 { letter-spacing: -.02em; }
+.ap-hero .ap-bouton, .og-hero .ap-bouton { background: var(--fil); } .ap-hero .ap-bouton:hover { background: var(--fil-fonce); }
+.ap-hero .ap-lien, .ap-hero .ap-lien-b { color: #e4e4e7; background: transparent; border-color: #4a4e56; }
+.og-sur { font: 600 .74rem/1.3 var(--texte) !important; letter-spacing: .12em; text-transform: uppercase; }
+.og-cote-l b { font-weight: 700; color: var(--fil); }
+.ap-bouton { border-radius: 10px; }
+body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] { border-radius: 10px; background: rgba(255, 255, 255, .09); color: #fff; box-shadow: inset 3px 0 0 var(--fil); }
+body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(--fil-clair); }
+/* admin : l'étape par étape des annuaires inversés */
+.ap-etapes-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+.ap-etape { padding: 14px 16px; border: 1px solid var(--trait); border-radius: 12px; background: #fafafa; }
+.ap-etape-t { margin: 0; font-weight: 700; font-size: .92rem; }
+.ap-etape-q { margin: 2px 0 10px; font-size: .8rem; color: var(--doux); }
+.ap-barre-l { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; margin: 5px 0; font-size: .82rem; }
+.ap-barre-l span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-barre-l i { display: block; height: 8px; border-radius: 99px; background: #ececee; overflow: hidden; }
+.ap-barre-l i b { display: block; height: 100%; background: var(--fil); border-radius: 99px; }
+.ap-barre-l em { font-style: normal; color: var(--doux); font-size: .78rem; white-space: nowrap; }
+.ap-corriger { display: grid; gap: 10px; max-width: 620px; }
+.ap-corriger h2 { margin: 0; }
+.ap-champ { display: grid; gap: 4px; font-size: .85rem; font-weight: 600; }
+.ap-champ input, .ap-champ textarea { font: 400 .95rem var(--texte); padding: 9px 11px; border: 1px solid var(--trait); border-radius: 9px; background: #fff; }

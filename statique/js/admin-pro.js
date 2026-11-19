@@ -1389,6 +1389,89 @@
     }
     IDX = tout;
   }
+  /* ---------- l'étape par étape : pour chaque étape du formulaire, ce que les gens choisissent ---------- */
+  function etapes(c, liste, defs) {
+    var k = carte(c, "Étape par étape", liste.length + " réponse" + (liste.length > 1 ? "s" : "") + " · ce que choisissent les gens à chaque étape", "ap-etapes");
+    var g = el("div", "ap-etapes-g"); k.appendChild(g);
+    defs.forEach(function (d) {
+      var cpt = {}; liste.forEach(function (x) { d[2](x).forEach(function (v) { cpt[v] = (cpt[v] || 0) + 1; }); });
+      var b = el("div", "ap-etape"); b.appendChild(el("p", "ap-etape-t", d[0])); b.appendChild(el("p", "ap-etape-q", d[1]));
+      var cles = Object.keys(cpt).sort(function (a, z) { return cpt[z] - cpt[a]; }), max = cles.length ? cpt[cles[0]] : 1;
+      if (!cles.length) b.appendChild(el("p", "ap-petit", "Pas encore de réponse."));
+      cles.slice(0, 8).forEach(function (v) {
+        var l = el("div", "ap-barre-l"); l.appendChild(el("span", null, v));
+        var t = el("i"); var r = el("b"); r.style.width = Math.max(4, Math.round(cpt[v] / max * 100)) + "%"; t.appendChild(r); l.appendChild(t);
+        l.appendChild(el("em", null, cpt[v] + " · " + Math.round(cpt[v] / liste.length * 100) + " %")); b.appendChild(l);
+      });
+      g.appendChild(b);
+    });
+  }
+  var CHAMPS_DEM = [["prenom", "Prénom", "texte"], ["poste", "Poste (animateur-stagiaire, animateur, directeur, directeur-adjoint…)", "texte"], ["departement", "Département (code)", "texte"], ["ville", "Ville", "texte"],
+    ["periodes", "Périodes (séparées par des virgules)", "liste"], ["diplomes", "Diplômes (séparés par des virgules)", "liste"], ["experiences", "Expériences (séparées par des virgules)", "liste"],
+    ["dispo_debut", "Disponible à partir du (AAAA-MM-JJ)", "texte"], ["dispo_fin", "Jusqu'au (AAAA-MM-JJ)", "texte"], ["message", "Message", "long"], ["note_admin", "Note de l'administration (privée)", "long"]];
+  var CHAMPS_BES = [["parent_nom", "Nom du parent", "texte"], ["telephone", "Téléphone", "texte"], ["ville", "Ville", "texte"], ["departement", "Département (code)", "texte"],
+    ["ages", "Âges (séparés par des virgules)", "nombres"], ["types", "Types : accueils, periscolaire, sejours (séparés par des virgules)", "liste"], ["quand", "Quand", "texte"], ["message", "Message", "long"]];
+  // corriger une demande : un formulaire avec les champs prévus, enregistré par admin_corriger_demande (la base vérifie les colonnes)
+  function corriger(table, x, champs) {
+    var f = el("form", "ap-corriger"); f.appendChild(el("p", "ap-sur", table === "demandes" ? "Demande d'animateur" : "Besoin d'une famille"));
+    f.appendChild(el("h2", null, "Corriger la demande")); f.appendChild(el("p", "ap-petit", "Seuls les champs ci-dessous peuvent être modifiés. Les structures déjà prévenues ne reçoivent pas de nouvel e-mail."));
+    champs.forEach(function (c) {
+      var l = el("label", "ap-champ"); l.appendChild(el("span", null, c[1]));
+      var v = x[c[0]]; var i = el(c[2] === "long" ? "textarea" : "input"); i.name = c[0];
+      i.value = Array.isArray(v) ? v.join(", ") : (v == null ? "" : String(v)); if (c[2] === "long") i.rows = 4;
+      l.appendChild(i); f.appendChild(l);
+    });
+    var b = el("button", "ap-bouton", "Enregistrer"); b.type = "submit"; f.appendChild(b);
+    f.addEventListener("submit", async function (e) {
+      e.preventDefault(); var mod = {};
+      champs.forEach(function (c) {
+        var brut = f.elements[c[0]].value.trim(), avant = x[c[0]];
+        var val = c[2] === "liste" ? (brut ? brut.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [])
+          : c[2] === "nombres" ? (brut ? brut.split(",").map(function (s) { return parseInt(s, 10); }).filter(function (n) { return !isNaN(n); }) : [])
+          : (brut || null);
+        if (JSON.stringify(val) !== JSON.stringify(Array.isArray(avant) ? avant : (avant == null || avant === "" ? (c[2] === "liste" || c[2] === "nombres" ? [] : null) : avant))) mod[c[0]] = val;
+      });
+      if (!Object.keys(mod).length) { E.fermerFiche(); return; }
+      b.disabled = true;
+      var r = await E.sb.rpc("admin_corriger_demande", { t: table, id: x.id, champs: mod });
+      b.disabled = false; if (r.error) return E.message(E.erreur(r.error), true);
+      Object.assign(x, mod); E.fermerFiche(); E.message("Demande corrigée."); annuaires(); if (table === "demandes") QG();
+    });
+    E.ouvrirFiche(f);
+  }
+
+  /* ---------- les parents : comptes, enfants, demandes de place, besoins décrits ---------- */
+  var PAR = null;
+  async function parentsAdmin(recharger) {
+    var c = $("ad-parents"); if (!c) return;
+    if (!PAR || recharger) {
+      var r = await Promise.all([E.sb.from("comptes_parents").select("*").order("cree_le", { ascending: false }),
+        E.sb.from("enfants").select("id,parent_id,prenom,annee_naissance"),
+        E.sb.from("demandes_sejour").select("id,parent_id,statut,cree_le,sejour_id").not("parent_id", "is", null).limit(2000),
+        E.sb.from("besoins_familles").select("id,parent_id,cree_le").not("parent_id", "is", null).limit(2000)]);
+      PAR = { comptes: (r[0] && r[0].data) || [], enfants: (r[1] && r[1].data) || [], demandes: (r[2] && r[2].data) || [], besoins: (r[3] && r[3].data) || [] };
+    }
+    c.textContent = "";
+    var mails = {}; D.comptes.forEach(function (x) { mails[x.id] = x.email; });
+    var par = function (l, id) { return l.filter(function (x) { return x.parent_id === id; }); };
+    hero(c, "Parents", "Les familles ", "et leurs enfants",
+      "Les comptes parents : leurs enfants, leurs demandes de place sur les séjours et accueils, et leurs besoins décrits. Le carnet de séjour leur arrive par e-mail quand une place est confirmée.",
+      [bouton("← Vue d'ensemble", "accueil"), bouton("Annuaires inversés", "annuaires")]);
+    var d30 = joursAvant(29), auj = new Date();
+    chiffres(c, [[String(PAR.comptes.length), "comptes parents"], [String(compte(PAR.comptes, function (x) { return iso(x.cree_le) >= d30; })), "sur 30 jours"],
+                 [String(PAR.enfants.length), "enfants"], [String(PAR.demandes.length), "demandes de place"], [String(compte(PAR.demandes, function (x) { return x.statut === "acceptee"; })), "places confirmées"],
+                 [String(PAR.besoins.length), "besoins décrits"]]);
+    if (!PAR.comptes.length) { c.appendChild(el("p", "ap-vide", "Aucun compte parent pour l'instant.")); return; }
+    tableau(c, ["Parent", "Enfants", "Demandes de place", "Besoins", ""], PAR.comptes.map(function (p) {
+      var en = par(PAR.enfants, p.id), dm = par(PAR.demandes, p.id), bs = par(PAR.besoins, p.id);
+      return [cellule(p.nom || "Sans nom", [mails[p.id], p.telephone, (p.ville || "") + (p.departement ? " (" + p.departement + ")" : ""), "inscrit " + depuis(p.cree_le)].filter(Boolean).join(" · ")),
+        cellule(en.length ? en.map(function (x) { return x.prenom + (x.annee_naissance ? " (" + (auj.getFullYear() - x.annee_naissance) + " ans)" : ""); }).join(", ") : "–"),
+        cellule(dm.length ? dm.length + " demande" + (dm.length > 1 ? "s" : "") : "–", compte(dm, function (x) { return x.statut === "acceptee"; }) ? compte(dm, function (x) { return x.statut === "acceptee"; }) + " confirmée(s)" : ""),
+        cellule(bs.length ? String(bs.length) : "–"),
+        actions([mails[p.id] ? ["✉ Écrire", null, "mailto:" + mails[p.id]] : null, ["Espace", function () { ouvrirEspace("parent", p.id); }]])];
+    }));
+  }
+
   /* ---------- Les deux annuaires inversés : animateurs → structures, familles → structures ---------- */
   var ANN = null, annVue = "anim";
   async function annuaires(recharger) {
@@ -1414,25 +1497,41 @@
       b.addEventListener("click", function () { annVue = x[0]; annuaires(); }); pu.appendChild(b); });
     c.appendChild(pu);
     if (annVue === "anim") {
-      c.appendChild(el("p", "ap-petit", "« Décrire ce que je cherche » (/trouver-un-poste/demande/) : le poste, la période, le lieu, et les structures qui l'ont reçue."));
+      c.appendChild(el("p", "ap-petit", "« Décrire ce que je cherche » (/trouver-un-poste/demande/) : ce que les animateurs choisissent à chaque étape du formulaire, puis chaque demande, que vous pouvez corriger."));
+      etapes(c, De, [
+        ["1 · Le poste", "Vous cherchez quoi ?", function (d) { return [POSTES[d.poste] || d.poste || "non précisé"]; }],
+        ["2 · Où", "Où voulez-vous travailler ?", function (d) { return [nomDep(d.departement) || "non précisé"]; }],
+        ["2 bis · Jusqu'où", "Mon département, ma région ou partout", function (d) { return [d.partout ? "Partout en France" : (d.zone || []).length > 1 ? "Toute ma région" : "Mon département"]; }],
+        ["3 · Quand", "Quand êtes-vous disponible ?", function (d) { return (d.periodes || []).length ? d.periodes.map(function (p) { return PERIODES[p] || p; }) : ["non précisé"]; }],
+        ["4 · Diplômes", "Vos diplômes", function (d) { return (d.diplomes || []).length ? d.diplomes.map(function (x) { return lib("diplomes", x); }) : ["aucun coché"]; }],
+        ["5 · Expérience", "Votre expérience", function (d) { return (d.experiences || []).length ? d.experiences.map(function (x) { return lib("experiences", x); }) : ["aucune cochée"]; }],
+        ["6 · Le message", "Quelques mots pour les structures", function (d) { return [d.message ? "avec un message" : "sans message"]; }],
+        ["7 · Qui la reçoit", "Votre demande partira chez…", function (d) { var n = (d.destinataires || []).length; return [n ? n + " structure" + (n > 1 ? "s" : "") : "aucune structure"]; }]]);
       if (!De.length) { c.appendChild(el("p", "ap-vide", "Aucune demande pour l'instant.")); return; }
       tableau(c, ["Animateur", "Poste et période", "Lieu", "Structures", ""], De.slice(0, 100).map(function (d) {
         var n = (d.destinataires || []).length;
         return [cellule(d.prenom || "Sans prénom", depuis(d.cree_le)), cellule(POSTES[d.poste] || d.poste || "–", (d.periodes || []).map(function (p) { return PERIODES[p] || p; }).join(", ")),
           cellule(lieuDe(d)), etiquette(n ? n + " structure" + (n > 1 ? "s" : "") : "aucune", n ? "ok" : "rouge"),
-          actions([["Ouvrir", function () { qg.filtre = "toutes"; qg.sel = d.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"]])];
+          actions([["Ouvrir", function () { qg.filtre = "toutes"; qg.sel = d.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"], ["Modifier", function () { corriger("demandes", d, CHAMPS_DEM); }]])];
       }));
     } else {
-      c.appendChild(el("p", "ap-petit", "« Décrire mon besoin » (/enfants/demande/) : ce que cherche la famille, et les structures qui l'ont reçue. Les coordonnées sont celles que la famille a données."));
-      if (!B.length) { c.appendChild(el("p", "ap-vide", "Aucun besoin décrit pour l'instant.")); return; }
+      c.appendChild(el("p", "ap-petit", "« Décrire mon besoin » (/enfants/demande/) : ce que les familles choisissent à chaque étape, puis chaque besoin, que vous pouvez corriger. Les coordonnées sont celles que la famille a données."));
       var TY = { accueils: "accueil de loisirs", periscolaire: "périscolaire", sejours: "séjour" };
-      tableau(c, ["Famille", "Ce qu'elle cherche", "Lieu", "Structures", ""], B.slice(0, 150).map(function (b) {
+      etapes(c, B, [
+        ["1 · Pour quel âge ?", "Un ou plusieurs enfants", function (b) { return (b.ages || []).length ? b.ages.map(function (a) { return a + " ans"; }) : ["non précisé"]; }],
+        ["2 · Vous cherchez…", "Accueil de loisirs, périscolaire, séjour", function (b) { return (b.types || []).length ? b.types.map(function (t) { return TY[t] || t; }) : ["non précisé"]; }],
+        ["2 bis · Quand ?", "La période", function (b) { return [b.quand || "je ne sais pas encore"]; }],
+        ["3 · Où ?", "Le département", function (b) { return [nomDep(b.departement) || "non précisé"]; }],
+        ["4 · Vos coordonnées", "Téléphone donné ou non", function (b) { return [b.telephone ? "avec téléphone" : "e-mail seulement"]; }],
+        ["5 · Qui la reçoit", "Les structures prévenues", function (b) { var n = (dests[b.id] || []).length; return [n ? n + " structure" + (n > 1 ? "s" : "") : "aucune structure"]; }]]);
+      if (!B.length) { c.appendChild(el("p", "ap-vide", "Aucun besoin décrit pour l'instant.")); return; }
+      tableau(c, ["Famille", "Ce qu'elle cherche", "Lieu", "Structures", "Reçue par", ""], B.slice(0, 150).map(function (b) {
         var ds = dests[b.id] || [];
         var st = ds.map(function (x) { return (noms[x.structure_id] || "structure") + (x.statut && x.statut !== "nouvelle" ? " (" + x.statut + ")" : ""); }).join(", ");
         return [cellule(b.parent_nom || "Sans nom", [b.email, b.telephone, depuis(b.cree_le)].filter(Boolean).join(" · ")),
           cellule((b.types || []).map(function (t) { return TY[t] || t; }).join(", ") || "–", [(b.ages || []).length ? (b.ages || []).join(", ") + " ans" : "", b.quand, b.message ? "« " + String(b.message).slice(0, 120) + " »" : ""].filter(Boolean).join(" · ")),
           cellule(b.ville || nomDep(b.departement), b.departement), etiquette(ds.length ? ds.length + " structure" + (ds.length > 1 ? "s" : "") : "aucune", ds.length ? "ok" : "rouge"),
-          cellule(st || "–")];
+          cellule(st || "–"), actions([["Modifier", function () { corriger("besoins_familles", b, CHAMPS_BES); }]])];
       }));
     }
   }
@@ -1514,6 +1613,7 @@
       membresPage(); enteteStructures(); enteteAnimateurs(); organismes(); visibilite(); provenance(); prospection();
       sejoursAdmin().catch(function (e) { console.error(e); });
       annuaires().catch(function (e) { console.error(e); }); pastillesAdmin();
+      parentsAdmin().catch(function (e) { console.error(e); });
       indexation(); actualites(); contenusSite(); reseaux(); enteteGuides();
       var p = document.querySelector('[data-pastille-admin="qg"]'); var n = compte(D.demandes, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; });
       if (p) { p.hidden = !n; p.textContent = n; }
