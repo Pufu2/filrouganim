@@ -41,21 +41,13 @@ h3 { letter-spacing: -.015em; }
 .co-marque .logo-mot { color: var(--encre); }
 .co-marque .logo-mot em { color: var(--fil); }
 
-/* ---------- la barre du menu : foncée, sur toute la largeur ---------- */
-header.jm-entete, header.jm-entete.defile { background: var(--nuit); padding: 0; border-bottom: 1px solid var(--nuit-3); }
-header.jm-entete .jm-barre, header.jm-entete.defile .jm-barre { background: transparent; border: 0; box-shadow: none; border-radius: 0; height: 68px;
-  width: min(1240px, 100% - 32px); padding: 0; }
-header.jm-entete .mm-bouton { color: #c4c7ce; font-weight: 500; font-size: 14.5px; }
-header.jm-entete .mm-bouton:hover, header.jm-entete .mm-bouton[aria-expanded="true"] { background: rgba(255, 255, 255, .08); color: #fff; }
-header.jm-entete .mm-bouton[data-actif] { color: #fff; font-weight: 600; }
-header.jm-entete .bouton-espace { background: transparent; color: #fff; border: 1px solid var(--nuit-3); }
-header.jm-entete .bouton-espace:hover { border-color: #5a5e66; background: rgba(255, 255, 255, .06); color: #fff; }
-header.jm-entete .bouton-espace .icone { stroke: #fff; }
-header.jm-entete .bouton-commencer { background: var(--fil); color: #fff; border: 0; }
-header.jm-entete .bouton-commencer:hover { background: var(--fil-fonce); color: #fff; }
-header.jm-entete .jm-st { background: transparent; border: 1px solid var(--nuit-3); color: #fff; }
-header.jm-entete .jm-st svg { stroke: #fff; }
-header.jm-entete .mm-tiroir span { background: #fff; }
+/* ---------- la barre du menu : la barre blanche flottante d'avant, avec le logo en version foncée ---------- */
+header.jm-entete .logo-n .lm-c { display: none; }
+header.jm-entete .logo-n .lm-s { display: block; }
+header.jm-entete .logo-mot { color: var(--encre); }
+header.jm-entete .logo-mot em { color: var(--fil); }
+header.jm-entete .logo-n img { height: 30px; }
+header.jm-entete .logo-mot { font-size: 18px; }
 
 /* ---------- le haut des pages : anthracite, avec des halos à la place du fil ---------- */
 .tete { background-color: var(--nuit); background-image: var(--halos); color: var(--creme); }
@@ -127,4 +119,39 @@ h1 em, h2 em, h3 em, .ft-explore-h em, .bo-h em { font-style: normal !important;
 @media (max-width: 560px) { .ac-hero-d .ro-onglets [role=tab] { white-space: normal; font-size: 12.5px; line-height: 1.2; padding: 0 6px; } }
 /* une largeur de page commune à la barre, au haut et au contenu */
 .cadre { width: min(1180px, 100% - 32px); }
-header.jm-entete .jm-barre, header.jm-entete.defile .jm-barre, .tete-accueil .cadre.ac-hero { width: min(1180px, 100% - 32px); }
+.tete-accueil .cadre.ac-hero { width: min(1180px, 100% - 32px); }
+
+/* ---------- accueil (maquette A) : une seule carte « Trouver une structure » ---------- */
+.ac-carte { background: #fff; border-radius: 16px; padding: 24px; color: var(--encre); box-shadow: 0 30px 60px -22px rgba(0, 0, 0, .55); }
+.ac-carte-t { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.ac-carte-s { margin: 2px 0 16px; font-size: 14px; color: var(--doux); }
+.ac-carte .ro-onglets, .ac-carte #ro-p1, .ac-carte #ro-p3 { display: none !important; }
+.ac-carte .ro-panneau { padding: 0; box-shadow: none !important; border-radius: 0 !important; background: transparent; gap: 12px; }
+.ac-carte .ro-quoi legend.ro-titre { display: none; }
+.ac-carte .ro-quoi { padding: 0; border: 0; }
+.ac-carte .ro-pourqui { grid-template-columns: 1fr 1fr; gap: 8px; }
+.ac-carte .ro-pourqui button { padding: 12px; gap: 10px; border-radius: 10px; font-size: 14px; }
+.ac-carte .ro-pourqui button small, .ac-carte .ro-pourqui button::after { display: none; }
+.ac-carte .ro-pourqui button svg { width: 30px; height: 30px; padding: 6px; border-radius: 8px; }
+.ac-carte .ro-pourqui button b { font-size: 14px; line-height: 1.25; }
+.ac-carte .ro-ou > .ro-titre { display: none; }
+.ac-carte .ro-plus { font-size: 13px; margin-top: 10px; }
+@media (max-width: 420px) { .ac-carte .ro-pourqui { grid-template-columns: 1fr; } }
+
+/* ---------- accueil : les quatre usages, reliés par un fil discret ---------- */
+.ac-usages { padding: 64px 0 24px; }
+.ac-usages h2 { margin: 0 0 26px; font-size: clamp(1.6rem, 3vw, 2rem); }
+.ac-4 { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.ac-4-fil { position: absolute; left: 46px; right: 46px; top: 46px; height: 2px; z-index: 0; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(214, 31, 53, .55), rgba(214, 31, 53, .18) 50%, rgba(214, 31, 53, .55)); }
+.ac-b { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; padding: 24px; background: #fff; border: 1px solid var(--trait); border-radius: 14px;
+  color: var(--encre); text-decoration: none; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.ac-b:hover { color: var(--encre); text-decoration: none; border-color: #cfd0d4; box-shadow: 0 18px 40px -26px rgba(23, 25, 29, .45); transform: translateY(-2px); }
+.ac-b-ic { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 10px; border-radius: 10px; background: var(--nuit); color: #fff; box-shadow: 0 0 0 6px #fff; }
+.ac-b-ic svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ac-b b { font-size: 17px; letter-spacing: -.01em; }
+.ac-b span:not(.ac-b-ic) { font-size: 14.5px; line-height: 1.55; color: var(--doux); }
+.ac-b em { margin-top: auto; padding-top: 8px; font-style: normal; font-size: 14px; font-weight: 600; color: var(--fil); }
+.ac-b em span { color: inherit !important; }
+@media (max-width: 960px) { .ac-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ac-4-fil { display: none; } }
+@media (max-width: 560px) { .ac-4 { grid-template-columns: minmax(0, 1fr); } }

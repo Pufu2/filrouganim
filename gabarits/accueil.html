@@ -14,48 +14,29 @@
       <ul class="ac-puces"><li>Gratuit pour les jeunes</li><li>Structures vérifiées</li><li>Sans intermédiaire</li></ul>
       <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
     </div>
-    <div class="ac-hero-d">{{ m.recherche_onglets(lien, departements) }}</div>
+    <div class="ac-hero-d"><div class="ac-carte"><p class="ac-carte-t">Trouver une structure</p><p class="ac-carte-s">Pour qui cherchez-vous ?</p>{{ m.recherche_onglets(lien, departements) }}</div></div>
   </div>
 </section>
 {% endblock %}
 
 {% block contenu %}
-{# Les trois parties du site : des cartes illustrées, comme les cartes d'offres et de profils #}
-<div class="cadre">
-<div class="pa" aria-label="Les trois parties du site">
-  <svg class="pa-fil" viewBox="0 0 600 128" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 78 C 40 40, 70 64, 100 64 S 190 108, 300 64 S 430 22, 500 64 S 570 92, 610 54"/></svg>
-  <a class="pa-c pa-former" href="{{ lien('/se-former/') }}">
-    <span class="pa-haut" aria-hidden="true"><span class="pa-ic"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg></span></span>
-    <span class="pa-corps">
-      <span class="note-main">trouver sa formation</span>
-      <span class="pa-t">Se former</span>
-      <span class="pa-x">BAFA, BAFD, PSC1, BPJEPS, DEJEPS : les sessions avec leurs dates et leurs prix.</span>
-      <span class="pa-ch"><b>{{ stats.nb }}</b> sessions · <b>{{ stats.nb_organismes }}</b> organismes</span>
-    </span>
-    <span class="pa-pied">Voir les sessions <span aria-hidden="true">→</span></span>
-  </a>
-  <a class="pa-c pa-poste" href="{{ lien('/trouver-un-poste/') }}">
-    <span class="pa-haut" aria-hidden="true"><span class="pa-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg></span></span>
-    <span class="pa-corps">
-      <span class="note-main">trouver un stage ou un job</span>
-      <span class="pa-t">Animateurs &amp; directeurs</span>
-      <span class="pa-x">Stage pratique, job d'été, poste à l'année : les offres, et un profil gratuit que les structures consultent.</span>
-      <span class="pa-ch">{% if offres %}<b>{{ offres | length }}</b> offre{{ 's' if offres | length > 1 }} en ligne · {% endif %}toujours gratuit</span>
-    </span>
-    <span class="pa-pied">Voir les offres <span aria-hidden="true">→</span></span>
-  </a>
-  <a class="pa-c pa-struct" href="{{ lien('/recruter/') }}">
-    <span class="pa-haut" aria-hidden="true"><span class="pa-ic"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span></span>
-    <span class="pa-corps">
-      <span class="note-main">recruter et se faire connaître</span>
-      <span class="pa-t">Structures</span>
-      <span class="pa-x">Votre page, vos offres là où les jeunes cherchent leur BAFA, et les profils de votre secteur.</span>
-      <span class="pa-ch"><b>Gratuit</b> : votre page et une offre · abonnement dès <b>{{ site.abonnement.prix_fondateur if restantes > 0 else site.abonnement.prix }}</b> par an</span>
-    </span>
-    <span class="pa-pied">Voir l'espace structures <span aria-hidden="true">→</span></span>
-  </a>
-</div>
-</div>
+{# Les quatre usages du site : quatre blocs reliés par un fil discret #}
+<section class="ac-usages" aria-labelledby="t-ac-usages">
+  <div class="cadre">
+    <h2 id="t-ac-usages">Une plateforme, quatre usages</h2>
+    <div class="ac-4">
+      <span class="ac-4-fil" aria-hidden="true"></span>
+      <a class="ac-b" href="{{ lien('/se-former/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg></span>
+        <b>Se former</b><span>BAFA, BAFD, BPJEPS : {{ stats.nb }} sessions comparées, dates et prix vérifiés.</span><em>Trouver une session <span aria-hidden="true">→</span></em></a>
+      <a class="ac-b" href="{{ lien('/trouver-un-poste/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18"/></svg></span>
+        <b>Trouver un poste</b><span>Stages pratiques, jobs d'été, postes à l'année dans des structures vérifiées.</span><em>Voir les offres <span aria-hidden="true">→</span></em></a>
+      <a class="ac-b" href="{{ lien('/recruter/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg></span>
+        <b>Recruter</b><span>Votre page et une offre gratuites. Les profils des animateurs de votre secteur.</span><em>Publier une offre <span aria-hidden="true">→</span></em></a>
+      <a class="ac-b" href="{{ lien('/enfants/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5"/><circle cx="17" cy="10" r="2.2"/></svg></span>
+        <b>Inscrire mon enfant</b><span>Colos, accueils de loisirs et périscolaire proposés par des structures vérifiées.</span><em>Voir les offres <span aria-hidden="true">→</span></em></a>
+    </div>
+  </div>
+</section>
 <section class="cb-bande"><div class="cadre">{{ m.bloc_chiffres(audience, lien) }}</div></section>
 <section class="bande bande-papier ac-st" aria-labelledby="t-ac-st">
   <div class="cadre">
