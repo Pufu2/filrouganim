@@ -199,7 +199,7 @@
           <datalist id="ro-sj-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les offres</button>
       </div>
-      <p class="ro-plus">Colos, accueils de loisirs et périscolaire proposés par des structures vérifiées. Vous ne trouvez pas ? <a href="{{ lien('/enfants/demande/') }}">Décrivez votre besoin</a> : les structures proches vous répondent.</p>
+      <p class="ro-plus">Colos, accueils de loisirs et périscolaire de structures vérifiées. Vous ne trouvez pas ? <a href="{{ lien('/enfants/demande/') }}">Décrivez votre besoin</a>.</p>
     </div>
   </form>
   <script>
