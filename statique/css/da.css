@@ -41,13 +41,22 @@ h3 { letter-spacing: -.015em; }
 .co-marque .logo-mot { color: var(--encre); }
 .co-marque .logo-mot em { color: var(--fil); }
 
-/* ---------- la barre du menu : la barre blanche flottante d'avant, avec le logo en version foncée ---------- */
-header.jm-entete .logo-n .lm-c { display: none; }
-header.jm-entete .logo-n .lm-s { display: block; }
-header.jm-entete .logo-mot { color: var(--encre); }
-header.jm-entete .logo-mot em { color: var(--fil); }
+/* ---------- la barre du menu : la forme flottante arrondie d'avant, en anthracite ---------- */
+header.jm-entete .jm-barre, header.jm-entete.defile .jm-barre { background: var(--nuit-2); border: 1px solid var(--nuit-3); box-shadow: 0 14px 34px -10px rgba(0, 0, 0, .45); }
+header.jm-entete .logo-mot { font-size: 18px; color: #fff; }
+header.jm-entete .logo-mot em { color: var(--fil-clair); }
 header.jm-entete .logo-n img { height: 30px; }
-header.jm-entete .logo-mot { font-size: 18px; }
+header.jm-entete .mm-bouton { color: #c4c7ce; }
+header.jm-entete .mm-bouton:hover, header.jm-entete .mm-bouton[aria-expanded="true"] { background: rgba(255, 255, 255, .08); color: #fff; }
+header.jm-entete .mm-bouton[data-actif] { color: #fff; font-weight: 600; }
+header.jm-entete .bouton-espace { background: transparent; color: #fff; border: 1px solid var(--nuit-3); }
+header.jm-entete .bouton-espace:hover { background: rgba(255, 255, 255, .06); border-color: #5a5e66; color: #fff; }
+header.jm-entete .bouton-espace .icone { stroke: #fff; }
+header.jm-entete .bouton-commencer { background: var(--fil); color: #fff; border: 0; }
+header.jm-entete .bouton-commencer:hover { background: var(--fil-fonce); color: #fff; }
+header.jm-entete .jm-st { background: transparent; border: 1px solid var(--nuit-3); }
+header.jm-entete .jm-st svg { stroke: #fff; }
+header.jm-entete .mm-tiroir span { background: #fff; }
 
 /* ---------- le haut des pages : anthracite, avec des halos à la place du fil ---------- */
 .tete { background-color: var(--nuit); background-image: var(--halos); color: var(--creme); }
@@ -155,3 +164,10 @@ h1 em, h2 em, h3 em, .ft-explore-h em, .bo-h em { font-style: normal !important;
 .ac-b em span { color: inherit !important; }
 @media (max-width: 960px) { .ac-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ac-4-fil { display: none; } }
 @media (max-width: 560px) { .ac-4 { grid-template-columns: minmax(0, 1fr); } }
+/* les volets du menu restent dans l'écran : le premier s'aligne sur la gauche de son bouton, le dernier sur la droite */
+@media (min-width: 1001px) {
+  header.jm-entete .mm-item:first-child .mm-panneau { left: 0; right: auto; transform: none; }
+}
+@media (min-width: 1001px) and (max-width: 1250px) {
+  header.jm-entete .mm-item:nth-child(2) .mm-panneau { left: 0; right: auto; transform: none; }
+}
