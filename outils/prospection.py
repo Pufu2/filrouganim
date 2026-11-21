@@ -82,7 +82,7 @@ def main():
     # chaque lot ne touche que ses structures : le lot 1 (repérées à la main), les suivants notés « lot N » à l'import
     prospects = [x for x in prospects if ((x.get("note") or "").startswith(f"lot {args.lot} ") if args.lot != "1"
                                           else not (x.get("note") or "").startswith("lot "))]
-    envoyes, ignores = 0, 0
+    envoyes, ignores, vus = 0, 0, set()
     for x in prospects:
         d = dep_de(x.get("ville")) or dep_de(x.get("nom"))
         if d not in IDF and d != "idf":
@@ -95,21 +95,39 @@ def main():
         lieux = liste(sorted({IDF.get(m["departement"], "en Île-de-France") for m in pour}))
         qui = f"{n} animateur{'s' if n > 1 else ''}" + (f", dont {stag} stagiaire{'s' if stag > 1 else ''} BAFA," if stag and stag < n else (" stagiaires BAFA" if stag == n and n > 1 else (" stagiaire BAFA" if stag else "")))
         verbe = "cherchent" if n > 1 else "cherche"
-        sujet = f"{n} animateur{'s' if n > 1 else ''} {verbe} un poste près de chez vous"
         lien = f"{site}/recruter/"
-        p1 = ("Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent, et leur demande part chez les structures "
-              "les plus proches.")
-        p2 = (f"En ce moment, {qui} {verbe} un poste {lieux}. {'Ils n’ont' if n > 1 else 'Il n’a'} encore reçu aucune réponse : "
-              "aucune structure de votre secteur n'est inscrite.")
-        p3 = "Votre page et une offre sont gratuites. Une fois votre structure vérifiée, les demandes de votre secteur arrivent directement chez vous."
-        texte = (f"Bonjour,\n\n{p1} {p2}\n\n{p3}\n\nCréer la page de votre structure (2 minutes) : {lien}\n\n"
-                 f"Bonne journée,\nL'équipe Fil Roug'Anim\n{site}\n\nVous ne souhaitez plus recevoir nos messages ? Répondez « stop ».\n")
-        corps = (f"<p>Bonjour,</p><p>{html.escape(p1)} {html.escape(p2)}</p><p>{html.escape(p3)}</p>"
-                 f'<p><a href="{lien}">Créer la page de votre structure</a> (2 minutes)</p>'
-                 f"<p>Bonne journée,<br>L'équipe Fil Roug'Anim<br><a href=\"{site}\">filrouganim.fr</a></p>"
-                 f'<p style="font-size:12px;color:#6b6f76">Vous ne souhaitez plus recevoir nos messages ? Répondez « stop ».</p>')
+        if (x.get("nom") or "").lower().startswith("mairie"):
+            # mairies (annuaire officiel) : le message va à l'accueil, on demande de le transmettre au service enfance-jeunesse
+            sujet = "Animateurs BAFA disponibles pour vos accueils de loisirs"
+            p0 = "Pourriez-vous transmettre ce message au service enfance-jeunesse ?"
+            p1 = "Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent."
+            p2 = f"En ce moment, {qui} {verbe} un poste {IDF.get(d, 'en Île-de-France')}."
+            p3 = "Votre service peut créer sa page gratuitement : les demandes du secteur arrivent alors directement chez vous."
+            texte = (f"Bonjour,\n\n{p0}\n\n{p1} {p2}\n\n{p3}\n\n{lien}\n\n"
+                     f"Bonne journée,\nL'équipe Fil Roug'Anim\n{site}\n\nVous ne souhaitez plus recevoir nos messages ? Répondez « stop ».\n")
+            corps = (f"<p>Bonjour,</p><p>{html.escape(p0)}</p><p>{html.escape(p1)} {html.escape(p2)}</p><p>{html.escape(p3)}</p>"
+                     f'<p><a href="{lien}">Créer la page de votre service</a></p>'
+                     f"<p>Bonne journée,<br>L'équipe Fil Roug'Anim<br><a href=\"{site}\">filrouganim.fr</a></p>"
+                     f'<p style="font-size:12px;color:#6b6f76">Vous ne souhaitez plus recevoir nos messages ? Répondez « stop ».</p>')
+        else:
+            sujet = f"{n} animateur{'s' if n > 1 else ''} {verbe} un poste près de chez vous"
+            p1 = ("Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent, et leur demande part chez les structures "
+                  "les plus proches.")
+            p2 = (f"En ce moment, {qui} {verbe} un poste {lieux}. {'Ils n’ont' if n > 1 else 'Il n’a'} encore reçu aucune réponse : "
+                  "aucune structure de votre secteur n'est inscrite.")
+            p3 = "Votre page et une offre sont gratuites. Une fois votre structure vérifiée, les demandes de votre secteur arrivent directement chez vous."
+            texte = (f"Bonjour,\n\n{p1} {p2}\n\n{p3}\n\nCréer la page de votre structure (2 minutes) : {lien}\n\n"
+                     f"Bonne journée,\nL'équipe Fil Roug'Anim\n{site}\n\nVous ne souhaitez plus recevoir nos messages ? Répondez « stop ».\n")
+            corps = (f"<p>Bonjour,</p><p>{html.escape(p1)} {html.escape(p2)}</p><p>{html.escape(p3)}</p>"
+                     f'<p><a href="{lien}">Créer la page de votre structure</a> (2 minutes)</p>'
+                     f"<p>Bonne journée,<br>L'équipe Fil Roug'Anim<br><a href=\"{site}\">filrouganim.fr</a></p>"
+                     f'<p style="font-size:12px;color:#6b6f76">Vous ne souhaitez plus recevoir nos messages ? Répondez « stop ».</p>')
         if args.essai:
-            print(f"(essai) {x['cle']} [{d}] : {sujet} | {p2}")
+            if (sujet, texte) not in vus:
+                vus.add((sujet, texte))
+                print(f"\n----- modèle (ex. {x['cle']}) -----\nObjet : {sujet}\n\n{texte}-----")
+            print(f"(essai) {x['cle']} <{x['email']}> [{d}] : {p2}")
+            envoyes += 1
             continue
         try:
             envoyer(cle_brevo, de, config["nom"], x["email"], sujet, texte, corps)
@@ -123,7 +141,7 @@ def main():
         appel(f"{base}/admin_prospects?cle=eq.{urllib.parse.quote(x['cle'])}", cle, "PATCH",
               {"statut": "contacte", "etapes": etapes, "maj": dt.datetime.now(dt.timezone.utc).isoformat()})
         envoyes += 1
-    print(f"Prospection lot {args.lot} : {envoyes} e-mails envoyés, {ignores} structures hors secteur laissées de côté.")
+    print(f"Prospection lot {args.lot} : {envoyes} e-mails {'à envoyer (essai, rien n’est parti)' if args.essai else 'envoyés'}, {ignores} structures hors secteur laissées de côté.")
 
 
 if __name__ == "__main__":
