@@ -77,8 +77,11 @@ def main():
     de = config.get("email") or "contact@filrouganim.fr"
 
     demandes = appel(f"{base}/demandes?select=poste,departement,ville,zone", cle) or []
-    prospects = appel(f"{base}/admin_prospects?select=cle,nom,email,ville,statut,etapes&type=eq.organisateur"
+    prospects = appel(f"{base}/admin_prospects?select=cle,nom,email,ville,statut,etapes,note&type=eq.organisateur"
                       f"&statut=eq.a_contacter&email=not.is.null", cle) or []
+    # chaque lot ne touche que ses structures : le lot 1 (repérées à la main), les suivants notés « lot N » à l'import
+    prospects = [x for x in prospects if ((x.get("note") or "").startswith(f"lot {args.lot} ") if args.lot != "1"
+                                          else not (x.get("note") or "").startswith("lot "))]
     envoyes, ignores = 0, 0
     for x in prospects:
         d = dep_de(x.get("ville")) or dep_de(x.get("nom"))

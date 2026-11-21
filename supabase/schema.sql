@@ -873,3 +873,6 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 -- cv_lisible() : l'admin lit tous les CV, les structures abonnées ceux des profils publiés et vérifiés (et de leurs candidats).
 -- v37 (appliquée par migration) : admin_indexation.lien (inspectionResultLink de l'API Search Console : lien direct vers l'inspection).
 -- v38 (appliquée par migration) : l'admin lit comptes_parents et enfants ; admin_corriger_demande(t, id, champs) corrige une demande des annuaires inversés (demandes, besoins_familles), colonnes prévues seulement.
+
+-- v39 (21/11/2026) : outils/prospection.py lit et met à jour la liste de prospection avec la clé serveur
+grant select, update on public.admin_prospects to service_role;
