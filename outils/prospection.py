@@ -101,7 +101,8 @@ def main():
             sujet = "Animateurs BAFA disponibles pour vos accueils de loisirs"
             p0 = "Pourriez-vous transmettre ce message au service enfance-jeunesse ?"
             p1 = "Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent."
-            p2 = f"En ce moment, {qui} {verbe} un poste {IDF.get(d, 'en Île-de-France')}."
+            qui_m = f"{n} stagiaire{'s' if n > 1 else ''} BAFA" if stag == n else qui
+            p2 = f"En ce moment, {qui_m} {verbe} un poste {IDF.get(d, 'en Île-de-France')}."
             p3 = "Votre service peut créer sa page gratuitement : les demandes du secteur arrivent alors directement chez vous."
             texte = (f"Bonjour,\n\n{p0}\n\n{p1} {p2}\n\n{p3}\n\n{lien}\n\n"
                      f"Bonne journée,\nL'équipe Fil Roug'Anim\n{site}\n\nVous ne souhaitez plus recevoir nos messages ? Répondez « stop ».\n")
