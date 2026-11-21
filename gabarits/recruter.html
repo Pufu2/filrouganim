@@ -46,7 +46,6 @@
 
 <section class="bande bande-papier"><div class="cadre"><div class="tp-bande">
   <p><b>Avec l'abonnement</b> : les demandes des animateurs de votre secteur arrivent chez vous ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; vos offres illimitées et « à la une » ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » ; la boîte à outils (guides, générateur d'annonce, budget de l'équipe). Vous recrutez juste pour une saison ? <b>Pass recrutement : {{ site.abonnement.pass_mois_prix }} par mois</b>, de 1 à {{ site.abonnement.pass_mois_max }} mois, payé une fois.</p>
-  <a class="tp-bande-bouton" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer l'espace de ma structure</a>
 </div></div></section>
 
 <section class="bande bande-papier rc-infos" aria-labelledby="t-inclus">
@@ -86,7 +85,6 @@
         <h2>Votre structure, <em>là où l'on cherche</em></h2>
         <p>Commencez gratuitement : votre page et une offre. {% if restantes > 0 %}Pour l'abonnement, il reste {{ restantes }} place{{ 's' if restantes > 1 }} à {{ site.abonnement.prix_fondateur }} par an, à vie. {% else %}Abonnement : {{ site.abonnement.prix }} par an, chaque centre en plus moitié prix. {% endif %}Une mairie ou une association qui paie sur facture (virement, mandat administratif, Chorus Pro) ? C'est prévu. Une question ? <a href="{{ lien('/contact/') }}">Écrivez-nous</a>.</p>
       </div>
-      <a class="tp-appel-bouton" href="{{ creer }}">Créer le compte de ma structure <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>

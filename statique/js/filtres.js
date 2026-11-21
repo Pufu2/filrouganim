@@ -17,6 +17,7 @@
   // --- une carte de session à partir des données (même contenu que la carte fabriquée par le site)
   function carte(x, lienOrganismes) {
     var a = el("article", "session" + (x.c ? " session-complete" : ""));
+    a.dataset.diplome = x.di; a.dataset.ville = x.v;
     var date = el("p", "s-date");
     date.setAttribute("aria-hidden", "true");
     date.appendChild(el("b", null, String(x.j)));
@@ -78,7 +79,7 @@
       var voir = i.ok && n < liste.limite;
       if (voir && !i.el) { i.el = carte(i.x, liste.lienOrganismes); liste.el.appendChild(i.el); }
       if (voir && i.el.parentNode !== liste.el) liste.el.appendChild(i.el);
-      if (i.el) i.el.hidden = !voir;
+      if (i.el) { i.el.hidden = !voir; i.el._i = i; }
       if (i.ok) n++;
     });
     // l'ordre des cartes suit l'ordre des données (date, puis prix)
@@ -223,8 +224,9 @@
         (!mois || (vac ? (d.periode || "").replace(/-\d{4}$/, "") === mois.slice(2) : d.mois.slice(5) === mois.slice(2)));
       i.okSansLieu = (!dip || d.diplome === dip) && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
-      i.ok = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) && okPlus(d) &&
+      i.okBase = (!dip || d.diplome === dip) && okDep && okQuand && (!type || d.type === type) && okPlus(d) &&
         mots.every(function (m) { return d.texte.indexOf(m) !== -1; });
+      i.ok = i.okBase && dansZone(i);
     });
     // formule partenaire : dans un lieu choisi, les sessions d'un organisme partenaire de ce département passent en premier
     liste.items.forEach(function (i, k) { if (i.rang == null) i.rang = k; });
@@ -239,13 +241,13 @@
     } else {
       document.dispatchEvent(new CustomEvent("sessions:compte", { detail: n }));
     }
-    if (plan) { majCarte(); cadrer(); }
+    if (plan) { majCarte(); if (!zone) cadrer(); }
     if (modeEcoles) {
       compte.textContent = nEcoles === null ? "Chargement des écoles…" : nEcoles + (nEcoles > 1 ? " écoles forment au " : " école forme au ") + dip;
       aucune.hidden = true;
     } else {
-      compte.textContent = n === 0 ? "Aucune session." : n + (n > 1 ? " sessions correspondent" : " session correspond") +
-        ", de la plus proche à la plus lointaine.";
+      compte.textContent = n === 0 ? "Aucune session." : zone ? n + (n > 1 ? " sessions dans cette zone de la carte" : " session dans cette zone de la carte")
+        : n + (n > 1 ? " sessions correspondent" : " session correspond") + ", de la plus proche à la plus lointaine.";
       aucune.hidden = n > 0;
     }
     if (majAdresse) {
@@ -319,39 +321,56 @@
   }
 
 
-  // --- La carte : des bulles qui comptent les sessions, par département de loin et par ville de près
-  var carteEl = document.getElementById("carte"), plan = null, calque = null;
+  // --- La carte, façon Airbnb : de loin, des pastilles qui comptent les sessions ; de près, une pastille par ville avec
+  // son prix le plus bas. Un clic sur un prix ouvre la fiche de la session sur la carte (flèches s'il y en a plusieurs) ;
+  // la liste suit la carte quand on la déplace (« Rechercher quand je déplace la carte »).
+  var carteEl = document.getElementById("carte"), plan = null, calque = null, zone = null, auto = false, autoT = null, pins = {};
   var FRANCE = [[42.3, -4.8], [51.1, 8.2]];
+  function dansZone(i) { return !zone || !!(i.x && i.x.g && zone.contains(i.x.g)); }
+  function bouger(fn) { auto = true; clearTimeout(autoT); autoT = setTimeout(function () { auto = false; }, 900); fn(); }
   function initCarte() {
     if (plan || !window.L || !carteEl || carteEl.offsetParent === null) return;
-    plan = L.map(carteEl, { scrollWheelZoom: true, maxZoom: 14, minZoom: 5 }).fitBounds(FRANCE);
+    plan = L.map(carteEl, { scrollWheelZoom: true, maxZoom: 15, minZoom: 5, zoomControl: false });
+    L.control.zoom({ position: "topright" }).addTo(plan);
+    bouger(function () { plan.fitBounds(FRANCE); });
     L.tileLayer(carteEl.dataset.tuiles, { maxZoom: 18, minZoom: 4,
-      attribution: '&copy; <a href="https://www.ign.fr/">IGN</a> &ndash; G\u00e9oplateforme' }).addTo(plan);
+      attribution: '&copy; <a href="https://www.ign.fr/">IGN</a> &ndash; Géoplateforme' }).addTo(plan);
     calque = L.layerGroup().addTo(plan);
     ajouterBoutonFrance();
     plan.on("zoomend moveend", majCarte);
+    plan.on("moveend", function () {
+      if (auto) return;
+      var suivre = document.getElementById("carte-suivre");
+      if (suivre && !suivre.checked) return;
+      zone = plan.getBounds().pad(-0.02); filtrerZone();
+    });
     majCarte();
     cadrer();
   }
-  // Les bulles : les villes proches à l'écran sont réunies en une seule bulle (seulement un chiffre, comme les
-  // cartes de location) ; le nom des villes s'affiche au survol. Un clic zoome, ou choisit la ville s'il n'y en a qu'une.
+  function filtrerZone() {
+    liste.items.forEach(function (i) { i.ok = (i.okBase === undefined ? true : i.okBase) && dansZone(i); });
+    liste.limite = liste.par;
+    var n = afficher(liste);
+    compte.textContent = n === 0 ? "Aucune session dans cette zone : dézoomez ou déplacez la carte." : n + (n > 1 ? " sessions dans cette zone de la carte" : " session dans cette zone de la carte");
+    aucune.hidden = true;
+  }
+  function prixCourt(x) { return x.px === 0 && x.app ? "Gratuit" : x.px != null ? (Number.isInteger(x.px) ? x.px : Math.round(x.px)) + " €" : null; }
   function majCarte() {
     if (!plan) return;
-    calque.clearLayers();
+    calque.clearLayers(); pins = {};
     var villes = {};
     liste.items.forEach(function (i) {
       if (!i.okSansLieu || !i.x || !i.x.g) return;
       var k = i.d.dep + "|" + i.x.v;
-      var x = villes[k] || (villes[k] = { n: 0, g: i.x.g, v: i.x.v, d: i.d.dep });
-      x.n++;
+      var x = villes[k] || (villes[k] = { k: k, n: 0, g: i.x.g, v: i.x.v, d: i.d.dep, s: [], min: null });
+      x.n++; x.s.push(i);
+      if (i.x.px != null && (x.min === null || i.x.px < x.min.x.px)) x.min = i;
     });
-    var amas = [], zone = plan.getBounds(), dans = 0, choisie = form.elements.dep.value;
+    var amas = [], zoom = plan.getZoom(), choisie = form.elements.dep.value, detail = zoom >= 9;
     Object.keys(villes).forEach(function (k) {
-      var x = villes[k], p = plan.latLngToContainerPoint(x.g);
-      if (zone.contains(x.g)) dans += x.n;
-      var proche = null;
+      var x = villes[k], p = plan.latLngToContainerPoint(x.g), proche = null;
       for (var j = 0; j < amas.length; j++) {
-        if (Math.abs(amas[j].p.x - p.x) < 46 && Math.abs(amas[j].p.y - p.y) < 34) { proche = amas[j]; break; }
+        if (Math.abs(amas[j].p.x - p.x) < (detail ? 64 : 56) && Math.abs(amas[j].p.y - p.y) < 30) { proche = amas[j]; break; }
       }
       if (proche) { proche.villes.push(x); proche.n += x.n; }
       else amas.push({ p: p, n: x.n, villes: [x] });
@@ -359,59 +378,104 @@
     amas.forEach(function (a) {
       var la = 0, lo = 0;
       a.villes.forEach(function (x) { la += x.g[0] * x.n; lo += x.g[1] * x.n; });
-      var pos = [la / a.n, lo / a.n], seule = a.villes.length === 1 ? a.villes[0] : null;
+      var seule = a.villes.length === 1 ? a.villes[0] : null, pos = seule ? seule.g : [la / a.n, lo / a.n];
       var active = seule && choisie === "v:" + seule.v;
+      var texte = seule && detail ? (seule.min ? prixCourt(seule.min.x) : (seule.n + (seule.n > 1 ? " sessions" : " session"))) : String(a.n);
       var mk = L.marker(pos, { icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0],
-        html: '<span class="bulle' + (a.n >= 100 ? " bulle-grande" : "") + (active ? " active" : "") + '"></span>' }), riseOnHover: true }).addTo(calque);
-      mk.getElement().querySelector(".bulle").textContent = a.n;
+        html: '<span class="pin' + (seule && detail ? " pin-prix" : " pin-amas") + (active ? " active" : "") + '"></span>' }), riseOnHover: true, keyboard: true }).addTo(calque);
+      var span = mk.getElement().querySelector(".pin");
+      span.textContent = texte;
+      if (seule && detail && seule.n > 1) span.appendChild(el("small", null, "· " + seule.n));
+      a.villes.forEach(function (x) { pins[x.k] = mk; });
       a.villes.sort(function (u, w) { return w.n - u.n; });
-      var noms = a.villes.slice(0, 4).map(function (x) { return x.v; }).join(", ") + (a.villes.length > 4 ? "\u2026" : "");
-      mk.bindTooltip(noms + " : " + a.n + (a.n > 1 ? " sessions" : " session"), { direction: "top", offset: [0, -16], className: "bulle-info" });
+      if (!(seule && detail)) {
+        var noms = a.villes.slice(0, 4).map(function (x) { return x.v; }).join(", ") + (a.villes.length > 4 ? "…" : "");
+        mk.bindTooltip(noms + " : " + a.n + (a.n > 1 ? " sessions" : " session"), { direction: "top", offset: [0, -16], className: "bulle-info" });
+      }
       mk.on("click", function () {
-        if (seule) { choisirVille(seule.v, seule.d); return; }
+        if (seule && detail) { fiche(seule, mk); return; }
         var b = L.latLngBounds(a.villes.map(function (x) { return x.g; }));
-        // des villes trop proches pour être séparées en zoomant : une petite liste à choisir
-        if (plan.getZoom() >= 11 || b.getNorthEast().distanceTo(b.getSouthWest()) < 1500) {
-          var div = L.DomUtil.create("div", "bulle-liste");
-          a.villes.forEach(function (x) {
-            var bt = L.DomUtil.create("button", "", div);
-            bt.type = "button"; bt.textContent = x.v + " \u00b7 " + x.n;
-            bt.addEventListener("click", function () { plan.closePopup(); choisirVille(x.v, x.d); });
-          });
-          L.popup({ closeButton: false, offset: [0, -14], className: "bulle-popup" }).setLatLng(pos).setContent(div).openOn(plan);
-        } else {
-          plan.fitBounds(b, { padding: [60, 60], maxZoom: Math.min(plan.getZoom() + 3, 12) });
-        }
+        if (seule || b.getNorthEast().distanceTo(b.getSouthWest()) < 1500) plan.setView(pos, Math.max(zoom + 2, 10));
+        else plan.fitBounds(b, { padding: [60, 60], maxZoom: Math.min(zoom + 3, 12) });
       });
     });
-    document.getElementById("carte-zone").textContent = dans + (dans > 1 ? " sessions dans cette zone" : " session dans cette zone");
-    if (boutonFrance) boutonFrance.hidden = !choisie;
+    if (boutonFrance) boutonFrance.hidden = !choisie && !zone;
   }
+  // la fiche sur la carte : comme chez Airbnb, une carte arrondie au-dessus du prix, avec des flèches s'il y a plusieurs sessions
+  function fiche(v, mk) {
+    var s = v.s.slice().sort(function (a, b) { return a.rang - b.rang; }), k = 0;
+    var boite = L.DomUtil.create("div", "pop");
+    L.DomEvent.disableClickPropagation(boite); L.DomEvent.disableScrollPropagation(boite);
+    function dessiner() {
+      var x = s[k].x; boite.textContent = "";
+      var haut = el("div", "pop-haut"); haut.dataset.diplome = x.di;
+      haut.appendChild(el("span", "pop-badge", x.dn));
+      var d = el("p", "pop-date"); d.appendChild(el("b", null, String(x.j))); d.appendChild(el("span", null, MOIS[parseInt(x.m.slice(5), 10) - 1])); haut.appendChild(d);
+      var ferme = el("button", "pop-x", "×"); ferme.type = "button"; ferme.setAttribute("aria-label", "Fermer"); ferme.addEventListener("click", function () { plan.closePopup(); }); haut.appendChild(ferme);
+      if (s.length > 1) {
+        [["pop-g", "‹", -1], ["pop-d", "›", 1]].forEach(function (f) {
+          var b = el("button", "pop-fl " + f[0], f[1]); b.type = "button"; b.setAttribute("aria-label", f[2] < 0 ? "Session précédente" : "Session suivante");
+          b.addEventListener("click", function () { k = (k + f[2] + s.length) % s.length; dessiner(); }); haut.appendChild(b);
+        });
+        var pts = el("p", "pop-pts", (k + 1) + " / " + s.length); haut.appendChild(pts);
+      }
+      boite.appendChild(haut);
+      var c = el("div", "pop-corps");
+      var t = el("p", "pop-t"); t.appendChild(el("b", null, x.v + " (" + x.d + ")"));
+      c.appendChild(t);
+      c.appendChild(el("p", "pop-l", x.dn + (x.spn ? " · " + x.spn : (x.t !== "parcours" && x.t !== "session" ? " · " + x.tn.toLowerCase() : "")) + (x.th ? " · " + x.th : "")));
+      c.appendChild(el("p", "pop-l", x.dates + " · " + x.o));
+      var bas = el("p", "pop-bas"); var px = prixCourt(x);
+      bas.appendChild(px ? el("b", null, px) : el("span", null, "prix à voir"));
+      if (px && px !== "Gratuit") bas.appendChild(el("span", null, " la session"));
+      var voir = el("a", "pop-voir", "Voir →"); voir.href = x.u; voir.target = "_blank"; voir.rel = "noopener nofollow";
+      if (x.ok) { voir.dataset.org = x.ok; voir.dataset.orgT = "clic_session"; voir.dataset.orgD = x.d || ""; }
+      bas.appendChild(voir); c.appendChild(bas);
+      if (s.length > 1) { var tout = el("button", "pop-tout", "Voir les " + s.length + " sessions à " + v.v); tout.type = "button"; tout.addEventListener("click", function () { plan.closePopup(); choisirVille(v.v, v.d); }); c.appendChild(tout); }
+      boite.appendChild(c);
+    }
+    dessiner();
+    bouger(function () {
+      L.popup({ closeButton: false, offset: [0, -16], className: "pop-carte", maxWidth: 300, minWidth: 300, autoPanPadding: [20, 20] })
+        .setLatLng(v.g).setContent(boite).openOn(plan);
+    });
+    var span = mk.getElement() && mk.getElement().querySelector(".pin");
+    Array.prototype.forEach.call(carteEl.querySelectorAll(".pin.ouverte"), function (p) { p.classList.remove("ouverte"); });
+    if (span) span.classList.add("ouverte");
+  }
+  // survol d'une carte de la liste : sa pastille passe en foncé sur la carte
+  liste.el.addEventListener("mouseover", function (e) {
+    var c = e.target.closest && e.target.closest(".session"); if (!c || !c._i || !c._i.x || !plan) return;
+    var mk = pins[c._i.d.dep + "|" + c._i.x.v], sp = mk && mk.getElement() && mk.getElement().querySelector(".pin");
+    Array.prototype.forEach.call(carteEl.querySelectorAll(".pin.survol"), function (p) { if (p !== sp) p.classList.remove("survol"); });
+    if (sp) { sp.classList.add("survol"); mk.setZIndexOffset(1000); }
+  });
+  liste.el.addEventListener("mouseleave", function () { if (carteEl) Array.prototype.forEach.call(carteEl.querySelectorAll(".pin.survol"), function (p) { p.classList.remove("survol"); }); });
   var depuisCarte = false;
   function cadrer() {
     if (!plan) return;
     if (depuisCarte) { depuisCarte = false; return; }
     var pts = [];
     liste.items.forEach(function (i) { if (i.ok && i.x && i.x.g) pts.push(i.x.g); });
-    if (form.elements.dep.value && pts.length) plan.fitBounds(pts, { maxZoom: 10, padding: [40, 40] });
-    else if (!form.elements.dep.value) plan.fitBounds(FRANCE);
+    if (form.elements.dep.value && pts.length) bouger(function () { plan.fitBounds(pts, { maxZoom: 11, padding: [40, 40] }); });
+    else if (!form.elements.dep.value) bouger(function () { plan.fitBounds(FRANCE); });
   }
   function choisirVille(v, d) {
     form.elements.ou.value = v + " (" + d + ")";
     form.elements.dep.value = "v:" + v;
-    depuisCarte = true;
+    zone = null;
     appliquer(true);
   }
   // « Toute la France » : enlève le lieu choisi et montre tout le pays
   var boutonFrance = null;
   function ajouterBoutonFrance() {
-    var Ctrl = L.Control.extend({ options: { position: "topleft" }, onAdd: function () {
+    var Ctrl = L.Control.extend({ options: { position: "bottomleft" }, onAdd: function () {
       var b = L.DomUtil.create("button", "bouton-france");
       b.type = "button"; b.textContent = "Toute la France"; b.hidden = true;
       L.DomEvent.disableClickPropagation(b);
       b.addEventListener("click", function () {
-        form.elements.ou.value = ""; form.elements.dep.value = "";
-        appliquer(true); plan.fitBounds(FRANCE);
+        form.elements.ou.value = ""; form.elements.dep.value = ""; zone = null;
+        appliquer(true); bouger(function () { plan.fitBounds(FRANCE); });
       });
       boutonFrance = b;
       return b;
@@ -432,11 +496,11 @@
 
   function f2dep() { return form.elements.dep.value; }
   function brancher() {
-    form.addEventListener("change", function () { appliquer(true); });
+    form.addEventListener("change", function () { zone = null; appliquer(true); });
     form.addEventListener("input", function (e) {
-      if (e.target.name === "q") appliquer(true);
+      if (e.target.name === "q") { zone = null; appliquer(true); }
       // un département reconnu pendant la frappe filtre tout de suite ; un champ vidé remet toute la France
-      if (e.target.name === "ou" && (f2dep() || !e.target.value.trim())) appliquer(true);
+      if (e.target.name === "ou" && (f2dep() || !e.target.value.trim())) { zone = null; appliquer(true); }
     });
     form.addEventListener("submit", function (e) {
       e.preventDefault();

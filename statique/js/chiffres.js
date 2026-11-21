@@ -98,7 +98,9 @@
   /* ---------- votre ville sur Google ---------- */
   var famille = (D.onglets[0] || [])[0], villeChoisie = null, lieux = null;
   var MOT = { bafa: "bafa", bafd: "bafd", bsb: "bsb", psc: "psc1", ecoles: "bpjeps" };
+  var LOCALES = { parent: 1, anim: 1, struct: 1 };
   function recherche(titre, ville, fam) {
+    if (LOCALES[fam]) return (titre || "").replace(/ \(\d+[AB]?\)$/, "").toLowerCase();
     var m = (titre || "").match(/\b(BAFA|BAFD|BSB|PSC1?|CPJEPS|BPJEPS|DEJEPS|DESJEPS)\b/i);
     return ((m ? m[1] : MOT[fam] || "bafa") + " " + ville).toLowerCase();
   }
@@ -106,7 +108,7 @@
     famille = fam;
     Array.prototype.forEach.call(document.querySelectorAll(".cj-onglet"), function (b) { b.setAttribute("aria-selected", b.dataset.famille === fam ? "true" : "false"); });
     var o = D.onglets.filter(function (x) { return x[0] === fam; })[0], villes = o ? o[2] : [];
-    document.getElementById("cj-nb-villes").textContent = villes.length + (villes.length > 1 ? " villes" : " ville");
+    document.getElementById("cj-nb-villes").textContent = villes.length + (LOCALES[fam] ? (villes.length > 1 ? " lieux" : " lieu") : (villes.length > 1 ? " villes" : " ville"));
     var ol = document.getElementById("cj-villes"); ol.textContent = "";
     villes.slice(0, 13).forEach(function (v, i) {
       var li = el("li"), b = el("button"); b.type = "button";
@@ -115,7 +117,7 @@
       li.appendChild(b); ol.appendChild(li);
       if (i === 0) choisir(v, b);
     });
-    if (!villes.length) { ol.appendChild(el("li", "cj-vide", "Pas encore de ville en première page pour " + (o ? o[1] : "cette formation") + " : ça vient.")); serp(null); }
+    if (!villes.length) { ol.appendChild(el("li", "cj-vide", "Pas encore de " + (LOCALES[fam] ? "lieu" : "ville") + " en première page pour « " + (o ? o[1] : "cette famille") + " » : ça vient.")); serp(null); }
   }
   function choisir(v, bouton) {
     Array.prototype.forEach.call(document.querySelectorAll("#cj-villes button"), function (b) { b.classList.toggle("on", b === bouton); });

@@ -110,9 +110,7 @@
     });
     res.textContent = "";
     if (!cartes.length) {
-      nb.textContent = "Les premières offres arrivent : les structures commencent à publier les leurs.";
-      var v = el("div", "sjc-vide"); v.appendChild(el("p", null, "Décrivez ce que vous cherchez (ci-dessus) ou laissez votre e-mail ci-dessous : vous serez prévenu. En attendant, voici à quoi ressemble une fiche."));
-      res.appendChild(v);
+      nb.textContent = "";
       if (D.exemple) { var g0 = el("div", "sjc-grille"); g0.appendChild(carte({ c: D.exemple, dates: D.exemple.d }, true)); res.appendChild(g0); }
     } else if (!r.length) {
       nb.textContent = "Aucune offre pour ces critères.";

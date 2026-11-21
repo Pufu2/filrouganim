@@ -4099,9 +4099,6 @@ body.sjf-ouvert { overflow: hidden; }
 .ap-verif-l { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 0; border-top: 1px solid var(--trait); }
 .ap-verif-l:first-of-type { border-top: 0; }
 
-/* menu Inscrire mon enfant : la colonne « Sur mesure » assez large pour le bouton « Décrire mon besoin » (le même que dans Structures) */
-#mm-sejours .mm-grille { grid-template-columns: minmax(0, 1.2fr) minmax(0, .95fr) minmax(0, 1.35fr) minmax(0, .9fr); }
-#mm-sejours .mm-colonne a.mm-bouton-plus { margin-top: 62px; }
 
 /* accueil, « Trouver une structure » : « Où ? » puis le bouton, l'un sous l'autre (le champ garde toute sa largeur) */
 #ro-p2 .ro-ligne { flex-direction: column; }

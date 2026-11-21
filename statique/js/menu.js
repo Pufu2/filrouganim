@@ -15,6 +15,13 @@
       panneau(x).hidden = !o;
     });
     document.documentElement.classList.toggle("mm-ouvert", !!oui && grand.matches);
+    if (oui && b && grand.matches) recaler(panneau(b));
+  }
+  // les grands menus : au milieu de la page (jamais collés au bord de l'écran)
+  function recaler(p) {
+    p.style.marginLeft = "";
+    var r = p.getBoundingClientRect(), d = (window.innerWidth - r.width) / 2 - r.left;
+    if (Math.abs(d) > 1) p.style.marginLeft = Math.round(d) + "px";
   }
   function tout_fermer() { ouvrir(null, false); }
 

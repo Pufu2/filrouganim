@@ -51,12 +51,10 @@
   <div class="cadre">
     <p class="cj-kicker">Familles, animateurs, structures</p>
     <h2 id="t-communaute" class="cj-h2">Qui vient sur Fil Roug'Anim, <em>en vrai</em></h2>
-    <p class="cj-intro">Les familles qui cherchent une place pour leur enfant, les animateurs et directeurs qui ont leur fiche, et ceux qui décrivent le poste qu'ils cherchent. Mis à jour en direct, sans rien sur les personnes.</p>
+    <p class="cj-intro">Les familles qui cherchent une place pour leur enfant et les animateurs et directeurs qui ont leur fiche. Mis à jour en direct, sans rien sur les personnes.</p>
     <ul class="cj-comm" id="cj-comm">
       <li><b data-c="familles">{{ cp.familles | length }}</b><span>demandes de familles</span><small>besoins décrits et demandes de place</small><a href="{{ lien('/enfants/demande/') }}">Décrire mon besoin →</a></li>
       <li><b data-c="fiches_animateurs">{{ cp.fiches_animateurs }}</b><span>animateurs et directeurs avec leur fiche</span><small>vérifiées, dans l'annuaire</small><a href="{{ lien('/compte/') }}?inscription=1">Créer ma fiche →</a></li>
-      <li><b data-c="demandes_animateurs">{{ (cp.demandes or []) | length }}</b><span>demandes dans l'annuaire des animateurs</span><small>animateurs et directeurs qui décrivent le poste qu'ils cherchent</small><a href="{{ lien('/trouver-un-poste/demande/') }}">Décrire ce que je cherche →</a></li>
-      <li><b data-c="offres_enfants">{{ cp.offres_enfants }}</b><span>offres pour les enfants</span><small>colos, accueils de loisirs, périscolaire</small><a href="{{ lien('/enfants/') }}">Inscrire mon enfant →</a></li>
     </ul>
     <p class="cj-aide-t" id="cj-familles-deps"></p>
   </div>
@@ -87,8 +85,8 @@
   <div class="cadre">
     <p class="cj-kicker">Sur Google</p>
     <h2 id="t-google" class="cj-h2">Votre ville <em>sur Google</em></h2>
-    <p class="cj-intro"><b>{{ n(a.recherches_premiere_page or 0) }}</b> recherche{{ 's' if (a.recherches_premiere_page or 0) > 1 }} et <b>{{ n(cp.villes_premiere) }}</b> page{{ 's' if cp.villes_premiere > 1 }} de ville en première page de Google. Choisissez votre formation et votre ville : vous voyez où elle sort, en vrai.</p>
-    <div class="cj-onglets" role="tablist" aria-label="Formations">
+    <p class="cj-intro"><b>{{ n(a.recherches_premiere_page or 0) }}</b> recherche{{ 's' if (a.recherches_premiere_page or 0) > 1 }} et <b>{{ n(cp.villes_premiere) }}</b> page{{ 's' if cp.villes_premiere > 1 }} de ville en première page de Google. Choisissez un sujet (formations, pages pour les parents, emploi, recrutement) et votre ville : vous voyez où elle sort, en vrai.</p>
+    <div class="cj-onglets" role="tablist" aria-label="Sujets">
       {% for cle, nom, villes in cp.onglets %}<button type="button" role="tab" class="cj-onglet" data-famille="{{ cle }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ nom }} <small>{{ villes | length }}</small></button>{% endfor %}
     </div>
     <form class="cj-cherche" id="cj-cherche" role="search">
@@ -96,7 +94,7 @@
       <span class="cj-champ">{{ m.icone("cherche") }}<input id="cj-lieu" type="search" placeholder="Ex. Lyon, Gironde, Bretagne…" autocomplete="off"></span>
       <button type="submit" class="cj-voir"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l5-6 4 3 7-9"/></svg>Voir</button>
     </form>
-    <p class="cj-cherche-aide">{{ n(s.villes) }} villes ont déjà leurs pages, pour le BAFA, le BAFD, le BSB, le PSC et les écoles. La vôtre n'y est pas ? Tapez-la quand même : elle arrive dès qu'une formation y est prévue. Votre département ou votre région marchent aussi.</p>
+    <p class="cj-cherche-aide">{{ n(s.villes) }} villes ont déjà leurs pages : formations (BAFA, BAFD, BSB, PSC, écoles), et pour chaque département les pages des parents (centres de loisirs, colos, périscolaire), de l'emploi d'animateur et du recrutement. La vôtre n'y est pas ? Tapez-la quand même : elle arrive dès qu'une formation y est prévue. Votre département ou votre région marchent aussi.</p>
     <div class="cj-google">
       <div class="cj-liste"><p class="cj-liste-t"><span>En première page</span><span id="cj-nb-villes"></span></p><ol id="cj-villes"></ol></div>
       <div class="cj-droite">
@@ -123,14 +121,12 @@
 <section class="bande cj-section cj-blanc">
   <div class="cadre">
     <div class="cj-final">
-      <h2 class="cj-h2">Rejoignez l'annuaire <em>là où les animateurs cherchent</em></h2>
-      <p>Votre page apparaît sur les pages de votre ville (<b>{{ n(s.villes) }}</b> villes pour le BAFA, le BAFD, le BSB, le PSC et les écoles) et dans l'annuaire des structures, avec vos propres statistiques chaque mois : vues, clics, candidatures et demandes reçues.</p>
+      <h2 class="cj-h2">Votre structure <em>là où les parents et les animateurs cherchent</em></h2>
+      <p>Votre page apparaît sur les pages de votre ville et de votre département (centres de loisirs, colos, périscolaire, emploi d'animateur) et dans l'annuaire des structures, avec vos propres statistiques chaque mois : vues, clics, demandes de familles et candidatures reçues.</p>
       <p class="cj-final-boutons">
-        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type=extrascolaire"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg>Créer la page de mon accueil de loisirs</a>
-        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure&amp;type=sejours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 20l7-14 7 14M12 6v14"/></svg>Créer la page de mes séjours</a>
-        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=candidat"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.8 3.6-5.6 7-5.6s6.1 1.8 7 5.6"/></svg>Créer mon profil d'animateur</a>
+        <a class="cj-jaune" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6"/></svg>Créer la page de ma structure</a>
+        <a class="cj-contour" href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a>
       </p>
-      <p class="cj-final-boutons"><a class="cj-contour" href="{{ lien('/recruter/exemple-de-page-structure/') }}">Exemple de page structure</a></p>
     </div>
   </div>
 </section>

@@ -43,7 +43,7 @@ def appel(url, methode="GET", entetes=None, donnees=None):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--nombre", type=int, default=300)
+    p.add_argument("--nombre", type=int, default=500)
     args = p.parse_args()
     cle_gsc = (os.environ.get("GSC_SERVICE_ACCOUNT") or "").strip()
     cle_sb = (os.environ.get("SUPABASE_SECRET_KEY") or "").strip()

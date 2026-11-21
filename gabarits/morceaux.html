@@ -139,12 +139,12 @@
   </div>
   {% if onglets %}
   <div class="ro-p" id="ro-p2" role="tabpanel" aria-labelledby="ro-t2">
-  <form class="ro-panneau" id="ro-demande" action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
+  <form class="ro-panneau" id="ro-demande" hidden action="{{ lien('/trouver-un-poste/demande/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Pour qui ?</legend>
       <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
-        <button type="button" role="radio" aria-checked="false" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
-        <button type="button" role="radio" aria-checked="true" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
+        <button type="button" role="radio" aria-checked="true" data-pour="enfant"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="10" r="2.2"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6"/></svg><span><b>Pour mon enfant</b><small>Accueil de loisirs, périscolaire, colo</small></span></button>
+        <button type="button" role="radio" aria-checked="false" data-pour="anim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span><b>Pour les animateurs et directeurs</b><small>Un stage, un job, un poste</small></span></button>
       </div>
     </fieldset>
     <div class="ro-ou">
@@ -155,7 +155,7 @@
         <input type="hidden" name="dep" value=""><input type="hidden" name="ville" value="">
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Trouver mes structures</button>
       </div>
-      <p class="ro-plus">Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent. <a href="{{ lien('/trouver-un-poste/structures/') }}">Voir toutes les structures</a></p>
+      <p class="ro-plus">Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent.</p>
     </div>
   </form>
   <script>
@@ -184,7 +184,7 @@
     window.addEventListener("pageshow", function () { Array.prototype.forEach.call(f.querySelectorAll("[disabled]"), function (e) { e.disabled = false; }); });
   })();
   </script>
-  <form class="ro-panneau" id="ro-enfant" hidden action="{{ lien('/enfants/') }}" method="get">
+  <form class="ro-panneau" id="ro-enfant" action="{{ lien('/enfants/') }}" method="get">
     <fieldset class="ro-quoi">
       <legend class="ro-titre">Pour qui ?</legend>
       <div class="ro-pourqui" role="radiogroup" aria-label="Pour qui cherchez-vous ?">
@@ -195,11 +195,11 @@
     <div class="ro-ou">
       <label class="ro-titre" for="ro-sj-ou">Où ?</label>
       <div class="ro-ligne">
-        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-sj-ou" name="ou" type="search" placeholder="Ville ou département" autocomplete="off" data-villes>
+        <span class="ro-champ">{{ icone("lieu") }}<input id="ro-sj-ou" name="ou" type="search" placeholder="Ville, département : Lyon, 93, Gironde…" autocomplete="off" data-villes>
           <datalist id="ro-sj-lieux">{% for d in departements | sort(attribute="code") %}<option value="{{ d.nom }} ({{ d.code }})"></option>{% endfor %}</datalist></span>
         <button class="bouton-r ro-aller" type="submit">{{ icone("cherche") }}Voir les offres</button>
       </div>
-      <p class="ro-plus">Colos, accueils de loisirs et périscolaire de structures vérifiées. Vous ne trouvez pas ? <a href="{{ lien('/enfants/demande/') }}">Décrivez votre besoin</a>.</p>
+      <p class="ro-plus">Colos, accueils de loisirs et périscolaire proposés près de chez vous par des structures vérifiées : demande de place gratuite.</p>
     </div>
   </form>
   <script>
@@ -212,10 +212,14 @@
     // « Pour mon enfant » ou « Pour les animateurs et directeurs » : chaque bouton montre la bonne recherche
     var bs = document.querySelectorAll(".ro-pourqui [data-pour]"), fa = document.getElementById("ro-demande"), fe = document.getElementById("ro-enfant");
     function pour(v) { Array.prototype.forEach.call(bs, function (b) { b.setAttribute("aria-checked", b.dataset.pour === v ? "true" : "false"); });
-      fe.hidden = v !== "enfant"; fa.hidden = v === "enfant"; try { sessionStorage.setItem("fra-pour", v); } catch (e) {} }
+      fe.hidden = v !== "enfant"; fa.hidden = v === "enfant"; try { sessionStorage.setItem("fra-pour", v); } catch (e) {}
+      // l'accueil : le titre de la carte dit à quoi sert le choix
+      var t = document.querySelector(".ac-carte-t"), st = document.querySelector(".ac-carte-s");
+      if (t) t.textContent = v === "enfant" ? "Trouver une place pour mon enfant" : "Trouver une structure qui recrute";
+      if (st) st.textContent = v === "enfant" ? "Colo, accueil de loisirs ou périscolaire" : "Stage pratique, job d'été ou poste à l'année"; }
     Array.prototype.forEach.call(bs, function (b) { b.addEventListener("click", function () { pour(b.dataset.pour); }); });
     var m = null; try { m = sessionStorage.getItem("fra-pour"); } catch (e) {}
-    if (/[?&]pour=enfant/.test(location.search) || m === "enfant") pour("enfant");
+    pour(/[?&]pour=anim/.test(location.search) || m === "anim" ? "anim" : "enfant");
   })();
   </script>
   </div>

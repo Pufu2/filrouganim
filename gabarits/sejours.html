@@ -72,14 +72,8 @@
     <section class="sjc-aides" aria-labelledby="t-sjc-aides">
       <h2 id="t-sjc-aides">Les aides pour <em>partir</em></h2>
       <ul>{% for k, a in AIDES.items() %}<li><b>{{ a.nom }}</b><span>{{ a.texte }}</span>{% if a.lien %}<a href="{{ a.lien }}" target="_blank" rel="noopener">En savoir plus ↗</a>{% endif %}</li>{% endfor %}</ul>
-      <p class="fp-note">Sur chaque fiche, un calculateur estime ce qu'il vous restera à payer. <a href="{{ lien('/enfants/aides/') }}">Le guide des aides et le calculateur →</a></p>
     </section>
 
-    <section class="sjc-structures">
-      <div><h2>Vous organisez des séjours ou un accueil de loisirs ?</h2>
-        <p>Publiez-les gratuitement : les familles vous demandent une place, et vos 2 premières demandes sont complètes sans rien payer.</p></div>
-      <div class="sjc-structures-b"><a class="bouton-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Publier mes séjours</a><a class="bouton-blanc" href="{{ lien('/enfants/exemple/') }}">Voir une fiche d'exemple</a></div>
-    </section>
   </div>
 </div>
 <script type="application/json" id="sjc-donnees">{{ {"cartes": page.cartes, "exemple": page.exemple, "envies": SEJ_ENVIES, "types": SEJ_TYPES, "deps": page.deps_noms} | tojson }}</script>

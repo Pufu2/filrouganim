@@ -656,7 +656,7 @@
   }
   function cellule(titre, sous) { var d = el("div", "ap-cel"); d.appendChild(el("b", null, titre || "–")); if (sous) d.appendChild(el("small", null, sous)); return d; }
   function actions(liste) { var d = el("div", "ap-boutons ap-boutons-fin"); liste.forEach(function (a) { if (!a) return; var b;
-      if (a[2]) { b = el("a", "ap-lien-b", a[0]); b.href = a[2]; if (!/^mailto:/.test(a[2])) { b.target = "_blank"; b.rel = "noopener"; } }
+      if (a[2]) { b = el("a", "ap-lien-b", a[0]); b.href = a[2]; if (!/^mailto:/.test(a[2])) { b.target = "_blank"; b.rel = "noopener"; } if (a[1]) b.addEventListener("click", a[1]); }
       else { b = el("button", "ap-lien-b" + (a[3] ? " " + a[3] : ""), a[0]); b.type = "button"; b.addEventListener("click", a[1]); }
       d.appendChild(b); }); return d; }
   function ouvrirEspace(role, id) { location.href = "/compte/?role=" + role + "&compte=" + encodeURIComponent(id); }
@@ -1130,6 +1130,20 @@
   // Google n'accepte pas l'adresse de la page dans le lien d'inspection (son « id » est un code interne, sinon : 404) :
   // on ouvre l'accueil de la propriété, et l'adresse copiée se colle dans la barre « Inspecter n'importe quelle URL »
   function lienGsc(u, compte) { return "https://search.google.com/search-console?resource_id=" + encodeURIComponent("sc-domain:filrouganim.fr") + "&authuser=" + (compte || compteGoogle()); }
+  // « Inspecter » en un clic : le lien d'inspection de Google (relevé par outils/indexation.py) ouvert avec le bon compte ;
+  // sans ce lien (page pas encore relevée), la Search Console s'ouvre et l'adresse est déjà copiée, prête à coller
+  function avecCompte(l) { return l.replace(/([?&])authuser=\d+/, "$1").replace(/[?&]$/, "") + (l.indexOf("?") < 0 ? "?" : "&") + "authuser=" + compteGoogle(); }
+  function lienInspecter(x) {
+    return ["Inspecter", function (e) { var a = e.currentTarget; a.href = x.lien ? avecCompte(x.lien) : lienGsc(x.url); if (!x.lien) { try { navigator.clipboard.writeText(x.url); } catch (er) {} } },
+            x.lien ? avecCompte(x.lien) : lienGsc(x.url)];
+  }
+  function choixCompte(c) {
+    var ch = el("label", "ap-compte-g"); ch.appendChild(document.createTextNode("Votre compte Google de la Search Console "));
+    var sel = el("select"); ["1er compte connecté", "2e compte connecté", "3e compte connecté", "4e compte connecté"].forEach(function (t, i) { var o = el("option", null, t); o.value = String(i); sel.appendChild(o); });
+    sel.value = compteGoogle(); sel.addEventListener("change", function () { try { localStorage.setItem("fra-gsc-compte", sel.value); } catch (e) {} });
+    ch.appendChild(sel); c.appendChild(ch);
+    c.appendChild(el("p", "ap-petit", "À régler une seule fois : si Google répond « Vous n'avez pas accès », choisissez le compte suivant. Ensuite, « Inspecter » ouvre directement la page dans la Search Console."));
+  }
   function indexation() {
     var c = $("ad-indexation"); if (!c) return; c.textContent = "";
     var parUrl = {}; (IDX || []).forEach(function (r) { parUrl[r.url] = r; });
@@ -1142,8 +1156,9 @@
     [["Vérifiées", fr(verifiees) + " / " + fr(L.length)], ["Dernière vérification", IDX && IDX.length ? depuis(IDX.reduce(function (a, r) { return r.verifie_le > a ? r.verifie_le : a; }, "")) : "pas encore"]].forEach(function (x) {
       var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, x[1])); cote.appendChild(r); });
     hero(c, "Indexation", "Vos pages ", "dans Google",
-      "Une page qui n'est pas indexée ne sort jamais dans Google. Toutes les 6 heures, environ 300 pages du plan du site sont vérifiées auprès de Google (2 000 par jour au plus). Pour une page pas encore indexée : « Inspecter » ouvre la Search Console, cliquez sur « Demander l'indexation » (une dizaine par jour), puis « C'est fait » ici.",
+      "Une page qui n'est pas indexée ne sort jamais dans Google. Toutes les 6 heures, les pages du plan du site sont vérifiées auprès de Google (2 000 par jour au plus). Pour une page pas encore indexée : « Inspecter » ouvre la Search Console, cliquez sur « Demander l'indexation » (une dizaine par jour), puis « C'est fait » ici.",
       [bouton("Visibilité", "visibilite", true, "loupe"), bouton("← Vue d'ensemble", "accueil")], cote);
+    choixCompte(c);
     var g = grille(c, "ap-g4");
     kpi(g, "base", "Pages du plan du site", fr(L.length), "dans sitemap.xml");
     kpi(g, "coche", "Indexées", fr(n("indexee")), verifiees ? pct(n("indexee"), verifiees) + " des pages vérifiées" : "en attente du premier relevé", "ok");
@@ -1182,7 +1197,7 @@
         var d = el("div"); d.appendChild(etiquette(couv(x.couverture), t)); if (x.demandee_le && x.etatIx !== "indexee") d.appendChild(el("small", "ap-petit", " demandée " + depuis(x.demandee_le)));
         return [cellule(chemin, rubrique(x.url) + (imp[x.url] ? " · " + fr(imp[x.url]) + " affichages" : "")), d,
           cellule(x.dernier_passage ? E.dateFr(iso(x.dernier_passage)) : "–", x.verifie_le ? "vérifiée " + depuis(x.verifie_le) : null),
-          actions([x.lien ? ["Inspecter", null, x.lien] : ["Inspecter", function () { inspecter(x.url); }], x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
+          actions([lienInspecter(x), x.etatIx !== "indexee" ? ["C'est fait", function () { demandee(x.url); }] : null, ["Voir", null, x.url]])];
       }));
       if (l.length > 150) zone.appendChild(el("p", "ap-petit", "Les 150 premières sur " + fr(l.length) + " : affinez avec la recherche ou la rubrique."));
     }

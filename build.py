@@ -1111,8 +1111,9 @@ class Site:
             local["voisins"] = vz
             for q in faq:
                 q["r_rendu"] = q["r"]
+            lieu = {"n": nom, "g": "ville", "d": d["code"]} if cle[1].startswith("ville") and d else ({"n": d["nom"], "g": "departement", "d": d["code"]} if d else {"n": nom, "g": "region", "d": ""})
             self.ajouter(url, "local.html", titre=titre, h1=h1, description=desc[:300], intro=intro, local=local, indexer=idx,
-                         faq_page=faq or None, schema_faq=self.schema_faq(faq) if faq else None, fil=fil)
+                         faq_page=faq or None, schema_faq=self.schema_faq(faq) if faq else None, fil=fil, lieu=lieu)
         # les pages d'index : un sujet, tous les départements (ou toutes les régions), rangés par région
         for cle, base in BASES.items():
             pub = cle[0]
@@ -2079,11 +2080,16 @@ class Site:
             g[u if u.endswith("/") else u + "/"] = (imp, clics, place)
         lieux = {}
         for p in self.pages:
-            if not p.get("indexer") or p["gabarit"] not in ("liste.html", "ecoles.html"):
+            if not p.get("indexer") or p["gabarit"] not in ("liste.html", "ecoles.html", "local.html"):
                 continue
             u = p["url"]
             dep = p.get("departement")
-            if p.get("ville"):
+            if p["gabarit"] == "local.html":
+                if not p.get("lieu"):
+                    continue
+                nom, genre = p["lieu"]["n"], p["lieu"]["g"]
+                dep = self.departements.get(p["lieu"]["d"]) if p["lieu"]["d"] else None
+            elif p.get("ville"):
                 nom, genre = p["ville"]["nom"], "ville"
             elif dep and len(p.get("fil") or []) >= 2 and p["fil"][-1][0] not in (dep["nom"],) and p.get("villes_famille") is not None \
                     and any(v["slug"] == u.rstrip("/").rsplit("/", 1)[-1] for v in p.get("villes_famille") or []):
@@ -2123,7 +2129,12 @@ class Site:
             f"<description>Conseils et chiffres sur le BAFA et l'animation</description><language>fr</language>"
             + "".join(items) + "</channel></rss>\n", encoding="utf-8")
 
-    FAMILLES_GOOGLE = [("bafa", "BAFA"), ("bafd", "BAFD"), ("bsb", "BSB"), ("psc", "PSC"), ("ecoles", "Écoles pros"), ("conseils", "Guides et blog")]
+    FAMILLES_GOOGLE = [("bafa", "BAFA"), ("bafd", "BAFD"), ("bsb", "BSB"), ("psc", "PSC"), ("ecoles", "Écoles pros"),
+                       ("parent", "Parents"), ("anim", "Emploi animateur"), ("struct", "Recrutement"), ("conseils", "Guides et blog")]
+    # les pages locales (pages_locales), rangées par public
+    BASES_LOCALES = {"parent": ("/enfants/centre-de-loisirs/", "/enfants/colonie-de-vacances/", "/enfants/periscolaire/"),
+                     "anim": ("/trouver-un-poste/emploi-animateur/", "/trouver-un-poste/stage-pratique-bafa/", "/trouver-un-poste/emploi-directeur/", "/trouver-un-poste/job-ete-animateur/"),
+                     "struct": ("/recruter/animateurs-bafa/", "/recruter/directeur-bafd/", "/recruter/stagiaire-bafa/", "/recruter/saisonniers-ete/")}
 
     def famille_page(self, url):
         """La famille d'une page, pour ranger les pages vues dans Google par formation."""
@@ -2134,6 +2145,9 @@ class Site:
                 if mot in url or url.endswith(mot.rstrip("/") + "/"):
                     return cle
             return "bafa"
+        for cle, bases in self.BASES_LOCALES.items():
+            if url.startswith(bases) and url not in bases:
+                return cle
         if url.startswith(("/blog/", "/lexique/", "/se-former/", "/trouver-un-poste/")):
             return "conseils"
         return None
@@ -2217,12 +2231,13 @@ class Site:
         par_famille = {cle: [] for cle, _ in self.FAMILLES_GOOGLE}
         # les pages de ville (les mêmes que « Les chiffres de ta ville »), formation par formation
         for e in self.lieux_google():
-            if e["g"] != "ville":
-                continue
             for titre, u, imp, clics, place in e["p"]:
                 if not place or place > 10:
                     continue
                 fam = self.famille_page(u)
+                # les formations : les pages de ville ; les pages locales (parents, emploi, recrutement) : ville, département ou région
+                if e["g"] != "ville" and fam not in self.BASES_LOCALES:
+                    continue
                 if fam in par_famille:
                     par_famille[fam].append({"v": e["n"], "t": titre, "u": u, "i": imp, "c": clics, "p": place})
         for l in par_famille.values():
@@ -2342,6 +2357,29 @@ class Site:
                             ("Par région", top(lambda u, sl=sl: u.startswith(f"{E}{sl}/") and u.count("/") == 5 and u.split("/")[4] in regs,
                                                lambda p: p["fil"][-1][0], None))],
                 "tout": (f"Toutes les écoles du {di}", f"{E}{sl}/")})
+        # les pages locales (pages_locales) : parents, emploi d'animateur, recrutement, par ville, département et région
+        loc = [p for p in self.pages if p["gabarit"] == "local.html" and p.get("indexer") and p.get("lieu")]
+        def groupes_locaux(bases):
+            out = []
+            for base, sujet in bases:
+                for g, nom in (("ville", "par ville"), ("departement", "par département"), ("region", "par région")):
+                    l = sorted({(p["lieu"]["n"], p["url"]) for p in loc if p["url"].startswith(base) and p["url"] != base and p["lieu"]["g"] == g})
+                    if l:
+                        out.append((f"{sujet} {nom}", l))
+            return out
+        sections += [
+            {"cle": "parents", "titre": "Parents", "aide": "Centres de loisirs, colonies de vacances et périscolaire : les pages de votre ville et de votre département.",
+             "groupes": groupes_locaux([("/enfants/centre-de-loisirs/", "Centres de loisirs"), ("/enfants/colonie-de-vacances/", "Colonies de vacances"), ("/enfants/periscolaire/", "Périscolaire")]),
+             "tout": ("Inscrire mon enfant", "/enfants/"), "az": False},
+            {"cle": "emploi", "titre": "Emploi animateur", "aide": "Offres, structures qui recrutent, stage pratique et postes de direction près de chez vous.",
+             "groupes": groupes_locaux([("/trouver-un-poste/emploi-animateur/", "Emploi animateur"), ("/trouver-un-poste/stage-pratique-bafa/", "Stage pratique BAFA"),
+                                        ("/trouver-un-poste/emploi-directeur/", "Emploi directeur"), ("/trouver-un-poste/job-ete-animateur/", "Job d'été")]),
+             "tout": ("Toutes les offres", "/trouver-un-poste/offres/"), "az": False},
+            {"cle": "recrutement", "titre": "Recruter", "aide": "Pour les structures : recruter des animateurs, un directeur, un stagiaire ou des saisonniers dans votre secteur.",
+             "groupes": groupes_locaux([("/recruter/animateurs-bafa/", "Recruter des animateurs"), ("/recruter/directeur-bafd/", "Recruter un directeur"),
+                                        ("/recruter/stagiaire-bafa/", "Accueillir un stagiaire"), ("/recruter/saisonniers-ete/", "Saisonniers d'été")]),
+             "tout": ("Recruter avec Fil Roug'Anim", "/recruter/"), "az": False},
+        ]
         self._recherches = []
         for x in sections:
             x["groupes"] = [g for g in x["groupes"] if g[1]]

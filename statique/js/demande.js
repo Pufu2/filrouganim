@@ -157,7 +157,7 @@
     var r = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: retour } });
     if (r.error) message("La connexion avec Google n'a pas marché : " + r.error.message, true);
   });
-  $("dm-lien").addEventListener("click", async function () {
+  if ($("dm-lien")) $("dm-lien").addEventListener("click", async function () {
     var email = form.elements.email_contact.value.trim();
     if (!form.elements.email_contact.checkValidity() || !email) { form.elements.email_contact.reportValidity(); return; }
     if (!valide(n)) return;

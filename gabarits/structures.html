@@ -34,7 +34,6 @@
     {% for st in page.structures %}{{ carte(st, lien('/trouver-un-poste/structures/' ~ st.slug ~ '/')) }}{% endfor %}
     {% if not page.structures and page.exemple %}{{ carte(page.exemple, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
     </ul>
-    {% if not page.structures %}<p class="petit annuaire-note">Les premières structures vérifiées arrivent : voici à quoi ressemblera leur fiche. <a href="{{ lien('/recruter/') }}">Vous recrutez&nbsp;? Inscrivez votre structure</a></p>{% endif %}
     <p class="aucune" id="annuaire-vide" hidden>Aucune structure inscrite dans ce secteur pour l'instant. <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous cherchez</a> : votre demande attend, et part dès qu'une structure de votre secteur s'inscrit.</p>
   </div>
 </section>

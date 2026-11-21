@@ -14,7 +14,7 @@
       <ul class="ac-puces"><li>Gratuit pour les jeunes</li><li>Structures vérifiées</li><li>Sans intermédiaire</li></ul>
       <p class="chiffres-une"><b>{{ stats.nb }}</b> sessions à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
     </div>
-    <div class="ac-hero-d"><div class="ac-carte"><p class="ac-carte-t">Trouver une structure</p><p class="ac-carte-s">Pour qui cherchez-vous ?</p>{{ m.recherche_onglets(lien, departements) }}</div></div>
+    <div class="ac-hero-d"><div class="ac-carte"><p class="ac-carte-t">Trouver une place pour mon enfant</p><p class="ac-carte-s">Colo, accueil de loisirs ou périscolaire</p>{{ m.recherche_onglets(lien, departements) }}</div></div>
   </div>
 </section>
 {% endblock %}
@@ -26,7 +26,7 @@
     <h2 id="t-ac-usages">Une plateforme, quatre usages</h2>
     <div class="ac-4">
       <span class="ac-4-fil" aria-hidden="true"></span>
-      <a class="ac-b" href="{{ lien('/se-former/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg></span>
+      <a class="ac-b" href="{{ lien('/se-former/sessions/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/></svg></span>
         <b>Se former</b><span>BAFA, BAFD, BPJEPS : {{ stats.nb }} sessions comparées, dates et prix vérifiés.</span><em>Trouver une session <span aria-hidden="true">→</span></em></a>
       <a class="ac-b" href="{{ lien('/trouver-un-poste/offres/') }}"><span class="ac-b-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18"/></svg></span>
         <b>Trouver un poste</b><span>Stages pratiques, jobs d'été, postes à l'année dans des structures vérifiées.</span><em>Voir les offres <span aria-hidden="true">→</span></em></a>
@@ -46,7 +46,7 @@
         <h2 id="t-ac-st">Les animateurs de votre secteur <em>vous cherchent déjà</em></h2>
         <p>Accueils de loisirs, organisateurs de séjours, collectivités : une page pour votre structure, vos offres là où les jeunes cherchent leur BAFA, et les demandes des candidats de votre secteur, directement chez vous.</p>
       </div>
-      <a class="ac-st-bouton" href="{{ lien('/recruter/') }}">Espace structures <span aria-hidden="true">→</span></a>
+      <a class="ac-st-bouton" href="{{ lien('/chiffres/') }}">Voir les chiffres du site <span aria-hidden="true">→</span></a>
     </div>
     <ul class="rc-atouts ac-st-cartes">
       <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-6z"/></svg></span><b>Les demandes viennent à vous</b><span>Un animateur décrit le poste qu'il cherche : sa demande arrive chez les 3 structures les plus proches.</span></li>

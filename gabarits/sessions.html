@@ -5,7 +5,7 @@
 {% block tete_chapo %}<p class="chapo">BAFA, BAFD, PSC, CPJEPS, BPJEPS, DEJEPS, DESJEPS, partout en France : toutes les écoles au même endroit : comparez ici, inscrivez-vous chez l'organisme. Mis à jour chaque semaine.</p>{% endblock %}
 {% block contenu %}
 <div class="recherche-une recherche-une-page"><div class="cadre">{{ m.recherche_ville(lien, departements, en_direct=True) }}</div></div>
-<section class="bande bande-papier" id="resultats" aria-labelledby="titre-resultats">
+<section class="bande bande-papier res-airbnb" id="resultats" aria-labelledby="titre-resultats">
   <div class="cadre">
     <div class="resultats-tete">
       <h2 id="titre-resultats" class="compte" aria-live="polite"><span id="compte">{{ page.sessions_total }} sessions à venir</span></h2>
@@ -28,9 +28,9 @@
     </div>
     <aside class="carte-bloc" id="carte-bloc" aria-label="Carte des sessions">
       <div class="carte-sessions" id="carte" data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png">
-        <p class="carte-zone" id="carte-zone" aria-live="polite"></p>
+        <label class="carte-zone" id="carte-zone-l"><input type="checkbox" id="carte-suivre" checked> <span id="carte-zone" aria-live="polite">Rechercher quand je déplace la carte</span></label>
       </div>
-      <p class="petit carte-note">Cliquez une bulle pour zoomer, puis sur une ville pour voir ses sessions. Fond de carte : IGN.</p>
+      <p class="petit carte-note">Cliquez un prix pour voir la session. Fond de carte : IGN.</p>
     </aside>
     </div>
   </div>
