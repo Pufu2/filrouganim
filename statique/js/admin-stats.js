@@ -164,7 +164,7 @@
     var b = el("div", "st-anneau"); parent.appendChild(b);
     var s = sv("svg", { viewBox: "0 0 120 120", class: "st-anneau-svg", role: "img", "aria-label": parts.map(function (p) { return p.nom + " " + p.n; }).join(", ") });
     var r = 46, circ = 2 * Math.PI * r, debut = 0;
-    s.appendChild(sv("circle", { cx: 60, cy: 60, r: r, fill: "none", stroke: "#f1e6dc", "stroke-width": 16 }));
+    s.appendChild(sv("circle", { cx: 60, cy: 60, r: r, fill: "none", stroke: "#f4f4f5", "stroke-width": 16 }));
     parts.forEach(function (p, i) {
       if (!p.n) return;
       var long = p.n / tot * circ;
@@ -238,7 +238,7 @@
     r.appendChild(el("b", null, euros(revenu))); r.appendChild(el("span", null, "par an · soit " + euros(revenu / 12) + " par mois"));
     c2.appendChild(r);
     anneau(c2, [{ nom: "Tarif fondateur", n: compte(payees, function (x) { return x.fondatrice; }), couleur: COUL[0] }, { nom: "Tarif normal", n: compte(payees, function (x) { return !x.fondatrice; }), couleur: COUL[1] },
-                { nom: "Inscrites sans paiement", n: compte(s, function (x) { return !paye(x); }), couleur: "#e8ddd0" }]);
+                { nom: "Inscrites sans paiement", n: compte(s, function (x) { return !paye(x); }), couleur: "#e4e4e7" }]);
 
     var c3 = carte(g, "c6", "Le parcours des animateurs", "Du compte à l'action : où ils s'arrêtent");
     var ont = function (l) { var o = {}; l.forEach(function (x) { o[x.candidat_id] = 1; }); return Object.keys(o).length; };
@@ -250,7 +250,7 @@
     var idsP = {}, idsS = {}; pr.forEach(function (x) { idsP[x.id] = 1; }); s.forEach(function (x) { idsS[x.id] = 1; });
     var c5 = carte(g, "c4", "Les comptes", fr(u.length) + " au total");
     anneau(c5, [{ nom: "Animateurs", n: compte(u, function (x) { return idsP[x.id] && !idsS[x.id]; }) }, { nom: "Structures", n: compte(u, function (x) { return idsS[x.id] && !idsP[x.id]; }) },
-                { nom: "Les deux", n: compte(u, function (x) { return idsP[x.id] && idsS[x.id]; }) }, { nom: "Sans profil", n: compte(u, function (x) { return !idsP[x.id] && !idsS[x.id]; }), couleur: "#e8ddd0" }]);
+                { nom: "Les deux", n: compte(u, function (x) { return idsP[x.id] && idsS[x.id]; }) }, { nom: "Sans profil", n: compte(u, function (x) { return !idsP[x.id] && !idsS[x.id]; }), couleur: "#e4e4e7" }]);
     var c6 = carte(g, "c4", "Où sont les animateurs", "Les départements des profils");
     liste(c6, repartir(pr, "departement", nomDep, 8), pr.length, COUL[1], "Département");
     var c7 = carte(g, "c4", "Où sont les structures", "Les départements des structures");

@@ -394,3 +394,18 @@ body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(-
   .res-airbnb .carte-sessions { height: 70vh; border-radius: 16px; }
   .res-airbnb .carte-zone { font-size: .78rem; padding: 8px 12px; }
 }
+
+/* ---- DA étape 2 : les derniers restes de l'ancien décor sur les pages publiques
+   (ronds clairs sur les cartes, vignettes vertes, titres en vert) ; les verts qui disent « c'est fait / validé » restent */
+.rc-carte-structure { background: radial-gradient(120% 90% at 85% 10%, rgba(255, 255, 255, .16), transparent 60%), linear-gradient(150deg, var(--theme, var(--fil)), var(--theme-fonce, var(--fil-fonce))) !important; }
+.sjc-photo:not([style*="url"]), .sjf-banniere:not([style*="url"]) { background-color: var(--nuit); background-image: radial-gradient(120% 90% at 85% 10%, rgba(214, 31, 53, .5), transparent 60%), linear-gradient(150deg, var(--nuit-3), var(--nuit)); }
+.sjc-aides li b, .sjf-aides b, .sjc-etiquettes .sjc-et-aide, .sjc-pc { color: var(--nuit); }
+.sjc-quand::before { background: var(--fil); }
+.an-carte .tp-avatar, .an-avatar, .pa-poste .pa-ic, .ad-etape-jauge i { background: var(--nuit-3); }
+.an-badge, .an-sous { color: var(--nuit); }
+.tp-carte-haut { background: linear-gradient(150deg, #f4f4f5, #e4e4e7); }
+.org-hab { color: var(--nuit); background: #f1f1f2; }
+.tp-bande { border-radius: 16px; }
+/* ---- DA étape 3 : Mon espace et l'admin, titres des cartes en Inter gras comme le reste */
+.tb-titre, .og-page h2, .ap-carte h2, .ap-carte-t, .en-app h2 { font-family: var(--titres); font-weight: 700; letter-spacing: -.02em; }
+.cj-courbe { overflow-x: clip; overflow-y: visible; }
