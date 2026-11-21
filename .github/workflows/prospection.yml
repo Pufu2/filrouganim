@@ -8,7 +8,10 @@ on:
         description: "Numéro du lot"
         default: "1"
       essai:
-        description: "Essai (n'envoie rien) : oui ou non"
+        description: "Essai (n'envoie rien aux structures) : oui ou non"
+        default: "non"
+      relance:
+        description: "Relance unique des non-répondants du lot : oui ou non"
         default: "non"
 
 permissions:
@@ -27,4 +30,5 @@ jobs:
         env:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-        run: python3 outils/prospection.py --lot "${{ inputs.lot }}" ${{ inputs.essai == 'oui' && '--essai' || '' }}
+          COPIE_EMAIL: ${{ secrets.COPIE_EMAIL }}
+        run: python3 outils/prospection.py --lot "${{ inputs.lot }}" ${{ inputs.essai == 'oui' && '--essai' || '' }} ${{ inputs.relance == 'oui' && '--relance' || '' }}
