@@ -1,0 +1,30 @@
+name: Prospection
+
+# à la demande seulement : un lot d'e-mails aux structures repérées près des demandes d'animateurs
+on:
+  workflow_dispatch:
+    inputs:
+      lot:
+        description: "Numéro du lot"
+        default: "1"
+      essai:
+        description: "Essai (n'envoie rien) : oui ou non"
+        default: "non"
+
+permissions:
+  contents: read
+
+jobs:
+  envoyer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Envoyer le lot
+        env:
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: python3 outils/prospection.py --lot "${{ inputs.lot }}" ${{ inputs.essai == 'oui' && '--essai' || '' }}
