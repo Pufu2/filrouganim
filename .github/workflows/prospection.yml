@@ -1,30 +1,54 @@
 name: Prospection
 
-# à la demande seulement : un lot d'e-mails aux structures repérées près des demandes d'animateurs
+# à la demande : un lot d'e-mails aux structures repérées près des demandes d'animateurs (ou sa relance unique).
+# chaque matin : prospection automatique autour des nouveaux animateurs (outils/prospection_auto.py).
 on:
+  schedule:
+    # 9 h 43 à Paris en hiver (10 h 43 en été)
+    - cron: "43 8 * * *"
   workflow_dispatch:
     inputs:
       lot:
-        description: "Numéro du lot"
+        description: "Numéro du lot (ou « auto » pour la prospection automatique autour des nouveaux animateurs)"
         default: "1"
       essai:
-        description: "Essai (n'envoie rien) : oui ou non"
+        description: "Essai (n'envoie rien aux structures) : oui ou non"
+        default: "non"
+      relance:
+        description: "Relance unique des non-répondants du lot : oui ou non"
         default: "non"
 
 permissions:
   contents: read
 
+concurrency:
+  group: prospection
+
 jobs:
   envoyer:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - name: Envoyer le lot
+      - name: Envoyer
         env:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-        run: python3 outils/prospection.py --lot "${{ inputs.lot }}" ${{ inputs.essai == 'oui' && '--essai' || '' }}
+          COPIE_EMAIL: ${{ secrets.COPIE_EMAIL }}
+          EVENEMENT: ${{ github.event_name }}
+          LOT: ${{ inputs.lot }}
+          ESSAI: ${{ inputs.essai }}
+          RELANCE: ${{ inputs.relance }}
+        run: |
+          options=""
+          if [ "$ESSAI" = "oui" ]; then options="--essai"; fi
+          if [ "$EVENEMENT" = "schedule" ] || [ "$LOT" = "auto" ]; then
+            python3 outils/prospection_auto.py $options
+          else
+            if [ "$RELANCE" = "oui" ]; then options="$options --relance"; fi
+            python3 outils/prospection.py --lot "$LOT" $options
+          fi
