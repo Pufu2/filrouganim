@@ -216,7 +216,14 @@
       // l'accueil : le titre de la carte dit à quoi sert le choix
       var t = document.querySelector(".ac-carte-t"), st = document.querySelector(".ac-carte-s");
       if (t) t.textContent = v === "enfant" ? "Trouver une place pour mon enfant" : "Trouver une structure qui recrute";
-      if (st) st.textContent = v === "enfant" ? "Colo, accueil de loisirs ou périscolaire" : "Stage pratique, job d'été ou poste à l'année"; }
+      if (st) st.textContent = v === "enfant" ? "Colo, accueil de loisirs ou périscolaire" : "Stage pratique, job d'été ou poste à l'année";
+      // à gauche : le titre, le texte et les puces disent à qui on parle
+      var cle = v === "enfant" ? "pourEnfant" : "pourAnim";
+      Array.prototype.forEach.call(document.querySelectorAll(".ac-hero-g [data-pour-enfant]"), function (x) {
+        var val = x.dataset[cle]; if (!val) return;
+        if (x.tagName === "UL") { x.textContent = ""; val.split("|").forEach(function (s) { var li = document.createElement("li"); li.textContent = s; x.appendChild(li); }); }
+        else x.innerHTML = val; });
+      Array.prototype.forEach.call(document.querySelectorAll(".ac-hero-g [data-pour-seul]"), function (x) { x.hidden = x.dataset.pourSeul !== v; }); }
     Array.prototype.forEach.call(bs, function (b) { b.addEventListener("click", function () { pour(b.dataset.pour); }); });
     var m = null; try { m = sessionStorage.getItem("fra-pour"); } catch (e) {}
     pour(/[?&]pour=anim/.test(location.search) || m === "anim" ? "anim" : "enfant");

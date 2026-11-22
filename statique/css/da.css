@@ -409,3 +409,4 @@ body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(-
 /* ---- DA étape 3 : Mon espace et l'admin, titres des cartes en Inter gras comme le reste */
 .tb-titre, .og-page h2, .ap-carte h2, .ap-carte-t, .en-app h2 { font-family: var(--titres); font-weight: 700; letter-spacing: -.02em; }
 .cj-courbe { overflow-x: clip; overflow-y: visible; }
+.h1-accueil { text-wrap: balance; }
