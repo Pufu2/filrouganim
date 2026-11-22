@@ -38,16 +38,15 @@
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
-          <a class="mm-bouton-plus" href="{{ lien('/outils/mon-parcours-bafa/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Mon parcours BAFA</b><small>Mes dates limites</small></span></a>
+          <a class="mm-bouton-plus" href="{{ lien('/trouver-un-poste/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Trouver mon stage pratique</b><small>Les structures viennent à vous</small></span></a>
           {{ lien_menu("/se-former/s-inscrire-a-une-formation/", "S'inscrire, pas à pas", "Du numéro officiel au paiement") }}
-          {{ lien_menu("/trouver-un-poste/demande/", "Trouver mon stage pratique", "Les structures viennent à vous") }}
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
           {{ lien_menu("/se-former/quelle-formation-choisir/", "Quelle formation choisir ?") }}
           {{ lien_menu("/se-former/etapes-du-bafa/", "Les étapes du BAFA") }}
           {{ lien_menu("/se-former/financer-son-bafa/", "Financer son BAFA") }}
-          {{ lien_menu("/se-former/questions-frequentes/", "Questions fréquentes") }}
+          {{ lien_menu("/outils/mon-parcours-bafa/", "Mon parcours BAFA", "Mes dates limites") }}
         </div>
         <div class="mm-bas">
           <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#former">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>
