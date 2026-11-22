@@ -587,3 +587,6 @@ body.en-app .tb-graphe-boite, body.en-app .tb-chiffre { background: #f6f7f9; bor
 body.en-app .ap-lien-b.ap-fort { background: #1a1f36; color: #fff; box-shadow: none; }
 body.en-app .ap-lien-b.ap-fort:hover { background: #2a3150; color: #fff; }
 body.en-app .ap-lien-b.ap-danger { color: #b42318; }
+
+/* /enfants/ : les aides pour partir sur une seule ligne (ordinateur) */
+@media (min-width: 1001px) { .sjc-aides ul { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
