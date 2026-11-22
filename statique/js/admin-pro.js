@@ -324,75 +324,193 @@
   }
 
   /* ---------- 2. le QG des demandes ---------- */
-  var qg = { filtre: "a_traiter", sel: null, q: "", ton: "vous" };
+  var qg = { onglet: "anim", filtre: "a_traiter", sel: null, q: "", ton: "vous" };
   var PERIODES = { "ete": "l'été", "petites-vacances": "les petites vacances", "mercredis": "les mercredis", "periscolaire": "le périscolaire", "annee": "toute l'année", "stage-pratique": "un stage pratique" };
   var POSTES = { "animateur-stagiaire": "Stage pratique BAFA", "animateur": "Animateur", "directeur": "Direction", "directeur-adjoint": "Direction adjointe", "surveillant-baignade": "Surveillant de baignade", "coordinateur": "Coordination", "autre": "Autre poste" };
   function lieuDe(d) { return d.ville ? d.ville + " (" + d.departement + ")" : nomDep(d.departement) || "Lieu non précisé"; }
+  // les besoins des familles (annuaire inversé des parents), chargés à part : ils ne sont pas dans admin_donnees()
+  var QF = null;
+  async function chargerFamilles() {
+    var r = await Promise.all([E.sb.from("besoins_familles").select("*").order("cree_le", { ascending: false }).limit(500),
+                               E.sb.from("besoins_destinataires").select("besoin_id,structure_id,ouverte,statut,cree_le").limit(5000)]);
+    QF = { besoins: (r[0] && r[0].data) || [], dest: (r[1] && r[1].data) || [] };
+  }
+  function destDe(b) { return QF ? QF.dest.filter(function (x) { return x.besoin_id === b.id; }) : []; }
+  function compteurs(liste, nbDest) {
+    return { a_traiter: compte(liste, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; }), sans: compte(liste, function (d) { return !nbDest(d) && d.suivi !== "traitee"; }),
+             en_cours: compte(liste, function (d) { return d.suivi === "en_cours"; }), traitee: compte(liste, function (d) { return d.suivi === "traitee"; }), toutes: liste.length };
+  }
   function QG() {
-    var c = $("ad-qg"); if (!c) return; c.textContent = "";
-    var dem = D.demandes;
-    var nb = { a_traiter: compte(dem, function (d) { return (d.suivi || "a_traiter") === "a_traiter"; }), sans: compte(dem, function (d) { return !(d.destinataires || []).length && d.suivi !== "traitee"; }),
-               en_cours: compte(dem, function (d) { return d.suivi === "en_cours"; }), traitee: compte(dem, function (d) { return d.suivi === "traitee"; }), toutes: dem.length };
-    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-cote-t", (nb.a_traiter + compte(D.structures, function (s) { return paye(s) && !s.verifiee; })) + " à traiter"));
-    [["Demandes d'animateurs", nb.a_traiter, "qg"], ["Structures à vérifier", compte(D.structures, function (s) { return paye(s) && !s.verifiee; }), "afaire"],
-     ["Candidatures sans réponse", compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); }), "afaire"],
-     ["Comptes sans fiche", compte(types(), function (t) { return t.type === "aucun"; }), "comptes"]].forEach(function (x) {
-      var r = vers(x[2]); r.className = "ap-cote-ligne"; r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, String(x[1]))); r.appendChild(el("i", null, "→")); cote.appendChild(r);
+    var c = $("ad-qg"); if (!c) return;
+    if (!QF) { chargerFamilles().then(QG); }
+    c.textContent = "";
+    var dem = D.demandes, fam = QF ? QF.besoins : [];
+    var nbA = compteurs(dem, function (d) { return (d.destinataires || []).length; }), nbF = compteurs(fam, function (b) { return destDe(b).length; });
+    var nbStruct = compte(D.structures, function (s) { return paye(s) && !s.verifiee; }), nbCand = compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); });
+    // en haut à droite : ce qui attend, comme une boîte de réception
+    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-cote-t", (nbA.a_traiter + nbF.a_traiter + nbStruct + nbCand) + " à traiter"));
+    [["Demandes d'animateurs", nbA.a_traiter, "anim"], ["Besoins des familles", QF ? nbF.a_traiter : "…", "fam"], ["Structures à vérifier", nbStruct, "afaire"], ["Candidatures sans réponse", nbCand, "afaire"]].forEach(function (x) {
+      var r = x[2] === "anim" || x[2] === "fam" ? el("button") : vers(x[2]); r.type = "button"; r.className = "ap-cote-ligne";
+      if (x[2] === "anim" || x[2] === "fam") r.addEventListener("click", function () { qg.onglet = x[2]; qg.sel = null; QG(); });
+      r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, String(x[1]))); r.appendChild(el("i", null, "→")); cote.appendChild(r);
     });
     hero(c, "QG demandes", "Tout ce qui attend ", "votre réponse",
-      "Les demandes de l'annuaire inversé : à qui elles sont parties, si une structure a été prévenue, et ce que vous pouvez faire. Une fiche par demande.", [bouton("← Vue d'ensemble", "accueil")], cote);
-    var corps = el("div", "ap-qg"); c.appendChild(corps);
-    // à gauche : les boîtes
-    var boites = el("div", "ap-qg-boites"); corps.appendChild(boites);
-    [["Demandes d'animateurs", "Envoyées aux structures", nb.a_traiter, null, "avion"], ["Structures à vérifier", "Fiches pas encore en ligne", compte(D.structures, function (s) { return !s.verifiee; }), "afaire", "maison"],
-     ["Candidatures", "Sans réponse depuis 3 jours", compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); }), "afaire", "offre"],
-     ["Comptes sans fiche", "Inscrits, rien rempli", compte(types(), function (t) { return t.type === "aucun"; }), "comptes", "personne"]].forEach(function (x, i) {
-      var b = x[3] ? vers(x[3]) : el("button"); b.type = "button"; b.className = "ap-boite" + (i === 0 ? " on" : "");
-      b.appendChild(ic(x[4])); var t = el("span"); t.appendChild(el("b", null, x[0])); t.appendChild(el("small", null, x[1])); b.appendChild(t); b.appendChild(el("i", x[2] ? "ap-pastille" : "ap-pastille ap-zero", String(x[2])));
+      "Demandes des animateurs, besoins des familles, structures à vérifier et candidatures : une boîte de réception, une fiche par demande.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    // les quatre boîtes, en ligne
+    var boites = el("div", "ap-qg-boites"); c.appendChild(boites);
+    [["anim", "Demandes d'animateurs", "Postes cherchés près des structures", nbA.a_traiter, "avion"], ["fam", "Besoins des familles", "Une place pour leur enfant", QF ? nbF.a_traiter : 0, "personne"],
+     ["afaire", "Structures à vérifier", "Fiches pas encore en ligne", nbStruct, "maison"], ["afaire", "Candidatures", "Sans réponse depuis 3 jours", nbCand, "offre"]].forEach(function (x, i) {
+      var interne = i < 2, b = interne ? el("button") : vers(x[0]); b.type = "button"; b.className = "ap-boite" + (interne && qg.onglet === x[0] ? " on" : "");
+      if (interne) b.addEventListener("click", function () { qg.onglet = x[0]; qg.sel = null; qg.filtre = "a_traiter"; QG(); });
+      b.appendChild(ic(x[4])); var t = el("span"); t.appendChild(el("b", null, x[1])); t.appendChild(el("small", null, x[2])); b.appendChild(t); b.appendChild(el("i", x[3] ? "ap-pastille" : "ap-pastille ap-zero", String(x[3])));
       boites.appendChild(b);
     });
-    // au milieu : la liste
-    var milieu = el("div", "ap-qg-liste"); corps.appendChild(milieu);
-    milieu.appendChild(el("h3", null, "Demandes d'animateurs"));
-    milieu.appendChild(el("p", "ap-petit", "Chaque besoin décrit sur « Décrire ce que je cherche » : à qui il est parti, et ce que vous pouvez en faire."));
+    var anim = qg.onglet !== "fam", L = anim ? dem : fam, nb = anim ? nbA : nbF;
+    var tete = el("div", "ap-qg-entete"); c.appendChild(tete);
+    var tt = el("div"); tt.appendChild(el("h3", null, anim ? "Demandes d'animateurs" : "Besoins des familles"));
+    tt.appendChild(el("p", "ap-petit", anim ? "Chaque poste décrit sur « Décrire ce que je cherche » : à qui il est parti, et ce que vous pouvez en faire."
+                                            : "Chaque besoin décrit sur « Décrire mon besoin » : les structures prévenues, et ce que vous pouvez en faire."));
+    tete.appendChild(tt);
+    var outils = el("div", "ap-qg-outils"); tete.appendChild(outils);
     var f = el("div", "ap-puces");
     [["a_traiter", "À traiter"], ["sans", "Sans structure"], ["en_cours", "En cours"], ["traitee", "Traitées"], ["toutes", "Toutes"]].forEach(function (x) {
       var b = el("button", null, x[1] + " " + nb[x[0]]); b.type = "button"; b.setAttribute("aria-pressed", qg.filtre === x[0] ? "true" : "false");
       b.addEventListener("click", function () { qg.filtre = x[0]; qg.sel = null; QG(); }); f.appendChild(b);
     });
-    milieu.appendChild(f);
-    var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Ville, département, prénom, e-mail…"; q.value = qg.q; milieu.appendChild(q);
-    var liste = el("div", "ap-qg-items"); milieu.appendChild(liste);
+    outils.appendChild(f);
+    var q = el("input", "ap-recherche"); q.type = "search"; q.placeholder = "Ville, nom, e-mail…"; q.value = qg.q; outils.appendChild(q);
+    var corps = el("div", "ap-qg"); c.appendChild(corps);
+    var liste = el("div", "ap-qg-items"); corps.appendChild(liste);
     var detail = el("div", "ap-qg-detail"); corps.appendChild(detail);
+    var TY = { accueils: "Accueil de loisirs", periscolaire: "Périscolaire", sejours: "Séjour" };
+    function nbDest(d) { return anim ? (d.destinataires || []).length : destDe(d).length; }
     function filtre(d) {
       var s = d.suivi || "a_traiter";
       if (qg.filtre === "a_traiter" && s !== "a_traiter") return false;
       if (qg.filtre === "en_cours" && s !== "en_cours") return false;
       if (qg.filtre === "traitee" && s !== "traitee") return false;
-      if (qg.filtre === "sans" && ((d.destinataires || []).length || s === "traitee")) return false;
+      if (qg.filtre === "sans" && (nbDest(d) || s === "traitee")) return false;
       var m = qg.q.trim().toLowerCase(); if (!m) return true;
-      return [d.prenom, d.ville, d.departement, nomDep(d.departement), d.email_contact, POSTES[d.poste]].join(" ").toLowerCase().indexOf(m) >= 0;
+      return (anim ? [d.prenom, d.ville, d.departement, nomDep(d.departement), d.email_contact, POSTES[d.poste]]
+                   : [d.parent_nom, d.ville, d.departement, nomDep(d.departement), d.email, d.telephone]).join(" ").toLowerCase().indexOf(m) >= 0;
     }
     function remplir() {
       liste.textContent = "";
-      var l = dem.filter(filtre);
-      if (!l.length) { liste.appendChild(el("p", "ap-vide", "Rien ici.")); detail.textContent = ""; detail.appendChild(el("p", "ap-vide ap-qg-rien", "Choisissez une demande à gauche.")); return; }
+      if (!anim && !QF) { liste.appendChild(el("p", "ap-vide", "Chargement…")); return; }
+      var l = L.filter(filtre);
+      if (!l.length) { liste.appendChild(el("p", "ap-vide", "Rien ici.")); detail.textContent = ""; detail.appendChild(el("p", "ap-vide ap-qg-rien", "Rien à afficher avec ce filtre.")); return; }
       if (!qg.sel || !l.some(function (d) { return d.id === qg.sel; })) qg.sel = l[0].id;
       l.forEach(function (d) {
         var b = el("button", "ap-qg-item" + (d.id === qg.sel ? " on" : "")); b.type = "button";
-        b.appendChild(ic("avion"));
-        var t = el("span"); t.appendChild(el("b", null, (POSTES[d.poste] || d.poste) + " · " + lieuDe(d)));
-        t.appendChild(el("small", null, ((d.periodes || []).map(function (p) { return PERIODES[p] || p; }).join(", ") || "Période non précisée") + " · " + (d.prenom || "?")));
-        var bad = el("span", "ap-qg-badges"); var n = (d.destinataires || []).length;
-        bad.appendChild(etiquette(n ? n + " structure" + (n > 1 ? "s" : "") : "Sans structure", n ? "ok" : "rouge"));
-        bad.appendChild(el("small", null, depuis(d.cree_le))); t.appendChild(bad); b.appendChild(t);
+        b.appendChild(ic(anim ? "avion" : "personne"));
+        var t = el("span"), n = nbDest(d);
+        var titre = anim ? (POSTES[d.poste] || d.poste) + " · " + lieuDe(d) : ((d.types || []).map(function (x) { return TY[x] || x; }).join(", ") || "Besoin") + " · " + (d.ville || nomDep(d.departement) || "?");
+        var hd = el("span", "ap-qg-it-h"); hd.appendChild(el("b", null, titre)); hd.appendChild(el("small", null, depuis(d.cree_le))); t.appendChild(hd);
+        t.appendChild(el("small", null, anim ? ((d.periodes || []).map(function (p) { return PERIODES[p] || p; }).join(", ") || "Période non précisée") + " · " + (d.prenom || "?")
+                                             : ((d.ages || []).length ? d.ages.join(", ") + " ans" : "Âge non précisé") + (d.quand ? " · " + d.quand : "") + " · " + (d.parent_nom || "?")));
+        var bad = el("span", "ap-qg-badges"); bad.appendChild(etiquette(n ? n + " structure" + (n > 1 ? "s" : "") : "Sans structure", n ? "ok" : "rouge")); t.appendChild(bad);
+        b.appendChild(t);
         b.addEventListener("click", function () { qg.sel = d.id; remplir(); });
         liste.appendChild(b);
       });
-      ficheDemande(detail, dem.filter(function (d) { return d.id === qg.sel; })[0]);
+      var sel = l.filter(function (d) { return d.id === qg.sel; })[0];
+      if (anim) ficheDemande(detail, sel); else ficheBesoin(detail, sel);
     }
     q.addEventListener("input", function () { qg.q = q.value; remplir(); });
     remplir();
+  }
+  async function modifierBesoin(b, champs) {
+    var r = await E.sb.rpc("admin_modifier", { t: "besoins_familles", cle: String(b.id), champs: champs });
+    if (r.error) { E.message(E.erreur(r.error), true); return; }
+    E.message("Enregistré."); await chargerFamilles(); QG();
+  }
+  function texteFamille(b, tu) {
+    var TYm = { accueils: "un accueil de loisirs", periscolaire: "un accueil périscolaire", sejours: "un séjour" };
+    var quoi = (b.types || []).map(function (x) { return TYm[x] || x; }).join(" ou ") || "un accueil";
+    var lieu = b.ville ? "à " + b.ville : "dans " + (nomDep(b.departement) || "votre secteur");
+    var ages = (b.ages || []).length ? " pour " + ((b.ages.length > 1 ? "des enfants de " : "un enfant de ") + b.ages.join(", ") + " ans") : "";
+    return "Bonjour,\n\nUne famille cherche " + quoi + " " + lieu + ages + (b.quand ? ", " + b.quand : "") + ".\n\n" +
+      (tu ? "Si tu as de la place, crée la page de ta structure sur Fil Roug'Anim : les demandes des familles de ton secteur arrivent directement chez toi, sans commission.\n"
+          : "Si vous avez de la place, créez la page de votre structure sur Fil Roug'Anim : les demandes des familles de votre secteur arrivent directement chez vous, sans commission.\n") +
+      "https://filrouganim.fr/recruter/sejours/\n\n" + (tu ? "À bientôt,\n" : "Bonne journée,\n") + "Fil Roug'Anim";
+  }
+  function ficheBesoin(c, b) {
+    c.textContent = ""; if (!b) return;
+    var TY = { accueils: "Accueil de loisirs", periscolaire: "Périscolaire", sejours: "Séjour" }, ds = destDe(b), n = ds.length;
+    var noms = {}; D.structures.forEach(function (st) { noms[st.id] = st; });
+    var h = el("div", "ap-carte ap-qg-tete");
+    var t = el("div"); t.appendChild(el("p", "ap-sur", "Besoin d'une famille · reçu " + depuis(b.cree_le)));
+    t.appendChild(el("h3", null, ((b.types || []).map(function (x) { return TY[x] || x; }).join(", ") || "Besoin") + " · " + (b.ville || nomDep(b.departement) || "lieu non précisé")));
+    var bad = el("p", "ap-qg-badges");
+    bad.appendChild(etiquette(n ? "Transmis à " + n + " structure" + (n > 1 ? "s" : "") : "Sans structure", n ? "ok" : "rouge"));
+    bad.appendChild(etiquette(({ a_traiter: "À traiter", en_cours: "En cours", traitee: "Traité" })[b.suivi || "a_traiter"]));
+    t.appendChild(bad); h.appendChild(t);
+    var acts = el("div", "ap-qg-actions");
+    function suivi(v, texte, plein) { var bt = el("button", plein ? "ap-bouton" : "ap-lien-b", texte); bt.type = "button"; bt.addEventListener("click", function () { modifierBesoin(b, { suivi: v }); }); acts.appendChild(bt); }
+    if ((b.suivi || "a_traiter") === "a_traiter") suivi("en_cours", "Je m'en occupe");
+    if (b.suivi !== "traitee") suivi("traitee", "✓ Marquer traité", true); else suivi("a_traiter", "Rouvrir");
+    h.appendChild(acts); c.appendChild(h);
+    var g = el("div", "ap-qg-g"); c.appendChild(g);
+    var gauche = el("div", "ap-col"), droite = el("div", "ap-col"); g.appendChild(gauche); g.appendChild(droite);
+    var be = carte(gauche, "Le besoin"); var tb = el("dl", "ap-dl");
+    var ligne = function (k, v) { if (!v) return; tb.appendChild(el("dt", null, k)); tb.appendChild(el("dd", null, v)); };
+    ligne("Cherche", (b.types || []).map(function (x) { return TY[x] || x; }).join(", "));
+    ligne("Âges", (b.ages || []).length ? b.ages.join(", ") + " ans" : "");
+    ligne("Quand", b.quand);
+    ligne("Lieu", (b.ville ? b.ville + " · " : "") + (nomDep(b.departement) || b.departement || ""));
+    be.appendChild(tb);
+    if (b.message) be.appendChild(el("blockquote", "ap-message", b.message));
+    var fa = carte(gauche, "La famille"); fa.appendChild(el("p", "ap-nom", b.parent_nom || "Nom non donné"));
+    fa.appendChild(el("p", "ap-petit", [b.email, b.telephone].filter(Boolean).join(" · ")));
+    var bts0 = el("div", "ap-boutons");
+    if (b.email) { var ecr = el("a", "ap-lien-b", "✉ Écrire"); ecr.href = "mailto:" + b.email + "?subject=" + encodeURIComponent("Votre demande sur Fil Roug'Anim"); bts0.appendChild(ecr); }
+    if (b.telephone) { var tel = el("a", "ap-lien-b", "✆ Appeler"); tel.href = "tel:" + String(b.telephone).replace(/[^0-9+]/g, ""); bts0.appendChild(tel); }
+    fa.appendChild(bts0);
+    var so = carte(gauche, "Structures sollicitées");
+    if (!n) so.appendChild(el("p", "ap-petit", "Aucune structure vérifiée dans son secteur pour l'instant. Transmettez-le à une structure ci-contre, ou partagez le besoin."));
+    ds.forEach(function (x) {
+      var st = noms[x.structure_id], p = el("p", "ap-sollicitee"); p.appendChild(el("b", null, st ? st.nom : "Structure supprimée"));
+      p.appendChild(etiquette(({ nouvelle: x.ouverte ? "ouvert" : "pas encore ouvert", en_cours: "en cours", acceptee: "acceptée", refusee: "refusée" })[x.statut] || x.statut, x.statut === "acceptee" ? "ok" : x.statut === "refusee" ? "rouge" : null));
+      so.appendChild(p);
+    });
+    var tr = carte(droite, "Transmettre à une structure de l'annuaire");
+    tr.appendChild(el("p", "ap-petit", "La structure le voit dans « Demandes des familles » de son espace, avec les coordonnées de la famille."));
+    var champ = el("input", "ap-recherche"); champ.type = "search"; champ.placeholder = "Nom ou ville de la structure…"; tr.appendChild(champ);
+    var res = el("div", "ap-resultats"); tr.appendChild(res);
+    function chercher() {
+      res.textContent = "";
+      var m = champ.value.trim().toLowerCase(), deja = ds.map(function (x) { return x.structure_id; });
+      var l = D.structures.filter(function (x) { return deja.indexOf(x.id) < 0; })
+        .filter(function (x) { return !m || [x.nom, x.ville, x.departement].join(" ").toLowerCase().indexOf(m) >= 0; })
+        .sort(function (a2, b2) { return (b2.departement === b.departement) - (a2.departement === b.departement) || (b2.verifiee ? 1 : 0) - (a2.verifiee ? 1 : 0); }).slice(0, 6);
+      if (!l.length) { res.appendChild(el("p", "ap-vide", D.structures.length ? "Aucune structure ne correspond." : "Aucune structure dans l'annuaire pour l'instant.")); return; }
+      l.forEach(function (x) {
+        var r = el("div", "ap-res"); var tx = el("span"); tx.appendChild(el("b", null, x.nom || "Sans nom")); tx.appendChild(el("small", null, (x.ville || "") + " (" + (x.departement || "?") + ")" + (x.verifiee ? " · vérifiée" : " · pas encore vérifiée"))); r.appendChild(tx);
+        var bt = el("button", "ap-lien-b", "Envoyer"); bt.type = "button";
+        bt.addEventListener("click", async function () {
+          if (!confirm("Transmettre ce besoin à « " + x.nom + " » ?")) return;
+          var rr = await E.sb.rpc("admin_transmettre_besoin", { besoin: b.id, structure: x.id });
+          if (rr.error) { E.message(E.erreur(rr.error), true); return; }
+          E.message("Transmis."); await chargerFamilles(); QG();
+        });
+        r.appendChild(bt); res.appendChild(r);
+      });
+    }
+    champ.addEventListener("input", chercher); chercher();
+    var pa = carte(droite, "Partager le besoin, sans les coordonnées");
+    pa.appendChild(el("p", "ap-petit", "Pour une structure qui n'est pas encore sur le site, ou un groupe de directeurs : ni le nom, ni le téléphone, ni le message de la famille."));
+    var tons = el("div", "ap-puces");
+    [["vous", "Vouvoiement"], ["tu", "Tutoiement"]].forEach(function (x) { var bt = el("button", null, x[1]); bt.type = "button"; bt.setAttribute("aria-pressed", qg.ton === x[0] ? "true" : "false"); bt.addEventListener("click", function () { qg.ton = x[0]; ficheBesoin(c, b); }); tons.appendChild(bt); });
+    pa.appendChild(tons);
+    var ta = el("textarea", "ap-texte"); ta.rows = 8; ta.value = texteFamille(b, qg.ton === "tu"); pa.appendChild(ta);
+    var bts = el("div", "ap-boutons");
+    var cp = el("button", "ap-bouton", "Copier"); cp.type = "button"; cp.addEventListener("click", function () { if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(function () { cp.textContent = "Copié"; setTimeout(function () { cp.textContent = "Copier"; }, 1500); }); }); bts.appendChild(cp);
+    var ml = el("a", "ap-lien-b", "E-mail"), wa = el("a", "ap-lien-b", "WhatsApp"); wa.target = "_blank"; wa.rel = "noopener";
+    function liens() { ml.href = "mailto:?subject=" + encodeURIComponent("Une famille cherche une place près de chez vous") + "&body=" + encodeURIComponent(ta.value); wa.href = "https://wa.me/?text=" + encodeURIComponent(ta.value); }
+    liens(); ta.addEventListener("input", liens); bts.appendChild(ml); bts.appendChild(wa); pa.appendChild(bts);
+    var no = carte(droite, "Note interne");
+    var tn = el("textarea", "ap-texte"); tn.rows = 3; tn.maxLength = 2000; tn.placeholder = "Ce qui a été fait, à qui vous avez écrit, à relancer le… (visible par l'administration seulement)"; tn.value = b.note_admin || ""; no.appendChild(tn);
+    var en = el("button", "ap-lien-b", "Enregistrer la note"); en.type = "button"; en.addEventListener("click", function () { modifierBesoin(b, { note_admin: tn.value.trim() || null }); }); no.appendChild(en);
   }
   function texteBesoin(d, tu) {
     var lieu = d.ville ? "à " + d.ville : "dans " + (nomDep(d.departement) || "votre secteur");
@@ -1527,7 +1645,7 @@
         var n = (d.destinataires || []).length;
         return [cellule(d.prenom || "Sans prénom", depuis(d.cree_le)), cellule(POSTES[d.poste] || d.poste || "–", (d.periodes || []).map(function (p) { return PERIODES[p] || p; }).join(", ")),
           cellule(lieuDe(d)), etiquette(n ? n + " structure" + (n > 1 ? "s" : "") : "aucune", n ? "ok" : "rouge"),
-          actions([["Ouvrir", function () { qg.filtre = "toutes"; qg.sel = d.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"], ["Modifier", function () { corriger("demandes", d, CHAMPS_DEM); }]])];
+          actions([["Ouvrir", function () { qg.onglet = "anim"; qg.filtre = "toutes"; qg.sel = d.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"], ["Modifier", function () { corriger("demandes", d, CHAMPS_DEM); }]])];
       }));
     } else {
       c.appendChild(el("p", "ap-petit", "« Décrire mon besoin » (/enfants/demande/) : ce que les familles choisissent à chaque étape, puis chaque besoin, que vous pouvez corriger. Les coordonnées sont celles que la famille a données."));
@@ -1546,7 +1664,7 @@
         return [cellule(b.parent_nom || "Sans nom", [b.email, b.telephone, depuis(b.cree_le)].filter(Boolean).join(" · ")),
           cellule((b.types || []).map(function (t) { return TY[t] || t; }).join(", ") || "–", [(b.ages || []).length ? (b.ages || []).join(", ") + " ans" : "", b.quand, b.message ? "« " + String(b.message).slice(0, 120) + " »" : ""].filter(Boolean).join(" · ")),
           cellule(b.ville || nomDep(b.departement), b.departement), etiquette(ds.length ? ds.length + " structure" + (ds.length > 1 ? "s" : "") : "aucune", ds.length ? "ok" : "rouge"),
-          cellule(st || "–"), actions([["Modifier", function () { corriger("besoins_familles", b, CHAMPS_BES); }]])];
+          cellule(st || "–"), actions([["Ouvrir", function () { qg.onglet = "fam"; qg.filtre = "toutes"; qg.sel = b.id; QG(); E.montrerOnglet("v-admin", "qg", true); }, null, "ap-fort"], ["Modifier", function () { corriger("besoins_familles", b, CHAMPS_BES); }]])];
       }));
     }
   }

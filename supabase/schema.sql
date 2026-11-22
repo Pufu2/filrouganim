@@ -876,3 +876,9 @@ create policy "structures abonnées : lire" on public.ressources_structures for 
 
 -- v39 (21/11/2026) : outils/prospection.py lit et met à jour la liste de prospection avec la clé serveur
 grant select, update on public.admin_prospects to service_role;
+
+-- v40 (22/11/2026) : le QG de l'admin traite aussi les besoins des familles (suivi, note, transmission à une structure)
+alter table public.besoins_familles add column if not exists suivi text not null default 'a_traiter' check (suivi in ('a_traiter','en_cours','traitee'));
+alter table public.besoins_familles add column if not exists note_admin text check (char_length(note_admin) <= 2000);
+-- admin_modifier : « besoins_familles » ajouté (suivi, note_admin) ; nouvelle fonction admin_transmettre_besoin(besoin, structure)
+-- (texte complet appliqué dans la migration v40_qg_familles)
