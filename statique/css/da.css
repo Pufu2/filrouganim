@@ -517,3 +517,12 @@ header.jm-entete .mm-colonne a.mm-bouton-plus:hover { background: #ffe4e7; }
 header.jm-entete .mm-colonne a.mm-bouton-plus b { color: var(--fil-fonce); }
 header.jm-entete .mm-colonne a.mm-bouton-plus > svg { stroke: var(--fil); }
 header.jm-entete .mm-autre span { white-space: nowrap; }
+/* la ligne du bas, en retrait : deux simples liens sous un trait fin, pas de fond */
+header.jm-entete .mm-bas { margin-top: 2px; padding-top: 10px; border-top: 1px solid var(--trait); gap: 0 20px; display: flex; justify-content: space-between; flex-wrap: wrap; }
+header.jm-entete .mm-bas .mm-ccm, header.jm-entete .mm-autre { background: none; padding: 4px 6px; border-radius: 8px; color: var(--doux); }
+header.jm-entete .mm-bas .mm-ccm:hover, header.jm-entete .mm-autre:hover { background: #f4f4f5; color: var(--nuit); }
+header.jm-entete .mm-bas .mm-ccm span, header.jm-entete .mm-autre span { font-weight: 600; font-size: .86rem; color: var(--nuit); }
+header.jm-entete .mm-bas small { font-size: .8rem; color: var(--doux); }
+header.jm-entete .mm-bas .mm-ccm .jm-ico { width: 16px; height: 16px; stroke: var(--doux); }
+header.jm-entete .mm-autre i { margin-left: 6px; color: var(--fil); }
+@media (max-width: 1000px) { header.jm-entete .mm-bas { flex-direction: column; } }
