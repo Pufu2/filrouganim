@@ -1758,6 +1758,36 @@ class Site:
                          fil=[TP, ("Exemple de profil", "/trouver-un-poste/exemple-de-profil/")])
         # outils gratuits (calculs dans le navigateur)
         OT = ("Outils", "/outils/")
+        # « Comment ça marche » : les quatre parcours du site, la même logique que le menu
+        self.ajouter("/comment-ca-marche/", "comment-ca-marche.html", titre="Comment ça marche : se former, trouver un poste, recruter, inscrire son enfant",
+                     description="Fil Roug'Anim en quatre parcours : comparer les formations BAFA, trouver un stage ou un job d'animateur, recruter son équipe, inscrire son enfant en colo ou en centre de loisirs. Qui paie quoi.",
+                     h1="Comment ça marche", intro="Quatre parcours, trois étapes chacun. Choisissez le vôtre.",
+                     parcours=[
+            {"id": "former", "qui": "Pour les futurs animateurs et directeurs", "titre": "Se former,", "em": "sans se perdre",
+             "prix": "Gratuit : on compare, vous vous inscrivez chez l'organisme.",
+             "etapes": [("Choisir sa formation", "BAFA pour animer, BAFD pour diriger, PSC et BSB en plus, diplômes pros pour en faire son métier."),
+                        ("Comparer les sessions", f"{len(self.sessions)} sessions près de chez vous : dates, formule, prix et aides, sur une carte."),
+                        ("S'inscrire chez l'organisme", "Vous cliquez sur « Voir » : l'inscription et le paiement se font directement chez lui, sans intermédiaire.")],
+             "aller": ("Trouver une session", "/se-former/sessions/"), "liens": [("Quelle formation choisir ?", "/se-former/quelle-formation-choisir/"), ("Les étapes du BAFA", "/se-former/etapes-du-bafa/")]},
+            {"id": "poste", "qui": "Pour les animateurs et directeurs", "titre": "Trouver un poste,", "em": "les structures viennent à vous",
+             "prix": "Gratuit, toujours.",
+             "etapes": [("Décrire ce que vous cherchez", "Stage pratique, job d'été, poste à l'année : en une minute, sans compte."),
+                        ("Votre demande part", "Elle arrive chez les 3 structures vérifiées les plus proches, qui vous répondent."),
+                        ("Ou créer votre fiche", "Vos diplômes et vos dates : les structures de votre secteur vous trouvent et vous écrivent.")],
+             "aller": ("Décrire ce que je cherche", "/trouver-un-poste/demande/"), "liens": [("Voir les offres", "/trouver-un-poste/offres/"), ("Trouver son stage pratique", "/trouver-un-poste/trouver-son-stage-pratique/")]},
+            {"id": "structure", "qui": "Pour les structures", "titre": "Recruter et se faire connaître,", "em": "au même endroit",
+             "prix": "Votre page et une offre : gratuit. L'abonnement en plus, si vous voulez.",
+             "etapes": [("Créer la page de votre structure", "Votre projet, vos publics, vos photos : vérifiée par nous, puis en ligne."),
+                        ("Publier vos offres et vos séjours", "Là où les animateurs cherchent leur BAFA, et là où les familles cherchent une place."),
+                        ("Recevoir les demandes", "Les animateurs et les familles de votre secteur décrivent leur besoin : il arrive chez vous.")],
+             "aller": ("Créer la page de ma structure", "/recruter/"), "liens": [("Un exemple de page", "/recruter/exemple-de-page-structure/"), ("Les chiffres du site", "/chiffres/")]},
+            {"id": "enfant", "qui": "Pour les familles", "titre": "Inscrire son enfant,", "em": "près de chez vous",
+             "prix": "La demande de place est sans frais. Le séjour ou l'accueil se paie à la structure.",
+             "etapes": [("Chercher une place", "Colo, accueil de loisirs ou périscolaire pour les 3 à 17 ans, près de chez vous."),
+                        ("Demander en ligne", "La structure vérifiée reçoit votre demande et vous répond directement."),
+                        ("Suivre le séjour", "Avec votre espace parent, le carnet de séjour vous envoie les nouvelles de l'équipe.")],
+             "aller": ("Voir les offres", "/enfants/"), "liens": [("Décrire mon besoin", "/enfants/demande/"), ("Les aides pour partir", "/enfants/aides/")]}],
+                     fil=[("Comment ça marche", "/comment-ca-marche/")])
         self.ajouter("/outils/", "outils.html", titre="Outils gratuits pour l'animation : encadrement, CEE, BAFA",
                      description="Calculer le taux d'encadrement d'un accueil de mineurs, vérifier un contrat d'engagement éducatif, suivre les délais de son BAFA : des outils gratuits, sans compte, avec les textes officiels.",
                      h1="Les outils gratuits", intro="Pour préparer une équipe, vérifier un contrat ou ne pas rater une date. Gratuits, sans compte, rien n'est envoyé.", fil=[OT])

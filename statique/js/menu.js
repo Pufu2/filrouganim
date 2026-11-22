@@ -26,10 +26,18 @@
   function tout_fermer() { ouvrir(null, false); }
 
   boutons.forEach(function (b) {
-    b.addEventListener("click", function () { ouvrir(b, b.getAttribute("aria-expanded") !== "true"); });
+    // ordinateur : le volet s'ouvre au survol, et un clic sur le titre mène à la page de la partie (la même que sa carte sombre) ;
+    // téléphone : un clic ouvre le tiroir de la partie
+    b.addEventListener("click", function () {
+      if (grand.matches && b.dataset.href) { tout_fermer(); location.href = b.dataset.href; return; }
+      ouvrir(b, b.getAttribute("aria-expanded") !== "true");
+    });
     var item = b.parentNode;
     item.addEventListener("mouseenter", function () { if (!grand.matches) return; clearTimeout(minuterie); minuterie = setTimeout(function () { ouvrir(b, true); }, 90); });
     item.addEventListener("mouseleave", function () { if (!grand.matches) return; clearTimeout(minuterie); minuterie = setTimeout(tout_fermer, 160); });
+    // au clavier : le volet s'ouvre quand le titre reçoit le focus, et se ferme quand on en sort
+    item.addEventListener("focusin", function () { if (grand.matches && b.getAttribute("aria-expanded") !== "true") ouvrir(b, true); });
+    item.addEventListener("focusout", function (e) { if (grand.matches && !item.contains(e.relatedTarget)) ouvrir(b, false); });
   });
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;

@@ -437,3 +437,43 @@ body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(-
 #ad-qg .ap-qg-item > .ap-ic svg, #ad-qg .ap-boite > .ap-ic svg { width: 16px; height: 16px; }
 #ad-qg .ap-boite { display: flex; align-items: center; gap: 10px; text-align: left; }
 #ad-qg .ap-boite > span { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* menu : « Comment ça marche ? » en bas de chaque volet, sur toute la largeur */
+header.jm-entete .mm-ccm { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 12px 14px; border-radius: 12px; background: #f4f4f5; color: var(--nuit); text-decoration: none; }
+header.jm-entete .mm-ccm:hover { background: #ececee; }
+header.jm-entete .mm-ccm .jm-ico { width: 18px; height: 18px; flex: none; stroke: var(--fil); }
+header.jm-entete .mm-ccm span { font-weight: 700; font-size: .92rem; }
+header.jm-entete .mm-ccm small { color: var(--doux); font-size: .82rem; }
+header.jm-entete .mm-ccm small::before { content: "·"; margin-right: 8px; }
+@media (max-width: 1000px) { header.jm-entete .mm-ccm { flex-wrap: wrap; } header.jm-entete .mm-ccm small::before { display: none; } }
+
+/* ---- « Comment ça marche » : quatre parcours, trois étapes reliées par le fil */
+.ccm-main { margin: 0 0 6px; font: 600 1.5rem/1 "Caveat", cursive; color: #c4c7ce; transform: rotate(-2deg); transform-origin: left center; display: inline-block; }
+.ccm-main b { color: var(--fil-clair); font-weight: 600; }
+.ccm .cadre { max-width: 1080px; }
+.ccm-choix { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 34px; }
+.ccm-pastille { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 18px; border-radius: 18px; background: #fff; border: 1px solid var(--trait); color: var(--nuit); text-decoration: none; font-weight: 700; transition: transform .15s, box-shadow .15s; }
+.ccm-pastille:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(0, 0, 0, .35); color: var(--nuit); }
+.ccm-pastille svg { width: 38px; height: 38px; padding: 9px; border-radius: 12px; background: var(--nuit); fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ccm-parcours { margin: 0 0 22px; padding: 28px clamp(18px, 3vw, 34px); border-radius: 24px; background: #fff; border: 1px solid var(--trait); scroll-margin-top: 90px; }
+.ccm-qui { margin: 0 0 6px; font: 700 .75rem/1 var(--texte); letter-spacing: .12em; text-transform: uppercase; color: var(--fil); }
+.ccm-tete h2 { margin: 0 0 6px; font-size: clamp(1.5rem, 2.6vw, 2rem); }
+.ccm-tete h2 em { font-style: normal; color: var(--fil); }
+.ccm-prix { margin: 0 0 22px; color: var(--doux); }
+.ccm-etapes { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; position: relative; }
+.ccm-etapes::before { content: ""; position: absolute; left: 22px; right: 22px; top: 21px; height: 3px; border-radius: 3px; background: var(--fil); opacity: .9; }
+.ccm-etapes li { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.ccm-n { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--nuit); color: #fff; font: 700 1.1rem var(--titres); box-shadow: 0 0 0 6px #fff; margin-bottom: 6px; }
+.ccm-etapes li:nth-child(2) .ccm-n { transform: rotate(-6deg); } .ccm-etapes li:nth-child(3) .ccm-n { background: var(--fil); }
+.ccm-etapes b { font-size: 1.02rem; } .ccm-etapes span:not(.ccm-n) { color: var(--doux); font-size: .94rem; line-height: 1.5; }
+.ccm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 0; }
+.ccm-lien { font-weight: 600; }
+.ccm-qui-paie { margin-top: 34px; }
+.ccm-qui-paie ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.ccm-qui-paie li { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: var(--nuit); color: #e4e4e7; }
+.ccm-qui-paie li b { color: #fff; } .ccm-qui-paie li span { font-size: .92rem; line-height: 1.5; color: #c4c7ce; }
+@media (max-width: 860px) {
+  .ccm-choix { grid-template-columns: 1fr 1fr; } .ccm-qui-paie ul { grid-template-columns: 1fr; }
+  .ccm-etapes { grid-template-columns: 1fr; } .ccm-etapes::before { left: 21px; right: auto; top: 22px; bottom: 22px; width: 3px; height: auto; }
+  .ccm-etapes li { padding-left: 62px; min-height: 44px; } .ccm-n { position: absolute; left: 0; top: 0; margin: 0; }
+}

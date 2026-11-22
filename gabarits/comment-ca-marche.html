@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{# « Comment ça marche » : la même page pour tout le monde, les quatre parcours du site en trois étapes chacun,
+   reliés par le fil. On y arrive depuis chaque volet du menu et depuis le pied de page. #}
+{% block tete_note %}<p class="ccm-main">Ne perds pas le <b>fil</b> de ton anim</p>{% endblock %}
+{% block contenu %}
+<section class="bande bande-papier ccm">
+  <div class="cadre">
+    <nav class="ccm-choix" aria-label="Choisir son parcours">
+      {% for id, ic, t in [("former", "M3 9l9-4 9 4-9 4-9-4z M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4", "Je veux me former"),
+                           ("poste", "M12 8a3.5 3.5 0 1 0 0-.1z M5 20c1-4 4-6 7-6s6 2 7 6", "Je cherche un poste"),
+                           ("structure", "M4 20V8l8-4 8 4v12 M9 20v-6h6v6 M3 20h18", "Je recrute"),
+                           ("enfant", "M9 7a3 3 0 1 0 0-.1z M17 10a2.2 2.2 0 1 0 0-.1z M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5 M14.5 20c.3-2.2 1.4-3.6 3-3.6s2.6 1.4 3 3.6", "J'inscris mon enfant")] %}
+      <a class="ccm-pastille" href="#{{ id }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{ ic }}"/></svg><span>{{ t }}</span></a>
+      {% endfor %}
+    </nav>
+
+    {% for p in page.parcours %}
+    <article class="ccm-parcours" id="{{ p.id }}" aria-labelledby="ccm-t-{{ p.id }}">
+      <header class="ccm-tete">
+        <p class="ccm-qui">{{ p.qui }}</p>
+        <h2 id="ccm-t-{{ p.id }}">{{ p.titre }} <em>{{ p.em }}</em></h2>
+        <p class="ccm-prix">{{ p.prix }}</p>
+      </header>
+      <ol class="ccm-etapes">
+        {% for e in p.etapes %}
+        <li><span class="ccm-n" aria-hidden="true">{{ loop.index }}</span><b>{{ e[0] }}</b><span>{{ e[1] }}</span></li>
+        {% endfor %}
+      </ol>
+      <p class="ccm-actions"><a class="bouton-r" href="{{ lien(p.aller[1]) }}">{{ p.aller[0] }} <span aria-hidden="true">→</span></a>{% for t, u in p.liens %}<a class="ccm-lien" href="{{ lien(u) }}">{{ t }}</a>{% endfor %}</p>
+    </article>
+    {% endfor %}
+
+    <section class="ccm-qui-paie" aria-labelledby="ccm-paie">
+      <h2 id="ccm-paie">Qui paie quoi ?</h2>
+      <ul>
+        <li><b>Animateurs, directeurs et familles</b><span>Rien. Chercher, créer sa fiche, décrire son besoin, demander une place : tout est gratuit, pour toujours.</span></li>
+        <li><b>Structures</b><span>Leur page et une offre sont gratuites. L'abonnement ajoute les demandes de leur secteur, les profils complets et les offres illimitées.</span></li>
+        <li><b>Organismes de formation</b><span>Leurs sessions sont comparées gratuitement, sans classement payant. Un partenariat met leur page en avant.</span></li>
+      </ul>
+    </section>
+  </div>
+</section>
+{% endblock %}
