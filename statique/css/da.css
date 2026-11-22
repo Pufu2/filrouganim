@@ -526,3 +526,64 @@ header.jm-entete .mm-bas small { font-size: .8rem; color: var(--doux); }
 header.jm-entete .mm-bas .mm-ccm .jm-ico { width: 16px; height: 16px; stroke: var(--doux); }
 header.jm-entete .mm-autre i { margin-left: 6px; color: var(--fil); }
 @media (max-width: 1000px) { header.jm-entete .mm-bas { flex-direction: column; } }
+
+/* ==== Mon espace et admin, style « B » (22/11/2026) : la barre latérale anthracite de la DA, des cartes blanches à ombre douce,
+   un seul bouton rouge par bandeau, des titres moins gras, des boîtes intérieures sur fond gris très clair. Seul le style change. */
+body.en-app, body.en-app .bande-papier { background: #f6f7f9; }
+body.en-app { font-feature-settings: "cv11", "tnum"; }
+body.en-app .co-onglets > .co-nav { background: #0f1115; border-right: 0; }
+body.en-app .co-marque, body.en-app .co-moi { border-color: #1d2027; }
+body.en-app .co-groupe { color: #5d6270; font-size: .68rem; letter-spacing: .1em; }
+body.en-app .co-nav [data-onglet-vers] { color: #a3a7b3; border-radius: 8px; font-weight: 500; }
+body.en-app .co-nav [data-onglet-vers]:hover { background: #171a20; color: #fff; }
+body.en-app .co-nav [data-onglet-vers][aria-current], body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] { background: #1d2027; color: #fff; box-shadow: none; border-radius: 8px; }
+body.en-app .co-nav [data-onglet-vers][aria-current] svg { color: #ff5470; }
+body.en-app .co-nav [data-onglet-vers][aria-current]::after { display: none; }
+/* la barre du haut */
+body.en-app #app-barre { background: #fff; box-shadow: 0 1px 0 #e9ebf0; border-bottom: 0; }
+body.en-app .app-titre { font-weight: 600; font-size: 1rem; color: #1a1f36; }
+body.en-app .app-ic { border: 0; background: #f6f7f9; color: #697386; border-radius: 8px; }
+body.en-app .app-ic:hover { background: #eef0f4; }
+/* les bandeaux du haut : blancs, un liseré rouge, une ombre douce */
+body.en-app .co-entete, body.en-app .og-hero, body.en-app .ap-hero {
+  background: #fff !important; background-image: none !important; color: #1a1f36; border: 0 !important; border-radius: 14px !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -12px rgba(16, 24, 40, .12) !important; position: relative; overflow: hidden; padding: 26px 28px !important; }
+body.en-app .co-entete::before, body.en-app .og-hero::before, body.en-app .ap-hero::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #d61f35, #ff8a5c); }
+body.en-app .co-entete h2, body.en-app .og-hero h2, body.en-app .ap-hero h2 { color: #1a1f36 !important; font-weight: 600 !important; font-size: clamp(1.4rem, 2.2vw, 1.75rem) !important; letter-spacing: -.02em; }
+body.en-app .co-entete h2 em, body.en-app .og-hero h2 em, body.en-app .ap-hero h2 em { color: #d61f35 !important; }
+body.en-app .co-e-sur, body.en-app .ap-sur, body.en-app .og-hero .og-sur { color: #697386 !important; font-size: .7rem !important; }
+body.en-app .co-e-p, body.en-app .og-hero-p, body.en-app .ap-hero-p, body.en-app .og-hero .og-hero-p { color: #697386 !important; font-size: .95rem; }
+body.en-app .co-entete .bouton-blanc, body.en-app .og-hero .bouton-blanc, body.en-app .ap-hero .bouton-blanc,
+body.en-app .ap-hero .ap-lien, body.en-app .ap-hero .ap-lien-b, body.en-app .co-e-guide {
+  background: #fff; color: #1a1f36; border: 0; box-shadow: 0 0 0 1px #e3e8ee, 0 1px 1px rgba(0, 0, 0, .03); border-radius: 8px; }
+body.en-app .co-entete .bouton-blanc:hover, body.en-app .ap-hero .ap-lien-b:hover, body.en-app .co-e-guide:hover { box-shadow: 0 0 0 1px #c9ced8; color: #1a1f36; }
+body.en-app .co-e-resume, body.en-app .og-hero-cote, body.en-app .ap-hero-cote { background: #f6f7f9; box-shadow: none !important; border: 0; border-radius: 12px; color: #1a1f36; }
+body.en-app .ap-hero .ap-hero-ic, body.en-app .ap-hero .ap-ic-hero { transform: scale(.8); transform-origin: left center; }
+/* les boutons */
+body.en-app .bouton-r, body.en-app .ap-bouton { border-radius: 8px; font-weight: 600; box-shadow: 0 1px 2px rgba(214, 31, 53, .25); }
+body.en-app .bouton-blanc, body.en-app .ap-lien-b { border-radius: 8px; border: 0; box-shadow: 0 0 0 1px #e3e8ee, 0 1px 1px rgba(0, 0, 0, .03); background: #fff; font-weight: 500; }
+body.en-app .ap-lien-b:hover, body.en-app .bouton-blanc:hover { box-shadow: 0 0 0 1px #c9ced8; }
+/* les cartes : blanches, sans bordure, ombre douce */
+body.en-app .carte-compte, body.en-app .ap-carte, body.en-app .og-carte, body.en-app .tb-carte, body.en-app .ap-boite, body.en-app .ap-qg-item {
+  border: 0 !important; border-radius: 14px; box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -14px rgba(16, 24, 40, .12); background: #fff; }
+body.en-app .ap-qg-item.on, body.en-app #ad-qg .ap-boite.on { box-shadow: 0 0 0 2px #d61f35, 0 8px 24px -14px rgba(16, 24, 40, .18) !important; background: #fff; }
+body.en-app .carte-compte h2, body.en-app .ap-carte h2, body.en-app .ap-carte h3, body.en-app .tb-titre { font-weight: 600 !important; font-size: 1.05rem; color: #1a1f36; }
+/* les boîtes à l'intérieur des cartes : fond gris très clair, pas de trait */
+body.en-app .tb-tuile, body.en-app .tb-afaire > *, body.en-app .ap-res, body.en-app .ap-etape, body.en-app .ap-chiffres > div, body.en-app .ap-pros-cases div,
+body.en-app .tb-conseil, body.en-app .tb-chiffre { border: 0 !important; background: #f6f7f9; border-radius: 10px; }
+body.en-app .ap-chiffres > div { background: #fff; box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -16px rgba(16, 24, 40, .12); }
+body.en-app .ap-jauge, body.en-app .co-e-jauge { background: #eef0f4; } body.en-app .ap-jauge i { background: linear-gradient(90deg, #d61f35, #ff8a5c); }
+body.en-app .ap-table-boite { border: 0; border-radius: 14px; box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -14px rgba(16, 24, 40, .12); background: #fff; }
+body.en-app .ap-table th { color: #697386; font-weight: 600; font-size: .7rem; letter-spacing: .06em; background: #fafbfc; }
+body.en-app .ap-table td { border-color: #f0f2f5; }
+body.en-app .ap-puces button[aria-pressed="true"], body.en-app .ap-pros-onglets button[aria-selected="true"] { background: #1a1f36; }
+body.en-app .tb-tuile { border: 0; background: #f6f7f9; border-radius: 10px; }
+body.en-app .tb-tuile-alerte { background: #fffaea; }
+body.en-app .tb-ic { background: #fff; color: #d61f35; box-shadow: 0 1px 2px rgba(16, 24, 40, .06); }
+body.en-app .tb-n { font-weight: 600; color: #1a1f36; }
+body.en-app .tb-etat-ok { background: #ecfdf3; color: #067647; }
+body.en-app .tb-progres { height: 4px; background: #eef0f4; } body.en-app .tb-progres i, body.en-app .tb-progres span { background: linear-gradient(90deg, #d61f35, #ff8a5c); }
+body.en-app .tb-graphe-boite, body.en-app .tb-chiffre { background: #f6f7f9; border: 0; }
+body.en-app .ap-lien-b.ap-fort { background: #1a1f36; color: #fff; box-shadow: none; }
+body.en-app .ap-lien-b.ap-fort:hover { background: #2a3150; color: #fff; }
+body.en-app .ap-lien-b.ap-danger { color: #b42318; }
