@@ -410,3 +410,7 @@ body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] svg { color: var(-
 .tb-titre, .og-page h2, .ap-carte h2, .ap-carte-t, .en-app h2 { font-family: var(--titres); font-weight: 700; letter-spacing: -.02em; }
 .cj-courbe { overflow-x: clip; overflow-y: visible; }
 .h1-accueil { text-wrap: balance; }
+/* le slogan de l'accueil : écrit à la main, discret, « fil » en rouge (maquette C bis, 22/11/2026) */
+.ac-pilule { padding: 0; border: 0; border-radius: 0; margin: 0 0 14px; font: 600 1.65rem/1 "Caveat", "Segoe Print", cursive; color: #c4c7ce; letter-spacing: 0;
+  transform: rotate(-2deg); transform-origin: left center; }
+.ac-pilule b { color: var(--fil-clair); font-weight: 600; }

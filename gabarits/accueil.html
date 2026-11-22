@@ -8,13 +8,13 @@
 <section class="tete tete-accueil">
   <div class="cadre ac-hero">
     <div class="ac-hero-g">
-      <p class="ac-pilule">{{ site.accroche }}</p>
+      <p class="ac-pilule">{{ site.accroche | replace(" fil ", " <b>fil</b> ") | safe }}</p>
       {# le titre, le texte et les puces suivent le choix « Pour mon enfant » / « Pour les animateurs et directeurs » (morceaux.html, pour()) #}
       <h1 class="h1-accueil" data-pour-enfant="Inscrivez votre enfant, &lt;em&gt;près de chez vous.&lt;/em&gt;" data-pour-anim="Votre prochain poste, &lt;em&gt;près de chez vous.&lt;/em&gt;">Inscrivez votre enfant, <em>près de chez vous.</em></h1>
       <p class="chapo chapo-accueil" data-pour-enfant="Colos, accueils de loisirs et périscolaire pour les 3 à 17 ans : choisissez une structure vérifiée et demandez une place en ligne, gratuitement. Elle vous répond directement."
          data-pour-anim="Stage pratique BAFA, job d'été ou poste à l'année : décrivez ce que vous cherchez, et les structures vérifiées de votre secteur reçoivent votre demande et vous répondent.">Colos, accueils de loisirs et périscolaire pour les 3 à 17 ans : choisissez une structure vérifiée et demandez une place en ligne, gratuitement. Elle vous répond directement.</p>
-      <ul class="ac-puces" data-pour-enfant="Gratuit pour les familles|Structures vérifiées|Réponse directe" data-pour-anim="Gratuit pour les animateurs|Structures vérifiées|Sans intermédiaire"><li>Gratuit pour les familles</li><li>Structures vérifiées</li><li>Réponse directe</li></ul>
-      <p class="chiffres-une" data-pour-seul="enfant"><b>3 à 17 ans</b> · mercredis, vacances et périscolaire · demande de place <b>sans frais</b></p>
+      <ul class="ac-puces" data-pour-enfant="Demande de place sans frais|Structures vérifiées|Réponse directe" data-pour-anim="Gratuit pour les animateurs|Structures vérifiées|Sans intermédiaire"><li>Demande de place sans frais</li><li>Structures vérifiées</li><li>Réponse directe</li></ul>
+      <p class="chiffres-une" data-pour-seul="enfant"><b>3 à 17 ans</b> · mercredis, vacances et autour de l'école</p>
       <p class="chiffres-une" data-pour-seul="anim" hidden><b>{{ stats.nb }}</b> sessions de formation à venir · <b>{{ stats.nb_organismes }}</b> organismes · mises à jour chaque jour</p>
     </div>
     <div class="ac-hero-d"><div class="ac-carte"><p class="ac-carte-t">Trouver une place pour mon enfant</p><p class="ac-carte-s">Colo, accueil de loisirs ou périscolaire</p>{{ m.recherche_onglets(lien, departements) }}</div></div>
