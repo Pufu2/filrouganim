@@ -82,8 +82,11 @@ ecoles:
   - {organisme_nom: "CEMEA région Centre", diplome: BPJEPS, specialite: "asec", ville: "Chambray-lès-Tours", departement: "37", derniere_rentree: 2026-02-04}
   - {organisme_nom: "I.R.S.S", diplome: BPJEPS, specialite: "asec", ville: "La Riche", departement: "37", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Institut du travail social (ITS)", diplome: BPJEPS, specialite: "asec", ville: "Tours", departement: "37", derniere_rentree: 2026-10-19}
+  - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Grenoble", departement: "38", derniere_rentree: 2026-11-24}
   - {organisme_nom: "COODEV Association Dauphiné", diplome: BPJEPS, specialite: "asec", ville: "Grenoble", departement: "38", derniere_rentree: 2026-11-09}
+  - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Le Pont-de-Claix", departement: "38", derniere_rentree: 2026-11-24}
   - {organisme_nom: "ARFAMSTA FuturOsud-FEA", diplome: BPJEPS, specialite: "asec", ville: "Saint-Clair-du-Rhône", departement: "38", derniere_rentree: 2026-11-03}
+  - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Saint-Martin-d'Hères", departement: "38", derniere_rentree: 2026-11-24}
   - {organisme_nom: "Jura Sport Formation", diplome: BPJEPS, specialite: "asec", ville: "Lons-le-Saunier", departement: "39", derniere_rentree: 2026-09-28}
   - {organisme_nom: "GRETA CFA Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Mont-de-Marsan", departement: "40", derniere_rentree: 2026-10-21}
   - {organisme_nom: "Respire", diplome: BPJEPS, specialite: "asec", ville: "Blois", departement: "41", derniere_rentree: 2026-10-05}
@@ -398,6 +401,7 @@ ecoles:
   - {organisme_nom: "EPLE FPA du Morvan", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Challuy", departement: "58", derniere_rentree: 2026-11-13}
   - {organisme_nom: "CEMEA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lille", departement: "59", derniere_rentree: 2026-10-01}
   - {organisme_nom: "CREPS de Wattignies - CFA MSA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Wattignies", departement: "59", derniere_rentree: 2026-09-07}
+  - {organisme_nom: "CEMEA 63", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Clermont-Ferrand", departement: "63", derniere_rentree: 2026-11-24}
   - {organisme_nom: "C.E.M.E.A_NA", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Anglet", departement: "64", derniere_rentree: 2026-11-10}
   - {organisme_nom: "Arfatsema", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lyon", departement: "69", derniere_rentree: 2026-11-09}
   - {organisme_nom: "Ocellia", diplome: DEJEPS, specialite: "coordination-de-projets", ville: "Lyon", departement: "69", derniere_rentree: 2026-01-26}
