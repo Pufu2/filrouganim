@@ -1112,6 +1112,12 @@ class Site:
             for q in faq:
                 q["r_rendu"] = q["r"]
             lieu = {"n": nom, "g": "ville", "d": d["code"]} if cle[1].startswith("ville") and d else ({"n": d["nom"], "g": "departement", "d": d["code"]} if d else {"n": nom, "g": "region", "d": ""})
+            # une page locale n'est proposée à Google que si elle a du contenu propre au lieu (offre, structure, séjour) :
+            # sans cela, elle ressemble à 90 % à celle du département voisin et Google la laisse de côté (« Détectée, non indexée »).
+            # Elle reste en ligne et revient d'elle-même dans le plan du site dès qu'une offre, une structure ou un séjour y arrive.
+            if idx and d:
+                idx = any(x for b in local.get("blocs") or [] for k in ("offres", "structures", "sejours")
+                          for x in (b.get(k) or []) if not (isinstance(x, dict) and x.get("exemple")))
             self.ajouter(url, "local.html", titre=titre, h1=h1, description=desc[:300], intro=intro, local=local, indexer=idx,
                          faq_page=faq or None, schema_faq=self.schema_faq(faq) if faq else None, fil=fil, lieu=lieu)
         # les pages d'index : un sujet, tous les départements (ou toutes les régions), rangés par région
