@@ -19,6 +19,9 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-former" data-href="{{ lien('/se-former/sessions/') }}"{% if page.url.startswith('/se-former/') %} data-actif{% endif %}>Se former<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-former" hidden>
       <div class="cadre mm-grille">
+        {# même règle dans les 4 volets : la carte = la page de la partie (comme un clic sur le titre) ; Chercher = des résultats déjà filtrés ;
+           Passer à l'action = un formulaire, le premier (en rose) est l'annuaire inversé ; Bien s'y prendre = guides et outils ;
+           en bas, « Comment ça marche ? » et la porte du public d'en face #}
         <a class="mm-une" href="{{ lien('/se-former/sessions/') }}">
           <span class="mm-une-sur">Pour se former</span>
           <b>Trouver une formation</b>
@@ -26,29 +29,30 @@
           <span class="mm-une-aller">Chercher une session <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico("diplome") }}Le BAFA</p>
-          {{ lien_menu('/se-former/bafa/', 'Le BAFA', 'Animateur, dès 16 ans') }}
-          {{ lien_menu('/se-former/etapes-du-bafa/', 'Les étapes du BAFA', 'Âge, durée, délais') }}
-          {{ lien_menu('/se-former/financer-son-bafa/', 'Financer son BAFA', 'Les aides') }}
-          {{ lien_menu('/outils/mon-parcours-bafa/', 'Mon parcours BAFA', 'Les dates limites') }}
-          {{ lien_menu('/trouver-un-poste/trouver-son-stage-pratique/', 'Trouver son stage pratique') }}
+          <p class="mm-titre">{{ ico("loupe") }}Chercher</p>
+          {{ lien_menu("/se-former/sessions/bafa/", "Sessions BAFA", "Formation générale, approfondissement") }}
+          {{ lien_menu("/se-former/sessions/bafd/", "Sessions BAFD", "Formation générale, perfectionnement") }}
+          {{ lien_menu("/se-former/sessions/psc1/", "PSC", "Premiers secours, une journée") }}
+          {{ lien_menu("/se-former/sessions/bsb/", "BSB", "Surveillant de baignade") }}
+          {{ lien_menu("/se-former/ecoles/", "Diplômes pros", "Les écoles, par ville") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico("etoile") }}Les autres formations</p>
-          {{ lien_menu('/se-former/bafd/', 'BAFD', 'Directeur, après le BAFA') }}
-          {{ lien_menu('/se-former/psc1/', 'PSC', 'Premiers secours, une journée') }}
-          {{ lien_menu('/se-former/surveillant-de-baignade/', 'BSB', 'Surveillant de baignade') }}
-          {{ lien_menu('/se-former/ecoles/', 'Les diplômes pros', 'CPJEPS, BPJEPS, DEJEPS…') }}
+          <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
+          <a class="mm-bouton-plus" href="{{ lien('/outils/mon-parcours-bafa/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Mon parcours BAFA</b><small>Mes dates limites</small></span></a>
+          {{ lien_menu("/se-former/s-inscrire-a-une-formation/", "S'inscrire, pas à pas", "Du numéro officiel au paiement") }}
+          {{ lien_menu("/trouver-un-poste/demande/", "Trouver mon stage pratique", "Les structures viennent à vous") }}
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
-          {{ lien_menu('/se-former/quelle-formation-choisir/', 'Quelle formation choisir ?', 'Selon votre projet') }}
-          {{ lien_menu('/se-former/s-inscrire-a-une-formation/', "S'inscrire, pas à pas", 'Comment ça marche') }}
-          {{ lien_menu('/se-former/questions-frequentes/', 'Questions fréquentes') }}
-          {{ lien_menu('/se-former/sessions/organismes/', 'Les organismes') }}
-          {{ lien_menu('/lexique/', 'Le lexique') }}
+          {{ lien_menu("/se-former/quelle-formation-choisir/", "Quelle formation choisir ?") }}
+          {{ lien_menu("/se-former/etapes-du-bafa/", "Les étapes du BAFA") }}
+          {{ lien_menu("/se-former/financer-son-bafa/", "Financer son BAFA") }}
+          {{ lien_menu("/se-former/questions-frequentes/", "Questions fréquentes") }}
         </div>
-        <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#former">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes, et qui paie quoi</small></a>
+        <div class="mm-bas">
+          <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#former">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>
+          <a class="mm-autre" href="{{ lien('/organismes-partenaires/') }}"><span>Organisme de formation ?</span><small>Vos sessions en avant</small><i aria-hidden="true">→</i></a>
+        </div>
       </div>
     </div>
   </div>
@@ -56,32 +60,39 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-poste" data-href="{{ lien('/trouver-un-poste/offres/') }}"{% if page.url.startswith('/trouver-un-poste/') and not page.url.startswith('/trouver-un-poste/structures/') %} data-actif{% endif %}>Animateurs &amp; directeurs<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-poste" hidden>
       <div class="cadre mm-grille">
-        <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}#animateurs">
+        {# même règle dans les 4 volets : la carte = la page de la partie (comme un clic sur le titre) ; Chercher = des résultats déjà filtrés ;
+           Passer à l'action = un formulaire, le premier (en rose) est l'annuaire inversé ; Bien s'y prendre = guides et outils ;
+           en bas, « Comment ça marche ? » et la porte du public d'en face #}
+        <a class="mm-une" href="{{ lien('/trouver-un-poste/offres/') }}">
           <span class="mm-une-sur">Pour les animateurs et directeurs</span>
-          <b>Les animateurs et directeurs qui cherchent</b>
-          <span>Stage pratique BAFA, colo l'été, centre de loisirs, poste à l'année : ce que cherchent les animateurs inscrits, et les offres des structures vérifiées.</span>
-          <span class="mm-une-aller">Voir les demandes <span aria-hidden="true">→</span></span>
+          <b>Trouver un poste</b>
+          <span>Stage pratique, job d'été ou poste à l'année : les offres des structures vérifiées près de chez vous.</span>
+          <span class="mm-une-aller">Voir les offres <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Être trouvé", "fleche")) }}Être trouvé</p>
-          {{ lien_menu('/trouver-un-poste/offres/', 'Les offres de stages et de jobs') }}
-          {{ lien_menu('/compte/?inscription=1', 'Créer mon profil gratuit', 'Les structures vous écrivent') }}
-          {{ lien_menu('/trouver-un-poste/exemple-de-profil/', 'Un exemple de profil', 'Ce que voit une structure') }}
+          <p class="mm-titre">{{ ico("loupe") }}Chercher</p>
+          {{ lien_menu("/trouver-un-poste/offres/", "Les offres", "Stages, jobs d'été, postes à l'année") }}
+          {{ lien_menu("/trouver-un-poste/structures/", "Les structures qui recrutent", "Leur projet, leurs offres") }}
+          {{ lien_menu("/trouver-un-poste/emploi-animateur/", "Emploi animateur", "Par département") }}
+          {{ lien_menu("/trouver-un-poste/job-ete-animateur/", "Job d'été", "Par région") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Décrocher le poste", "fleche")) }}Décrocher le poste</p>
-          {{ lien_menu('/trouver-un-poste/trouver-son-stage-pratique/', 'Trouver son stage pratique') }}
-          {{ lien_menu('/trouver-un-poste/preparer-son-entretien/', 'Préparer son entretien') }}
-          {{ lien_menu('/trouver-un-poste/le-projet-pedagogique/', 'Le projet pédagogique') }}
+          <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
+          <a class="mm-bouton-plus" href="{{ lien('/trouver-un-poste/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Décrire ce que je cherche</b><small>Les structures viennent à vous</small></span></a>
+          {{ lien_menu("/compte/?inscription=1&role=candidat", "Créer ma fiche", "Gratuit, vue par les structures") }}
+          {{ lien_menu("/trouver-un-poste/exemple-de-profil/", "Un exemple de fiche", "Ce que voit une structure") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Partir serein", "fleche")) }}Partir serein</p>
-          {{ lien_menu('/trouver-un-poste/contrat-d-engagement-educatif/', "Le contrat d'engagement éducatif") }}
-          {{ lien_menu('/outils/salaire-cee/', 'Calculer son salaire en CEE') }}
-          {{ lien_menu('/outils/mon-parcours-bafa/', 'Mon parcours BAFA', 'Les dates limites') }}
-          {{ lien_menu('/trouver-un-poste/preparer-sa-valise-de-colo/', 'La valise de colo') }}
+          <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
+          {{ lien_menu("/trouver-un-poste/preparer-son-entretien/", "Préparer son entretien") }}
+          {{ lien_menu("/trouver-un-poste/contrat-d-engagement-educatif/", "Le contrat d'engagement éducatif") }}
+          {{ lien_menu("/outils/salaire-cee/", "Calculer son salaire en CEE") }}
+          {{ lien_menu("/trouver-un-poste/preparer-sa-valise-de-colo/", "La valise de colo") }}
         </div>
-        <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#poste">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes, et qui paie quoi</small></a>
+        <div class="mm-bas">
+          <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#poste">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>
+          <a class="mm-autre" href="{{ lien('/recruter/') }}"><span>Vous recrutez ?</span><small>L'espace structures</small><i aria-hidden="true">→</i></a>
+        </div>
       </div>
     </div>
   </div>
@@ -89,26 +100,39 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-recruter" data-href="{{ lien('/recruter/') }}"{% if page.url.startswith('/recruter/') or page.url.startswith('/trouver-un-poste/structures/') or page.url.startswith('/outils/') or page.url == '/chiffres/' %} data-actif{% endif %}>Structures<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-recruter" hidden>
       <div class="cadre mm-grille">
+        {# même règle dans les 4 volets : la carte = la page de la partie (comme un clic sur le titre) ; Chercher = des résultats déjà filtrés ;
+           Passer à l'action = un formulaire, le premier (en rose) est l'annuaire inversé ; Bien s'y prendre = guides et outils ;
+           en bas, « Comment ça marche ? » et la porte du public d'en face #}
         <a class="mm-une" href="{{ lien('/recruter/') }}">
           <span class="mm-une-sur">Pour les structures</span>
           <b>Recruter et se faire connaître</b>
-          <span>Accueils de loisirs, mairies, associations, organisateurs de colos : votre page, vos offres et les demandes des animateurs et des familles de votre secteur.</span>
-          <span class="mm-une-aller">Créer la page de ma structure <span aria-hidden="true">→</span></span>
+          <span>Votre page, vos offres et les demandes des animateurs et des familles de votre secteur.</span>
+          <span class="mm-une-aller">L'espace structures <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Votre structure", "fleche")) }}Votre structure</p>
-          {{ lien_menu('/trouver-un-poste/structures/', 'Les structures inscrites', 'Projet, offres, photos') }}
-          {{ lien_menu('/recruter/exemple-de-page-structure/', 'Un exemple de fiche structure') }}
-          {{ lien_menu('/chiffres/', 'Les chiffres du site', 'Qui vous verra') }}
-          <a class="mm-bouton-plus" href="{{ lien('/trouver-un-poste/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Décrire mon besoin</b><small>Les structures viennent à vous</small></span></a>
+          <p class="mm-titre">{{ ico("loupe") }}Chercher</p>
+          {{ lien_menu("/trouver-un-poste/offres/#animateurs", "Les animateurs qui cherchent", "Leurs demandes, près de chez vous") }}
+          {{ lien_menu("/recruter/animateurs-bafa/", "Recruter des animateurs", "Par département") }}
+          {{ lien_menu("/recruter/saisonniers-ete/", "Saisonniers d'été", "Par région") }}
+          {{ lien_menu("/recruter/stagiaire-bafa/", "Accueillir un stagiaire BAFA", "Par département") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico(ICONES_TITRES.get("Outils gratuits", "fleche")) }}Outils gratuits</p>
-          {{ lien_menu('/outils/taux-d-encadrement/', "Taux d'encadrement", 'Combien d’animateurs pour votre accueil') }}
-          {{ lien_menu('/outils/salaire-cee/', 'Rémunération en CEE', 'Le minimum et les 80 jours') }}
-          {{ lien_menu('/outils/', 'Tous les outils') }}
+          <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
+          <a class="mm-bouton-plus" href="{{ lien('/compte/?inscription=1&role=structure') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Créer la page de ma structure</b><small>Votre page et une offre : gratuit</small></span></a>
+          {{ lien_menu("/recruter/sejours/", "Publier mes séjours et accueils", "Les familles vous demandent une place") }}
+          {{ lien_menu("/recruter/exemple-de-page-structure/", "Un exemple de page", "Ce que voient les candidats") }}
         </div>
-        <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#structure">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes, et qui paie quoi</small></a>
+        <div class="mm-colonne">
+          <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
+          {{ lien_menu("/outils/taux-d-encadrement/", "Calculer le taux d'encadrement") }}
+          {{ lien_menu("/recruter/reussir-son-recrutement/", "Réussir son recrutement") }}
+          {{ lien_menu("/recruter/aides-pour-recruter/", "Les aides pour recruter") }}
+          {{ lien_menu("/chiffres/", "Les chiffres du site") }}
+        </div>
+        <div class="mm-bas">
+          <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#structure">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>
+          <a class="mm-autre" href="{{ lien('/trouver-un-poste/offres/') }}"><span>Vous cherchez un poste ?</span><small>L'espace animateurs</small><i aria-hidden="true">→</i></a>
+        </div>
       </div>
     </div>
   </div>
@@ -116,29 +140,38 @@
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-sejours" data-href="{{ lien('/enfants/') }}"{% if page.url.startswith('/enfants/') %} data-actif{% endif %}>Inscrire mon enfant<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-sejours" hidden>
       <div class="cadre mm-grille">
+        {# même règle dans les 4 volets : la carte = la page de la partie (comme un clic sur le titre) ; Chercher = des résultats déjà filtrés ;
+           Passer à l'action = un formulaire, le premier (en rose) est l'annuaire inversé ; Bien s'y prendre = guides et outils ;
+           en bas, « Comment ça marche ? » et la porte du public d'en face #}
         <a class="mm-une" href="{{ lien('/enfants/') }}">
           <span class="mm-une-sur">Pour les familles</span>
           <b>Inscrire mon enfant</b>
-          <span>Colos, accueils de loisirs et périscolaire pour les 3-17 ans, proposés par des structures vérifiées. Demande de place en ligne, sans frais.</span>
+          <span>Colos, accueils de loisirs et périscolaire pour les 3 à 17 ans, près de chez vous.</span>
           <span class="mm-une-aller">Voir les offres <span aria-hidden="true">→</span></span>
         </a>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico("loupe") }}Les offres</p>
-          <a href="{{ lien('/enfants/') }}?type=accueils">{{ ico("fleche") }}<span class="mm-lien-texte"><b>Accueils de loisirs</b><small>Vacances et mercredis</small></span></a>
-          <a href="{{ lien('/enfants/') }}?type=periscolaire">{{ ico("fleche") }}<span class="mm-lien-texte"><b>Périscolaire</b><small>Matin, midi, soir</small></span></a>
-          <a href="{{ lien('/enfants/') }}?type=sejours">{{ ico("fleche") }}<span class="mm-lien-texte"><b>Séjours et colos</b><small>Avec nuits</small></span></a>
+          <p class="mm-titre">{{ ico("loupe") }}Chercher</p>
+          {{ lien_menu("/enfants/?type=accueils", "Accueils de loisirs", "Mercredis et vacances") }}
+          {{ lien_menu("/enfants/?type=periscolaire", "Périscolaire", "Matin, midi, soir") }}
+          {{ lien_menu("/enfants/?type=sejours", "Séjours et colos", "Avec nuits") }}
+          {{ lien_menu("/enfants/centre-de-loisirs/", "Centres de loisirs", "Par département") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico("profil") }}Sur mesure</p>
-          <a href="{{ lien('/enfants/aides/') }}">{{ ico("euro") }}<span class="mm-lien-texte"><b>Les aides pour partir</b><small>Pass Colo, CAF, CSE</small></span></a>
+          <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
           <a class="mm-bouton-plus" href="{{ lien('/enfants/demande/') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span><b>Décrire mon besoin</b><small>Les structures viennent à vous</small></span></a>
+          {{ lien_menu("/compte/?inscription=1&role=parent", "Mon espace parent", "Mes demandes, le carnet de séjour") }}
         </div>
         <div class="mm-colonne">
-          <p class="mm-titre">{{ ico("structure") }}Organisateurs</p>
-          <a href="{{ lien('/recruter/sejours/') }}">{{ ico("structure") }}<span class="mm-lien-texte"><b>Publier mes offres</b><small>Gratuit</small></span></a>
-          <a href="{{ lien('/enfants/exemple/') }}">{{ ico("etoile") }}<span class="mm-lien-texte"><b>Un exemple de fiche</b></span></a>
+          <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
+          {{ lien_menu("/enfants/aides/", "Les aides pour partir") }}
+          {{ lien_menu("/blog/premiere-colo-a-quel-age/", "Première colo : à quel âge ?") }}
+          {{ lien_menu("/blog/colo-serieuse-les-questions-a-poser/", "Les 7 questions à poser") }}
+          {{ lien_menu("/blog/centre-de-loisirs-colo-mini-camp-differences/", "Centre de loisirs ou colo ?") }}
         </div>
-        <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#enfant">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes, et qui paie quoi</small></a>
+        <div class="mm-bas">
+          <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#enfant">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>
+          <a class="mm-autre" href="{{ lien('/recruter/sejours/') }}"><span>Vous organisez des séjours ?</span><small>Publier mes offres</small><i aria-hidden="true">→</i></a>
+        </div>
       </div>
     </div>
   </div>

@@ -500,3 +500,20 @@ header.jm-entete .mm-ccm small::before { content: "·"; margin-right: 8px; }
 .ap-pros-cases div { display: flex; flex-direction: column; padding: 6px 8px; border-radius: 8px; background: #f6f6f7; }
 .ap-pros-cases b { font-size: 1.05rem; } .ap-pros-cases span { font-size: .72rem; color: var(--doux); }
 @media (max-width: 760px) { .ap-dep-form { grid-template-columns: 1fr; } .ap-pros-cases { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* menu : la ligne du bas, identique dans les 4 volets — « Comment ça marche ? » à gauche, le public d'en face à droite */
+header.jm-entete .mm-bas { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+header.jm-entete .mm-bas .mm-ccm { margin: 0; grid-column: auto; }
+header.jm-entete .mm-autre { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--nuit); color: #fff; text-decoration: none; }
+header.jm-entete .mm-autre:hover { background: var(--nuit-3); color: #fff; }
+header.jm-entete .mm-autre span { font-weight: 700; font-size: .92rem; }
+header.jm-entete .mm-autre small { color: #c4c7ce; font-size: .82rem; }
+header.jm-entete .mm-autre small::before { content: "·"; margin-right: 8px; }
+header.jm-entete .mm-autre i { margin-left: auto; font-style: normal; color: var(--fil-clair); }
+header.jm-entete .mm-colonne .mm-bouton-plus { margin: 0 0 6px; }
+@media (max-width: 1000px) { header.jm-entete .mm-bas { grid-template-columns: 1fr; } header.jm-entete .mm-autre { flex-wrap: wrap; } header.jm-entete .mm-autre small::before { display: none; } }
+/* le lien « Passer à l'action » mis en avant (l'annuaire inversé) : rose, comme partout ailleurs sur le site */
+header.jm-entete .mm-colonne a.mm-bouton-plus { background: #fff1f2; border: 1px solid #f6c4ca; }
+header.jm-entete .mm-colonne a.mm-bouton-plus:hover { background: #ffe4e7; }
+header.jm-entete .mm-colonne a.mm-bouton-plus b { color: var(--fil-fonce); }
+header.jm-entete .mm-colonne a.mm-bouton-plus > svg { stroke: var(--fil); }
+header.jm-entete .mm-autre span { white-space: nowrap; }
