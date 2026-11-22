@@ -185,7 +185,7 @@
     }
     ongletActuel[vue] = nom;
     Array.prototype.forEach.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) {
-      if (b.dataset.ongletVers === nom) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+      if (b.dataset.ongletVers === nom || (b.dataset.ongletsAussi || "").split(" ").indexOf(nom) >= 0) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
     Array.prototype.forEach.call(v.querySelectorAll("[data-onglet]"), function (b) { b.classList.toggle("hors-onglet", b.dataset.onglet !== nom); });
     try { sessionStorage.setItem("fra-onglet-" + vue, nom); } catch (e) {}

@@ -477,3 +477,26 @@ header.jm-entete .mm-ccm small::before { content: "·"; margin-right: 8px; }
   .ccm-etapes { grid-template-columns: 1fr; } .ccm-etapes::before { left: 21px; right: auto; top: 22px; bottom: 22px; width: 3px; height: auto; }
   .ccm-etapes li { padding-left: 62px; min-height: 44px; } .ccm-n { position: absolute; left: 0; top: 0; margin: 0; }
 }
+
+/* admin : les onglets « Pros » (structures, organismes, séjours) en haut de chaque page */
+.ap-pros-onglets { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; margin: 0 0 18px; border-radius: 14px; background: #fff; border: 1px solid var(--trait); }
+.ap-pros-onglets button { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 0; border-radius: 10px; background: none; font: 600 .88rem var(--texte); color: var(--doux); cursor: pointer; }
+.ap-pros-onglets button .ap-ic { width: 20px; height: 20px; background: none; padding: 0; }
+.ap-pros-onglets button .ap-ic svg { width: 16px; height: 16px; }
+.ap-pros-onglets button small { font-size: .74rem; padding: 1px 7px; border-radius: 999px; background: #f1f1f2; color: var(--doux); }
+.ap-pros-onglets button[aria-selected="true"] { background: var(--nuit); color: #fff; }
+.ap-pros-onglets button[aria-selected="true"] .ap-ic svg { stroke: #fff; }
+.ap-pros-onglets button[aria-selected="true"] small { background: rgba(255, 255, 255, .16); color: #fff; }
+
+/* admin, Ventes : paliers de dépenses, cases de prospection, formulaire des dépenses */
+.ap-dep-c .ap-jauge { margin: 8px 0; }
+.ap-ok { color: #2f6440; font-weight: 600; }
+.ap-note-ventes { margin: -4px 0 16px; }
+.ap-dep-form { display: grid; grid-template-columns: minmax(0, 2fr) 120px minmax(0, 2fr) auto; gap: 8px; margin-top: 12px; }
+.ap-dep-form .ap-recherche { margin: 0; }
+.ap-pros-bloc { padding: 10px 12px; border: 1px solid var(--trait); border-radius: 12px; margin: 0 0 8px; }
+.ap-pros-bloc .ap-mini-t { margin: 0 0 6px; }
+.ap-pros-cases { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.ap-pros-cases div { display: flex; flex-direction: column; padding: 6px 8px; border-radius: 8px; background: #f6f6f7; }
+.ap-pros-cases b { font-size: 1.05rem; } .ap-pros-cases span { font-size: .72rem; color: var(--doux); }
+@media (max-width: 760px) { .ap-dep-form { grid-template-columns: 1fr; } .ap-pros-cases { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

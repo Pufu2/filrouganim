@@ -882,3 +882,5 @@ alter table public.besoins_familles add column if not exists suivi text not null
 alter table public.besoins_familles add column if not exists note_admin text check (char_length(note_admin) <= 2000);
 -- admin_modifier : « besoins_familles » ajouté (suivi, note_admin) ; nouvelle fonction admin_transmettre_besoin(besoin, structure)
 -- (texte complet appliqué dans la migration v40_qg_familles)
+
+-- v41 (22/11/2026) : admin_depenses (nom, montant_an, note, ordre), lue et modifiée par l'administration seulement (page Ventes)

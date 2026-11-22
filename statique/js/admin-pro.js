@@ -690,62 +690,142 @@
   }
 
   /* ---------- 4. les ventes ---------- */
+  // nos dépenses (table admin_depenses), saisies dans la page Ventes
+  var DEP = null;
+  async function lireDepenses() { var r = await E.sb.from("admin_depenses").select("*").order("ordre").order("id"); DEP = (r && r.data) || []; }
   function ventes() {
-    var c = $("ad-ventes"); if (!c) return; c.textContent = "";
+    var c = $("ad-ventes"); if (!c) return;
+    if (DEP === null) { DEP = []; lireDepenses().then(ventes); }
+    c.textContent = "";
     var st = D.structures, payees = st.filter(paye), an = payees.reduce(function (a, s) { return a + prixAn(s); }, 0);
-    var fond = compte(payees, function (s) { return s.fondatrice; });
+    var net = Math.max(0, an * 0.985 - payees.length * 0.25), fond = compte(payees, function (s) { return s.fondatrice; });
+    var totalDep = DEP.reduce(function (a, d) { return a + Number(d.montant_an || 0); }, 0);
+    // en haut à droite : ce que ça rapporte par an, et la part de nos dépenses couverte
     var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-mini-t", "Par an aujourd'hui"));
     cote.appendChild(el("p", "ap-cote-gros", euros(an)));
-    cote.appendChild(el("p", "ap-petit", payees.length + " abonnement" + (payees.length > 1 ? "s" : "") + " · environ " + euros(an * 0.985 - payees.length * 0.25) + " après les frais Stripe"));
-    var j = el("div", "ap-jauge"); var ji = el("i"); ji.style.width = Math.min(100, fond / 10 * 100) + "%"; j.appendChild(ji); cote.appendChild(j);
-    cote.appendChild(el("p", "ap-petit", "Offre fondateurs : " + fond + " place" + (fond > 1 ? "s" : "") + " prise" + (fond > 1 ? "s" : "") + " sur 10"));
-    hero(c, "Ventes", "Ce que rapportent vos abonnements, ", "mois après mois",
-      "Où en sont les structures, de l'inscription à la page payée, et à qui écrire cette semaine.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    cote.appendChild(el("p", "ap-petit", payees.length + " abonnement" + (payees.length > 1 ? "s" : "") + " · environ " + euros(net) + " net après les frais Stripe"));
+    var j = el("div", "ap-jauge"); var ji = el("i"); ji.style.width = (totalDep ? Math.min(100, net / totalDep * 100) : 0) + "%"; j.appendChild(ji); cote.appendChild(j);
+    cote.appendChild(el("p", "ap-petit", totalDep ? pct(Math.min(net, totalDep), totalDep) + " de nos dépenses (" + euros(totalDep, true) + " par an)" : "Ajoutez vos dépenses plus bas pour voir ce qui est couvert"));
+    hero(c, "Ventes", "Ce que rapportent vos abonnements, ", "semaine après semaine",
+      "Où vous en êtes par rapport à nos dépenses, à quelle étape les structures s'arrêtent, ce que donne la prospection, et à qui écrire cette semaine.", [bouton("← Vue d'ensemble", "accueil")], cote);
+    // nos dépenses couvertes, palier par palier (en cumulant dans l'ordre de la liste)
+    var g0 = grille(c, "ap-g2"), cumul = 0;
+    var PF = 39.5, PS = 79, PC = 19.75, netDe = function (p) { return p * 0.985 - 0.25; };
+    DEP.forEach(function (d, k) {
+      cumul += Number(d.montant_an || 0);
+      var noms = DEP.slice(0, k + 1).map(function (x) { return x.nom; }).join(" + ");
+      var part = cumul ? Math.min(1, net / cumul) : 1;
+      var kk = carte(g0, noms, pct(Math.min(net, cumul), cumul), "ap-dep-c");
+      kk.appendChild(el("p", "ap-petit", euros(cumul) + " par an" + (d.note ? " · " + d.note : "")));
+      var jj = el("div", "ap-jauge"); var ii = el("i"); ii.style.width = (part * 100) + "%"; jj.appendChild(ii); kk.appendChild(jj);
+      if (part >= 1) kk.appendChild(el("p", "ap-petit ap-ok", "Couvert : les abonnements paient ce palier."));
+      else {
+        var manque = cumul - net; kk.appendChild(el("p", "ap-petit", "Il manque environ " + euros(manque, true) + " net par an, soit au choix :"));
+        var pu = el("div", "ap-puces");
+        [[Math.ceil(manque / netDe(PF)), "abonnements fondateurs à 39,50 €"], [Math.ceil(manque / netDe(PS)), "abonnements à 79 €"], [Math.ceil(manque / netDe(PC)), "centres en plus à 19,75 €"]].forEach(function (x) { pu.appendChild(el("span", "ap-etiq", x[0] + " " + x[1])); });
+        kk.appendChild(pu);
+      }
+    });
+    if (!DEP.length) { var vide = carte(g0, "Nos dépenses couvertes"); vide.appendChild(el("p", "ap-petit", "Ajoutez nos dépenses ci-dessous (nom de domaine, Supabase Pro le jour où il le faudra, Brevo payant…) : vous verrez, palier par palier, ce que les abonnements couvrent et ce qu'il manque.")); }
+    c.appendChild(el("p", "ap-petit ap-note-ventes", "Net estimé : prix payé moins les frais Stripe (1,5 % + 0,25 € par paiement), avant impôts et cotisations. Prix fondateurs 39,50 € par an, sinon 79 €, chaque centre en plus moitié prix."));
+    // la liste des dépenses, modifiable
+    var dc = carte(c, "Nos dépenses", euros(totalDep) + " par an");
+    dc.appendChild(el("p", "ap-petit", "Dans l'ordre où vous voulez les couvrir : chaque ligne devient un palier ci-dessus. Les montants sont par an (un abonnement mensuel × 12)."));
+    DEP.forEach(function (d) {
+      var r = el("div", "ap-res"); var tx = el("span"); tx.appendChild(el("b", null, d.nom)); tx.appendChild(el("small", null, euros(d.montant_an) + " par an" + (d.note ? " · " + d.note : ""))); r.appendChild(tx);
+      r.appendChild(actions([["Modifier", function () { var m = prompt("Montant par an (€) pour « " + d.nom + " »", String(d.montant_an).replace(".", ",")); if (m == null) return; var v = parseFloat(m.replace(",", ".")); if (isNaN(v)) return; E.sb.from("admin_depenses").update({ montant_an: v }).eq("id", d.id).then(function (q) { if (q.error) return E.message(E.erreur(q.error), true); lireDepenses().then(ventes); }); }],
+                             ["Supprimer", function () { if (!confirm("Supprimer « " + d.nom + " » ?")) return; E.sb.from("admin_depenses").delete().eq("id", d.id).then(function (q) { if (q.error) return E.message(E.erreur(q.error), true); lireDepenses().then(ventes); }); }, null, "ap-danger"]]));
+      dc.appendChild(r);
+    });
+    var f = el("form", "ap-dep-form");
+    var iN = el("input", "ap-recherche"); iN.placeholder = "Nom (ex. nom de domaine)"; iN.required = true; iN.maxLength = 120;
+    var iM = el("input", "ap-recherche"); iM.placeholder = "€ par an"; iM.inputMode = "decimal"; iM.required = true;
+    var iT = el("input", "ap-recherche"); iT.placeholder = "Note (facultatif)"; iT.maxLength = 300;
+    var ok = el("button", "ap-bouton", "Ajouter"); ok.type = "submit";
+    [iN, iM, iT, ok].forEach(function (x) { f.appendChild(x); });
+    f.addEventListener("submit", async function (e) { e.preventDefault(); var v = parseFloat(iM.value.replace(",", ".")); if (isNaN(v)) return;
+      var q = await E.sb.from("admin_depenses").insert({ nom: iN.value.trim(), montant_an: v, note: iT.value.trim() || null, ordre: DEP.length + 1 });
+      if (q.error) return E.message(E.erreur(q.error), true); await lireDepenses(); ventes(); });
+    dc.appendChild(f);
     var g = grille(c, "ap-g2");
-    // l'entonnoir des structures
-    var e = carte(g, "Structures : de l'inscription à la page en ligne");
+    // l'entonnoir des structures : où elles s'arrêtent
+    var e = carte(g, "Structures : où elles s'arrêtent");
     var avecOffre = {}; D.offres.forEach(function (o) { if (o.publiee && o.expire_le >= AUJ) avecOffre[o.structure_id] = 1; });
     var remplie = function (s) { return [s.nom, s.ville, s.presentation, s.projet, (s.photos || []).length, s.logo, (s.accueils || []).length || s.type, s.age_min != null || (s.publics || []).length, s.email_contact, s.identifiant].filter(Boolean).length >= 7; };
-    var etapes = [["Fiche créée", st.length], ["Fiche bien remplie", compte(st, remplie)], ["Abonnement payé", payees.length], ["Vérifiée", compte(st, function (s) { return paye(s) && s.verifiee; })],
-                  ["Page publique", compte(st, function (s) { return paye(s) && s.verifiee && s.page_publique && s.slug; })], ["Avec une offre en ligne", Object.keys(avecOffre).length]];
+    var etapes = [["Fiche créée", st.length], ["Fiche bien remplie", compte(st, remplie)], ["Vérifiée, en ligne", compte(st, function (s) { return s.verifiee; })],
+                  ["Avec une offre en ligne", Object.keys(avecOffre).length], ["Abonnement payé", payees.length]];
     var ul = el("ul", "ap-entonnoir");
     etapes.forEach(function (x, i) { var li = el("li"); li.appendChild(el("span", null, x[0])); var b = el("span", "ap-b-barre"), r = el("i"); r.style.width = (st.length ? Math.max(2, x[1] / st.length * 100) : 2) + "%"; b.appendChild(r); li.appendChild(b); li.appendChild(el("b", null, x[1] + (i ? " · " + pct(x[1], st.length) : ""))); ul.appendChild(li); });
     e.appendChild(ul);
-    // les animateurs, côté activité
-    var a = carte(g, "Animateurs : de l'inscription à la candidature");
-    var T = types(), ani = T.filter(function (t) { return t.type === "animateur" || (t.type === "aucun"); });
-    var ontPostule = {}; D.candidatures.forEach(function (x) { ontPostule[x.candidat_id] = 1; });
-    var ontDemande = {}; D.demandes.forEach(function (x) { if (x.candidat_id) ontDemande[x.candidat_id] = 1; });
-    var et2 = [["Comptes (hors structures)", ani.length], ["Profil créé", D.profils.length], ["Profil visible", compte(D.profils, function (p) { return p.publie; })], ["Avec CV", compte(D.profils, function (p) { return p.cv_nom; })],
-               ["Ont postulé", Object.keys(ontPostule).length], ["Ont envoyé une demande", Object.keys(ontDemande).length]];
-    var ul2 = el("ul", "ap-entonnoir");
-    et2.forEach(function (x, i) { var li = el("li"); li.appendChild(el("span", null, x[0])); var b = el("span", "ap-b-barre"), r = el("i"); r.style.width = (et2[0][1] ? Math.max(2, x[1] / et2[0][1] * 100) : 2) + "%"; b.appendChild(r); li.appendChild(b); li.appendChild(el("b", null, String(x[1]))); ul2.appendChild(li); });
-    a.appendChild(ul2);
+    var pire = null; etapes.forEach(function (x, i) { if (i && etapes[i - 1][1]) { var perte = 1 - x[1] / etapes[i - 1][1]; if (!pire || perte > pire[1]) pire = [x[0], perte]; } });
+    if (pire && pire[1] > 0) e.appendChild(el("p", "ap-petit", "Le plus gros écart : avant « " + pire[0] + " » (" + Math.round(pire[1] * 100) + " % s'arrêtent là)."));
+    // la prospection : de la liste au client, par type
+    var pr = carte(g, "Pros : de la prospection à la page payée");
+    var TYPESP = [["organisateur", "Organisateurs et mairies"], ["structure", "Structures inscrites"], ["organisme", "Organismes de formation"]];
+    TYPESP.forEach(function (tp) {
+      var l = (PROS || []).filter(function (x) { return x.type === tp[0]; });
+      var bloc = el("div", "ap-pros-bloc"); bloc.appendChild(el("p", "ap-mini-t", tp[1]));
+      var cases = el("div", "ap-pros-cases");
+      [["À contacter", compte(l, function (x) { return x.statut === "a_contacter"; })], ["Contactés", compte(l, function (x) { return x.statut !== "a_contacter"; })],
+       ["Ont répondu", compte(l, function (x) { return ["repondu", "interesse", "client"].indexOf(x.statut) >= 0; })], ["Intéressés", compte(l, function (x) { return ["interesse", "client"].indexOf(x.statut) >= 0; })],
+       ["Clients", compte(l, function (x) { return x.statut === "client"; })]].forEach(function (k) { var d = el("div"); d.appendChild(el("b", null, String(k[1]))); d.appendChild(el("span", null, k[0])); cases.appendChild(d); });
+      bloc.appendChild(cases); pr.appendChild(bloc);
+    });
+    var vp = pr.appendChild(vers("prospection")); vp.textContent = "Ouvrir la prospection →"; vp.className = "ap-lien-b";
     // les inscriptions par semaine
+    var T = types();
     var s = carte(c, "Inscriptions par semaine", "8 dernières semaines");
-    var sem = [], noms = []; for (var i = 7; i >= 0; i--) { var d = new Date(auj); d.setDate(d.getDate() - d.getDay() + 1 - i * 7); sem.push(d.toISOString().slice(0, 10)); noms.push(d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })); }
+    var sem = [], noms = []; for (var i = 7; i >= 0; i--) { var d = new Date(auj); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - i * 7); sem.push(d.toISOString().slice(0, 10)); noms.push(d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })); }
     var dans = function (t, k) { var x = iso(t.c.cree_le); return x >= sem[k] && (k === 7 || x < sem[k + 1]); };
     var cols = el("div", "ap-colonnes"), mx = 1;
     var vals = sem.map(function (_, k) { var an2 = compte(T, function (t) { return dans(t, k) && t.type !== "structure"; }), st2 = compte(T, function (t) { return dans(t, k) && t.type === "structure"; }); mx = Math.max(mx, an2 + st2); return [an2, st2]; });
     vals.forEach(function (v, k) { var col = el("div", "ap-col-s"); col.appendChild(el("b", null, String(v[0] + v[1]))); var pile = el("div", "ap-pile"); var a1 = el("i", "ap-s1"); a1.style.height = (v[0] / mx * 100) + "%"; var a2 = el("i", "ap-s2"); a2.style.height = (v[1] / mx * 100) + "%"; pile.appendChild(a2); pile.appendChild(a1); col.appendChild(pile); col.appendChild(el("small", null, noms[k])); cols.appendChild(col); });
-    s.appendChild(cols); legende(s, [["Animateurs et comptes sans fiche", "ap-s1"], ["Structures", "ap-s2"]]);
-    // à qui écrire
+    s.appendChild(cols); legende(s, [["Animateurs, parents et comptes sans fiche", "ap-s1"], ["Structures", "ap-s2"]]);
+    // un e-mail aux membres gratuits : les adresses en copie cachée, le message prêt
+    var em = carte(c, "Un e-mail à vos membres gratuits");
+    em.appendChild(el("p", "ap-petit", "Une seule fois, depuis votre boîte : les adresses partent en copie cachée, les réponses arrivent chez vous."));
+    var SEG = [["sans", "Structures sans abonnement", st.filter(function (x) { return !paye(x) && x.email_contact; }).map(function (x) { return x.email_contact; }),
+                "Votre page sur Fil Roug'Anim", "Bonjour,\n\nMerci d'avoir créé la page de votre structure sur Fil Roug'Anim. L'abonnement ajoute les demandes des animateurs et des familles de votre secteur, leurs profils complets et les offres illimitées" + (compte(st, function (y) { return y.fondatrice && paye(y); }) < 10 ? " : 39,50 € par an, à vie, pour les 10 premières structures." : " : 79 € par an.") + "\n\nVotre espace : https://filrouganim.fr/compte/\n\nBonne journée,\nFil Roug'Anim"],
+               ["vide", "Comptes sans fiche", T.filter(function (t) { return t.type === "aucun" && t.c.email; }).map(function (t) { return t.c.email; }),
+                "Votre espace Fil Roug'Anim", "Bonjour,\n\nVous avez créé un compte sur Fil Roug'Anim sans encore remplir votre fiche. Animateur ou directeur : décrivez ce que vous cherchez, les structures de votre secteur vous écrivent. Structure : votre page et une offre sont gratuites.\n\nVotre espace : https://filrouganim.fr/compte/\n\nBonne journée,\nFil Roug'Anim"]];
+    var choix = el("div", "ap-puces"), zone = el("div"); em.appendChild(choix); em.appendChild(zone);
+    function montrer(k) {
+      Array.prototype.forEach.call(choix.children, function (b, n) { b.setAttribute("aria-pressed", n === k ? "true" : "false"); });
+      zone.textContent = ""; var sg = SEG[k];
+      var ta = el("textarea", "ap-texte"); ta.rows = 7; ta.value = sg[4]; zone.appendChild(ta);
+      var bs = el("div", "ap-boutons");
+      var m = el("a", "ap-bouton", "✉ Écrire aux " + sg[2].length); m.href = "mailto:?bcc=" + encodeURIComponent(sg[2].join(",")) + "&subject=" + encodeURIComponent(sg[3]) + "&body=" + encodeURIComponent(ta.value);
+      ta.addEventListener("input", function () { m.href = "mailto:?bcc=" + encodeURIComponent(sg[2].join(",")) + "&subject=" + encodeURIComponent(sg[3]) + "&body=" + encodeURIComponent(ta.value); });
+      var cp = el("button", "ap-lien-b", "Copier les adresses"); cp.type = "button"; cp.addEventListener("click", function () { if (navigator.clipboard) navigator.clipboard.writeText(sg[2].join(", ")).then(function () { cp.textContent = "Copiées"; }); });
+      if (sg[2].length) bs.appendChild(m); bs.appendChild(cp); zone.appendChild(bs);
+      if (!sg[2].length) zone.appendChild(el("p", "ap-vide", "Personne dans ce groupe pour l'instant."));
+    }
+    SEG.forEach(function (sg, k) { var b = el("button", null, sg[1] + " · " + sg[2].length); b.type = "button"; b.addEventListener("click", function () { montrer(k); }); choix.appendChild(b); });
+    montrer(0);
+    // à qui écrire, une par une
     var g2 = grille(c, "ap-g2");
-    function listeRelance(titre, sous, l, objet, corps) {
+    function listeRelance(titre, sous, l, objet, corps, fiche) {
       var k = carte(g2, titre, String(l.length)); k.appendChild(el("p", "ap-petit", sous));
       l.slice(0, 12).forEach(function (x) {
-        var r = el("div", "ap-res"); var tx = el("span"); tx.appendChild(el("b", null, x.nom || "Sans nom")); tx.appendChild(el("small", null, (x.ville || "") + (x.departement ? " (" + x.departement + ")" : "") + " · inscrite " + depuis(x.cree_le) + (x.abonnement_fin ? " · abonnement jusqu'au " + E.dateFr(x.abonnement_fin) : ""))); r.appendChild(tx);
+        var r = el("div", "ap-res"); var tx = el("span"); tx.appendChild(el("b", null, x.nom || "Sans nom")); tx.appendChild(el("small", null, x.sous)); r.appendChild(tx);
         var bs = el("span", "ap-boutons");
-        if (x.email_contact) { var m = el("a", "ap-bouton", "✉ Écrire"); m.href = "mailto:" + x.email_contact + "?subject=" + encodeURIComponent(objet) + "&body=" + encodeURIComponent(corps(x)); bs.appendChild(m); }
-        var f2 = el("button", "ap-lien-b", "Fiche"); f2.type = "button"; f2.addEventListener("click", function () { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); }); bs.appendChild(f2);
+        if (x.email) { var m = el("a", "ap-bouton", "✉ Écrire"); m.href = "mailto:" + x.email + "?subject=" + encodeURIComponent(objet) + "&body=" + encodeURIComponent(corps(x)); bs.appendChild(m); }
+        if (fiche) { var f2 = el("button", "ap-lien-b", "Fiche"); f2.type = "button"; f2.addEventListener("click", function () { fiche(x); }); bs.appendChild(f2); }
         r.appendChild(bs); k.appendChild(r);
       });
       if (!l.length) k.appendChild(el("p", "ap-vide", "Personne pour l'instant."));
     }
-    listeRelance("Fiches sans abonnement", "Elles ont rempli leur page sans payer : un mot pour les aider à franchir le pas.", st.filter(function (x) { return !paye(x); }),
-      "Votre page sur Fil Roug'Anim", function (x) { return "Bonjour,\n\nMerci d'avoir créé la page de " + (x.nom || "votre structure") + " sur Fil Roug'Anim. Il ne reste qu'une étape pour la mettre en ligne avec vos offres : l'abonnement (" + (compte(st, function (y) { return y.fondatrice && paye(y); }) < 10 ? "39,50 € par an au tarif fondateur, à vie" : "79 € par an") + ", sans commission).\n\nUne question ? Répondez simplement à ce message.\n\nBonne journée,\nFil Roug'Anim"; });
-    listeRelance("Abonnements à renouveler", "Ils se terminent dans les 60 jours : prévenez avant la coupure.", st.filter(function (x) { return x.abonnement_fin && x.abonnement_fin >= AUJ && x.abonnement_fin <= new Date(auj.getTime() + 60 * 864e5).toISOString().slice(0, 10); }),
-      "Votre abonnement Fil Roug'Anim", function (x) { return "Bonjour,\n\nL'abonnement de " + (x.nom || "votre structure") + " se termine le " + E.dateFr(x.abonnement_fin) + ". Pour garder votre page et vos offres en ligne, pensez à le renouveler depuis votre espace.\n\nBonne journée,\nFil Roug'Anim"; });
+    listeRelance("Elles utilisent le site, en gratuit", "Page et offre gratuites, sans abonnement : le bon moment pour leur parler des demandes de leur secteur.",
+      st.filter(function (x) { return !paye(x); }).map(function (x) { return { id: x.id, nom: x.nom, email: x.email_contact, sous: (x.ville || "") + (x.departement ? " (" + x.departement + ")" : "") + " · inscrite " + depuis(x.cree_le) + (x.verifiee ? " · en ligne" : " · à vérifier") }; }),
+      "Votre page sur Fil Roug'Anim", function (x) { return "Bonjour,\n\nMerci d'avoir créé la page de " + (x.nom || "votre structure") + " sur Fil Roug'Anim. L'abonnement ajoute les demandes des animateurs et des familles de votre secteur, leurs profils complets et les offres illimitées.\n\nVotre espace : https://filrouganim.fr/compte/\n\nBonne journée,\nFil Roug'Anim"; },
+      function (x) { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); });
+    listeRelance("Inscrits sans fiche", "Ils ont créé un compte sans rien remplir : un mot pour les aider à démarrer.",
+      T.filter(function (t) { return t.type === "aucun"; }).sort(function (a, b) { return (b.c.cree_le || "").localeCompare(a.c.cree_le || ""); }).map(function (t) { return { nom: nomDe(t), email: t.c.email, sous: "inscrit " + depuis(t.c.cree_le) }; }),
+      "Votre espace Fil Roug'Anim", function (x) { return "Bonjour,\n\nVous avez créé un compte sur Fil Roug'Anim sans encore remplir votre fiche. Il ne faut que quelques minutes : https://filrouganim.fr/compte/\n\nBonne journée,\nFil Roug'Anim"; }, null);
+    listeRelance("Abonnements à renouveler", "Ils se terminent dans les 60 jours : prévenez avant la coupure.",
+      st.filter(function (x) { return x.abonnement_fin && x.abonnement_fin >= AUJ && x.abonnement_fin <= new Date(auj.getTime() + 60 * 864e5).toISOString().slice(0, 10); }).map(function (x) { return { id: x.id, nom: x.nom, email: x.email_contact, fin: x.abonnement_fin, sous: "abonnement jusqu'au " + E.dateFr(x.abonnement_fin) }; }),
+      "Votre abonnement Fil Roug'Anim", function (x) { return "Bonjour,\n\nL'abonnement de " + (x.nom || "votre structure") + " se termine le " + E.dateFr(x.fin) + ". Pour garder vos demandes et vos offres, pensez à le renouveler depuis votre espace.\n\nBonne journée,\nFil Roug'Anim"; },
+      function (x) { location.href = "/compte/?role=structure&compte=" + encodeURIComponent(x.id); });
   }
 
 
@@ -1736,6 +1816,25 @@
       c.appendChild(el("p", "ap-petit", "Utile pour la prospection : démarchez en priorité les organisateurs qui proposent ce que les parents attendent."));
     }
   }
+
+  /* ---------- « Pros » : structures, organismes de formation et séjours, sous un même menu, avec des onglets en haut ---------- */
+  function barrePros(c, actif) {
+    if (!c) return;
+    Array.prototype.forEach.call(c.querySelectorAll(":scope > .ap-pros-onglets"), function (x) { x.remove(); });
+    var st = D.structures || [];
+    var bar = el("div", "ap-pros-onglets"); bar.setAttribute("role", "tablist"); bar.setAttribute("aria-label", "Les pros");
+    [["structures", "maison", "Structures", st.length], ["organismes", "livre", "Organismes de formation", ORG && ORG.suivis ? ORG.suivis.length : null],
+     ["sejours", "photo", "Séjours et accueils", SJ ? SJ.sejours.length : null]].forEach(function (x) {
+      var b = el("button"); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", x[0] === actif ? "true" : "false");
+      b.appendChild(ic(x[1])); b.appendChild(el("span", null, x[2])); if (x[3] != null) b.appendChild(el("small", null, String(x[3])));
+      b.addEventListener("click", function () { E.montrerOnglet("v-admin", x[0], true); });
+      bar.appendChild(b);
+    });
+    c.insertBefore(bar, c.firstChild);
+  }
+  var _enteteStructures = enteteStructures; enteteStructures = function () { _enteteStructures(); barrePros($("ad-structures"), "structures"); };
+  var _organismes = organismes; organismes = function () { _organismes.apply(null, arguments); barrePros($("ad-organismes"), "organismes"); };
+  var _sejoursAdmin = sejoursAdmin; sejoursAdmin = function () { return _sejoursAdmin.apply(null, arguments).then(function (r) { barrePros($("ad-sejours"), "sejours"); return r; }); };
 
   window.FRA_ADMIN_PRO = {
     rendre: async function (donnees, actions) {
