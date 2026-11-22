@@ -8,8 +8,9 @@ Usage :
 
 Secrets : GSC_SERVICE_ACCOUNT (le même que pour les chiffres) et SUPABASE_SECRET_KEY.
 Google autorise 2 000 inspections par jour : à 4 passages par jour, tout le plan du site est vu en quelques jours.
-Ordre : les pages jamais vérifiées, puis celles qui ne sont pas encore indexées (revues après 3 jours),
-puis les indexées (revues après 21 jours).
+Ordre : les pages jamais vérifiées, puis celles sans lien direct vers la Search Console, puis celles qui ne sont
+pas encore indexées (revues après 3 jours), puis les indexées (revues après 21 jours).
+Les lignes des pages sorties du plan du site sont effacées : l'administration ne compte que les pages actuelles.
 """
 
 import argparse
@@ -72,10 +73,26 @@ def main():
         age = (maintenant - dt.datetime.fromisoformat(x["verifie_le"].replace("Z", "+00:00"))).days
         indexee = (x.get("couverture") or "").lower().startswith(("submitted and indexed", "indexed", "envoyée et indexée", "indexée"))
         if not x.get("lien"):
-            return (2, -age)  # pas encore de lien direct vers la page d'inspection de la Search Console
+            return (1, -age)  # pas encore de lien direct vers la page d'inspection de la Search Console
         if indexee:
             return (3, -age) if age >= 21 else (9, 0)
-        return (1, -age) if age >= 3 else (9, 0)
+        return (2, -age) if age >= 3 else (9, 0)
+
+    # les pages qui ne sont plus dans le plan du site (supprimées, en double) : on les retire du suivi
+    dans_plan = set(urls)
+    anciennes = [u for u in connus if u not in dans_plan]
+    for i in range(0, len(anciennes), 50):
+        lot = ",".join('"' + u.replace('"', '') + '"' for u in anciennes[i:i + 50])
+        try:
+            appel(f"{base}/rest/v1/admin_indexation?url=in.({urllib.parse.quote(lot, safe=',')})", "DELETE",
+                  {**sb, "Prefer": "return=minimal"})
+        except urllib.error.HTTPError as e:
+            print(f"  effacement des anciennes pages : erreur {e.code}")
+            break
+    if anciennes:
+        print(f"{len(anciennes)} pages sorties du plan du site retirées du suivi")
+        for u in anciennes:
+            connus.pop(u, None)
 
     a_voir = sorted((u for u in urls if priorite(u)[0] < 9), key=priorite)[:args.nombre]
     print(f"Plan du site : {len(urls)} pages, {len(connus)} déjà vues, {len(a_voir)} à vérifier maintenant")

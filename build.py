@@ -2805,7 +2805,7 @@ class Site:
             par_ville.setdefault(slug(sans_cedex(s["ville"])), []).append(s)
         villes = []
         for sl, l in par_ville.items():
-            if len(l) >= minimum:
+            if sl and len(l) >= minimum:  # une session sans commune ne fait pas de page « …// »
                 nom = collections.Counter(sans_cedex(s["ville"]) for s in l).most_common(1)[0][0]
                 villes.append({"nom": nom, "slug": sl, "sessions": l})
         return sorted(villes, key=lambda v: sans_accents(v["nom"]))
@@ -2885,6 +2885,7 @@ class Site:
         SORTIE.mkdir()
         shutil.copytree(RACINE / "statique", SORTIE, dirs_exist_ok=True)
         self.declarer()
+        self.dedoublonner()
         for page in self.pages:
             cible = SORTIE / fichier_de_sortie(page["url"])
             cible.parent.mkdir(parents=True, exist_ok=True)
@@ -2946,14 +2947,33 @@ class Site:
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
+    def dedoublonner(self):
+        """Deux pages au même titre (« BAFA Paris » et « BAFA Paris, Paris », le département et son unique ville du même nom) :
+        Google n'en garde qu'une et laisse l'autre de côté. La page la plus courte reste ; l'autre la désigne comme page
+        de référence (balise canonique) et sort du plan du site."""
+        par_titre = collections.defaultdict(list)
+        for p in self.pages:
+            if p.get("indexer"):
+                par_titre[p["titre"]].append(p)
+        n = 0
+        for groupe in par_titre.values():
+            if len(groupe) < 2:
+                continue
+            groupe.sort(key=lambda p: (len(p["url"]), p["url"]))
+            for p in groupe[1:]:
+                p["indexer"], p["canonique"] = False, groupe[0]["url"]
+                n += 1
+        if n:
+            print(f"Pages en double : {n} renvoient vers leur page de référence")
+
     def ecrire_fichiers_seo(self):
         base = self.config["url"].rstrip("/")
         lignes = ['<?xml version="1.0" encoding="UTF-8"?>',
                   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
         for p in self.pages:
             if p["indexer"]:
-                lignes.append(f"  <url><loc>{html.escape(base + p['url'])}</loc>"
-                              f"<lastmod>{self.aujourdhui.isoformat()}</lastmod></url>")
+                # pas de <lastmod> : la date du jour sur toutes les pages à chaque publication, Google apprend à l'ignorer
+                lignes.append(f"  <url><loc>{html.escape(base + p['url'])}</loc></url>")
         lignes.append("</urlset>")
         (SORTIE / "sitemap.xml").write_text("\n".join(lignes) + "\n", encoding="utf-8")
         (SORTIE / "robots.txt").write_text(
