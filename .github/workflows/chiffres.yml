@@ -42,7 +42,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add donnees/audience.yml
+          git add donnees/audience.yml donnees/pages-indexees.txt
           if git diff --cached --quiet; then
             echo "Aucun changement."
             exit 0

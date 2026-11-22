@@ -1115,7 +1115,8 @@ class Site:
             # une page locale n'est proposée à Google que si elle a du contenu propre au lieu (offre, structure, séjour) :
             # sans cela, elle ressemble à 90 % à celle du département voisin et Google la laisse de côté (« Détectée, non indexée »).
             # Elle reste en ligne et revient d'elle-même dans le plan du site dès qu'une offre, une structure ou un séjour y arrive.
-            if idx and d:
+            # Les pages que Google a déjà indexées restent dans le plan du site (donnees/pages-indexees.txt).
+            if idx and d and url not in self.deja_indexees():
                 idx = any(x for b in local.get("blocs") or [] for k in ("offres", "structures", "sejours")
                           for x in (b.get(k) or []) if not (isinstance(x, dict) and x.get("exemple")))
             self.ajouter(url, "local.html", titre=titre, h1=h1, description=desc[:300], intro=intro, local=local, indexer=idx,
@@ -2952,6 +2953,13 @@ class Site:
         cible = SORTIE / "se-former" / "sessions" / "sessions.json"
         cible.parent.mkdir(parents=True, exist_ok=True)
         cible.write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+    def deja_indexees(self):
+        """Les pages que Google a déjà indexées (relevé de outils/indexation.py) : on ne les lui retire pas."""
+        if not hasattr(self, "_deja_indexees"):
+            f = RACINE / "donnees" / "pages-indexees.txt"
+            self._deja_indexees = set(f.read_text(encoding="utf-8").split()) if f.exists() else set()
+        return self._deja_indexees
 
     def dedoublonner(self):
         """Deux pages au même titre (« BAFA Paris » et « BAFA Paris, Paris », le département et son unique ville du même nom) :

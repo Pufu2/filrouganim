@@ -131,6 +131,13 @@ def main():
     for i in range(0, len(lignes), 200):
         appel(f"{base}/rest/v1/admin_indexation?on_conflict=url", "POST",
               {**sb, "Prefer": "resolution=merge-duplicates,return=minimal"}, lignes[i:i + 200])
+    # la liste des pages indexées, lue par build.py : une page déjà dans Google n'en est jamais retirée
+    for r in lignes:
+        connus[r["url"]] = r
+    indexees = sorted(u[len(SITE):] for u, x in connus.items() if u.startswith(SITE) and
+                      (x.get("couverture") or "").lower().startswith(("submitted and indexed", "indexed", "envoyée et indexée", "indexée")))
+    if indexees:
+        (RACINE / "donnees" / "pages-indexees.txt").write_text("\n".join(indexees) + "\n", encoding="utf-8")
     etats = {}
     for r in lignes:
         etats[r["couverture"] or "?"] = etats.get(r["couverture"] or "?", 0) + 1
