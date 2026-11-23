@@ -1211,3 +1211,16 @@ body.en-app .assistant:not(.as-parcours) .as-plan-aide { margin: 10px 0 0 6px; f
 body.en-app .assistant:not(.as-parcours) .etape-aide + .cartes-choix, body.en-app .assistant:not(.as-parcours) .etape-aide + .cartes-icones { margin-top: 0; }
 body.en-app .assistant:not(.as-parcours) .as-carte .tp-carte-pied { flex-wrap: wrap; gap: 6px; }
 body.en-app .assistant:not(.as-parcours) .as-carte .tp-carte-haut { height: 110px; }
+.rs-pour-vous { margin: 22px 0 0; }
+.bandeau-exemple { margin: 0 0 12px; }
+/* accueil mobile : les quatre usages en lignes compactes (icône, titre, phrase), pas un écran chacun */
+@media (max-width: 720px) {
+  .ac-4 { gap: 8px !important; }
+  .ac-4-fil { display: none !important; }
+  .ac-b { display: grid !important; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "ic t fl" "ic p fl"; column-gap: 12px; row-gap: 2px; align-items: center; padding: 14px 14px !important; min-height: 0 !important; }
+  .ac-b .ac-b-ic { grid-area: ic; width: 40px !important; height: 40px !important; margin: 0 !important; }
+  .ac-b > b { grid-area: t; margin: 0 !important; font-size: 1rem; }
+  .ac-b > span:not(.ac-b-ic) { grid-area: p; margin: 0 !important; font-size: .85rem; line-height: 1.4; }
+  .ac-b > em { grid-area: fl; margin: 0 !important; font-size: 0 !important; }
+  .ac-b > em span { font-size: 1.1rem; }
+}
