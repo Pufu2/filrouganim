@@ -685,3 +685,57 @@ body.en-app .app-ic { border: 0; background: #fff; color: #6c7077; border-radius
   body.en-app.menu-ouvert .co-onglets > .co-nav { transform: none; box-shadow: 0 12px 40px rgba(23, 25, 29, .25); }
   body.en-app .app-burger { border: 0; border-radius: 8px; box-shadow: 0 1px 2px rgba(23, 25, 29, .06); }
 }
+
+/* ---- Mon espace et admin : le contenu des pages en retenue, comme le menu (23/11/2026) ----
+   Moins de gras (titres en 500, textes forts en 500 au lieu de 700), plus de majuscules espacées, plus de liseré dégradé
+   en haut des en-têtes, cartes à trait fin et ombre presque invisible, boutons plus légers, chiffres en graisse normale. */
+body.en-app #espace-compte b, body.en-app #espace-compte strong { font-weight: 500; }
+body.en-app #espace-compte h2, body.en-app #espace-compte h3, body.en-app #espace-compte h4 { font-weight: 500 !important; letter-spacing: -.01em; color: #17191d; }
+/* les en-têtes de chaque page */
+body.en-app .co-entete, body.en-app .og-hero, body.en-app .ap-hero { padding: 22px 26px; border-radius: 14px; border: 1px solid #ececef !important;
+  background: #fff !important; box-shadow: 0 1px 2px rgba(23, 25, 29, .03) !important; }
+body.en-app .co-entete::before, body.en-app .og-hero::before, body.en-app .ap-hero::before { display: none !important; }
+body.en-app .co-entete h2, body.en-app .og-hero h2, body.en-app .ap-hero h2 { font-size: clamp(1.25rem, 1.9vw, 1.5rem) !important; font-weight: 500 !important; margin-bottom: 6px; }
+body.en-app .co-entete h2 em, body.en-app .og-hero h2 em, body.en-app .ap-hero h2 em { font-style: normal; color: #17191d !important; }
+body.en-app .co-e-sur, body.en-app .ap-sur, body.en-app .og-hero .og-sur, body.en-app .ap-mini-t, body.en-app .ap-cote-t { font-size: .74rem !important; font-weight: 400 !important;
+  letter-spacing: 0 !important; text-transform: none !important; color: #8a8e95 !important; }
+body.en-app .co-e-p, body.en-app .og-hero-p, body.en-app .ap-hero-p { font-size: .88rem !important; color: #6c7077 !important; }
+body.en-app .co-e-resume, body.en-app .og-hero-cote, body.en-app .ap-hero-cote { background: #f7f7f8 !important; border-radius: 10px; padding: 14px 16px; }
+body.en-app .ap-cote-gros { font-size: 1.15rem; font-weight: 500; }
+body.en-app .ap-hero .ap-hero-ic, body.en-app .ap-hero .ap-ic-hero { display: none; }
+/* les cartes */
+body.en-app .carte-compte, body.en-app .ap-carte, body.en-app .og-carte, body.en-app .tb-carte, body.en-app .ap-boite, body.en-app .ap-qg-item, body.en-app .ap-table-boite {
+  border: 1px solid #ececef !important; border-radius: 12px !important; box-shadow: 0 1px 2px rgba(23, 25, 29, .03) !important; }
+body.en-app .carte-compte h2, body.en-app .ap-carte h2, body.en-app .ap-carte h3, body.en-app .tb-titre, body.en-app .ap-carte-t, body.en-app .ap-carte-h h3 {
+  font-size: .98rem !important; font-weight: 500 !important; }
+body.en-app .carte-compte .petit, body.en-app .ap-petit, body.en-app .ap-carte p { color: #6c7077; }
+/* les chiffres et les tuiles */
+body.en-app .tb-n, body.en-app .ap-chiffres b, body.en-app .co-e-grands b, body.en-app .tb-chiffre b { font-weight: 400 !important; color: #17191d; }
+body.en-app .co-e-grands b { font-size: 1.5rem; }
+body.en-app .ap-chiffres b { font-size: 1.25rem; }
+body.en-app .tb-tuile b, body.en-app .tuile b { font-weight: 500; }
+body.en-app .tb-tuile, body.en-app .tb-afaire > *, body.en-app .ap-res, body.en-app .ap-etape, body.en-app .ap-pros-cases div, body.en-app .tb-conseil, body.en-app .tb-chiffre { background: #f7f7f8; }
+/* les tableaux */
+body.en-app .ap-table th { font-weight: 500; font-size: .74rem; letter-spacing: 0; text-transform: none; color: #8a8e95; background: #fafafb; }
+body.en-app .ap-table td { font-size: .86rem; }
+/* les étiquettes et pastilles dans les pages */
+body.en-app .ap-etiquette, body.en-app .ad-pastilles i, body.en-app .tp-fictif, body.en-app .ac-exemple { font-weight: 500 !important; letter-spacing: 0; text-transform: none; }
+/* les boutons : plus légers */
+body.en-app .bouton-r, body.en-app .ap-bouton, body.en-app .ap-lien-b.ap-fort { font-weight: 500 !important; box-shadow: none !important; border-radius: 8px; }
+body.en-app .bouton-blanc, body.en-app .ap-lien-b, body.en-app .bouton-texte { font-weight: 400 !important; }
+body.en-app .ap-lien, body.en-app .co-e-guide { font-weight: 500; }
+body.en-app .ap-puces button, body.en-app .ap-pros-onglets button { font-weight: 400; }
+body.en-app .ap-puces button[aria-pressed="true"], body.en-app .ap-pros-onglets button[aria-selected="true"] { font-weight: 500; background: #17191d; }
+/* les jauges : une seule couleur, plus de dégradé */
+body.en-app .ap-jauge i, body.en-app .tb-progres i, body.en-app .tb-progres span { background: #17191d; }
+/* les pastilles d'icônes : plus de ronds de couleur, une icône grise sur gris pâle ; plus d'icône dans l'en-tête */
+body.en-app .ap-hero .ap-sur .ap-ic, body.en-app .co-entete .co-e-ic { display: none !important; }
+body.en-app #espace-compte .ap-ic:not(.ap-ic-mini), body.en-app #espace-compte .tb-ic { background: #f3f3f5 !important; color: #6c7077 !important; box-shadow: none !important; border: 0 !important; }
+body.en-app #espace-compte .ap-ic:not(.ap-ic-mini) svg { stroke-width: 1.6; }
+body.en-app .ap-kpi small { color: #8a8e95 !important; font-weight: 400 !important; font-size: .78rem; letter-spacing: 0; text-transform: none; }
+body.en-app .ap-kpi b { font-weight: 400 !important; font-size: 1.45rem; }
+/* le bouton principal : plus petit, sans ombre */
+body.en-app .ap-bouton, body.en-app .co-entete .bouton-r { padding: 8px 14px !important; font-size: .86rem !important; min-height: 0; }
+body.en-app .ap-kpi { border-radius: 12px; border-color: #ececef; box-shadow: 0 1px 2px rgba(23, 25, 29, .03); }
+body.en-app .ap-kpi .ap-ic { width: 34px; height: 34px; border-radius: 9px; }
+body.en-app .ap-qg-item.on, body.en-app #ad-qg .ap-boite.on { box-shadow: 0 0 0 1px #17191d, 0 1px 2px rgba(23, 25, 29, .04) !important; border-color: #17191d !important; background: #fff; }
