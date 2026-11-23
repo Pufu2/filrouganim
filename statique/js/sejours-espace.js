@@ -60,8 +60,8 @@
     if (brouillon) { editeur(c); return; }
     if (carnetDe) { pageCarnet(c, carnetDe); return; }
     var tete = el("div", "sj-tete");
-    var t = el("div"); t.appendChild(el("h2", null, "Mes séjours et accueils"));
-    t.appendChild(el("p", "petit", "Publiez vos séjours, vos accueils de loisirs et votre périscolaire, gratuitement : les familles les trouvent dans « Inscrire mon enfant » et vous demandent une place." + (E.structure() && !E.structure().verifiee ? " Ils seront visibles dès que nous aurons vérifié votre structure." : "")));
+    // le titre et l'explication sont dans l'en-tête de la page : ici, seulement ce qui change
+    var t = el("div"); if (E.structure() && !E.structure().verifiee) t.appendChild(el("p", "petit", "Vos séjours seront visibles dès que nous aurons vérifié votre structure."));
     tete.appendChild(t);
     var b = el("button", "bouton-r", "+ Créer un séjour ou un accueil"); b.type = "button"; b.addEventListener("click", function () { nouveau(); }); tete.appendChild(b);
     c.appendChild(tete);

@@ -976,3 +976,54 @@ body.en-app #co-bascule a[aria-current] { font-weight: 500; }
 body.en-app .co-nav .co-premium:not(.co-ferme) { opacity: 1; }
 /* les pages ouvertes en version réduite gardent leur nom sur une ligne : pas d'étiquette « Abonnement » dans le menu */
 body.en-app .co-nav .co-premium:not(.co-ferme)::after { display: none; }
+
+/* ---- Espace structure : le modèle de liste (filtres en pastilles, une ligne par élément, état en pastille, actions à droite) ---- */
+.ls-filtres { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.ls-puce { height: 30px; padding: 0 12px; border-radius: 99px; border: 1px solid rgba(23, 25, 29, .1); background: rgba(255, 255, 255, .7); font: 400 .88rem var(--texte); color: #40444b; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.ls-puce small { font-size: .8rem; opacity: .65; }
+.ls-puce.on { background: #17191d; border-color: #17191d; color: #fff; font-weight: 500; }
+.ls-table { display: flex; flex-direction: column; margin: 0 -4px; }
+.ls-rang { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) 110px 110px 150px 150px; align-items: center; gap: 12px; padding: 11px 4px; border-top: 1px solid rgba(23, 25, 29, .06); }
+.ls-entete { padding-top: 4px; padding-bottom: 8px; font-size: .82rem; color: #8a8e95; border-top: 0; }
+.ls-qui b { display: block; font-weight: 500; }
+.ls-qui small, .ls-sous { display: block; font-size: .82rem; color: #8a8e95; }
+.ls-sous { margin-top: 3px; }
+.ls-doux { color: #6c7077; font-size: .92rem; }
+.ls-fin { display: flex; justify-content: flex-end; gap: 14px; }
+.ls-danger { color: #b42318 !important; }
+.tb2-etat-jaune { background: #fff5db; color: #8a5a00; }
+/* une candidature : le profil, l'offre, le statut ; le message et les réponses toutes prêtes en dessous */
+.cd-ligne { padding: 12px 0; border-top: 1px solid rgba(23, 25, 29, .06); }
+.cd-ligne:first-child { border-top: 0; }
+.cd-ligne[hidden] { display: none; }
+.cd-haut { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) 150px; align-items: center; gap: 16px; }
+.cd-info b { display: block; font-weight: 500; }
+.cd-info small { display: block; font-size: .85rem; color: #8a8e95; }
+.cd-message { margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; background: rgba(23, 25, 29, .035); color: #40444b; font-size: .92rem; }
+.cd-reponses { margin-top: 6px; }
+.cd-reponses summary { font-size: .88rem; color: #a8162a; cursor: pointer; font-weight: 500; }
+.cd-reponses .reponses-types { margin-top: 8px; }
+.cd-ligne .profil-candidat { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; padding: 0; border: 0; background: none !important; box-shadow: none; }
+.cd-ligne .profil-candidat .petit, .cd-ligne .profil-candidat .accroche-profil { display: none; }
+.cd-ligne .profil-candidat .pastilles { margin: 4px 0 0; }
+.cd-ligne .profil-candidat .boutons-colonne { flex-direction: row; gap: 8px; }
+.cd-ligne .profil-candidat .bouton-r, .cd-ligne .profil-candidat .bouton-texte { height: 30px; padding: 0 11px; border-radius: 7px; font-size: .85rem; background: #fff; color: #17191d; border: 1px solid #dcdce0; box-shadow: none; }
+@media (max-width: 860px) {
+  .ls-entete { display: none; }
+  .ls-rang { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; }
+  .ls-rang > :nth-child(2), .ls-rang > :nth-child(3), .ls-rang > :nth-child(4) { font-size: .85rem; }
+  .ls-fin { justify-content: flex-start; grid-column: 1 / -1; }
+  .cd-haut { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+/* Mes offres : le titre et le bouton sont déjà dans l'en-tête de la page */
+body.en-app #bloc-offres > .titre-et-bouton { display: none; }
+body.en-app .ls-fin .tb2-lien:not(.ls-danger) { color: #17191d; }
+body.en-app .ls-offres .ls-rang { grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr) 120px 100px 170px 140px; }
+body.en-app .sj-tete { align-items: center; margin-bottom: 12px; }
+body.en-app .sj-tete .bouton-r { height: 38px; padding: 0 16px; font-size: .92rem; }
+@media (max-width: 860px) {
+  body.en-app .ls-offres .ls-rang { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  body.en-app .ls-offres .ls-rang > .ls-qui, body.en-app .ls-offres .ls-rang > .ls-fin { flex: 0 0 100%; }
+  body.en-app .ls-offres .ls-rang > .ls-fin { margin-top: 6px; }
+}
+@media (max-width: 860px) { body.en-app .ls-offres .ls-rang.ls-entete { display: none; } }

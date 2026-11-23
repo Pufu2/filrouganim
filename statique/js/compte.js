@@ -84,7 +84,7 @@
                 actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(pageEnLigne(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
                 resume: null },
         offres: { sur: "Espace structure", t: "Mes offres", em: "", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
-                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2], ["Publier un séjour ou un accueil", "sejours"]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
+                  actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
                   resume: null },
         candidats: { sur: "Espace structure", t: "Candidatures", em: "", p: "Les animateurs qui ont postulé à vos offres. Donnez un statut à chacun : il le voit dans son espace.",
                      actions: [], guide: ["Accueillir un stagiaire BAFA", "#guide-accueillir-un-stagiaire-bafa"],
@@ -1514,23 +1514,28 @@
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
     if (!r.data.length) { liste.appendChild(el("p", "aucune", "Pas encore d'offre. Les structures recrutent souvent dès l'hiver pour l'été.")); return; }
+    var t = el("div", "ls-table ls-offres");
+    var h = el("div", "ls-rang ls-entete"); ["Offre", "Lieu", "Début", "Candidatures", "État", ""].forEach(function (x) { h.appendChild(el("span", null, x)); }); t.appendChild(h);
     r.data.forEach(function (o) {
-      var item = el("article", "ligne-compte");
-      var corps = el("div");
-      corps.appendChild(el("h3", null, o.intitule));
-      corps.appendChild(el("p", "petit", o.ville + " (" + o.departement + ") · à partir du " + dateFr(o.debut) + " · " + libelle("contrats", o.contrat)));
-      var etat, classe;
-      if (o.expire_le < aujourdhui()) { etat = "Expirée le " + dateFr(o.expire_le); classe = "etat etat-off"; }
-      else if (!o.publiee) { etat = "En pause"; classe = "etat etat-off"; }
-      else if (!pageEnLigne(structure)) { etat = "En ligne après la vérification"; classe = "etat etat-attente"; }
-      else { etat = "En ligne jusqu'au " + dateFr(o.expire_le); classe = "etat etat-ok"; }
-      corps.appendChild(el("p", classe, etat));
-      item.appendChild(corps);
-      var actions = el("div", "boutons");
-      var modif = el("button", "bouton-texte", "Modifier");
+      var rang = el("div", "ls-rang");
+      var q = el("span", "ls-qui"); q.appendChild(el("b", null, o.intitule)); q.appendChild(el("small", null, libelle("contrats", o.contrat))); rang.appendChild(q);
+      rang.appendChild(el("span", "ls-doux", o.ville + " (" + o.departement + ")"));
+      rang.appendChild(el("span", "ls-doux", dateFr(o.debut)));
+      var nc = recues.filter(function (c) { return c.offre_id === o.id; }).length;
+      var ncs = el("span", "ls-doux", nc ? String(nc) : "–"); ncs.dataset.ncOffre = o.id; rang.appendChild(ncs);
+      var etat, ton;
+      if (o.expire_le < aujourdhui()) { etat = "Expirée"; ton = "gris"; }
+      else if (!o.publiee) { etat = "En pause"; ton = "gris"; }
+      else if (!pageEnLigne(structure)) { etat = "Après la vérification"; ton = "jaune"; }
+      else { etat = "En ligne"; ton = "vert"; }
+      var e = el("span"); e.appendChild(el("em", "tb2-etat tb2-etat-" + ton, etat));
+      if (ton === "vert") e.appendChild(el("small", "ls-sous", "jusqu'au " + dateFr(o.expire_le)));
+      rang.appendChild(e);
+      var actions = el("span", "ls-fin");
+      var modif = el("button", "tb2-lien", "Modifier");
       modif.type = "button";
       modif.addEventListener("click", function () { ouvrirOffre(o); });
-      var suppr = el("button", "bouton-texte bouton-danger", "Supprimer");
+      var suppr = el("button", "tb2-lien ls-danger", "Supprimer");
       suppr.type = "button";
       suppr.addEventListener("click", async function () {
         if (!confirm("Supprimer l'offre « " + o.intitule + " » ?")) return;
@@ -1538,9 +1543,10 @@
         if (d.error) message(erreurLisible(d.error), true); else { message("Offre supprimée. Elle disparaît du site dans l'heure."); chargerOffres(); }
       });
       actions.appendChild(modif); actions.appendChild(suppr);
-      item.appendChild(actions);
-      liste.appendChild(item);
+      rang.appendChild(actions);
+      t.appendChild(rang);
     });
+    liste.appendChild(t);
   }
   function ouvrirOffre(o) {
     offreEnCours = o || null;
@@ -1970,36 +1976,58 @@
       .in("offre_id", ids).order("cree_le", { ascending: false });
     recues = r.data || [];
     try { aFaireStructure(); } catch (e) {}
+    Array.prototype.forEach.call(document.querySelectorAll("[data-nc-offre]"), function (x) {
+      var n = recues.filter(function (c) { return c.offre_id === x.dataset.ncOffre; }).length; x.textContent = n ? String(n) : "–";
+    });
     blocR.hidden = false;
     liste.textContent = "";
     if (r.error) { liste.appendChild(el("p", "aucune", erreurLisible(r.error))); return; }
     if (!recues.length) { liste.appendChild(el("p", "aucune", "Pas encore de candidature. Elles arrivent ici dès qu'un candidat postule à l'une de vos offres en ligne.")); return; }
+    var FILTRES = [["toutes", "Toutes"], ["envoyee", "Nouvelles"], ["vue", "Vues"], ["retenue", "Retenues"], ["non-retenue", "Non retenues"]];
+    var fb = $("cd-filtres"), lignes = [];
+    function appliquer() {
+      lignes.forEach(function (l) { l.hidden = cdFiltre !== "toutes" && l.dataset.statut !== cdFiltre; });
+      fb.textContent = "";
+      FILTRES.forEach(function (f) {
+        var n = f[0] === "toutes" ? recues.length : recues.filter(function (c) { return c.statut === f[0]; }).length;
+        var p = el("button", "ls-puce" + (cdFiltre === f[0] ? " on" : "")); p.type = "button"; p.setAttribute("aria-pressed", cdFiltre === f[0] ? "true" : "false");
+        p.appendChild(document.createTextNode(f[1] + " ")); p.appendChild(el("small", null, String(n)));
+        p.addEventListener("click", function () { cdFiltre = f[0]; appliquer(); });
+        fb.appendChild(p);
+      });
+    }
     recues.forEach(function (c) {
       var offre = mesOffres.filter(function (o) { return o.id === c.offre_id; })[0];
-      var bloc1 = el("div", "candidature");
-      var tete = el("div", "candidature-tete");
-      tete.appendChild(el("p", null, "Pour « " + (offre ? offre.intitule : "offre supprimée") + " », le " + dateFr(c.cree_le)));
+      var ligne = el("div", "cd-ligne"); ligne.dataset.statut = c.statut;
+      var haut = el("div", "cd-haut");
+      haut.appendChild(carteProfil(c.profils || { prenom: "Candidat" }, actif(structure)));
+      var info = el("div", "cd-info");
+      info.appendChild(el("b", null, offre ? offre.intitule : "Offre supprimée"));
+      info.appendChild(el("small", null, "reçue " + ilYa(c.cree_le)));
+      haut.appendChild(info);
       var sel = el("select", "statut-select");
       sel.setAttribute("aria-label", "Statut de la candidature");
       STATUTS.forEach(function (st) { var o = el("option", null, st[1]); o.value = st[0]; sel.appendChild(o); });
       sel.value = c.statut;
       sel.addEventListener("change", async function () {
         var u = await sb.from("candidatures").update({ statut: sel.value }).eq("id", c.id);
-        if (u.error) message(erreurLisible(u.error), true); else { c.statut = sel.value; tableauStructure(); }
+        if (u.error) message(erreurLisible(u.error), true); else { c.statut = sel.value; ligne.dataset.statut = sel.value; appliquer(); tableauStructure(); }
       });
-      tete.appendChild(sel);
-      bloc1.appendChild(tete);
-      if (c.message) bloc1.appendChild(el("p", "presentation message-candidat", "« " + c.message + " »"));
-      if (c.profils) bloc1.appendChild(carteProfil(c.profils, actif(structure)));
-      bloc1.appendChild(reponsesTypes(c, offre));
-      liste.appendChild(bloc1);
+      haut.appendChild(sel);
+      ligne.appendChild(haut);
+      if (c.message) ligne.appendChild(el("p", "cd-message", "« " + c.message + " »"));
+      var det = el("details", "cd-reponses"); det.appendChild(el("summary", null, "Répondre avec un modèle")); det.appendChild(reponsesTypes(c, offre));
+      ligne.appendChild(det);
+      liste.appendChild(ligne); lignes.push(ligne);
       if (c.statut === "envoyee") {
         // vue par la structure seulement quand elle ouvre vraiment la page « Candidatures » : le candidat voit alors « vue »
         aMarquerVues.push(c);
         if (ongletActuel["v-structure"] === "candidats") marquerVues();
       }
     });
+    appliquer();
   }
+  var cdFiltre = "toutes";
 
   // les réponses toutes prêtes aux candidats (avec l'abonnement) : un clic ouvre la messagerie, le message est prêt
   var REPONSES = [
