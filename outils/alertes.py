@@ -140,7 +140,8 @@ POSTES = {"animateur-stagiaire": "stage pratique BAFA", "animateur": "animateur 
 
 def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourdhui):
     """Chaque lundi, à toutes les structures vérifiées : les animateurs qui ont publié leur fiche dans leur secteur cette
-    semaine, et les demandes de l'annuaire inversé (le poste qu'un animateur cherche) de leur département. Jamais le nom
+    semaine, et les demandes de l'annuaire inversé (le poste qu'un animateur cherche) de leur département : celles de la
+    semaine, et celles des 30 derniers jours qui attendent encore (pas marquées « traitée » dans le QG). Jamais le nom
     de famille, le message ni les coordonnées : ils sont dans l'espace structure. Les structures abonnées les contactent
     directement ; les autres voient ce qu'elles manquent."""
     structures = lire(f"{base}/structures?select=nom,departement,email_contact,abonnement_fin&verifiee=is.true&email_contact=not.is.null", cle)
@@ -149,8 +150,10 @@ def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourd
         return
     profils = lire(f"{base}/profils?select=prenom,departement,mobilite,diplomes,poste_recherche,ville&publie=is.true&verifie=is.true"
                    f"&cree_le=gte.{urllib.parse.quote(depuis)}", cle) or []
-    demandes = lire(f"{base}/demandes?select=poste,departement,ville,zone,partout,periodes,dispo_debut,diplomes"
-                    f"&cree_le=gte.{urllib.parse.quote(depuis)}", cle) or []
+    depuis30 = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    demandes = lire(f"{base}/demandes?select=poste,departement,ville,zone,partout,periodes,dispo_debut,diplomes,cree_le,suivi"
+                    f"&cree_le=gte.{urllib.parse.quote(depuis30)}&order=cree_le.desc", cle) or []
+    demandes = [d for d in demandes if d.get("suivi") != "traitee"]
     envoyes = 0
     for st in structures:
         dep = st["departement"]
@@ -162,10 +165,15 @@ def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourd
         lien = f"{site}/compte/?role=structure"
         l_f = [f"{p['prenom']}, {POSTES.get(p.get('poste_recherche'), p.get('poste_recherche') or 'animation')}"
                f"{', ' + p['ville'] if p.get('ville') else ''} ({p['departement']}){' · ' + ', '.join(p['diplomes'][:3]) if p.get('diplomes') else ''}" for p in fiches[:15]]
-        l_d = [f"{POSTES.get(d.get('poste'), d.get('poste') or 'animation').capitalize()}"
-               f"{' à ' + d['ville'] if d.get('ville') else ''} ({d['departement']})"
-               f"{', dès le ' + dt.date.fromisoformat(d['dispo_debut']).strftime('%d/%m') if d.get('dispo_debut') else ''}"
-               f"{' · ' + ', '.join(d['diplomes'][:3]) if d.get('diplomes') else ''}" for d in dem[:15]]
+        def ligne_d(d):
+            return (f"{POSTES.get(d.get('poste'), d.get('poste') or 'animation').capitalize()}"
+                    f"{' à ' + d['ville'] if d.get('ville') else ''} ({d['departement']})"
+                    f"{', dès le ' + dt.date.fromisoformat(d['dispo_debut']).strftime('%d/%m') if d.get('dispo_debut') else ''}"
+                    f"{' · ' + ', '.join(d['diplomes'][:3]) if d.get('diplomes') else ''}")
+        dem_neuves = [d for d in dem if (d.get("cree_le") or "") >= depuis]
+        dem_attente = [d for d in dem if (d.get("cree_le") or "") < depuis]
+        l_d = [ligne_d(d) for d in dem_neuves[:15]]
+        l_a = [ligne_d(d) for d in dem_attente[:15]]
         nf, nd = len(fiches), len(dem)
         morceaux = []
         if nd:
@@ -179,12 +187,15 @@ def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourd
         if l_d:
             blocs_t.append("Ils décrivent le poste qu'ils cherchent :\n" + "\n".join("- " + l for l in l_d))
             blocs_h.append("<p><b>Ils décrivent le poste qu'ils cherchent :</b></p><ul>" + "".join("<li>" + html.escape(l) + "</li>" for l in l_d) + "</ul>")
+        if l_a:
+            blocs_t.append("Ils attendent toujours une réponse :\n" + "\n".join("- " + l for l in l_a))
+            blocs_h.append("<p><b>Ils attendent toujours une réponse :</b></p><ul>" + "".join("<li>" + html.escape(l) + "</li>" for l in l_a) + "</ul>")
         if l_f:
             blocs_t.append("Ils ont publié leur fiche :\n" + "\n".join("- " + l for l in l_f))
             blocs_h.append("<p><b>Ils ont publié leur fiche :</b></p><ul>" + "".join("<li>" + html.escape(l) + "</li>" for l in l_f) + "</ul>")
-        texte = (f"Bonjour,\n\nCette semaine, près de {st['nom']} :\n\n" + "\n\n".join(blocs_t) +
+        texte = (f"Bonjour,\n\nPrès de {st['nom']} :\n\n" + "\n\n".join(blocs_t) +
                  f"\n\n{suite}\n{lien}\n\nVous recevez cet e-mail parce que votre structure est inscrite sur {config['nom']}. Pour ne plus le recevoir, répondez simplement « stop ».\n")
-        corps = (f"<p>Bonjour,</p><p>Cette semaine, près de {html.escape(st['nom'])} :</p>" + "".join(blocs_h) +
+        corps = (f"<p>Bonjour,</p><p>Près de {html.escape(st['nom'])} :</p>" + "".join(blocs_h) +
                  f'<p>{html.escape(suite)}</p><p><a href="{html.escape(lien)}" style="display:inline-block;background:#d61f35;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:700">Ouvrir mon espace</a></p>'
                  f'<p style="font-size:13px;color:#6e655d">Vous recevez cet e-mail parce que votre structure est inscrite sur {html.escape(config["nom"])}. Pour ne plus le recevoir, répondez « stop ».</p>')
         if args.essai:
@@ -195,7 +206,7 @@ def alertes_structures(args, config, base, site, cle, cle_brevo, depuis, aujourd
             envoyes += 1
         except Exception as e:
             print(f"Alertes structures : un envoi a échoué ({e})", file=sys.stderr)
-    print(f"Alertes structures : {len(profils)} nouvelles fiches, {len(demandes)} nouvelles demandes, {envoyes} e-mails envoyés.")
+    print(f"Alertes structures : {len(profils)} nouvelles fiches, {len(demandes)} demandes de moins de 30 jours, {envoyes} e-mails envoyés.")
 
 
 if __name__ == "__main__":

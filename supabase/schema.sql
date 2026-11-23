@@ -1044,3 +1044,122 @@ revoke all on function public.prevenir_demande() from public, anon, authenticate
 drop trigger if exists prevenir_demande on public.demandes;
 create trigger prevenir_demande after insert or update of destinataires on public.demandes
   for each row when (cardinality(new.destinataires) > 0) execute function public.prevenir_demande();
+-- v45 (23/11/2026) : deux e-mails de plus, envoyés tout de suite par la base.
+-- 1. Bienvenue à une structure quand l'administration la vérifie : sa page est en ligne, et les animateurs qui cherchent
+--    déjà près de chez elle (demandes de moins de 30 jours, fiches publiées et vérifiées), sans nom de famille ni coordonnées.
+-- 2. L'animateur est prévenu quand sa demande, restée en attente, part enfin chez une ou plusieurs structures.
+create or replace function public.libelle_poste(p text) returns text
+language sql immutable set search_path = '' as $$
+  select case p when 'animateur-stagiaire' then 'Stage pratique BAFA' when 'animateur' then 'Animateur ou animatrice'
+    when 'directeur' then 'Direction ou adjoint' when 'surveillant-baignade' then 'Surveillance de baignade'
+    when 'directeur-adjoint' then 'Direction adjointe' when 'coordinateur' then 'Coordination' when 'autre' then 'Autre poste'
+    else coalesce(nullif(p, ''), 'Animation') end $$;
+
+create or replace function public.bienvenue_structure() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  dem text[]; fic text[]; n int; abonnee boolean := new.abonnement_fin >= current_date; t text; h text; sujet text;
+  page text := 'https://filrouganim.fr/trouver-un-poste/structures/' || new.slug || '/';
+  espace text := 'https://filrouganim.fr/compte/' || case when new.abonnement_fin >= current_date then '' else '?onglet=abonnement' end;
+  bouton constant text := 'display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold';
+begin
+  if new.email_contact is null then return null; end if;
+  select array_agg(l order by c desc) into dem from (
+    select public.libelle_poste(d.poste) || coalesce(' à ' || d.ville, '') || ' (' || d.departement || ')'
+           || coalesce(', dès le ' || to_char(d.dispo_debut, 'DD/MM'), '') l, d.cree_le c
+    from public.demandes d
+    where d.cree_le > now() - interval '30 days' and coalesce(d.suivi, 'a_traiter') <> 'traitee'
+      and (d.departement = new.departement or new.departement = any(d.zone) or d.partout)
+    order by d.cree_le desc limit 10) x;
+  select array_agg(l order by c desc) into fic from (
+    select p.prenom || ', ' || lower(public.libelle_poste(p.poste_recherche)) || coalesce(', ' || p.ville, '') || ' (' || p.departement || ')' l, p.cree_le c
+    from public.profils p
+    where p.publie and p.verifie and (p.departement = new.departement or new.departement = any(coalesce(p.mobilite, '{}')))
+    order by p.cree_le desc limit 10) y;
+  n := coalesce(cardinality(dem), 0) + coalesce(cardinality(fic), 0);
+  sujet := 'Votre structure est vérifiée : votre page est en ligne'
+    || case when n > 0 then ' · ' || n || ' animateur' || case when n > 1 then 's' else '' end || ' près de chez vous' else '' end;
+  t := 'Bonjour,' || E'\n\n' || 'Bonne nouvelle : ' || new.nom || ' est vérifiée sur Fil Roug''Anim. '
+    || case when new.page_publique and new.slug is not null then 'Votre page sera visible dans l''heure : ' || page || E'\n' else E'\n' end
+    || 'Vous pouvez publier une offre gratuitement depuis votre espace.';
+  h := '<p>Bonjour,</p><p>Bonne nouvelle : <b>' || public.html_txt(new.nom) || '</b> est vérifiée sur Fil Roug''Anim. '
+    || case when new.page_publique and new.slug is not null then 'Votre page sera visible dans l''heure : <a href="' || page || '">' || page || '</a>. ' else '' end
+    || 'Vous pouvez publier une offre gratuitement depuis votre espace.</p>';
+  if dem is not null then
+    t := t || E'\n\nPrès de chez vous, des animateurs décrivent le poste qu''ils cherchent :\n- ' || array_to_string(dem, E'\n- ');
+    h := h || '<p><b>Près de chez vous, des animateurs décrivent le poste qu''ils cherchent :</b></p><ul>'
+      || (select string_agg('<li>' || public.html_txt(x) || '</li>', '') from unnest(dem) x) || '</ul>';
+  end if;
+  if fic is not null then
+    t := t || E'\n\nIls ont publié leur fiche dans votre secteur :\n- ' || array_to_string(fic, E'\n- ');
+    h := h || '<p><b>Ils ont publié leur fiche dans votre secteur :</b></p><ul>'
+      || (select string_agg('<li>' || public.html_txt(x) || '</li>', '') from unnest(fic) x) || '</ul>';
+  end if;
+  if n > 0 then
+    t := t || E'\n\n' || case when abonnee then 'Leurs fiches complètes et leurs coordonnées sont dans votre espace : écrivez-leur directement.'
+      else 'Avec l''abonnement ou le Pass recrutement, leurs demandes arrivent chez vous, vous voyez leurs fiches complètes et vous leur écrivez directement.' end;
+    h := h || '<p>' || case when abonnee then 'Leurs fiches complètes et leurs coordonnées sont dans votre espace : écrivez-leur directement.'
+      else 'Avec l''abonnement ou le Pass recrutement, leurs demandes arrivent chez vous, vous voyez leurs fiches complètes et vous leur écrivez directement.' end || '</p>';
+  end if;
+  t := t || E'\n\nVotre espace : ' || espace || E'\n\nL''équipe Fil Roug''Anim';
+  h := h || '<p><a href="' || espace || '" style="' || bouton || '">' || case when n > 0 and not abonnee then 'Voir l''abonnement' else 'Ouvrir mon espace' end || '</a></p>'
+    || '<p style="color:#6b6264;font-size:13px">Fil Roug''Anim · filrouganim.fr</p>';
+  perform public.envoyer_mail(new.email_contact, sujet, t, h);
+  return null;
+exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la vérification
+end $$;
+revoke all on function public.bienvenue_structure() from public, anon, authenticated;
+drop trigger if exists bienvenue_structure on public.structures;
+create trigger bienvenue_structure after update of verifiee on public.structures
+  for each row when (new.verifiee and not coalesce(old.verifiee, false)) execute function public.bienvenue_structure();
+
+-- prevenir_demande (v44) : en plus, l'animateur est prévenu quand sa demande en attente part enfin chez des structures
+create or replace function public.prevenir_demande() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  sid uuid; st record; envoyees uuid[] := coalesce(new.notifiees, '{}'); poste text; quand text; lieu text; sujet text; noms text;
+  bouton constant text := 'display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold';
+begin
+  poste := public.libelle_poste(new.poste);
+  quand := array_to_string(array(select case p when 'ete' then 'l''été' when 'petites-vacances' then 'les petites vacances'
+    when 'mercredis' then 'les mercredis' when 'periscolaire' then 'le périscolaire' when 'annee' then 'toute l''année' else p end
+    from unnest(coalesce(new.periodes, '{}')) p), ', ');
+  lieu := coalesce(new.ville || ', ', '') || new.departement || case when new.partout then ' · partout en France' else '' end;
+  sujet := 'Nouvelle demande : ' || poste || ', ' || lieu;
+  foreach sid in array coalesce(new.destinataires, '{}') loop
+    continue when sid = any(envoyees);
+    select nom, email_contact into st from public.structures where id = sid;
+    continue when st.email_contact is null;
+    if public.envoyer_mail(st.email_contact, sujet,
+         'Bonjour,' || E'\n\n' || coalesce(new.prenom, 'Un animateur') || ' cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug''Anim :' || E'\n\n'
+         || poste || E'\n' || lieu || case when quand <> '' then ' · ' || quand else '' end || E'\n\n'
+         || 'Elle n''est envoyée qu''à 3 structures au plus. Lisez-la et répondez directement depuis votre espace : https://filrouganim.fr/compte/' || E'\n\nL''équipe Fil Roug''Anim',
+         '<p>Bonjour,</p><p><b>' || public.html_txt(coalesce(new.prenom, 'Un animateur')) || '</b> cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug''Anim :</p>'
+         || '<p style="padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2"><b>' || public.html_txt(poste) || '</b><br>'
+         || public.html_txt(lieu) || case when quand <> '' then ' · ' || public.html_txt(quand) else '' end || '</p>'
+         || '<p>Elle n''est envoyée qu''à 3 structures au plus. Lisez-la et répondez directement :</p>'
+         || '<p><a href="https://filrouganim.fr/compte/" style="' || bouton || '">Voir la demande</a></p>'
+         || '<p style="color:#6b6264;font-size:13px">Fil Roug''Anim · filrouganim.fr</p>') then
+      envoyees := array_append(envoyees, sid);
+    end if;
+  end loop;
+  if envoyees is distinct from coalesce(new.notifiees, '{}') then
+    update public.demandes set notifiees = envoyees where id = new.id;
+  end if;
+  -- la demande attendait (aucune structure à l'envoi) et vient de partir : on le dit à l'animateur
+  if tg_op = 'UPDATE' and coalesce(cardinality(old.destinataires), 0) = 0 and new.email_contact is not null then
+    select string_agg(s.nom || coalesce(' (' || s.ville || ')', ''), ', ') into noms from public.structures s where s.id = any(new.destinataires);
+    perform public.envoyer_mail(new.email_contact, 'Votre demande vient d''arriver chez ' || case when cardinality(new.destinataires) > 1 then cardinality(new.destinataires) || ' structures' else 'une structure' end,
+      'Bonjour ' || coalesce(new.prenom, '') || ',' || E'\n\n' || 'Bonne nouvelle : votre demande (' || poste || ', ' || lieu || ') vient d''arriver chez '
+      || coalesce(noms, 'une structure de votre secteur') || '.' || E'\n\n'
+      || case when cardinality(new.destinataires) > 1 then 'Elles peuvent' else 'Elle peut' end || ' maintenant vous écrire directement : surveillez vos e-mails, et pensez à regarder vos courriers indésirables. Votre espace : https://filrouganim.fr/compte/'
+      || E'\n\nL''équipe Fil Roug''Anim',
+      '<p>Bonjour ' || public.html_txt(coalesce(new.prenom, '')) || ',</p><p>Bonne nouvelle : votre demande (<b>' || public.html_txt(poste) || '</b>, ' || public.html_txt(lieu)
+      || ') vient d''arriver chez <b>' || public.html_txt(coalesce(noms, 'une structure de votre secteur')) || '</b>.</p>'
+      || '<p>' || case when cardinality(new.destinataires) > 1 then 'Elles peuvent' else 'Elle peut' end || ' maintenant vous écrire directement : surveillez vos e-mails, et pensez à regarder vos courriers indésirables.</p>'
+      || '<p><a href="https://filrouganim.fr/compte/" style="' || bouton || '">Ouvrir mon espace</a></p>'
+      || '<p style="color:#6b6264;font-size:13px">Fil Roug''Anim · filrouganim.fr</p>');
+  end if;
+  return null;
+exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la demande : le robot réessaiera
+end $$;
