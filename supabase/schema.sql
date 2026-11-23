@@ -1163,3 +1163,63 @@ begin
   return null;
 exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la demande : le robot réessaiera
 end $$;
+
+-- v46 (23/11/2026) : l'e-mail de bienvenue d'une structure vérifiée invite aussi à publier sa première offre et ses séjours
+-- (les deux gratuits), avec un lien direct vers l'onglet de son espace.
+create or replace function public.bienvenue_structure() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  dem text[]; fic text[]; n int; abonnee boolean := new.abonnement_fin >= current_date; t text; h text; sujet text;
+  page text := 'https://filrouganim.fr/trouver-un-poste/structures/' || new.slug || '/';
+  espace text := 'https://filrouganim.fr/compte/' || case when new.abonnement_fin >= current_date then '' else '?onglet=abonnement' end;
+  bouton constant text := 'display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold';
+begin
+  if new.email_contact is null then return null; end if;
+  select array_agg(l order by c desc) into dem from (
+    select public.libelle_poste(d.poste) || coalesce(' à ' || d.ville, '') || ' (' || d.departement || ')'
+           || coalesce(', dès le ' || to_char(d.dispo_debut, 'DD/MM'), '') l, d.cree_le c
+    from public.demandes d
+    where d.cree_le > now() - interval '30 days' and coalesce(d.suivi, 'a_traiter') <> 'traitee'
+      and (d.departement = new.departement or new.departement = any(d.zone) or d.partout)
+    order by d.cree_le desc limit 10) x;
+  select array_agg(l order by c desc) into fic from (
+    select p.prenom || ', ' || lower(public.libelle_poste(p.poste_recherche)) || coalesce(', ' || p.ville, '') || ' (' || p.departement || ')' l, p.cree_le c
+    from public.profils p
+    where p.publie and p.verifie and (p.departement = new.departement or new.departement = any(coalesce(p.mobilite, '{}')))
+    order by p.cree_le desc limit 10) y;
+  n := coalesce(cardinality(dem), 0) + coalesce(cardinality(fic), 0);
+  sujet := 'Votre structure est vérifiée : votre page est en ligne'
+    || case when n > 0 then ' · ' || n || ' animateur' || case when n > 1 then 's' else '' end || ' près de chez vous' else '' end;
+  t := 'Bonjour,' || E'\n\n' || 'Bonne nouvelle : ' || new.nom || ' est vérifiée sur Fil Roug''Anim. '
+    || case when new.page_publique and new.slug is not null then 'Votre page sera visible dans l''heure : ' || page || E'\n' else E'\n' end
+    || E'\nPour bien démarrer, deux choses gratuites :\n'
+    || '- Publiez votre première offre (stage pratique BAFA, job d''été, poste à l''année) : elle paraît sur le site et dans l''alerte des animateurs de votre secteur. ' || 'https://filrouganim.fr/compte/?onglet=offres' || E'\n'
+    || '- Vous organisez des séjours ou un accueil de loisirs ? Publiez-les aussi : les familles vous demandent une place directement. ' || 'https://filrouganim.fr/compte/?onglet=sejours';
+  h := '<p>Bonjour,</p><p>Bonne nouvelle : <b>' || public.html_txt(new.nom) || '</b> est vérifiée sur Fil Roug''Anim. '
+    || case when new.page_publique and new.slug is not null then 'Votre page sera visible dans l''heure : <a href="' || page || '">' || page || '</a>. ' else '' end
+    || '</p><p><b>Pour bien démarrer, deux choses gratuites :</b></p><ul>'
+    || '<li><a href="https://filrouganim.fr/compte/?onglet=offres">Publiez votre première offre</a> (stage pratique BAFA, job d''été, poste à l''année) : elle paraît sur le site et dans l''alerte des animateurs de votre secteur.</li>'
+    || '<li>Vous organisez des séjours ou un accueil de loisirs ? <a href="https://filrouganim.fr/compte/?onglet=sejours">Publiez-les aussi</a> : les familles vous demandent une place directement.</li></ul>';
+  if dem is not null then
+    t := t || E'\n\nPrès de chez vous, des animateurs décrivent le poste qu''ils cherchent :\n- ' || array_to_string(dem, E'\n- ');
+    h := h || '<p><b>Près de chez vous, des animateurs décrivent le poste qu''ils cherchent :</b></p><ul>'
+      || (select string_agg('<li>' || public.html_txt(x) || '</li>', '') from unnest(dem) x) || '</ul>';
+  end if;
+  if fic is not null then
+    t := t || E'\n\nIls ont publié leur fiche dans votre secteur :\n- ' || array_to_string(fic, E'\n- ');
+    h := h || '<p><b>Ils ont publié leur fiche dans votre secteur :</b></p><ul>'
+      || (select string_agg('<li>' || public.html_txt(x) || '</li>', '') from unnest(fic) x) || '</ul>';
+  end if;
+  if n > 0 then
+    t := t || E'\n\n' || case when abonnee then 'Leurs fiches complètes et leurs coordonnées sont dans votre espace : écrivez-leur directement.'
+      else 'Avec l''abonnement ou le Pass recrutement, leurs demandes arrivent chez vous, vous voyez leurs fiches complètes et vous leur écrivez directement.' end;
+    h := h || '<p>' || case when abonnee then 'Leurs fiches complètes et leurs coordonnées sont dans votre espace : écrivez-leur directement.'
+      else 'Avec l''abonnement ou le Pass recrutement, leurs demandes arrivent chez vous, vous voyez leurs fiches complètes et vous leur écrivez directement.' end || '</p>';
+  end if;
+  t := t || E'\n\nVotre espace : ' || espace || E'\n\nL''équipe Fil Roug''Anim';
+  h := h || '<p><a href="' || espace || '" style="' || bouton || '">' || case when n > 0 and not abonnee then 'Voir l''abonnement' else 'Ouvrir mon espace' end || '</a></p>'
+    || '<p style="color:#6b6264;font-size:13px">Fil Roug''Anim · filrouganim.fr</p>';
+  perform public.envoyer_mail(new.email_contact, sujet, t, h);
+  return null;
+exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la vérification
+end $$;
