@@ -605,6 +605,8 @@
       return;
     }
     if (estAdmin) {
+      // un compte administrateur ne se supprime pas depuis le site (la base le refuse aussi, v47)
+      document.body.classList.add("est-admin");
       $("co-bascule").hidden = false;
       var voulu = params.get("role") || "admin";
       Array.prototype.forEach.call(document.querySelectorAll("[data-bascule]"), function (a) { if (a.dataset.bascule === voulu) a.setAttribute("aria-current", "page"); });

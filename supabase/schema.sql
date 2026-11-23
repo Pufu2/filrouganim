@@ -1223,3 +1223,6 @@ begin
   return null;
 exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la vérification
 end $$;
+
+-- v47 (23/11/2026) : supprimer_mon_compte() refuse un compte administrateur ; admins_attente (email) réserve une adresse comme
+-- administrateur : le trigger promouvoir_admin_attente (after insert on auth.users) l'ajoute à admins dès que le compte est créé.

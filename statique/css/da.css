@@ -777,3 +777,5 @@ body.en-app .ap-boite { padding: 8px 10px; border-radius: 10px; }
 body.en-app .tb-tuile { padding: 10px 12px; }
 body.en-app .co-e-grands b { font-size: 1.3rem; }
 body.en-app #espace-compte input:not([type="checkbox"]):not([type="radio"]), body.en-app #espace-compte select, body.en-app #espace-compte textarea { font-size: 13.5px; }
+/* un compte administrateur ne se supprime pas depuis le site */
+body.est-admin #supprimer, body.est-admin .co-moi-danger { display: none !important; }
