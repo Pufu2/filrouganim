@@ -122,7 +122,7 @@
     var fiches = aVerifierProfils().length;
     if (fiches) l.push([fiches, fiches > 1 ? "fiches d'animateurs à vérifier" : "fiche d'animateur à vérifier", "animateurs"]);
     if (cand) l.push([cand, cand > 1 ? "candidatures sans réponse depuis 3 jours" : "candidature sans réponse depuis 3 jours", "afaire"]);
-    if (S && S.emails && S.emails.en_attente && S.emails.plus_ancien && (Date.now() - new Date(S.emails.plus_ancien)) > 3 * 3600e3) l.push([S.emails.en_attente, "e-mails d'alerte pas encore partis", "sante"]);
+    if (S && S.emails && S.emails.en_attente && S.emails.plus_ancien && (Date.now() - new Date(S.emails.plus_ancien)) > 12 * 3600e3) l.push([S.emails.en_attente, "e-mails d'alerte pas encore partis", "sante"]);
     if (S && S.offres_expirees_publiees) l.push([S.offres_expirees_publiees, "offres expirées encore publiées", "offres"]);
     return l;
   }
@@ -607,7 +607,7 @@
 
   /* ---------- 3. l'état de santé ---------- */
   var ACTIONS = [["publier.yml", "Publication du site", "toutes les heures, de 6 h à 23 h", 3], ["relever.yml", "Relevé des sessions", "chaque nuit", 30],
-                 ["chiffres.yml", "Relevé des chiffres (Google, visites)", "toutes les 6 heures", 9], ["abonnements.yml", "Paiements Stripe et e-mails des demandes", "tous les quarts d'heure", 2],
+                 ["chiffres.yml", "Relevé des chiffres (Google, visites)", "toutes les 6 heures", 9], ["abonnements.yml", "Paiements Stripe et e-mails des demandes", "plusieurs fois par jour (GitHub espace les passages)", 12],
                  ["alertes.yml", "Alertes du lundi aux animateurs", "chaque lundi", 24 * 8]];
   var gh = null, verifieA = null;
   async function lireGithub() {
@@ -654,9 +654,9 @@
       au ? [["Visiteurs jour par jour", (au.donnees.visiteurs_par_jour || []).length + " jours"], ["Pages lues", (au.donnees.pages_lues || []).length + " pages suivies"], ["Provenances", (au.donnees.provenances || []).length + " sources"]] : []));
     // les e-mails d'alerte à l'administration
     var em = S.emails || {}, retard = em.plus_ancien ? (Date.now() - new Date(em.plus_ancien)) / 3600e3 : 0;
-    etats.push(bloc(g, "mail", "E-mails à l'administration", retard > 3 ? ["surveiller", "À surveiller"] : ["ok", "OK"],
-      "Chaque nouvelle fiche, structure, paiement ou demande vous est envoyé par e-mail (Brevo).",
-      [[em.en_attente ? em.en_attente + " pas encore parti" + (em.en_attente > 1 ? "s" : "") : "Aucun en attente", em.plus_ancien ? "le plus ancien : " + heure(em.plus_ancien) : "", em.en_attente && retard > 3 ? "surveiller" : "ok"],
+    etats.push(bloc(g, "mail", "E-mails à l'administration", retard > 12 ? ["surveiller", "À surveiller"] : ["ok", "OK"],
+      "Chaque nouvelle fiche, structure, paiement ou demande vous est envoyé par e-mail (Brevo), au passage suivant de la tâche automatique.",
+      [[em.en_attente ? em.en_attente + " pas encore parti" + (em.en_attente > 1 ? "s" : "") : "Aucun en attente", em.plus_ancien ? "le plus ancien : " + heure(em.plus_ancien) : "", em.en_attente && retard > 12 ? "surveiller" : "ok"],
        ["Dernier envoi", em.dernier_envoi ? heure(em.dernier_envoi) : "aucun pour l'instant"], ["Sur 30 jours", fr(em.total_30j) + " événements"]]));
     // la base et le stockage (offre gratuite de Supabase : 500 Mo de base, 1 Go de fichiers)
     var mo = (S.base_octets || 0) / 1048576, sto = (S.stockage || []).reduce(function (a, x) { return a + (x.octets || 0); }, 0) / 1048576;
@@ -666,7 +666,8 @@
       (S.stockage || []).map(function (x) { return [x.bucket === "structures" ? "Photos et logos des structures" : x.bucket === "cv" ? "CV des animateurs" : x.bucket, fr(x.fichiers) + " fichiers · " + (x.octets / 1048576).toFixed(1).replace(".", ",") + " Mo"]; })
         .concat([["Total", sto.toFixed(1).replace(".", ",") + " Mo sur 1 024 Mo"]])));
     // les demandes, les structures, les offres
-    etats.push(bloc(g, "avion", "Demandes des animateurs", S.demandes_sans_structure_48h ? ["surveiller", "À surveiller"] : ["ok", "OK"], "Une demande sans structure depuis 48 heures attend votre coup de main (QG demandes).",
+    // une demande sans structure, c'est du travail (QG demandes), pas une panne : pas d'alerte ici
+    etats.push(bloc(g, "avion", "Demandes des animateurs", ["ok", "OK"], "Une demande sans structure depuis 48 heures attend votre coup de main (QG demandes).",
       [["À traiter", fr(S.demandes_a_traiter)], ["Sans structure depuis 48 h", fr(S.demandes_sans_structure_48h), S.demandes_sans_structure_48h ? "surveiller" : "ok"]]));
     etats.push(bloc(g, "maison", "Structures et abonnements", S.structures_payees_non_verifiees ? ["surveiller", "À surveiller"] : ["ok", "OK"], null,
       [["Payées, pas encore vérifiées", fr(S.structures_payees_non_verifiees), S.structures_payees_non_verifiees ? "surveiller" : "ok"], ["Abonnements à renouveler dans 30 jours", fr(S.abonnements_30j)]]));
