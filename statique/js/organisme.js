@@ -39,7 +39,7 @@
     if (!carte) { try { carte = await (await fetch(E.L.carte)).json(); } catch (e) { carte = null; } }
   }
   function etat() {
-    var st = $("statut-organisme"); st.hidden = false; st.className = "statut";
+    var st = $("statut-organisme"); st.hidden = true; st.className = "statut";  // le « À suivre » du tableau de bord le dit déjà
     if (!compte) { st.textContent = "Bienvenue ! Présentez votre organisme : votre fiche, puis vos départements."; st.className = "statut statut-attente"; return; }
     var actifs = parts.filter(function (p) { return p.statut === "actif"; }).length, attente = parts.filter(function (p) { return p.statut === "facture" || p.statut === "reserve"; }).length;
     if (actifs) { st.textContent = "Partenaire de Fil Roug'Anim dans " + actifs + " département" + (actifs > 1 ? "s" : "") + " : vos sessions y sont mises en avant. Vous payez seulement les clics, chaque mois."; st.className = "statut statut-ok"; }
@@ -51,42 +51,74 @@
   }
 
   /* ---------- tableau de bord ---------- */
+  var ETATS_P = { reserve: ["En vérification", "jaune"], facture: ["Actif", "vert"], actif: ["Actif", "vert"], expire: ["Terminé", "gris"], annule: ["Arrêté", "gris"] };
+  var ETATS_F = { a_facturer: ["En préparation", "gris"], facture: ["À payer", "jaune"], payee: ["Payée", "vert"], offerte: ["Offerte (moins de 10 €)", "gris"], annulee: ["Annulée", "gris"] };
+  function pastille(e) { return el("span", "tb2-etat tb2-etat-" + e[1], e[0]); }
+  function carteK(c, titre, lien, vers) {
+    var k = el("div", "carte-compte pa-k"), h = el("div", "pa-k-tete"); h.appendChild(el("h2", null, titre));
+    if (lien) { var b = el("button", "tb2-lien", lien + " →"); b.type = "button"; b.dataset.ongletVers = vers; h.appendChild(b); }
+    k.appendChild(h); c.appendChild(k); return k;
+  }
   function tableau() {
     var c = $("og-tableau"); c.textContent = "";
-    var h = el("div", "og-hero");
-    var t = el("div"); t.appendChild(el("p", "og-sur", "votre espace organisme"));
-    var h2 = el("h2"); h2.appendChild(document.createTextNode("Bonjour, ")); h2.appendChild(el("em", null, compte ? compte.nom : "bienvenue")); t.appendChild(h2);
-    t.appendChild(el("p", "og-hero-p", "Vos sessions sont déjà comparées gratuitement sur Fil Roug'Anim. Prenez vos départements : vos sessions y passent en premier, avec un bouton vers vos inscriptions. Vous ne payez que les vrais clics, jamais plus que le plafond."));
-    var bs = el("div", "og-boutons");
-    [["zones", "Choisir mes départements", true], ["fiche", "Ma fiche", false]].forEach(function (x) { var b = el("button", x[2] ? "bouton-r" : "bouton-blanc", x[1]); b.type = "button"; b.dataset.ongletVers = x[0]; bs.appendChild(b); });
-    var ex = el("a", "og-lien", "Voir une fiche partenaire d'exemple →"); ex.href = E.L.lien_exemple_organisme; ex.target = "_blank"; ex.rel = "noopener"; bs.appendChild(ex);
-    t.appendChild(bs); h.appendChild(t);
-    var k = el("div", "og-hero-cote");
-    k.appendChild(el("p", "og-mini", "30 derniers jours"));
-    [["clics vers vos sessions", stats ? stats.clic_session : null], ["clics vers votre site", stats ? stats.clic_site : null], ["vues de votre page", stats ? stats.vue_page : null]].forEach(function (x) {
-      var l = el("p", "og-cote-l"); l.appendChild(el("b", null, x[1] == null ? "–" : String(x[1]))); l.appendChild(el("span", null, x[0])); k.appendChild(l); });
-    if (!stats) k.appendChild(el("p", "og-petit", "Vos chiffres s'affichent dès que votre fiche est reliée à vos sessions."));
-    h.appendChild(k); c.appendChild(h);
-    var g = el("div", "og-grille"); c.appendChild(g);
-    var a = el("article", "og-carte"); a.appendChild(el("h3", null, "Vos départements"));
-    var actifs = parts.filter(enCours);
-    if (!actifs.length) a.appendChild(el("p", "og-vide", "Aucun pour l'instant. Les plus grands départements partent en premier."));
-    actifs.forEach(function (p) { var z = zone(p.departement) || {}; var l = el("p", "og-ligne"); l.appendChild(el("b", null, (z.nom || p.departement) + " (" + p.departement + ")")); l.appendChild(el("span", "og-etiq og-" + p.statut, { actif: "actif" + (p.fin ? " jusqu'au " + E.dateFr(p.fin) : ""), facture: "actif", reserve: "en vérification" }[p.statut])); a.appendChild(l); });
-    g.appendChild(a);
-    if (actifs.length) {
-      var mois = new Date().toISOString().slice(0, 7), ce = 0, tous = 0;
-      clics.forEach(function (x) { if (String(x.jour).slice(0, 7) === mois) { ce += x.facturables; tous += x.tous; } });
-      var m = el("article", "og-carte"); m.appendChild(el("h3", null, "Ce mois-ci"));
-      var l1 = el("p", "og-ligne"); l1.appendChild(el("b", null, ce + " clic" + (ce > 1 ? "s" : "") + " compté" + (ce > 1 ? "s" : ""))); l1.appendChild(el("span", null, "sur " + tous + " clics au total")); m.appendChild(l1);
-      m.appendChild(el("p", "og-petit", "Les clics en double, ceux des robots et les pics anormaux ne sont jamais comptés. Le détail est dans « Clics et factures »."));
-      var vb = el("button", "bouton-blanc", "Voir mes clics jour par jour"); vb.type = "button"; vb.dataset.ongletVers = "factures"; m.appendChild(vb);
-      g.appendChild(m);
+    var actifs = parts.filter(enCours), aPayer = fact.filter(function (x) { return x.statut === "facture"; });
+    // 1. à suivre : seulement ce qui demande un geste
+    var faire = [];
+    if (!compte) faire.push(["Présentez votre organisme", "Votre fiche d'abord, puis vos départements.", "fiche"]);
+    else {
+      if (!compte.verifie) faire.push(["Fiche en vérification", "Nous la relions à vos sessions sur le site, sous 2 jours ouvrés. Vous pouvez déjà choisir vos départements.", null]);
+      if (!compte.presentation || compte.presentation.length < 80) faire.push(["Complétez votre présentation", "Pédagogie, formules, accompagnement, aides : c'est elle qui décide un futur stagiaire à cliquer chez vous.", "fiche"]);
+      if (!compte.inscription) faire.push(["Ajoutez votre page d'inscription", "Le bouton « S'inscrire chez vous » y mènera.", "fiche"]);
+      if (!actifs.length) faire.push(["Choisissez vos départements", "Un seul partenaire par département : les plus demandés partent en premier.", "zones"]);
+      aPayer.forEach(function (x) { faire.push(["Facture à payer : " + euros(x.montant), "Clics de " + new Date(x.mois + "T12:00:00").toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) + ", à régler sous 30 jours.", "factures"]); });
     }
-    var b = el("article", "og-carte"); b.appendChild(el("h3", null, "Ce que vous obtenez"));
-    var ul = el("ul", "og-liste");
-    ["Vos sessions seules en tête des pages de vos départements et de leurs villes", "Un bouton « S'inscrire chez vous » sur chacune de ces pages", "L'étiquette « Partenaire » sur toutes vos sessions, partout en France",
-     "Votre fiche complète : présentation, habilitation, lien d'inscription", "Vos statistiques : vues, clics vers vos sessions et votre site", "Chaque clic compté visible jour par jour : vous vérifiez tout ce que vous payez"].forEach(function (x) { ul.appendChild(el("li", null, x)); });
-    b.appendChild(ul); g.appendChild(b);
+    var k1 = carteK(c, "À suivre");
+    if (!faire.length) k1.appendChild(el("p", "og-vide", "Rien en attente : vos sessions sont en tête de vos départements."));
+    faire.forEach(function (x) {
+      var l = el("div", "pa-afaire"), t = el("div"); t.appendChild(el("b", null, x[0])); t.appendChild(el("small", null, x[1])); l.appendChild(t);
+      if (x[2]) { var b = el("button", "tb2-lien", "Ouvrir →"); b.type = "button"; b.dataset.ongletVers = x[2]; l.appendChild(b); }
+      k1.appendChild(l);
+    });
+    // 2. les chiffres
+    var mois = new Date().toISOString().slice(0, 7), ce = 0, tous = 0;
+    clics.forEach(function (x) { if (String(x.jour).slice(0, 7) === mois) { ce += x.facturables; tous += x.tous; } });
+    var ch = el("div", "tb2-chiffres pa-chiffres"); c.appendChild(ch);
+    [["Vues de votre page · 30 j", stats && stats.vue_page], ["Clics vers vos sessions · 30 j", stats && stats.clic_session], ["Clics vers votre site · 30 j", stats && stats.clic_site],
+     ["Clics comptés ce mois-ci", actifs.length ? ce : null, actifs.length ? "sur " + tous + " clics au total" : "dès votre premier département"]].forEach(function (x) {
+      var d = el("div", "tb2-chiffre"); d.appendChild(el("p", "tb2-l", x[0])); d.appendChild(el("p", "tb2-v", x[1] == null ? "–" : Number(x[1]).toLocaleString("fr-FR")));
+      d.appendChild(el("p", "tb2-s", x[2] || (stats ? "sur les 30 derniers jours" : "dès que votre fiche est reliée"))); ch.appendChild(d);
+    });
+    // 3. les départements
+    var k2 = carteK(c, "Vos départements", actifs.length ? "Clics et factures" : "Choisir", actifs.length ? "factures" : "zones");
+    if (!actifs.length) {
+      k2.appendChild(el("p", "og-vide", "Aucun pour l'instant. Dans vos départements partenaires :"));
+      var ul = el("ul", "og-liste");
+      ["vos sessions seules en tête des pages du département et de ses villes ;", "un bouton « S'inscrire chez vous » sur chacune de ces pages ;", "l'étiquette « Partenaire » sur toutes vos sessions, partout en France ;", "vous ne payez que les clics, avec un plafond par département."].forEach(function (x) { ul.appendChild(el("li", null, x)); });
+      k2.appendChild(ul);
+    } else k2.appendChild(tableDeps(actifs, false));
+  }
+  function tableDeps(liste, avecArret) {
+    var t = el("div", "ls-table ls-org-d"), e = el("div", "ls-rang ls-entete");
+    ["Département", "Prix du clic", "Plafond par an", "État", ""].forEach(function (x) { e.appendChild(el("span", null, x)); }); t.appendChild(e);
+    liste.forEach(function (p) {
+      var z = zone(p.departement) || {}, r = el("div", "ls-rang"), q = el("span", "ls-qui");
+      q.appendChild(el("b", null, (z.nom || p.departement) + " (" + p.departement + ")")); q.appendChild(el("small", null, (p.lancement ? "tarif de lancement" : "") + (p.debut ? (p.lancement ? " · " : "") + "depuis le " + E.dateFr(p.debut) : ""))); r.appendChild(q);
+      r.appendChild(el("span", "ls-doux", euros(p.prix_clic || 1)));
+      r.appendChild(el("span", "ls-doux", euros(p.prix)));
+      var st = el("span"); st.appendChild(pastille(ETATS_P[p.statut] || [p.statut, "gris"])); r.appendChild(st);
+      var fin = el("span", "ls-fin");
+      if (avecArret && (p.statut === "actif" || p.statut === "reserve")) {
+        var x = el("button", "tb2-lien ls-danger", "Arrêter"); x.type = "button";
+        x.addEventListener("click", async function () {
+          if (!confirm("Arrêter " + (z.nom || p.departement) + " ? Le mois en cours sera facturé selon les clics déjà comptés, et le département redevient libre pour les autres organismes.")) return;
+          var rr = await E.sb.rpc("arreter_partenariat", { pid: p.id }); if (rr.error) { E.message(E.erreur(rr.error), true); return; }
+          await tout(); E.message("C'est arrêté.");
+        });
+        fin.appendChild(x);
+      }
+      r.appendChild(fin); t.appendChild(r);
+    });
+    return t;
   }
   function zone(d) { return zones.filter(function (z) { return z.departement === d; })[0]; }
 
@@ -97,8 +129,6 @@
   function fiche() {
     var c = $("og-fiche"); c.textContent = "";
     var k = el("div", "carte-compte"); c.appendChild(k);
-    k.appendChild(el("h2", null, compte ? "Ma fiche" : "Présentez votre organisme"));
-    k.appendChild(el("p", "petit", "Elle s'affiche sur votre page organisme (rubrique Sessions › Organismes) et, dans vos départements, en tête des pages de sessions."));
     var f = el("form", "formulaire"); var g = el("div", "champs-2"); f.appendChild(g);
     var x = compte || { email_contact: C.email };
     CHAMPS.forEach(function (ch) {
@@ -133,7 +163,7 @@
   function zonesPage() {
     var c = $("og-zones"); c.textContent = "";
     var tete = el("div", "og-zones-tete");
-    var t = el("div"); t.appendChild(el("h2", null, "Choisissez vos départements"));
+    var t = el("div");
     t.appendChild(el("p", "petit", "Un seul partenaire par département (deux dans les six plus grands). Vous payez " + prixClic() + " par clic venu de ce département, jamais plus que son plafond annuel, qui dépend du nombre de jeunes de 15 à 24 ans qui y vivent (INSEE), des sessions et des recherches Google. Rien à payer d'avance, arrêt quand vous voulez. Premier arrivé, premier servi."));
     tete.appendChild(t);
     if (lancementOuvert) tete.appendChild(el("p", "og-lancement", "Tarif de lancement : 0,50 € le clic et plafonds à moitié prix pour les 10 premiers organismes, gardés tant que vous restez partenaire."));
@@ -210,27 +240,10 @@
   /* ---------- les clics et les factures ---------- */
   function factures() {
     var c = $("og-factures"); c.textContent = "";
-    var k = el("div", "carte-compte"); c.appendChild(k); k.appendChild(el("h2", null, "Clics et factures"));
+    var k = el("div", "carte-compte"); c.appendChild(k);
     if (!parts.length) { k.appendChild(el("p", "og-vide", "Rien pour l'instant : choisissez vos départements dans « Mes départements »."));  return; }
-    // les départements
     k.appendChild(el("h3", null, "Vos départements"));
-    parts.forEach(function (p) {
-      var z = zone(p.departement) || {}, b = el("div", "og-facture");
-      var t = el("div"); t.appendChild(el("b", null, (z.nom || p.departement) + " (" + p.departement + ")"));
-      t.appendChild(el("small", null, euros(p.prix_clic || 1) + " le clic · plafond " + euros(p.prix) + " par an" + (p.lancement ? " · tarif de lancement" : "") + (p.debut ? " · depuis le " + E.dateFr(p.debut) : "") + (p.fin && p.statut === "actif" ? " · jusqu'au " + E.dateFr(p.fin) : "")));
-      b.appendChild(t);
-      b.appendChild(el("span", "og-etiq og-" + p.statut, { reserve: "en vérification", facture: "actif", actif: "actif", expire: "terminé", annule: "arrêté" }[p.statut]));
-      if (p.statut === "actif" || p.statut === "reserve") {
-        var x = el("button", "bouton-texte", "Arrêter"); x.type = "button";
-        x.addEventListener("click", async function () {
-          if (!confirm("Arrêter " + (z.nom || p.departement) + " ? Le mois en cours sera facturé selon les clics déjà comptés, et le département redevient libre pour les autres organismes.")) return;
-          var r = await E.sb.rpc("arreter_partenariat", { pid: p.id }); if (r.error) { E.message(E.erreur(r.error), true); return; }
-          await tout(); E.message("C'est arrêté.");
-        });
-        b.appendChild(x);
-      }
-      k.appendChild(b);
-    });
+    k.appendChild(tableDeps(parts, true));
     // les clics, jour par jour
     k.appendChild(el("h3", null, "Vos clics, jour par jour"));
     k.appendChild(el("p", "petit", "« Comptés » : les clics facturables (une personne par jour, sans robots). « Tous » : tous les clics enregistrés, pour comparer. Une ligne vous paraît bizarre ? Écrivez-nous, on la retire."));
@@ -245,16 +258,21 @@
     // les factures mensuelles
     k.appendChild(el("h3", null, "Vos factures"));
     if (!fact.length) k.appendChild(el("p", "og-vide", "La première arrive au début du mois prochain, pour les clics de ce mois-ci."));
-    fact.forEach(function (f) {
-      var b = el("div", "og-facture"), t = el("div");
-      var m = new Date(f.mois + "T12:00:00").toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
-      t.appendChild(el("b", null, "Clics · " + m + " · " + euros(f.montant)));
-      t.appendChild(el("small", null, f.clics + " clics comptés" + (f.clics_ecartes ? " · " + f.clics_ecartes + " écartés (pic anormal, non facturés)" : "") + ((f.detail || []).some(function (d) { return d.montant < d.clics * d.prix_clic; }) ? " · plafond atteint" : "")));
-      b.appendChild(t);
-      b.appendChild(el("span", "og-etiq og-" + f.statut, { a_facturer: "en préparation", facture: "à payer", payee: "payée", offerte: "moins de 10 € : offert", annulee: "annulée" }[f.statut]));
-      if (f.statut === "facture" && f.facture_url) { var a = el("a", "bouton-r", "Payer la facture →"); a.href = f.facture_url; a.target = "_blank"; a.rel = "noopener"; b.appendChild(a); }
-      k.appendChild(b);
-    });
+    if (fact.length) {
+      var tf = el("div", "ls-table ls-org-f"), ef = el("div", "ls-rang ls-entete");
+      ["Mois", "Clics comptés", "Montant", "État", ""].forEach(function (x) { ef.appendChild(el("span", null, x)); }); tf.appendChild(ef);
+      fact.forEach(function (f) {
+        var r = el("div", "ls-rang"), m = new Date(f.mois + "T12:00:00").toLocaleDateString("fr-FR", { month: "long", year: "numeric" }), q = el("span", "ls-qui");
+        q.appendChild(el("b", null, m.charAt(0).toUpperCase() + m.slice(1))); if (f.clics_ecartes) q.appendChild(el("small", null, f.clics_ecartes + " clics écartés (pic anormal, non facturés)")); r.appendChild(q);
+        r.appendChild(el("span", "ls-doux", String(f.clics)));
+        r.appendChild(el("span", "ls-doux", euros(f.montant)));
+        var st = el("span"); st.appendChild(pastille(ETATS_F[f.statut] || [f.statut, "gris"])); r.appendChild(st);
+        var fin = el("span", "ls-fin");
+        if (f.statut === "facture" && f.facture_url) { var a = el("a", "ls-postuler", "Payer"); a.href = f.facture_url; a.target = "_blank"; a.rel = "noopener"; fin.appendChild(a); }
+        r.appendChild(fin); tf.appendChild(r);
+      });
+      k.appendChild(tf);
+    }
     k.appendChild(protections());
   }
 
@@ -265,6 +283,6 @@
   }
   window.FRA_ORGANISME = {
     ouvrir: async function (ctx) { E = window.FRA_ESPACE; C = ctx; await tout(); return compte; },
-    compte: function () { return compte; }
+    compte: function () { return compte; }, parts: function () { return parts; }
   };
 })();

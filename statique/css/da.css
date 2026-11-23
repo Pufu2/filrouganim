@@ -1059,3 +1059,17 @@ body.en-app .ls-pa-i .ls-rang { grid-template-columns: minmax(0, 2.2fr) minmax(0
   body.en-app .ls-pa-i .ls-qui { flex: 0 0 100%; }
   body.en-app .ls-pa-i .ls-rang.ls-entete { display: none; }
 }
+
+/* ---- Espace organisme : même modèle (à suivre, chiffres, listes) ---- */
+body.en-app .pa-chiffres { margin: 0 0 14px; }
+body.en-app .ls-org-d .ls-rang { grid-template-columns: minmax(0, 2fr) 120px 140px 150px 90px; }
+body.en-app .ls-org-f .ls-rang { grid-template-columns: minmax(0, 2fr) 130px 130px 190px 90px; }
+body.en-app a.ls-postuler { display: inline-flex; align-items: center; text-decoration: none; }
+body.en-app #og-factures h3 { margin: 22px 0 6px; font-size: .95rem; font-weight: 500; }
+body.en-app #og-factures h3:first-child { margin-top: 0; }
+@media (max-width: 860px) {
+  body.en-app .ls-org-d .ls-rang, body.en-app .ls-org-f .ls-rang { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  body.en-app .ls-org-d .ls-qui, body.en-app .ls-org-f .ls-qui { flex: 0 0 100%; }
+  body.en-app .ls-org-d .ls-rang.ls-entete, body.en-app .ls-org-f .ls-rang.ls-entete { display: none; }
+}
+body.en-app .og-page > .pa-chiffres { background: none; border: 0; box-shadow: none; padding: 0; backdrop-filter: none; }

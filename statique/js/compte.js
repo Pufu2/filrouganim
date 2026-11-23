@@ -64,6 +64,7 @@
     familles: '<circle cx="8" cy="7" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c.7-3.6 3-5.5 6-5.5s5.3 1.9 6 5.5M14 20c.4-2.4 1.6-3.8 3-3.8s2.6 1.4 3 3.8"/>'
   };
   function iconeOnglet(nom) { var sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("viewBox", "0 0 24 24"); sv.setAttribute("aria-hidden", "true"); sv.innerHTML = ICO[nom] || ICO.page; return sv; }
+  function E_LIEN_EXEMPLE_ORG() { return L.lien_exemple_organisme; }
   function enteteDonnees(vue, nom) {
     var pl = function (n, mot, motPl) { return n + " " + (n > 1 ? (motPl || mot + "s") : mot); };
     if (vue === "v-structure") {
@@ -104,6 +105,17 @@
         outils: { sur: "Espace structure", t: "Boîte à outils", em: "", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
                   actions: [], guide: null, resume: null }
       }[nom];
+    }
+    if (vue === "v-organisme") {
+      var FO = window.FRA_ORGANISME, oc = (FO && FO.compte && FO.compte()) || null, op = FO && FO.parts ? FO.parts() : [];
+      var oa = op.filter(function (p) { return ["actif", "reserve", "facture"].indexOf(p.statut) >= 0; }).length;
+      return {
+        tableau: { sur: "Espace organisme", t: "Tableau de bord", em: "", p: oc ? oc.nom + (oc.verifie ? " · fiche reliée à vos sessions" : " · fiche en vérification") + " · " + (oa ? pl(oa, "département partenaire", "départements partenaires") : "pas encore partenaire") : "Présentez votre organisme pour commencer.",
+                   actions: [["Choisir mes départements", "zones"], ["Voir une fiche partenaire d'exemple", E_LIEN_EXEMPLE_ORG(), 2]], guide: null, resume: null },
+        fiche: { sur: "Espace organisme", t: oc ? "Ma fiche" : "Présentez votre organisme", em: "", p: "Elle s'affiche sur votre page organisme (rubrique Sessions › Organismes) et, dans vos départements, en tête des pages de sessions.", actions: [], guide: null, resume: null },
+        zones: { sur: "Espace organisme", t: "Mes départements", em: "", p: "Choisissez sur la carte les départements où vos sessions passent en tête.", actions: [], guide: null, resume: null },
+        factures: { sur: "Espace organisme", t: "Clics et factures", em: "", p: "Chaque clic compté, jour par jour, et vos factures mensuelles : vous vérifiez tout ce que vous payez.", actions: [], guide: null, resume: null }
+      }[nom] || null;
     }
     if (vue === "v-parent") {
       var FP = window.FRA_PARENT, ins = FP && FP.inscriptions ? FP.inscriptions() : [], conf = ins.filter(function (i) { return i.statut === "acceptee"; }).length;
@@ -916,7 +928,7 @@
     memoire({ role: "organisme" });
     $("chapo-compte").textContent = "Votre espace organisme de formation.";
     for (var i = 0; i < 100 && !window.FRA_ORGANISME; i++) await new Promise(function (r) { setTimeout(r, 30); });
-    window.FRA_ORGANISME.apres = function (c) { organisme = c; majApp(["v-organisme"]); };
+    window.FRA_ORGANISME.apres = function (c) { organisme = c; majApp(["v-organisme"]); try { majEntete("v-organisme"); } catch (err) {} };
     var c = await window.FRA_ORGANISME.ouvrir({ id: idEspace(), email: utilisateur.email });
     organisme = c;
     ongletDepart("v-organisme", c ? "tableau" : "fiche", !c);
