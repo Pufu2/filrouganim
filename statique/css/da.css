@@ -739,3 +739,41 @@ body.en-app .ap-bouton, body.en-app .co-entete .bouton-r { padding: 8px 14px !im
 body.en-app .ap-kpi { border-radius: 12px; border-color: #ececef; box-shadow: 0 1px 2px rgba(23, 25, 29, .03); }
 body.en-app .ap-kpi .ap-ic { width: 34px; height: 34px; border-radius: 9px; }
 body.en-app .ap-qg-item.on, body.en-app #ad-qg .ap-boite.on { box-shadow: 0 0 0 1px #17191d, 0 1px 2px rgba(23, 25, 29, .04) !important; border-color: #17191d !important; background: #fff; }
+
+/* ---- Mon espace et admin : version dense (23/11/2026) ----
+   Comme les outils pros : tout le contenu un cran plus petit (la page passe de 16 à 14 px de base, toutes les tailles en rem
+   suivent), des marges et des espaces resserrés. Le menu garde des tailles fixes en px pour rester lisible. */
+html:has(body.en-app) { font-size: 14px; }
+body.en-app { line-height: 1.5; }
+/* le menu, en tailles fixes */
+body.en-app .co-nav [data-onglet-vers], body.en-app #v-admin .co-nav [data-onglet-vers] { font-size: 13px; min-height: 30px; padding: 5px 10px; }
+body.en-app #v-admin .co-nav .co-groupe { font-size: 11.5px; margin: 14px 10px 3px; }
+body.en-app .co-marque .logo-mot { font-size: 14px; }
+body.en-app .co-nav .co-pastille { font-size: 11px; }
+body.en-app .co-moi-t b { font-size: 13px; } body.en-app .co-moi-t small, body.en-app .co-moi-ch { font-size: 11.5px; }
+body.en-app .co-nav .co-moi-av { font-size: 11px; }
+body.en-app .co-moi-menu a, body.en-app .co-moi-menu button { font-size: 13px; }
+body.en-app #co-bascule span { font-size: 11px; } body.en-app #co-bascule a { font-size: 12px; }
+body.en-app .bandeau-admin, .bandeau-admin { font-size: 13px; }
+/* la page : plus près du haut, blocs plus serrés */
+body.en-app .compte-vue.co-onglets:not([hidden]) { padding-top: 16px; }
+body.en-app .app-barre { height: 52px; }
+body.en-app .app-ic { width: 32px; height: 32px; }
+body.en-app .co-entete, body.en-app .og-hero, body.en-app .ap-hero { padding: 16px 20px; margin-bottom: 14px; gap: 16px; }
+body.en-app .co-entete h2, body.en-app .og-hero h2, body.en-app .ap-hero h2 { font-size: 1.35rem !important; margin-bottom: 4px; }
+body.en-app .co-e-p, body.en-app .og-hero-p, body.en-app .ap-hero-p { margin-bottom: 10px; }
+body.en-app .co-e-resume, body.en-app .og-hero-cote, body.en-app .ap-hero-cote { padding: 12px 14px; }
+body.en-app .carte-compte { padding: 18px 20px; margin-bottom: 14px; }
+body.en-app #v-admin > .ad-bloc, body.admin-large #v-admin > .ad-bloc { padding: 18px 20px; }
+body.en-app .ap-carte { padding: 14px 16px; margin-bottom: 12px; }
+body.en-app .ap-carte-h { margin-bottom: 8px; }
+body.en-app .tb-carte, body.en-app .og-carte { padding: 16px 18px; }
+body.en-app .ap-grille { gap: 12px; margin-bottom: 12px; }
+body.en-app .tb-app { gap: 14px; margin-bottom: 14px; }
+body.en-app .ap-kpi { padding: 12px 14px; gap: 10px; }
+body.en-app .ap-kpi .ap-ic { width: 30px; height: 30px; }
+body.en-app .ap-kpi b { font-size: 1.3rem; }
+body.en-app .ap-boite { padding: 8px 10px; border-radius: 10px; }
+body.en-app .tb-tuile { padding: 10px 12px; }
+body.en-app .co-e-grands b { font-size: 1.3rem; }
+body.en-app #espace-compte input:not([type="checkbox"]):not([type="radio"]), body.en-app #espace-compte select, body.en-app #espace-compte textarea { font-size: 13.5px; }
