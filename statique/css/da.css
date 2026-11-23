@@ -821,3 +821,34 @@ body.en-app #espace-compte .ap-pro .ap-bouton:hover { border-color: #17191d !imp
 .ft .ft-panel { gap: 7px; }
 .ft .ft-baseline { padding-top: 18px; }
 .ft { padding: 36px 0 24px; }
+
+/* ---- Tout le site public : la passe « fine et dense » (23/11/2026), comme Mon espace ----
+   Même DA (Inter, anthracite, rouge du fil, même mise en page, mêmes textes) ; seulement moins gros : base 15 px,
+   titres plus petits et moins épais, boutons et barres de recherche moins hauts, cartes moins arrondies, ombres presque
+   invisibles, bandes moins hautes. */
+html:not(:has(body.en-app)) { font-size: 15px; }
+body:not(.en-app) h1, body:not(.en-app) h2, body:not(.en-app) h3 { font-weight: 600; }
+body:not(.en-app) h1 { font-size: clamp(1.7rem, 3.4vw, 2.25rem); letter-spacing: -.03em; }
+body:not(.en-app) .h1-accueil { font-size: clamp(1.9rem, 4vw, 2.65rem); }
+body:not(.en-app) main h2, body:not(.en-app) .bande h2, body:not(.en-app) section h2 { font-size: clamp(1.3rem, 2.3vw, 1.7rem); }
+body:not(.en-app) main h3, body:not(.en-app) .bande h3 { font-size: 1.05rem; }
+body:not(.en-app) .bande { padding: 38px 0; }
+body:not(.en-app) .tete .cadre { padding-bottom: 32px; }
+/* les barres de recherche et les gros boutons */
+body:not(.en-app) .champ-ou, body:not(.en-app) .bouton-filtres, body:not(.en-app) .tp-filtres { height: 52px; border-radius: 14px; }
+body:not(.en-app) .bouton-filtres, body:not(.en-app) .tp-filtres { font-size: .95rem; padding: 0 16px; }
+body:not(.en-app) .bouton-r, body:not(.en-app) .voir-plus, body:not(.en-app) .cb-bouton, body:not(.en-app) .tp-bande-bouton, body:not(.en-app) .rc-creer {
+  padding: 10px 18px; min-height: 0; font-size: .95rem; border-radius: 10px; box-shadow: none; }
+body:not(.en-app) .bouton-r { font-weight: 600; }
+/* les cartes : moins arrondies, ombre presque invisible, un peu moins de vide */
+body:not(.en-app) :is(.tp-carte, .ac-carte, .cb, .cb-carte, .cb-tuile-dem, .sjc-carte, .sjc-alerte, .rc-fondateurs, .carte-sessions, .article-carte,
+  .ccm-pastille, .ccm-parcours, .ac-b, .rc-atouts li, .annuaire-cartes .ac a, .encart-besoin, .tp-appel, .tuile, .formation-carte, .guide-carte, .faq-bloc) {
+  border-radius: 12px !important; box-shadow: 0 1px 2px rgba(23, 25, 29, .04) !important; }
+body:not(.en-app) :is(.cb, .ccm-parcours) { padding: 24px 26px; }
+body:not(.en-app) :is(.ac-carte, .ac-b, .cb-carte) { padding: 18px 20px; }
+body:not(.en-app) .session { box-shadow: none; }
+body:not(.en-app) :is(.tp-carte, .ac a):hover { box-shadow: 0 8px 22px -16px rgba(23, 25, 29, .35) !important; }
+/* les gros chiffres et avatars */
+body:not(.en-app) .tp-avatar { width: 64px; height: 64px; font-size: 26px; }
+body:not(.en-app) .ac-initiales { font-size: 2.6rem; }
+body:not(.en-app) .etape-noeud { font-size: 1.2rem; }
