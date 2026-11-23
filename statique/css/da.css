@@ -1172,3 +1172,42 @@ body.en-app .as-onglets:not([hidden]) { -webkit-mask-image: linear-gradient(90de
   body.en-app .carte-icone svg { width: 20px; height: 20px; margin-bottom: 6px; }
   body.en-app .carte-icone small, body.en-app .pastille-choix small { font-size: .78rem; }
 }
+
+/* ---- Fiche et profil en modification : une page de réglages ----
+   à gauche, le plan des parties (remplie / à compléter, et combien sont complètes) et, dessous, l'aperçu de la carte ;
+   à droite, le formulaire sur toute la largeur. Les onglets du haut ne servent plus que sur mobile. */
+@media (min-width: 901px) {
+  body.en-app .assistant:not(.as-parcours) { grid-template-columns: 270px minmax(0, 1fr); grid-template-areas: "plan corps" "cote corps"; gap: 16px 20px; }
+  body.en-app .assistant:not(.as-parcours) > .as-plan { grid-area: plan; display: flex; flex-direction: column; gap: 2px; padding: 18px 16px 14px; background: rgba(255, 255, 255, .86); border: 1px solid rgba(23, 25, 29, .08); border-radius: 14px; }
+  body.en-app .assistant:not(.as-parcours) > .as-plan[hidden] { display: none; }
+  body.en-app .assistant:not(.as-parcours) > .assistant-corps { grid-area: corps; padding: 26px 30px 22px; }
+  body.en-app .assistant:not(.as-parcours) > .assistant-cote { grid-area: cote; position: static; }
+  body.en-app .assistant:not(.as-parcours) > .assistant-cote > .as-boite + .as-boite { display: none; }
+  body.en-app .assistant:not(.as-parcours) .as-onglets { display: none !important; }
+}
+body.en-app .assistant:not(.as-parcours) .as-plan-sur { margin: 0 0 2px 6px; font: 600 1rem/1.3 var(--titres); color: #17191d; }
+body.en-app .assistant:not(.as-parcours) .as-plan-duree { margin: 0 0 12px 6px; font-size: .84rem; color: #6c7077; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes { margin: 0 0 12px; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes::before { display: none; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes button { gap: 10px; padding: 8px 8px; border-radius: 8px; font-size: .92rem; color: #40444b; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes button:hover { background: rgba(23, 25, 29, .04); }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes button:not(:disabled):hover span { text-decoration: none; color: #17191d; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes i { position: relative; width: 20px; height: 20px; border-width: 1.5px; font-size: 0; background: #fff; border-color: #c9c9cf; box-shadow: none; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .fait i, body.en-app .assistant:not(.as-parcours) .as-plan-etapes .rempli i { background: #2f7a4b; border-color: #2f7a4b; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .fait i::after, body.en-app .assistant:not(.as-parcours) .as-plan-etapes .rempli i::after { content: ""; position: absolute; left: 5px; top: 5px; width: 7px; height: 4px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg); }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .vide i { border-style: dashed; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .fait span, body.en-app .assistant:not(.as-parcours) .as-plan-etapes .vide span { color: #40444b; font-weight: 400; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .vide span::after { content: "à compléter"; margin-left: 6px; font-size: .76rem; color: #b7791f; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .en-cours button { background: #17191d; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .en-cours span { color: #fff; font-weight: 500; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .en-cours i { background: transparent; border-color: rgba(255, 255, 255, .5); }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .en-cours.rempli i { background: #fff; border-color: #fff; }
+body.en-app .assistant:not(.as-parcours) .as-plan-etapes .en-cours.rempli i::after { border-color: #17191d; }
+body.en-app .assistant:not(.as-parcours) .as-conseil { padding: 12px 14px; border-radius: 10px; background: #fafafa; border: 1px solid rgba(23, 25, 29, .07); font-size: .86rem; }
+body.en-app .assistant:not(.as-parcours) .as-conseil b { color: #40444b; letter-spacing: .06em; }
+body.en-app .assistant:not(.as-parcours) .as-conseil b::before { background: #b7791f; }
+body.en-app .assistant:not(.as-parcours) .as-plan-aide { margin: 10px 0 0 6px; font-size: .84rem; }
+@media (max-width: 900px) { body.en-app .assistant:not(.as-parcours) > .as-plan { display: none !important; } }
+body.en-app .assistant:not(.as-parcours) .etape-aide + .cartes-choix, body.en-app .assistant:not(.as-parcours) .etape-aide + .cartes-icones { margin-top: 0; }
+body.en-app .assistant:not(.as-parcours) .as-carte .tp-carte-pied { flex-wrap: wrap; gap: 6px; }
+body.en-app .assistant:not(.as-parcours) .as-carte .tp-carte-haut { height: 110px; }

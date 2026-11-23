@@ -844,8 +844,14 @@
       var actif = nav.children[n]; if (actif && !nav.hidden) nav.scrollTo({ left: Math.max(0, actif.offsetLeft - 40), behavior: "smooth" });  // l'onglet en cours reste visible
       bloc.querySelector(".as-n").textContent = creation ? "Étape " + (n + 1) + " sur " + etapes.length : (bloc.id === "bloc-profil" ? "Mon profil" : "Ma fiche");
       plusLoin = Math.max(plusLoin, n);
+      // en modification : chaque partie dit si elle est remplie, et le plan compte les parties complètes
+      if (!creation) {
+        var pleines = etapes.filter(function (f, k) { return rempli(k); }).length;
+        plan.children[0].textContent = bloc.id === "bloc-profil" ? "Votre profil" : "Votre fiche";
+        plan.children[1].textContent = pleines + " partie" + (pleines > 1 ? "s" : "") + " sur " + etapes.length + " remplie" + (pleines > 1 ? "s" : "");
+      }
       points.forEach(function (li, k) {
-        li.className = k === n ? "en-cours" : k <= plusLoin ? "fait" : "";
+        li.className = k === n ? "en-cours" + (!creation && rempli(k) ? " rempli" : "") : !creation ? (rempli(k) ? "fait" : "vide") : k <= plusLoin ? "fait" : "";
         li.firstChild.disabled = k > plusLoin;
         if (k === n) li.firstChild.setAttribute("aria-current", "step"); else li.firstChild.removeAttribute("aria-current");
       });
@@ -859,6 +865,14 @@
       bloc.querySelector(".as-fin").hidden = !derniere;
       bloc.querySelector(".as-enregistrer").hidden = creation || derniere;
       if (quandChange) quandChange();
+    }
+    // une partie est « remplie » si au moins un de ses champs a une valeur (case cochée, texte, choix)
+    function rempli(k) {
+      return Array.prototype.some.call(etapes[k].querySelectorAll("input, select, textarea"), function (c) {
+        if (c.type === "hidden" || c.type === "file" || c.type === "button" || c.type === "submit") return false;
+        if (c.type === "checkbox" || c.type === "radio") return c.checked;
+        return String(c.value || "").trim() !== "";
+      });
     }
     // les champs de l'étape sont-ils bons ? (le navigateur montre le premier problème)
     function valide(i) {
@@ -883,12 +897,14 @@
         }
       }
     }, true);
-    form.addEventListener("input", function () { if (quandChange) quandChange(); });
-    form.addEventListener("change", function () { if (quandChange) quandChange(); });
+    function majPlan() { if (!creation) points.forEach(function (li, k) { if (k !== n) li.className = rempli(k) ? "fait" : "vide"; else li.classList.toggle("rempli", rempli(k)); }); }
+    form.addEventListener("input", function () { majPlan(); if (quandChange) quandChange(); });
+    form.addEventListener("change", function () { majPlan(); if (quandChange) quandChange(); });
     return {
       ouvrir: function (enCreation) {
-        creation = enCreation; plusLoin = 0; nav.hidden = creation; bloc.querySelector(".as-duree").hidden = !creation;
-        plan.hidden = !creation;
+        creation = enCreation; plusLoin = creation ? 0 : etapes.length - 1; nav.hidden = creation; bloc.querySelector(".as-duree").hidden = !creation;
+        plan.hidden = false;  // en modification aussi : le plan des parties, à gauche (les onglets restent pour le mobile)
+        if (creation) { plan.children[0].textContent = bloc.id === "bloc-profil" ? "Votre profil d'animateur" : "Votre fiche structure"; plan.children[1].textContent = etapes.length + " étapes · " + (bloc.querySelector(".as-duree") || {}).textContent.replace(/^Environ/, "environ"); }
         bloc.classList.toggle("as-parcours", creation);
         aller(0);
         majParcours();
