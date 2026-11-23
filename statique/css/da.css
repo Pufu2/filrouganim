@@ -594,3 +594,32 @@ body.en-app .ap-lien-b.ap-danger { color: #b42318; }
 /* /recruter/ : l'annuaire des structures, les abonnées (« Partenaire ») en tête et mises en avant */
 .ac-partenaire a { border-color: var(--fil); box-shadow: 0 0 0 1px var(--fil), 0 22px 40px -30px rgba(214, 31, 53, .55); }
 .ac-une { background: var(--fil); color: #fff; }
+
+/* /trouver-un-poste/offres/ : les animateurs inscrits 4 par 4, sur toute la largeur de la page */
+#animateurs-of { max-width: none; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+#animateurs-of .tp-carte-haut { height: 170px; padding-top: 14px; }
+#animateurs-of .tp-avatar { width: 76px; height: 76px; font-size: 32px; }
+#animateurs-of .tp-carte-corps { padding: 16px 18px 4px; }
+#animateurs-of .tp-carte-corps h2 { font-size: 1.2rem; }
+#animateurs-of .tp-carte-pied { padding: 12px 18px 16px; flex-wrap: wrap; }
+/* /recruter/ : les structures 4 par 4, en cartes plus compactes */
+.rc-annuaire .annuaire-cartes { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.rc-annuaire .ac-image { aspect-ratio: 16 / 9; }
+.rc-annuaire .ac-initiales { font-size: 2.6rem; }
+.rc-annuaire .ac-type { bottom: 10px; font-size: .66rem; }
+.rc-annuaire .ac-corps { padding: 14px 16px 4px; }
+.rc-annuaire .ac-nom { font-size: 1.12rem; }
+.rc-annuaire .ac-lieu { font-size: .9rem; }
+.rc-annuaire .ac-pied { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 16px 14px; font-size: .85rem; }
+@media (max-width: 1100px) { #animateurs-of, .rc-annuaire .annuaire-cartes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 820px) { #animateurs-of, .rc-annuaire .annuaire-cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { #animateurs-of, .rc-annuaire .annuaire-cartes { grid-template-columns: minmax(0, 1fr); } }
+
+/* /se-former/sessions/ : plus de grand encadré sombre sans image ; chaque session dans une carte blanche, le diplôme en pastille */
+.res-airbnb .s-date, .res-airbnb .session::after { display: none; }
+.res-airbnb .sessions { gap: 16px; }
+.res-airbnb .session { grid-template-areas: "badge badge" "corps corps" "prix lien"; align-content: start; padding: 14px 16px; background: #fff;
+  border: 1px solid #e4e4e7; border-radius: 14px; box-shadow: 0 10px 24px -22px rgba(23, 25, 29, .55); transition: border-color .15s; }
+.res-airbnb .session:hover { border-color: var(--nuit); }
+.res-airbnb .session::before { grid-area: badge; position: static; justify-self: start; margin: 0 0 10px; background: var(--nuit); color: #fff; box-shadow: none; }
+.res-airbnb .session[data-diplome="BAFA"]::before { background: var(--fil); }
