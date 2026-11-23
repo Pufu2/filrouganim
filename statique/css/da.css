@@ -852,3 +852,41 @@ body:not(.en-app) :is(.tp-carte, .ac a):hover { box-shadow: 0 8px 22px -16px rgb
 body:not(.en-app) .tp-avatar { width: 64px; height: 64px; font-size: 26px; }
 body:not(.en-app) .ac-initiales { font-size: 2.6rem; }
 body:not(.en-app) .etape-noeud { font-size: 1.2rem; }
+
+/* ---- Mon espace et admin : l'ambiance du site sur toute la page (maquette « fond 4 », 24/11/2026) ----
+   Une brume de halos très doux sur toute la fenêtre (anthracite en haut à gauche, rouge du fil en haut à droite, gris en bas),
+   fixe pendant le défilement ; le menu et les cartes sont légèrement translucides : l'ambiance se sent partout, sans qu'aucun
+   élément soit coloré. L'admin a la même ambiance, un peu plus marquée. */
+body.en-app { background:
+  radial-gradient(ellipse 900px 700px at 0% 0%, rgba(23, 25, 29, .16), transparent 70%),
+  radial-gradient(ellipse 800px 560px at 100% 0%, rgba(214, 31, 53, .14), transparent 70%),
+  radial-gradient(ellipse 900px 620px at 100% 100%, rgba(23, 25, 29, .10), transparent 70%),
+  radial-gradient(ellipse 700px 500px at 30% 100%, rgba(120, 125, 135, .12), transparent 70%),
+  #f2f2f3 !important; background-attachment: fixed !important; }
+body.en-app.admin-large { background:
+  radial-gradient(ellipse 950px 740px at 0% 0%, rgba(23, 25, 29, .26), transparent 70%),
+  radial-gradient(ellipse 860px 600px at 100% 0%, rgba(214, 31, 53, .22), transparent 70%),
+  radial-gradient(ellipse 950px 660px at 100% 100%, rgba(23, 25, 29, .16), transparent 70%),
+  radial-gradient(ellipse 760px 520px at 30% 100%, rgba(214, 31, 53, .07), transparent 70%),
+  #efeff1 !important; background-attachment: fixed !important; }
+body.en-app .bande-papier, body.en-app #espace-compte, body.en-app .app-barre, body.en-app #app-barre { background: transparent !important; }
+body.en-app .app-barre, body.en-app #app-barre { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* le menu en verre dépoli */
+body.en-app .co-onglets > .co-nav { background: rgba(255, 255, 255, .62) !important; -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  box-shadow: 0 1px 2px rgba(23, 25, 29, .05), 0 10px 30px -20px rgba(23, 25, 29, .35); }
+body.en-app .co-nav [data-onglet-vers]:hover { background: rgba(23, 25, 29, .05); }
+body.en-app .co-nav [data-onglet-vers][aria-current], body.en-app #v-admin .co-nav [data-onglet-vers][aria-current] { background: rgba(23, 25, 29, .07); }
+body.en-app .co-marque, body.en-app .co-moi, body.en-app .co-nav .co-groupe { border-color: rgba(23, 25, 29, .07); }
+body.en-app .co-nav .co-groupe { background: rgba(23, 25, 29, .07); }
+body.en-app #v-admin .co-nav .co-groupe { background: none; }
+body.en-app #co-bascule { background: rgba(23, 25, 29, .05); }
+/* les cartes, légèrement translucides : la lumière du fond passe */
+body.en-app :is(.carte-compte, .ap-carte, .og-carte, .tb-carte, .ap-boite, .ap-qg-item, .ap-table-boite, .ap-kpi, .co-entete, .og-hero, .ap-hero, .tuile,
+  .ap-pro, .ad-ligne, #v-admin > .ad-bloc) { background: rgba(255, 255, 255, .84) !important; border-color: rgba(23, 25, 29, .08) !important; }
+body.en-app :is(.co-e-resume, .og-hero-cote, .ap-hero-cote, .tb-tuile, .tb-chiffre, .tb-conseil, .ap-res, .ap-etape) { background: rgba(23, 25, 29, .035) !important; }
+/* la bascule entre espaces : une liste verticale fixe (avant, les liens se rangeaient au fil du texte et « Espace parent »
+   changeait de ligne selon l'espace ouvert) */
+body.en-app #co-bascule { display: flex; flex-direction: column; flex-wrap: nowrap; gap: 1px; padding: 6px; }
+body.en-app #co-bascule span { padding: 2px 7px 4px; }
+body.en-app #co-bascule a, body.en-app #co-bascule a[aria-current] { display: block; width: 100%; padding: 4px 8px; font-weight: 400; line-height: 1.35; }
+body.en-app #co-bascule a[aria-current] { font-weight: 500; }
