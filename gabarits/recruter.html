@@ -4,6 +4,21 @@
    le haut foncé, la bande de l'offre fondateurs, les cartes d'exemple (page structure et profil de candidat), puis le détail. #}
 {% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
 {% set st = EXEMPLES.structure %}
+{# la carte d'une structure dans l'annuaire : les abonnées (en tête de liste) portent l'étiquette « Partenaire » #}
+{% macro carte(st, url, exemple=False) %}
+{% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
+<li class="ac{% if st.abonnee %} ac-partenaire{% endif %} theme-{{ st.couleur or 'rouge' }}" data-type="{{ familles_structure(st) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }} {{ nature_structure(st) }}">
+  <a href="{{ url }}">
+    <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ nature_structure(st) }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% elif st.abonnee %}<span class="ac-exemple ac-une">Partenaire</span>{% endif %}</span>
+    <span class="ac-corps">
+      <b class="ac-nom">{{ st.nom }}</b>
+      <span class="ac-lieu">{{ st.ville }} · {{ departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first }}</span>
+      <span class="ac-details">{% if ages_structure(st) %}{{ ages_structure(st) | capitalize }}{% for p in st.publics or [] if p in ["handicap", "familles"] %} · {{ PUBLICS.get(p, p) }}{% endfor %}{% elif st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
+    </span>
+    <span class="ac-pied"><span>{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Pas d'offre en ce moment{% endif %}</span><span class="ac-voir">Voir la fiche <span aria-hidden="true">→</span></span></span>
+  </a>
+</li>
+{% endmacro %}
 {% set creer = lien('/compte/') ~ '?inscription=1&role=structure' %}
 {% block tete_note %}<p class="tp-sur">Structures · votre page, vos offres, les candidats</p>{% endblock %}
 {% block h1 %}Recrutez et faites-vous <em>connaître</em>{% endblock %}
@@ -20,27 +35,40 @@
   </div>
 </div></div>
 
-<section class="bande bande-papier tp-cartes-bande" aria-label="Exemple de page structure">
+<section class="bande bande-papier rc-annuaire" id="structures" aria-labelledby="t-structures">
   <div class="cadre">
-    <ul class="tp-cartes">
-      {% if st %}
-      {% set _m = st.nom.replace("L'", "").replace("’", " ").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et", "d", "l"]) | list %}
-      <li class="tp-carte tp-carte-exemple">
-        <a class="tp-carte-haut rc-carte-structure theme-{{ st.couleur or 'rouge' }}" href="{{ lien('/recruter/exemple-de-page-structure/') }}" tabindex="-1" aria-hidden="true">
-          <span class="tp-avatar">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span>
-          <span class="tp-badge-exemple">Exemple de page structure</span>
-        </a>
-        <div class="tp-carte-corps">
-          <h2><a href="{{ lien('/recruter/exemple-de-page-structure/') }}">{{ st.nom }}</a></h2>
-          <p class="tp-carte-lieu">{{ TYPES_STRUCTURE.get(st.type, "Structure") }} · {{ st.ville }} ({{ st.departement }})</p>
-          <p class="tp-carte-detail">{{ st.offres | length }} offre{{ 's' if st.offres | length > 1 }} en ce moment · {% for x in st.publics %}{{ PUBLICS.get(x, x) }}{{ " · " if not loop.last }}{% endfor %}</p>
-        </div>
-        <div class="tp-carte-pied"><span class="tp-carte-note">Ce que voient les candidats</span><a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir la page <span aria-hidden="true">→</span></a></div>
-      </li>
-      {% endif %}
+    <div class="rc-annuaire-tete">
+      <h2 id="t-structures" class="rc-titre-cartes">Les structures qui <em>recrutent</em></h2>
+      <form class="annuaire-recherche" role="search" aria-label="Chercher une structure" onsubmit="return false">
+        <label class="champ-ou" for="q-structures">{{ m.icone("lieu") }}<span class="sr">Où cherchez-vous ?</span><input id="q-structures" type="search" placeholder="Où ? Ville, département : Lyon, 93, Gironde…" autocomplete="off" data-villes data-villes-valeur="nom"></label>
+      </form>
+    </div>
+    <ul class="annuaire-cartes" id="annuaire">
+    {% for x in annuaire_structures %}{{ carte(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
+    {% if not annuaire_structures and st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
     </ul>
+    <p class="aucune" id="annuaire-vide" hidden>Aucune structure inscrite dans ce secteur pour l'instant. <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous cherchez</a> : votre demande attend, et part dès qu'une structure de votre secteur s'inscrit.</p>
   </div>
 </section>
+<script>
+(function () {
+  var q = document.getElementById("q-structures"), cartes = document.querySelectorAll("#annuaire .ac"), vide = document.getElementById("annuaire-vide");
+  var sa = function (t) { return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); };
+  var ps = new URLSearchParams(location.search), type = ps.get("type") || "";
+  function filtrer() {
+    var mots = sa(q.value).replace(/[(),]/g, " ").split(/\s+/).filter(Boolean), n = 0;
+    Array.prototype.forEach.call(cartes, function (c) {
+      if (c.querySelector(".ac-exemple")) return;   // l'exemple reste visible tant qu'il n'y a pas de vraie structure
+      var ok = (!type || (" " + c.dataset.type + " ").indexOf(" " + type + " ") !== -1) && mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; });
+      c.hidden = !ok; if (ok) n++;
+    });
+    vide.hidden = n > 0 || !(mots.length || type);
+  }
+  q.addEventListener("input", filtrer);
+  if (ps.get("ou")) q.value = ps.get("ou");
+  if (ps.get("ou") || type) filtrer();
+})();
+</script>
 
 <section class="bande bande-papier"><div class="cadre"><div class="tp-bande">
   <p><b>Avec l'abonnement</b> : les demandes des animateurs de votre secteur arrivent chez vous ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; vos offres illimitées et « à la une » ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » ; la boîte à outils (guides, générateur d'annonce, budget de l'équipe). Vous recrutez juste pour une saison ? <b>Pass recrutement : {{ site.abonnement.pass_mois_prix }} par mois</b>, de 1 à {{ site.abonnement.pass_mois_max }} mois, payé une fois.</p>

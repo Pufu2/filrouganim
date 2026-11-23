@@ -998,3 +998,49 @@ end $$;
 
 revoke all on function public.ranger_cle_stripe(text), public.cle_stripe(), public.prevenir_admin_paiements(), public.stripe_paiement(jsonb, jsonb) from public, anon, authenticated;
 grant execute on function public.ranger_cle_stripe(text), public.cle_stripe(), public.stripe_paiement(jsonb, jsonb) to service_role;
+
+-- v44 (23/11/2026) : l'e-mail « Nouvelle demande » part tout de suite chez chaque structure qui reçoit la demande d'un
+-- animateur (à l'envoi, à un relais quand une structure arrive dans la zone, à une transmission par l'admin), au lieu
+-- d'attendre le robot de GitHub. Même texte que outils/abonnements.py (demandes), qui reste en filet de sécurité :
+-- une structure n'est notée dans « notifiees » que si l'e-mail est vraiment parti.
+create or replace function public.prevenir_demande() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  sid uuid; st record; envoyees uuid[] := coalesce(new.notifiees, '{}'); poste text; quand text; lieu text; sujet text;
+  bouton constant text := 'display:inline-block;background:#d61f35;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold';
+begin
+  poste := case new.poste when 'animateur-stagiaire' then 'Stage pratique BAFA' when 'animateur' then 'Animateur ou animatrice'
+    when 'directeur' then 'Direction ou adjoint' when 'surveillant-baignade' then 'Surveillance de baignade'
+    when 'directeur-adjoint' then 'Direction adjointe' when 'autre' then 'Autre poste' else new.poste end;
+  quand := array_to_string(array(select case p when 'ete' then 'l''été' when 'petites-vacances' then 'les petites vacances'
+    when 'mercredis' then 'les mercredis' when 'periscolaire' then 'le périscolaire' when 'annee' then 'toute l''année' else p end
+    from unnest(coalesce(new.periodes, '{}')) p), ', ');
+  lieu := coalesce(new.ville || ', ', '') || new.departement || case when new.partout then ' · partout en France' else '' end;
+  sujet := 'Nouvelle demande : ' || poste || ', ' || lieu;
+  foreach sid in array coalesce(new.destinataires, '{}') loop
+    continue when sid = any(envoyees);
+    select nom, email_contact into st from public.structures where id = sid;
+    continue when st.email_contact is null;
+    if public.envoyer_mail(st.email_contact, sujet,
+         'Bonjour,' || E'\n\n' || coalesce(new.prenom, 'Un animateur') || ' cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug''Anim :' || E'\n\n'
+         || poste || E'\n' || lieu || case when quand <> '' then ' · ' || quand else '' end || E'\n\n'
+         || 'Elle n''est envoyée qu''à 3 structures au plus. Lisez-la et répondez directement depuis votre espace : https://filrouganim.fr/compte/' || E'\n\nL''équipe Fil Roug''Anim',
+         '<p>Bonjour,</p><p><b>' || public.html_txt(coalesce(new.prenom, 'Un animateur')) || '</b> cherche un poste près de chez vous et sa demande vous est arrivée sur Fil Roug''Anim :</p>'
+         || '<p style="padding:12px 16px;border-left:3px solid #d61f35;background:#fbf8f2"><b>' || public.html_txt(poste) || '</b><br>'
+         || public.html_txt(lieu) || case when quand <> '' then ' · ' || public.html_txt(quand) else '' end || '</p>'
+         || '<p>Elle n''est envoyée qu''à 3 structures au plus. Lisez-la et répondez directement :</p>'
+         || '<p><a href="https://filrouganim.fr/compte/" style="' || bouton || '">Voir la demande</a></p>'
+         || '<p style="color:#6b6264;font-size:13px">Fil Roug''Anim · filrouganim.fr</p>') then
+      envoyees := array_append(envoyees, sid);
+    end if;
+  end loop;
+  if envoyees is distinct from coalesce(new.notifiees, '{}') then
+    update public.demandes set notifiees = envoyees where id = new.id;
+  end if;
+  return null;
+exception when others then return null;   -- un e-mail qui ne part pas ne bloque jamais la demande : le robot réessaiera
+end $$;
+revoke all on function public.prevenir_demande() from public, anon, authenticated;
+drop trigger if exists prevenir_demande on public.demandes;
+create trigger prevenir_demande after insert or update of destinataires on public.demandes
+  for each row when (cardinality(new.destinataires) > 0) execute function public.prevenir_demande();

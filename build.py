@@ -1707,7 +1707,7 @@ class Site:
                      fil=[("Animateurs & directeurs", "/trouver-un-poste/offres/"), ("Décrire ce que je cherche", "/trouver-un-poste/demande/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
         TP = ("Animateurs & directeurs", "/trouver-un-poste/offres/")
-        STR = ("Les structures", "/trouver-un-poste/structures/")
+        STR = ("Structures", "/recruter/")   # l'annuaire des structures est sur /recruter/
         structures = self.structures_en_ligne()
         # les places fondatrices qui restent : comptées dans la base (structures qui ont payé au tarif fondateur)
         places = self.lire_supabase("rpc/places_fondatrices", "places fondatrices")
@@ -1725,7 +1725,7 @@ class Site:
                 c["offres"] = [o for o in st["offres"] if o.get("centre_id") == c["id"]]
             self.ajouter(url, "structure.html", titre=f"{st['nom']} : {TYPES_STRUCTURE.get(st['type'], 'structure')} à {st['ville']}",
                          description=(st.get("accroche") or f"{st['nom']}, {TYPES_STRUCTURE.get(st['type'], 'structure d animation').lower()} à {st['ville']}") + " Ses offres de stages et de jobs d'animation.",
-                         structure=st, point=self.point_structure(st), fil=[TP, STR, (st["nom"], url)])
+                         structure=st, point=self.point_structure(st), fil=[STR, (st["nom"], url)])
             for c in st["centres"]:
                 # la page d'un centre : ses informations, et pour le reste (projet, couleur, logo, ce qu'on offre à l'équipe) celles de la structure
                 cst = dict(st, **{k: v for k, v in c.items() if v not in (None, [], "")}, offres=c["offres"], centres=[],
@@ -1733,12 +1733,11 @@ class Site:
                 cst["type"] = c.get("type") or st["type"]
                 self.ajouter(c["url"], "structure.html", titre=f"{c['nom']} ({st['nom']}) : {TYPES_STRUCTURE.get(cst['type'], 'structure')} à {c['ville']}",
                              description=(c.get("accroche") or f"{c['nom']}, un centre de {st['nom']} à {c['ville']}.") + " Ses offres de stages et de jobs d'animation.",
-                             structure=cst, point=self.point_structure(cst), fil=[TP, STR, (st["nom"], url), (c["nom"], c["url"])])
+                             structure=cst, point=self.point_structure(cst), fil=[STR, (st["nom"], url), (c["nom"], c["url"])])
         ex = self.donnees.get("exemples", {})
-        self.ajouter("/trouver-un-poste/structures/", "structures.html", titre="Les structures d'animation qui recrutent",
-                     description="Les centres de loisirs, organisateurs de séjours et associations d'animation inscrits et vérifiés : leur projet, leurs publics et leurs offres.",
-                     h1="Les structures qui recrutent", structures=structures, indexer=bool(structures), fil=[TP, STR],
-                     exemple=dict(ex["structure"], exemple=True) if ex.get("structure") else None)
+        # l'annuaire des structures est sur /recruter/ (les abonnées en tête) : l'ancienne page y renvoie
+        self.annuaire_structures = structures
+        self.ajouter("/trouver-un-poste/structures/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/#structures")
         if ex.get("structure"):
             st = dict(ex["structure"], exemple=True)
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]
@@ -2085,7 +2084,7 @@ class Site:
                           "texte": f"📖 {a['titre']}\n\n{a.get('resume') or a.get('description') or ''}\n\nÀ lire sur le blog 👉", "lien": a["url"]})
         idees.append({"cle": f"recruter-{cle}", "titre": "Pour les structures qui recrutent", "pour": "structures",
                       "texte": "🧭 Vous cherchez des animateurs pour les vacances ? Sur Fil Roug'Anim, ce sont les animateurs qui décrivent le poste qu'ils cherchent : leur demande arrive directement chez les structures les plus proches. Créez la page de votre structure 👉",
-                      "lien": "/trouver-un-poste/structures/"})
+                      "lien": "/recruter/"})
         idees.append({"cle": f"demande-{cle}", "titre": "Pour les animateurs qui cherchent un poste", "pour": "animateurs",
                       "texte": "✋ Animateur, stagiaire BAFA ou directeur ? Décrivez en 2 minutes le poste que vous cherchez (quand, où, quel public) : votre demande part chez les structures les plus proches de chez vous. Gratuit 👉",
                       "lien": "/trouver-un-poste/demande/"})
@@ -2872,7 +2871,7 @@ class Site:
             "periodes": self.periodes, "types": self.types, "regions": list(self.regions.values()),
             "themes_appro": getattr(self, "themes_appro", []), "recherches": self.recherches_frequentes(), "pc": self.panneau_chiffres(), "cd": self.chiffres_detail(), "cp": self.chiffres_page(), "MOIS_COURTS_FR": MOIS_COURTS,
             "c": self.chiffres_blog(), "articles": getattr(self, "articles", []), "mois_pages": getattr(self, "mois_pages", {}),
-            "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui,
+            "annee": self.aujourdhui.year, "aujourdhui": self.aujourdhui, "annuaire_structures": getattr(self, "annuaire_structures", []),
             "url_complete": self.config["url"].rstrip("/") + url_page.replace("index.html", ""),
             "fil_jsonld": json_ld({"@context": "https://schema.org", "@type": "BreadcrumbList",
                                    "itemListElement": [

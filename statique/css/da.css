@@ -590,3 +590,12 @@ body.en-app .ap-lien-b.ap-danger { color: #b42318; }
 
 /* /enfants/ : les aides pour partir sur une seule ligne (ordinateur) */
 @media (min-width: 1001px) { .sjc-aides ul { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
+/* /recruter/ : l'annuaire des structures, les abonnées (« Partenaire ») en tête et mises en avant */
+.rc-annuaire-tete { display: flex; align-items: center; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; margin: 0 0 22px; }
+.rc-annuaire-tete .rc-titre-cartes { margin: 0; }
+.rc-annuaire-tete .annuaire-recherche { flex: 0 1 460px; display: flex; }
+.rc-annuaire-tete .champ-ou { height: 54px; border-radius: 14px; box-shadow: none; }
+.ac-partenaire a { border-color: var(--fil); box-shadow: 0 0 0 1px var(--fil), 0 22px 40px -30px rgba(214, 31, 53, .55); }
+.ac-une { background: var(--fil); color: #fff; }
+.rc-annuaire .aucune { margin-top: 16px; }
