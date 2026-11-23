@@ -9,7 +9,7 @@
   <section class="gd-bloc">
     <h3>Bien démarrer en 5 étapes</h3>
     <ol class="gd-etapes">
-      <li><b>Remplissez votre fiche</b><span>Dans « Ma page » : présentation, projet pédagogique, publics accueillis, photos, logo et ce que vous offrez à l'équipe. Une fiche complète inspire confiance et attire plus de candidats.</span></li>
+      <li><b>Remplissez votre fiche</b><span>Dans « Ma page et mes centres » : présentation, projet pédagogique, publics accueillis, photos, logo et ce que vous offrez à l'équipe. Une fiche complète inspire confiance et attire plus de candidats.</span></li>
       <li><b>Indiquez votre identifiant</b><span>SIRET, numéro RNA ou numéro de déclaration de l'accueil : nous vérifions chaque structure à la main, en général sous 2 jours ouvrés.</span></li>
       <li><b>Votre page passe en ligne</b><span>Dès la vérification, votre page est visible sur le site et vous recevez un e-mail de bienvenue avec les animateurs qui cherchent déjà près de chez vous.</span></li>
       <li><b>Publiez une offre</b><span>Votre première offre est gratuite : stage pratique BAFA, job d'été, poste à l'année. Elle paraît sur le site et dans l'alerte du lundi des animateurs de votre secteur.</span></li>
@@ -20,18 +20,26 @@
   <div class="gd-rubriques">
     <section class="gd-r">
       <h3>Tableau de bord</h3>
-      <p>Votre recrutement en un coup d'œil : les vues de votre page, vos offres en ligne, les candidatures et ce qu'il reste à faire. Commencez chaque visite par ici.</p>
+      <p>Trois zones, dans l'ordre : « À faire » (seulement ce qui attend une action, avec un lien direct), vos 4 chiffres clés, puis l'activité récente (candidatures, demandes, offres). Commencez chaque visite par ici.</p>
       <button type="button" class="gd-aller" data-onglet-vers="tableau">Ouvrir le tableau de bord →</button>
     </section>
     <section class="gd-r">
-      <h3>Candidats</h3>
-      <p>Deux listes au même endroit : les candidatures reçues sur vos offres, et les profils des animateurs qui cherchent près de chez vous.</p>
+      <h3>Candidatures</h3>
+      <p>Les animateurs qui ont postulé à vos offres, avec l'offre concernée et la date.</p>
       <ul>
         <li>Donnez un statut à chaque candidature (vue, retenue, non retenue) : le candidat le voit dans son espace. Répondez-lui vite.</li>
+        <li>Les nouvelles candidatures apparaissent aussi dans le « À faire » de votre tableau de bord.</li>
+      </ul>
+      <button type="button" class="gd-aller" data-onglet-vers="candidats">Voir les candidatures →</button>
+    </section>
+    <section class="gd-r">
+      <h3>Profils du secteur</h3>
+      <p>Les animateurs et directeurs qui cherchent près de chez vous, ou qui peuvent travailler dans votre département, même sans avoir postulé.</p>
+      <ul>
         <li>Mettez les profils qui vous intéressent en favoris pour les retrouver facilement.</li>
         <li>Les fiches complètes (diplômes, expériences, CV, coordonnées) sont réservées aux structures abonnées. Seuls les profils vérifiés par notre équipe y apparaissent.</li>
       </ul>
-      <button type="button" class="gd-aller" data-onglet-vers="candidats">Voir les candidats →</button>
+      <button type="button" class="gd-aller" data-onglet-vers="profils">Voir les profils →</button>
     </section>
     <section class="gd-r">
       <h3>Demandes reçues</h3>
@@ -44,12 +52,12 @@
       <button type="button" class="gd-aller" data-onglet-vers="demandes">Voir les demandes →</button>
     </section>
     <section class="gd-r">
-      <h3>Ma page</h3>
+      <h3>Ma page et mes centres</h3>
       <p>C'est ce que les animateurs et les familles lisent avant de vous contacter. Remplissez-la étape par étape, avec l'aperçu à côté.</p>
       <ul>
         <li>Soignez la présentation et le projet : c'est ce qui donne envie de vous rejoindre.</li>
         <li>Ajoutez des photos et votre logo : une page illustrée est bien plus consultée.</li>
-        <li>Vous avez plusieurs accueils ? Ajoutez vos centres : chacun a sa page, rattachée à la vôtre.</li>
+        <li>Vous avez plusieurs accueils ? Ajoutez vos centres, sous votre fiche : chacun a sa page, rattachée à la vôtre (chaque centre en plus est à moitié prix avec l'abonnement).</li>
       </ul>
       <button type="button" class="gd-aller" data-onglet-vers="page">Modifier ma page →</button>
     </section>
@@ -64,7 +72,7 @@
       <button type="button" class="gd-aller" data-onglet-vers="offres">Gérer mes offres →</button>
     </section>
     <section class="gd-r">
-      <h3>Abonnement et centres</h3>
+      <h3>Abonnement et factures</h3>
       <p>Votre page et une offre restent gratuites. L'abonnement ({{ site.abonnement.prix }} par an, ou {{ site.abonnement.prix_fondateur }} par an à vie pour les {{ site.fondateurs.places }} premières structures) ajoute :</p>
       <ul>
         <li>les demandes des animateurs de votre secteur, dès qu'elles arrivent ;</li>
@@ -81,7 +89,7 @@
       <button type="button" class="gd-aller" data-onglet-vers="outils">Ouvrir la boîte à outils →</button>
     </section>
     <section class="gd-r">
-      <h3>Mes séjours et accueils</h3>
+      <h3>Séjours et accueils</h3>
       <p>Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : publiez-les gratuitement. Ils apparaissent dans « Inscrire mon enfant », là où les familles cherchent.</p>
       <button type="button" class="gd-aller" data-onglet-vers="sejours">Publier un séjour ou un accueil →</button>
     </section>
@@ -100,8 +108,8 @@
     <h3>Questions fréquentes</h3>
     <details><summary>Combien de temps prend la vérification ?</summary><p>En général moins de 2 jours ouvrés. Nous vérifions votre identifiant (SIRET, RNA ou numéro de déclaration) et nous vous prévenons par e-mail dès que votre page est en ligne.</p></details>
     <details><summary>Prenez-vous une commission sur les recrutements ?</summary><p>Non, jamais. Vous payez seulement l'abonnement si vous le choisissez, sans engagement : vous pouvez l'arrêter à tout moment.</p></details>
-    <details><summary>Je ne reçois pas d'e-mail, que faire ?</summary><p>Regardez dans vos courriers indésirables, et vérifiez l'adresse de contact de votre fiche dans « Ma page ». Si le problème continue, écrivez-nous : nous regardons avec vous.</p></details>
-    <details><summary>Comment arrêter mon abonnement ou télécharger une facture ?</summary><p>Depuis « Abonnement et centres », le lien vers votre espace de paiement vous permet de voir vos factures, de changer de carte ou d'arrêter l'abonnement.</p></details>
+    <details><summary>Je ne reçois pas d'e-mail, que faire ?</summary><p>Regardez dans vos courriers indésirables, et vérifiez l'adresse de contact de votre fiche dans « Ma page et mes centres ». Si le problème continue, écrivez-nous : nous regardons avec vous.</p></details>
+    <details><summary>Comment arrêter mon abonnement ou télécharger une facture ?</summary><p>Depuis « Abonnement et factures », le lien vers votre espace de paiement vous permet de voir vos factures, de changer de carte ou d'arrêter l'abonnement.</p></details>
   </section>
   <p class="gd-pied">Une question qui n'est pas ici ? Écrivez-nous à <a href="mailto:{{ site.email }}">{{ site.email }}</a> : nous répondons vite.</p>
 </div>

@@ -25,7 +25,8 @@
 
   /* -- les onglets de « Mon espace » : un menu à gauche (en haut sur téléphone), une partie à la fois -- */
   var VIDES = {
-    "v-structure": { candidats: "Les profils complets des animateurs de votre secteur s'ouvrent avec l'abonnement. Les candidatures à vos offres arrivent dans « Mes offres ».",
+    "v-structure": { candidats: "Pas encore de candidature : publiez une offre (onglet « Mes offres ») pour en recevoir.",
+                     profils: "Les profils des animateurs de votre secteur arrivent ici dès que votre page est en ligne.",
                      demandes: "Les demandes de l'annuaire inversé arrivent ici dès que votre page est en ligne : les animateurs de votre secteur décrivent le poste qu'ils cherchent.",
                      offres: "Enregistrez d'abord votre page (onglet « Ma page ») : vous pourrez ensuite publier vos offres.",
                      abonnement: "Enregistrez d'abord votre page (onglet « Ma page ») : l'abonnement se règle juste après.",
@@ -76,29 +77,31 @@
       if (bientot) afaire.push([bientot, (bientot > 1 ? "offres expirent" : "offre expire") + " cette semaine", "offres"]);
       var nomSt = st.nom || "votre structure";
       return {
-        tableau: { sur: "Tableau de bord", t: "Bonjour, ", em: nomSt, p: "Votre recrutement en un coup d'œil : les vues de votre page, les candidats et ce qu'il reste à faire.",
-                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Publier un séjour ou un accueil", "sejours"], ["Voir les candidats", "candidats"]], guide: ["Réussir son recrutement", "#guide-reussir-son-recrutement"],
-                   resume: { t: "En ce moment", grands: [[enLigne.length, enLigne.length > 1 ? "offres en ligne" : "offre en ligne"], [recues.length, recues.length > 1 ? "candidatures" : "candidature"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
-        page: { sur: "Ma page", t: "Votre page, ", em: "à votre image", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
+        tableau: { sur: "Espace structure", t: "Tableau de bord", em: "", p: nomSt + (st.ville ? " · " + st.ville : "") + (!st.verifiee ? " · vérification en cours" : pageEnLigne(st) ? " · votre page est en ligne" : "") + (paye(st) ? " · abonnée" : " · formule gratuite"),
+                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Publier un séjour ou un accueil", "sejours"]], guide: null,
+                   resume: null },
+        page: { sur: "Espace structure", t: "Ma page et mes centres", em: "", p: "Présentation, projet, photos, avantages : c'est ce que les animateurs lisent avant de postuler.",
                 actions: [["Voir l'aperçu", ".as-voir-fiche", 1]].concat(pageEnLigne(structure) && st.slug && st.page_publique ? [["Ma page en ligne", L.lien_structures + st.slug + "/", 2]] : []), guide: ["Un exemple de page", "/recruter/exemple-de-page-structure/"],
-                resume: { t: "Votre page", jauge: true } },
-        offres: { sur: "Mes offres", t: "Vos offres, ", em: "là où les jeunes cherchent", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
+                resume: null },
+        offres: { sur: "Espace structure", t: "Mes offres", em: "", p: "Elles paraissent sur la page des offres, sur votre page, et dans les alertes du lundi des animateurs de votre secteur.",
                   actions: [["Nouvelle offre", "#nouvelle-offre", 1], ["Écrire mon annonce", "#outil-annonce", 2], ["Publier un séjour ou un accueil", "sejours"]], guide: ["Une annonce qui donne envie", "#guide-reussir-son-recrutement"],
-                  resume: { t: "Vos offres", lignes: bientot ? [[bientot, (bientot > 1 ? "expirent" : "expire") + " dans 7 jours", "offres"]] : [], mini: [[enLigne.length, "en ligne"], [mesOffres.length - enLigne.length, "hors ligne"]] } },
-        candidats: { sur: "Candidats", t: "Les animateurs ", em: "de votre secteur", p: "Les candidatures à vos offres, et les profils des animateurs qui cherchent près de chez vous. Mettez les meilleurs en favoris.",
+                  resume: null },
+        candidats: { sur: "Espace structure", t: "Candidatures", em: "", p: "Les animateurs qui ont postulé à vos offres. Donnez un statut à chacun : il le voit dans son espace.",
                      actions: [], guide: ["Accueillir un stagiaire BAFA", "#guide-accueillir-un-stagiaire-bafa"],
-                     resume: { t: "Candidatures", lignes: nouvelles ? [[nouvelles, nouvelles > 1 ? "nouvelles à lire" : "nouvelle à lire", "candidats"]] : [], vide: "Pas de nouvelle candidature.", mini: [[recues.length, "reçues"], [favoris.length, favoris.length > 1 ? "favoris" : "favori"]] } },
-        demandes: { sur: "Demandes reçues", t: "Ils décrivent leur besoin, ", em: "vous répondez", p: "Les animateurs qui cherchent un poste envoient leur demande aux 3 structures les plus proches. Répondez vite : vous n'êtes que trois.",
-                    actions: [], guide: ["Comment ça marche", "/trouver-un-poste/demande/"],
-                    resume: { t: "Demandes", mini: [[demandesRecues.length, demandesRecues.length > 1 ? "reçues" : "reçue"]] } },
-        abonnement: { sur: "Abonnement et centres", t: "Votre abonnement, ", em: "sans commission", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
-                      actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
-                      resume: { t: "Abonnement", lignes: structure && !paye(structure) ? [["+", "demandes, profils, offres illimitées", "abonnement"]] : [], vide: structure && st.abonnement_fin ? "Réglé jusqu'au " + dateFr(st.abonnement_fin) + "." : "", mini: [[st.centres_payes || 1, (st.centres_payes || 1) > 1 ? "centres payés" : "centre payé"]] } },
-        sejours: { sur: "Mes séjours", t: "Vos séjours et accueils, ", em: "là où les familles cherchent", p: "Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : publiez-les gratuitement, les familles vous demandent une place.",
+                     resume: null },
+        profils: { sur: "Espace structure", t: "Profils du secteur", em: "", p: "Les animateurs et directeurs qui cherchent près de chez vous ou peuvent y travailler. Mettez les meilleurs en favoris.",
                    actions: [], guide: null, resume: null },
-        familles: { sur: "Demandes des familles", t: "Les familles ", em: "vous demandent une place", p: "Chaque demande arrive ici et par e-mail. Les 2 premières sont complètes gratuitement ; ensuite, l'abonnement ou le Pass recrutement affiche les coordonnées.",
+        demandes: { sur: "Espace structure", t: "Demandes reçues", em: "", p: "Les animateurs qui cherchent un poste envoient leur demande aux 3 structures les plus proches. Répondez vite : vous n'êtes que trois.",
+                    actions: [], guide: ["Comment ça marche", "/trouver-un-poste/demande/"],
+                    resume: null },
+        abonnement: { sur: "Espace structure", t: "Abonnement et factures", em: "", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
+                      actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
+                      resume: null },
+        sejours: { sur: "Espace structure", t: "Séjours et accueils", em: "", p: "Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : publiez-les gratuitement, les familles vous demandent une place.",
+                   actions: [], guide: null, resume: null },
+        familles: { sur: "Espace structure", t: "Demandes des familles", em: "", p: "Chaque demande arrive ici et par e-mail. Les 2 premières sont complètes gratuitement ; ensuite, l'abonnement ou le Pass recrutement affiche les coordonnées.",
                     actions: [], guide: null, resume: null },
-        outils: { sur: "Boîte à outils", t: "Vos outils, ", em: "déjà prêts", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
+        outils: { sur: "Espace structure", t: "Boîte à outils", em: "", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
                   actions: [], guide: null, resume: null }
       }[nom];
     }
@@ -184,6 +187,7 @@
                         : "Commencez par enregistrer votre page : ensuite votre espace s'ouvre.");
     }
     ongletActuel[vue] = nom;
+    if (vue === "v-structure" && nom === "candidats" && typeof aMarquerVues !== "undefined" && aMarquerVues.length) marquerVues();
     Array.prototype.forEach.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) {
       if (b.dataset.ongletVers === nom || (b.dataset.ongletsAussi || "").split(" ").indexOf(nom) >= 0) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
@@ -1144,9 +1148,9 @@
     // les demandes de l'annuaire inversé et la boîte à outils. Sans fiche : seulement « Ma page ».
     var ferme = !paye(structure) && !estAdmin;
     Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
-      var verrou = !estAdmin && b.dataset.ongletVers !== "guide" && (nouveau ? b.dataset.ongletVers !== "page" : ferme && ["demandes", "outils"].indexOf(b.dataset.ongletVers) >= 0);
+      var verrou = !estAdmin && nouveau && ["page", "guide"].indexOf(b.dataset.ongletVers) < 0;
       b.classList.toggle("co-ferme", verrou);
-      b.classList.toggle("co-premium", !nouveau && ferme && verrou);
+      b.classList.toggle("co-premium", !nouveau && ferme && ["demandes", "profils", "outils"].indexOf(b.dataset.ongletVers) >= 0);
       b.setAttribute("aria-disabled", verrou ? "true" : "false");
       b.title = verrou ? (nouveau ? "Enregistrez d'abord votre page" : "Avec l'abonnement") : "";
     });
@@ -1178,6 +1182,12 @@
     $("bloc-centres").hidden = nouveau;
     $("bloc-candidats").hidden = !(actif(structure) || estAdmin);
     $("bloc-candidats-verrou").hidden = nouveau || actif(structure) || estAdmin;
+    $("bloc-demandes-verrou").hidden = nouveau || actif(structure) || estAdmin;
+    if (!nouveau && !actif(structure) && !estAdmin) sb.rpc("demandes_du_secteur").then(function (r) {
+      var n = (r && !r.error && r.data) || 0;
+      $("demandes-verrou-n").textContent = n ? n + (n > 1 ? " animateurs" : " animateur") : "Des animateurs";
+      $("demandes-verrou-t").textContent = n ? (n > 1 ? " ont décrit" : " a décrit") + " le poste qu'ils cherchent dans votre secteur ces 2 derniers mois." : " décrivent le poste qu'ils cherchent près de chez vous.";
+    });
     $("tuiles-structure").hidden = nouveau;
     if (structure) chargerCentres().then(montrerAbonnement);
     else $("bloc-abonnement").hidden = true;
@@ -1942,6 +1952,11 @@
 
   /* -- candidatures reçues par la structure -- */
   var STATUTS = [["envoyee", "Nouvelle"], ["vue", "Vue"], ["retenue", "Retenue"], ["non-retenue", "Non retenue"]];
+  var aMarquerVues = [];
+  function marquerVues() {
+    var l = aMarquerVues.splice(0);
+    l.forEach(function (c) { if (c.statut === "envoyee") sb.from("candidatures").update({ statut: "vue" }).eq("id", c.id).then(function () { c.statut = "vue"; }); });
+  }
   var recues = [];
   async function chargerCandidaturesRecues() {
     var ids = mesOffres.map(function (o) { return o.id; });
@@ -1979,8 +1994,9 @@
       bloc1.appendChild(reponsesTypes(c, offre));
       liste.appendChild(bloc1);
       if (c.statut === "envoyee") {
-        // ouverte par la structure : le candidat voit « vue »
-        sb.from("candidatures").update({ statut: "vue" }).eq("id", c.id).then(function () { c.statut = "vue"; });
+        // vue par la structure seulement quand elle ouvre vraiment la page « Candidatures » : le candidat voit alors « vue »
+        aMarquerVues.push(c);
+        if (ongletActuel["v-structure"] === "candidats") marquerVues();
       }
     });
   }
@@ -2038,6 +2054,7 @@
     pastille("demandes", demandesRecues.length);
     pastille("abonnement", false);   // la formule gratuite n'est pas une alerte
     majVide("v-structure");
+    try { aFaire2(); activite2(); } catch (e) {}
     apercuStructure();
     try { majEntete("v-structure"); } catch (err) {}
   }
@@ -2073,7 +2090,96 @@
     p.textContent = ""; p.className = "tb-etat " + (ok ? "tb-etat-ok" : "tb-etat-alerte");
     p.appendChild(el("span", "tb-etat-ic", ok ? "✓" : "!")); p.appendChild(el("span", null, texte));
   }
+  // le tableau de bord en 3 zones : ce qui attend une action, 4 chiffres, l'activité récente
+  function ilYa(iso) {
+    var j = Math.round((new Date(aujourdhui()) - new Date(String(iso).slice(0, 10))) / 864e5);
+    return j <= 0 ? "aujourd'hui" : j === 1 ? "hier" : j < 30 ? "il y a " + j + " j" : dateFr(String(iso).slice(0, 10));
+  }
+  function lienOnglet(texte, vers) { var b = el("button", "tb2-lien", texte + " →"); b.type = "button"; b.dataset.ongletVers = vers; return b; }
+  function aFaire2() {
+    var box = $("tb2-afaire"); if (!box || !structure) return;
+    box.textContent = "";
+    var st = structure, auj = aujourdhui(), items = [];
+    var enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= auj; });
+    var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; });
+    if (!st.verifiee) items.push(["attente", "Vérification de votre structure en cours", "En général sous 2 jours ouvrés : votre page et votre offre seront en ligne juste après.", null]);
+    if (demandesRecues.length) items.push(["chaud", demandesRecues.length + (demandesRecues.length > 1 ? " demandes d'animateurs reçues" : " demande d'animateur reçue"), "Vous n'êtes que 3 structures au plus à les recevoir : répondez vite.", "demandes", "Lire"]);
+    if (nouvelles.length) items.push(["chaud", nouvelles.length + (nouvelles.length > 1 ? " nouvelles candidatures" : " nouvelle candidature"),
+      nouvelles.slice(0, 3).map(function (c) { return (c.profils && c.profils.prenom) || "Un candidat"; }).join(", ") + " : donnez-leur une réponse.", "candidats", "Voir"]);
+    enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(auj)) / 864e5 <= 7; }).forEach(function (o) {
+      items.push(["alerte", "Votre offre « " + o.intitule + " » expire le " + dateFr(o.expire_le), "Prolongez-la pour qu'elle reste en ligne.", "offres", "Prolonger"]);
+    });
+    if (st.verifiee && !enLigne.length) items.push(["conseil", "Publiez votre première offre", "Elle paraît sur le site et dans l'alerte du lundi des animateurs de votre secteur.", "offres", "Publier"]);
+    var manque = [[!!st.logo, "votre logo"], [(st.photos || []).length >= 3, "3 photos"], [!!(st.projet && st.projet.length > 80), "votre projet"], [!!st.avantages, "ce que vous offrez à l'équipe"], [!!st.presentation, "une présentation"]];
+    var faits = manque.filter(function (m) { return m[0]; }).length;
+    if (faits < manque.length) items.push(["conseil", "Votre page est remplie à " + Math.round(faits / manque.length * 100) + " %",
+      "Ajoutez " + manque.filter(function (m) { return !m[0]; }).map(function (m) { return m[1]; }).slice(0, 2).join(" et ") + " : les pages complètes reçoivent plus de candidatures.", "page", "Compléter"]);
+    if (st.verifiee && !paye(st) && !estAdmin) items.push(["conseil", "Recevez les demandes des animateurs de votre secteur", "Avec l'abonnement ou le Pass recrutement, elles arrivent chez vous, avec leur profil complet.", "abonnement", "Voir"]);
+    $("tb2-nb").textContent = items.length ? items.length + (items.length > 1 ? " actions" : " action") : "";
+    if (!items.length) { box.appendChild(el("p", "tb2-vide", "Rien à faire pour l'instant : tout est à jour.")); return; }
+    items.forEach(function (x) {
+      var l = el("div", "tb2-ligne"); l.appendChild(el("i", "tb2-pt tb2-" + x[0]));
+      var t = el("div"); t.appendChild(el("b", null, x[1])); t.appendChild(el("small", null, x[2])); l.appendChild(t);
+      if (x[3]) l.appendChild(lienOnglet(x[4], x[3]));
+      box.appendChild(l);
+    });
+  }
+  function chiffres2(somme, d0, dA) {
+    var box = $("tb2-chiffres"); if (!box || !structure) return;
+    box.textContent = "";
+    var auj = aujourdhui(), enLigne = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= auj; });
+    var bientot = enLigne.filter(function (o) { return (new Date(o.expire_le) - new Date(auj)) / 864e5 <= 7; }).length;
+    var nouvelles = recues.filter(function (c) { return c.statut === "envoyee"; }).length;
+    function evol(types) { var n = somme(types, d0), p = somme(types, dA, d0); return [n, p ? Math.round((n - p) / p * 100) : null]; }
+    var vp = evol(["page"]), vo = evol(["offre"]);
+    [["Vues de votre page · " + tbJours + " j", vp[0], vp[1]], ["Vues de vos offres · " + tbJours + " j", vo[0], vo[1]],
+     ["Candidatures", recues.length, null, nouvelles ? "dont " + nouvelles + (nouvelles > 1 ? " nouvelles" : " nouvelle") : recues.length ? "toutes lues" : "aucune pour l'instant"],
+     ["Offres en ligne", enLigne.length, null, bientot ? bientot + (bientot > 1 ? " expirent" : " expire") + " cette semaine" : enLigne.length ? "rien n'expire cette semaine" : "la première est gratuite"]
+    ].forEach(function (c) {
+      var d = el("div", "tb2-chiffre"); d.appendChild(el("p", "tb2-l", c[0])); d.appendChild(el("p", "tb2-v", Number(c[1]).toLocaleString("fr-FR")));
+      var sous = el("p", "tb2-s");
+      if (c[3]) sous.textContent = c[3];
+      else if (c[2] !== null) { sous.appendChild(el("span", c[2] >= 0 ? "tb2-hausse" : "tb2-baisse", (c[2] >= 0 ? "+" : "") + c[2] + " %")); sous.appendChild(document.createTextNode(" sur la période d'avant")); }
+      else sous.textContent = pageEnLigne(structure) ? "nouveau" : "dès que votre page est en ligne";
+      d.appendChild(sous); box.appendChild(d);
+    });
+  }
+  function activite2() {
+    var box = $("tb2-activite"); if (!box || !structure) return;
+    box.textContent = "";
+    var auj = aujourdhui(), act = [];
+    var ETAT = { envoyee: ["Nouvelle", "rouge"], vue: ["Vue", "gris"], retenue: ["Retenue", "vert"], "non-retenue": ["Non retenue", "gris"] };
+    recues.forEach(function (c) {
+      var o = mesOffres.filter(function (x) { return x.id === c.offre_id; })[0], p = c.profils || {};
+      act.push({ d: c.cree_le, type: ["Candidature", "gris"], qui: p.prenom || "Un candidat", sous: o ? o.intitule : "", lieu: p.ville ? p.ville + (p.departement ? " (" + p.departement + ")" : "") : (p.departement || ""),
+                 etat: ETAT[c.statut] || [c.statut, "gris"], vers: "candidats", act: "Voir" });
+    });
+    demandesRecues.forEach(function (d) {
+      act.push({ d: d.cree_le, type: ["Demande", "rose"], qui: libelle("postes", d.poste), sous: d.prenom || "", lieu: (d.ville ? d.ville + " " : "") + "(" + d.departement + ")",
+                 etat: ["Reçue", "rouge"], vers: "demandes", act: "Lire" });
+    });
+    mesOffres.forEach(function (o) {
+      var enL = o.publiee && o.expire_le >= auj;
+      act.push({ d: o.cree_le || o.debut, type: ["Offre", "vert"], qui: o.intitule, sous: enL ? "en ligne jusqu'au " + dateFr(o.expire_le) : o.expire_le < auj ? "expirée" : "en pause",
+                 lieu: o.ville ? o.ville + " (" + o.departement + ")" : "", etat: enL ? ["En ligne", "vert"] : ["Hors ligne", "gris"], vers: "offres", act: "Modifier" });
+    });
+    act.sort(function (a, b) { return String(b.d).localeCompare(String(a.d)); });
+    if (!act.length) { box.appendChild(el("p", "tb2-vide", "Pas encore d'activité : publiez une offre pour recevoir vos premières candidatures.")); return; }
+    var t = el("div", "tb2-table");
+    var h = el("div", "tb2-rang tb2-entete"); ["Quoi", "Qui", "Lieu", "Quand", "État", ""].forEach(function (x) { h.appendChild(el("span", null, x)); }); t.appendChild(h);
+    act.slice(0, 6).forEach(function (x) {
+      var r = el("div", "tb2-rang");
+      r.appendChild(el("span", null)).appendChild(el("em", "tb2-tag tb2-tag-" + x.type[1], x.type[0]));
+      var q = el("span", "tb2-qui"); q.appendChild(el("b", null, x.qui)); if (x.sous) q.appendChild(el("small", null, x.sous)); r.appendChild(q);
+      r.appendChild(el("span", "tb2-doux", x.lieu || "")); r.appendChild(el("span", "tb2-doux", ilYa(x.d)));
+      r.appendChild(el("span", null)).appendChild(el("em", "tb2-etat tb2-etat-" + x.etat[1], x.etat[0]));
+      var a = el("span", "tb2-fin"); a.appendChild(lienOnglet(x.act, x.vers)); r.appendChild(a);
+      t.appendChild(r);
+    });
+    box.appendChild(t);
+  }
   function aFaireStructure() {
+    try { aFaire2(); activite2(); } catch (e) {}
     var box = $("tb-tuiles"); if (!box || !structure) return;
     box.textContent = "";
     var auj = aujourdhui();
@@ -2129,6 +2235,7 @@
       g.appendChild(barre);
     }
     g.setAttribute("aria-label", "Vues par jour sur " + J + " jours : " + somme(["page", "offre"], d0) + " au total");
+    try { chiffres2(somme, d0, dA); } catch (e) {}
     var estEnLigne = pageEnLigne(structure);
     $("tb-sous").textContent = estEnLigne ? "Les vues de votre page et de vos offres, et les clics des candidats, sur " + J + " jours." :
       "Les chiffres commencent dès que votre page est en ligne (après notre vérification).";

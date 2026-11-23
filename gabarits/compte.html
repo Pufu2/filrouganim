@@ -339,20 +339,20 @@
   <div class="compte-vue co-onglets" id="v-structure" hidden>
     <nav class="co-nav" data-onglets="structure" aria-label="Mon espace">
       <a class="co-marque" href="{{ lien('/') }}" aria-label="Fil Roug'Anim, retour au site">{% include "svg/logo-titre.svg" %}</a>
-      <p class="co-groupe">Au quotidien</p>
+      <p class="co-groupe">Recruter</p>
       <button type="button" data-onglet-vers="tableau"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Tableau de bord</span><i class="co-pastille" data-pastille="tableau" hidden></i></button>
-      <button type="button" data-onglet-vers="candidats"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Candidats</span><i class="co-pastille" data-pastille="candidats" hidden></i></button>
-      <button type="button" data-onglet-vers="demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Demandes reçues</span><i class="co-pastille" data-pastille="demandes" hidden></i></button>
-      <p class="co-groupe">Ma structure</p>
-      <button type="button" data-onglet-vers="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Ma page</span><i class="co-pastille" data-pastille="page" hidden></i></button>
       <button type="button" data-onglet-vers="offres"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg><span>Mes offres</span><i class="co-pastille" data-pastille="offres" hidden></i></button>
-      <button type="button" data-onglet-vers="abonnement"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span>Abonnement et centres</span><i class="co-pastille" data-pastille="abonnement" hidden></i></button>
-      <p class="co-groupe">Ressources</p>
-      <button type="button" data-onglet-vers="outils"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span>Boîte à outils</span><i class="co-pastille" data-pastille="outils" hidden></i></button>
-      <p class="co-groupe">Pour les familles</p>
-      <button type="button" data-onglet-vers="sejours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/></svg><span>Mes séjours et accueils</span><i class="co-pastille" data-pastille="sejours" hidden></i></button>
+      <button type="button" data-onglet-vers="candidats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg><span>Candidatures</span><i class="co-pastille" data-pastille="candidats" hidden></i></button>
+      <button type="button" data-onglet-vers="demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg><span>Demandes reçues</span><i class="co-pastille" data-pastille="demandes" hidden></i></button>
+      <button type="button" data-onglet-vers="profils"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Profils du secteur</span><i class="co-pastille" data-pastille="profils" hidden></i></button>
+      <p class="co-groupe">Familles</p>
+      <button type="button" data-onglet-vers="sejours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/></svg><span>Séjours et accueils</span><i class="co-pastille" data-pastille="sejours" hidden></i></button>
       <button type="button" data-onglet-vers="familles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="7" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c.7-3.6 3-5.5 6-5.5s5.3 1.9 6 5.5M14 20c.4-2.4 1.6-3.8 3-3.8s2.6 1.4 3 3.8"/></svg><span>Demandes des familles</span><i class="co-pastille" data-pastille="familles" hidden></i></button>
-          <p class="co-groupe">Aide</p>
+      <p class="co-groupe">Ma structure</p>
+      <button type="button" data-onglet-vers="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Ma page et mes centres</span><i class="co-pastille" data-pastille="page" hidden></i></button>
+      <button type="button" data-onglet-vers="abonnement"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span>Abonnement et factures</span><i class="co-pastille" data-pastille="abonnement" hidden></i></button>
+      <button type="button" data-onglet-vers="outils"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span>Boîte à outils</span><i class="co-pastille" data-pastille="outils" hidden></i></button>
+      <p class="co-groupe">Aide</p>
       <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'espace</span></button>
     </nav>
     <section class="co-guide" data-onglet="guide">{% include "guides-espace/structure.html" %}</section>
@@ -377,7 +377,18 @@
     </div>
     <div class="tuiles" id="tuiles-structure" data-onglet="aucun"></div>
 
-    <section class="tb-app" id="bloc-tableau" data-onglet="tableau" hidden aria-label="Tableau de bord">
+    <section class="tb2" id="bloc-tableau" data-onglet="tableau" hidden aria-label="Tableau de bord">
+      <article class="tb2-carte">
+        <div class="tb2-t"><h2>À faire</h2><span id="tb2-nb"></span></div>
+        <div id="tb2-afaire"></div>
+      </article>
+      <div class="tb2-chiffres" id="tb2-chiffres"></div>
+      <article class="tb2-carte tb2-sans-marge">
+        <div class="tb2-t"><h2>Activité récente</h2></div>
+        <div id="tb2-activite"></div>
+      </article>
+      <p class="tb2-aide">Besoin d'aide ? Le <button type="button" data-onglet-vers="guide">guide de l'espace</button> explique chaque rubrique.</p>
+    <div id="tb-anciens" hidden aria-hidden="true">
       <div class="tb-col">
         <article class="tb-carte">
           <h2 class="tb-titre">À faire aujourd'hui</h2>
@@ -413,18 +424,23 @@
           <div id="tb-secteur" class="tb-secteur"></div>
         </article>
       </div>
+    </div>
     </section>
-    <section class="carte-compte co-conseils" id="bloc-conseils" data-onglet="tableau" hidden aria-labelledby="t-conseils">
+    <section class="carte-compte co-conseils" id="bloc-conseils" data-onglet="outils" hidden aria-labelledby="t-conseils">
       <h2 id="t-conseils">Nos conseils pour recruter</h2>
       <p class="petit">Les six qui comptent le plus, avec celui de la semaine en tête.</p>
       <ol class="bo-conseils" id="liste-conseils"></ol>
     </section>
-    <section class="carte-compte co-conseils-verrou" id="bloc-conseils-verrou" data-onglet="tableau" hidden>
+    <section class="carte-compte co-conseils-verrou" id="bloc-conseils-verrou" data-onglet="aucun" hidden>
       <p><b>Les conseils, les guides et les outils pour recruter</b> s'ouvrent avec l'abonnement.</p>
       <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
     </section>
 
 
+    <section class="carte-compte co-conseils-verrou" id="bloc-demandes-verrou" data-onglet="demandes" hidden>
+      <p><b id="demandes-verrou-n">Des animateurs</b> <span id="demandes-verrou-t">décrivent le poste qu'ils cherchent près de chez vous.</span> Avec l'abonnement ou le Pass recrutement, leurs demandes arrivent ici et par e-mail, avec leur profil complet, et vous leur répondez directement.</p>
+      <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
+    </section>
     <div class="carte-compte" id="bloc-demandes-recues" data-onglet="demandes" hidden>
       <h2>Demandes reçues</h2>
       <p class="petit">Des animateurs et des directeurs de votre secteur décrivent le poste qu'ils cherchent : leur demande arrive chez 3 structures au plus. Répondez-leur directement par e-mail.</p>
@@ -553,7 +569,7 @@
       </aside>
     </div>
 
-    <div class="carte-compte" id="bloc-centres" data-onglet="abonnement" hidden>
+    <div class="carte-compte" id="bloc-centres" data-onglet="page" hidden>
       <div class="titre-et-bouton"><h2>Mes centres</h2><button type="button" class="bouton-r" id="nouveau-centre">Ajouter un centre</button></div>
       <p class="petit">Vous gérez plusieurs accueils de loisirs, séjours ou accueils de jeunes ? Chaque centre a sa page et ses offres, et la page de votre structure les regroupe. Chaque centre en plus coûte moitié prix.</p>
       <div id="liste-centres" class="liste-compte"></div>
@@ -606,7 +622,7 @@
       </form>
     </div>
 
-    <div class="carte-compte" id="bloc-candidats" data-onglet="candidats" hidden>
+    <div class="carte-compte" id="bloc-candidats" data-onglet="profils" hidden>
       <h2>Les candidats</h2>
       <form id="f-candidats" class="filtres-candidats">
         <label class="champ"><span>Département</span>{{ select_deps("dep", "Tous", False) }}</label>
@@ -619,7 +635,7 @@
       <p class="petit">Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas. Beaucoup de candidats ont 16 ou 17 ans.</p>
     </div>
 
-    <section class="carte-compte co-conseils-verrou" id="bloc-candidats-verrou" data-onglet="candidats" hidden>
+    <section class="carte-compte co-conseils-verrou" id="bloc-candidats-verrou" data-onglet="profils" hidden>
       <p><b>Les profils complets des animateurs de votre secteur</b> s'ouvrent avec l'abonnement : diplômes, expériences, disponibilités, CV et contact direct. Les candidatures à vos offres, elles, arrivent ici gratuitement.</p>
       <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
     </section>
