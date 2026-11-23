@@ -6,8 +6,9 @@
 
 @font-face { font-family: "Inter"; src: url("../polices/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Inter"; src: url("../polices/inter-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "Inter"; src: url("../polices/inter-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
-@font-face { font-family: "Inter"; src: url("../polices/inter-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+/* un cran plus fin partout (23/11/2026) : le demi-gras (600) prend le dessin de la graisse moyenne, le gras (700) celui du demi-gras */
+@font-face { font-family: "Inter"; src: url("../polices/inter-latin-500-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("../polices/inter-latin-600-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 
 :root {
   --nuit: #17191d;  --nuit-2: #22252b;  --nuit-3: #30333a;
@@ -799,3 +800,24 @@ body.en-app .ap-b-barre { height: 5px; background: #efeff1; }
 body.en-app .ap-b-barre i { background: #3a3d44; }
 body.en-app #espace-compte .ap-pro .ap-bouton { background: #fff !important; color: #17191d !important; border: 1px solid #dcdce0 !important; box-shadow: none !important; font-weight: 500 !important; }
 body.en-app #espace-compte .ap-pro .ap-bouton:hover { border-color: #17191d !important; }
+
+/* ---- Tout le site : un cran plus fin, sans toucher à la DA (23/11/2026) ----
+   Même police (Inter), mêmes couleurs, même mise en page : les graisses sont décalées d'un cran en haut de ce fichier
+   (@font-face), et le pied de page est plus compact. */
+/* le pied de page plus compact : mêmes couleurs, mêmes contenus, moins de place */
+.ft .ft-hero { padding-bottom: 26px; gap: 28px 48px; }
+.ft .ft-cols { gap: 22px 28px; }
+.ft .ft-cat { gap: 7px; }
+.ft .ft-cat a { font-size: 13.5px; line-height: 1.45; }
+.ft .ft-brand { gap: 12px; }
+.ft .ft-brand-desc { font-size: 13.5px; line-height: 1.6; }
+.ft .ft-brand-note { font-size: 12px; }
+.ft .ft-explore { padding: 22px 0; }
+.ft .ft-explore-head { margin-bottom: 12px; }
+.ft .ft-explore-h { font-size: 16px; }
+.ft .ft-tab { padding: 6px 11px; font-size: 12px; }
+.ft .ft-chips { gap: 5px; }
+.ft .ft-chips a { font-size: 12px; padding: 4px 9px; }
+.ft .ft-panel { gap: 7px; }
+.ft .ft-baseline { padding-top: 18px; }
+.ft { padding: 36px 0 24px; }
