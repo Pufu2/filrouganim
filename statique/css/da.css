@@ -779,3 +779,23 @@ body.en-app .co-e-grands b { font-size: 1.3rem; }
 body.en-app #espace-compte input:not([type="checkbox"]):not([type="radio"]), body.en-app #espace-compte select, body.en-app #espace-compte textarea { font-size: 13.5px; }
 /* un compte administrateur ne se supprime pas depuis le site */
 body.est-admin #supprimer, body.est-admin .co-moi-danger { display: none !important; }
+
+/* ---- Mon espace et admin : les derniers éléments appuyés (23/11/2026) ----
+   Boutons répétés sur chaque ligne en contour fin (plus de rouge ou de noir plein), petits titres sans majuscules espacées,
+   barres de progression fines et neutres. */
+body.en-app #espace-compte .ad-actions .ad-fort, body.en-app #espace-compte .ap-table .ap-lien-b.ap-fort, body.en-app #espace-compte .ap-table .ap-bouton,
+body.en-app #espace-compte .ap-boutons-fin .ap-lien-b.ap-fort, body.en-app #espace-compte .ad-etapes button, body.en-app #espace-compte .ad-etapes a {
+  background: #fff !important; color: #17191d !important; border: 1px solid #dcdce0 !important; box-shadow: none !important; font-weight: 500 !important; border-radius: 7px; }
+body.en-app #espace-compte .ad-actions .ad-fort:hover, body.en-app #espace-compte .ap-table .ap-lien-b.ap-fort:hover, body.en-app #espace-compte .ap-table .ap-bouton:hover,
+body.en-app #espace-compte .ap-boutons-fin .ap-lien-b.ap-fort:hover { border-color: #17191d !important; }
+body.en-app #espace-compte .ad-actions .bouton-texte { padding: 5px 10px; border-radius: 7px; font-size: .9rem; }
+body.en-app #espace-compte .ad-actions .bouton-danger, body.en-app #espace-compte .ap-lien-b.ap-danger { background: none !important; border-color: transparent !important; color: #b42318 !important; }
+body.en-app #espace-compte .ad-etapes button, body.en-app #espace-compte .ad-etapes a { border: 0 !important; background: none !important; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+body.en-app .ap-titre-s, body.en-app .ap-mini-t, body.en-app .ap-membre-i small, body.en-app .og-mini, body.en-app .tb-l, body.en-app .co-e-r-t {
+  font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; color: #6c7077 !important; }
+body.en-app .ap-titre-s { font-size: .88rem; color: #17191d !important; }
+body.en-app .ad-section h3 { font-size: 1.05rem; }
+body.en-app .ap-b-barre { height: 5px; background: #efeff1; }
+body.en-app .ap-b-barre i { background: #3a3d44; }
+body.en-app #espace-compte .ap-pro .ap-bouton { background: #fff !important; color: #17191d !important; border: 1px solid #dcdce0 !important; box-shadow: none !important; font-weight: 500 !important; }
+body.en-app #espace-compte .ap-pro .ap-bouton:hover { border-color: #17191d !important; }
