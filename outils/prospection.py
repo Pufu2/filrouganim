@@ -116,6 +116,7 @@ def message(x, d, demandes, site, relance):
                      "service enfance-jeunesse ?",
                      f"{cle} Si votre service recrute pour les vacances ou le périscolaire, il peut créer sa page gratuitement : "
                      "les demandes du secteur arrivent alors directement chez vous.",
+                     "Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous.",
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = ["Pourriez-vous transmettre ce message au service enfance-jeunesse ?",
@@ -129,10 +130,9 @@ def message(x, d, demandes, site, relance):
         sujet = f"{'Rappel : ' if relance else ''}{n} animateur{s} {verbe} un poste près de chez vous"
         cle = f"En ce moment, {qui} {verbe}{toujours} un poste {lieux}."
         if relance:
-            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. {cle} Aucune structure de votre "
-                     "secteur n'est encore inscrite sur Fil Roug'Anim.",
-                     "Votre page et une offre sont gratuites. Une fois votre structure vérifiée, les demandes de votre secteur "
-                     "arrivent directement chez vous.",
+            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. {cle}",
+                     "Votre page et une offre sont gratuites. Dès que votre page est vérifiée, vous voyez les animateurs qui "
+                     "cherchent déjà près de chez vous, et les nouvelles demandes de votre secteur arrivent directement chez vous.",
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = ["Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent, et leur demande part chez les "
