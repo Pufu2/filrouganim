@@ -974,6 +974,8 @@
                  [s.page_publique ? "Masquer" : "Afficher", function () { A.modifier("structures", s.id, { page_publique: !s.page_publique }); }]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Toutes les fiches, étape par étape"));
+    // une seule fois : à chaque mise à jour (fiche acceptée, cachée…), l'ancien en-tête est remplacé, pas doublé
+    Array.prototype.forEach.call(c.querySelectorAll(":scope > ." + w.className.split(" ")[0]), function (x) { x.remove(); });
     c.insertBefore(w, c.firstChild);
   }
   function enteteAnimateurs() {
@@ -994,6 +996,8 @@
           ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, { cvId: p.cv_nom ? p.id : null })); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
     }));
     w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
+    // une seule fois : à chaque mise à jour (fiche acceptée, cachée…), l'ancien en-tête est remplacé, pas doublé
+    Array.prototype.forEach.call(c.querySelectorAll(":scope > ." + w.className.split(" ")[0]), function (x) { x.remove(); });
     c.insertBefore(w, c.firstChild);
   }
 
