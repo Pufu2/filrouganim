@@ -328,16 +328,10 @@
     c.textContent = "";
     var dem = D.demandes, fam = QF ? QF.besoins : [];
     var nbA = compteurs(dem, function (d) { return (d.destinataires || []).length; }), nbF = compteurs(fam, function (b) { return destDe(b).length; });
-    var nbStruct = compte(D.structures, function (s) { return paye(s) && !s.verifiee; }), nbCand = compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); });
-    // en haut à droite : ce qui attend, comme une boîte de réception
-    var cote = el("div", "ap-hero-cote"); cote.appendChild(el("p", "ap-cote-t", (nbA.a_traiter + nbF.a_traiter + nbStruct + nbCand) + " à traiter"));
-    [["Demandes d'animateurs", nbA.a_traiter, "anim"], ["Besoins des familles", QF ? nbF.a_traiter : "…", "fam"], ["Structures à vérifier", nbStruct, "afaire"], ["Candidatures sans réponse", nbCand, "afaire"]].forEach(function (x) {
-      var r = x[2] === "anim" || x[2] === "fam" ? el("button") : vers(x[2]); r.type = "button"; r.className = "ap-cote-ligne";
-      if (x[2] === "anim" || x[2] === "fam") r.addEventListener("click", function () { qg.onglet = x[2]; qg.sel = null; QG(); });
-      r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, String(x[1]))); r.appendChild(el("i", null, "→")); cote.appendChild(r);
-    });
+    var nbStruct = compte(D.structures, function (s) { return !s.verifiee; }), nbCand = compte(D.candidatures, function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= joursAvant(3); });
+    // pas de liste à droite : les quatre boîtes juste en dessous disent déjà ce qui attend
     hero(c, "QG demandes", "Tout ce qui attend ", "votre réponse",
-      "Demandes des animateurs, besoins des familles, structures à vérifier et candidatures : une boîte de réception, une fiche par demande.", [bouton("← Vue d'ensemble", "accueil")], cote);
+      "Demandes des animateurs, besoins des familles, structures à vérifier et candidatures : une boîte de réception, une fiche par demande.", [], null);
     // les quatre boîtes, en ligne
     var boites = el("div", "ap-qg-boites"); c.appendChild(boites);
     [["anim", "Demandes d'animateurs", "Postes cherchés près des structures", nbA.a_traiter, "avion"], ["fam", "Besoins des familles", "Une place pour leur enfant", QF ? nbF.a_traiter : 0, "personne"],
@@ -667,7 +661,7 @@
     var rev = el("button", "ap-lien-b", "↻ Revérifier"); rev.type = "button";
     rev.addEventListener("click", async function () { rev.disabled = true; await toutLire(); sante(); });
     hero(c, "État de santé", "Tout ce qui doit marcher, ", "au même endroit",
-      "Publication, relevés, chiffres, e-mails, base et fichiers : chaque bloc dit ce qui se passe et quoi faire.", [rev, bouton("Vue d'ensemble", "accueil")], cote);
+      "Publication, relevés, chiffres, e-mails, base et fichiers : chaque bloc dit ce qui se passe et quoi faire.", [rev], cote);
     c.appendChild(g);
     var p = document.querySelector('[data-pastille-admin="sante"]'); if (p) { p.hidden = !nb; p.textContent = nb; }
   }
@@ -690,7 +684,7 @@
     var j = el("div", "ap-jauge"); var ji = el("i"); ji.style.width = (totalDep ? Math.min(100, net / totalDep * 100) : 0) + "%"; j.appendChild(ji); cote.appendChild(j);
     cote.appendChild(el("p", "ap-petit", totalDep ? pct(Math.min(net, totalDep), totalDep) + " de nos dépenses (" + euros(totalDep, true) + " par an)" : "Ajoutez vos dépenses plus bas pour voir ce qui est couvert"));
     hero(c, "Ventes", "Ce que rapportent vos abonnements, ", "semaine après semaine",
-      "Où vous en êtes par rapport à nos dépenses, à quelle étape les structures s'arrêtent, ce que donne la prospection, et à qui écrire cette semaine.", [bouton("← Vue d'ensemble", "accueil")], cote);
+      "Où vous en êtes par rapport à nos dépenses, à quelle étape les structures s'arrêtent, ce que donne la prospection, et à qui écrire cette semaine.", [], cote);
     // nos dépenses couvertes, palier par palier (en cumulant dans l'ordre de la liste)
     var g0 = grille(c, "ap-g2"), cumul = 0;
     var PF = 39.5, PS = 79, PC = 19.75, netDe = function (p) { return p * 0.985 - 0.25; };
@@ -861,7 +855,7 @@
     var T = types(), adm = D.comptes.filter(function (x) { return D.admins.indexOf(x.id) >= 0; });
     var an = D.structures.filter(paye).reduce(function (a, s) { return a + prixAn(s); }, 0);
     hero(c, "Membres", "Tous vos membres, ", "au même endroit",
-      fr(D.comptes.length) + " comptes, dont " + compte(T, function (t) { return t.type === "animateur"; }) + " animateurs et " + compte(T, function (t) { return t.type === "structure"; }) + " structures. Cliquez sur un membre pour ouvrir son espace.", [bouton("← Vue d'ensemble", "accueil")]);
+      fr(D.comptes.length) + " comptes, dont " + compte(T, function (t) { return t.type === "animateur"; }) + " animateurs et " + compte(T, function (t) { return t.type === "structure"; }) + " structures. Cliquez sur un membre pour ouvrir son espace.", []);
     var k = el("div", "ap-carte"); c.appendChild(k);
     chiffres(k, [[fr(T.length), "membres"], [fr(compte(T, function (t) { return t.type === "animateur"; })), "animateurs"], [fr(compte(T, function (t) { return t.s && paye(t.s); })), "structures payantes", "rouge"],
                  [fr(compte(T, function (t) { return t.s && !paye(t.s); })), "structures sans abonnement"], [fr(compte(T, function (t) { return t.type === "aucun"; })), "sans fiche"],
@@ -936,7 +930,7 @@
     var enLigne = st.filter(function (s) { return s.verifiee; }), aVerif = st.filter(function (s) { return !s.verifiee; }), abonnees = enLigne.filter(paye);
     enLigne.sort(function (a, b) { return paye(b) - paye(a); });
     hero(w, "Annuaire des structures", "Les structures ", "de l'annuaire",
-      "Une structure remplit sa fiche, vous la vérifiez, elle est en ligne gratuitement (sa page et une offre). L'abonnement ajoute les demandes, les profils et les offres illimitées. Ici : celles à vérifier, celles en ligne, et les abonnées.", [bouton("← Vue d'ensemble", "accueil")]);
+      "Une structure remplit sa fiche, vous la vérifiez, elle est en ligne gratuitement (sa page et une offre). L'abonnement ajoute les demandes, les profils et les offres illimitées. Ici : celles à vérifier, celles en ligne, et les abonnées.", []);
     chiffres(w, [[String(aVerif.length), "à vérifier", aVerif.length ? "rouge" : null], [String(enLigne.length), "en ligne"], [String(abonnees.length), "abonnées"],
                  [compte(st, function (s) { return s.fondatrice && paye(s); }) + "/10", "fondatrices"], [String(compte(enLigne, function (s) { return !s.page_publique; })), "pages cachées"]]);
     var s2 = el("p", "ap-titre-s"); s2.appendChild(el("i", "ap-dot ap-dot-surveiller")); s2.appendChild(document.createTextNode("À vérifier · " + aVerif.length)); w.appendChild(s2);
@@ -956,7 +950,7 @@
         actions([["Espace", function () { ouvrirEspace("structure", s.id); }], s.slug && s.page_publique ? ["Page", null, "/trouver-un-poste/structures/" + s.slug + "/"] : null,
                  [s.page_publique ? "Masquer" : "Afficher", function () { A.modifier("structures", s.id, { page_publique: !s.page_publique }); }]])];
     }));
-    w.appendChild(el("p", "ap-titre-s", "Toutes les fiches, étape par étape"));
+    w.appendChild(el("p", "ap-titre-s", "Toutes les fiches, pour les modifier"));
     // une seule fois : à chaque mise à jour (fiche acceptée, cachée…), l'ancien en-tête est remplacé, pas doublé
     Array.prototype.forEach.call(c.querySelectorAll(":scope > ." + w.className.split(" ")[0]), function (x) { x.remove(); });
     c.insertBefore(w, c.firstChild);
@@ -967,7 +961,7 @@
     var post = {}; D.candidatures.forEach(function (x) { post[x.candidat_id] = (post[x.candidat_id] || 0) + 1; });
     var dem = {}; D.demandes.forEach(function (x) { if (x.candidat_id) dem[x.candidat_id] = (dem[x.candidat_id] || 0) + 1; });
     hero(w, "Annuaire des animateurs", "Les animateurs ", "de l'annuaire",
-      "Inscription libre et gratuite. Un profil n'apparaît sur le site qu'après votre vérification (« ✓ Vérifier ») : relisez le prénom, la présentation et les diplômes.", [bouton("← Vue d'ensemble", "accueil")]);
+      "Inscription libre et gratuite. Un profil n'apparaît sur le site qu'après votre vérification (« ✓ Vérifier ») : relisez le prénom, la présentation et les diplômes.", []);
     chiffres(w, [[String(P.length), "profils"], [String(compte(P, function (p) { return p.publie && !p.verifie; })), "à vérifier", "rouge"], [String(compte(P, function (p) { return p.publie && p.verifie; })), "visibles"], [String(compte(P, function (p) { return p.cv_nom; })), "avec CV"],
                  [String(Object.keys(post).length), "ont postulé"], [String(Object.keys(dem).length), "ont envoyé une demande"], [String(compte(P, function (p) { return p.annee_naissance && auj.getFullYear() - p.annee_naissance < 18; })), "mineurs"]]);
     var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Les derniers profils · " + Math.min(P.length, 25) + " sur " + P.length)); w.appendChild(s1);
@@ -978,7 +972,7 @@
         actions([[p.verifie ? "Retirer du site" : "✓ Accepter", function () { verifierProfil(p, !p.verifie); }, null, p.verifie ? "" : "ap-fort"],
           ["Espace", function () { ouvrirEspace("candidat", p.id); }], ["Fiche", function () { E.ouvrirFiche(E.ficheProfil(p, { cvId: p.cv_nom ? p.id : null })); }], [p.publie ? "Cacher" : "Afficher", function () { A.modifier("profils", p.id, { publie: !p.publie }); }]])];
     }));
-    w.appendChild(el("p", "ap-titre-s", "Tous les profils"));
+    w.appendChild(el("p", "ap-titre-s", "Tous les profils, pour les modifier"));
     // une seule fois : à chaque mise à jour (fiche acceptée, cachée…), l'ancien en-tête est remplacé, pas doublé
     Array.prototype.forEach.call(c.querySelectorAll(":scope > ." + w.className.split(" ")[0]), function (x) { x.remove(); });
     c.insertBefore(w, c.firstChild);
@@ -1006,7 +1000,7 @@
     var sessions = o.suivis.reduce(function (a, x) { return a + x.n; }, 0);
     var clients = compte(PROS || [], function (p) { return p.type === "organisme" && p.statut === "client"; });
     hero(c, "Organismes de formation", "Les organismes, ", "vos futurs clients",
-      "Les organismes du BAFA, du BAFD, du BSB et du PSC dont le site compare les sessions. Le projet : une formule payante pour eux (mise en avant, page soignée, statistiques). Suivez ici qui vous avez contacté.", [bouton("Prospection", "prospection", true, "avion"), bouton("← Vue d'ensemble", "accueil")]);
+      "Les organismes du BAFA, du BAFD, du BSB et du PSC dont le site compare les sessions. Le projet : une formule payante pour eux (mise en avant, page soignée, statistiques). Suivez ici qui vous avez contacté.", [bouton("Prospection", "prospection", true, "avion")]);
     var totalClics = Object.keys(SORG).reduce(function (a, k) { return a + clicsOrg(k); }, 0);
     chiffres(c, [[fr(totalClics), "clics envoyés · 30 j", "rouge"], [String(CORG.length), "demandes reçues"], [String(o.suivis.length), "organismes suivis"], [fr(sessions), "sessions comparées"], [String(o.autres.length), "autres repérés"],
                  [String(compte(PROS || [], function (p) { return p.type === "organisme" && p.statut !== "a_contacter"; })), "contactés"], [String(clients), "clients", "rouge"]]);
@@ -1062,7 +1056,7 @@
     cote.appendChild(el("p", "ap-cote-gros", fr(g.clics_28j))); cote.appendChild(el("p", "ap-petit", fr(g.impressions_28j) + " affichages" + (g.gsc_du ? " du " + E.dateFr(g.gsc_du) + " au " + E.dateFr(g.gsc_au) : "")));
     cote.appendChild(el("p", "ap-mini-t", "Visiteurs du site · 30 j")); cote.appendChild(el("p", "ap-cote-gros", fr(g.visiteurs_30j)));
     hero(c, "Visibilité", "Où l'on vous trouve, ", "recherche par recherche",
-      "Ce que Google montre de chaque page, sa place, et les pages qui sont à deux doigts de la première page : c'est là qu'un peu de travail rapporte le plus.", [bouton("← Vue d'ensemble", "accueil")], cote);
+      "Ce que Google montre de chaque page, sa place, et les pages qui sont à deux doigts de la première page : c'est là qu'un peu de travail rapporte le plus.", [], cote);
     var g4 = grille(c, "ap-g4");
     var prem = P.filter(function (x) { return x[4] && x[4] <= 10; });
     kpi(g4, "google", "Clics depuis Google", fr(g.clics_28j), g.clics_evolution != null ? (g.clics_evolution > 0 ? "+" : "") + g.clics_evolution + " % vs 28 j d'avant" : "premier mois mesuré");
@@ -1134,7 +1128,7 @@
     var premier = Object.keys(parCanal).sort(function (a, b) { return parCanal[b] - parCanal[a]; })[0];
     cote.appendChild(el("p", "ap-petit", premier ? "Premier canal des inscrits : " + premier : "Le canal des inscrits est noté depuis cette mise à jour."));
     hero(c, "Provenance", "D'où viennent ", "vos visiteurs et vos inscrits",
-      "Google, les réseaux, les e-mails, les IA, vos liens : jugé sur les inscriptions et les structures clientes, pas seulement sur les clics.", [bouton("← Vue d'ensemble", "accueil")], cote);
+      "Google, les réseaux, les e-mails, les IA, vos liens : jugé sur les inscriptions et les structures clientes, pas seulement sur les clics.", [], cote);
     // par canal
     var k = carte(c, "Par canal", "visiteurs (30 jours), inscriptions et clientes de chaque canal");
     var g = el("div", "ap-canaux"); k.appendChild(g);
@@ -1216,7 +1210,7 @@
     [["Contactés", compte(tous, function (p) { return p.statut !== "a_contacter"; })], ["Ont répondu", compte(tous, function (p) { return ["repondu", "interesse", "client"].indexOf(p.statut) >= 0; })], ["Clients", compte(tous, function (p) { return p.statut === "client"; })]].forEach(function (x) {
       var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, String(x[1]))); cote.appendChild(r); });
     hero(c, "Prospection", "Trouvez vos clients, ", "écrivez-leur au bon moment",
-      "Les organismes de formation, les structures qui n'ont pas payé, et les contacts que vous ajoutez. Trois messages prêts par type (premier contact, relance à 7 jours, dernière relance) : un clic ouvre votre messagerie, et l'étape est notée.", [bouton("← Vue d'ensemble", "accueil")], cote);
+      "Les organismes de formation, les structures qui n'ont pas payé, et les contacts que vous ajoutez. Trois messages prêts par type (premier contact, relance à 7 jours, dernière relance) : un clic ouvre votre messagerie, et l'étape est notée.", [], cote);
     var on = el("div", "ap-puces ap-onglets-p"); c.appendChild(on);
     [["organisme", "Organismes de formation"], ["structure", "Structures sans abonnement"], ["organisateur", "Organisateurs de séjours"], ["contact", "Contacts ajoutés"]].forEach(function (x) {
       var b = el("button", null, x[1] + " " + contactsDe(x[0]).length); b.type = "button"; b.setAttribute("aria-pressed", pr.onglet === x[0] ? "true" : "false"); b.addEventListener("click", function () { pr.onglet = x[0]; prospection(); }); on.appendChild(b); });
@@ -1342,7 +1336,7 @@
       var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, x[1])); cote.appendChild(r); });
     hero(c, "Indexation", "Vos pages ", "dans Google",
       "Une page qui n'est pas indexée ne sort jamais dans Google. Toutes les 6 heures, les pages du plan du site sont vérifiées auprès de Google (2 000 par jour au plus). Pour une page pas encore indexée : « Inspecter » ouvre la Search Console, cliquez sur « Demander l'indexation » (une dizaine par jour), puis « C'est fait » ici.",
-      [bouton("Visibilité", "visibilite", true, "loupe"), bouton("← Vue d'ensemble", "accueil")], cote);
+      [bouton("Visibilité", "visibilite", true, "loupe")], cote);
     choixCompte(c);
     var g = grille(c, "ap-g4");
     kpi(g, "base", "Pages du plan du site", fr(L.length), "dans sitemap.xml");
@@ -1407,7 +1401,7 @@
     var l = ACT || [];
     hero(c, "Actualités", "Les actualités ", "du secteur",
       "Ce que vous publiez ici apparaît dans l'espace des membres connectés (animateurs, structures, ou les deux), dans une carte « Actualités du secteur ». Rien n'est écrit tout seul : ajoutez une nouvelle à partir d'une source sûre, avec son lien.",
-      [bouton("← Vue d'ensemble", "accueil")]);
+      []);
     chiffres(c, [[String(compte(l, function (a) { return a.publie; })), "publiées"], [String(compte(l, function (a) { return !a.publie; })), "brouillons"],
                  [String(compte(l, function (a) { return a.publie && iso(a.date) >= joursAvant(30); })), "ce mois-ci", "rouge"]]);
     var g = el("div", "ap-pros"); c.appendChild(g);
@@ -1470,7 +1464,7 @@
     var tot = l.reduce(function (a, x) { return a + (x.impressions || 0); }, 0), clics = l.reduce(function (a, x) { return a + (x.clics || 0); }, 0);
     hero(c, "Contenus du site", "Vos articles ", "et vos guides",
       "Chaque article, guide et fiche formation du site public, avec ce que Google en montre sur 28 jours. Les textes sont dans le dépôt (dossier contenu/) : « Modifier » ouvre le fichier sur GitHub. Les guides réservés aux structures abonnées sont à part, dans « Guides et conseils ».",
-      [bouton("Guides et conseils (structures)", "contenus", true, "livre"), bouton("← Vue d'ensemble", "accueil")]);
+      [bouton("Guides et conseils (structures)", "contenus", true, "livre")]);
     var g = grille(c, "ap-g4");
     kpi(g, "livre", "Articles du blog", String(compte(l, function (x) { return x.type === "Article"; })), "dans contenu/blog");
     kpi(g, "offre", "Guides et fiches", String(compte(l, function (x) { return x.type !== "Article"; })), "guides et fiches formations");
@@ -1509,7 +1503,7 @@
       var r = el("p", "ap-cote-l"); r.appendChild(el("span", null, x[0])); r.appendChild(el("b", null, x[1])); cote.appendChild(r); });
     hero(c, "Réseaux sociaux", "Des posts prêts, ", "chaque semaine",
       "Chaque publication du site prépare des idées de posts à partir des vraies sessions et des derniers articles. Choisissez le réseau, copiez le texte (le lien est suivi : vous verrez les visites et les inscriptions dans « Provenance »), publiez, puis « C'est publié ».",
-      [bouton("Provenance", "provenance", true, "lien"), bouton("← Vue d'ensemble", "accueil")], cote);
+      [bouton("Provenance", "provenance", true, "lien")], cote);
     // calendrier des 5 dernières semaines
     var cal = carte(c, "Vos 5 dernières semaines", "un point par jour où vous avez posté");
     var jours = {}; pub.forEach(function (p) { var k = iso(p.publie_le); jours[k] = (jours[k] || 0) + 1; });
@@ -1656,7 +1650,7 @@
     var par = function (l, id) { return l.filter(function (x) { return x.parent_id === id; }); };
     hero(c, "Parents", "Les familles ", "et leurs enfants",
       "Les comptes parents : leurs enfants, leurs demandes de place sur les séjours et accueils, et leurs besoins décrits. Le carnet de séjour leur arrive par e-mail quand une place est confirmée.",
-      [bouton("← Vue d'ensemble", "accueil"), bouton("Annuaires inversés", "annuaires")]);
+      [bouton("Annuaires inversés", "annuaires")]);
     var d30 = joursAvant(29), auj = new Date();
     chiffres(c, [[String(PAR.comptes.length), "comptes parents"], [String(compte(PAR.comptes, function (x) { return iso(x.cree_le) >= d30; })), "sur 30 jours"],
                  [String(PAR.enfants.length), "enfants"], [String(PAR.demandes.length), "demandes de place"], [String(compte(PAR.demandes, function (x) { return x.statut === "acceptee"; })), "places confirmées"],
@@ -1687,7 +1681,7 @@
     var dests = {}; ANN.dest.forEach(function (x) { (dests[x.besoin_id] = dests[x.besoin_id] || []).push(x); });
     hero(c, "Annuaires inversés", "Ceux qui cherchent, ", "les structures qui répondent",
       "Deux annuaires inversés : les animateurs et directeurs décrivent le poste qu'ils cherchent, les parents décrivent ce qu'il leur faut pour leur enfant. Chaque demande part chez les structures vérifiées les plus proches.",
-      [bouton("← Vue d'ensemble", "accueil"), bouton("Ouvrir le QG", "qg")]);
+      [bouton("Ouvrir le QG", "qg")]);
     chiffres(c, [[String(De.length), "demandes d'animateurs"], [String(compte(De, function (d) { return iso(d.cree_le) >= d30; })), "sur 30 jours"],
                  [String(B.length), "besoins de familles"], [String(compte(B, function (b) { return iso(b.cree_le) >= d30; })), "sur 30 jours"],
                  [String(compte(B, function (b) { return !(dests[b.id] || []).length; })), "familles sans structure", compte(B, function (b) { return !(dests[b.id] || []).length; }) ? "rouge" : null]]);

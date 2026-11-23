@@ -1027,3 +1027,6 @@ body.en-app .sj-tete .bouton-r { height: 38px; padding: 0 16px; font-size: .92re
   body.en-app .ls-offres .ls-rang > .ls-fin { margin-top: 6px; }
 }
 @media (max-width: 860px) { body.en-app .ls-offres .ls-rang.ls-entete { display: none; } }
+/* Pros et Animateurs : l'en-tête de la page porte déjà le titre, la liste complète n'en répète pas un second */
+.ap-entete-annuaire ~ .ad-tete { display: none; }
+.ap-entete-annuaire ~ .petit { margin-top: 0; }
