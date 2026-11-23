@@ -884,3 +884,117 @@ alter table public.besoins_familles add column if not exists note_admin text che
 -- (texte complet appliqué dans la migration v40_qg_familles)
 
 -- v41 (22/11/2026) : admin_depenses (nom, montant_an, note, ordre), lue et modifiée par l'administration seulement (page Ventes)
+-- v43 (23/11/2026) : les paiements Stripe arrivent tout de suite (webhook) au lieu d'attendre le robot de GitHub,
+-- que GitHub ne lance que toutes les 4 à 8 heures. Le relais supabase/functions/stripe reçoit l'événement de Stripe,
+-- relit le paiement chez Stripe (clé de lecture rangée dans le coffre-fort par outils/abonnements.py) puis appelle
+-- stripe_paiement(). Le robot reste en filet de sécurité : il refait les mêmes calculs à chaque passage.
+
+-- la clé de lecture Stripe, rangée par le robot comme la clé Brevo
+create or replace function public.ranger_cle_stripe(k text) returns void
+language plpgsql security definer set search_path = '' as $$
+declare sid uuid;
+begin
+  if coalesce(current_setting('request.jwt.claims', true)::json ->> 'role', '') <> 'service_role' then raise exception 'Réservé au relevé.'; end if;
+  if k is null or char_length(k) < 20 then return; end if;
+  select id into sid from vault.secrets where name = 'stripe_abonnements';
+  if sid is null then perform vault.create_secret(k, 'stripe_abonnements', 'Clé Stripe en lecture (paiements immédiats)');
+  elsif (select decrypted_secret from vault.decrypted_secrets where id = sid) is distinct from k then perform vault.update_secret(sid, k); end if;
+end $$;
+
+create or replace function public.cle_stripe() returns text
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  if coalesce(current_setting('request.jwt.claims', true)::json ->> 'role', '') <> 'service_role' then raise exception 'Réservé au relais.'; end if;
+  return (select decrypted_secret from vault.decrypted_secrets where name = 'stripe_abonnements');
+end $$;
+
+-- l'e-mail « paiement reçu » à l'administration, sans attendre le robot (les autres événements restent groupés)
+create or replace function public.prevenir_admin_paiements() returns void
+language plpgsql security definer set search_path = '' as $$
+declare ids bigint[]; lignes text; lignes_html text;
+begin
+  select array_agg(id order by cree_le), string_agg('- ' || resume, E'\n' order by cree_le),
+         string_agg('<li>' || replace(replace(replace(resume, '&', '&amp;'), '<', '&lt;'), '>', '&gt;') || '</li>', '' order by cree_le)
+    into ids, lignes, lignes_html
+    from public.evenements_admin where type = 'paiement' and not envoye;
+  if ids is null then return; end if;
+  if public.envoyer_mail('contact@filrouganim.fr', 'Fil Roug''Anim : ' || case when cardinality(ids) > 1 then cardinality(ids) || ' paiements reçus' else 'paiement reçu' end,
+       'Paiement reçu :' || E'\n' || lignes || E'\n\nTout voir dans l''espace admin : https://filrouganim.fr/compte/?role=admin',
+       '<h3 style="margin:0 0 6px">Paiement reçu</h3><ul style="margin:0;padding-left:18px">' || lignes_html || '</ul>'
+       || '<p style="margin-top:20px"><a href="https://filrouganim.fr/compte/?role=admin" style="display:inline-block;background:#d61f35;color:#fff;padding:11px 18px;border-radius:10px;text-decoration:none;font-weight:bold">Ouvrir l''espace admin</a></p>') then
+    update public.evenements_admin set envoye = true where id = any(ids);
+  end if;
+end $$;
+
+-- s : la session de paiement (Checkout) relue chez Stripe, ou null ; a : l'abonnement relu chez Stripe, ou null.
+-- Mêmes règles que outils/abonnements.py (liens de config.yml : abonnement.liens_stripe et abonnement.lien_pass_mois).
+create or replace function public.stripe_paiement(s jsonb, a jsonb) returns text
+language plpgsql security definer set search_path = '' as $$
+declare
+  liens constant text[] := array['plink_1UaMsiKIAmufAQXGfqHfwFYK', 'plink_1UaMzrKIAmufAQXGhXgOnrPD'];
+  lien_pass constant text := 'plink_1UcoRtKIAmufAQXGGbhTWC07';
+  sid uuid; st public.structures; ref text; marque text; mois int; fin date; t bigint; q int; res text := '';
+begin
+  if coalesce(current_setting('request.jwt.claims', true)::json ->> 'role', '') <> 'service_role' then raise exception 'Réservé au relais.'; end if;
+  ref := trim(coalesce(s ->> 'client_reference_id', ''));
+  if ref ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then sid := ref::uuid; end if;
+
+  -- 1. le Pass recrutement (paiement unique) : 1 à 5 mois à partir d'aujourd'hui ou de la fin déjà payée
+  if s is not null and s ->> 'payment_link' = lien_pass and s ->> 'payment_status' = 'paid' then
+    marque := '[' || right(s ->> 'id', 10) || ']';
+    select * into st from public.structures where id = sid;
+    if st.id is null then
+      insert into public.evenements_admin (type, resume) values ('paiement', 'Pass payé sans structure reconnue : à rattacher à la main ' || marque);
+    elsif not exists (select 1 from public.evenements_admin where resume like '%' || marque || '%') then
+      mois := greatest(1, round(coalesce((s ->> 'amount_total')::numeric, 1500) / 1500));
+      fin := (greatest(current_date, coalesce(st.abonnement_fin, current_date)) + make_interval(months => mois))::date;
+      update public.structures set abonnement_fin = fin where id = st.id;
+      insert into public.evenements_admin (type, resume) values ('paiement', st.nom || ' · Pass ' || mois || ' mois, jusqu''au ' || to_char(fin, 'DD/MM/YYYY') || ' ' || marque);
+      res := 'pass ' || mois || ' mois';
+    end if;
+  end if;
+
+  -- 2. l'abonnement annuel : fin de période (+3 jours de grâce), centres payés, tarif fondateur
+  if a is not null and coalesce(a -> 'metadata' ->> 'site', '') = 'filrouganim' then
+    if s is null or not (s ->> 'payment_link' = any(liens)) then sid := null; end if;
+    if sid is null then select id into sid from public.structures where abonnement_id = a ->> 'id'; end if;
+    if sid is null and coalesce(a -> 'metadata' ->> 'structure_id', '') ~ '^[0-9a-f-]{36}$' then sid := (a -> 'metadata' ->> 'structure_id')::uuid; end if;
+    select * into st from public.structures where id = sid;
+    if st.id is null then
+      if s is not null then
+        insert into public.evenements_admin (type, resume) values ('paiement', 'Abonnement payé sans structure reconnue : à rattacher à la main [' || right(a ->> 'id', 10) || ']');
+      end if;
+    else
+      t := coalesce((a ->> 'current_period_end')::bigint, (a -> 'items' -> 'data' -> 0 ->> 'current_period_end')::bigint);
+      if a ->> 'status' = 'canceled' and a ->> 'ended_at' is not null then t := least(coalesce(t, (a ->> 'ended_at')::bigint), (a ->> 'ended_at')::bigint); end if;
+      fin := (to_timestamp(t) at time zone 'UTC')::date;
+      if a ->> 'status' in ('active', 'trialing', 'past_due') and fin is not null then fin := fin + 3;
+      elsif a ->> 'status' in ('incomplete', 'incomplete_expired', 'unpaid') then fin := null; end if;
+      select coalesce(sum((x ->> 'quantity')::int), 0) into q from jsonb_array_elements(coalesce(a -> 'items' -> 'data', '[]')) x;
+      q := least(greatest(q, 1), 50);
+      -- une structure qui a deux abonnements (un ancien arrêté, un nouveau) : on garde celui qui finit le plus tard
+      if st.abonnement_id is not null and st.abonnement_id <> a ->> 'id' and st.abonnement_fin is not null and coalesce(fin, '-infinity') < st.abonnement_fin then
+        res := res || ' ancien abonnement ignoré';
+      elsif st.abonnement_id is distinct from a ->> 'id' or st.abonnement_fin is distinct from fin or st.centres_payes is distinct from q
+            or st.fondatrice is distinct from (a -> 'metadata' ->> 'formule' = 'fondateur') then
+        update public.structures set abonnement_id = a ->> 'id', abonnement_fin = fin, centres_payes = q,
+               fondatrice = (a -> 'metadata' ->> 'formule' = 'fondateur') where id = st.id;
+        res := res || ' abonnement jusqu''au ' || coalesce(fin::text, 'aucun');
+      end if;
+    end if;
+  end if;
+
+  -- 3. ce que l'abonnement ouvre tout de suite : demandes de séjour masquées, demandes d'animateurs en attente
+  if st.id is not null and exists (select 1 from public.structures where id = st.id and abonnement_fin >= current_date) then
+    begin
+      perform public.ouvrir_demandes(st.id);
+      perform public.relayer_demandes();
+    exception when others then res := res || ' (demandes : ' || sqlerrm || ')';
+    end;
+  end if;
+  perform public.prevenir_admin_paiements();
+  return trim(res);
+end $$;
+
+revoke all on function public.ranger_cle_stripe(text), public.cle_stripe(), public.prevenir_admin_paiements(), public.stripe_paiement(jsonb, jsonb) from public, anon, authenticated;
+grant execute on function public.ranger_cle_stripe(text), public.cle_stripe(), public.stripe_paiement(jsonb, jsonb) to service_role;

@@ -1,5 +1,5 @@
 """Relève les abonnements des structures dans Stripe et les recopie dans la base (Supabase).
-Lancé toutes les 15 minutes par GitHub Actions (.github/workflows/abonnements.yml), sur le modèle des livraisons de Jeuphorie.
+Lancé par GitHub Actions (prévu toutes les 15 minutes, en vrai toutes les 4 à 8 heures ; les paiements arrivent aussi tout de suite par supabase/functions/stripe) (.github/workflows/abonnements.yml), sur le modèle des livraisons de Jeuphorie.
 
 1. Les paiements terminés des 3 derniers jours, faits avec les liens de paiement de Fil Roug'Anim (config.yml,
    abonnement.liens_stripe) : la structure est reconnue par « client_reference_id » (son identifiant, ajouté au lien
@@ -746,6 +746,14 @@ if __name__ == "__main__":
         k = os.environ.get("BREVO_API_KEY", "").strip()
         if k and cle and "--essai" not in sys.argv:
             supabase("POST", "rpc/ranger_cle_envoi", cle, {"k": k})
+        # la clé de lecture Stripe, au même endroit : le relais supabase/functions/stripe relit chaque paiement que Stripe
+        # lui signale et l'applique tout de suite (sans attendre ce relevé, que GitHub ne lance que toutes les 4 à 8 heures)
+        ks = os.environ.get("STRIPE_ABONNEMENTS_KEY", "").strip()
+        if ks and cle and "--essai" not in sys.argv:
+            try:
+                supabase("POST", "rpc/ranger_cle_stripe", cle, {"k": ks})
+            except urllib.error.HTTPError as e:
+                print(f"Clé Stripe non rangée ({e.code}) : les paiements attendent ce relevé.")
     for etape in (ranger_cle, main, lambda: None if "--essai" in sys.argv or not cle else demandes(cle),
                   lambda: None if "--essai" in sys.argv or not cle else demandes_sejours(cle),
                   lambda: None if "--essai" in sys.argv or not cle else alertes_sejours(cle),
