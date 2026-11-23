@@ -1044,3 +1044,18 @@ body.en-app #bloc-mes-candidatures > .liste-compte, body.en-app #bloc-mes-demand
   body.en-app .ls-anim-c .ls-qui, body.en-app .ls-anim-o .ls-qui, body.en-app .ls-anim-d .ls-qui, body.en-app .ls-anim-c .ls-fin, body.en-app .ls-anim-o .ls-fin, body.en-app .ls-anim-d .ls-fin { flex: 0 0 100%; }
   body.en-app .ls-anim-c .ls-rang.ls-entete, body.en-app .ls-anim-o .ls-rang.ls-entete, body.en-app .ls-anim-d .ls-rang.ls-entete { display: none; }
 }
+
+/* ---- Espace parent : à suivre, puis les listes ---- */
+body.en-app .pa-k { margin-bottom: 14px; }
+body.en-app .pa-k-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+body.en-app .pa-k-tete h2 { margin: 0; font-size: 1rem; font-weight: 500; }
+body.en-app .pa-afaire { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid rgba(23, 25, 29, .06); }
+body.en-app .pa-afaire:first-of-type { border-top: 0; }
+body.en-app .pa-afaire b { display: block; font-weight: 500; }
+body.en-app .pa-afaire small { display: block; color: #8a8e95; font-size: .85rem; }
+body.en-app .ls-pa-i .ls-rang { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr) minmax(0, 1fr) 140px 70px; }
+@media (max-width: 860px) {
+  body.en-app .ls-pa-i .ls-rang { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  body.en-app .ls-pa-i .ls-qui { flex: 0 0 100%; }
+  body.en-app .ls-pa-i .ls-rang.ls-entete { display: none; }
+}

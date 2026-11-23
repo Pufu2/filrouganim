@@ -105,6 +105,19 @@
                   actions: [], guide: null, resume: null }
       }[nom];
     }
+    if (vue === "v-parent") {
+      var FP = window.FRA_PARENT, ins = FP && FP.inscriptions ? FP.inscriptions() : [], conf = ins.filter(function (i) { return i.statut === "acceptee"; }).length;
+      var pa = (FP && FP.compte && FP.compte()) || {};
+      return {
+        tableau: { sur: "Espace parent", t: "Tableau de bord", em: "", p: (pa.nom || "Votre espace") + " · " + pl(ins.length, "demande envoyée", "demandes envoyées") + " · " + pl(conf, "place confirmée", "places confirmées"),
+                   actions: [["Voir les offres", "/enfants/", 2], ["Décrire mon besoin", "/enfants/demande/", 2]], guide: null, resume: null },
+        inscriptions: { sur: "Espace parent", t: "Demandes et inscriptions", em: "", p: "Chaque demande de place envoyée avec l'adresse de ce compte, et sa réponse. Quand la structure confirme une place, l'inscription se termine directement avec elle.",
+                        actions: [["Voir les offres", "/enfants/", 2]], guide: null, resume: null },
+        carnet: { sur: "Espace parent", t: "Carnet de séjour", em: "", p: "Pendant le séjour, l'équipe raconte la journée : activités, sorties, veillées. Vous recevez aussi chaque nouvelle par e-mail.", actions: [], guide: null, resume: null },
+        enfants: { sur: "Espace parent", t: FP && FP.compte && FP.compte() ? "Mes enfants" : "Créer mon espace parent", em: "", p: "Leur prénom et leur année de naissance : de quoi remplir vos demandes plus vite. Aucune information de santé ici.", actions: [], guide: null, resume: null },
+        favoris: { sur: "Espace parent", t: "Offres gardées", em: "", p: "Sur chaque fiche, « ♡ Garder » met l'offre de côté ici, pour comparer tranquillement (gardé dans ce navigateur).", actions: [], guide: null, resume: null }
+      }[nom] || null;
+    }
     if (vue !== "v-candidat") return null;
     var pr = profil || {};
     return {
@@ -915,7 +928,7 @@
     try { if (!espaceDe) localStorage.setItem("fra-role", "parent"); } catch (e) {}
     $("chapo-compte").textContent = "Votre espace parent.";
     for (var i = 0; i < 100 && !window.FRA_PARENT; i++) await new Promise(function (r) { setTimeout(r, 30); });
-    window.FRA_PARENT.apres = function (c) { parent = c; majApp(["v-parent"]); };
+    window.FRA_PARENT.apres = function (c) { parent = c; majApp(["v-parent"]); try { majEntete("v-parent"); } catch (err) {} };
     var c = await window.FRA_PARENT.ouvrir({ id: idEspace(), email: utilisateur.email });
     parent = c;
     ongletDepart("v-parent", c ? "tableau" : "enfants", !c);

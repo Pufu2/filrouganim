@@ -20,7 +20,8 @@
     }
   }
   function etat() {
-    var st = $("statut-parent"); st.hidden = !compte; if (!compte) return;
+    var st = $("statut-parent"); st.hidden = true;  // le « À suivre » du tableau de bord dit déjà tout : pas de bandeau répété sur chaque page
+    if (!compte) return;
     var conf = inscriptions.filter(function (i) { return i.statut === "acceptee"; }).length;
     st.className = "statut statut-ok";
     st.textContent = conf ? conf + " place" + (conf > 1 ? "s" : "") + " confirmée" + (conf > 1 ? "s" : "") + " : les nouvelles de l'équipe arrivent dans « Carnet de séjour » et par e-mail." : "Votre espace parent est prêt. Demandez une place sur une fiche : elle apparaît ici, avec sa réponse.";
@@ -28,37 +29,61 @@
   }
 
   /* ---------- l'accueil de l'espace ---------- */
+  // une pastille d'état, la même que dans les autres espaces
+  function pastille(statut) { var s = STATUTS[statut] || [statut, ""]; return el("span", "tb2-etat tb2-etat-" + (s[1] === "ok" ? "vert" : s[1] === "jaune" ? "jaune" : "gris"), s[0]); }
+  function carte(c, titre, lien, vers) {
+    var k = el("div", "carte-compte pa-k"), h = el("div", "pa-k-tete"); h.appendChild(el("h2", null, titre));
+    if (lien) { var b = el("button", "tb2-lien", lien + " →"); b.type = "button"; b.dataset.ongletVers = vers; h.appendChild(b); }
+    k.appendChild(h); c.appendChild(k); return k;
+  }
   function tableau() {
     var c = $("pa-tableau"); c.textContent = "";
-    var h = el("div", "og-hero"), t = el("div");
-    t.appendChild(el("p", "og-sur", "votre espace parent"));
-    var h2 = el("h2"); h2.appendChild(document.createTextNode("Bonjour, ")); h2.appendChild(el("em", null, compte ? compte.nom : "bienvenue")); t.appendChild(h2);
-    t.appendChild(el("p", "og-hero-p", "Vos demandes de place et leurs réponses, les nouvelles de l'équipe pendant le séjour, vos enfants et vos offres gardées : tout au même endroit."));
-    var bs = el("div", "og-boutons");
-    [["/enfants/", "Voir les offres", true], ["/enfants/demande/", "Décrire mon besoin", false]].forEach(function (x) { var a = el("a", x[2] ? "bouton-r" : "bouton-blanc", x[1]); a.href = x[0]; bs.appendChild(a); });
-    t.appendChild(bs); h.appendChild(t);
-    var k = el("div", "og-hero-cote"); k.appendChild(el("p", "og-mini", "En ce moment"));
-    [[inscriptions.length, "demandes envoyées"], [inscriptions.filter(function (i) { return i.statut === "acceptee"; }).length, "places confirmées"], [carnet.length, "nouvelles du carnet"]].forEach(function (x) {
-      var l = el("p", "og-cote-l"); l.appendChild(el("b", null, String(x[0]))); l.appendChild(el("span", null, x[1])); k.appendChild(l); });
-    h.appendChild(k); c.appendChild(h);
-    // le prochain départ
     var auj = new Date().toISOString().slice(0, 10);
+    // 1. à faire / à suivre : seulement ce qui demande un geste
+    var faire = [];
+    if (!compte) faire.push(["Créez votre espace parent", "Votre nom et votre ville suffisent.", "enfants"]);
+    else if (!enfants.length) faire.push(["Ajoutez vos enfants", "Leur prénom et leur année de naissance : vos demandes se remplissent plus vite.", "enfants"]);
     var proch = inscriptions.filter(function (i) { return i.statut === "acceptee" && i.debut && i.fin >= auj; }).sort(function (a, b) { return a.debut.localeCompare(b.debut); })[0];
-    if (proch) {
-      var d = el("article", "og-carte pa-depart"); d.appendChild(el("h3", null, "Le prochain départ"));
-      var j = Math.round((new Date(proch.debut) - new Date(auj)) / 864e5);
-      d.appendChild(el("p", "pa-j", j > 0 ? "J-" + j : j === 0 ? "C'est aujourd'hui !" : "En ce moment"));
-      d.appendChild(el("p", null, (proch.enfant_prenom || "Votre enfant") + " · " + proch.sejour + " · " + E.dateFr(proch.debut) + " → " + E.dateFr(proch.fin)));
-      var a = el("a", "bouton-blanc", "La fiche, le trousseau et les infos pratiques"); a.href = proch.url; a.target = "_blank"; a.rel = "noopener"; d.appendChild(a);
-      c.appendChild(d);
-    }
+    if (proch) { var j = Math.round((new Date(proch.debut) - new Date(auj)) / 864e5);
+      faire.push([(j > 0 ? "Départ dans " + j + " jour" + (j > 1 ? "s" : "") : j === 0 ? "Départ aujourd'hui" : "Séjour en cours") + " : " + proch.sejour, (proch.enfant_prenom || "Votre enfant") + " · " + E.dateFr(proch.debut) + " → " + E.dateFr(proch.fin) + ". La fiche, le trousseau et les infos pratiques sont sur la page du séjour.", null, proch.url]); }
+    var recentes = carnet.filter(function (x) { return (Date.now() - new Date(x.cree_le)) < 3 * 864e5; }).length;
+    if (recentes) faire.push([recentes + " nouvelle" + (recentes > 1 ? "s" : "") + " de l'équipe", "Dans le carnet de séjour.", "carnet"]);
+    var attente = inscriptions.filter(function (i) { return i.statut === "nouvelle" || i.statut === "en_cours"; }).length;
+    if (attente) faire.push([attente + " demande" + (attente > 1 ? "s" : "") + " en attente de réponse", "La structure vous répond par e-mail : pensez à regarder vos courriers indésirables.", "inscriptions"]);
+    var k1 = carte(c, "À suivre");
+    if (!faire.length) k1.appendChild(el("p", "og-vide", "Rien en attente. Trouvez une colo, un mini-séjour ou un accueil de loisirs dans les offres."));
+    faire.forEach(function (x) {
+      var l = el("div", "pa-afaire"), t = el("div"); t.appendChild(el("b", null, x[0])); t.appendChild(el("small", null, x[1])); l.appendChild(t);
+      if (x[2]) { var b = el("button", "tb2-lien", "Ouvrir →"); b.type = "button"; b.dataset.ongletVers = x[2]; l.appendChild(b); }
+      else if (x[3]) { var a = el("a", "tb2-lien", "La fiche →"); a.href = x[3]; a.target = "_blank"; a.rel = "noopener"; l.appendChild(a); }
+      k1.appendChild(l);
+    });
+    // 2. les dernières demandes
+    if (inscriptions.length) { var k2 = carte(c, "Vos dernières demandes", "Toutes", "inscriptions"); k2.appendChild(tableInscriptions(inscriptions.slice(0, 4), true)); }
+    // 3. la dernière nouvelle du carnet
+    if (carnet.length) { var k3 = carte(c, "La dernière nouvelle", "Le carnet", "carnet"), x = carnet[0];
+      k3.appendChild(el("p", "pa-c-sur", E.dateFr(x.jour) + " · " + x.sejour)); if (x.titre) k3.appendChild(el("h3", null, x.titre)); k3.appendChild(el("p", "pa-c-texte", x.texte)); }
+  }
+  function tableInscriptions(liste, court) {
+    var t = el("div", "ls-table ls-pa-i"), e = el("div", "ls-rang ls-entete");
+    ["Séjour ou accueil", "Dates", "Enfant", "Réponse", ""].forEach(function (x) { e.appendChild(el("span", null, x)); }); t.appendChild(e);
+    liste.forEach(function (i) {
+      var r = el("div", "ls-rang"), q = el("span", "ls-qui"), a = el("a", null, i.sejour); a.href = i.url; a.target = "_blank"; a.rel = "noopener";
+      var bb = el("b"); bb.appendChild(a); q.appendChild(bb); q.appendChild(el("small", null, i.structure + " · demandée le " + E.dateFr(String(i.cree_le).slice(0, 10)))); r.appendChild(q);
+      r.appendChild(el("span", "ls-doux", i.debut ? E.dateFr(i.debut) + " → " + E.dateFr(i.fin) : "–"));
+      r.appendChild(el("span", "ls-doux", (i.enfant_prenom || "Enfant") + (i.enfant_age ? ", " + i.enfant_age + " ans" : "")));
+      var st = el("span"); st.appendChild(pastille(i.statut)); r.appendChild(st);
+      var fin = el("span", "ls-fin");
+      if (!court && i.structure_email) { var m = el("a", "tb2-lien", "Écrire"); m.href = "mailto:" + i.structure_email + "?subject=" + encodeURIComponent("Inscription : " + i.sejour); fin.appendChild(m); }
+      r.appendChild(fin); t.appendChild(r);
+    });
+    return t;
   }
 
   /* ---------- mes enfants ---------- */
   function pageEnfants() {
     var c = $("pa-enfants"); c.textContent = "";
     var k = el("div", "carte-compte"); c.appendChild(k);
-    k.appendChild(el("h2", null, compte ? "Mes enfants" : "Créer mon espace parent"));
     if (!compte) {
       k.appendChild(el("p", "petit", "Votre nom et votre ville suffisent. Vos demandes déjà envoyées avec cette adresse e-mail apparaîtront tout de suite."));
       var f = el("form", "formulaire"), g = el("div", "champs-2"); f.appendChild(g);
@@ -74,7 +99,7 @@
       });
       k.appendChild(f); return;
     }
-    k.appendChild(el("p", "petit", "Leur prénom et leur année de naissance : de quoi remplir vos demandes plus vite. Aucune information de santé ici : la fiche sanitaire se remplit avec l'organisateur."));
+    k.appendChild(el("p", "petit", "La fiche sanitaire se remplit avec l'organisateur, jamais ici."));
     var ul = el("ul", "pa-enfants");
     enfants.forEach(function (x) {
       var li = el("li"); li.appendChild(el("b", null, x.prenom)); li.appendChild(el("span", null, x.annee_naissance ? age(x.annee_naissance) + " ans cette année" : ""));
@@ -97,26 +122,16 @@
   /* ---------- mes demandes et inscriptions ---------- */
   function pageInscriptions() {
     var c = $("pa-inscriptions"); c.textContent = "";
-    var k = el("div", "carte-compte"); c.appendChild(k); k.appendChild(el("h2", null, "Mes demandes et inscriptions"));
-    k.appendChild(el("p", "petit", "Chaque demande de place envoyée avec l'adresse de ce compte, et sa réponse. Quand la structure confirme une place, l'inscription se termine directement avec elle."));
+    var k = el("div", "carte-compte"); c.appendChild(k);
     if (!inscriptions.length) { k.appendChild(el("p", "og-vide", "Pas encore de demande. Choisissez une offre et cliquez sur « Demander une place »."));
       var a0 = el("a", "bouton-r", "Voir les offres"); a0.href = "/enfants/"; k.appendChild(a0); return; }
-    inscriptions.forEach(function (i) {
-      var b = el("div", "og-facture"), t = el("div");
-      var a = el("a", null, i.sejour); a.href = i.url; a.target = "_blank"; a.rel = "noopener"; var bb = el("b"); bb.appendChild(a); t.appendChild(bb);
-      t.appendChild(el("small", null, i.structure + (i.debut ? " · " + E.dateFr(i.debut) + " → " + E.dateFr(i.fin) : "") + " · " + (i.enfant_prenom || "enfant") + ", " + i.enfant_age + " ans · demandée le " + E.dateFr(String(i.cree_le).slice(0, 10))));
-      b.appendChild(t);
-      var s = STATUTS[i.statut] || [i.statut, ""]; b.appendChild(el("span", "og-etiq og-" + (s[1] === "ok" ? "actif" : s[1] === "neutre" ? "annule" : "reserve"), s[0]));
-      if (i.structure_email) { var m = el("a", "bouton-blanc", "Écrire à la structure"); m.href = "mailto:" + i.structure_email + "?subject=" + encodeURIComponent("Inscription : " + i.sejour); b.appendChild(m); }
-      k.appendChild(b);
-    });
+    k.appendChild(tableInscriptions(inscriptions, false));
   }
 
   /* ---------- le carnet de séjour ---------- */
   function pageCarnet() {
     var c = $("pa-carnet"); c.textContent = "";
-    var k = el("div", "carte-compte"); c.appendChild(k); k.appendChild(el("h2", null, "Le carnet de séjour"));
-    k.appendChild(el("p", "petit", "Pendant le séjour, l'équipe raconte la journée : activités, sorties, veillées. Vous recevez aussi chaque nouvelle par e-mail. Réservé aux familles dont l'enfant a une place confirmée."));
+    var k = el("div", "carte-compte"); c.appendChild(k);
     if (!carnet.length) { k.appendChild(el("p", "og-vide", inscriptions.some(function (i) { return i.statut === "acceptee"; }) ? "Pas encore de nouvelle : elles arrivent pendant le séjour." : "Le carnet s'ouvre quand une structure confirme une place pour votre enfant.")); return; }
     var fil = el("ol", "pa-carnet");
     carnet.forEach(function (x) {
@@ -130,8 +145,7 @@
   /* ---------- mes offres gardées (favoris, gardés dans ce navigateur) ---------- */
   function pageFavoris() {
     var c = $("pa-favoris"); c.textContent = "";
-    var k = el("div", "carte-compte"); c.appendChild(k); k.appendChild(el("h2", null, "Mes offres gardées"));
-    k.appendChild(el("p", "petit", "Sur chaque fiche, « ♡ Garder » met l'offre de côté ici, pour comparer tranquillement (gardé dans ce navigateur)."));
+    var k = el("div", "carte-compte"); c.appendChild(k);
     var f = favoris();
     if (!f.length) { k.appendChild(el("p", "og-vide", "Rien de gardé pour l'instant.")); return; }
     var ul = el("ul", "pa-enfants");
@@ -148,6 +162,6 @@
   }
   window.FRA_PARENT = {
     ouvrir: async function (ctx) { E = window.FRA_ESPACE; C = ctx; await tout(); return compte; },
-    compte: function () { return compte; }
+    compte: function () { return compte; }, inscriptions: function () { return inscriptions; }
   };
 })();
