@@ -183,29 +183,30 @@
   /* -- à traiter -- */
   function aFaire() {
     var c = $("ad-afaire"); c.textContent = "";
-    c.appendChild(el("h2", null, "À traiter"));
     var aVerifier = D.structures.filter(function (x) { return !x.verifiee; });
-    var nonPayees = D.structures.filter(function (x) { return !paye(x); });
+    var nonPayees = D.structures.filter(function (x) { return x.verifiee && !paye(x); });  // les non vérifiées sont déjà dans la liste du dessus
     var attente = D.demandes.filter(function (x) { return !(x.destinataires || []).length; });
     var expirent = D.offres.filter(function (x) { return enLigne(x) && x.expire_le <= jours(-7); });
     var nouvellesCa = D.candidatures.filter(function (x) { return x.statut === "envoyee" && iso(x.cree_le) <= jours(3); });
     var n = aVerifier.length;
     var p = document.querySelector('[data-pastille-admin="afaire"]'); if (p) { p.hidden = !n; p.textContent = n; }
+    var vides = [];
     function liste(titre, aide, items, ligne) {
+      if (!items.length) { vides.push(titre.toLowerCase()); return; }  // une liste vide ne prend pas de place
       var s = section(c, titre + " (" + items.length + ")", aide);
-      if (!items.length) { s.appendChild(el("p", "ad-rien", "Rien à faire ici.")); return; }
       items.forEach(function (x) { s.appendChild(ligne(x)); });
     }
     liste("Structures à vérifier", "Vérifiez qu'elles existent (SIRET, site, déclaration d'accueil), puis mettez-les en ligne : leur page et une offre paraissent gratuitement.", aVerifier, function (x) {
       return ligneStructure(x, true);
     });
     liste("Demandes sans structure", "Aucune structure abonnée dans leur zone : elles partiront dès qu'une s'inscrit. Une bonne liste de structures à démarcher.", attente, ligneDemande);
-    liste("Inscriptions sans abonnement", "Des structures qui ont rempli leur fiche sans payer : à relancer.", nonPayees, function (x) { return ligneStructure(x, false); });
+    liste("Structures en ligne sans abonnement", "Vérifiées, mais sans abonnement : à relancer.", nonPayees, function (x) { return ligneStructure(x, false); });
     liste("Offres qui expirent dans 7 jours", null, expirent, ligneOffre);
     liste("Candidatures sans réponse depuis 3 jours", "La structure n'a pas encore ouvert la candidature.", nouvellesCa, function (x) {
       var o = D.offres.filter(function (y) { return y.id === x.offre_id; })[0];
       var l = el("div", "ad-ligne"); l.appendChild(el("b", null, o ? o.intitule : "Offre supprimée")); l.appendChild(el("span", null, "envoyée le " + E.dateFr(iso(x.cree_le)))); return l;
     });
+    if (vides.length) c.appendChild(el("p", "ad-rien", (vides.length === 5 ? "Tout est à jour. " : "") + "Rien en ce moment pour : " + vides.join(", ") + "."));
   }
 
   /* -- les listes et leurs fiches -- */

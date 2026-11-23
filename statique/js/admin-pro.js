@@ -194,25 +194,7 @@
     c3.appendChild(el("p", "ap-petit", "Hier, journée entière : " + fr(vHier) + " visiteurs. La journée n'est pas finie : c'est un repère, pas une comparaison."));
     c3.appendChild(el("p", "ap-petit", "Inscriptions : " + compte(T, function (t) { return iso(t.c.cree_le) === AUJ; }) + " aujourd'hui, " + compte(T, function (t) { return iso(t.c.cree_le) === joursAvant(1); }) + " hier."));
     trois.appendChild(c3);
-    // les accès rapides, par partie
-    var g4 = grille(c, "ap-g4");
-    var vues30 = D.vues.filter(function (v) { return v.jour >= joursAvant(29) && (v.type === "page" || v.type === "offre"); }).reduce(function (a, v) { return a + v.n; }, 0);
-    [["Pilotage", [["qg", "boite", "QG demandes", aTraiter().length ? aTraiter().length + " point" + (aTraiter().length > 1 ? "s" : "") + " à traiter" : "Rien en attente"],
-                   ["ventes", "courbe", "Ventes", euros(an / 12) + " par mois"], ["sante", "coeur", "État de santé", "Relevés, e-mails, base, stockage"], ["afaire", "coche", "À traiter", "Structures, demandes, offres"]]],
-     ["Utilisateurs", [["annuaires", "avion", "Annuaires inversés", "Animateurs et familles → structures"], ["comptes", "personne", "Membres", fr(D.comptes.length) + " comptes, +" + ceMois + " ce mois-ci"], ["structures", "maison", "Structures", st.length + " fiches, " + payees.length + " payées"],
-                       ["animateurs", "groupe", "Animateurs", D.profils.length + " profils" + (aVerifierProfils().length ? ", " + aVerifierProfils().length + " à vérifier" : ", " + compte(D.profils, function (p) { return p.publie && p.verifie; }) + " visibles")]]],
-     ["Acquisition", [["stats", "courbe", "Statistiques détaillées", "Vues, clics, entonnoirs, trafic"], ["stats", "oeil", "Vues des pages structures", fr(vues30) + " sur 30 jours"],
-                      ["visibilite", "google", "Visibilité", "Google, page par page"], ["provenance", "lien", "Provenance", "Canaux, liens suivis, inscrits"], ["prospection", "avion", "Prospection", "Organismes, structures, contacts"]]],
-     ["Contenu", [["offres", "offre", "Offres", compte(D.offres, function (o) { return o.publiee && o.expire_le >= AUJ; }) + " en ligne"], ["demandes", "avion", "Toutes les demandes", D.demandes.length + " reçues"],
-                  ["contenus", "livre", "Guides et conseils", D.ressources.length + " ressources"]]]].forEach(function (p) {
-      var k = carte(g4, null, null, "ap-acces"); k.appendChild(el("p", "ap-mini-t", p[0]));
-      p[1].forEach(function (x) {
-        var b = x[0] ? vers(x[0]) : el("a"); if (!x[0]) { b.href = x[4]; b.target = "_blank"; b.rel = "noopener"; }
-        b.className = "ap-acces-l"; b.appendChild(ic(x[1]));
-        var t = el("span", "ap-acces-t"); t.appendChild(el("b", null, x[2])); t.appendChild(el("small", null, x[3])); b.appendChild(t); b.appendChild(el("i", null, "→"));
-        k.appendChild(b);
-      });
-    });
+    // pas de grille d'accès rapides : le menu à gauche fait déjà ce travail
     clicsParPublic(c);
     audience(c, T);
     membres(c, T);
