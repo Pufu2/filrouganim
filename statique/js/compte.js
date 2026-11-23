@@ -400,12 +400,18 @@
     });
     document.body.classList.toggle("en-parcours", oui);
   }
+  // le message se pose par-dessus la page, en haut : il part seul après quelques secondes (une erreur reste jusqu'à ce qu'on la ferme)
+  var minuteurMessage = null;
   function message(texte, erreur) {
     var m = $("message");
+    clearTimeout(minuteurMessage);
     m.textContent = texte || "";
     m.hidden = !texte;
     m.classList.toggle("erreur", !!erreur);
-    if (texte) m.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (!texte) return;
+    var x = document.createElement("button"); x.type = "button"; x.className = "msg-fermer"; x.setAttribute("aria-label", "Fermer"); x.textContent = "×";
+    x.addEventListener("click", function () { m.hidden = true; }); m.appendChild(x);
+    if (!erreur) minuteurMessage = setTimeout(function () { m.hidden = true; }, Math.max(5000, texte.length * 70));
   }
   function erreurLisible(e) {
     var t = (e && (e.message || e.error_description)) || String(e);
@@ -835,6 +841,7 @@
       n = Math.max(0, Math.min(etapes.length - 1, i));
       etapes.forEach(function (f, k) { f.hidden = k !== n; });
       Array.prototype.forEach.call(nav.children, function (b, k) { if (k === n) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+      var actif = nav.children[n]; if (actif && !nav.hidden) nav.scrollTo({ left: Math.max(0, actif.offsetLeft - 40), behavior: "smooth" });  // l'onglet en cours reste visible
       bloc.querySelector(".as-n").textContent = creation ? "Étape " + (n + 1) + " sur " + etapes.length : (bloc.id === "bloc-profil" ? "Mon profil" : "Ma fiche");
       plusLoin = Math.max(plusLoin, n);
       points.forEach(function (li, k) {
