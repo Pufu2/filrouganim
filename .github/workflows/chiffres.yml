@@ -49,7 +49,7 @@ jobs:
           fi
           git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com commit -m "Chiffres : relevé du $(date -u +%d/%m/%Y) à $(date -u +%H:%M)"
           for essai in 1 2 3; do
-            if git pull --rebase -q origin main && git push; then
+            if git -c user.name=Pufu2 -c user.email=Pufu2@users.noreply.github.com pull --rebase -q origin main && git push; then
               # un envoi fait par GitHub Actions ne relance pas la publication : on la lance nous-mêmes
               gh workflow run publier.yml --ref main
               exit 0
