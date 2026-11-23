@@ -107,18 +107,17 @@
     }
     if (vue !== "v-candidat") return null;
     var pr = profil || {};
-    var enCours = mesCandidatures.filter(function (c) { return c.statut === "envoyee" || c.statut === "vue"; }).length;
-    var retenues = mesCandidatures.filter(function (c) { return c.statut === "retenue"; }).length;
     return {
-      tableau: { sur: "Tableau de bord", t: "Bonjour" + (pr.prenom ? " " : ""), em: pr.prenom || "", p: "Vos candidatures, vos demandes et les offres de votre secteur, au même endroit.",
-                 actions: [["Voir les offres", L.lien_offre, 2], ["Décrire ce que je cherche", L.lien_demande, 2]], guide: ["Trouver son stage pratique", "/trouver-un-poste/trouver-son-stage-pratique/"],
-                 resume: { t: "En ce moment", grands: [[mesCandidatures.length, mesCandidatures.length > 1 ? "candidatures" : "candidature"], [enCours, "en attente"]] } },
-      profil: { sur: "Mon profil", t: "Votre profil, ", em: "vu par les structures", p: "Les structures vérifiées de votre secteur le consultent et vous écrivent directement. Plus il est complet, plus on vous contacte.",
+      tableau: { sur: "Espace animateur", t: "Tableau de bord", em: "", p: (pr.prenom || "Votre espace") + (pr.ville ? " · " + pr.ville : "") + (!pr.publie ? " · profil caché" : pr.verifie === false ? " · profil en cours de vérification" : " · profil visible des structures"),
+                 actions: [["Voir les offres pour moi", "offres"], ["Décrire ce que je cherche", L.lien_demande, 2]], guide: null, resume: null },
+      profil: { sur: "Espace animateur", t: "Mon profil", em: "", p: "Les structures vérifiées de votre secteur le consultent et vous écrivent directement. Plus il est complet, plus on vous contacte.",
                 actions: [["Voir ma fiche", "#bloc-profil .as-voir-fiche", 1]], guide: ["Un exemple de profil", "/trouver-un-poste/exemple-de-profil/"], resume: null },
-      candidatures: { sur: "Mes candidatures", t: "Vos candidatures, ", em: "suivies de près", p: "Envoyée, vue, retenue : vous voyez où en est chacune.", actions: [["Voir les offres", L.lien_offre, 2]], guide: ["Préparer son entretien", "/trouver-un-poste/preparer-son-entretien/"],
-                      resume: { t: "Suivi", mini: [[mesCandidatures.length, "envoyées"], [retenues, retenues > 1 ? "retenues" : "retenue"]] } },
-      demandes: { sur: "Mes demandes", t: "Décrivez, ", em: "les structures viennent à vous", p: "Votre demande part chez les 3 structures les plus proches, qui vous répondent par e-mail.", actions: [["Nouvelle demande", L.lien_demande, 2]], guide: null, resume: null },
-      offres: { sur: "Offres pour moi", t: "Les offres ", em: "de votre secteur", p: "Les offres en ligne près de chez vous et dans les départements où vous pouvez travailler.", actions: [["Toutes les offres", L.lien_offre, 2]], guide: null, resume: null }
+      candidatures: { sur: "Espace animateur", t: "Mes candidatures", em: "", p: "Chaque offre à laquelle vous avez postulé, et où en est la réponse. La structure vous écrit directement quand elle est intéressée.",
+                      actions: [], guide: ["Préparer son entretien", "/trouver-un-poste/preparer-son-entretien/"], resume: null },
+      demandes: { sur: "Espace animateur", t: "Mes demandes", em: "", p: "Décrivez le poste que vous cherchez : votre demande part chez les 3 structures les plus proches, qui vous répondent par e-mail.",
+                  actions: [["Nouvelle demande", L.lien_demande, 2]], guide: null, resume: null },
+      offres: { sur: "Espace animateur", t: "Offres pour moi", em: "", p: "Les offres en ligne dans votre département et là où vous pouvez travailler. Vous postulez en un clic, avec votre profil.",
+                actions: [["Toutes les offres du site", L.lien_offre, 2]], guide: ["Trouver son stage pratique", "/trouver-un-poste/trouver-son-stage-pratique/"], resume: null }
     }[nom];
   }
   function majEntete(vue) {
@@ -2475,22 +2474,26 @@
     var d = r.data || [];
     $("bloc-mes-demandes").hidden = false;
     if (r.error || !d.length) { liste.appendChild(el("p", "aucune", r.error ? erreurLisible(r.error) : "Pas encore de demande. Décrivez le poste que vous cherchez : ça prend une minute.")); return d; }
+    // une ligne par demande : le poste, envoyée le, à qui elle est partie, retirer
+    var t = el("div", "ls-table ls-anim-d"), e = el("div", "ls-rang ls-entete");
+    ["Poste cherché", "Envoyée", "Structures", ""].forEach(function (x) { e.appendChild(el("span", null, x)); }); t.appendChild(e);
     d.forEach(function (x) {
-      var item = el("article", "ligne-compte"), corps = el("div");
-      corps.appendChild(el("h3", null, POSTES_D[x.poste] || x.poste));
-      corps.appendChild(el("p", "petit", resumeDemande(x) + " · envoyée le " + dateFr(x.cree_le)));
-      var nb = (x.destinataires || []).length;
-      corps.appendChild(el("p", nb ? "etat etat-ok" : "etat etat-attente", nb ? "Reçue par " + nb + (nb > 1 ? " structures" : " structure") + " : elles vous répondent par e-mail" : "En attente d'une structure dans votre secteur (30 jours au plus)"));
-      item.appendChild(corps);
-      var b = el("button", "bouton-texte", "Retirer"); b.type = "button";
+      var r = el("div", "ls-rang"), qui = el("span", "ls-qui");
+      qui.appendChild(el("b", null, POSTES_D[x.poste] || x.poste)); qui.appendChild(el("small", null, resumeDemande(x))); r.appendChild(qui);
+      r.appendChild(el("span", "ls-doux", dateFr(x.cree_le)));
+      var nb = (x.destinataires || []).length, et = el("span");
+      et.appendChild(el("span", "tb2-etat tb2-etat-" + (nb ? "vert" : "jaune"), nb ? "Reçue par " + nb : "En attente"));
+      et.appendChild(el("small", "ls-sous", nb ? "elles vous répondent par e-mail" : "part dès qu'une structure s'abonne près de chez vous"));
+      r.appendChild(et);
+      var fin = el("span", "ls-fin"), b = el("button", "tb2-lien ls-danger", "Retirer"); b.type = "button";
       b.addEventListener("click", async function () {
         if (!confirm("Retirer cette demande ? Les structures ne la verront plus.")) return;
         var x2 = await sb.from("demandes").delete().eq("id", x.id);
         if (x2.error) message(erreurLisible(x2.error), true); else { message("Demande retirée."); mesDemandes(); }
       });
-      item.appendChild(b);
-      liste.appendChild(item);
+      fin.appendChild(b); r.appendChild(fin); t.appendChild(r);
     });
+    liste.appendChild(t);
     return d;
   }
   var demandesRecues = [];
@@ -2549,7 +2552,7 @@
     c.appendChild(ul); colonne.appendChild(c);
   }
   function tableauAnimateur(offres) {
-    var t = $("tuiles-candidat"); t.textContent = ""; t.className = "tb-app";
+    var t = $("tuiles-candidat"); t.textContent = ""; t.classList.remove("tuiles"); t.classList.add("tb-app");  // sans écraser « hors-onglet », qui cache le tableau sur les autres pages
     var g = el("div", "tb-col"), d = el("div", "tb-col tb-cote"); t.appendChild(g); t.appendChild(d);
     var retenues = mesCandidatures.filter(function (c) { return c.statut === "retenue"; }).length;
     var attente = mesCandidatures.filter(function (c) { return c.statut === "envoyee" || c.statut === "vue"; }).length;
@@ -2600,52 +2603,53 @@
     var offres = rep[1].data || [];
     tableauAnimateur(offres);
 
+    // Mes candidatures : une ligne par offre (offre, envoyée le, état, retirer), comme les listes de l'espace structure
     var l1 = $("liste-mes-candidatures");
     l1.textContent = "";
-    if (!mesCandidatures.length) l1.appendChild(el("p", "aucune", "Pas encore de candidature. Choisissez une offre ci-dessous et postulez avec votre profil."));
-    mesCandidatures.forEach(function (c) {
-      var o = c.offres || {};
-      var item = el("article", "ligne-compte");
-      var corps = el("div");
-      corps.appendChild(el("h3", null, o.intitule || "Offre retirée"));
-      corps.appendChild(el("p", "petit", ((o.structures && o.structures.nom) || "") + (o.ville ? " · " + o.ville : "") + " · envoyée le " + dateFr(c.cree_le)));
-      var etats = { envoyee: ["Envoyée", "etat etat-attente"], vue: ["Vue par la structure", "etat etat-attente"], retenue: ["Retenue : la structure va vous contacter", "etat etat-ok"], "non-retenue": ["Non retenue", "etat etat-off"] };
-      corps.appendChild(el("p", etats[c.statut][1], etats[c.statut][0]));
-      item.appendChild(corps);
-      var b = el("button", "bouton-texte", "Retirer");
-      b.type = "button";
-      b.addEventListener("click", async function () {
-        if (!confirm("Retirer cette candidature ?")) return;
-        var d = await sb.from("candidatures").delete().eq("id", c.id);
-        if (d.error) message(erreurLisible(d.error), true); else { message("Candidature retirée."); tableauCandidat(); }
+    if (!mesCandidatures.length) l1.appendChild(el("p", "aucune", "Pas encore de candidature. Choisissez une offre dans « Offres pour moi » et postulez avec votre profil."));
+    else {
+      var t1 = el("div", "ls-table ls-anim-c"), e1 = el("div", "ls-rang ls-entete");
+      ["Offre", "Envoyée", "Réponse", ""].forEach(function (x) { e1.appendChild(el("span", null, x)); }); t1.appendChild(e1);
+      var etats = { envoyee: ["Envoyée", "gris"], vue: ["Vue par la structure", "jaune"], retenue: ["Retenue", "vert"], "non-retenue": ["Non retenue", "gris"] };
+      mesCandidatures.forEach(function (c) {
+        var o = c.offres || {}, r = el("div", "ls-rang");
+        var qui = el("span", "ls-qui"); qui.appendChild(el("b", null, o.intitule || "Offre retirée")); qui.appendChild(el("small", null, [(o.structures && o.structures.nom), o.ville].filter(Boolean).join(" · "))); r.appendChild(qui);
+        r.appendChild(el("span", "ls-doux", dateFr(c.cree_le)));
+        var et = el("span"), e = etats[c.statut] || etats.envoyee; et.appendChild(el("span", "tb2-etat tb2-etat-" + e[1], e[0]));
+        if (c.statut === "retenue") et.appendChild(el("small", "ls-sous", "la structure va vous écrire"));
+        r.appendChild(et);
+        var fin = el("span", "ls-fin"), b = el("button", "tb2-lien ls-danger", "Retirer"); b.type = "button";
+        b.addEventListener("click", async function () {
+          if (!confirm("Retirer cette candidature ?")) return;
+          var d = await sb.from("candidatures").delete().eq("id", c.id);
+          if (d.error) message(erreurLisible(d.error), true); else { message("Candidature retirée."); tableauCandidat(); }
+        });
+        fin.appendChild(b); r.appendChild(fin); t1.appendChild(r);
       });
-      item.appendChild(b);
-      l1.appendChild(item);
-    });
+      l1.appendChild(t1);
+    }
 
+    // Offres pour moi : une ligne par offre (offre, lieu, début, contrat, postuler)
     var l2 = $("liste-offres-pour-toi");
     l2.textContent = "";
     if (!offres.length) l2.appendChild(el("p", "aucune", "Pas d'offre en ligne dans votre secteur pour l'instant. Les structures recrutent souvent dès l'hiver pour l'été : revenez bientôt."));
-    offres.forEach(function (o) {
-      var deja = mesCandidatures.some(function (c) { return c.offre_id === o.id; });
-      var item = el("article", "ligne-compte");
-      var corps = el("div");
-      var titre = el("h3");
-      var a = el("a", null, o.intitule);
-      a.href = L.lien_offre + o.id + "/";
-      titre.appendChild(a);
-      corps.appendChild(titre);
-      corps.appendChild(el("p", "petit", ((o.structures && o.structures.nom) || "") + " · " + o.ville + " (" + o.departement + ") · à partir du " + dateFr(o.debut) + " · " + libelle("contrats", o.contrat)));
-      item.appendChild(corps);
-      if (deja) item.appendChild(el("p", "etat etat-ok", "Candidature envoyée"));
-      else {
-        var b = el("button", "bouton-r", "Postuler");
-        b.type = "button";
-        b.addEventListener("click", function () { ouvrirPostuler(o.id); });
-        item.appendChild(b);
-      }
-      l2.appendChild(item);
-    });
+    else {
+      var t2 = el("div", "ls-table ls-anim-o"), e2 = el("div", "ls-rang ls-entete");
+      ["Offre", "Lieu", "Début", "Contrat", ""].forEach(function (x) { e2.appendChild(el("span", null, x)); }); t2.appendChild(e2);
+      offres.forEach(function (o) {
+        var deja = mesCandidatures.some(function (c) { return c.offre_id === o.id; }), r = el("div", "ls-rang");
+        var qui = el("span", "ls-qui"), a = el("a", null, o.intitule); a.href = L.lien_offre + o.id + "/"; a.target = "_blank"; a.rel = "noopener";
+        var bt = el("b"); bt.appendChild(a); qui.appendChild(bt); qui.appendChild(el("small", null, (o.structures && o.structures.nom) || "")); r.appendChild(qui);
+        r.appendChild(el("span", "ls-doux", o.ville + " (" + o.departement + ")"));
+        r.appendChild(el("span", "ls-doux", dateFr(o.debut)));
+        r.appendChild(el("span", "ls-doux", libelle("contrats", o.contrat)));
+        var fin = el("span", "ls-fin");
+        if (deja) fin.appendChild(el("span", "tb2-etat tb2-etat-vert", "Postulé"));
+        else { var b = el("button", "ls-postuler", "Postuler"); b.type = "button"; b.addEventListener("click", function () { ouvrirPostuler(o.id); }); fin.appendChild(b); }
+        r.appendChild(fin); t2.appendChild(r);
+      });
+      l2.appendChild(t2);
+    }
     try { majEntete("v-candidat"); } catch (err) {}
   }
 

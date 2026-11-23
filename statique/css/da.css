@@ -1030,3 +1030,17 @@ body.en-app .sj-tete .bouton-r { height: 38px; padding: 0 16px; font-size: .92re
 /* Pros et Animateurs : l'en-tête de la page porte déjà le titre, la liste complète n'en répète pas un second */
 .ap-entete-annuaire ~ .ad-tete { display: none; }
 .ap-entete-annuaire ~ .petit { margin-top: 0; }
+
+/* ---- Espace animateur : les mêmes listes que l'espace structure ---- */
+body.en-app .ls-anim-c .ls-rang { grid-template-columns: minmax(0, 2.4fr) 140px 200px 100px; }
+body.en-app .ls-anim-o .ls-rang { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr) 130px minmax(0, 1fr) 120px; }
+body.en-app .ls-anim-d .ls-rang { grid-template-columns: minmax(0, 2.4fr) 140px 240px 100px; }
+body.en-app .ls-qui b a { color: inherit; text-decoration: none; }
+body.en-app .ls-qui b a:hover { text-decoration: underline; }
+body.en-app .ls-postuler { height: 32px; padding: 0 14px; border-radius: 8px; border: 0; background: #17191d; color: #fff; font: 500 .88rem var(--texte); cursor: pointer; }
+body.en-app #bloc-mes-candidatures > .liste-compte, body.en-app #bloc-mes-demandes > .liste-compte, body.en-app #bloc-offres-pour-toi > .liste-compte { display: block; }
+@media (max-width: 860px) {
+  body.en-app .ls-anim-c .ls-rang, body.en-app .ls-anim-o .ls-rang, body.en-app .ls-anim-d .ls-rang { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  body.en-app .ls-anim-c .ls-qui, body.en-app .ls-anim-o .ls-qui, body.en-app .ls-anim-d .ls-qui, body.en-app .ls-anim-c .ls-fin, body.en-app .ls-anim-o .ls-fin, body.en-app .ls-anim-d .ls-fin { flex: 0 0 100%; }
+  body.en-app .ls-anim-c .ls-rang.ls-entete, body.en-app .ls-anim-o .ls-rang.ls-entete, body.en-app .ls-anim-d .ls-rang.ls-entete { display: none; }
+}
