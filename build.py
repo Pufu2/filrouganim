@@ -1715,7 +1715,7 @@ class Site:
             self.config["fondateurs"]["reservees"] = self.config["fondateurs"]["places"] - places
         # les centres en ligne (version 5) : une page chacun, rattachée à celle de la structure
         champs_c = "id,structure_id,nom,type,ville,departement,slug,accroche,presentation,publics,activites,photos"
-        centres = self.lire_supabase(f"centres?select={champs_c}&order=cree_le", "centres des structures") if structures else []
+        centres = self.lire_supabase(f"centres?select={champs_c}&order=nom", "centres des structures") if structures else []
         for st in structures:
             st["offres"] = [o for o in self.offres if o["structure"].get("slug") == st["slug"]]
             st["centres"] = [c for c in centres if c.get("structure_id") == st.get("id") and c.get("departement") in self.departements]
