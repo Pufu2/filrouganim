@@ -191,7 +191,10 @@
       <p class="co-groupe">Mon profil</p>
       <button type="button" data-onglet-vers="profil"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Mon profil</span><i class="co-pastille" data-pastille="profil" hidden></i></button>
       <button type="button" data-onglet-vers="offres"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg><span>Offres pour moi</span><i class="co-pastille" data-pastille="offres" hidden></i></button>
+          <p class="co-groupe">Aide</p>
+      <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'espace</span></button>
     </nav>
+    <section class="co-guide" data-onglet="guide">{% include "guides-espace/candidat.html" %}</section>
     <div class="tuiles" id="tuiles-candidat" data-onglet="tableau"></div>
 
     <div class="carte-compte carte-accent" id="bloc-postuler" data-onglet="tableau" hidden>
@@ -349,7 +352,10 @@
       <p class="co-groupe">Pour les familles</p>
       <button type="button" data-onglet-vers="sejours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/></svg><span>Mes séjours et accueils</span><i class="co-pastille" data-pastille="sejours" hidden></i></button>
       <button type="button" data-onglet-vers="familles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="7" r="3"/><circle cx="17" cy="9" r="2"/><path d="M2 20c.7-3.6 3-5.5 6-5.5s5.3 1.9 6 5.5M14 20c.4-2.4 1.6-3.8 3-3.8s2.6 1.4 3 3.8"/></svg><span>Demandes des familles</span><i class="co-pastille" data-pastille="familles" hidden></i></button>
+          <p class="co-groupe">Aide</p>
+      <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'espace</span></button>
     </nav>
+    <section class="co-guide" data-onglet="guide">{% include "guides-espace/structure.html" %}</section>
     <p class="statut" id="statut-structure" hidden></p>
     <section class="sj-page" id="sj-liste" data-onglet="sejours"></section>
     <section class="sj-page" id="sj-demandes" data-onglet="familles"></section>
@@ -654,7 +660,10 @@
       <button type="button" data-onglet-vers="fiche"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Ma fiche</span><i class="co-pastille" data-pastille-org="fiche" hidden></i></button>
       <button type="button" data-onglet-vers="zones"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Mes départements</span><i class="co-pastille" data-pastille-org="zones" hidden></i></button>
       <button type="button" data-onglet-vers="factures"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg><span>Clics et factures</span><i class="co-pastille" data-pastille-org="factures" hidden></i></button>
+          <p class="co-groupe">Aide</p>
+      <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'espace</span></button>
     </nav>
+    <section class="co-guide" data-onglet="guide">{% include "guides-espace/organisme.html" %}</section>
     <p class="statut" id="statut-organisme" hidden></p>
     <section class="og-page" id="og-tableau" data-onglet="tableau"></section>
     <section class="og-page" id="og-fiche" data-onglet="fiche"></section>
@@ -673,7 +682,10 @@
       <p class="co-groupe">Ma famille</p>
       <button type="button" data-onglet-vers="enfants"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5"/><circle cx="17" cy="10" r="2.2"/></svg><span>Mes enfants</span></button>
       <button type="button" data-onglet-vers="favoris"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Offres gardées</span></button>
+          <p class="co-groupe">Aide</p>
+      <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'espace</span></button>
     </nav>
+    <section class="co-guide" data-onglet="guide">{% include "guides-espace/parent.html" %}</section>
     <p class="statut" id="statut-parent" hidden></p>
     <section class="og-page" id="pa-tableau" data-onglet="tableau"></section>
     <section class="og-page" id="pa-inscriptions" data-onglet="inscriptions"></section>
@@ -713,7 +725,10 @@
       <button type="button" data-onglet-vers="site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h11l5 5v9a1 1 0 0 1-1 1H4z"/><path d="M15 5v5h5M8 13h8M8 17h5"/></svg><span>Contenus du site</span><i class="co-pastille" data-pastille-admin="site" hidden></i></button>
       <button type="button" data-onglet-vers="actualites"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h3v10a2 2 0 0 1-2 2M7 8h7M7 12h7M7 16h4"/></svg><span>Actualités</span><i class="co-pastille" data-pastille-admin="actualites" hidden></i></button>
       <button type="button" data-onglet-vers="contenus"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Guides et conseils</span><i class="co-pastille" data-pastille-admin="contenus" hidden></i></button>
+          <p class="co-groupe">Aide</p>
+      <button type="button" data-onglet-vers="guide"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6M12 17h.01"/></svg><span>Guide de l'admin</span></button>
     </nav>
+    <section class="co-guide" data-onglet="guide">{% include "guides-espace/admin.html" %}</section>
     {% for k in ["accueil", "qg", "annuaires", "parents", "sante", "ventes", "organismes", "sejours", "visibilite", "provenance", "prospection", "reseaux", "indexation", "site", "actualites"] %}
     <section class="ap-page" id="ad-{{ k }}" data-onglet="{{ k }}"></section>
     {% endfor %}

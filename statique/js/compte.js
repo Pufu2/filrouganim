@@ -1144,7 +1144,7 @@
     // les demandes de l'annuaire inversé et la boîte à outils. Sans fiche : seulement « Ma page ».
     var ferme = !paye(structure) && !estAdmin;
     Array.prototype.forEach.call(document.querySelectorAll("#v-structure .co-nav [data-onglet-vers]"), function (b) {
-      var verrou = !estAdmin && (nouveau ? b.dataset.ongletVers !== "page" : ferme && ["demandes", "outils"].indexOf(b.dataset.ongletVers) >= 0);
+      var verrou = !estAdmin && b.dataset.ongletVers !== "guide" && (nouveau ? b.dataset.ongletVers !== "page" : ferme && ["demandes", "outils"].indexOf(b.dataset.ongletVers) >= 0);
       b.classList.toggle("co-ferme", verrou);
       b.classList.toggle("co-premium", !nouveau && ferme && verrou);
       b.setAttribute("aria-disabled", verrou ? "true" : "false");
