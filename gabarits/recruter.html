@@ -35,44 +35,14 @@
   </div>
 </div></div>
 
-<section class="bande bande-papier rc-annuaire" id="structures" aria-labelledby="t-structures">
+<section class="bande bande-papier rc-annuaire" id="structures" aria-label="Les structures">
   <div class="cadre">
-    <div class="rc-annuaire-tete">
-      <h2 id="t-structures" class="rc-titre-cartes">Les structures qui <em>recrutent</em></h2>
-      <form class="annuaire-recherche" role="search" aria-label="Chercher une structure" onsubmit="return false">
-        <label class="champ-ou" for="q-structures">{{ m.icone("lieu") }}<span class="sr">Où cherchez-vous ?</span><input id="q-structures" type="search" placeholder="Où ? Ville, département : Lyon, 93, Gironde…" autocomplete="off" data-villes data-villes-valeur="nom"></label>
-      </form>
-    </div>
     <ul class="annuaire-cartes" id="annuaire">
     {% for x in annuaire_structures %}{{ carte(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
-    {% if not annuaire_structures and st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
+    {% if st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
     </ul>
-    <p class="aucune" id="annuaire-vide" hidden>Aucune structure inscrite dans ce secteur pour l'instant. <a href="{{ lien('/trouver-un-poste/demande/') }}">Décrivez le poste que vous cherchez</a> : votre demande attend, et part dès qu'une structure de votre secteur s'inscrit.</p>
   </div>
 </section>
-<script>
-(function () {
-  var q = document.getElementById("q-structures"), cartes = document.querySelectorAll("#annuaire .ac"), vide = document.getElementById("annuaire-vide");
-  var sa = function (t) { return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); };
-  var ps = new URLSearchParams(location.search), type = ps.get("type") || "";
-  function filtrer() {
-    var mots = sa(q.value).replace(/[(),]/g, " ").split(/\s+/).filter(Boolean), n = 0;
-    Array.prototype.forEach.call(cartes, function (c) {
-      if (c.querySelector(".ac-exemple")) return;   // l'exemple reste visible tant qu'il n'y a pas de vraie structure
-      var ok = (!type || (" " + c.dataset.type + " ").indexOf(" " + type + " ") !== -1) && mots.every(function (m) { return sa(c.dataset.texte).indexOf(m) !== -1; });
-      c.hidden = !ok; if (ok) n++;
-    });
-    vide.hidden = n > 0 || !(mots.length || type);
-  }
-  q.addEventListener("input", filtrer);
-  if (ps.get("ou")) q.value = ps.get("ou");
-  if (ps.get("ou") || type) filtrer();
-})();
-</script>
-
-<section class="bande bande-papier"><div class="cadre"><div class="tp-bande">
-  <p><b>Avec l'abonnement</b> : les demandes des animateurs de votre secteur arrivent chez vous ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; vos offres illimitées et « à la une » ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » ; la boîte à outils (guides, générateur d'annonce, budget de l'équipe). Vous recrutez juste pour une saison ? <b>Pass recrutement : {{ site.abonnement.pass_mois_prix }} par mois</b>, de 1 à {{ site.abonnement.pass_mois_max }} mois, payé une fois.</p>
-</div></div></section>
 
 <section class="bande bande-papier rc-infos" aria-labelledby="t-inclus">
   <div class="cadre">
@@ -93,25 +63,7 @@
 
     <p class="rs-pour-vous">Vous organisez des <b>séjours</b> ou un <b>accueil de loisirs</b> ? Publiez-les gratuitement : les familles vous demandent une place. <a href="{{ lien('/recruter/sejours/') }}">Voir comment ça marche →</a></p>
 
-    <ul class="rc-engagements" aria-label="Nos engagements">
-      <li>Aucune commission sur vos recrutements</li>
-      <li>Sans engagement, arrêt à tout moment</li>
-      <li>Paiement par carte ou sur facture</li>
-      <li>Chaque structure vérifiée à la main</li>
-      <li>Vos données jamais revendues</li>
-    </ul>
   </div>
 </section>
 
-<section class="bande bande-papier">
-  <div class="cadre">
-    <div class="tp-appel">
-      <div>
-        <p class="tp-appel-sur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Offre fondateurs</p>
-        <h2>Votre structure, <em>là où l'on cherche</em></h2>
-        <p>Commencez gratuitement : votre page et une offre. {% if restantes > 0 %}Pour l'abonnement, il reste {{ restantes }} place{{ 's' if restantes > 1 }} à {{ site.abonnement.prix_fondateur }} par an, à vie. {% else %}Abonnement : {{ site.abonnement.prix }} par an, chaque centre en plus moitié prix. {% endif %}Une mairie ou une association qui paie sur facture (virement, mandat administratif, Chorus Pro) ? C'est prévu. Une question ? <a href="{{ lien('/contact/') }}">Écrivez-nous</a>.</p>
-      </div>
-    </div>
-  </div>
-</section>
 {% endblock %}
