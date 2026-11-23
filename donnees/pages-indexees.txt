@@ -1033,6 +1033,7 @@
 /se-former/sessions/bas-rhin/haguenau/
 /se-former/sessions/bas-rhin/rhinau/
 /se-former/sessions/bas-rhin/strasbourg/
+/se-former/sessions/bas-rhin/vacances-noel-2026/
 /se-former/sessions/bas-rhin/walbourg/
 /se-former/sessions/bas-rhin/wolfisheim/
 /se-former/sessions/bouches-du-rhone/
@@ -1448,7 +1449,6 @@
 /se-former/sessions/hautes-alpes/baratier/
 /se-former/sessions/hautes-alpes/gap/
 /se-former/sessions/hautes-alpes/psc1/
-/se-former/sessions/hautes-alpes/psc1/embrun/
 /se-former/sessions/hautes-alpes/psc1/gap/
 /se-former/sessions/hautes-alpes/vacances-hiver-2027/
 /se-former/sessions/hautes-alpes/vacances-noel-2026/
@@ -1861,6 +1861,7 @@
 /se-former/sessions/nord/le-quesnoy/
 /se-former/sessions/nord/lille/
 /se-former/sessions/nord/loon-plage/
+/se-former/sessions/nord/marcq-en-baroeul/
 /se-former/sessions/nord/marquette-lez-lille/
 /se-former/sessions/nord/mons-en-barul/
 /se-former/sessions/nord/mouvaux/
@@ -1886,6 +1887,7 @@
 /se-former/sessions/nord/wattignies/
 /se-former/sessions/nord/wattrelos/
 /se-former/sessions/nord/wavrin/
+/se-former/sessions/nord/willems/
 /se-former/sessions/normandie/approfondissement/6-12-ans/
 /se-former/sessions/normandie/approfondissement/accueil-de-loisirs/
 /se-former/sessions/normandie/approfondissement/expression-spectacle/
@@ -1931,8 +1933,10 @@
 /se-former/sessions/oise/beauvais/
 /se-former/sessions/oise/compiegne/
 /se-former/sessions/oise/formation-generale/
+/se-former/sessions/oise/montataire/
 /se-former/sessions/oise/nogent-sur-oise/
 /se-former/sessions/oise/vacances-hiver-2027/
+/se-former/sessions/oise/vacances-noel-2026/
 /se-former/sessions/organismes/
 /se-former/sessions/organismes/afocal/
 /se-former/sessions/organismes/cemea/
@@ -1956,6 +1960,7 @@
 /se-former/sessions/paris/paris-11e/
 /se-former/sessions/paris/paris-12e/
 /se-former/sessions/paris/paris-13e/
+/se-former/sessions/paris/paris-14e/
 /se-former/sessions/paris/paris-15e/
 /se-former/sessions/paris/paris-18e/
 /se-former/sessions/paris/paris-19e/
@@ -2126,6 +2131,7 @@
 /se-former/sessions/savoie/approfondissement/
 /se-former/sessions/savoie/bafd/
 /se-former/sessions/savoie/bafd/chambery/
+/se-former/sessions/savoie/bourg-saint-maurice/
 /se-former/sessions/savoie/chambery/
 /se-former/sessions/savoie/formation-generale/
 /se-former/sessions/savoie/jacob-bellecombette/
@@ -2223,6 +2229,7 @@
 /se-former/sessions/tarn-et-garonne/bafd/montauban/
 /se-former/sessions/tarn-et-garonne/bsb/
 /se-former/sessions/tarn-et-garonne/formation-generale/
+/se-former/sessions/tarn-et-garonne/montauban/
 /se-former/sessions/tarn-et-garonne/psc1/montauban/
 /se-former/sessions/tarn-et-garonne/vacances-hiver-2027/
 /se-former/sessions/tarn-et-garonne/vacances-noel-2026/
@@ -2277,7 +2284,6 @@
 /se-former/sessions/val-de-marne/chennevieres-sur-marne/
 /se-former/sessions/val-de-marne/creteil/
 /se-former/sessions/val-de-marne/maisons-alfort/
-/se-former/sessions/val-de-marne/psc1/gentilly/
 /se-former/sessions/val-de-marne/psc1/limeil-brevannes/
 /se-former/sessions/val-de-marne/psc1/saint-maur-des-fosses/
 /se-former/sessions/val-de-marne/psc1/villejuif/
