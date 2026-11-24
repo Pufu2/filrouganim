@@ -1558,3 +1558,57 @@ body.en-app .assistant:not(.as-parcours) .as-plan-etapes li[data-facultatif="1"]
 }
 .sjf .sjf-fenetre .fp-bouton-principal { background: #d61f35; color: #fff; border: 0; border-radius: 10px; height: 46px; font-weight: 500; }
 .sjf .sjf-fenetre .fp-bouton-principal:hover { background: #b81a2d; }
+
+/* =========================================================================================
+   Fiche animateur (exemple-profil.html et ficheProfil dans compte.js) : même modèle (fs-*), sans photo par choix
+   (les profils n'en ont pas) : le haut porte une grande initiale, le contact suit à droite.
+   ========================================================================================= */
+.fa-haut .fs-haut-fond { inset: 0; background: radial-gradient(circle at 82% 30%, color-mix(in srgb, var(--theme) 55%, transparent), transparent 55%), radial-gradient(circle at 105% 110%, color-mix(in srgb, var(--theme) 35%, transparent), transparent 45%); }
+.fa-haut .fs-haut-fond::after { display: none; }
+.fa-haut .fs-haut-in { padding-bottom: 110px; }
+.fa-id { display: flex; align-items: center; gap: 24px; margin-top: 34px; }
+.fa-avatar { width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; flex: none; background: #fff; color: var(--theme-fonce); font: 600 2.6rem var(--titres); box-shadow: 0 0 0 6px rgba(255, 255, 255, .08); }
+.fa-avatar-p { width: 46px; height: 46px; font-size: 1.2rem; box-shadow: none; background: color-mix(in srgb, var(--theme) 14%, #fff); }
+.fa .fs-haut h1 { margin: 0 0 6px; }
+.fa .fs-accroche { font-size: 1.08rem; }
+.fa .fs-qui { margin-top: 14px; }
+.fa-mois { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; }
+.fa-mois li { position: relative; padding: 30px 0 10px; border-radius: 10px; background: #f4f4f2; text-align: center; font-size: .8rem; color: #8a8e95; }
+.fa-mois li::before { content: ""; position: absolute; left: 10px; right: 10px; top: 12px; height: 6px; border-radius: 99px; background: #e3e3df; }
+.fa-mois li.on { background: color-mix(in srgb, var(--theme) 10%, #fff); color: var(--fs-e); font-weight: 500; box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme) 40%, #fff) inset; }
+.fa-mois li.on::before { background: var(--theme); }
+.fa-mois small { display: block; font-size: .68rem; color: #8a8e95; font-weight: 400; }
+.fa-dipl { list-style: none; margin: 0; padding: 8px 24px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+.fa-dipl li { display: flex; gap: 12px; align-items: flex-start; padding: 13px 0; border-top: 1px solid var(--fs-t); }
+.fa-dipl li:nth-child(-n+2) { border-top: 0; }
+.fa-dipl svg { width: 22px; height: 22px; padding: 6px; box-sizing: content-box; border-radius: 9px; background: color-mix(in srgb, var(--theme) 12%, #fff); fill: none; stroke: var(--theme-fonce); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.fa-dipl b { display: block; font-weight: 500; color: var(--fs-e); }
+.fa-dipl small { display: block; font-size: .82rem; color: var(--fs-d); }
+.fa-puces { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.fa-puces li { padding: 7px 12px; border-radius: 9px; background: color-mix(in srgb, var(--theme) 10%, #fff); color: var(--theme-fonce); font-size: .88rem; font-weight: 500; }
+.fa-puces-douces li { background: #f4f4f2; color: #2b2e33; font-weight: 400; }
+.fa-cv { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--fs-t); background: #fafaf9; }
+.fa-cv > span:nth-child(2) { flex: 1; }
+.fa-cv b { display: block; font-weight: 500; color: var(--fs-e); } .fa-cv small { color: var(--fs-d); font-size: .82rem; }
+.fa-ct { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--fs-t); }
+.fa-ct b { display: block; font-weight: 600; color: var(--fs-e); } .fa-ct small { color: var(--fs-d); font-size: .84rem; }
+.fa-dispo { margin: 14px 0; }
+.fa-dispo small { display: block; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--fs-d); }
+.fa-dispo b { display: block; margin-top: 3px; font: 600 1.2rem var(--titres); color: var(--fs-e); }
+.fa-contact .fs-btn-large { margin-top: 8px; }
+.fa-contact .fs-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fa .fp-inerte { pointer-events: none; }
+.fiche-voile .fs { border-radius: 16px; overflow: hidden; padding-bottom: 30px; }
+.fiche-voile .fs-sections, .fiche-voile .sjf-reserver { top: 0; }
+@media (max-width: 900px) {
+  .fa-id { gap: 16px; align-items: flex-start; }
+  .fa-avatar { width: 68px; height: 68px; font-size: 1.8rem; }
+  .fa-mois { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .fa-dipl { grid-template-columns: 1fr; padding: 8px 18px; }
+  .fa-dipl li:nth-child(2) { border-top: 1px solid var(--fs-t); }
+}
+.fa-une-col { grid-template-columns: 1fr !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.fs-bloc-t > .fs-rang:first-child { border-top: 0; padding-top: 0; }
+.fa-mois li.on { background: var(--theme); color: #fff; box-shadow: none; }
+.fa-mois li.on::before { background: rgba(255, 255, 255, .6); }
+.fa-mois li.on small { color: rgba(255, 255, 255, .8); }

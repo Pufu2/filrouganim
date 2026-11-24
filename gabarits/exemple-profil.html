@@ -14,101 +14,83 @@
 {% set MOIS_L = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"] %}
 {% set age = annee - p.annee_naissance if p.annee_naissance else None %}
 {% block tete %}{% endblock %}
+{% set ic_c %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{% endset %}
+{% set ic_b %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>{% endset %}
+{% set ic_d %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10l8-5 8 5-8 5z"/><path d="M7 12v4c0 1 2.2 2.5 5 2.5s5-1.5 5-2.5v-4"/></svg>{% endset %}
 {% block contenu %}
-<div class="fp theme-sauge">
-  <div class="cadre">
-    <nav class="fil-ariane fp-ariane" aria-label="Fil d'Ariane">
-      <a href="{{ lien('/') }}">Accueil</a>
-      {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
-    </nav>
-    <p class="fp-exemple">Profil fictif. Un vrai profil complet n'est vu que par les structures vérifiées et abonnées, et celles à qui vous avez postulé ; les autres visiteurs n'en voient qu'un résumé.</p>
-    <div class="fp-banniere" aria-hidden="true"><span>{{ p.poste_recherche }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
-    <div class="fp-identite">
-      <span class="fp-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
-      <div>
-        <h1>{{ p.prenom }}</h1>
-        <p class="fp-sous">{{ p.poste_recherche }} · {{ p.ville }}</p>
-        <ul class="fp-badges">
-          {% if age %}<li>{{ m.icone("etape") }}{{ age }} ans</li>{% endif %}
-          {% for d in p.diplomes %}<li>{{ m.icone("diplome") }}{{ DIPLOMES_PROFIL.get(d, d) }}</li>{% endfor %}
-          {% if p.permis_b %}<li>{{ m.icone("etape") }}Permis B</li>{% endif %}
-          {% if p.cv_nom %}<li>{{ m.icone("etape") }}CV joint</li>{% endif %}
-        </ul>
+<div class="fs fa theme-sauge">
+  <header class="fs-haut fa-haut">
+    <div class="fs-haut-fond" aria-hidden="true"></div>
+    <div class="cadre fs-haut-in">
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
+        <a href="{{ lien('/') }}">Accueil</a>
+        {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+      </nav>
+      <p class="fs-exemple">Profil fictif. Un vrai profil complet n'est vu que par les structures vérifiées et abonnées, et celles à qui vous avez postulé ; les autres visiteurs n'en voient qu'un résumé.</p>
+      <div class="fa-id">
+        <span class="fa-avatar" aria-hidden="true">{{ p.prenom[0] | upper }}</span>
+        <div>
+          <h1>{{ p.prenom }}</h1>
+          <p class="fs-accroche">{{ p.poste_recherche }}</p>
+          <p class="fs-qui"><span>{{ p.ville }}{% if age %} · {{ age }} ans{% endif %}</span><span class="fs-verifiee">{{ ic_b }}Profil relu par Fil Roug'Anim</span>{% if p.cv_nom %}<span class="fs-verifiee">{{ ic_c }}CV joint</span>{% endif %}</p>
+        </div>
       </div>
     </div>
-    <div class="fp-grille">
-      <div class="fp-principal">
-        <ul class="fp-chiffres">
-          <li><b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b><span>disponible jusqu'au {{ p.dispo_fin | date_fr }}</span></li>
-          <li><b>{{ p.mobilite | length + 1 }}</b><span>zone{{ 's' if p.mobilite }} où travailler</span></li>
-          {% if age %}<li><b>{{ age }} ans</b><span>né·e en {{ p.annee_naissance }} · {{ "majeur·e" if age >= 18 else "mineur·e" }}</span></li>{% else %}<li><b>{{ p.experiences | length }}</b><span>type{{ 's' if p.experiences | length > 1 }} d'expérience</span></li>{% endif %}
-        </ul>
-
-        {% if page.mois_dispo %}<section class="fp-bloc" aria-labelledby="t-mois">
-          <h2 id="t-mois">Ses disponibilités sur l'année</h2>
-          <ol class="fp-mois">{% for x in page.mois_dispo %}<li{% if x.on %} class="on"{% endif %} aria-label="{{ x.nom }} {{ x.annee or '' }}{{ ' : disponible' if x.on }}"><span>{{ x.nom }}</span>{% if x.annee %}<small>{{ x.annee }}</small>{% endif %}</li>{% endfor %}</ol>
-        </section>{% endif %}
-        {% if p.qualifications %}<section class="fp-bloc" aria-labelledby="t-qualifs">
-          <h2 id="t-qualifs">Ses qualifications</h2>
-          <ul class="fp-qualifs">{% for q in p.qualifications %}<li>{{ m.icone("diplome") }}<span><b>{{ QUALIFS.get(q.q, q.q) }}</b><small>{% if q.fin %}valable jusqu'en {{ MOIS_L[q.fin[5:7] | int - 1] }} {{ q.fin[:4] }}{% else %}date de fin non précisée{% endif %}</small></span></li>{% endfor %}</ul>
-        </section>{% endif %}
-
-        <section class="fp-bloc" aria-labelledby="t-cherche">
-          <h2 id="t-cherche">Ce que {{ p.prenom }} cherche</h2>
-          <div class="fp-formules">
-            {% for r in p.recherche %}
-            <article class="fp-formule{% if loop.first %} fp-formule-une{% endif %}">
-              {% if loop.first %}<span class="fp-formule-badge">En priorité</span>{% endif %}
-              <h3>{{ RECHERCHE.get(r, r) }}</h3>
-              <p class="fp-formule-lieu">{{ RECH_DETAIL.get(r, "") }}</p>
-            </article>
-            {% endfor %}
-          </div>
-          {% if p.disponibilites %}<p class="fp-note">Disponibilités : {{ p.disponibilites }}</p>{% endif %}
-        </section>
-
-        <section class="fp-bloc" aria-labelledby="t-pres">
-          <h2 id="t-pres">Présentation</h2>
-          <div class="fp-texte" data-replie><p>{{ p.presentation }}</p></div>
-          <button type="button" class="fp-lire" hidden>Lire la suite</button>
-          {% if p.cv_nom %}<div class="fp-cv"><span class="fichier-icone" aria-hidden="true">PDF</span><span><b>Le CV de {{ p.prenom }}</b><small>{{ p.cv_nom }}</small></span><span class="fp-cv-bouton fp-inerte">Ouvrir le CV</span></div>{% endif %}
-        </section>
-
-        <section class="fp-bloc" aria-labelledby="t-sait">
-          <h2 id="t-sait">Ce que {{ p.prenom }} sait faire</h2>
-          <p class="fp-sous-titre">Ses expériences</p>
-          <ul class="fp-coches">{% for r in p.experiences %}<li>{{ EXPERIENCES.get(r, r) }}</li>{% endfor %}</ul>
-          <p class="fp-sous-titre">Ses activités et talents</p>
-          <ul class="fp-coches fp-coches-douces">{% for a in p.activites %}<li>{{ a | majuscule }}</li>{% endfor %}{% if p.permis_b %}<li>Permis B</li>{% endif %}</ul>
-        </section>
-
-        <section class="fp-bloc" aria-labelledby="t-ou">
-          <h2 id="t-ou">Où {{ p.prenom }} peut travailler</h2>
-          <ul class="fp-ou">
-            <li><b>{{ p.ville }}</b><span>{{ nom_dep }} ({{ p.departement }})</span></li>
-            {% for d in p.mobilite %}<li><b>{% if d == "france" %}Partout en France{% else %}{{ noms[deps.index(d)] if d in deps else d }}{% endif %}</b><span>{% if d == "france" %}pour les séjours{% else %}département ({{ d }}){% endif %}</span></li>{% endfor %}
-          </ul>
-          {% if page.points %}<div class="fp-carte" data-fp-carte='{{ {"points": page.points} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png" role="img" aria-label="Carte des départements où {{ p.prenom }} peut travailler"></div>{% endif %}
-          <p class="fp-note">Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme).</p>
-        </section>
-
-        <section class="fp-bloc fp-bloc-doux" aria-labelledby="t-contient">
-          <h2 id="t-contient">Ce qu'un profil contient, et ce qu'il ne contient pas</h2>
-          <ul class="fp-coches">
-            <li>Un prénom ou un pseudo, la ville si on veut, les diplômes, les dates, les expériences et les talents, le CV si on veut</li>
-            <li>L'année de naissance (pour l'âge), mais ni photo, ni nom de famille, ni date de naissance complète, ni adresse, ni téléphone : les structures choisissent sur ce que vous savez faire</li>
-            <li>Vous pouvez cacher votre profil, retirer votre CV ou tout supprimer à tout moment</li>
-          </ul>
-        </section>
-        <p class="fp-bon"><b>Bon à savoir.</b> Profil mis à jour le {{ p.maj_le | date_fr }}. Les structures écrivent directement aux candidats ; le contrat se signe entre eux, sans commission ni intermédiaire.</p>
+  </header>
+  <div class="cadre">
+    <ul class="fs-ruban sjf-ruban">
+      <li><small>Disponible</small><b>du {{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }} au {{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></li>
+      <li><small>Diplômes</small><b>{{ DIPLOMES_PROFIL.get(p.diplomes[0], p.diplomes[0]) if p.diplomes else "Pas encore" }}</b>{% if p.diplomes | length > 1 %}<em>+ {{ p.diplomes | length - 1 }} autre{{ 's' if p.diplomes | length > 2 }}</em>{% endif %}</li>
+      <li><small>Âge</small><b>{{ age ~ " ans" if age else "Non précisé" }}</b>{% if age %}<em>{{ "majeur·e" if age >= 18 else "mineur·e" }}</em>{% endif %}</li>
+      <li><small>Peut travailler</small><b>{% if "france" in p.mobilite %}Partout en France{% else %}{{ p.mobilite | length + 1 }} départements{% endif %}</b><em>{{ nom_dep }}</em></li>
+    </ul>
+    <div class="sjf-grille">
+      <div class="sjf-principal">
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">Le poste</p><h2>Ce que {{ p.prenom }} cherche</h2></div>
+          <div class="fs-carte fs-bloc-t">
+            {% for r in p.recherche %}<div class="fs-rang"><div><b>{{ RECHERCHE.get(r, r) }}{% if loop.first %} <span class="fs-etat fs-jaune">en priorité</span>{% endif %}</b><small>{{ RECH_DETAIL.get(r, "") }}</small></div></div>{% endfor %}
+            {% if p.disponibilites %}<p class="fs-note">Disponibilités : {{ p.disponibilites }}</p>{% endif %}
+          </div></section>
+        {% if page.mois_dispo %}<section class="fs-s"><div class="fs-tt"><p class="fs-sur">Le calendrier</p><h2>Ses disponibilités sur l'année</h2></div>
+          <div class="fs-carte fs-bloc-t"><ol class="fa-mois">{% for x in page.mois_dispo %}<li{% if x.on %} class="on"{% endif %} aria-label="{{ x.nom }} {{ x.annee or '' }}{{ ' : disponible' if x.on }}">{{ x.nom }}{% if x.annee %}<small>{{ x.annee }}</small>{% endif %}</li>{% endfor %}</ol></div></section>{% endif %}
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">Les diplômes</p><h2>Diplômes et qualifications</h2></div>
+          <ul class="fs-carte fa-dipl">
+            {% for d in p.diplomes %}<li>{{ ic_d }}<span><b>{{ DIPLOMES_PROFIL.get(d, d) }}</b><small>{{ "en cours de formation" if "stagiaire" in d else "diplôme" }}</small></span></li>{% endfor %}
+            {% for q in p.qualifications or [] %}<li>{{ ic_b }}<span><b>{{ QUALIFS.get(q.q, q.q) }}</b><small>{% if q.fin %}valable jusqu'en {{ MOIS_L[q.fin[5:7] | int - 1] }} {{ q.fin[:4] }}{% else %}date de fin non précisée{% endif %}</small></span></li>{% endfor %}
+            {% if p.permis_b %}<li>{{ ic_c }}<span><b>Permis B</b><small>peut conduire</small></span></li>{% endif %}
+          </ul></section>
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">En quelques mots</p><h2>Présentation</h2></div>
+          <div class="fs-carte fs-bloc-t"><div class="fs-texte"><p>{{ p.presentation }}</p></div>
+            {% if p.cv_nom %}<div class="fp-cv fa-cv"><span class="fichier-icone" aria-hidden="true">PDF</span><span><b>Le CV de {{ p.prenom }}</b><small>{{ p.cv_nom }}</small></span><span class="fs-btn fs-btn-b fp-inerte">Ouvrir le CV</span></div>{% endif %}
+          </div></section>
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">L'expérience</p><h2>Ce que {{ p.prenom }} sait faire</h2></div>
+          <div class="fs-carte fs-bloc-t">
+            <p class="fs-sous">Ses expériences</p><ul class="fa-puces">{% for r in p.experiences %}<li>{{ EXPERIENCES.get(r, r) }}</li>{% endfor %}</ul>
+            <p class="fs-sous">Ses activités et talents</p><ul class="fa-puces fa-puces-douces">{% for a in p.activites %}<li>{{ a | majuscule }}</li>{% endfor %}</ul>
+          </div></section>
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">Où</p><h2>Où {{ p.prenom }} peut travailler</h2></div>
+          <div class="fs-lx">
+            {% if page.points %}<div class="fp-carte fs-map" data-fp-carte='{{ {"points": page.points} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"></div>{% endif %}
+            <div class="fs-carte fs-lieux">
+              <div class="fs-rang"><div><b>{{ p.ville }}</b><small>{{ nom_dep }} ({{ p.departement }})</small></div><span class="fs-etat">chez elle</span></div>
+              {% for d in p.mobilite %}<div class="fs-rang"><div><b>{% if d == "france" %}Partout en France{% else %}{{ noms[deps.index(d)] if d in deps else d }}{% endif %}</b><small>{% if d == "france" %}pour les séjours{% else %}département ({{ d }}){% endif %}</small></div></div>{% endfor %}
+              <p class="fs-note">Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme).</p>
+            </div>
+          </div></section>
+        <section class="fs-s"><div class="fs-tt"><p class="fs-sur">Ce qui est protégé</p><h2>Ce qu'un profil contient, et ce qu'il ne contient pas</h2></div>
+          <div class="fs-carte fs-bloc-t"><ul class="fs-coches fa-une-col">
+            <li>{{ ic_c }}Un prénom ou un pseudo, la ville si on veut, les diplômes, les dates, les expériences et les talents, le CV si on veut</li>
+            <li>{{ ic_c }}L'année de naissance (pour l'âge), mais ni photo, ni nom de famille, ni date de naissance complète, ni adresse, ni téléphone : les structures choisissent sur ce que vous savez faire</li>
+            <li>{{ ic_c }}Vous pouvez cacher votre profil, retirer votre CV ou tout supprimer à tout moment</li>
+          </ul></div></section>
+        <p class="fs-bon"><b>Bon à savoir.</b> Profil mis à jour le {{ p.maj_le | date_fr }}. Les structures écrivent directement aux candidats ; le contrat se signe entre eux, sans commission ni intermédiaire.</p>
       </div>
-      <aside class="fp-contact">
-        <div class="fp-contact-tete"><span class="fp-avatar fp-avatar-petit" aria-hidden="true">{{ p.prenom[0] | upper }}</span><span><b>{{ p.prenom }}</b><small>{{ p.ville }} · {{ nom_dep }}</small></span></div>
-        <p class="fp-contact-chiffre">Disponible du <b>{{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }}</b> au <b>{{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></p>
-        <ul class="fp-contact-liste">{% for d in p.diplomes %}<li><span>{{ DIPLOMES_PROFIL.get(d, d) }}</span><b>✓</b></li>{% endfor %}</ul>
-        <span class="fp-bouton-principal fp-inerte">{{ m.icone("cherche") }}Écrire à {{ p.prenom }}</span>
-        <span class="fp-bouton-second fp-inerte">☆ Mettre en favori</span>
-        <p class="fp-contact-note">Réservé aux structures vérifiées. Dans l'exemple, les boutons ne font rien.</p>
+      <aside class="fs-carte sjf-reserver fa-contact">
+        <div class="fa-ct"><span class="fa-avatar fa-avatar-p" aria-hidden="true">{{ p.prenom[0] | upper }}</span><span><b>{{ p.prenom }}</b><small>{{ p.ville }} · {{ nom_dep }}</small></span></div>
+        <p class="fa-dispo"><small>Disponible</small><b>du {{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }} au {{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</b></p>
+        <span class="fs-btn fs-btn-r fs-btn-large fp-inerte">Écrire à {{ p.prenom }}</span>
+        <span class="fs-btn fs-btn-b fs-btn-large fp-inerte">☆ Mettre en favori</span>
+        <ul class="sjf-r-rassure"><li>{{ ic_c }}Réservé aux structures vérifiées</li><li>{{ ic_c }}Le contrat se signe directement entre vous</li><li>{{ ic_c }}Dans l'exemple, les boutons ne font rien</li></ul>
       </aside>
     </div>
   </div>

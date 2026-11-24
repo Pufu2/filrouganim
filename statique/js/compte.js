@@ -1772,111 +1772,112 @@
     }
     return n ? ul : null;
   }
+  // la fiche d'un animateur : la même mise en page que les fiches structure et séjour (classes fs-*, fa-*)
   function ficheProfil(p, opts) {
     opts = opts || {};
-    var f = el("div", "fp theme-sauge"), c = el("div", "cadre");
-    f.appendChild(c);
-    if (opts.apercu) c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées et abonnées. Les autres visiteurs n'en voient qu'un résumé, sans contact."));
-    var badges = (p.diplomes || []).map(function (x) { return libelle("diplomes", x); });
-    if (p.permis_b) badges.push("Permis B");
-    (p.qualifications || []).forEach(function (q) { var b = libelle("qualifs", q.q).replace(/ \(.*\)$/, ""); if (badges.indexOf(b) < 0) badges.push(b); });
-    if (p.cv_nom) badges.push("CV joint");
-    if (p.annee_naissance) badges.unshift(age(p.annee_naissance) + " ans");
-    entete(c, { banniere: p.poste_recherche || "", initiale: (p.prenom || "?").charAt(0).toUpperCase(), nom: p.prenom || "Votre prénom",
-                sous: [p.poste_recherche, p.ville || nomDep(p.departement)].filter(Boolean).join(" · "), badges: badges });
-    var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
-    grille.appendChild(pr); c.appendChild(grille);
-    var mob = (p.mobilite || []);
-    pr.appendChild(chiffres([
-      [p.dispo_debut ? jourMois(p.dispo_debut) : "À voir", p.dispo_debut ? (p.dispo_fin ? "disponible jusqu'au " + dateFr(p.dispo_fin) : "disponible à partir de cette date") : "les dates, avec " + (p.prenom || "le candidat")],
-      p.annee_naissance ? [age(p.annee_naissance) + " ans", "né" + "·e en " + p.annee_naissance + (age(p.annee_naissance) >= 18 ? " · majeur·e" : " · mineur·e")]
-                        : [String((p.experiences || []).length), (p.experiences || []).length > 1 ? "types d'expérience" : "type d'expérience"],
-      [String(mob.length + 1), mob.length ? "zones où travailler" : "zone où travailler"]
-    ]));
-    var bande = bandeMois(p);
-    if (bande) { var sd = bloc("Ses disponibilités sur l'année"); sd.appendChild(bande); pr.appendChild(sd); }
-    if ((p.qualifications || []).length) {
-      var sq = bloc("Ses qualifications"), ql = el("ul", "fp-qualifs");
-      p.qualifications.forEach(function (q) {
-        var li = el("li"), perime = q.fin && q.fin < new Date().toISOString().slice(0, 7);
-        li.appendChild(icone(IC.badge));
-        var t = el("span"); t.appendChild(el("b", null, libelle("qualifs", q.q)));
-        t.appendChild(el("small", perime ? "fp-qualif-perime" : null, q.fin ? (perime ? "à renouveler (fin " : "valable jusqu'en ") + moisAnnee(q.fin) + (perime ? ")" : "") : "date de fin non précisée"));
-        li.appendChild(t); ql.appendChild(li);
-      });
-      sq.appendChild(ql); pr.appendChild(sq);
-    }
+    var SVG = { c: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', b: '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+                d: '<path d="M4 10l8-5 8 5-8 5z"/><path d="M7 12v4c0 1 2.2 2.5 5 2.5s5-1.5 5-2.5v-4"/>', l: '<path d="M4 6h16v13H4z"/><path d="M4 6l8 7 8-7"/>' };
+    function ic(k) { var sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("viewBox", "0 0 24 24"); sv.setAttribute("aria-hidden", "true"); sv.innerHTML = SVG[k]; return sv; }
+    function sect(c, sur, titre) { var s = el("section", "fs-s"), t = el("div", "fs-tt"); t.appendChild(el("p", "fs-sur", sur)); t.appendChild(el("h2", null, titre)); s.appendChild(t); c.appendChild(s); return s; }
+    var nom = p.prenom || "Votre prénom", qui = p.prenom || "le candidat", mob = p.mobilite || [], a = p.annee_naissance ? age(p.annee_naissance) : null;
+    var f = el("div", "fs fa theme-sauge");
+    // le haut
+    var h = el("header", "fs-haut fa-haut"), hf = el("div", "fs-haut-fond"); h.appendChild(hf);
+    var hi = el("div", "cadre fs-haut-in");
+    if (opts.apercu) hi.appendChild(el("p", "fs-exemple", "Aperçu : voici votre profil tel que le voient les structures vérifiées et abonnées. Les autres visiteurs n'en voient qu'un résumé, sans contact."));
+    var id = el("div", "fa-id"); id.appendChild(el("span", "fa-avatar", nom.charAt(0).toUpperCase()));
+    var idt = el("div"); idt.appendChild(el("h1", null, nom));
+    idt.appendChild(el("p", "fs-accroche", majuscule(p.poste_recherche || "Animateur ou animatrice")));
+    var q = el("p", "fs-qui"); q.appendChild(el("span", null, [p.ville || nomDep(p.departement), a ? a + " ans" : null].filter(Boolean).join(" · ")));
+    if (p.verifie !== false) { var v = el("span", "fs-verifiee"); v.appendChild(ic("b")); v.appendChild(document.createTextNode("Profil relu par Fil Roug'Anim")); q.appendChild(v); }
+    if (p.cv_nom) { var cvb = el("span", "fs-verifiee"); cvb.appendChild(ic("c")); cvb.appendChild(document.createTextNode("CV joint")); q.appendChild(cvb); }
+    idt.appendChild(q); id.appendChild(idt); hi.appendChild(id); h.appendChild(hi); f.appendChild(h);
+    var c = el("div", "cadre"); f.appendChild(c);
+    // le ruban de l'essentiel
+    var rb = el("ul", "fs-ruban sjf-ruban");
+    [["Disponible", p.dispo_debut ? (p.dispo_fin ? "du " + jourMois(p.dispo_debut) + " au " + jourMois(p.dispo_fin) : "dès le " + jourMois(p.dispo_debut)) : (p.disponibilites ? "Voir ses dates" : "À voir ensemble"), null],
+     ["Diplômes", (p.diplomes || []).length ? libelle("diplomes", p.diplomes[0]) : "Pas encore", (p.diplomes || []).length > 1 ? "+ " + (p.diplomes.length - 1) + " autre" + (p.diplomes.length > 2 ? "s" : "") : null],
+     ["Âge", a ? a + " ans" : "Non précisé", a ? (a >= 18 ? "majeur·e" : "mineur·e") : null],
+     ["Peut travailler", mob.indexOf("france") >= 0 ? "Partout en France" : (mob.length + 1) + (mob.length ? " départements" : " département"), nomDep(p.departement) || null]].forEach(function (x) {
+      var li = el("li"); li.appendChild(el("small", null, x[0])); li.appendChild(el("b", null, x[1])); if (x[2]) li.appendChild(el("em", null, x[2])); rb.appendChild(li); });
+    c.appendChild(rb);
+    var g = el("div", "sjf-grille"), pr = el("div", "sjf-principal"); g.appendChild(pr); c.appendChild(g);
+    // ce qu'il cherche
     if ((p.recherche || []).length) {
-      var s1 = bloc("Ce que " + (p.prenom || "le candidat") + " cherche"), fo = el("div", "fp-formules");
+      var s1 = sect(pr, "Le poste", "Ce que " + qui + " cherche"), k1 = el("div", "fs-carte fs-bloc-t");
       p.recherche.forEach(function (r, i) {
-        var a = el("article", "fp-formule" + (i === 0 ? " fp-formule-une" : ""));
-        if (i === 0) a.appendChild(el("span", "fp-formule-badge", "En priorité"));
-        a.appendChild(el("h3", null, libelle("recherche", r)));
-        a.appendChild(el("p", "fp-formule-lieu", RECH_DETAIL[r] || ""));
-        fo.appendChild(a);
+        var rg = el("div", "fs-rang"), t = el("div"), b = el("b", null, libelle("recherche", r));
+        if (i === 0) { b.appendChild(document.createTextNode(" ")); b.appendChild(el("span", "fs-etat fs-jaune", "en priorité")); }
+        t.appendChild(b); t.appendChild(el("small", null, RECH_DETAIL[r] || "")); rg.appendChild(t); k1.appendChild(rg);
       });
-      s1.appendChild(fo);
-      if (p.disponibilites) s1.appendChild(el("p", "fp-note", "Disponibilités : " + p.disponibilites));
-      pr.appendChild(s1);
+      if (p.disponibilites) k1.appendChild(el("p", "fs-note", "Disponibilités : " + p.disponibilites));
+      s1.appendChild(k1);
     }
+    // l'année
+    var bande = bandeMois(p);
+    if (bande) { var s5 = sect(pr, "Le calendrier", "Ses disponibilités sur l'année"), k5 = el("div", "fs-carte fs-bloc-t"); bande.className = "fa-mois"; k5.appendChild(bande); s5.appendChild(k5); }
+    // diplômes et qualifications
+    if ((p.diplomes || []).length || (p.qualifications || []).length || p.permis_b) {
+      var s2 = sect(pr, "Les diplômes", "Diplômes et qualifications"), k2 = el("ul", "fs-carte fa-dipl");
+      (p.diplomes || []).forEach(function (d) { var li = el("li"); li.appendChild(ic("d")); var t = el("span"); t.appendChild(el("b", null, libelle("diplomes", d))); t.appendChild(el("small", null, /stagiaire/.test(d) ? "en cours de formation" : "diplôme")); li.appendChild(t); k2.appendChild(li); });
+      (p.qualifications || []).forEach(function (qq) {
+        var perime = qq.fin && qq.fin < new Date().toISOString().slice(0, 7), li = el("li"); li.appendChild(ic("b"));
+        var t = el("span"); t.appendChild(el("b", null, libelle("qualifs", qq.q)));
+        t.appendChild(el("small", perime ? "fp-qualif-perime" : null, qq.fin ? (perime ? "à renouveler (fin " : "valable jusqu'en ") + moisAnnee(qq.fin) + (perime ? ")" : "") : "date de fin non précisée"));
+        li.appendChild(t); k2.appendChild(li); });
+      if (p.permis_b) { var lp = el("li"); lp.appendChild(ic("c")); var tp = el("span"); tp.appendChild(el("b", null, "Permis B")); tp.appendChild(el("small", null, "peut conduire")); lp.appendChild(tp); k2.appendChild(lp); }
+      s2.appendChild(k2);
+    }
+    // présentation et CV
     if (p.presentation || p.cv_nom) {
-      var s2 = bloc("Présentation");
-      if (p.presentation) texteReplie(s2, [p.presentation]);
+      var s3 = sect(pr, "En quelques mots", "Présentation"), k3 = el("div", "fs-carte fs-bloc-t");
+      if (p.presentation) { var tx = el("div", "fs-texte"); p.presentation.split(/\n\s*\n/).forEach(function (x) { if (x.trim()) tx.appendChild(el("p", null, x.trim())); }); k3.appendChild(tx); }
       if (p.cv_nom) {
-        var cv = el("div", "fp-cv"), ic = el("span", "fichier-icone", "PDF"), t = el("span");
-        t.appendChild(el("b", null, "Le CV de " + (p.prenom || "ce candidat"))); t.appendChild(el("small", null, p.cv_nom));
-        cv.appendChild(ic); cv.appendChild(t);
-        if (opts.cvId) {
-          var bcv = el("button", "fp-cv-bouton", "Ouvrir le CV"); bcv.type = "button";
-          bcv.addEventListener("click", function () { ouvrirCv(opts.cvId); });
-          cv.appendChild(bcv);
-        }
-        s2.appendChild(cv);
+        var cv = el("div", "fp-cv fa-cv"), t = el("span");
+        cv.appendChild(el("span", "fichier-icone", "PDF")); t.appendChild(el("b", null, "Le CV de " + qui)); t.appendChild(el("small", null, p.cv_nom)); cv.appendChild(t);
+        if (opts.cvId) { var bcv = el("button", "fs-btn fs-btn-b", "Ouvrir le CV"); bcv.type = "button"; bcv.addEventListener("click", function () { ouvrirCv(opts.cvId); }); cv.appendChild(bcv); }
+        k3.appendChild(cv);
       }
-      pr.appendChild(s2);
+      s3.appendChild(k3);
     }
+    // ce qu'il sait faire
     if ((p.experiences || []).length || (p.activites || []).length) {
-      var s3 = bloc("Ce que " + (p.prenom || "le candidat") + " sait faire");
-      if ((p.experiences || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Ses expériences")); s3.appendChild(coches(p.experiences.map(function (x) { return libelle("experiences", x); }))); }
-      if ((p.activites || []).length) { s3.appendChild(el("p", "fp-sous-titre", "Ses activités et talents")); s3.appendChild(coches(p.activites.map(majuscule).concat(p.permis_b ? ["Permis B"] : []), true)); }
-      pr.appendChild(s3);
+      var s4 = sect(pr, "L'expérience", "Ce que " + qui + " sait faire"), k4 = el("div", "fs-carte fs-bloc-t");
+      if ((p.experiences || []).length) { k4.appendChild(el("p", "fs-sous", "Ses expériences")); var u1 = el("ul", "fa-puces"); p.experiences.forEach(function (x) { u1.appendChild(el("li", null, libelle("experiences", x))); }); k4.appendChild(u1); }
+      if ((p.activites || []).length) { k4.appendChild(el("p", "fs-sous", "Ses activités et talents")); var u2 = el("ul", "fa-puces fa-puces-douces"); p.activites.forEach(function (x) { u2.appendChild(el("li", null, majuscule(x))); }); k4.appendChild(u2); }
+      s4.appendChild(k4);
     }
+    // où
     if (p.departement) {
-      var s4 = bloc("Où " + (p.prenom || "le candidat") + " peut travailler"), ou = el("ul", "fp-ou"), pts = [];
+      var s6 = sect(pr, "Où", "Où " + qui + " peut travailler"), lx = el("div", "fs-lx"), pts = [], k6 = el("div", "fs-carte fs-lieux");
       [p.departement].concat(mob).forEach(function (d, i) {
-        var li = el("li");
-        li.appendChild(el("b", null, d === "france" ? "Partout en France" : (i === 0 && p.ville ? p.ville : nomDep(d))));
-        li.appendChild(el("span", null, d === "france" ? "pour les séjours" : (i === 0 && p.ville ? nomDep(d) + " (" + d + ")" : "département (" + d + ")")));
-        ou.appendChild(li);
+        var rg = el("div", "fs-rang"), t = el("div");
+        t.appendChild(el("b", null, d === "france" ? "Partout en France" : (i === 0 && p.ville ? p.ville : nomDep(d))));
+        t.appendChild(el("small", null, d === "france" ? "pour les séjours" : (i === 0 && p.ville ? nomDep(d) + " (" + d + ")" : "département (" + d + ")")));
+        rg.appendChild(t); if (i === 0) rg.appendChild(el("span", "fs-etat", "chez lui·elle")); k6.appendChild(rg);
         if (L.centres[d]) pts.push([L.centres[d][0], L.centres[d][1], nomDep(d), i === 0 ? 1 : 0]);
       });
-      s4.appendChild(ou);
-      if (pts.length) s4.appendChild(carteOu(pts, "Carte des départements où " + (p.prenom || "le candidat") + " peut travailler"));
-      s4.appendChild(el("p", "fp-note", "Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme)."));
-      pr.appendChild(s4);
+      k6.appendChild(el("p", "fs-note", "Points au centre de chaque département, jamais l'adresse. Fond de carte IGN (Géoplateforme)."));
+      if (pts.length) { var cm = carteOu(pts, "Carte des départements où " + qui + " peut travailler"); cm.classList.add("fs-map"); lx.appendChild(cm); }
+      lx.appendChild(k6); s6.appendChild(lx);
     }
-    if (p.maj_le) pr.appendChild(el("p", "fp-bon", "Profil mis à jour le " + dateFr(p.maj_le) + ". Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas."));
-
-    var aside = el("aside", "fp-contact");
-    contactTete(aside, (p.prenom || "?").charAt(0).toUpperCase(), p.prenom || "Votre prénom", [p.ville, nomDep(p.departement)].filter(Boolean).join(" · "));
-    var dispo = el("p", "fp-contact-chiffre");
-    if (p.dispo_debut) { dispo.appendChild(document.createTextNode((p.dispo_fin ? "Disponible du " : "Disponible à partir du "))); dispo.appendChild(el("b", null, jourMois(p.dispo_debut))); if (p.dispo_fin) { dispo.appendChild(document.createTextNode(" au ")); dispo.appendChild(el("b", null, jourMois(p.dispo_fin))); } }
-    else dispo.textContent = p.disponibilites || "Dates à voir ensemble";
-    aside.appendChild(dispo);
-    if ((p.diplomes || []).length) {
-      var ul = el("ul", "fp-contact-liste");
-      p.diplomes.forEach(function (d) { var li = el("li"); li.appendChild(el("span", null, libelle("diplomes", d))); li.appendChild(el("b", null, "✓")); ul.appendChild(li); });
-      aside.appendChild(ul);
-    }
+    if (p.maj_le) pr.appendChild(el("p", "fs-bon", "Profil mis à jour le " + dateFr(p.maj_le) + ". Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas."));
+    // le contact, qui suit
+    var as = el("aside", "fs-carte sjf-reserver fa-contact");
+    var ct = el("div", "fa-ct"); ct.appendChild(el("span", "fa-avatar fa-avatar-p", nom.charAt(0).toUpperCase())); var ctt = el("span"); ctt.appendChild(el("b", null, nom)); ctt.appendChild(el("small", null, [p.ville, nomDep(p.departement)].filter(Boolean).join(" · "))); ct.appendChild(ctt); as.appendChild(ct);
+    var dispo = el("p", "fa-dispo"); dispo.appendChild(el("small", null, "Disponible"));
+    dispo.appendChild(el("b", null, p.dispo_debut ? (p.dispo_fin ? "du " + jourMois(p.dispo_debut) + " au " + jourMois(p.dispo_fin) : "dès le " + jourMois(p.dispo_debut)) : (p.disponibilites || "Dates à voir ensemble"))); as.appendChild(dispo);
     if (opts.ecrire && p.email_contact) {
-      var a = el("a", "fp-bouton-principal");
-      a.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim" + (structure && structure.nom ? " : " + structure.nom : ""));
-      a.appendChild(icone(IC.lettre)); a.appendChild(document.createTextNode("Écrire à " + p.prenom));
-      aside.appendChild(a);
-    } else aside.appendChild(el("span", "fp-bouton-principal fp-inerte", "Écrire à " + (p.prenom || "vous")));
-    if (opts.favori) aside.appendChild(opts.favori);
-    aside.appendChild(el("p", "fp-contact-note", opts.apercu ? "Les structures vérifiées vous écrivent à l'adresse de votre profil ; vous répondez si vous voulez." : "Réservé aux structures vérifiées. Beaucoup de candidats ont 16 ou 17 ans : restez dans le cadre du recrutement."));
-    grille.appendChild(aside);
+      var mail = el("a", "fs-btn fs-btn-r fs-btn-large");
+      mail.href = "mailto:" + encodeURIComponent(p.email_contact).replace(/%40/g, "@") + "?subject=" + encodeURIComponent("Votre profil Fil Roug'Anim" + (structure && structure.nom ? " : " + structure.nom : ""));
+      mail.appendChild(ic("l")); mail.appendChild(document.createTextNode("Écrire à " + p.prenom)); as.appendChild(mail);
+    } else as.appendChild(el("span", "fs-btn fs-btn-r fs-btn-large fp-inerte", "Écrire à " + (p.prenom || "vous")));
+    if (opts.favori) { opts.favori.className = "fs-btn fs-btn-b fs-btn-large fa-favori"; as.appendChild(opts.favori); }
+    var ras = el("ul", "sjf-r-rassure");
+    (opts.apercu ? ["Les structures vérifiées vous écrivent à l'adresse de votre profil", "Vous répondez si vous voulez", "Vous pouvez cacher votre profil à tout moment"]
+                 : ["Il ou elle reçoit votre message par e-mail", "Le contrat se signe directement entre vous", "Beaucoup de candidats ont 16 ou 17 ans : restez dans un cadre professionnel"]).forEach(function (x) { var li = el("li"); li.appendChild(ic("c")); li.appendChild(document.createTextNode(x)); ras.appendChild(li); });
+    as.appendChild(ras);
+    g.appendChild(as);
     return f;
   }
 
