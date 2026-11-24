@@ -149,7 +149,7 @@
             {% endfor %}
           </div>
         </div></div>
-        <p class="fs-an-pied">Vacances scolaires de la zone {{ cal.zone }} ({{ nom_dep }}), année {{ cal.an }}-{{ cal.an + 1 }}.{% if not st.exemple %} Un séjour ou une offre s'ouvre au clic.{% endif %}</p>
+        <p class="fs-an-pied">Vacances scolaires de la zone {{ cal.zone }} ({{ nom_dep }}), année {{ cal.an }}-{{ cal.an + 1 }}.{% if not st.exemple and cal.lignes | map(attribute="barres") | sum(start=[]) | selectattr("url") | list %} Un séjour ou une offre s'ouvre au clic.{% endif %}</p>
       </div>
     </section>
     {% endif %}

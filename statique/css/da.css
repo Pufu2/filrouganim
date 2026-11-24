@@ -1668,3 +1668,4 @@ body.en-app .assistant:not(.as-parcours) .as-plan-etapes li[data-facultatif="1"]
 @media (max-width: 900px) { .fa-mois { grid-template-columns: repeat(12, minmax(0, 1fr)) !important; } .fa-mois li { font-size: .62rem !important; padding-left: 2px !important; } .fa-mois small { display: none !important; } }
 .fa-mois li.on + li.on { border-left-color: transparent; }
 .fa-mois li.on + li.on::before { left: -1px !important; }
+@media (max-width: 1000px) { .fa .sjf-reserver { order: 0; margin-top: 30px; } }
