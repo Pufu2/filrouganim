@@ -1452,3 +1452,7 @@ body.en-app .assistant:not(.as-parcours) .as-carte .tp-carte-haut { height: 110p
   .qa-grille, .qa-chiffres { grid-template-columns: 1fr; }
 }
 body.en-app .assistant:not(.as-parcours) .as-plan-etapes li[data-facultatif="1"].vide span::after { content: "facultatif"; color: #8a8e95; }
+/* l'aperçu dans l'espace structure : la page dans la fenêtre, sans marge en haut */
+.fs-apercu { padding-bottom: 30px; border-radius: 16px; overflow: hidden; }
+.fs-apercu .fs-haut-in { padding-top: 22px; }
+.fs-apercu .fs-exemple { margin-top: 0; }

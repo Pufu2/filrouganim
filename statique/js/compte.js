@@ -1491,6 +1491,7 @@
     var d = lireStructure();
     d.offres = mesOffres.filter(function (o) { return o.publiee && o.expire_le >= aujourdhui(); });
     d.fondatrice = structure && structure.fondatrice;
+    d.journee = lireJournee();
     ouvrirFiche(ficheStructure(d));
   });
   // les photos et le logo, envoyés dès qu'on les choisit (dans le dossier de la structure)
@@ -1880,69 +1881,110 @@
   }
 
   // l'aperçu de la page de la structure, avant la vérification
+  // l'aperçu de la page structure : la même mise en page que la page en ligne (gabarits/structure.html, classes fs-*)
   function ficheStructure(d) {
-    var f = el("div", "fp theme-" + (d.couleur || "rouge")), c = el("div", "cadre");
-    f.appendChild(c);
-    c.appendChild(el("p", "fp-exemple", "Aperçu : voici votre page telle qu'elle sera en ligne une fois la structure vérifiée."));
-    var nat = (d.accueils || []).filter(function (a) { return a !== "autre"; }).map(function (a) { return libelle("accueils_st", a); });
-    var type = nat.length ? nat.slice(0, 3).join(" · ") : d.type ? libelle("types", d.type) : "Structure d'animation";
-    var ages = d.age_min != null && d.age_max != null;
-    entete(c, { photos: d.photos, logo: d.logo, banniere: type, initiale: initiales(d.nom), nom: d.nom || "Votre structure",
-                sous: type + (d.ville ? " à " + d.ville : ""), badges: ["Vérifiée par Fil Roug'Anim"].concat(d.offres.length ? ["Recrute en ce moment"] : []).concat(d.fondatrice ? ["Structure fondatrice"] : []).concat(["Sans commission"]) });
-    var grille = el("div", "fp-grille"), pr = el("div", "fp-principal");
-    grille.appendChild(pr); c.appendChild(grille);
-    pr.appendChild(chiffres([[String(d.offres.length), d.offres.length === 1 ? "offre en ce moment" : "offres en ce moment"],
-      ages ? [d.age_min === d.age_max ? String(d.age_min) : d.age_min + "-" + d.age_max, "ans, les publics"] :
-      [(d.publics || []).length ? libelle("publics", d.publics[0]).replace(" ans", "") + (d.publics.length > 1 ? " et +" : "") : "Tous", (d.publics || []).length ? "ans, les publics" : "les publics"],
-      [d.departement || "—", nomDep(d.departement) || "le département"]]));
-    var s1 = bloc(d.offres.length ? "Ses offres" : "Pas d'offre en ce moment");
-    if (d.offres.length) {
-      var fo = el("div", "fp-formules");
-      d.offres.slice(0, 6).forEach(function (o, i) {
-        var a = el("article", "fp-formule" + (i === 0 && d.offres.length > 1 ? " fp-formule-une" : ""));
-        a.appendChild(el("p", "fp-formule-sur", libelle("contrats", o.contrat)));
-        var dt = el("p", "fp-formule-date"); dt.appendChild(el("b", null, jourMois(o.debut))); dt.appendChild(document.createTextNode(" " + o.debut.slice(0, 4))); a.appendChild(dt);
-        a.appendChild(el("h3", null, o.intitule)); a.appendChild(el("p", "fp-formule-lieu", o.ville + " (" + o.departement + ")"));
-        fo.appendChild(a);
-      });
-      s1.appendChild(fo);
-    } else s1.appendChild(el("p", null, "Vos offres en ligne apparaîtront ici, en cartes."));
-    pr.appendChild(s1);
-    if (d.presentation || d.projet || d.accroche) {
-      var s2 = bloc("Présentation");
-      if (d.accroche) s2.dataset.accroche = "1";
-      var morceaux = [];
-      if (d.accroche) morceaux.push(d.accroche);
-      if (d.presentation) morceaux.push(d.presentation);
-      if (d.projet) { morceaux.push(["h3", "Notre projet"]); morceaux.push(d.projet); }
-      texteReplie(s2, morceaux);
-      pr.appendChild(s2);
+    var SVG = {
+      p: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18"/>', s: '<path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/>',
+      a: '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>',
+      c: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', b: '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>' };
+    function ic(k) { var sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("viewBox", "0 0 24 24"); sv.setAttribute("aria-hidden", "true"); sv.innerHTML = SVG[k]; return sv; }
+    function sect(c, sur, titre, sous) { var s = el("section", "fs-s"), t = el("div", "fs-tt"); t.appendChild(el("p", "fs-sur", sur)); t.appendChild(el("h2", null, titre)); if (sous) t.appendChild(el("p", null, sous)); s.appendChild(t); c.appendChild(s); return s; }
+    function rang(p, titre, sous, lien) { var r = el("div", "fs-rang"), t = el("div"); t.appendChild(el("b", null, titre)); t.appendChild(el("small", null, sous)); r.appendChild(t); if (lien) r.appendChild(el("span", "fs-lp", lien + " →")); p.appendChild(r); }
+    function coches(p, liste) { if (!liste.length) return; var ul = el("ul", "fs-coches"); liste.forEach(function (x) { var li = el("li"); li.appendChild(ic("c")); li.appendChild(document.createTextNode(x)); ul.appendChild(li); }); p.appendChild(ul); }
+    var acc = d.accueils || [], ages = d.age_min != null && d.age_max != null ? (d.age_min === d.age_max ? d.age_min + " ans" : "de " + d.age_min + " à " + d.age_max + " ans") : "";
+    var nat = acc.filter(function (a) { return a !== "autre"; }).map(function (a) { return libelle("accueils_st", a); });
+    var type = d.type ? libelle("types", d.type) : "Structure d'animation";
+    var sejours = acc.indexOf("sejours") >= 0 || acc.indexOf("mini-camps") >= 0, accueil = ["periscolaire", "extrascolaire", "accueil-de-jeunes"].some(function (a) { return acc.indexOf(a) >= 0; });
+    var familles = sejours || accueil, handicap = (d.publics || []).indexOf("handicap") >= 0;
+    var f = el("div", "fs fs-apercu theme-" + (d.couleur || "rouge"));
+    // le haut
+    var h = el("header", "fs-haut" + (d.photos && d.photos.length ? " fs-haut-photo" : "")), fd = el("div", "fs-haut-fond");
+    if (d.photos && d.photos.length) fd.style.backgroundImage = "url('" + urlPhoto(d.photos[0]) + "')";
+    h.appendChild(fd);
+    var hi = el("div", "cadre fs-haut-in");
+    hi.appendChild(el("p", "fs-exemple", "Aperçu : voici votre page telle qu'elle sera en ligne une fois la structure vérifiée."));
+    var qui = el("p", "fs-qui"), lg = el("span", "fs-logo");
+    if (d.logo) { var im = el("img"); im.src = urlPhoto(d.logo); im.alt = ""; lg.appendChild(im); } else lg.textContent = initiales(d.nom);
+    qui.appendChild(lg); qui.appendChild(el("span", null, (d.statut ? libelle("statuts", d.statut) : type) + (d.ville ? " · " + d.ville + " (" + (d.departement || "") + ")" : "")));
+    var vf = el("span", "fs-verifiee"); vf.appendChild(ic("b")); vf.appendChild(document.createTextNode("Vérifiée par Fil Roug'Anim")); qui.appendChild(vf);
+    hi.appendChild(qui);
+    hi.appendChild(el("h1", null, d.nom || "Votre structure"));
+    hi.appendChild(el("p", "fs-accroche", d.accroche || (type + (d.ville ? " à " + d.ville : "") + (ages ? ", " + ages : "") + ".")));
+    h.appendChild(hi); f.appendChild(h);
+    var c = el("div", "cadre"); f.appendChild(c);
+    // le ruban
+    var items = [];
+    if (d.offres.length || !familles) items.push(["p", d.offres.length ? "Recrute" : "Travailler ici", d.offres.length ? d.offres.length + (d.offres.length > 1 ? " offres ouvertes" : " offre ouverte") : "Pas d'offre en ce moment : envoyez votre profil", d.offres.length ? "Voir les offres" : "En savoir plus"]);
+    if (sejours) items.push(["s", "Séjours", acc.indexOf("mini-camps") >= 0 ? "Mini-camps" : "Séjours de vacances", "Voir les séjours"]);
+    if (accueil) items.push(["a", acc.indexOf("accueil-de-jeunes") >= 0 && acc.indexOf("periscolaire") < 0 && acc.indexOf("extrascolaire") < 0 ? "Accueil de jeunes" : "Accueil de loisirs",
+      [acc.indexOf("periscolaire") >= 0 ? "Périscolaire" : null, acc.indexOf("extrascolaire") >= 0 ? "vacances" : null].filter(Boolean).join(" et ") + (ages ? " · " + ages : ""), "Voir l'accueil"]);
+    var rb = el("div", "fs-ruban fs-ruban-" + Math.max(1, items.length));
+    items.forEach(function (x) { var a = el("a"), k = el("span", "fs-k"), t = el("span"); k.appendChild(ic(x[0])); a.appendChild(k); t.appendChild(el("b", null, x[1])); t.appendChild(el("small", null, x[2])); t.appendChild(el("em", null, x[3] + " →")); a.appendChild(t); rb.appendChild(a); });
+    c.appendChild(rb);
+    // deux façons de venir
+    var s1 = sect(c, "Ce qu'elle propose", familles ? "Deux façons de venir" : "Travailler avec " + (d.nom || "vous"));
+    var portes = el("div", "fs-portes" + (familles ? "" : " fs-portes-1")); s1.appendChild(portes);
+    var p1 = el("article", "fs-carte fs-porte"), t1 = el("div", "fs-porte-t"); t1.appendChild(el("h3", null, "Travailler avec nous")); t1.appendChild(el("small", null, "Animateurs, stagiaires BAFA, directeurs")); p1.appendChild(t1);
+    d.offres.slice(0, 5).forEach(function (o) { rang(p1, o.intitule, "Dès le " + dateFr(o.debut) + " · " + libelle("contrats", o.contrat) + " · " + o.ville, "Postuler"); });
+    if (!d.offres.length) p1.appendChild(el("p", "fs-vide", "Vos offres en ligne apparaîtront ici, chacune avec son bouton « Postuler »."));
+    coches(p1, (d.avantages || "").split("\n").map(function (x) { return x.trim().replace(/\.$/, ""); }).filter(Boolean).slice(0, 4));
+    p1.appendChild(el("span", "fs-btn fs-btn-r fs-btn-large", d.offres.length ? "Postuler avec mon profil" : "Créer mon profil gratuit"));
+    portes.appendChild(p1);
+    if (familles) {
+      var p2 = el("article", "fs-carte fs-porte"), t2 = el("div", "fs-porte-t"); t2.appendChild(el("h3", null, "Inscrire votre enfant")); t2.appendChild(el("small", null, (ages ? majuscule(ages) + " · " : "") + "demande de place en ligne, sans frais")); p2.appendChild(t2);
+      if (acc.indexOf("periscolaire") >= 0) rang(p2, "Périscolaire et mercredis", "Matins, midis, soirs et mercredis" + (d.ville ? " · " + d.ville : ""), "Demander");
+      if (acc.indexOf("extrascolaire") >= 0) rang(p2, "Accueil de loisirs des vacances", "Pendant les vacances scolaires" + (d.ville ? " · " + d.ville : ""), "Demander");
+      if (acc.indexOf("accueil-de-jeunes") >= 0) rang(p2, "Accueil de jeunes", "Ados, espace jeunes", "Demander");
+      if (sejours) p2.appendChild(el("p", "fs-vide", "Vos séjours publiés (« Séjours et accueils ») apparaîtront ici et en cartes, avec leurs dates dans le calendrier de l'année."));
+      if (handicap) coches(p2, ["Enfants en situation de handicap"]);
+      p2.appendChild(el("span", "fs-btn fs-btn-b fs-btn-large", "Demander une place"));
+      portes.appendChild(p2);
     }
-    if (d.avantages || (d.publics || []).length || d.activites.length) {
-      var s3 = bloc("Ce que la structure propose");
-      if (d.avantages) { s3.appendChild(el("p", "fp-sous-titre", "À l'équipe")); s3.appendChild(coches(d.avantages.split("\n").map(function (x) { return x.trim().replace(/\.$/, ""); }).filter(Boolean))); }
-      if (nat.length) { s3.appendChild(el("p", "fp-sous-titre", "Ce que nous organisons")); s3.appendChild(coches(nat, true)); }
-      var pub = ages ? ["De " + d.age_min + " à " + d.age_max + " ans"].concat((d.publics || []).filter(function (x) { return x === "handicap" || x === "familles"; }).map(function (x) { return libelle("publics", x); }))
-                     : (d.publics || []).map(function (x) { return libelle("publics", x); });
-      if (pub.length) { s3.appendChild(el("p", "fp-sous-titre", "Aux enfants et aux jeunes")); s3.appendChild(coches(pub, true)); }
-      if (d.activites.length) { s3.appendChild(el("p", "fp-sous-titre", "Les activités")); s3.appendChild(coches(d.activites.map(majuscule), true)); }
-      pr.appendChild(s3);
+    // une journée type
+    if (d.journee && d.journee.length) {
+      var sj = sect(c, "Pour se projeter", "Une journée type" + ({ mercredi: ", un mercredi", vacances: ", pendant les vacances", sejour: " en séjour", periscolaire: " au périscolaire" }[d.journee_jour] || ""), "Ce que vivent les enfants, et ce que fait l'équipe.");
+      var ol = el("ol", "fs-carte fs-journee"); ol.style.setProperty("--n", d.journee.length);
+      d.journee.forEach(function (m) { var li = el("li"); li.appendChild(el("i", null, m.h)); li.appendChild(el("b", null, m.t)); if (m.p) li.appendChild(el("small", null, m.p)); ol.appendChild(li); });
+      sj.appendChild(ol);
     }
+    // qui nous sommes
+    var s2 = sect(c, "La structure", "Qui nous sommes"), pres = el("div", "fs-carte fs-pres"), tx = el("div", "fs-texte");
+    (d.presentation || "Votre présentation apparaîtra ici.").split(/\n\s*\n/).forEach(function (x) { if (x.trim()) tx.appendChild(el("p", null, x.trim())); });
+    if (d.projet) { tx.appendChild(el("h3", null, "Notre projet")); d.projet.split(/\n\s*\n/).forEach(function (x) { if (x.trim()) tx.appendChild(el("p", null, x.trim())); }); }
+    pres.appendChild(tx);
+    var dl = el("dl", "fs-bref");
+    [["Ce qu'elle organise", nat.join(", ")], ["Pour qui", ages ? majuscule(ages) + (handicap ? ", enfants en situation de handicap" : "") : ""], ["Les activités", (d.activites || []).join(", ")], ["Statut", d.statut ? libelle("statuts", d.statut) : ""]].forEach(function (x) {
+      if (!x[1]) return; var dv = el("div"); dv.appendChild(el("dt", null, x[0])); dv.appendChild(el("dd", null, majuscule(x[1]))); dl.appendChild(dv); });
+    pres.appendChild(dl); s2.appendChild(pres);
+    // qui vous accueille
+    var s3 = sect(c, "Les personnes", "Qui vous accueille"), avec = d.accueil_phrase || d.nb_animateurs || d.capacite, duo = el("div", "fs-duo" + (avec ? "" : " fs-duo-1"));
+    if (avec) {
+      var dir = el("div", "fs-carte fs-dir");
+      if (d.accueil_phrase) {
+        var dt = el("div", "fs-dir-t"), ph = el("span", "fs-dir-photo");
+        if (d.accueil_photo) { var im2 = el("img"); im2.src = urlPhoto(d.accueil_photo); im2.alt = ""; ph.appendChild(im2); } else ph.textContent = (d.accueil_prenom || d.nom || "?").charAt(0).toUpperCase();
+        dt.appendChild(ph); var dv2 = el("div"); dv2.appendChild(el("blockquote", null, "« " + d.accueil_phrase + " »"));
+        if (d.accueil_prenom || d.accueil_role) { var n = el("p", "fs-dir-n"); if (d.accueil_prenom) n.appendChild(el("b", null, d.accueil_prenom)); n.appendChild(document.createTextNode((d.accueil_prenom && d.accueil_role ? ", " + d.accueil_role.toLowerCase() : d.accueil_role || ""))); dv2.appendChild(n); }
+        dt.appendChild(dv2); dir.appendChild(dt);
+      }
+      var eq = el("div", "fs-eq");
+      [[d.nb_animateurs, "animateurs"], [d.nb_stagiaires, "stagiaires BAFA par an"], [d.capacite, "enfants accueillis au plus"]].forEach(function (x) { if (x[0]) { var e = el("div"); e.appendChild(el("b", null, String(x[0]))); e.appendChild(document.createTextNode(x[1])); eq.appendChild(e); } });
+      if (eq.children.length) dir.appendChild(eq);
+      duo.appendChild(dir);
+    }
+    var cf = el("div", "fs-carte fs-conf"); cf.appendChild(el("h3", null, "Ce qui est vérifié"));
+    [["b", "Structure vérifiée à la main", "Son identifiant (SIRET, RNA ou déclaration de l'accueil) est contrôlé par Fil Roug'Anim."], ["c", "Sans commission", "Le contrat ou l'inscription se fait directement avec " + (d.nom || "vous") + "."]].forEach(function (x) {
+      var it = el("div", "fs-it"), t = el("div"); it.appendChild(ic(x[0])); t.appendChild(el("b", null, x[1])); t.appendChild(el("small", null, x[2])); it.appendChild(t); cf.appendChild(it); });
+    duo.appendChild(cf); s3.appendChild(duo);
+    // où
     if (d.departement) {
-      var s4 = bloc("Où elle accueille"), ou = el("ul", "fp-ou");
-      [[d.ville || "Votre ville", type.toLowerCase()], [nomDep(d.departement), "département (" + d.departement + ")"]].forEach(function (x) { var li = el("li"); li.appendChild(el("b", null, x[0])); li.appendChild(el("span", null, x[1])); ou.appendChild(li); });
-      s4.appendChild(ou);
-      if (L.centres[d.departement]) s4.appendChild(carteOu([[L.centres[d.departement][0], L.centres[d.departement][1], nomDep(d.departement), 1]], "Carte : " + nomDep(d.departement)));
-      if (d.lieux) s4.appendChild(el("p", "fp-lieux", d.lieux));
-      pr.appendChild(s4);
+      var s4 = sect(c, "Où", "Où elle accueille"), lx = el("div", "fs-lx");
+      if (L.centres[d.departement]) { var cm = carteOu([[L.centres[d.departement][0], L.centres[d.departement][1], nomDep(d.departement), 1]], "Carte : " + nomDep(d.departement)); cm.classList.add("fs-map"); lx.appendChild(cm); }
+      var li2 = el("div", "fs-carte fs-lieux"); rang(li2, d.ville || "Votre ville", type + " · " + nomDep(d.departement) + " (" + d.departement + ")");
+      if (d.lieux) li2.appendChild(el("p", "fs-lieux-t", d.lieux));
+      lx.appendChild(li2); s4.appendChild(lx);
     }
-    var aside = el("aside", "fp-contact");
-    contactTete(aside, initiales(d.nom), d.nom || "Votre structure", type + (d.ville ? " · " + d.ville : ""), d.logo);
-    aside.appendChild(el("p", "fp-contact-chiffre", d.offres.length ? d.offres.length + (d.offres.length > 1 ? " offres en ce moment" : " offre en ce moment") : "Recrute toute l'année"));
-    aside.appendChild(el("span", "fp-bouton-principal fp-inerte", "Postuler avec mon profil"));
-    if (d.site) { var s = el("span", "fp-bouton-second fp-inerte", "Le site de la structure"); s.appendChild(el("small", null, d.site.replace(/^https?:\/\//, "").replace(/\/$/, ""))); aside.appendChild(s); }
-    aside.appendChild(el("p", "fp-contact-note", "Les candidats postulent avec leur profil (et leur CV) : vous les retrouvez dans « Candidatures reçues »."));
-    grille.appendChild(aside);
+    c.appendChild(el("p", "fs-bon", "Sur votre page en ligne s'ajoutent aussi : la barre des sections qui suit au défilement, vos séjours en cartes, le calendrier de l'année (vacances de votre zone, accueils, séjours, offres) et les questions fréquentes."));
     return f;
   }
 
