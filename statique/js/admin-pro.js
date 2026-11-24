@@ -1770,7 +1770,7 @@
     var ids = Object.keys(parSt).sort(function (a, b) { return parSt[b] - parSt[a]; });
     if (ids.length) {
       var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("Structures avec des demandes masquées · " + ids.length)); c.appendChild(s1);
-      c.appendChild(el("p", "ap-petit", "Elles ont utilisé leurs 2 demandes gratuites : le rappel du lundi leur propose l'abonnement ou le Pass. Un petit mot de vous en plus fait souvent la différence."));
+      c.appendChild(el("p", "ap-petit", "Elles ont utilisé leur demande gratuite : le rappel du lundi leur propose l'abonnement ou le Pass. Un petit mot de vous en plus fait souvent la différence."));
       tableau(c, ["Structure", "Masquées", ""], ids.map(function (id) { var st = noms[id] || {};
         return [cellule(st.nom || id, [st.ville, st.email_contact].filter(Boolean).join(" · ")), String(parSt[id]),
           actions([st.email_contact ? ["Écrire", null, "mailto:" + st.email_contact + "?subject=" + encodeURIComponent(parSt[id] + " familles vous attendent sur Fil Roug'Anim")] : null, ["Espace", function () { ouvrirEspace("structure", id); }]])]; }));

@@ -5,14 +5,14 @@
 {% set creer = lien('/compte/') ~ '?inscription=1&role=structure&type=sejours' %}
 {% block tete_note %}<p class="tp-sur">Organisateurs de séjours et accueils de loisirs</p>{% endblock %}
 {% block h1 %}Vos séjours, là où les familles <em>cherchent</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Colos, mini-séjours, accueils de loisirs des vacances et du mercredi : publiez-les gratuitement sur Fil Roug'Anim. Les familles cherchent par âge, par période et par envie, voient les aides (Pass Colo, VACAF) et vous demandent une place en ligne. Aucune commission.</p>{% endblock %}
+{% block tete_chapo %}<p class="chapo">Colos, mini-séjours, accueils de loisirs des vacances et du mercredi : publiez-les sur Fil Roug'Anim, le premier gratuitement. Les familles cherchent par âge, par période et par envie, voient les aides (Pass Colo, VACAF) et vous demandent une place en ligne. Aucune commission.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
 <div class="tp-recherche"><div class="cadre">
   <div class="rc-fondateurs">
     <div class="rc-fondateurs-texte">
       <p class="rc-fondateurs-sur">{{ m.icone("etape") }}Gratuit, sans carte bancaire</p>
-      <p><b>Publiez tous vos séjours gratuitement</b>, et recevez vos <b>2 premières demandes de familles en entier</b>. Ensuite, les demandes continuent d'arriver ; l'abonnement ou le Pass recrutement ({{ site.abonnement.pass_mois_prix }} par mois, sans engagement) affiche leurs coordonnées.</p>
+      <p><b>Publiez un séjour ou accueil gratuitement</b>, et recevez la <b>première demande d'une famille en entier</b>. Ensuite, les demandes continuent d'arriver ; l'abonnement ou le Pass recrutement ({{ site.abonnement.pass_mois_prix }} par mois, sans engagement) affiche leurs coordonnées.</p>
     </div>
     <a class="tp-bande-bouton rc-creer" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Publier mes séjours</a>
   </div>
@@ -51,7 +51,7 @@
     <h2 id="t-rs-prix" class="rc-titre-cartes">Gratuit, puis <em>si vous voulez</em></h2>
     <div class="rs-formules">
       <div class="rs-formule"><p class="rs-f-t">Gratuit</p><p class="rs-f-prix">0 €</p>
-        <ul><li>Tous vos séjours et accueils de loisirs</li><li>Votre page structure et une offre d'emploi</li><li>Les 2 premières demandes des familles, en entier</li><li>Ensuite, les demandes arrivent avec les coordonnées masquées</li></ul></div>
+        <ul><li>Un séjour ou accueil en ligne à la fois</li><li>Votre page structure et une offre d'emploi</li><li>La première demande d'une famille, en entier</li><li>Ensuite, les demandes arrivent avec les coordonnées masquées</li></ul></div>
       <div class="rs-formule rs-formule-une"><p class="rs-f-t">Abonnement ou Pass</p><p class="rs-f-prix">{{ site.abonnement.pass_mois_prix }}<small> / mois avec le Pass</small></p>
         <ul><li>Toutes les demandes des familles, en entier, anciennes comprises</li><li>Vos offres d'emploi illimitées et les profils des animateurs</li><li>L'étiquette « Partenaire » et vos séjours en tête</li><li>Abonnement à l'année : voir <a href="{{ lien('/recruter/') }}">l'offre structures</a></li></ul></div>
     </div>

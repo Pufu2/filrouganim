@@ -15,7 +15,7 @@ Ces conditions s'appliquent aux structures (accueils de loisirs, organisateurs d
 
 ## Ce qui est gratuit
 
-Une fois vérifiée, toute structure a gratuitement, sans limite de durée : sa page sur Fil Roug'Anim (présentation, projet, publics, activités, photos), **une offre en ligne à la fois** et la réception des candidatures à cette offre. Elle peut aussi publier **ses séjours et ses accueils de loisirs** (« Trouver un séjour »), sans limite de nombre, et recevoir **ses 2 premières demandes de place des familles en entier** (nom, e-mail, téléphone, message).
+Une fois vérifiée, toute structure a gratuitement, sans limite de durée : sa page sur Fil Roug'Anim (présentation, projet, publics, activités, photos), **une offre en ligne à la fois** et la réception des candidatures à cette offre. Elle peut aussi publier **un séjour ou accueil de loisirs en ligne à la fois** (« Inscrire mon enfant »), recevoir **sa première demande de place d'une famille en entier** (nom, e-mail, téléphone, message) et ouvrir **une demande d'animateur de son secteur**, de son choix. Les demandes de place suivantes lui sont signalées, sans les coordonnées de la famille, qui en est prévenue.
 
 ## Ce que comprend l'abonnement
 
@@ -27,6 +27,8 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 - ses offres « à la une », en tête des listes d'offres ;
 - des réponses toutes prêtes aux candidats ;
 - l'étiquette « Partenaire » sur sa page, et sa place en tête de l'annuaire des structures ;
+- tous ses séjours et accueils en ligne, et toutes les demandes de place des familles avec leurs coordonnées ;
+- sur sa page, le calendrier de l'année et le bloc « Qui vous accueille » ;
 - la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus ;
 - **toutes les demandes de place des familles en entier**, sans limite : à partir de la 3e demande, sans abonnement ni Pass, les demandes continuent d'arriver mais les coordonnées de la famille restent masquées ; elles s'affichent toutes, anciennes comprises, dès le paiement.
 

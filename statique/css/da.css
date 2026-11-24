@@ -1869,3 +1869,17 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .vr-apercu { position: relative; }
 .vr-apercu::after { content: "🔒 Avec l'abonnement"; position: absolute; top: 14px; right: 14px; padding: 4px 10px; border-radius: 99px; background: #fdecee; color: #a8162a; font-size: .76rem; font-weight: 500; }
 @media (max-width: 720px) { .vr { min-height: 460px; } .vr-carte { padding: 22px 18px 18px; } }
+.sjf-pas-garanti { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; background: #fff8e9; border: 1px solid #f2dfb3; font-size: .84rem; line-height: 1.5; color: #5c4210; text-align: left; }
+.sjf-pas-garanti a { color: #8a5a00; font-weight: 500; }
+.sjf-fenetre form > h2 + .sjf-pas-garanti { margin: 0 0 14px; }
+/* la demande d'animateur offerte (formule gratuite) */
+.vr-offerte { margin-bottom: 16px; border: 1px solid #f6d3d8 !important; background: linear-gradient(180deg, #fff8f8, #fff) !important; }
+.vr-of-tete { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 8px; }
+.vr-of-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: #fdecee; flex: none; }
+.vr-of-ic svg { width: 22px; height: 22px; fill: none; stroke: #d61f35; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vr-of-tete h2 { margin: 0 0 4px; font: 600 1.1rem var(--titres); color: #17191d; }
+.vr-of-tete p { margin: 0; font-size: .9rem; color: #40444b; }
+.vr-of-rang { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid rgba(23, 25, 29, .07); }
+.vr-of-rang b { display: block; font-weight: 500; color: #17191d; } .vr-of-rang small { color: #6c7077; font-size: .84rem; }
+.vr-of-rang .bouton-blanc { flex: none; height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid rgba(23, 25, 29, .15); background: #fff; font-size: .86rem; font-weight: 500; color: #17191d; cursor: pointer; }
+.sj-gratuit { margin: 0 0 14px; }

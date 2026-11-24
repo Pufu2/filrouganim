@@ -98,9 +98,9 @@
         abonnement: { sur: "Espace structure", t: "Abonnement et factures", em: "", p: "Un prix à l'année pour votre page, vos offres et les profils des candidats. Chaque centre en plus est à moitié prix.",
                       actions: [], guide: ["Conditions de vente", "/conditions-de-vente/"],
                       resume: null },
-        sejours: { sur: "Espace structure", t: "Séjours et accueils", em: "", p: "Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : publiez-les gratuitement, les familles vous demandent une place.",
+        sejours: { sur: "Espace structure", t: "Séjours et accueils", em: "", p: "Colos, mini-séjours, accueils de loisirs des vacances et des mercredis : les familles vous demandent une place en ligne. Un en ligne à la fois gratuitement, tous avec l'abonnement.",
                    actions: [], guide: null, resume: null },
-        familles: { sur: "Espace structure", t: "Demandes des familles", em: "", p: "Chaque demande arrive ici et par e-mail. Les 2 premières sont complètes gratuitement ; ensuite, l'abonnement ou le Pass recrutement affiche les coordonnées.",
+        familles: { sur: "Espace structure", t: "Demandes des familles", em: "", p: "Chaque demande arrive ici et par e-mail. La première est complète gratuitement ; ensuite, l'abonnement ou le Pass recrutement affiche les coordonnées.",
                     actions: [], guide: null, resume: null },
         outils: { sur: "Espace structure", t: "Boîte à outils", em: "", p: "Écrire une annonce, calculer l'encadrement ou le budget de l'équipe, et les guides pour recruter un service civique ou un apprenti. Réservés aux structures abonnées.",
                   actions: [], guide: null, resume: null }
@@ -1313,7 +1313,7 @@
     var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
     $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Passer à l'abonnement";
     $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
-    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire et sur votre page ; le calendrier de l'année et « Qui vous accueille » sur votre page ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
+    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire et sur votre page ; tous vos séjours et accueils en ligne ; toutes les demandes des familles avec leurs coordonnées ; le calendrier de l'année et « Qui vous accueille » sur votre page ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
     var champ = $("abo-nb");
     if (!champ.dataset.touche) champ.value = nbCentres;
     function maj() {
@@ -2644,10 +2644,37 @@
     liste.appendChild(t);
     return d;
   }
+  // formule gratuite : une demande d'animateur offerte, choisie parmi celles du secteur (sans coordonnées avant de l'ouvrir)
+  async function chargerDemandeOfferte() {
+    var b = $("bloc-demande-offerte"); if (!b) return;
+    var ok = structure && structure.verifiee && !actif(structure) && !estAdmin && !structure.demande_offerte;
+    b.hidden = !ok; if (!ok) return;
+    var l = $("liste-demande-offerte"); l.textContent = "";
+    var r = await sb.rpc("demandes_du_secteur_apercu");
+    var d = (r && r.data) || [];
+    if (!d.length) { b.hidden = true; return; }
+    d.forEach(function (x) {
+      var rg = el("div", "vr-of-rang"), t = el("span");
+      t.appendChild(el("b", null, (x.prenom || "Un animateur") + " · " + (x.poste || "animation")));
+      t.appendChild(el("small", null, [x.ville, x.departement ? "(" + x.departement + ")" : null].filter(Boolean).join(" ") + " · " + ilYa(x.cree_le)));
+      rg.appendChild(t);
+      var bt = el("button", "bouton-blanc", "L'ouvrir gratuitement"); bt.type = "button";
+      bt.addEventListener("click", async function () {
+        if (!confirm("Ouvrir la demande de " + (x.prenom || "cet animateur") + " ? C'est votre seule demande offerte : les suivantes arrivent avec l'abonnement.")) return;
+        var o = await sb.rpc("ouvrir_demande_offerte", { did: x.id });
+        if (o.error) { message(erreurLisible(o.error), true); return; }
+        structure.demande_offerte = x.id;
+        message("C'est ouvert : la demande est ci-dessous, avec le contact. Répondez-lui vite !");
+        chargerDemandesRecues();
+      });
+      rg.appendChild(bt); l.appendChild(rg);
+    });
+  }
   var demandesRecues = [];
   async function chargerDemandesRecues() {
     var blocD = $("bloc-demandes-recues");
-    if (!actif(structure)) { blocD.hidden = true; return; }
+    chargerDemandeOfferte();
+    if (!actif(structure) && !(structure && structure.demande_offerte)) { blocD.hidden = true; return; }
     var r = await sb.from("demandes").select("id,prenom,annee_naissance,poste,departement,ville,zone,partout,periodes,dispo_debut,dispo_fin,diplomes,experiences,message,email_contact,cree_le")
       .contains("destinataires", [idEspace()]).order("cree_le", { ascending: false }).limit(50);
     demandesRecues = r.data || [];
@@ -2862,6 +2889,6 @@
   // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace
   window.FRA_ESPACE = { sb: sb, el: el, ouvrirFiche: ouvrirFiche, fermerFiche: fermerFiche, message: message, erreur: erreurLisible,
                         montrerOnglet: montrerOnglet, dateFr: dateFr, libelle: libelle, nomDep: nomDep, age: age, L: L, ficheProfil: ficheProfil,
-                        reduireImage: reduireImage, structure: function () { return structure; } };
+                        reduireImage: reduireImage, structure: function () { return structure; }, estAdminF: function () { return estAdmin; } };
   demarrer().catch(function (e) { montrer("v-connexion"); message(erreurLisible(e), true); });
 })();

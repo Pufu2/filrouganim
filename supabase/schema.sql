@@ -1243,3 +1243,12 @@ alter table public.structures
 grant select (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite, cree_le, maj_le) on public.structures to anon;
 grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite),
       update (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite) on public.structures to authenticated;
+
+-- v49 (24/11/2026) : la formule gratuite resserrée.
+--  * demander_place() et deposer_besoin() : 1 demande de famille complète gratuite (au lieu de 2) ;
+--  * prevenir_demande_sejour() : quand la structure ne reçoit pas les coordonnées, l'e-mail à la famille le dit et propose « Décrire mon besoin » ;
+--  * limiter_sejours_gratuits (trigger before insert/update of statut on sejours) : sans abonnement, un seul séjour ou accueil publié à la fois ;
+--  * structures.demande_offerte : une demande d'animateur offerte, choisie dans demandes_du_secteur_apercu() (sans contact)
+--    et ouverte par ouvrir_demande_offerte(did) (la structure est ajoutée aux destinataires) ;
+--  * sejour_recoit_demandes(sid) : la fiche séjour prévient la famille avant l'envoi.
+-- (fonctions appliquées dans la base : migrations v49_formule_gratuite et v49b_sejour_recoit)

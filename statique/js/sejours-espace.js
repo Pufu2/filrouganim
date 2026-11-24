@@ -63,6 +63,12 @@
     // le titre et l'explication sont dans l'en-tête de la page : ici, seulement ce qui change
     var t = el("div"); if (E.structure() && !E.structure().verifiee) t.appendChild(el("p", "petit", "Vos séjours seront visibles dès que nous aurons vérifié votre structure."));
     tete.appendChild(t);
+    if (!paye() && !(E.estAdminF && E.estAdminF())) {
+      var g = el("p", "statut sj-gratuit"); g.appendChild(document.createTextNode("Formule gratuite : "));
+      g.appendChild(el("b", null, "un séjour ou accueil en ligne à la fois")); g.appendChild(document.createTextNode(" (les autres restent en brouillon), et la première demande d'une famille en entier. "));
+      var gb = el("button", "bouton-texte", "Tout débloquer avec l'abonnement →"); gb.type = "button"; gb.dataset.ongletVers = "abonnement"; g.appendChild(gb);
+      c.appendChild(g);
+    }
     var b = el("button", "bouton-r", "+ Créer un séjour ou un accueil"); b.type = "button"; b.addEventListener("click", function () { nouveau(); }); tete.appendChild(b);
     c.appendChild(tete);
     if (!sejours.length) {
@@ -432,7 +438,7 @@
     var m = manques(b);
     if (m.length) { f.appendChild(el("p", "statut statut-attente", "Il manque encore : " + m.join(", ") + ".")); }
     else f.appendChild(el("p", "statut statut-ok", "Tout est prêt. Vérifiez l'aperçu, puis publiez : les familles pourront vous demander une place."));
-    f.appendChild(el("p", "petit", "Vous recevez les 2 premières demandes des familles en entier, gratuitement. Ensuite, les demandes continuent d'arriver, et l'abonnement (ou le Pass recrutement) affiche leurs coordonnées." + (paye() ? " Votre abonnement est actif : toutes vos demandes sont complètes." : "")));
+    f.appendChild(el("p", "petit", "Vous recevez la première demande d'une famille en entier, gratuitement. Ensuite, les demandes continuent d'arriver, et l'abonnement (ou le Pass recrutement) affiche leurs coordonnées." + (paye() ? " Votre abonnement est actif : toutes vos demandes sont complètes." : "")));
   }
   function manques(b) {
     var m = [];

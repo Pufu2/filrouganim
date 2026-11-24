@@ -60,6 +60,16 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !voile.hidden) fermer(); });
   if (/#demander$/.test(location.hash)) ouvrir(false);
 
+  // avant d'écrire : si l'organisateur ne reçoit pas encore les coordonnées des familles, la page le dit tout de suite
+  if (id && !exemple) rpc("sejour_recoit_demandes", { sid: parseInt(id, 10) }).then(function (r) { return r.json(); }).then(function (ok) {
+    if (ok !== false) return;
+    Array.prototype.forEach.call(racine.querySelectorAll(".sjf-reserver [data-ouvrir-demande]:not([data-ouvrir-demande=question]), .sjf-fenetre form > h2"), function (x) {
+      var n = document.createElement("p"); n.className = "sjf-pas-garanti";
+      n.innerHTML = "<b>À savoir :</b> cet organisateur ne reçoit pas encore les coordonnées des familles par Fil Roug'Anim. Votre demande lui signale votre intérêt, mais sa réponse n'est pas garantie. <a href=\"/enfants/demande/\">Décrire aussi mon besoin</a>";
+      x.parentNode.insertBefore(n, x.nextSibling);
+    });
+  }).catch(function () {});
+
   function dire(t, ko) { retour.hidden = false; retour.textContent = t; retour.className = "sjf-f-retour " + (ko ? "sjf-ko" : "sjf-ok"); }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -78,6 +88,10 @@
       return r.json().then(function (j) {
         if (!r.ok) throw new Error((j && (j.message || j.hint)) || "erreur");
         form.reset(); form.hidden = true; document.getElementById("sjf-merci").hidden = false;
+        if (j && j.ouverte === false) {   // la structure ne reçoit pas encore les coordonnées : on le dit, et on propose mieux
+          var m = document.getElementById("sjf-merci"), p = m.querySelector("p:not(.sjf-merci-ic)");
+          if (p) p.innerHTML = "L'organisateur sait qu'une famille est intéressée, mais <b>il ne reçoit pas encore vos coordonnées</b> par Fil Roug'Anim : sa réponse n'est pas garantie. Pour être sûr d'avoir des réponses, <a href=\"/enfants/demande/\">décrivez aussi votre besoin</a> : il part chez les structures proches qui reçoivent les demandes.";
+        }
       });
     }).catch(function (err) {
       var t = String(err && err.message || "");
