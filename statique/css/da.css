@@ -779,7 +779,7 @@ body.en-app .tb-tuile { padding: 10px 12px; }
 body.en-app .co-e-grands b { font-size: 1.3rem; }
 body.en-app #espace-compte input:not([type="checkbox"]):not([type="radio"]), body.en-app #espace-compte select, body.en-app #espace-compte textarea { font-size: 13.5px; }
 /* un compte administrateur ne se supprime pas depuis le site */
-body.est-admin #supprimer, body.est-admin .co-moi-danger { display: none !important; }
+body.est-admin .co-moi-danger { display: none !important; }
 
 /* ---- Mon espace et admin : les derniers éléments appuyés (23/11/2026) ----
    Boutons répétés sur chaque ligne en contour fin (plus de rouge ou de noir plein), petits titres sans majuscules espacées,
@@ -1883,3 +1883,51 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .vr-of-rang b { display: block; font-weight: 500; color: #17191d; } .vr-of-rang small { color: #6c7077; font-size: .84rem; }
 .vr-of-rang .bouton-blanc { flex: none; height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid rgba(23, 25, 29, .15); background: #fff; font-size: .86rem; font-weight: 500; color: #17191d; cursor: pointer; }
 .sj-gratuit { margin: 0 0 14px; }
+
+/* ---- Connexion et création de compte : pas de bande blanche sous la barre, la page tient l'écran ---- */
+.page-auth .bande-papier, .page-auth section.bande.bande-papier { padding: 0 !important; margin: 0 !important; }
+.page-auth .auth { min-height: calc(100vh - 64px); }
+.page-auth main { background: #fff; }
+/* étape 2 : de l'air entre le profil choisi et le titre */
+#ins-2 .ins-choisi { margin: 0 0 18px !important; }
+/* étape 1 : deux familles de profils, gratuit et professionnels */
+#ins-1:not([hidden]) { display: block !important; }
+.pc-groupe { margin: 0 0 14px; padding: 14px; border-radius: 16px; }
+.pc-groupe-gratuit { background: #f3f8f4; border: 1px solid #d6e8db; }
+.pc-groupe-pro { background: #f7f7f8; border: 1px solid #e4e4e8; }
+.pc-groupe-t { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 10px; }
+.pc-groupe-t b { font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.pc-groupe-gratuit .pc-groupe-t b { color: #2a6b40; }
+.pc-groupe-pro .pc-groupe-t b { color: #17191d; }
+.pc-groupe-t span { font-size: .84rem; color: #6c7077; }
+#ins-1 .pc-groupe .profils-choix { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pc-groupe-gratuit .profils-choix { grid-template-columns: 1fr 1fr 1fr !important; }
+#ins-1 .profil-choix { background: #fff; }
+#ins-1 .profil-choix[data-role="organisme"] { grid-column: auto; }
+.pc-groupe-note { margin: 10px 2px 0; font-size: .78rem; line-height: 1.45; color: #6c7077; }
+.pc-groupe-note b { color: #40444b; font-weight: 500; }
+@media (max-width: 860px) {
+  .pc-groupe { padding: 10px; }
+  #ins-1 .pc-groupe .profils-choix, .pc-groupe-gratuit .profils-choix { grid-template-columns: 1fr !important; }
+  .page-auth .auth { min-height: 0; }
+}
+
+/* ---- Paramètres du compte : la suppression, tout en bas, repliée, confirmée en tapant SUPPRIMER ---- */
+.co-moi-menu .co-moi-sortir { color: #17191d; font-weight: 500; }
+.pc-param { max-width: 560px; margin: 0 auto; padding: 28px 30px; background: #fff; border-radius: 16px; }
+.pc-param h2 { margin: 0 0 16px; font: 600 1.35rem var(--titres); color: #17191d; }
+.pc-param-l { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid rgba(23, 25, 29, .08); }
+.pc-param-l b { display: block; font-weight: 500; color: #17191d; } .pc-param-l small { color: #6c7077; font-size: .85rem; }
+.pc-param-l .bouton-blanc { flex: none; height: 38px; padding: 0 16px; border-radius: 9px; border: 1px solid rgba(23, 25, 29, .15); background: #fff; font-weight: 500; color: #17191d; cursor: pointer; }
+.pc-param-danger { margin-top: 24px; padding: 14px 16px; border-radius: 12px; border: 1px solid #f3cfcb; background: #fdf7f6; }
+.pc-param-danger summary { cursor: pointer; font-size: .9rem; font-weight: 500; color: #b42318; }
+.pc-param-danger p { margin: 10px 0; font-size: .88rem; color: #5f1a13; }
+.pc-param-danger .champ { margin-bottom: 12px; }
+.pc-param-suppr { height: 40px; padding: 0 16px; border: 0; border-radius: 9px; background: #b42318; color: #fff; font: inherit; font-weight: 500; cursor: pointer; }
+.pc-param-suppr:disabled { background: #e8c6c2; cursor: not-allowed; }
+.fiche-fenetre:has(.pc-param) { max-width: 600px; margin-top: 8vh; background: #fff; }
+.fiche-fenetre:has(.pc-param) .pc-param { max-width: none; }
+@media (max-width: 860px) {
+  .auth-corps:has(#v-inscription:not([hidden])), .page-auth .auth-corps { padding-top: 26px !important; }
+  body.page-auth { background: #fff; }
+}

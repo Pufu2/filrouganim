@@ -345,8 +345,9 @@
       var menu = el("div", "co-moi-menu"); menu.hidden = true;
       var site = el("a", null, "Retour au site"); site.href = "/"; menu.appendChild(site);
       var aide = el("a", null, "Une question ? Écrivez-nous"); aide.href = "mailto:" + L.email_site; menu.appendChild(aide);
-      var dec = el("button", null, "Se déconnecter"); dec.type = "button"; dec.addEventListener("click", function () { $("deconnexion").click(); }); menu.appendChild(dec);
-      var sup = el("button", "co-moi-danger", "Supprimer mon compte"); sup.type = "button"; sup.addEventListener("click", function () { $("supprimer").click(); }); menu.appendChild(sup);
+      // la suppression du compte n'est plus ici (trop près d'un mauvais clic) : elle est dans « Paramètres du compte », tout en bas
+      var par = el("button", null, "Paramètres du compte"); par.type = "button"; par.addEventListener("click", function () { menu.hidden = true; ouvrirParametres(); }); menu.appendChild(par);
+      var dec = el("button", "co-moi-sortir", "Se déconnecter"); dec.type = "button"; dec.addEventListener("click", function () { $("deconnexion").click(); }); menu.appendChild(dec);
       b.addEventListener("click", function () { menu.hidden = !menu.hidden; b.setAttribute("aria-expanded", menu.hidden ? "false" : "true"); });
       document.addEventListener("click", function (e) { if (!moi.contains(e.target)) { menu.hidden = true; b.setAttribute("aria-expanded", "false"); } });
       moi.appendChild(menu); moi.appendChild(b); nav.appendChild(moi);
@@ -2874,8 +2875,27 @@
     if (a.length) await sb.storage.from("cv").remove(a);
     if (b.length) await sb.storage.from("structures").remove(b);
   }
-  $("supprimer").addEventListener("click", async function () {
-    if (!confirm("Supprimer définitivement votre compte" + (structure ? ", votre fiche, vos photos et toutes vos offres" : ", votre profil et votre CV") + " ? Ce n'est pas réversible.")) return;
+  // les paramètres du compte : l'adresse, la déconnexion et, tout en bas et repliée, la suppression (il faut taper SUPPRIMER)
+  function ouvrirParametres() {
+    var c = el("div", "pc-param");
+    c.appendChild(el("h2", null, "Paramètres du compte"));
+    var l1 = el("div", "pc-param-l"), t1 = el("div"); t1.appendChild(el("b", null, "Adresse e-mail")); t1.appendChild(el("small", null, (utilisateur && utilisateur.email) || "")); l1.appendChild(t1); c.appendChild(l1);
+    var l2 = el("div", "pc-param-l"), t2 = el("div"); t2.appendChild(el("b", null, "Mot de passe")); t2.appendChild(el("small", null, "Pour le changer, déconnectez-vous puis « Mot de passe oublié ? »")); l2.appendChild(t2); c.appendChild(l2);
+    var l3 = el("div", "pc-param-l"), t3 = el("div"); t3.appendChild(el("b", null, "Se déconnecter")); t3.appendChild(el("small", null, "Vos données restent enregistrées.")); l3.appendChild(t3);
+    var bd = el("button", "bouton-blanc", "Se déconnecter"); bd.type = "button"; bd.addEventListener("click", function () { fermerFiche(); $("deconnexion").click(); }); l3.appendChild(bd); c.appendChild(l3);
+    if (!estAdmin) {
+      var z = el("details", "pc-param-danger"); z.appendChild(el("summary", null, "Supprimer mon compte"));
+      z.appendChild(el("p", null, "Tout est effacé définitivement : " + (structure ? "votre fiche, vos photos, vos offres et vos séjours" : profil ? "votre profil, vos candidatures et votre CV" : "votre espace et vos données") + ". Un abonnement en cours n'est pas remboursé. Ce n'est pas réversible."));
+      var lab = el("label", "champ"), sp = el("span", null, "Pour confirmer, tapez SUPPRIMER"), inp = el("input"); inp.autocomplete = "off"; lab.appendChild(sp); lab.appendChild(inp); z.appendChild(lab);
+      var bs = el("button", "pc-param-suppr", "Supprimer définitivement mon compte"); bs.type = "button"; bs.disabled = true;
+      inp.addEventListener("input", function () { bs.disabled = inp.value.trim().toUpperCase() !== "SUPPRIMER"; });
+      bs.addEventListener("click", function () { fermerFiche(); supprimerCompte(); });
+      z.appendChild(bs); c.appendChild(z);
+    }
+    ouvrirFiche(c);
+  }
+  $("supprimer").addEventListener("click", function () { ouvrirParametres(); });
+  async function supprimerCompte() {
     try { await supprimerMesFichiers(); } catch (e) { /* on supprime le compte quand même */ }
     var r = await sb.rpc("supprimer_mon_compte");
     if (r.error) { message(erreurLisible(r.error) + " Écrivez-nous pour que nous le supprimions.", true); return; }
@@ -2884,7 +2904,7 @@
     profil = structure = utilisateur = null;
     montrer("v-connexion");
     message("Votre compte et vos données sont supprimés.");
-  });
+  }
 
   // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace
   window.FRA_ESPACE = { sb: sb, el: el, ouvrirFiche: ouvrirFiche, fermerFiche: fermerFiche, message: message, erreur: erreurLisible,
