@@ -129,9 +129,13 @@
   function fiche() {
     var c = $("og-fiche"); c.textContent = "";
     var k = el("div", "carte-compte"); c.appendChild(k);
-    var f = el("form", "formulaire"); var g = el("div", "champs-2"); f.appendChild(g);
+    // trois blocs numérotés, comme les autres formulaires des espaces
+    var f = el("form", "formulaire fm");
+    var blocs = {}, PLACE = { nom: [1, "Votre organisme"], habilitation: [1], site: [1], inscription: [1], email_contact: [2, "Le contact"], telephone: [2], presentation: [3, "Ce qui vous distingue"] };
+    function blocDe(n, titre) { if (!blocs[n]) { var fs = el("fieldset", "fm-bloc"), lg = el("legend"); lg.appendChild(el("i", null, String(n))); lg.appendChild(document.createTextNode(titre)); fs.appendChild(lg); var g2 = el("div", "fm-2"); fs.appendChild(g2); f.appendChild(fs); blocs[n] = g2; } return blocs[n]; }
     var x = compte || { email_contact: C.email };
     CHAMPS.forEach(function (ch) {
+      var g = blocDe(PLACE[ch[0]][0], PLACE[ch[0]][1]);
       var l = el("label", "champ" + (ch[2] === "texte" ? " champ-large" : "")); l.appendChild(el("span", null, ch[1]));
       var i;
       if (ch[2] === "texte") { i = el("textarea"); i.rows = 6; i.maxLength = 3000; }
@@ -139,9 +143,10 @@
       else { i = el("input"); i.type = ch[2] === "lien" ? "text" : ch[2]; if (ch[2] === "lien") { i.inputMode = "url"; i.placeholder = "www.votre-site.fr"; } i.maxLength = 300; }
       i.name = ch[0]; i.value = x[ch[0]] || ""; if (ch[3]) i.required = true;
       l.appendChild(i); g.appendChild(l);
+      if (ch[2] === "texte") { g.className = ""; l.firstChild.textContent = "Présentation"; l.appendChild(el("small", "fm-aide", "Pédagogie, formules, accompagnement, aides : c'est elle qui décide un futur stagiaire à cliquer chez vous.")); }
     });
     if (!compte) { var acc = el("label", "case-accord"); var cb = el("input"); cb.type = "checkbox"; cb.required = true; acc.appendChild(cb); acc.appendChild(document.createTextNode(" Je représente cet organisme et j'accepte les conditions de vente.")); f.appendChild(acc); }
-    var b = el("button", "bouton-r", compte ? "Enregistrer" : "Créer ma fiche"); b.type = "submit"; f.appendChild(b);
+    var pied = el("div", "boutons fm-pied"), b = el("button", "bouton-r", compte ? "Enregistrer" : "Créer ma fiche"); b.type = "submit"; pied.appendChild(b); f.appendChild(pied);
     f.addEventListener("submit", async function (e) {
       e.preventDefault(); b.disabled = true;
       var v = {}; CHAMPS.forEach(function (ch) { var val = f[ch[0]].value.trim(); v[ch[0]] = val || null; });

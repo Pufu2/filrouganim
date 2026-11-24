@@ -267,14 +267,17 @@
   function editeur(c) {
     var b = brouillon;
     var cadre = el("div", "sj-editeur"); c.appendChild(cadre);
-    var gauche = el("div", "sj-gauche"), droite = el("aside", "sj-apercu"); cadre.appendChild(gauche); cadre.appendChild(droite);
+    // à gauche : le plan des étapes, puis l'aperçu de la fiche ; à droite : l'étape en cours (comme « Ma page »)
+    var col = el("div", "sj-col"), gauche = el("div", "sj-gauche"), droite = el("aside", "sj-apercu"); cadre.appendChild(col); cadre.appendChild(gauche);
     var fil = el("ol", "sj-fil");
     ETAPES.forEach(function (nom, i) {
       if (sautees().indexOf(i) >= 0) return;
       var li = el("li", i === etape ? "sj-ici" : i < etape ? "sj-fait" : null); var bt = el("button", null, nom); bt.type = "button";
       bt.addEventListener("click", function () { lire(); etape = i; liste(); }); li.appendChild(bt); fil.appendChild(li);
     });
-    gauche.appendChild(fil);
+    var plan = el("div", "sj-plan"); plan.appendChild(el("p", "sj-plan-t", b.id ? "Modifier le séjour" : "Nouveau séjour"));
+    plan.appendChild(el("p", "sj-plan-n", "Étape " + (ETAPES.filter(function (x, i) { return sautees().indexOf(i) < 0 && i <= etape; }).length) + " sur " + ETAPES.filter(function (x, i) { return sautees().indexOf(i) < 0; }).length));
+    plan.appendChild(fil); col.appendChild(plan); col.appendChild(droite);
     var f = el("form", "formulaire sj-form"); f.id = "sj-form"; f.addEventListener("submit", function (e) { e.preventDefault(); }); gauche.appendChild(f);
     f.appendChild(el("h2", null, ETAPES[etape]));
     [etapeType, etapeEssentiel, etapeDates, etapeLieu, etapeTransport, etapeProgramme, etapeEncadrement, etapePhotos, etapePrix, etapeRelire][etape](f, b);
