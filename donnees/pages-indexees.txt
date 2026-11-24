@@ -575,6 +575,7 @@
 /se-former/ecoles/bpjeps/var/la-garde/
 /se-former/ecoles/bpjeps/var/la-seyne-sur-mer/
 /se-former/ecoles/bpjeps/var/saint-raphael/
+/se-former/ecoles/bpjeps/var/toulon/
 /se-former/ecoles/bpjeps/vaucluse/
 /se-former/ecoles/bpjeps/vaucluse/avignon/
 /se-former/ecoles/bpjeps/vendee/
