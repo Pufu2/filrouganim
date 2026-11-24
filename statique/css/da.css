@@ -1669,3 +1669,38 @@ body.en-app .assistant:not(.as-parcours) .as-plan-etapes li[data-facultatif="1"]
 .fa-mois li.on + li.on { border-left-color: transparent; }
 .fa-mois li.on + li.on::before { left: -1px !important; }
 @media (max-width: 1000px) { .fa .sjf-reserver { order: 0; margin-top: 30px; } }
+
+/* =========================================================================================
+   Visite guidée des espaces (statique/js/visite.js) : un voile, la rubrique mise en lumière, une fenêtre à côté
+   ========================================================================================= */
+.vg-voile[hidden], .vg-lumiere[hidden], .vg-bulle[hidden] { display: none !important; }
+.vg-voile { position: fixed; inset: 0; z-index: 3000; background: transparent; }
+.vg-voile.vg-plein { background: rgba(23, 25, 29, .55); backdrop-filter: blur(2px); }
+.vg-lumiere { position: fixed; z-index: 3001; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(23, 25, 29, .55), 0 0 0 3px #fff, 0 0 0 6px rgba(214, 31, 53, .55); pointer-events: none; transition: left .3s, top .3s, width .3s, height .3s; }
+.vg-lumiere.vg-sans { display: none; }
+.vg-bulle { position: fixed; z-index: 3002; width: min(360px, calc(100vw - 24px)); padding: 20px 22px 18px; border-radius: 16px; background: #fff; color: #2b2e33; box-shadow: 0 30px 70px -20px rgba(23, 25, 29, .45), 0 0 0 1px rgba(23, 25, 29, .06); transition: left .3s, top .3s; animation: vg-entre .25s ease-out; }
+.vg-bulle.vg-centre { left: 50% !important; top: 50% !important; transform: translate(-50%, -50%); width: min(440px, calc(100vw - 32px)); padding: 28px 28px 22px; text-align: left; }
+@keyframes vg-entre { from { opacity: 0; } to { opacity: 1; } }
+.vg-haut { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.vg-etape { font-size: .74rem; font-weight: 600; letter-spacing: .08em; color: #d61f35; }
+.vg-ignorer { border: 0; background: none; padding: 4px 0; font: inherit; font-size: .82rem; color: #8a8e95; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+.vg-ignorer:hover { color: #17191d; }
+.vg-icone { display: block; font-size: 1.8rem; margin: 4px 0 6px; }
+.vg-bulle h2 { margin: 0 0 6px; font: 600 1.15rem/1.3 var(--titres); letter-spacing: -.01em; color: #17191d; }
+.vg-centre h2 { font-size: 1.35rem; }
+.vg-bulle p { margin: 0; font-size: .93rem; line-height: 1.55; color: #40444b; }
+.vg-bas { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }
+.vg-points { display: flex; gap: 5px; }
+.vg-points i { width: 6px; height: 6px; border-radius: 99px; background: #e3e3df; transition: width .2s; }
+.vg-points i.fait { background: #c9ccd1; }
+.vg-points i.on { width: 18px; background: #d61f35; }
+.vg-boutons { display: flex; gap: 6px; }
+.vg-retour, .vg-suivant { height: 36px; padding: 0 14px; border-radius: 9px; font: inherit; font-size: .88rem; font-weight: 500; cursor: pointer; }
+.vg-retour { border: 1px solid rgba(23, 25, 29, .15); background: #fff; color: #17191d; }
+.vg-suivant { border: 0; background: #d61f35; color: #fff; }
+.vg-suivant:hover { background: #b81a2d; }
+.vg-bulle[data-cote="droite"]::before { content: ""; position: absolute; left: -7px; top: 50%; width: 14px; height: 14px; margin-top: -7px; background: #fff; transform: rotate(45deg); border-radius: 2px; }
+/* « Revoir la visite guidée », dans le guide */
+.gd-visite { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; height: 38px; padding: 0 16px; border-radius: 9px; border: 1px solid rgba(23, 25, 29, .15); background: #fff; font: inherit; font-size: .9rem; font-weight: 500; color: #17191d; cursor: pointer; }
+.gd-visite:hover { border-color: rgba(23, 25, 29, .35); }
+@media (max-width: 900px) { .vg-bulle:not(.vg-centre) { left: 12px !important; right: 12px; width: auto; } .vg-bulle[data-cote="droite"]::before { display: none; } }
