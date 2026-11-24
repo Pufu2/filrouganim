@@ -9,7 +9,10 @@
 /blog/reussir-son-stage-pratique-bafa/
 /chiffres/
 /classement-des-sessions/
+/conditions-de-vente/
 /conditions-utilisation/
+/contact/
+/enfants/aides/
 /enfants/centre-de-loisirs/ain/
 /enfants/centre-de-loisirs/ain/jasseron/
 /enfants/centre-de-loisirs/alpes-maritimes/cannes/
@@ -164,6 +167,7 @@
 /enfants/colonie-de-vacances/val-d-oise/
 /enfants/colonie-de-vacances/var/
 /enfants/colonie-de-vacances/vienne/
+/enfants/demande/
 /enfants/periscolaire/ain/
 /enfants/periscolaire/aisne/
 /enfants/periscolaire/alpes-de-haute-provence/
@@ -216,6 +220,7 @@
 /lexique/taux-d-encadrement/
 /lexique/ucc/
 /mentions-legales/
+/organismes-partenaires/
 /outils/mon-parcours-bafa/
 /outils/salaire-cee/
 /outils/taux-d-encadrement/
@@ -289,6 +294,7 @@
 /recruter/saisonniers-ete/ile-de-france/
 /recruter/saisonniers-ete/normandie/
 /recruter/saisonniers-ete/provence-alpes-cote-d-azur/
+/recruter/sejours/
 /recruter/stagiaire-bafa/aisne/
 /recruter/stagiaire-bafa/ardeche/
 /recruter/stagiaire-bafa/ariege/
