@@ -52,7 +52,7 @@
             {% if p.disponibilites %}<p class="fs-note">Disponibilités : {{ p.disponibilites }}</p>{% endif %}
           </div></section>
         {% if page.mois_dispo %}<section class="fs-s"><div class="fs-tt"><p class="fs-sur">Le calendrier</p><h2>Ses disponibilités sur l'année</h2></div>
-          <div class="fs-carte fs-bloc-t"><ol class="fa-mois">{% for x in page.mois_dispo %}<li{% if x.on %} class="on"{% endif %} aria-label="{{ x.nom }} {{ x.annee or '' }}{{ ' : disponible' if x.on }}">{{ x.nom }}{% if x.annee %}<small>{{ x.annee }}</small>{% endif %}</li>{% endfor %}</ol></div></section>{% endif %}
+          <div class="fs-carte fs-bloc-t"><ol class="fa-mois">{% for x in page.mois_dispo %}<li{% if x.on %} class="on"{% endif %} aria-label="{{ x.nom }} {{ x.annee or '' }}{{ ' : disponible' if x.on }}">{{ x.nom }}{% if x.annee %}<small>{{ x.annee }}</small>{% endif %}</li>{% endfor %}</ol><p class="fa-mois-leg"><i></i>Disponible du {{ p.dispo_debut.day }} {{ p.dispo_debut | mois_court }} au {{ p.dispo_fin.day }} {{ p.dispo_fin | mois_court }}</p></div></section>{% endif %}
         <section class="fs-s"><div class="fs-tt"><p class="fs-sur">Les diplômes</p><h2>Diplômes et qualifications</h2></div>
           <ul class="fs-carte fa-dipl">
             {% for d in p.diplomes %}<li>{{ ic_d }}<span><b>{{ DIPLOMES_PROFIL.get(d, d) }}</b><small>{{ "en cours de formation" if "stagiaire" in d else "diplôme" }}</small></span></li>{% endfor %}

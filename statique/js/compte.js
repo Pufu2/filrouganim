@@ -1815,7 +1815,11 @@
     }
     // l'année
     var bande = bandeMois(p);
-    if (bande) { var s5 = sect(pr, "Le calendrier", "Ses disponibilités sur l'année"), k5 = el("div", "fs-carte fs-bloc-t"); bande.className = "fa-mois"; k5.appendChild(bande); s5.appendChild(k5); }
+    if (bande) {
+      var s5 = sect(pr, "Le calendrier", "Ses disponibilités sur l'année"), k5 = el("div", "fs-carte fs-bloc-t"); bande.className = "fa-mois"; k5.appendChild(bande);
+      var lg = el("p", "fa-mois-leg"); lg.appendChild(el("i")); lg.appendChild(document.createTextNode(p.dispo_debut ? "Disponible " + (p.dispo_fin ? "du " + jourMois(p.dispo_debut) + " au " + jourMois(p.dispo_fin) : "dès le " + jourMois(p.dispo_debut)) : "Les périodes qui l'intéressent")); k5.appendChild(lg);
+      s5.appendChild(k5);
+    }
     // diplômes et qualifications
     if ((p.diplomes || []).length || (p.qualifications || []).length || p.permis_b) {
       var s2 = sect(pr, "Les diplômes", "Diplômes et qualifications"), k2 = el("ul", "fs-carte fa-dipl");

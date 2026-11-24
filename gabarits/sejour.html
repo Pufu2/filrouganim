@@ -71,8 +71,8 @@
       <div class="sjf-principal">
         {% if sj.description %}
         <section class="fs-s" id="le-sejour" aria-labelledby="t-sj-pres">
-          <div class="fs-tt"><p class="fs-sur">{{ SEJ_TYPES[sj.type][0] }}</p><h2 id="t-sj-pres">{{ "Le séjour" if not jour else "L'accueil" }}</h2></div>
-          <div class="fs-carte fs-bloc-t"><div class="fs-texte">{{ sj.description | paragraphes | safe }}</div>
+          <div class="fs-tt"><h2 id="t-sj-pres">{{ "Le séjour" if not jour else "L'accueil" }}</h2></div>
+          <div class="fs-carte fs-bloc-t"><div class="fs-texte" data-replie>{{ sj.description | paragraphes | safe }}</div><button type="button" class="fp-lire" hidden>Lire la suite</button>
           {% if photos | length > 1 %}
           <div class="fp-galerie fp-galerie-{{ [photos | length - 1, 4] | min }} sjf-galerie" data-galerie>
             {% for ph in photos[1:5] %}<a href="{{ base_photos ~ ph }}" class="fp-photo" data-photo="{{ loop.index }}"><img src="{{ base_photos ~ ph }}" alt="Photo {{ loop.index + 1 }} : {{ sj.titre }}" loading="lazy"></a>{% endfor %}
@@ -84,31 +84,31 @@
 
         {% if sj.programme %}
         <section class="fs-s" id="programme" aria-labelledby="t-sj-prog">
-          <div class="fs-tt"><p class="fs-sur">Jour après jour</p><h2 id="t-sj-prog">Au programme</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-prog">Au programme</h2></div>
           <div class="fs-carte fs-bloc-t">{{ etapes(sj.programme) }}</div>
         </section>
         {% endif %}
 
         {% if sj.vie_sur_place %}
         <section class="fs-s" id="vie" aria-labelledby="t-sj-vie">
-          <div class="fs-tt"><p class="fs-sur">Pour se projeter</p><h2 id="t-sj-vie">{{ "La vie sur place" if not jour else "Une journée type" }}</h2></div>
-          <div class="fs-carte fs-bloc-t">{{ lignes(sj.vie_sur_place) }}</div>
+          <div class="fs-tt"><h2 id="t-sj-vie">{{ "La vie sur place" if not jour else "Une journée type" }}</h2></div>
+          <ul class="sjf-vie">{% for l in sj.vie_sur_place.split("\n") if l.strip() %}{% set p = l.strip().split(" : ", 1) %}<li class="fs-carte">{% if p | length > 1 and p[0] | length < 28 %}<b>{{ p[0] }}</b><span>{{ p[1] }}</span>{% else %}<span>{{ l.strip() }}</span>{% endif %}</li>{% endfor %}</ul>
         </section>
         {% endif %}
 
         {% if sj.encadrement_texte %}
         <section class="fs-s" id="equipe" aria-labelledby="t-sj-equipe">
-          <div class="fs-tt"><p class="fs-sur">Les personnes</p><h2 id="t-sj-equipe">L'équipe</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-equipe">L'équipe</h2></div>
           <div class="fs-carte fs-bloc-t">
             <div class="fs-texte">{{ sj.encadrement_texte | paragraphes | safe }}</div>
-            <div class="sjf-loi">{{ ic_b }}<p>En accueil collectif de mineurs, l'équipe est encadrée par la loi : une direction diplômée (BAFD ou équivalent) et au moins la moitié d'animateurs titulaires du BAFA. <a href="{{ lien('/se-former/') }}">Ce que sont ces diplômes</a></p></div>
+            <div class="sjf-loi">{{ ic_b }}<p>Direction diplômée et au moins la moitié d'animateurs BAFA, comme le veut la loi. <a href="{{ lien('/se-former/') }}">En savoir plus</a></p></div>
           </div>
         </section>
         {% endif %}
 
         {% if sj.transport or sj.infos_pratiques %}
         <section class="fs-s" id="infos" aria-labelledby="t-sj-infos">
-          <div class="fs-tt"><p class="fs-sur">Avant le départ</p><h2 id="t-sj-infos">Infos pratiques</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-infos">Infos pratiques</h2></div>
           <div class="fs-carte fs-bloc-t">
             {% if sj.transport %}<p class="fs-sous">Les départs</p>
             <ul class="sjf-departs">{% for t in sj.transport %}<li><b>{{ t.ville }}</b><span>{{ SEJ_TRANSPORT.get(t.mode, "transport") }}</span><span>{% if t.prix %}+ {{ '%g' | format(t.prix) }} €{% else %}compris{% endif %}</span></li>{% endfor %}</ul>{% endif %}
@@ -119,44 +119,44 @@
         {% endif %}
 
         <section class="fs-s" id="prix" aria-labelledby="t-sj-prix">
-          <div class="fs-tt"><p class="fs-sur">Le budget</p><h2 id="t-sj-prix">Le prix et les aides</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-prix">Le prix et les aides</h2></div>
           <div class="fs-carte fs-bloc-t">
           {% if sj.prix_min is not none %}<p class="sjf-prix-grand">À partir de <b>{{ '%g' | format(sj.prix_min) }} €</b> {{ SEJ_UNITES.get(sj.prix_unite, "") }}</p>{% endif %}
           {% if sj.prix_texte %}<div class="fs-texte">{{ sj.prix_texte | paragraphes | safe }}</div>{% endif %}
-          {% if sj.inclus %}<p class="fs-sous">Compris dans le prix</p><ul class="fs-coches">{% for l in sj.inclus.split("\n") if l.strip() %}<li>{{ ic_c }}{{ l.strip().rstrip(".") }}</li>{% endfor %}</ul>{% endif %}
+          {% if sj.inclus %}<p class="fs-sous">Compris dans le prix</p><ul class="sjf-pastilles">{% for l in sj.inclus.split("\n") if l.strip() %}<li>{{ ic_c }}{{ l.strip().rstrip(".") }}</li>{% endfor %}</ul>{% endif %}
           {% if sj.aides %}
           <p class="fs-sous">Les aides acceptées</p>
-          <ul class="sjf-aides">{% for a in sj.aides if AIDES.get(a) %}<li><b>{{ AIDES[a].nom }}</b><span>{{ AIDES[a].court }}</span></li>{% endfor %}</ul>
+          <ul class="sjf-pastilles sjf-pastilles-aides">{% for a in sj.aides if AIDES.get(a) %}<li title="{{ AIDES[a].court }}">{{ AIDES[a].nom.split(" (")[0] }}</li>{% endfor %}</ul>
           {% endif %}
           {% if sj.prix_min is not none and sj.prix_unite != "quotient" %}
+          <details class="sjf-calcul-plie"><summary>Combien il vous restera à payer ? <span>Calculer</span></summary>
           <div class="sjf-calcul" id="sjf-calcul" data-prix="{{ sj.prix_min }}" data-pass="{{ 1 if 'pass_colo' in (sj.aides or []) and not jour and nuits and nuits + 1 >= AIDES_REGLES.pass_colo.duree_min else 0 }}"
                data-annee="{{ d0.debut.year if d0 else '' }}" data-regles='{{ AIDES_REGLES | tojson }}'>
-            <p class="sjf-calcul-t">Combien il vous restera à payer ?</p>
             <div class="sjf-calcul-champs">
               <label>Année de naissance de l'enfant<input type="number" name="naissance" min="2005" max="2025" inputmode="numeric" placeholder="ex. 2016"></label>
               <label>Votre quotient familial CAF<input type="number" name="qf" min="0" max="5000" inputmode="numeric" placeholder="ex. 650"></label>
               <label>Autres aides (VACAF, CSE, mairie…) en €<input type="number" name="autres" min="0" max="5000" inputmode="numeric" placeholder="0"></label>
             </div>
             <p class="sjf-calcul-res" id="sjf-calcul-res" aria-live="polite">Remplissez les cases : le calcul se fait ici, rien n'est envoyé.</p>
-            <p class="fs-note">Estimation : le montant exact des aides de la CAF est sur votre compte CAF. Le Pass Colo concerne les enfants qui ont 11 ans dans l'année (ou 12 ans en report), au quotient de 1 500 € au plus, pour une colo d'au moins 5 jours pendant les vacances, chez un organisateur conventionné.</p>
-          </div>
+            <p class="fs-note">Une estimation : le montant exact est sur votre compte CAF. <a href="{{ lien('/enfants/aides/') }}">Les aides en détail</a></p>
+          </div></details>
           {% endif %}
           </div>
         </section>
 
         <section class="fs-s" id="organisateur" aria-labelledby="t-sj-st">
-          <div class="fs-tt"><p class="fs-sur">L'organisateur</p><h2 id="t-sj-st">Qui organise</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-st">Qui organise</h2></div>
           <a class="fs-carte sjf-orga" href="{{ lien(url_structure) }}">
             {% set _m = st.nom.replace("L'", "").split() %}<span class="fs-logo" aria-hidden="true">{% if st.logo %}<img src="{{ site.supabase.url ~ '/storage/v1/object/public/structures/' ~ st.logo }}" alt="" loading="lazy">{% else %}{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}{% endif %}</span>
-            <span><b>{{ st.nom }}</b><small>{{ TYPES_STRUCTURE.get(st.type, "Structure d'animation") }} · {{ st.ville }} · vérifiée par Fil Roug'Anim</small>{% if st.accroche %}<span class="sjf-orga-p">{{ st.accroche }}</span>{% endif %}</span>
-            <em>Sa page, son calendrier et ses autres séjours <span aria-hidden="true">→</span></em>
+            <span><b>{{ st.nom }}</b><small>{{ TYPES_STRUCTURE.get(st.type, "Structure d'animation") }} · {{ st.ville }} · vérifiée par Fil Roug'Anim</small></span>
+            <em>Voir sa page <span aria-hidden="true">→</span></em>
           </a>
-          <p class="fs-bon"><b>Bon à savoir.</b> {% if sj.numero_declaration %}Accueil déclaré : n° {{ sj.numero_declaration }}. {% endif %}Les informations de cette page sont écrites par l'organisateur, sous sa responsabilité. L'inscription, le paiement et le contrat se font directement avec lui : Fil Roug'Anim transmet votre demande, sans commission. <a href="mailto:{{ site.email }}?subject=Signaler%20le%20s%C3%A9jour%20{{ sj.slug }}">Signaler un problème</a></p>
+          <p class="fs-bon"><b>Bon à savoir.</b> {% if sj.numero_declaration %}Accueil déclaré : n° {{ sj.numero_declaration }}. {% endif %}Page écrite par l'organisateur. L'inscription et le paiement se font directement avec lui, sans commission. <a href="mailto:{{ site.email }}?subject=Signaler%20le%20s%C3%A9jour%20{{ sj.slug }}">Signaler un problème</a></p>
         </section>
 
         {% if sj.proches %}
         <section class="fs-s" aria-labelledby="t-sj-proches">
-          <div class="fs-tt"><p class="fs-sur">Pour comparer</p><h2 id="t-sj-proches">D'autres séjours pour cet âge</h2></div>
+          <div class="fs-tt"><h2 id="t-sj-proches">D'autres séjours pour cet âge</h2></div>
           <div class="sjf-proches">{% for x in sj.proches %}
             <a class="sjf-proche" href="{{ lien(x.url) }}">
               <span class="sjf-proche-photo"{% if x.photos %} style="background-image:url('{{ base_photos ~ x.photos[0] }}')"{% endif %}></span>

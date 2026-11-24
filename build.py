@@ -1186,7 +1186,7 @@ class Site:
             nom = "Périscolaire et mercredis" if "periscolaire" in acc else "Mercredis"
             lignes.append({"nom": nom, "classe": "c1", "barres": [{"g": pos(a), "l": round(pos(b) - pos(a), 2)} for a, b in morceaux if b > a]})
         if acc & {"extrascolaire"} or "accueil_vacances" in types_sj:
-            lignes.append({"nom": "Vacances", "classe": "c2", "barres": [{"g": v["g"], "l": v["l"], "texte": "tout l'été" if v["nom"] == "Été" and v["l"] > 8 else ""} for v in vac]})
+            lignes.append({"nom": "Vacances", "classe": "c2", "barres": [{"g": v["g"], "l": v["l"], "texte": ""} for v in vac]})
         barres = []
         for sj in sejours:
             if sj["type"] not in ("sejour", "mini_sejour"):
@@ -1203,15 +1203,22 @@ class Site:
             premier = min(b["g"] for b in barres)
             lignes.append({"nom": "Séjours" if acc & {"sejours"} or "sejour" in types_sj else "Mini-camps", "classe": "c3", "barres": barres,
                            "note": note, "note_g": premier - 1, "note_avant": True})
-        for o in (st.get("offres") or [])[:4]:
-            a = o["debut"]
-            b = o.get("fin") or (a + dt.timedelta(days=13))
-            if b < d0 or a > d1:
+        # le recrutement : une seule ligne, une barre par offre (le titre de l'offre au survol)
+        rec = []
+        for o in (st.get("offres") or [])[:6]:
+            a_ = o["debut"]
+            b_ = o.get("fin") or (a_ + dt.timedelta(days=13))
+            if b_ < d0 or a_ > d1:
                 continue
-            g, l = pos(max(a, d0)), max(1.5, round(pos(min(b, d1)) - pos(max(a, d0)), 2))
-            lignes.append({"nom": "Recrute", "classe": "c4", "barres": [{"g": g, "l": l, "texte": o["intitule"] if l >= 30 else "",
-                           "url": None if st.get("exemple") else f"/trouver-un-poste/offres/{o['id']}/"}],
-                           "note": "" if l >= 30 else f"dès le {date_fr(a, annee=False)} · {o['intitule']}", "note_g": g + l + 0.8})
+            g, l = pos(max(a_, d0)), max(1.5, round(pos(min(b_, d1)) - pos(max(a_, d0)), 2))
+            rec.append({"g": g, "l": l, "titre": f"{o['intitule']} · dès le {date_fr(a_, annee=False)}", "texte": "",
+                        "url": None if st.get("exemple") else f"/trouver-un-poste/offres/{o['id']}/"})
+        if rec:
+            n = len(rec)
+            lignes.append({"nom": "Recrute", "classe": "c4", "barres": rec,
+                           "note": f"{n} offres" if n > 1 else rec[0]["titre"], "note_g": max(b["g"] + b["l"] for b in rec) + 0.8})
+            if lignes[-1]["note_g"] > 62:  # pas la place à droite : la note passe à gauche de la première barre
+                lignes[-1].update(note_avant=True, note_g=min(b["g"] for b in rec) - 0.8)
         if not lignes:
             return None
         mois = ["sept.", "oct.", "nov.", "déc.", "janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août"]

@@ -1612,3 +1612,59 @@ body.en-app .assistant:not(.as-parcours) .as-plan-etapes li[data-facultatif="1"]
 .fa-mois li.on { background: var(--theme); color: #fff; box-shadow: none; }
 .fa-mois li.on::before { background: rgba(255, 255, 255, .6); }
 .fa-mois li.on small { color: rgba(255, 255, 255, .8); }
+
+/* ---- Calendrier de la fiche structure, allégé : une seule teinte neutre pour les vacances, la couleur de la page
+   pour l'accueil (clair) et les séjours (foncé), le rouge seulement pour « recrute » ---- */
+.fs-an-fond i { background: #f1f1ee !important; }
+.fs-an-vac > div > span { color: #8a8e95 !important; font-weight: 500; }
+.fs-an-vac i { display: none; }
+.fs-c1 { background: color-mix(in srgb, var(--theme) 30%, #fff); }
+.fs-c2 { background: color-mix(in srgb, var(--theme) 65%, #fff); }
+.fs-c3 { background: var(--theme-fonce); }
+.fs-c4 { background: transparent; box-shadow: inset 0 0 0 1.5px #d61f35; }
+.fs-an-l u.fs-c4 span, .fs-an-l a.fs-c4 span { color: #a8162a; }
+.fs-an-l > span i.fs-c4 { background: #fff; box-shadow: inset 0 0 0 1.5px #d61f35; }
+.fs-an-l { height: 40px; border-bottom-color: rgba(23, 25, 29, .05); }
+.fs-an-l u, .fs-an-l a { top: 13px; height: 14px; border-radius: 99px; }
+.fs-an-l u span, .fs-an-l a span { line-height: 14px; font-size: .68rem; }
+.fs-an-fond em { border-left: 1.5px solid #17191d; opacity: .7; }
+
+/* ---- Fiche séjour allégée : moins de texte, des pastilles, le calcul replié ---- */
+.sjf .fs-s { margin-top: 40px; }
+.sjf .fs-tt { margin-bottom: 14px; }
+.sjf .fs-tt h2 { font-size: 1.45rem; }
+.sjf .fs-texte { font-size: .98rem; }
+.sjf-vie { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sjf-vie li { padding: 16px 18px; display: flex; flex-direction: column; gap: 3px; font-size: .92rem; line-height: 1.45; color: #40444b; }
+.sjf-vie b { font-weight: 600; color: var(--fs-e); }
+.sjf-pastilles { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.sjf-pastilles li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 9px; background: #f4f4f2; font-size: .87rem; color: #2b2e33; }
+.sjf-pastilles svg { width: 15px; height: 15px; fill: none; stroke: #2f7a4b; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sjf-pastilles-aides li { background: color-mix(in srgb, var(--theme) 10%, #fff); color: var(--theme-fonce); font-weight: 500; cursor: help; }
+.sjf-calcul-plie { margin-top: 18px; border-top: 1px solid var(--fs-t); padding-top: 14px; }
+.sjf-calcul-plie summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-weight: 500; color: var(--fs-e); }
+.sjf-calcul-plie summary::-webkit-details-marker { display: none; }
+.sjf-calcul-plie summary span { font-size: .85rem; color: #a8162a; }
+.sjf-calcul-plie[open] summary span { display: none; }
+.sjf-calcul-plie .sjf-calcul { margin-top: 12px; }
+.sjf .sjf-loi { padding: 10px 14px; }
+@media (max-width: 720px) { .sjf-vie { grid-template-columns: 1fr; } }
+
+/* ---- Fiche animateur : le planning en une ligne continue (les mois en haut, la période disponible en bande) ---- */
+.fa-mois { gap: 0 !important; }
+.fa-mois li { padding: 0 0 22px !important; background: none !important; border-radius: 0 !important; box-shadow: none !important; text-align: left !important; font-size: .78rem !important; color: #8a8e95 !important; font-weight: 400 !important; border-left: 1px solid rgba(23, 25, 29, .07); padding-left: 6px !important; }
+.fa-mois li:first-child { border-left: 0; }
+.fa-mois li::before { left: 0 !important; right: 0 !important; top: auto !important; bottom: 4px !important; height: 8px !important; border-radius: 0 !important; background: #efefec !important; }
+.fa-mois li:first-child::before { border-radius: 99px 0 0 99px !important; }
+.fa-mois li:last-child::before { border-radius: 0 99px 99px 0 !important; }
+.fa-mois li.on { color: var(--fs-e) !important; font-weight: 600 !important; }
+.fa-mois li.on::before { background: var(--theme) !important; }
+.fa-mois li.on:not(.on + li.on)::before, .fa-mois li.on:first-child::before { border-top-left-radius: 99px !important; border-bottom-left-radius: 99px !important; left: 3px !important; }
+.fa-mois li.on:not(:has(+ li.on))::before { border-top-right-radius: 99px !important; border-bottom-right-radius: 99px !important; right: 3px !important; }
+.fa-mois small { display: inline !important; margin-left: 3px; font-size: .68rem !important; color: #b0b3b8 !important; }
+.fa-mois li.on small { color: var(--fs-d) !important; }
+.fa-mois-leg { margin: 14px 0 0; font-size: .86rem; color: #40444b; display: flex; align-items: center; gap: 8px; }
+.fa-mois-leg i { width: 22px; height: 8px; border-radius: 99px; background: var(--theme); }
+@media (max-width: 900px) { .fa-mois { grid-template-columns: repeat(12, minmax(0, 1fr)) !important; } .fa-mois li { font-size: .62rem !important; padding-left: 2px !important; } .fa-mois small { display: none !important; } }
+.fa-mois li.on + li.on { border-left-color: transparent; }
+.fa-mois li.on + li.on::before { left: -1px !important; }
