@@ -89,3 +89,20 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { preparer(document); });
   else preparer(document);
 })();
+
+/* Fiche structure : la barre des sections surligne la section qu'on est en train de lire */
+(function () {
+  var liens = document.querySelectorAll(".fs-sections-liens a");
+  if (!liens.length || !window.IntersectionObserver) return;
+  var parId = {};
+  Array.prototype.forEach.call(liens, function (a) { parId[a.getAttribute("href").slice(1)] = a; });
+  var vu = new IntersectionObserver(function (entrees) {
+    entrees.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var a = parId[e.target.id]; if (!a) return;
+      Array.prototype.forEach.call(liens, function (x) { x.classList.toggle("on", x === a); });
+      a.parentNode.scrollTo({ left: Math.max(0, a.offsetLeft - 24), behavior: "smooth" });  // sur mobile, le lien reste visible dans la barre
+    });
+  }, { rootMargin: "-80px 0px -65% 0px" });
+  Object.keys(parId).forEach(function (id) { var s = document.getElementById(id); if (s) vu.observe(s); });
+})();

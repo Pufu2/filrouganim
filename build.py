@@ -537,7 +537,9 @@ class Site:
         filtre = "&page_publique=is.true&slug=not.is.null&order=nom"
         # le logo et les photos (version 4 du schéma) ; sans eux si la base n'a pas encore ces colonnes
         # le statut, les accueils et les âges (version 14) ; le logo et les photos (version 4)
-        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max,banniere{filtre}", "bannières des structures")
+        v48 = ",journee_jour,journee,accueil_prenom,accueil_role,accueil_phrase,accueil_photo,nb_animateurs,nb_stagiaires,capacite,cree_le,maj_le"
+        lignes = (self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max,banniere{v48}{filtre}", "journée type et équipe des structures")
+                  or self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max,banniere{filtre}", "bannières des structures")
                   or self.lire_supabase(f"structures?select={champs},logo,photos,statut,accueils,age_min,age_max{filtre}", "accueils des structures")
                   or self.lire_supabase(f"structures?select={champs},logo,photos{filtre}", "logos et photos des structures")
                   or self.lire_supabase(f"structures?select={champs}{filtre}", "pages des structures"))
@@ -1144,6 +1146,78 @@ class Site:
                          intro="Choisissez votre département : chaque page rassemble ce qui existe près de chez vous.", local=local, fil=[fil0, (titre, base)])
         self.pages_locales_liens = {k: BASES[k] for k in BASES}
 
+    VAC_COULEURS = {"toussaint": ("Toussaint", "#f6ead9", "#b7791f"), "noel": ("Noël", "#e3ebf5", "#3d6a9e"), "hiver": ("Hiver", "#ebe8f6", "#6a5aa8"),
+                    "printemps": ("Printemps", "#e4f1e1", "#3f7a4a"), "ete": ("Été", "#fbf1d0", "#a07a10")}
+
+    def calendrier_structure(self, st):
+        """« L'année à … » sur la page structure : l'année scolaire (septembre à août), les vacances de la zone du département
+        en bandes de couleur pâle, et une ligne par activité : l'accueil hors vacances (mercredis, périscolaire), l'accueil
+        pendant les vacances, les séjours (leurs dates), puis une ligne par offre (le recrutement). Chaque élément est placé
+        en pourcentage de la largeur. Rien si aucune ligne n'a quelque chose à montrer."""
+        auj = self.aujourdhui
+        an = auj.year if auj.month >= 9 else auj.year - 1
+        d0, d1 = dt.date(an, 9, 1), dt.date(an + 1, 8, 31)
+        total = (d1 - d0).days + 1
+        pos = lambda d: round(max(0, min(total, (d - d0).days)) / total * 100, 2)
+        dep = self.departements.get(st.get("departement")) or {}
+        vac = []
+        for p in self.periodes:
+            z = p["zones"].get(dep.get("zone"), p) if p["zones"] else p
+            a, b = max(z["debut"], d0), min(z["fin"], d1)
+            if a > b:
+                continue
+            nom, fond, texte = self.VAC_COULEURS.get(p["id"].split("-")[0], (p["court"], "#eeeeee", "#555555"))
+            vac.append({"nom": nom, "g": pos(a), "l": max(1.5, round(pos(b) - pos(a), 2)), "fond": fond, "texte": texte, "debut": a, "fin": b})
+        if not vac:
+            return None
+        lignes = []
+        acc = set(st.get("accueils") or [])
+        sejours = st.get("sejours") or []
+        types_sj = {sj["type"] for sj in sejours}
+        # l'accueil en dehors des vacances : de septembre au début de l'été, interrompu à chaque période de vacances
+        if acc & {"periscolaire"} or types_sj & {"accueil_mercredis", "accueil_periscolaire"}:
+            ete = next((v for v in vac if v["nom"] == "Été"), None)
+            fin_annee = ete["debut"] if ete else d1
+            morceaux, curseur = [], d0
+            for v in sorted(vac, key=lambda v: v["debut"]):
+                if v["debut"] > curseur and curseur < fin_annee:
+                    morceaux.append((curseur, min(v["debut"], fin_annee)))
+                curseur = max(curseur, v["fin"] + dt.timedelta(days=1))
+            nom = "Périscolaire et mercredis" if "periscolaire" in acc else "Mercredis"
+            lignes.append({"nom": nom, "classe": "c1", "barres": [{"g": pos(a), "l": round(pos(b) - pos(a), 2)} for a, b in morceaux if b > a]})
+        if acc & {"extrascolaire"} or "accueil_vacances" in types_sj:
+            lignes.append({"nom": "Vacances", "classe": "c2", "barres": [{"g": v["g"], "l": v["l"], "texte": "tout l'été" if v["nom"] == "Été" and v["l"] > 8 else ""} for v in vac]})
+        barres = []
+        for sj in sejours:
+            if sj["type"] not in ("sejour", "mini_sejour"):
+                continue
+            for d in sj["a_venir"]:
+                if d["fin"] < d0 or d["debut"] > d1:
+                    continue
+                barres.append({"g": pos(d["debut"]), "l": max(1.2, round(pos(d["fin"]) - pos(d["debut"]), 2)), "url": sj["url"],
+                               "complet": bool(d.get("complet") or d.get("places_restantes") == 0), "titre": f"{sj['titre']} · {d['debut'].day}/{d['debut'].month:02d} → {d['fin'].day}/{d['fin'].month:02d}"})
+        if barres:
+            n = len(barres)
+            ages = sorted({(sj["age_min"], sj["age_max"]) for sj in sejours if sj["type"] in ("sejour", "mini_sejour")})
+            note = (f"{ages[0][0]}-{ages[0][1]} ans · " if len(ages) == 1 else "") + (f"{n} départs" if n > 1 else "1 départ")
+            premier = min(b["g"] for b in barres)
+            lignes.append({"nom": "Séjours" if acc & {"sejours"} or "sejour" in types_sj else "Mini-camps", "classe": "c3", "barres": barres,
+                           "note": note, "note_g": premier - 1, "note_avant": True})
+        for o in (st.get("offres") or [])[:4]:
+            a = o["debut"]
+            b = o.get("fin") or (a + dt.timedelta(days=13))
+            if b < d0 or a > d1:
+                continue
+            g, l = pos(max(a, d0)), max(1.5, round(pos(min(b, d1)) - pos(max(a, d0)), 2))
+            lignes.append({"nom": "Recrute", "classe": "c4", "barres": [{"g": g, "l": l, "texte": o["intitule"] if l >= 30 else "",
+                           "url": None if st.get("exemple") else f"/trouver-un-poste/offres/{o['id']}/"}],
+                           "note": "" if l >= 30 else f"dès le {date_fr(a, annee=False)} · {o['intitule']}", "note_g": g + l + 0.8})
+        if not lignes:
+            return None
+        mois = ["sept.", "oct.", "nov.", "déc.", "janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août"]
+        return {"vacances": vac, "lignes": lignes, "mois": mois, "auj": pos(auj) if d0 <= auj <= d1 else None,
+                "zone": dep.get("zone"), "an": an}
+
     def frise_ete(self, sejours):
         """La frise de l'été sur la page structure : juillet et août, chaque date placée en pourcentage de la largeur."""
         dates = [(sj, d) for sj in sejours if sj["type"] not in ("accueil_mercredis", "accueil_periscolaire") for d in sj["a_venir"] if d["debut"].month in (7, 8) or d["fin"].month in (7, 8)]
@@ -1745,6 +1819,10 @@ class Site:
                          description="À quoi ressemble la page d'une structure sur Fil Roug'Anim : un exemple fictif.",
                          indexer=False, structure=st, point=self.point_structure(st), fil=[("Structures", "/recruter/"), ("Exemple de page structure", "/recruter/exemple-de-page-structure/")])
         self.pages_sejours(structures)
+        # le calendrier de l'année, une fois les séjours rattachés à chaque page structure
+        for pg in self.pages:
+            if pg.get("gabarit") == "structure.html" or (pg.get("structure") and pg["url"].startswith(("/trouver-un-poste/structures/", "/recruter/exemple-de-page-structure/"))):
+                pg["structure"]["calendrier"] = self.calendrier_structure(pg["structure"])
         self.page_catalogue_sejours()
         self.pages_sejours_google()
         self.pages_locales(structures)

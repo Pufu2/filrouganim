@@ -508,6 +508,40 @@
             <p class="etape-aide">Préparation payée, tutorat des stagiaires, formation, logement… Une ligne par point : chacun devient une coche sur votre page.</p>
             <label class="champ"><span>Ce que nous offrons à l'équipe</span><textarea name="avantages" rows="5" maxlength="800" placeholder="Un tuteur pour chaque stagiaire BAFA&#10;Un temps de préparation payé avant les vacances"></textarea></label>
           </fieldset>
+          <fieldset class="etape" data-titre="Une journée type" data-aide="Quatre à six moments suffisent. C'est souvent ce que les familles et les animateurs regardent en premier pour se projeter.">
+            <legend class="etape-q">Une journée type <small class="etape-facultatif">facultatif</small></legend>
+            <p class="etape-aide">Racontez une journée chez vous : l'heure, le moment, et une phrase si vous voulez. Vide, ce bloc ne s'affiche pas sur votre page.</p>
+            <div class="champ"><span>Le jour que vous décrivez</span>
+              <div class="pastilles-choix jt-jours">{% for v, l in [("mercredi", "Un mercredi"), ("vacances", "Un jour de vacances"), ("sejour", "Un jour de séjour"), ("periscolaire", "Le périscolaire")] %}<label class="pastille-choix"><input type="radio" name="journee_jour" value="{{ v }}"><span><b>{{ l }}</b></span></label>{% endfor %}</div>
+            </div>
+            <div class="champ"><span>Les moments de la journée</span>
+              <ol class="jt-moments" id="jt-moments"></ol>
+              <button type="button" class="bouton-texte jt-ajouter" id="jt-ajouter">+ Ajouter un moment</button>
+            </div>
+          </fieldset>
+          <fieldset class="etape" data-titre="Qui vous accueille" data-aide="Une personne et une phrase donnent un visage à votre structure : la directrice, le coordinateur, l'élu à la jeunesse…">
+            <legend class="etape-q">Qui vous accueille <small class="etape-facultatif">facultatif</small></legend>
+            <p class="etape-aide">Une personne de l'équipe, sa phrase pour les animateurs et les familles, et l'équipe en chiffres. Vide, ce bloc ne s'affiche pas.</p>
+            <div class="qa-grille">
+              <div class="champ champ-fichier qa-photo"><span>Sa photo</span>
+                <div class="depot-ligne"><span class="logo-apercu qa-apercu" id="qa-apercu" aria-hidden="true"></span>
+                  <label class="depot depot-petit"><input type="file" name="accueil_fichier" accept="image/jpeg,image/png,image/webp"><span class="depot-texte"><b>Choisir</b></span></label>
+                  <button type="button" class="bouton-texte bouton-danger" id="qa-retirer" hidden>Retirer</button></div>
+              </div>
+              <div class="champs-2">
+                <label class="champ"><span>Prénom</span><input name="accueil_prenom" maxlength="40" placeholder="Sarah"></label>
+                <label class="champ"><span>Rôle</span><input name="accueil_role" maxlength="80" placeholder="Directrice de l'accueil de loisirs"></label>
+              </div>
+            </div>
+            <label class="champ"><span>Sa phrase pour les animateurs et les familles</span><textarea name="accueil_phrase" rows="3" maxlength="300" placeholder="On prend le temps de former nos stagiaires : chacun a un tuteur."></textarea></label>
+            <div class="champ"><span>L'équipe en chiffres</span>
+              <div class="qa-chiffres">
+                <label><input name="nb_animateurs" type="number" min="0" max="2000" inputmode="numeric"><small>animateurs</small></label>
+                <label><input name="nb_stagiaires" type="number" min="0" max="500" inputmode="numeric"><small>stagiaires BAFA par an</small></label>
+                <label><input name="capacite" type="number" min="0" max="10000" inputmode="numeric"><small>enfants accueillis au plus</small></label>
+              </div>
+            </div>
+          </fieldset>
           <fieldset class="etape" data-titre="Votre page">
             <legend class="etape-q">Votre page sur Fil Roug'Anim</legend>
             <p class="etape-aide">Une fois la structure vérifiée, elle a sa page, avec ses offres. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}" target="_blank" rel="noopener">Voir un exemple</a> · <a id="voir-ma-page" href="#" target="_blank" rel="noopener" hidden>Voir ma page</a></p>

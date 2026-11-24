@@ -851,6 +851,7 @@
         plan.children[1].textContent = pleines + " partie" + (pleines > 1 ? "s" : "") + " sur " + etapes.length + " remplie" + (pleines > 1 ? "s" : "");
       }
       points.forEach(function (li, k) {
+        li.dataset.facultatif = etapes[k].querySelector(".etape-facultatif") ? "1" : "";
         li.className = k === n ? "en-cours" + (!creation && rempli(k) ? " rempli" : "") : !creation ? (rempli(k) ? "fait" : "vide") : k <= plusLoin ? "fait" : "";
         li.firstChild.disabled = k > plusLoin;
         if (k === n) li.firstChild.setAttribute("aria-current", "step"); else li.firstChild.removeAttribute("aria-current");
@@ -1163,7 +1164,8 @@
      Structure
      ==================================================================================== */
   var CHAMPS_STRUCTURE = ["nom", "type", "statut", "accueils", "age_min", "age_max", "code_commune", "ville", "departement", "email_contact", "site", "identifiant", "presentation",
-                          "page_publique", "slug", "accroche", "couleur", "publics", "activites", "lieux", "projet", "avantages"];
+                          "page_publique", "slug", "accroche", "couleur", "publics", "activites", "lieux", "projet", "avantages",
+                          "journee_jour", "accueil_prenom", "accueil_role", "accueil_phrase", "nb_animateurs", "nb_stagiaires", "capacite"];
   var assistantStructure = Assistant($("bloc-structure"), apercuStructure);
   var photos = [], logo = null, aSupprimer = [];
   function enSlug(t) {
@@ -1181,6 +1183,9 @@
     if (!structure || !structure.couleur) remplir(f, { couleur: "rouge" });
     photos = (structure && structure.photos || []).slice();
     logo = structure && structure.logo || null;
+    photoAccueil = structure && structure.accueil_photo || null;
+    montrerJournee(structure && structure.journee);
+    montrerPhotoAccueil();
     aSupprimer = [];
     montrerPhotos();
     var voir = $("voir-ma-page");
@@ -1448,6 +1453,11 @@
     d.publics = (d.age_min == null || d.age_max == null ? [] : tranches.filter(function (t) { return t[0] <= d.age_max && t[1] >= d.age_min; }).map(function (t) { return t[0] + "-" + t[1]; }))
       .concat((d.publics || []).filter(function (p) { return p === "handicap" || p === "familles"; }));
     d.couleur = d.couleur || "rouge";
+    // une journée type : les moments remplis (heure et titre), 8 au plus ; « Qui vous accueille » : la photo et les chiffres
+    d.journee = lireJournee();
+    if (!d.journee) d.journee_jour = null;
+    d.accueil_photo = photoAccueil;
+    ["nb_animateurs", "nb_stagiaires", "capacite"].forEach(function (k) { d[k] = d[k] == null ? null : Math.max(0, parseInt(d[k], 10) || 0); });
     d.activites = (d.activites || "").split(",").map(function (x) { return x.trim().slice(0, 40); }).filter(Boolean).slice(0, 12);
     d.slug = enSlug(d.slug || d.nom);
     if (d.slug.length < 3) d.slug = null;
@@ -1531,6 +1541,45 @@
     } catch (e) { message(erreurLisible(e), true); }
     montrerPhotos(); apercuStructure();
   });
+  /* -- une journée type : une ligne par moment (heure, titre, phrase) -- */
+  var EX_MOMENTS = [["7h30", "Accueil"], ["9h30", "Ateliers"], ["12h", "Repas"], ["14h", "Grand jeu"], ["16h30", "Goûter, départs"], ["18h", "Fermeture"], ["", ""], ["", ""]];
+  function ligneMoment(m) {
+    var li = el("li", "jt-moment"), ex = EX_MOMENTS[Math.min(7, $("jt-moments").children.length)];
+    [["h", ex[0] || "Heure", 8, "jt-h"], ["t", ex[1] ? "Ex. : " + ex[1] : "Moment", 40, "jt-t"], ["p", "Une phrase, facultative", 90, "jt-p"]].forEach(function (c) {
+      var i = el("input", c[3]); i.placeholder = c[1]; i.maxLength = c[2]; i.value = (m && m[c[0]]) || ""; i.dataset.k = c[0];
+      i.setAttribute("aria-label", { h: "Heure", t: "Moment", p: "Phrase" }[c[0]]); li.appendChild(i);
+    });
+    var x = el("button", "jt-retirer", "×"); x.type = "button"; x.setAttribute("aria-label", "Retirer ce moment");
+    x.addEventListener("click", function () { li.remove(); if (!$("jt-moments").children.length) $("jt-moments").appendChild(ligneMoment()); apercuStructure(); });
+    li.appendChild(x);
+    return li;
+  }
+  function montrerJournee(liste) {
+    var ol = $("jt-moments"); ol.textContent = "";
+    (liste && liste.length ? liste : [{}, {}, {}, {}]).forEach(function (m) { ol.appendChild(ligneMoment(m)); });  // ligneMoment lit le nombre de lignes déjà là
+  }
+  function lireJournee() {
+    var l = Array.prototype.map.call($("jt-moments").children, function (li) {
+      var o = {}; Array.prototype.forEach.call(li.querySelectorAll("input"), function (i) { o[i.dataset.k] = i.value.trim(); }); return o;
+    }).filter(function (m) { return m.h && m.t; }).slice(0, 8);
+    return l.length ? l : null;
+  }
+  $("jt-ajouter").addEventListener("click", function () { if ($("jt-moments").children.length < 8) $("jt-moments").appendChild(ligneMoment()); });
+  /* -- qui vous accueille : la photo -- */
+  var photoAccueil = null;
+  function montrerPhotoAccueil() {
+    var a = $("qa-apercu"); a.textContent = "";
+    if (photoAccueil) { var im = el("img"); im.src = urlPhoto(photoAccueil); im.alt = ""; a.appendChild(im); }
+    $("qa-retirer").hidden = !photoAccueil;
+  }
+  $("f-structure").accueil_fichier.addEventListener("change", async function () {
+    var f = this.files[0]; this.value = "";
+    if (!f) return;
+    try { var ancienne = photoAccueil; photoAccueil = await envoyerImage(f, "accueil", 500); if (ancienne) aSupprimer.push(ancienne); message("Photo ajoutée. Pensez à enregistrer votre fiche."); }
+    catch (e) { message(erreurLisible(e), true); }
+    montrerPhotoAccueil();
+  });
+  $("qa-retirer").addEventListener("click", function () { if (photoAccueil) aSupprimer.push(photoAccueil); photoAccueil = null; montrerPhotoAccueil(); });
   $("logo-retirer").addEventListener("click", function () { if (logo) aSupprimer.push(logo); logo = null; montrerPhotos(); apercuStructure(); });
 
   $("f-structure").addEventListener("submit", async function (e) {

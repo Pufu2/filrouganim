@@ -1226,3 +1226,20 @@ end $$;
 
 -- v47 (23/11/2026) : supprimer_mon_compte() refuse un compte administrateur ; admins_attente (email) réserve une adresse comme
 -- administrateur : le trigger promouvoir_admin_attente (after insert on auth.users) l'ajoute à admins dès que le compte est créé.
+
+-- v48 (24/11/2026) : la fiche structure. « Une journée type » (journee_jour, journee : [{h, t, p}], 8 moments au plus)
+-- et « Qui vous accueille » (accueil_prenom, accueil_role, accueil_phrase, accueil_photo ; nb_animateurs, nb_stagiaires, capacite),
+-- tous facultatifs : vides, leur bloc ne s'affiche pas. cree_le et maj_le lisibles par anon (« sur le site depuis », « mis à jour »).
+alter table public.structures
+  add column if not exists journee_jour text check (journee_jour is null or journee_jour in ('mercredi','vacances','sejour','periscolaire')),
+  add column if not exists journee jsonb check (journee is null or (jsonb_typeof(journee) = 'array' and jsonb_array_length(journee) <= 8)),
+  add column if not exists accueil_prenom text check (accueil_prenom is null or length(accueil_prenom) <= 40),
+  add column if not exists accueil_role text check (accueil_role is null or length(accueil_role) <= 80),
+  add column if not exists accueil_phrase text check (accueil_phrase is null or length(accueil_phrase) <= 300),
+  add column if not exists accueil_photo text check (accueil_photo is null or length(accueil_photo) <= 300),
+  add column if not exists nb_animateurs int check (nb_animateurs is null or nb_animateurs between 0 and 2000),
+  add column if not exists nb_stagiaires int check (nb_stagiaires is null or nb_stagiaires between 0 and 500),
+  add column if not exists capacite int check (capacite is null or capacite between 0 and 10000);
+grant select (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite, cree_le, maj_le) on public.structures to anon;
+grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite),
+      update (journee_jour, journee, accueil_prenom, accueil_role, accueil_phrase, accueil_photo, nb_animateurs, nb_stagiaires, capacite) on public.structures to authenticated;

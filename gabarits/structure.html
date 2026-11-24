@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Fiche d'une structure vérifiée (ou exemple fictif), sur le modèle des fiches de l'annuaire de jasonmarinho.com :
-   les photos, le nom et les badges, trois chiffres, les offres en cartes, la présentation, ce que la structure propose,
-   où elle accueille (carte), et une carte de contact qui suit à droite. #}
+{# Fiche d'une structure vérifiée (ou exemple fictif). De haut en bas :
+   le haut (sa photo en grand, son nom, sa phrase), le ruban de ses activités (recrute, séjours, accueil de loisirs),
+   une barre de sections qui suit au défilement avec les deux boutons (postuler, demander une place), puis :
+   « Deux façons de venir » (travailler avec elle / inscrire son enfant), ses séjours en cartes, l'année (calendrier
+   des vacances de sa zone, de ses accueils, de ses séjours et de ses offres), une journée type, la présentation,
+   qui vous accueille et ce qui est vérifié, ses lieux sur la carte, et les réponses aux questions qu'on se pose.
+   Tout bloc sans contenu ne s'affiche pas. #}
 {% set st = page.structure %}
 {% set nom_dep = departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first %}
 {% set type_nom = TYPES_STRUCTURE.get(st.type, "Structure d'animation") %}
@@ -10,174 +14,249 @@
 {% set photos = st.photos or [] %}
 {% set base_photos = site.supabase.url ~ "/storage/v1/object/public/structures/" %}
 {% set point = page.point %}
-{% set _nn = (st.sejours or []) | selectattr("type", "in", ["sejour", "mini_sejour"]) | list | length %}{% set _nj = (st.sejours or []) | length - _nn %}
-{% set compte_sejours = ([(_nn ~ " séjour" ~ ("s" if _nn > 1 else "")) if _nn else None, (_nj ~ " accueil" ~ ("s" if _nj > 1 else "") ~ " de loisirs") if _nj else None] | select | join(" · ")) %}
-{% macro avatar(classe="") %}<span class="fp-avatar {{ classe }}" aria-hidden="true">{% if st.logo %}<img src="{{ base_photos ~ st.logo }}" alt="" loading="lazy">{% else %}{{ initiales }}{% endif %}</span>{% endmacro %}
+{% set acc = st.accueils or [] %}
+{% set sejours = st.sejours or [] %}
+{% set sj_nuits = sejours | selectattr("type", "in", ["sejour", "mini_sejour"]) | list %}
+{% set sj_jour = sejours | rejectattr("type", "in", ["sejour", "mini_sejour"]) | list %}
+{% set a_sejours = sj_nuits or "sejours" in acc or "mini-camps" in acc %}
+{% set a_accueil = sj_jour or "periscolaire" in acc or "extrascolaire" in acc or "accueil-de-jeunes" in acc %}
+{% set familles = a_sejours or a_accueil %}
+{% set aides = [] %}{% for sj in sejours %}{% for a in sj.aides or [] %}{% if a not in aides and AIDES.get(a) %}{% set _ = aides.append(a) %}{% endif %}{% endfor %}{% endfor %}
+{% set handicap = "handicap" in (st.publics or []) %}
+{% set stagiaires = [] %}{% for o in st.offres or [] %}{% if o.poste == "animateur-stagiaire" or o.contrat == "stage-pratique" or "stagiaire" in (o.intitule or "") | lower or "stagiaire-bafa" in (o.diplomes or []) %}{% set _ = stagiaires.append(o) %}{% endif %}{% endfor %}
+{% set ages = ages_structure(st) %}
+{% set demande_url = (sejours[0].url if sejours else '/enfants/demande/') %}
+{% set fond = base_photos ~ st.banniere if st.banniere else (base_photos ~ photos[0] if photos else None) %}
+{% set ic_p %}<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18"/></svg>{% endset %}
+{% set ic_s %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l7-12 4 6 2-3 5 9z"/><circle cx="17" cy="6" r="2"/></svg>{% endset %}
+{% set ic_a %}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>{% endset %}
+{% set ic_c %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{% endset %}
+{% set ic_b %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>{% endset %}
+{% macro avatar(classe="") %}<span class="fs-logo {{ classe }}" aria-hidden="true">{% if st.logo %}<img src="{{ base_photos ~ st.logo }}" alt="" loading="lazy">{% else %}{{ initiales }}{% endif %}</span>{% endmacro %}
+{% macro lien_offre(o) %}{% if st.exemple %}#{% else %}{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}{% endif %}{% endmacro %}
 {% block tete %}{% endblock %}
 {% block contenu %}
 {% if not st.exemple and st.id %}<div id="stat" hidden data-s="{{ st.id }}" data-t="page" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></div>{% endif %}
-<div class="fp theme-{{ st.couleur or 'rouge' }}">
-  <div class="cadre">
-    <nav class="fil-ariane fp-ariane" aria-label="Fil d'Ariane">
-      <a href="{{ lien('/') }}">Accueil</a>
-      {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
-    </nav>
-    {% if st.exemple %}<p class="fp-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
+<div class="fs theme-{{ st.couleur or 'rouge' }}">
 
-    {% if st.banniere %}<div class="fp-banniere-photo" style="background-image:url('{{ base_photos ~ st.banniere }}')" role="img" aria-label="{{ st.nom }}"></div>{% endif %}
-    {% if photos %}
-    <div class="fp-galerie fp-galerie-{{ [photos | length, 5] | min }}">
-      {% for ph in photos[:5] %}<a href="{{ base_photos ~ ph }}" class="fp-photo" target="_blank" rel="noopener"><img src="{{ base_photos ~ ph }}" alt="Photo {{ loop.index }} de {{ st.nom }}" loading="{{ 'eager' if loop.first else 'lazy' }}"></a>{% endfor %}
-      {% if photos | length > 1 %}<span class="fp-nb-photos">{{ m.icone("cherche") }}{{ photos | length }} photos</span>{% endif %}
+  {# ---------- le haut ---------- #}
+  <header class="fs-haut{% if fond %} fs-haut-photo{% endif %}">
+    <div class="fs-haut-fond" aria-hidden="true"{% if fond %} style="background-image:url('{{ fond }}')"{% endif %}></div>
+    <div class="cadre fs-haut-in">
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
+        <a href="{{ lien('/') }}">Accueil</a>
+        {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+      </nav>
+      {% if st.exemple %}<p class="fs-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
+      <p class="fs-qui">{{ avatar() }}<span>{{ STATUTS.get(st.statut, type_nom) if st.statut else type_nom }} · {{ st.ville }} ({{ st.departement }})</span><span class="fs-verifiee">{{ ic_b }}Vérifiée par Fil Roug'Anim</span>{% if st.abonnee %}<span class="fs-partenaire">Partenaire</span>{% endif %}</p>
+      <h1>{{ st.nom }}</h1>
+      <p class="fs-accroche">{% if st.accroche %}{{ st.accroche }}{% else %}{{ type_nom }} à {{ st.ville }}{% if ages %}, {{ ages }}{% endif %}.{% endif %}</p>
+      {% if st.parent %}<p class="fs-parent">Un centre de <a href="{{ lien(st.parent.url) }}">{{ st.parent.nom }}</a></p>{% endif %}
+      {% if st.site %}<a class="fs-site" data-stat="clic_site" href="{{ st.site }}" rel="noopener">Le site de la structure <span aria-hidden="true">↗</span></a>{% endif %}
     </div>
-    {% else %}
-    <div class="fp-banniere" aria-hidden="true"><span>{{ type_nom }}</span><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 80 C 160 40, 300 110, 470 70 S 760 20, 900 66 S 1110 100, 1200 50"/></svg></div>
+  </header>
+
+  <div class="cadre">
+    {# ---------- le ruban : ce qu'elle fait ---------- #}
+    <div class="fs-ruban fs-ruban-{{ [1, (1 if st.offres or not familles else 0) + (1 if a_sejours else 0) + (1 if a_accueil else 0)] | max }}">
+      {% if st.offres or not familles %}
+      <a href="#travailler"><span class="fs-k">{{ ic_p }}</span><span><b>{% if st.offres %}Recrute{% else %}Travailler ici{% endif %}</b><small>{% if st.offres %}{{ st.offres | length }} offre{{ 's' if st.offres | length > 1 }} ouverte{{ 's' if st.offres | length > 1 }}{% if stagiaires %} · stagiaires BAFA bienvenus{% endif %}{% else %}Pas d'offre en ce moment : envoyez votre profil{% endif %}</small><em>{% if st.offres %}Voir les offres{% else %}En savoir plus{% endif %} <span aria-hidden="true">→</span></em></span></a>
+      {% endif %}
+      {% if a_sejours %}
+      <a href="#{{ 'sejours' if sj_nuits else 'familles' }}"><span class="fs-k">{{ ic_s }}</span><span><b>Séjours</b><small>{% if sj_nuits %}{{ sj_nuits | length }} séjour{{ 's' if sj_nuits | length > 1 }} à venir · {{ sj_nuits[0].age_min }}-{{ sj_nuits[0].age_max }} ans{% else %}{{ "Mini-camps" if "mini-camps" in acc else "Séjours de vacances" }}{% endif %}</small><em>Voir les séjours <span aria-hidden="true">→</span></em></span></a>
+      {% endif %}
+      {% if a_accueil %}
+      <a href="#familles"><span class="fs-k">{{ ic_a }}</span><span><b>{{ "Accueil de jeunes" if "accueil-de-jeunes" in acc and not ("periscolaire" in acc or "extrascolaire" in acc) else "Accueil de loisirs" }}</b><small>{{ (["Périscolaire" if "periscolaire" in acc else None, "vacances" if "extrascolaire" in acc else None] | select | join(" et ")) or "À la journée" }}{% if ages %} · {{ ages }}{% endif %}</small><em>Voir l'accueil <span aria-hidden="true">→</span></em></span></a>
+      {% endif %}
+    </div>
+
+    {# ---------- la barre des sections, qui suit ---------- #}
+    <nav class="fs-sections" aria-label="Sections de la page">
+      <div class="fs-sections-liens">
+        <a href="#propose">Ce qu'elle propose</a>
+        {% if st.calendrier %}<a href="#annee">L'année</a>{% endif %}
+        {% if st.journee %}<a href="#journee">Une journée</a>{% endif %}
+        <a href="#presentation">Présentation</a>
+        <a href="#equipe">L'équipe</a>
+        <a href="#lieux">{{ "Les lieux" if st.centres else "Où" }}</a>
+        <a href="#questions">Questions</a>
+      </div>
+      <div class="fs-sections-boutons">
+        {% if st.maj_le %}<small class="fs-maj">Mise à jour le {{ st.maj_le[:10] | date_fr }}</small>{% endif %}
+        {% if familles %}<a class="fs-btn fs-btn-b" href="{{ lien(demande_url) if not st.exemple else '#familles' }}">Demander une place</a>{% endif %}
+        <a class="fs-btn fs-btn-r" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">Postuler</a>
+      </div>
+    </nav>
+
+    {# ---------- deux façons de venir ---------- #}
+    <section class="fs-s" id="propose" aria-labelledby="t-propose">
+      <div class="fs-tt"><p class="fs-sur">Ce qu'elle propose</p><h2 id="t-propose">{% if familles %}Deux façons de venir{% else %}Travailler avec {{ st.nom }}{% endif %}</h2></div>
+      <div class="fs-portes{% if not familles %} fs-portes-1{% endif %}">
+        <article class="fs-carte fs-porte" id="travailler">
+          <div class="fs-porte-t"><h3>Travailler avec nous</h3><small>Animateurs, stagiaires BAFA, directeurs</small></div>
+          {% for o in st.offres[:5] %}
+          <div class="fs-rang"><div><b>{{ o.intitule }}</b><small>Dès le {{ o.debut | date_fr }} · {{ CONTRATS.get(o.contrat, o.contrat) }} · {{ o.ville }}{% if o.remuneration %} · {{ o.remuneration.montant | euros }} brut par {{ o.remuneration.unite }}{% endif %}{% if o.loge %} · logé{% endif %}</small></div><a class="fs-lp" href="{{ lien_offre(o) }}">Postuler <span aria-hidden="true">→</span></a></div>
+          {% else %}
+          <p class="fs-vide">Pas d'offre en ligne aujourd'hui. Avec un profil gratuit, {{ st.nom }} peut vous trouver et vous écrire quand elle recrute.</p>
+          {% endfor %}
+          {% if st.offres | length > 5 %}<p class="fs-plus"><a href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ st.departement }}">Ses {{ st.offres | length }} offres <span aria-hidden="true">→</span></a></p>{% endif %}
+          {% if st.avantages %}<ul class="fs-coches">{% for a in st.avantages.split("\n") if a.strip() %}{% if loop.index <= 4 %}<li>{{ ic_c }}{{ a.strip().rstrip(".") }}</li>{% endif %}{% endfor %}</ul>{% endif %}
+          <a class="fs-btn fs-btn-r fs-btn-large" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">{% if st.offres %}Postuler avec mon profil{% else %}Créer mon profil gratuit{% endif %}</a>
+        </article>
+        {% if familles %}
+        <article class="fs-carte fs-porte" id="familles">
+          <div class="fs-porte-t"><h3>Inscrire votre enfant</h3><small>{% if ages %}{{ ages | capitalize }} · {% endif %}demande de place en ligne, sans frais</small></div>
+          {% for sj in sejours[:4] %}{% set d = sj.a_venir[0] %}
+          <div class="fs-rang"><div><b>{{ sj.titre }}{% if d.places_restantes and d.places_restantes <= 5 and not d.complet %} <span class="fs-etat fs-jaune">plus que {{ d.places_restantes }} place{{ 's' if d.places_restantes > 1 }}</span>{% endif %}</b><small>{{ sj.age_min }}-{{ sj.age_max }} ans · {{ SEJ_TYPES[sj.type][0] }} · dès le {{ d.debut | date_fr }}{% if sj.prix_min %} · dès {{ sj.prix_min | euros }}{% endif %}</small></div><a class="fs-lp" href="{{ lien(sj.url) }}">Demander <span aria-hidden="true">→</span></a></div>
+          {% endfor %}
+          {% for a, l in ACCUEILS_ST if a in acc and a in ["periscolaire", "extrascolaire", "accueil-de-jeunes"] %}
+          <div class="fs-rang"><div><b>{{ {"periscolaire": "Périscolaire et mercredis", "extrascolaire": "Accueil de loisirs des vacances", "accueil-de-jeunes": "Accueil de jeunes"}[a] }}</b><small>{{ {"periscolaire": "Matins, midis, soirs et mercredis", "extrascolaire": "Pendant les vacances scolaires", "accueil-de-jeunes": "Ados, espace jeunes"}[a] }} · {{ st.ville }}{% if ages %} · {{ ages }}{% endif %}</small></div><a class="fs-lp" href="{{ lien('/enfants/demande/') }}">Demander <span aria-hidden="true">→</span></a></div>
+          {% endfor %}
+          {% if aides or handicap %}<ul class="fs-coches">{% for a in aides[:4] %}<li>{{ ic_c }}{{ AIDES[a].nom }}</li>{% endfor %}{% if handicap %}<li>{{ ic_c }}Enfants en situation de handicap</li>{% endif %}</ul>{% endif %}
+          <a class="fs-btn fs-btn-b fs-btn-large" href="{{ lien(demande_url) if not st.exemple else '#sejours' }}">Demander une place</a>
+        </article>
+        {% endif %}
+      </div>
+    </section>
+
+    {# ---------- ses séjours, en cartes ---------- #}
+    {% if sejours %}
+    <section class="fs-s" id="sejours" aria-labelledby="t-sejours">
+      <div class="fs-tt"><p class="fs-sur">Pour les familles</p><h2 id="t-sejours">{% if sj_jour and sj_nuits %}Ses séjours et accueils{% elif sj_jour %}Ses accueils de loisirs{% else %}Ses séjours{% endif %}</h2><p>Demandez une place en ligne, sans frais : {{ st.nom }} vous répond directement.</p></div>
+      <div class="sjc-grille fp-sj-grille">
+      {% for x in sejours %}{{ m.carte_sejour(x) }}
+      {% endfor %}
+      </div>
+    </section>
     {% endif %}
 
-    <div class="fp-identite">
-      {{ avatar() }}
-      <div>
-        <h1>{{ st.nom }}</h1>{% if st.abonnee %}<p class="fp-partenaire"><span class="s-partenaire">Partenaire</span> Structure partenaire de Fil Roug'Anim</p>{% endif %}
-        <p class="fp-sous">{{ type_nom }} à {{ st.ville }}{% if st.parent %} · un centre de <a href="{{ lien(st.parent.url) }}">{{ st.parent.nom }}</a>{% endif %}</p>
-        <ul class="fp-badges">
-          <li>{{ m.icone("diplome") }}Vérifiée par Fil Roug'Anim</li>
-          {% if st.offres %}<li>{{ m.icone("date") }}Recrute en ce moment</li>{% endif %}
-          {% if st.fondatrice %}<li>{{ m.icone("etape") }}Structure fondatrice</li>{% endif %}
-          {% if st.sejours %}<li class="fp-badge-sejours"><a href="#sejours">{{ m.icone("date") }}{{ compte_sejours }}</a></li>{% endif %}
-          <li>{{ m.icone("lieu") }}Sans commission</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="fp-grille">
-      <div class="fp-principal">
-        <ul class="fp-chiffres">
-          <li><b>{{ st.offres | length }}</b><span>offre{{ 's' if st.offres | length != 1 }} en ce moment</span></li>
-          <li>{% if ages_structure(st) %}<b>{{ st.age_min }}{% if st.age_max != st.age_min %}-{{ st.age_max }}{% endif %}</b><span>ans, les publics</span>{% else %}<b>{% if st.publics %}{{ PUBLICS.get(st.publics[0], st.publics[0]) | replace(" ans", "") }}{% if st.publics | length > 1 %} et +{% endif %}{% else %}Tous{% endif %}</b><span>{% if st.publics %}ans, les publics{% else %}les publics{% endif %}</span>{% endif %}</li>
-          <li><b>{{ st.departement }}</b><span>{{ nom_dep }}</span></li>
-        </ul>
-
-        <section class="fp-bloc" aria-labelledby="t-offres-st">
-          <h2 id="t-offres-st">{% if st.offres %}Ses offres{% else %}Pas d'offre en ce moment{% endif %}</h2>
-          {% if st.offres %}
-          <div class="fp-formules">
-          {% for o in st.offres[:6] %}
-            <article class="fp-formule{% if loop.first and st.offres | length > 1 %} fp-formule-une{% endif %}">
-              {% if loop.first and st.offres | length > 1 %}<span class="fp-formule-badge">La plus proche</span>{% endif %}
-              <p class="fp-formule-sur">{{ CONTRATS.get(o.contrat, o.contrat) }}</p>
-              <p class="fp-formule-date"><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b> {{ o.debut.year }}</p>
-              <h3>{{ o.intitule }}</h3>
-              <p class="fp-formule-lieu">{{ o.ville }} ({{ o.departement }})</p>
-              {% if st.exemple %}<span class="fp-formule-lien">Voir l'offre <span aria-hidden="true">→</span></span>{% else %}<a class="fp-formule-lien" href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">Voir l'offre <span aria-hidden="true">→</span></a>{% endif %}
-            </article>
-          {% endfor %}
-          </div>
-          <p class="fp-note">Candidature directe auprès de la structure, sans frais ni intermédiaire.</p>
-          {% else %}<p>{{ st.nom }} n'a pas d'offre en ligne aujourd'hui. Avec un profil gratuit, elle peut vous trouver et vous écrire.</p>{% endif %}
-        </section>
-
-        {% if st.centres %}
-        <section class="fp-bloc" aria-labelledby="t-centres">
-          <h2 id="t-centres">Ses {{ st.centres | length + 1 }} centres</h2>
-          <ul class="fp-centres">
-            <li class="fp-centre fp-centre-ici"><span class="fp-centre-ic" aria-hidden="true">{{ initiales }}</span><span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }} ({{ st.departement }})</small></span><span class="fp-centre-note">Vous êtes ici</span></li>
-            {% for c in st.centres %}
-            <li class="fp-centre">{% set _ci = c.nom.replace("L'", "").split() %}<span class="fp-centre-ic" aria-hidden="true">{{ (_ci[0][0] ~ (_ci[1][0] if _ci | length > 1 else "")) | upper }}</span>
-              <span><b>{% if c.url %}<a href="{{ lien(c.url) }}">{{ c.nom }}</a>{% else %}{{ c.nom }}{% endif %}</b><small>{{ TYPES_STRUCTURE.get(c.type or st.type, "Centre") }} · {{ c.ville }} ({{ c.departement }}){% if c.offres %} · {{ c.offres | length }} offre{{ 's' if c.offres | length > 1 }}{% endif %}</small></span>
-              {% if c.url %}<a class="fp-centre-note" href="{{ lien(c.url) }}">Voir <span aria-hidden="true">→</span></a>{% endif %}</li>
+    {# ---------- l'année ---------- #}
+    {% set cal = st.calendrier %}
+    {% if cal %}
+    <section class="fs-s" id="annee" aria-labelledby="t-annee">
+      <div class="fs-tt"><p class="fs-sur">Le calendrier</p><h2 id="t-annee">L'année à {{ st.nom }}</h2><p>Quand les enfants sont accueillis, quand partent les séjours, et quand la structure recrute.</p></div>
+      <div class="fs-carte fs-an">
+        <div class="fs-an-defile"><div class="fs-an-in">
+          <div class="fs-an-ligne fs-an-vac"><span></span><div>{% for v in cal.vacances %}<span style="left:{{ v.g }}%;color:{{ v.texte }}"><i style="background:{{ v.texte }}"></i>{{ v.nom }}</span>{% endfor %}</div></div>
+          <div class="fs-an-ligne fs-an-mois"><span></span><div>{% for mo in cal.mois %}<span>{{ mo }}</span>{% endfor %}</div></div>
+          <div class="fs-an-corps">
+            <div class="fs-an-fond" aria-hidden="true">{% for v in cal.vacances %}<i style="left:{{ v.g }}%;width:{{ v.l }}%;background:{{ v.fond }}"></i>{% endfor %}{% if cal.auj is not none %}<em style="left:{{ cal.auj }}%"></em><b style="left:{{ cal.auj }}%">aujourd'hui</b>{% endif %}</div>
+            {% for l in cal.lignes %}
+            <div class="fs-an-ligne fs-an-l"><span><i class="fs-{{ l.classe }}"></i>{{ l.nom }}</span><div>
+              {% for b in l.barres %}{% if b.url %}<a class="fs-{{ l.classe }}{% if b.complet %} fs-complet{% endif %}" href="{{ lien(b.url) }}" style="left:{{ b.g }}%;width:{{ b.l }}%" title="{{ b.titre or b.texte or l.nom }}">{% if b.texte %}<span>{{ b.texte }}</span>{% endif %}</a>{% else %}<u class="fs-{{ l.classe }}{% if b.complet %} fs-complet{% endif %}" style="left:{{ b.g }}%;width:{{ b.l }}%">{% if b.texte %}<span>{{ b.texte }}</span>{% endif %}</u>{% endif %}{% endfor %}
+              {% if l.note %}<small class="fs-an-note{% if l.note_avant %} fs-avant{% endif %}" style="{% if l.note_avant %}right:{{ 100 - l.note_g }}%{% else %}left:{{ l.note_g }}%{% endif %}">{{ l.note }}{% if l.note_avant %} <span aria-hidden="true">→</span>{% endif %}</small>{% endif %}
+            </div></div>
             {% endfor %}
-          </ul>
-        </section>
-        {% endif %}
-
-        {% if st.presentation or st.projet %}
-        <section class="fp-bloc" aria-labelledby="t-pres">
-          <h2 id="t-pres">Présentation</h2>
-          <div class="fp-texte" data-replie>
-            {% if st.accroche %}<p class="fp-accroche">{{ st.accroche }}</p>{% endif %}
-            {% if st.presentation %}{{ st.presentation | paragraphes | safe }}{% endif %}
-            {% if st.projet %}<h3>Notre projet</h3>{{ st.projet | paragraphes | safe }}{% endif %}
           </div>
-          <button type="button" class="fp-lire" hidden>Lire la suite</button>
-        </section>
-        {% endif %}
-
-        {% if st.sejours %}
-        <section class="fp-bloc fp-sejours" id="sejours" aria-labelledby="t-sejours">
-          <h2 id="t-sejours">{% if _nj and _nn %}Nos séjours et accueils{% elif _nj %}Nos accueils de loisirs{% else %}Nos séjours{% endif %}</h2>
-          <p class="fp-sous-titre">Demandez une place en ligne, sans frais : {{ st.nom }} vous répond directement.</p>
-          {% if st.sejours | length >= 4 %}
-          <div class="fp-sj-filtres" role="group" aria-label="Filtrer les séjours">
-            <button type="button" class="fp-sj-on" data-sj-f="">Tous</button>
-            {% if st.sejours | selectattr("type", "in", ["sejour", "mini_sejour"]) | list %}<button type="button" data-sj-f="nuits">Avec nuits</button>{% endif %}
-            {% if st.sejours | selectattr("type", "in", ["accueil_vacances", "accueil_mercredis", "accueil_periscolaire"]) | list %}<button type="button" data-sj-f="journee">À la journée</button>{% endif %}
-            {% for b, r in [("3-5", [3, 5]), ("6-8", [6, 8]), ("9-11", [9, 11]), ("12-14", [12, 14]), ("15-17", [15, 17])] %}{% if st.sejours | selectattr("age_min", "le", r[1]) | selectattr("age_max", "ge", r[0]) | list %}<button type="button" data-sj-f="a{{ b }}">{{ b }} ans</button>{% endif %}{% endfor %}
-          </div>
-          {% endif %}
-          <div class="sjc-grille fp-sj-grille">
-          {% for x in st.sejours %}{{ m.carte_sejour(x) }}
-          {% endfor %}
-          </div>
-          {% if st.frise %}
-          <div class="fp-frise" aria-label="Les séjours de l'été {{ st.frise.an }}">
-            <p class="fp-sous-titre">L'été {{ st.frise.an }} d'un coup d'œil</p>
-            <div class="fp-frise-axe"><span style="left:0">Juillet</span><span style="left:{{ 100 - st.frise.aout }}%">Août</span></div>
-            <div class="fp-frise-zone">
-              {% for w in st.frise.semaines %}<i class="fp-frise-sem" style="left:{{ w.g }}%"><small>{{ w.t }}</small></i>{% endfor %}
-              {% for l in st.frise.lignes %}{% set droite = l.g + l.l > 55 %}<a class="fp-frise-ligne{% if l.complet %} fp-frise-complet{% endif %}{% if droite %} fp-frise-g{% endif %}" href="{{ lien(l.url) }}" style="{% if droite %}padding-right:{{ (100 - l.g - l.l) | round(2) }}%{% else %}padding-left:{{ l.g }}%{% endif %}"><i class="fp-frise-barre" style="width:{{ l.l }}%"></i><span>{{ l.titre }} <small>{{ l.dates }} · {{ l.age }}{% if l.complet %} · complet{% endif %}</small></span></a>{% endfor %}
-            </div>
-          </div>
-          {% endif %}
-          <p class="fp-liens"><a class="fp-lien-bouton" href="{{ lien('/enfants/') }}">Tous les séjours sur Fil Roug'Anim <span aria-hidden="true">→</span></a></p>
-        </section>
-        {% endif %}
-
-        {% if st.avantages or st.activites or st.publics %}
-        <section class="fp-bloc" aria-labelledby="t-propose">
-          <h2 id="t-propose">Ce que la structure propose</h2>
-          {% if st.avantages %}<p class="fp-sous-titre">À l'équipe</p><ul class="fp-coches">{% for a in st.avantages.split("\n") if a.strip() %}<li>{{ a.strip().rstrip(".") }}</li>{% endfor %}</ul>{% endif %}
-          {% if st.accueils %}<p class="fp-sous-titre">Ce que nous organisons</p><ul class="fp-coches fp-coches-douces">{% for a, l in ACCUEILS_ST if a in st.accueils and a != "autre" %}<li>{{ l }}</li>{% endfor %}</ul>{% endif %}
-          {% if ages_structure(st) %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces"><li>{{ ages_structure(st) | capitalize }}</li>{% for p in st.publics or [] if p in ["handicap", "familles"] %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>
-          {% elif st.publics %}<p class="fp-sous-titre">Aux enfants et aux jeunes</p><ul class="fp-coches fp-coches-douces">{% for p in st.publics %}<li>{{ PUBLICS.get(p, p) }}</li>{% endfor %}</ul>{% endif %}
-          {% if st.activites %}<p class="fp-sous-titre">Les activités</p><ul class="fp-coches fp-coches-douces">{% for a in st.activites %}<li>{{ a | majuscule }}</li>{% endfor %}</ul>{% endif %}
-        </section>
-        {% endif %}
-
-        <section class="fp-bloc" aria-labelledby="t-ou">
-          <h2 id="t-ou">Où elle accueille</h2>
-          <ul class="fp-ou">
-            <li><b>{{ st.ville }}</b><span>{{ type_nom | lower }}</span></li>
-            <li><b>{{ nom_dep }}</b><span>département ({{ st.departement }})</span></li>
-          </ul>
-          {% if point %}<div class="fp-carte" data-fp-carte='{{ {"points": [[point[0], point[1], st.ville, 1]], "rayon": 0} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png" role="img" aria-label="Carte : {{ st.ville }}, {{ nom_dep }}"></div>{% endif %}
-          {% if st.lieux %}<p class="fp-lieux">{{ st.lieux }}</p>{% endif %}
-          <p class="fp-note">Fond de carte IGN (Géoplateforme).</p>
-        </section>
-
-        <p class="fp-liens">
-          <a class="fp-lien-bouton" href="{{ lien('/recruter/') }}#structures">← Toutes les structures</a>
-          <a class="fp-lien-bouton" href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ st.departement }}">{{ m.icone("lieu") }}Les offres du {{ st.departement }}</a>
-        </p>
-        <p class="fp-bon"><b>Bon à savoir.</b> Les informations de cette page sont écrites par la structure, sous sa responsabilité. La candidature, le contrat et la rémunération se font directement entre vous et {{ st.nom }}, sans commission ni intermédiaire. <a href="mailto:{{ site.email }}?subject=Signaler%20la%20page%20{{ st.slug }}">Signaler un problème</a></p>
+        </div></div>
+        <p class="fs-an-pied">Vacances scolaires de la zone {{ cal.zone }} ({{ nom_dep }}), année {{ cal.an }}-{{ cal.an + 1 }}.{% if not st.exemple %} Un séjour ou une offre s'ouvre au clic.{% endif %}</p>
       </div>
+    </section>
+    {% endif %}
 
-      <aside class="fp-contact">
-        <div class="fp-contact-tete">{{ avatar("fp-avatar-petit") }}<span><b>{{ st.nom }}</b><small>{{ type_nom }} · {{ st.ville }}</small></span></div>
-        <p class="fp-contact-chiffre">{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Recrute toute l'année{% endif %}</p>
-        {% if st.offres %}<ul class="fp-contact-liste">{% for o in st.offres[:3] %}<li><span>{{ o.intitule }}</span><b>{{ o.debut.day }} {{ o.debut | mois_court }}</b></li>{% endfor %}</ul>{% endif %}
-        <a class="fp-bouton-principal" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">{{ m.icone("cherche") }}Postuler avec mon profil</a>
-        {% if st.sejours %}<a class="fp-bouton-second fp-bouton-sejours" href="#sejours">Voir nos séjours<small>{{ compte_sejours }} · demande de place en ligne</small></a>{% endif %}
-        {% if st.site %}<a class="fp-bouton-second" data-stat="clic_site" href="{{ st.site }}" rel="noopener">Le site de la structure<small>{{ st.site.split('//')[-1].rstrip('/') }}</small></a>{% endif %}
-        <p class="fp-contact-note">Profil gratuit, vu en entier par les seules structures vérifiées : la structure le voit quand vous postulez, avec votre CV si vous l'avez ajouté.</p>
-      </aside>
-    </div>
+    {# ---------- une journée type ---------- #}
+    {% if st.journee %}
+    <section class="fs-s" id="journee" aria-labelledby="t-journee">
+      <div class="fs-tt"><p class="fs-sur">Pour se projeter</p><h2 id="t-journee">Une journée type{{ {"mercredi": ", un mercredi", "vacances": ", pendant les vacances", "sejour": " en séjour", "periscolaire": " au périscolaire"}.get(st.journee_jour, "") }}</h2><p>Ce que vivent les enfants, et ce que fait l'équipe.</p></div>
+      <ol class="fs-carte fs-journee" style="--n:{{ st.journee | length }}">
+        {% for x in st.journee %}<li><i>{{ x.h }}</i><b>{{ x.t }}</b>{% if x.p %}<small>{{ x.p }}</small>{% endif %}</li>{% endfor %}
+      </ol>
+    </section>
+    {% endif %}
+
+    {# ---------- la présentation ---------- #}
+    <section class="fs-s" id="presentation" aria-labelledby="t-pres">
+      <div class="fs-tt"><p class="fs-sur">La structure</p><h2 id="t-pres">Qui nous sommes</h2></div>
+      <div class="fs-carte fs-pres">
+        <div class="fs-texte" data-replie>
+          {% if st.presentation %}{{ st.presentation | paragraphes | safe }}{% else %}<p>{{ type_nom }} à {{ st.ville }} ({{ nom_dep }}). {{ st.nom }} n'a pas encore écrit sa présentation.</p>{% endif %}
+          {% if st.projet %}<h3>Notre projet</h3>{{ st.projet | paragraphes | safe }}{% endif %}
+        </div>
+        <button type="button" class="fp-lire" hidden>Lire la suite</button>
+        <dl class="fs-bref">
+          {% if acc %}<div><dt>Ce qu'elle organise</dt><dd>{% for a, l in ACCUEILS_ST if a in acc and a != "autre" %}{{ l }}{{ ", " if not loop.last }}{% endfor %}</dd></div>{% endif %}
+          {% if ages or st.publics %}<div><dt>Pour qui</dt><dd>{% if ages %}{{ ages | capitalize }}{% else %}{% for p in st.publics %}{{ PUBLICS.get(p, p) }}{{ ", " if not loop.last }}{% endfor %}{% endif %}{% if handicap and ages %}, enfants en situation de handicap{% endif %}</dd></div>{% endif %}
+          {% if st.activites %}<div><dt>Les activités</dt><dd>{% for a in st.activites %}{{ a | majuscule if loop.first else a }}{{ ", " if not loop.last }}{% endfor %}</dd></div>{% endif %}
+          {% if st.statut %}<div><dt>Statut</dt><dd>{{ STATUTS.get(st.statut, st.statut) }}</dd></div>{% endif %}
+        </dl>
+      </div>
+    </section>
+
+    {# ---------- l'équipe et ce qui est vérifié ---------- #}
+    <section class="fs-s" id="equipe" aria-labelledby="t-equipe">
+      <div class="fs-tt"><p class="fs-sur">Les personnes</p><h2 id="t-equipe">Qui vous accueille</h2></div>
+      <div class="fs-duo{% if not (st.accueil_phrase or st.nb_animateurs or st.capacite) %} fs-duo-1{% endif %}">
+        {% if st.accueil_phrase or st.nb_animateurs or st.capacite %}
+        <div class="fs-carte fs-dir">
+          {% if st.accueil_phrase %}
+          <div class="fs-dir-t">
+            <span class="fs-dir-photo" aria-hidden="true">{% if st.accueil_photo %}<img src="{{ base_photos ~ st.accueil_photo }}" alt="" loading="lazy">{% else %}{{ (st.accueil_prenom or st.nom)[0] | upper }}{% endif %}</span>
+            <div><blockquote>« {{ st.accueil_phrase }} »</blockquote>{% if st.accueil_prenom or st.accueil_role %}<p class="fs-dir-n"><b>{{ st.accueil_prenom }}</b>{% if st.accueil_prenom and st.accueil_role %}, {% endif %}{{ st.accueil_role | lower if st.accueil_prenom else st.accueil_role }}</p>{% endif %}</div>
+          </div>
+          {% endif %}
+          {% set chiffres = [(st.nb_animateurs, "animateur" ~ ("s" if (st.nb_animateurs or 0) > 1 else "")), (st.nb_stagiaires, "stagiaire" ~ ("s" if (st.nb_stagiaires or 0) > 1 else "") ~ " BAFA par an"), (st.capacite, "enfants accueillis au plus"), ((st.centres | length + 1) if st.centres else None, "lieux")] | selectattr(0) | list %}
+          {% if chiffres %}<div class="fs-eq">{% for n, l in chiffres %}<div><b>{{ n }}</b>{{ l }}</div>{% endfor %}</div>{% endif %}
+        </div>
+        {% endif %}
+        <div class="fs-carte fs-conf">
+          <h3>Ce qui est vérifié</h3>
+          <div class="fs-it">{{ ic_b }}<div><b>Structure vérifiée à la main</b><small>Son identifiant (SIRET, RNA ou déclaration de l'accueil) est contrôlé par Fil Roug'Anim.</small></div></div>
+          <div class="fs-it">{{ ic_c }}<div><b>Sans commission</b><small>Le contrat ou l'inscription se fait directement avec {{ st.nom }}.</small></div></div>
+          {% if st.cree_le %}<div class="fs-it">{{ ic_c }}<div><b>Sur Fil Roug'Anim depuis {{ mois_nom(st.cree_le[:7]) }}</b><small>Page et offres mises à jour par la structure{% if st.fondatrice %}, structure fondatrice{% endif %}.</small></div></div>{% endif %}
+        </div>
+      </div>
+    </section>
+
+    {# ---------- les lieux ---------- #}
+    <section class="fs-s" id="lieux" aria-labelledby="t-lieux">
+      <div class="fs-tt"><p class="fs-sur">Où</p><h2 id="t-lieux">{% if st.centres %}{{ st.centres | length + 1 }} lieux d'accueil{% else %}Où elle accueille{% endif %}</h2></div>
+      <div class="fs-lx">
+        {% if point %}<div class="fp-carte fs-map" data-fp-carte='{{ {"points": [[point[0], point[1], st.ville, 1]], "rayon": 0} | tojson }}' data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png"></div>{% endif %}
+        <div class="fs-carte fs-lieux">
+          <div class="fs-rang"><div><b>{{ st.ville }}</b><small>{{ type_nom }} · {{ nom_dep }} ({{ st.departement }})</small></div><span class="fs-etat">ici</span></div>
+          {% for c in st.centres %}
+          <div class="fs-rang"><div><b>{% if c.url %}<a href="{{ lien(c.url) }}">{{ c.nom }}</a>{% else %}{{ c.nom }}{% endif %}</b><small>{{ TYPES_STRUCTURE.get(c.type or st.type, "Centre") }} · {{ c.ville }} ({{ c.departement }})</small></div>{% if c.url %}<a class="fs-lp" href="{{ lien(c.url) }}">Voir <span aria-hidden="true">→</span></a>{% endif %}</div>
+          {% endfor %}
+          {% if st.lieux %}<p class="fs-lieux-t">{{ st.lieux }}</p>{% endif %}
+          <p class="fs-note">Fond de carte IGN (Géoplateforme).</p>
+        </div>
+      </div>
+    </section>
+
+    {# ---------- les questions : seulement des réponses tirées de la page ---------- #}
+    
+    {% set remun = st.offres | selectattr("remuneration") | list %}
+    {% set loges = st.offres | selectattr("loge") | list %}
+    <section class="fs-s" id="questions" aria-labelledby="t-questions">
+      <div class="fs-tt"><p class="fs-sur">Questions</p><h2 id="t-questions">En bref, avant de vous lancer</h2></div>
+      <div class="fs-carte fs-faq">
+        {% if st.offres %}<div><span>Les stagiaires BAFA sont-ils acceptés ?</span><b>{% if stagiaires %}Oui : {{ stagiaires | length }} offre{{ 's' if stagiaires | length > 1 }} leur {{ 'sont' if stagiaires | length > 1 else 'est' }} ouverte{{ 's' if stagiaires | length > 1 }}{% else %}Pas sur les offres en ligne : regardez chaque offre{% endif %}</b></div>{% endif %}
+        {% if remun %}<div><span>Combien c'est payé ?</span><b>{% for o in remun[:2] %}{{ o.remuneration.montant | euros }} brut par {{ o.remuneration.unite }}{{ " ; " if not loop.last }}{% endfor %}</b></div>{% endif %}
+        {% if loges %}<div><span>Est-on logé ?</span><b>Oui, sur {{ loges | length }} offre{{ 's' if loges | length > 1 }}</b></div>{% endif %}
+        {% if ages %}<div><span>Pour quels âges ?</span><b>{{ ages | capitalize }}{% if sj_nuits %}, séjours dès {{ sj_nuits | map(attribute="age_min") | min }} ans{% endif %}</b></div>{% endif %}
+        {% if aides %}<div><span>Quelles aides sont acceptées ?</span><b>{% for a in aides %}{{ AIDES[a].nom }}{{ ", " if not loop.last }}{% endfor %}</b></div>{% endif %}
+        {% if handicap %}<div><span>Les enfants en situation de handicap sont-ils accueillis ?</span><b>Oui, indiqué par la structure</b></div>{% endif %}
+        <div><span>Y a-t-il des frais pour postuler ou demander une place ?</span><b>Non, jamais : tout se fait directement avec {{ st.nom }}</b></div>
+      </div>
+      <p class="fs-liens">
+        <a class="fs-btn fs-btn-b" href="{{ lien('/recruter/') }}#structures"><span aria-hidden="true">←</span> Toutes les structures</a>
+        <a class="fs-btn fs-btn-b" href="{{ lien('/trouver-un-poste/offres/') }}?dep={{ st.departement }}">Les offres du {{ st.departement }}</a>
+      </p>
+      <p class="fs-bon"><b>Bon à savoir.</b> Les informations de cette page sont écrites par la structure, sous sa responsabilité. La candidature, le contrat, l'inscription et le paiement se font directement entre vous et {{ st.nom }}, sans commission ni intermédiaire. <a href="{{ lien('/contact/') }}">Signaler un problème</a></p>
+    </section>
+  </div>
+
+  {# sur mobile : les deux boutons restent en bas de l'écran #}
+  <div class="fs-mobile-boutons">
+    {% if familles %}<a class="fs-btn fs-btn-b" href="{{ lien(demande_url) if not st.exemple else '#familles' }}">Demander une place</a>{% endif %}
+    <a class="fs-btn fs-btn-r" data-stat="clic_candidater" href="{{ lien('/compte/') }}?inscription=1">Postuler</a>
   </div>
 </div>
 {% if st.exemple %}
 <section class="bande bande-papier">
   <div class="cadre">
     <div class="tp-appel">
-      <div><h2>Votre structure, <em>avec la même page</em></h2><p>Photos, projet, publics, activités et offres, mis à jour par vous depuis votre espace.</p></div>
+      <div><h2>Votre structure, <em>avec la même page</em></h2><p>Photos, projet, publics, journée type, équipe et offres, mis à jour par vous depuis votre espace.</p></div>
       <a class="tp-appel-bouton" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Créer le compte de ma structure <span aria-hidden="true">→</span></a>
     </div>
   </div>

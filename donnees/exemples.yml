@@ -24,6 +24,26 @@ structure:
     Un tuteur pour chaque stagiaire BAFA, et une aide pour financer l'approfondissement.
     Des réunions d'équipe courtes, chaque semaine.
   site: null
+  statut: association
+  accueils: [periscolaire, extrascolaire, mini-camps]
+  age_min: 3
+  age_max: 11
+  # « Une journée type » et « Qui vous accueille » : facultatifs, remplis depuis l'espace structure
+  journee_jour: mercredi
+  journee:
+    - {h: "7h30", t: "Accueil", p: "Arrivées échelonnées, jeux calmes, coin lecture"}
+    - {h: "9h30", t: "Le choix", p: "Les enfants choisissent leur atelier du jour"}
+    - {h: "10h", t: "Ateliers", p: "Jardin, cuisine, théâtre, vélo"}
+    - {h: "12h", t: "Repas", p: "À table avec les animateurs"}
+    - {h: "14h", t: "Grand jeu", p: "Toutes les tranches d'âge ensemble"}
+    - {h: "16h30", t: "Goûter, départs", p: "Un mot à chaque famille"}
+  accueil_prenom: Sarah
+  accueil_role: "Directrice de l'accueil de loisirs"
+  accueil_phrase: "On prend le temps de former nos stagiaires : chacun a un tuteur, et on prépare chaque période ensemble, payé."
+  nb_animateurs: 10
+  nb_stagiaires: 3
+  capacite: 80
+  cree_le: "2026-10-12"
   # une structure peut regrouper plusieurs centres, chacun avec sa page et ses offres
   centres:
     - {nom: "Les Pelotes du Mont-Mesly", type: accueil-de-loisirs, ville: Créteil, departement: "94"}
