@@ -910,6 +910,7 @@
 /se-former/sessions/allier/vacances-printemps-2027/
 /se-former/sessions/alpes-de-haute-provence/
 /se-former/sessions/alpes-de-haute-provence/approfondissement/
+/se-former/sessions/alpes-de-haute-provence/psc1/
 /se-former/sessions/alpes-de-haute-provence/st-michel-l-observatoire/
 /se-former/sessions/alpes-de-haute-provence/ubay-serre-poncon/
 /se-former/sessions/alpes-maritimes/
@@ -1211,6 +1212,7 @@
 /se-former/sessions/dordogne/montrem/
 /se-former/sessions/dordogne/psc1/
 /se-former/sessions/dordogne/psc1/sarliac-sur-l-isle/
+/se-former/sessions/dordogne/vacances-printemps-2027/
 /se-former/sessions/doubs/
 /se-former/sessions/doubs/approfondissement/
 /se-former/sessions/doubs/bafd/
@@ -1222,6 +1224,7 @@
 /se-former/sessions/doubs/psc1/
 /se-former/sessions/doubs/psc1/besancon/
 /se-former/sessions/doubs/psc1/chalezeule/
+/se-former/sessions/doubs/psc1/pontarlier/
 /se-former/sessions/doubs/vacances-ete-2027/
 /se-former/sessions/doubs/vacances-hiver-2027/
 /se-former/sessions/doubs/vacances-noel-2026/
@@ -1275,6 +1278,7 @@
 /se-former/sessions/eure/la-bonneville-sur-iton/
 /se-former/sessions/eure/poses/
 /se-former/sessions/eure/psc1/
+/se-former/sessions/eure/psc1/breteuil/
 /se-former/sessions/eure/psc1/daubeuf-la-campagne/
 /se-former/sessions/eure/psc1/evreux/
 /se-former/sessions/eure/psc1/pont-audemer/
@@ -1402,6 +1406,7 @@
 /se-former/sessions/haute-loire/psc1/vorey/
 /se-former/sessions/haute-loire/saint-front/
 /se-former/sessions/haute-loire/vacances-hiver-2027/
+/se-former/sessions/haute-loire/vals-pres-le-puy/
 /se-former/sessions/haute-loire/yssingeaux/
 /se-former/sessions/haute-marne/
 /se-former/sessions/haute-marne/chaumont/
@@ -1455,6 +1460,8 @@
 /se-former/sessions/hautes-pyrenees/
 /se-former/sessions/hautes-pyrenees/approfondissement/
 /se-former/sessions/hautes-pyrenees/arcizans-dessus/
+/se-former/sessions/hautes-pyrenees/psc1/
+/se-former/sessions/hautes-pyrenees/psc1/tarbes/
 /se-former/sessions/hautes-pyrenees/tarbes/
 /se-former/sessions/hautes-pyrenees/vacances-hiver-2027/
 /se-former/sessions/hauts-de-france/
@@ -1562,6 +1569,7 @@
 /se-former/sessions/ille-et-vilaine/noyal-chatillon-sur-seiche/
 /se-former/sessions/ille-et-vilaine/psc1/
 /se-former/sessions/ille-et-vilaine/psc1/redon/
+/se-former/sessions/ille-et-vilaine/psc1/saint-malo/
 /se-former/sessions/ille-et-vilaine/rennes/
 /se-former/sessions/ille-et-vilaine/saint-lunaire/
 /se-former/sessions/ille-et-vilaine/vacances-hiver-2027/
@@ -1586,6 +1594,7 @@
 /se-former/sessions/indre-et-loire/tours/
 /se-former/sessions/indre-et-loire/vacances-noel-2026/
 /se-former/sessions/indre-et-loire/vacances-printemps-2027/
+/se-former/sessions/indre/formation-generale/
 /se-former/sessions/indre/vacances-hiver-2027/
 /se-former/sessions/isere/
 /se-former/sessions/isere/beaucroissant/
@@ -1684,6 +1693,7 @@
 /se-former/sessions/loiret/bafd/orleans/
 /se-former/sessions/loiret/chaingy/
 /se-former/sessions/loiret/formation-generale/
+/se-former/sessions/loiret/ingrannes/
 /se-former/sessions/loiret/lorris/
 /se-former/sessions/loiret/orleans/
 /se-former/sessions/loiret/psc1/
@@ -1712,6 +1722,7 @@
 /se-former/sessions/lot/formation-generale/
 /se-former/sessions/lot/le-montat/
 /se-former/sessions/lot/psc1/
+/se-former/sessions/lot/psc1/cahors/
 /se-former/sessions/lot/psc1/souillac/
 /se-former/sessions/lot/vacances-printemps-2027/
 /se-former/sessions/maine-et-loire/
@@ -2153,6 +2164,7 @@
 /se-former/sessions/seine-et-marne/brie-comte-robert/
 /se-former/sessions/seine-et-marne/combs-la-ville/
 /se-former/sessions/seine-et-marne/croissy-beaubourg/
+/se-former/sessions/seine-et-marne/dammartin-en-goele/
 /se-former/sessions/seine-et-marne/dammartin-sur-tigeaux/
 /se-former/sessions/seine-et-marne/les-chapelles-bourbon/
 /se-former/sessions/seine-et-marne/lieusaint/
@@ -2272,6 +2284,7 @@
 /se-former/sessions/val-d-oise/psc1/
 /se-former/sessions/val-d-oise/psc1/cergy/
 /se-former/sessions/val-d-oise/psc1/epiais-rhus/
+/se-former/sessions/val-d-oise/psc1/fosses/
 /se-former/sessions/val-d-oise/psc1/pontoise/
 /se-former/sessions/val-d-oise/psc1/saint-clair-sur-epte/
 /se-former/sessions/val-d-oise/psc1/villiers-le-bel/
@@ -2319,9 +2332,11 @@
 /se-former/sessions/vaucluse/bafd/
 /se-former/sessions/vaucluse/bafd/avignon/
 /se-former/sessions/vaucluse/bafd/beaumont-du-ventoux/
+/se-former/sessions/vaucluse/carpentras/
 /se-former/sessions/vaucluse/jonquieres/
 /se-former/sessions/vaucluse/l-isle-sur-la-sorgue/
 /se-former/sessions/vaucluse/psc1/
+/se-former/sessions/vaucluse/psc1/carpentras/
 /se-former/sessions/vaucluse/psc1/orange/
 /se-former/sessions/vaucluse/vacances-hiver-2027/
 /se-former/sessions/vaucluse/vacances-noel-2026/
