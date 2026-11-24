@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% if page.url == "/" %}{{ page.titre }} | {{ site.nom }}{% else %}{{ page.titre }} | {{ site.nom }}{% endif %}</title>
+{# Google coupe les titres vers 60 caractères : le nom du site n'est ajouté que s'il tient #}
+<title>{{ page.titre }}{% if page.titre | length <= 46 %} | {{ site.nom }}{% endif %}</title>
 <meta name="description" content="{{ page.description | resume }}">
 {% if not page.indexer and not page.canonique %}<meta name="robots" content="noindex, follow">{% endif %}
 <link rel="canonical" href="{{ site.url.rstrip('/') ~ page.canonique if page.canonique else url_complete }}">

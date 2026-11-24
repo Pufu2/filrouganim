@@ -9,9 +9,30 @@
 {% block tete_chapo %}<p class="chapo">{{ page.intro }}</p>
 {% if L.chiffres %}<ul class="lc-chiffres">{% for n, t in L.chiffres %}<li><b>{{ n }}</b><span>{{ t }}</span></li>{% endfor %}</ul>{% endif %}
 <p class="lc-actions">{% for t, u, fort in L.actions %}<a class="{{ 'bouton-r' if fort else 'bouton-blanc' }}" href="{{ lien(u) if u.startswith('/') else u }}">{{ t }}</a>{% endfor %}</p>{% endblock %}
+{% block scripts %}{% if L.hub %}<script>document.querySelector("[data-hub]").addEventListener("submit",function(e){e.preventDefault();var v=document.getElementById("hb-q").value.trim().toLowerCase(),o=[].slice.call(document.querySelectorAll("#hb-liste option"));var t=o.filter(function(x){return x.value.toLowerCase()===v})[0]||o.filter(function(x){return x.value.toLowerCase().indexOf(v)>=0})[0];if(t)location.href=t.dataset.u});</script>{% endif %}{% endblock %}
 {% block contenu %}
 <div class="lc lc-{{ L.public }}">
   <div class="cadre">
+    {% if L.hub %}{% set H = L.hub %}
+    {# une page portail : chercher, les plus fournis, puis toutes les régions #}
+    <section class="hb">
+      <form class="hb-cherche" role="search" data-hub>
+        <label for="hb-q" class="sr-only">Votre {{ H.lieu }}</label>
+        <input id="hb-q" list="hb-liste" placeholder="Votre {{ H.lieu }} : Yvelines, 69, Gironde…" autocomplete="off">
+        <datalist id="hb-liste">{% for t, u in H.tous %}<option value="{{ t }}" data-u="{{ lien(u) }}">{% endfor %}</datalist>
+        <button type="submit" class="bouton-r">Voir</button>
+      </form>
+      <ul class="hb-trouve">{% for x in H.trouve %}<li>{{ x }}</li>{% endfor %}</ul>
+      {% if H.vedettes %}
+      <h2 class="hb-t">Les plus actifs en ce moment</h2>
+      <ul class="hb-vedettes">{% for t, u, ch in H.vedettes %}<li><a href="{{ lien(u) }}"><b>{{ t }}</b>{% for n, l in ch[:2] if n %}<small>{{ n }} {{ l }}</small>{% endfor %}<em>Voir <span aria-hidden="true">→</span></em></a></li>{% endfor %}</ul>
+      {% endif %}
+      <h2 class="hb-t">{{ "Toutes les régions" if H.lieu == "région" else "Tous les départements, par région" }}</h2>
+      <div class="hb-regions">
+        {% for reg, ls in H.groupes %}<details class="hb-reg"{% if loop.index <= 3 %} open{% endif %}><summary>{{ reg }} <small>{{ ls | length }}</small></summary><ul>{% for t, u in ls %}<li><a href="{{ lien(u) }}">{{ t }}</a></li>{% endfor %}</ul></details>{% endfor %}
+      </div>
+    </section>
+    {% endif %}
     {% for b in L.blocs %}
     <section class="lc-bloc{% if b.large %} lc-large{% endif %}" aria-labelledby="lc-t{{ loop.index }}">
       <h2 id="lc-t{{ loop.index }}">{{ b.titre }}</h2>

@@ -1094,6 +1094,31 @@ class Site:
                  ("struct", "animateurs"): "/recruter/animateurs-bafa/", ("struct", "directeur"): "/recruter/directeur-bafd/", ("struct", "stagiaire"): "/recruter/stagiaire-bafa/",
                  ("parent", "loisirs"): "/enfants/centre-de-loisirs/", ("parent", "colo"): "/enfants/colonie-de-vacances/", ("parent", "peri"): "/enfants/periscolaire/",
                  ("anim", "ete"): "/trouver-un-poste/job-ete-animateur/", ("struct", "ete"): "/recruter/saisonniers-ete/"}
+        # Les structures : une seule page par département (« Recruter des animateurs ») qui reprend aussi l'accueil d'un
+        # stagiaire BAFA et le recrutement d'un directeur ; les anciennes pages (et les pages « saisonniers d'été » par
+        # région) renvoient vers elle. Quatre pages presque identiques par département, c'était du contenu en double.
+        FONDUES = {("struct", "stagiaire"), ("struct", "directeur"), ("struct", "ete")}
+        rec_dep = {x[0]: x for x in a_faire if x[9] == ("struct", "animateurs")}
+        for x in sorted(a_faire, key=lambda x: x[9] != ("struct", "stagiaire")):
+            if x[9] in (("struct", "stagiaire"), ("struct", "directeur")):
+                dslug = x[0].rstrip("/").split("/")[-1]
+                cible = rec_dep.get(f"/recruter/animateurs-bafa/{dslug}/")
+                if not cible:
+                    continue
+                sous = "Accueillir un stagiaire BAFA" if x[9][1] == "stagiaire" else "Recruter un directeur ou un adjoint"
+                for b in x[5].get("blocs") or []:
+                    if b.get("titre", "").startswith(("Les taux", "Le calendrier", "Les périodes")):
+                        continue
+                    cible[5]["blocs"].append(dict(b, titre=f"{sous} · {b['titre']}"))
+                cible[6].extend(x[6])
+        for (url, titre, h1, desc, intro, local, faq, fil, idx, cle, nom) in [x for x in a_faire if x[9] in FONDUES]:
+            dslug = url.rstrip("/").split("/")[-1]
+            vers = f"/recruter/animateurs-bafa/{dslug}/" if cle != ("struct", "ete") and f"/recruter/animateurs-bafa/{dslug}/" in rec_dep else "/recruter/animateurs-bafa/"
+            self.ajouter(url, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=vers)
+        a_faire = [x for x in a_faire if x[9] not in FONDUES]
+        for k in list(SUJETS):
+            if k in FONDUES:
+                del SUJETS[k]
         for (url, titre, h1, desc, intro, local, faq, fil, idx, cle, nom) in a_faire:
             pub = cle[0]
             dslug = url.rstrip("/").split("/")[3] if len(url.rstrip("/").split("/")) > 3 else None
@@ -1126,6 +1151,9 @@ class Site:
         # les pages d'index : un sujet, tous les départements (ou toutes les régions), rangés par région
         for cle, base in BASES.items():
             pub = cle[0]
+            if cle in FONDUES:
+                self.ajouter(base, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/animateurs-bafa/")
+                continue
             liens = par_cle.get(cle, [])
             if not liens:
                 continue
@@ -1138,12 +1166,22 @@ class Site:
                     ls = [(f"{x['nom']} ({x['code']})", f"{base}{x['slug']}/") for x in sorted(par_reg.get(r["id"]) or [], key=lambda x: x["code"])]
                     if ls:
                         groupes.append((r["nom"], ls))
+            # la page portail : chercher son département, les départements les plus fournis en tête, puis les régions en pastilles
+            idx_url = {p["url"]: p for p in self.pages if p.get("gabarit") == "local.html"}
+            tous = [(t, u) for _, ls in groupes for t, u in ls]
+            vedettes = sorted([(t, u, idx_url[u]["local"].get("chiffres") or []) for t, u in tous if u in idx_url and idx_url[u].get("indexer")
+                               and sum(n for n, _ in idx_url[u]["local"].get("chiffres") or [] if isinstance(n, int)) > 0],
+                              key=lambda x: -sum(n for n, _ in x[2] if isinstance(n, int)))[:8]
+            ce_qu_on_trouve = {"anim": ["Les offres en ligne du département", "Les structures vérifiées qui recrutent", "Les sessions BAFA et BAFD proches", "Le contrat et la paie"],
+                               "struct": ["Le vivier : les sessions BAFA du département", "Accueillir un stagiaire, recruter un directeur", "Les taux d'encadrement et le calendrier", "Publier une offre gratuite"],
+                               "parent": ["Les accueils et séjours en ligne", "Les structures vérifiées du département", "Les aides (CAF, Pass Colo)", "Les vacances de la zone"]}[pub]
             local = {"public": pub, "sur": {"anim": "Animateurs & directeurs", "struct": "Structures", "parent": "Inscrire mon enfant"}[pub], "chiffres": [],
-                     "actions": [], "blocs": [], "voisins": groupes}
+                     "actions": [], "blocs": [], "voisins": [], "hub": {"groupes": groupes, "tous": tous, "vedettes": vedettes, "trouve": ce_qu_on_trouve,
+                                                                          "lieu": "région" if cle[1] == "ete" else "département"}}
             fil0 = {"anim": TP, "struct": REC, "parent": ENF}[pub]
             self.ajouter(base, "local.html", titre=f"{titre} : toute la France, département par département", h1=f"{titre}, partout en France",
                          description=f"{titre} : choisissez votre département ou votre région pour voir les offres, les structures et les informations utiles près de chez vous.",
-                         intro="Choisissez votre département : chaque page rassemble ce qui existe près de chez vous.", local=local, fil=[fil0, (titre, base)])
+                         intro="Tapez votre département ou votre ville : chaque page rassemble ce qui existe près de chez vous.", local=local, fil=[fil0, (titre, base)])
         self.pages_locales_liens = {k: BASES[k] for k in BASES}
 
     VAC_COULEURS = {"toussaint": ("Toussaint", "#f6ead9", "#b7791f"), "noel": ("Noël", "#e3ebf5", "#3d6a9e"), "hiver": ("Hiver", "#ebe8f6", "#6a5aa8"),
@@ -2496,9 +2534,8 @@ class Site:
              "groupes": groupes_locaux([("/trouver-un-poste/emploi-animateur/", "Emploi animateur"), ("/trouver-un-poste/stage-pratique-bafa/", "Stage pratique BAFA"),
                                         ("/trouver-un-poste/emploi-directeur/", "Emploi directeur"), ("/trouver-un-poste/job-ete-animateur/", "Job d'été")]),
              "tout": ("Toutes les offres", "/trouver-un-poste/offres/"), "az": False},
-            {"cle": "recrutement", "titre": "Recruter", "aide": "Pour les structures : recruter des animateurs, un directeur, un stagiaire ou des saisonniers dans votre secteur.",
-             "groupes": groupes_locaux([("/recruter/animateurs-bafa/", "Recruter des animateurs"), ("/recruter/directeur-bafd/", "Recruter un directeur"),
-                                        ("/recruter/stagiaire-bafa/", "Accueillir un stagiaire"), ("/recruter/saisonniers-ete/", "Saisonniers d'été")]),
+            {"cle": "recrutement", "titre": "Recruter", "aide": "Pour les structures : recruter des animateurs, des stagiaires BAFA ou un directeur dans votre département.",
+             "groupes": groupes_locaux([("/recruter/animateurs-bafa/", "Recruter des animateurs")]),
              "tout": ("Recruter avec Fil Roug'Anim", "/recruter/"), "az": False},
         ]
         self._recherches = []
@@ -2902,6 +2939,13 @@ class Site:
         return sorted(villes, key=lambda v: sans_accents(v["nom"]))
 
     def ajouter(self, url, gabarit, titre, description=None, indexer=True, **extra):
+        # une ville du même nom que son département (Paris dans Paris, « Gard » dans le Gard…) : même contenu que la page
+        # du département, donc une page en double pour Google. On renvoie vers la page du département.
+        morceaux = [m for m in url.split("/") if m]
+        if gabarit != "redirection.html" and len(morceaux) >= 3 and morceaux[-1] == morceaux[-2]:
+            self.pages.append({"url": url, "gabarit": "redirection.html", "titre": "Cette page a changé d'adresse", "indexer": False,
+                               "description": self.config["description"], "vers": "/" + "/".join(morceaux[:-1]) + "/"})
+            return
         if extra.get("sujet") and extra.get("sessions"):
             extra["bref"], extra["faq_page"] = self.synthese(extra["sessions"], *extra.pop("sujet"))
             if extra["faq_page"]:

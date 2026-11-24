@@ -1972,3 +1972,31 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 @media (max-width: 1100px) { .sjc .sjc-grille, .sjc-grille { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 820px) { .sjc .sjc-grille, .sjc-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) { .sjc .sjc-grille, .sjc-grille { grid-template-columns: 1fr; } }
+
+/* ---- Pages portail (« … partout en France ») : chercher son département, les plus actifs, les régions repliées ---- */
+.hb { padding: 8px 0 20px; }
+.hb-cherche { display: flex; gap: 8px; max-width: 640px; margin: -42px auto 18px; position: relative; z-index: 2; padding: 8px; background: #fff; border-radius: 14px; box-shadow: 0 20px 40px -24px rgba(23, 25, 29, .35), 0 0 0 1px rgba(23, 25, 29, .06); }
+.hb-cherche input { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border: 0; font: inherit; font-size: 1rem; outline: 0; }
+.hb-cherche .bouton-r { height: 48px; padding: 0 22px; border-radius: 10px; border: 0; }
+.hb-trouve { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 0 0 34px; padding: 0; }
+.hb-trouve li { display: flex; align-items: center; gap: 7px; font-size: .9rem; color: #40444b; }
+.hb-trouve li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #d61f35; }
+.hb-t { margin: 0 0 14px; font: 600 1.35rem var(--titres); color: #17191d; }
+.hb-vedettes { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 34px; padding: 0; }
+.hb-vedettes a { display: flex; flex-direction: column; gap: 2px; height: 100%; box-sizing: border-box; padding: 16px; border-radius: 14px; background: #fff; border: 1px solid rgba(23, 25, 29, .08); color: inherit; text-decoration: none; }
+.hb-vedettes a:hover { border-color: rgba(23, 25, 29, .25); }
+.hb-vedettes b { font-weight: 600; color: #17191d; } .hb-vedettes small { font-size: .82rem; color: #6c7077; }
+.hb-vedettes em { margin-top: 8px; font-style: normal; font-size: .84rem; font-weight: 500; color: #a8162a; }
+.hb-regions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: start; }
+.hb-reg { border-radius: 12px; background: #fff; border: 1px solid rgba(23, 25, 29, .08); }
+.hb-reg summary { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; cursor: pointer; font-weight: 500; color: #17191d; list-style: none; }
+.hb-reg summary::-webkit-details-marker { display: none; }
+.hb-reg summary small { padding: 2px 8px; border-radius: 99px; background: #f0f0ee; font-size: .76rem; color: #6c7077; }
+.hb-reg ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0 14px 14px; }
+.hb-reg a { display: inline-block; padding: 5px 10px; border-radius: 8px; background: #f4f4f2; font-size: .85rem; color: #2b2e33; text-decoration: none; }
+.hb-reg a:hover { background: #17191d; color: #fff; }
+@media (max-width: 900px) { .hb-vedettes { grid-template-columns: 1fr 1fr; } .hb-regions { grid-template-columns: 1fr; } .hb-cherche { margin-top: -30px; } }
+.lc .hb { grid-column: 1 / -1; }
+.hb-cherche label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.hb-regions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 900px) { .hb-regions { grid-template-columns: 1fr; } }
