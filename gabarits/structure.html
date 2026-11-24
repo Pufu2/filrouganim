@@ -8,6 +8,8 @@
    qui vous accueille et ce qui est vérifié, ses lieux sur la carte, et les réponses aux questions qu'on se pose.
    Tout bloc sans contenu ne s'affiche pas. #}
 {% set st = page.structure %}
+{# avec l'abonnement : le calendrier de l'année et « Qui vous accueille » s'affichent, et la page porte la marque « Partenaire » #}
+{% set premium = st.abonnee or st.exemple %}
 {% set nom_dep = departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first %}
 {% set type_nom = TYPES_STRUCTURE.get(st.type, "Structure d'animation") %}
 {% set _m = st.nom.replace("L'", "").replace("’", " ").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et", "d", "l"]) | list %}{% set initiales = (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper %}
@@ -40,7 +42,7 @@
 <div class="fs theme-{{ st.couleur or 'rouge' }}">
 
   {# ---------- le haut ---------- #}
-  <header class="fs-haut{% if fond %} fs-haut-photo{% endif %}">
+  <header class="fs-haut{% if fond %} fs-haut-photo{% endif %}{% if st.abonnee %} fs-haut-partenaire{% endif %}">
     <div class="fs-haut-fond" aria-hidden="true"{% if fond %} style="background-image:url('{{ fond }}')"{% endif %}></div>
     <div class="cadre fs-haut-in">
       <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
@@ -48,7 +50,8 @@
         {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
       </nav>
       {% if st.exemple %}<p class="fs-exemple">Exemple fictif : voici à quoi ressemble la page d'une structure. Chaque structure vérifiée remplit la sienne depuis son espace.</p>{% endif %}
-      <p class="fs-qui">{{ avatar() }}<span>{{ STATUTS.get(st.statut, type_nom) if st.statut else type_nom }} · {{ st.ville }} ({{ st.departement }})</span><span class="fs-verifiee">{{ ic_b }}Vérifiée par Fil Roug'Anim</span>{% if st.abonnee %}<span class="fs-partenaire">Partenaire</span>{% endif %}</p>
+      <p class="fs-qui">{{ avatar() }}<span>{{ STATUTS.get(st.statut, type_nom) if st.statut else type_nom }} · {{ st.ville }} ({{ st.departement }})</span><span class="fs-verifiee">{{ ic_b }}Vérifiée par Fil Roug'Anim</span></p>
+      {% if st.abonnee %}<p class="fs-marque"><span>★</span>Structure partenaire de Fil Roug'Anim</p>{% endif %}
       <h1>{{ st.nom }}</h1>
       <p class="fs-accroche">{% if st.accroche %}{{ st.accroche }}{% else %}{{ type_nom }} à {{ st.ville }}{% if ages %}, {{ ages }}{% endif %}.{% endif %}</p>
       {% if st.parent %}<p class="fs-parent">Un centre de <a href="{{ lien(st.parent.url) }}">{{ st.parent.nom }}</a></p>{% endif %}
@@ -74,10 +77,10 @@
     <nav class="fs-sections" aria-label="Sections de la page">
       <div class="fs-sections-liens">
         <a href="#propose">Ce qu'elle propose</a>
-        {% if st.calendrier %}<a href="#annee">L'année</a>{% endif %}
+        {% if st.calendrier and premium %}<a href="#annee">L'année</a>{% endif %}
         {% if st.journee %}<a href="#journee">Une journée</a>{% endif %}
         <a href="#presentation">Présentation</a>
-        <a href="#equipe">L'équipe</a>
+        <a href="#equipe">{{ "L'équipe" if premium and (st.accueil_phrase or st.nb_animateurs or st.capacite) else "Vérifiée" }}</a>
         <a href="#lieux">{{ "Les lieux" if st.centres else "Où" }}</a>
         <a href="#questions">Questions</a>
       </div>
@@ -131,7 +134,7 @@
     {% endif %}
 
     {# ---------- l'année ---------- #}
-    {% set cal = st.calendrier %}
+    {% set cal = st.calendrier if premium else None %}
     {% if cal %}
     <section class="fs-s" id="annee" aria-labelledby="t-annee">
       <div class="fs-tt"><p class="fs-sur">Le calendrier</p><h2 id="t-annee">L'année à {{ st.nom }}</h2><p>Quand les enfants sont accueillis, quand partent les séjours, et quand la structure recrute.</p></div>
@@ -184,9 +187,10 @@
 
     {# ---------- l'équipe et ce qui est vérifié ---------- #}
     <section class="fs-s" id="equipe" aria-labelledby="t-equipe">
-      <div class="fs-tt"><p class="fs-sur">Les personnes</p><h2 id="t-equipe">Qui vous accueille</h2></div>
-      <div class="fs-duo{% if not (st.accueil_phrase or st.nb_animateurs or st.capacite) %} fs-duo-1{% endif %}">
-        {% if st.accueil_phrase or st.nb_animateurs or st.capacite %}
+      <div class="fs-tt"><p class="fs-sur">Les personnes</p><h2 id="t-equipe">{{ "Qui vous accueille" if avec_equipe_titre is not defined and premium and (st.accueil_phrase or st.nb_animateurs or st.capacite) else "Une structure vérifiée" }}</h2></div>
+      {% set avec_equipe = premium and (st.accueil_phrase or st.nb_animateurs or st.capacite) %}
+      <div class="fs-duo{% if not avec_equipe %} fs-duo-1{% endif %}">
+        {% if avec_equipe %}
         <div class="fs-carte fs-dir">
           {% if st.accueil_phrase %}
           <div class="fs-dir-t">

@@ -1196,6 +1196,10 @@
     // l'administration sans fiche à elle : l'espace complet, ouvert, sans le parcours d'inscription
     var apercu = nouveau && estAdmin && !espaceDe;
     assistantStructure.ouvrir(nouveau && !apercu);
+    // sans abonnement : « Qui vous accueille » se remplit, mais ne paraît sur la page qu'avec l'abonnement (cadenas)
+    var gratuit = !nouveau && !paye(structure) && !estAdmin;
+    $("qa-verrou").hidden = !gratuit;
+    Array.prototype.forEach.call(document.querySelectorAll("#bloc-structure .as-plan-etapes li"), function (li) { li.dataset.verrou = gratuit && /Qui vous accueille/.test(li.textContent) ? "1" : ""; });
     // gratuit : le tableau de bord, la page, les offres (une en ligne à la fois) ; avec l'abonnement : les candidats,
     // les demandes de l'annuaire inversé et la boîte à outils. Sans fiche : seulement « Ma page ».
     var ferme = !paye(structure) && !estAdmin;
@@ -1238,7 +1242,7 @@
     if (!nouveau && !actif(structure) && !estAdmin) sb.rpc("demandes_du_secteur").then(function (r) {
       var n = (r && !r.error && r.data) || 0;
       $("demandes-verrou-n").textContent = n ? n + (n > 1 ? " animateurs" : " animateur") : "Des animateurs";
-      $("demandes-verrou-t").textContent = n ? (n > 1 ? " ont décrit" : " a décrit") + " le poste qu'ils cherchent dans votre secteur ces 2 derniers mois." : " décrivent le poste qu'ils cherchent près de chez vous.";
+      $("demandes-verrou-t").textContent = n ? (n > 1 ? " cherchent" : " cherche") + " un poste près de chez vous" : " cherchent un poste près de chez vous";
     });
     $("tuiles-structure").hidden = nouveau;
     if (structure) chargerCentres().then(montrerAbonnement);
@@ -1309,7 +1313,7 @@
     var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
     $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Passer à l'abonnement";
     $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
-    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
+    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire et sur votre page ; le calendrier de l'année et « Qui vous accueille » sur votre page ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
     var champ = $("abo-nb");
     if (!champ.dataset.touche) champ.value = nbCentres;
     function maj() {
@@ -1964,7 +1968,7 @@
     // qui vous accueille
     var s3 = sect(c, "Les personnes", "Qui vous accueille"), avec = d.accueil_phrase || d.nb_animateurs || d.capacite, duo = el("div", "fs-duo" + (avec ? "" : " fs-duo-1"));
     if (avec) {
-      var dir = el("div", "fs-carte fs-dir");
+      var dir = el("div", "fs-carte fs-dir" + (!paye(structure) && !estAdmin ? " vr-apercu" : ""));
       if (d.accueil_phrase) {
         var dt = el("div", "fs-dir-t"), ph = el("span", "fs-dir-photo");
         if (d.accueil_photo) { var im2 = el("img"); im2.src = urlPhoto(d.accueil_photo); im2.alt = ""; ph.appendChild(im2); } else ph.textContent = (d.accueil_prenom || d.nom || "?").charAt(0).toUpperCase();

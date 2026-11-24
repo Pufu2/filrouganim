@@ -432,9 +432,16 @@
     </section>
 
 
-    <section class="carte-compte co-conseils-verrou" id="bloc-demandes-verrou" data-onglet="demandes" hidden>
-      <p><b id="demandes-verrou-n">Des animateurs</b> <span id="demandes-verrou-t">décrivent le poste qu'ils cherchent près de chez vous.</span> Avec l'abonnement ou le Pass recrutement, leurs demandes arrivent ici et par e-mail, avec leur profil complet, et vous leur répondez directement.</p>
-      <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
+    <section class="carte-compte vr" id="bloc-demandes-verrou" data-onglet="demandes" hidden>
+      <div class="vr-flou" aria-hidden="true"><div class="vr-rang"><i></i><span><b>Léa, 19 ans</b><small>Stagiaire BAFA · cherche un stage pratique · juillet</small></span><em>Guerville · 4 km</em></div><div class="vr-rang"><i></i><span><b>Mehdi, 22 ans</b><small>BAFA · animateur en accueil de loisirs · l'été</small></span><em>Mantes · 9 km</em></div><div class="vr-rang"><i></i><span><b>Inès, 24 ans</b><small>BAFD · direction adjointe · à l'année</small></span><em>Poissy · 15 km</em></div><div class="vr-rang"><i></i><span><b>Tom, 18 ans</b><small>Stagiaire BAFA · séjours avec nuitées</small></span><em>Les Mureaux · 11 km</em></div></div>
+      <div class="vr-carte">
+        <span class="vr-cadenas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/><circle cx="12" cy="15.5" r="1.3"/></svg></span>
+        <p class="vr-sur">Réservé aux structures abonnées</p>
+        <h2><span id="demandes-verrou-n">Des animateurs</span> <span id="demandes-verrou-t">cherchent un poste près de chez vous</span></h2>
+        <p>Ils décrivent le poste qu'ils cherchent : leur demande part chez les 3 structures abonnées les plus proches. Avec l'abonnement, la vôtre en fait partie.</p>
+        <ul class="vr-puces"><li>Leurs demandes ici et par e-mail, dès qu'elles arrivent</li><li>Leur profil complet et leur contact direct</li><li>Vous n'êtes que trois à les recevoir</li></ul>
+        <div class="vr-actions"><button type="button" class="bouton-r" data-onglet-vers="abonnement">Débloquer avec l'abonnement</button><span>ou le Pass recrutement, pour une saison</span></div>
+      </div>
     </section>
     <div class="carte-compte" id="bloc-demandes-recues" data-onglet="demandes" hidden>
       <h2>Demandes reçues</h2>
@@ -522,6 +529,7 @@
           <fieldset class="etape" data-titre="Qui vous accueille" data-aide="Une personne et une phrase donnent un visage à votre structure : la directrice, le coordinateur, l'élu à la jeunesse…">
             <legend class="etape-q">Qui vous accueille <small class="etape-facultatif">facultatif</small></legend>
             <p class="etape-aide">Une personne de l'équipe, sa phrase pour les animateurs et les familles, et l'équipe en chiffres. Vide, ce bloc ne s'affiche pas.</p>
+            <div class="vr-bandeau" id="qa-verrou" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg><span>Ce bloc et le calendrier de l'année s'affichent sur votre page avec l'abonnement. Vous pouvez déjà le remplir.</span><button type="button" data-onglet-vers="abonnement">Voir l'abonnement</button></div>
             <div class="qa-grille">
               <div class="champ champ-fichier qa-photo"><span>Sa photo</span>
                 <div class="depot-ligne"><span class="logo-apercu qa-apercu" id="qa-apercu" aria-hidden="true"></span>
@@ -686,13 +694,27 @@
       <p class="petit">Ces profils vous sont confiés pour recruter, rien d'autre : ne les copiez pas, ne les transmettez pas. Beaucoup de candidats ont 16 ou 17 ans.</p>
     </div>
 
-    <section class="carte-compte co-conseils-verrou" id="bloc-candidats-verrou" data-onglet="profils" hidden>
-      <p><b>Les profils complets des animateurs de votre secteur</b> s'ouvrent avec l'abonnement : diplômes, expériences, disponibilités, CV et contact direct. Les candidatures à vos offres, elles, arrivent ici gratuitement.</p>
-      <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
+    <section class="carte-compte vr" id="bloc-candidats-verrou" data-onglet="profils" hidden>
+      <div class="vr-flou" aria-hidden="true"><div class="vr-rang"><i></i><span><b>Camille, 18 ans</b><small>Stagiaire BAFA, PSC1 · CV joint</small></span><em>Disponible juillet-août</em></div><div class="vr-rang"><i></i><span><b>Yanis, 21 ans</b><small>BAFA, BSB · 3 étés en colo</small></span><em>Disponible à l'année</em></div><div class="vr-rang"><i></i><span><b>Sarah, 26 ans</b><small>BAFD · direction d'accueil de loisirs</small></span><em>Disponible dès mars</em></div><div class="vr-rang"><i></i><span><b>Noah, 17 ans</b><small>Stagiaire BAFA · grands jeux, sport</small></span><em>Disponible les mercredis</em></div></div>
+      <div class="vr-carte">
+        <span class="vr-cadenas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/><circle cx="12" cy="15.5" r="1.3"/></svg></span>
+        <p class="vr-sur">Réservé aux structures abonnées</p>
+        <h2>Les animateurs de votre secteur</h2>
+        <p>Les animateurs et directeurs qui cherchent près de chez vous, même sans avoir postulé. Les candidatures à vos offres, elles, restent gratuites.</p>
+        <ul class="vr-puces"><li>Diplômes, expériences, disponibilités et CV</li><li>Leur contact, pour leur écrire directement</li><li>Chaque lundi, les nouveaux profils par e-mail</li></ul>
+        <div class="vr-actions"><button type="button" class="bouton-r" data-onglet-vers="abonnement">Débloquer avec l'abonnement</button><span>ou le Pass recrutement, pour une saison</span></div>
+      </div>
     </section>
-    <section class="carte-compte co-conseils-verrou" id="bloc-outils-verrou" data-onglet="outils" hidden>
-      <p><b>La boîte à outils est réservée aux structures abonnées</b> : guides pour recruter un service civique ou un apprenti, les aides, la déclaration TAM, un générateur d'annonce et le budget de l'équipe.</p>
-      <button type="button" class="bouton-r" data-onglet-vers="abonnement">Voir l'abonnement</button>
+    <section class="carte-compte vr" id="bloc-outils-verrou" data-onglet="outils" hidden>
+      <div class="vr-flou" aria-hidden="true"><div class="vr-rang"><i></i><span><b>Générateur d'annonce</b><small>Un texte prêt à publier en 2 minutes</small></span><em>Outil</em></div><div class="vr-rang"><i></i><span><b>Budget de l'équipe</b><small>Salaires, CEE, charges : le coût de votre été</small></span><em>Outil</em></div><div class="vr-rang"><i></i><span><b>Recruter un service civique</b><small>Les étapes, les aides, les modèles</small></span><em>Guide</em></div><div class="vr-rang"><i></i><span><b>Accueillir un stagiaire BAFA</b><small>Tutorat, convention, évaluation</small></span><em>Guide</em></div></div>
+      <div class="vr-carte">
+        <span class="vr-cadenas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/><circle cx="12" cy="15.5" r="1.3"/></svg></span>
+        <p class="vr-sur">Réservé aux structures abonnées</p>
+        <h2>La boîte à outils</h2>
+        <p>Des outils et des guides pour recruter plus vite et mieux, écrits pour les accueils de loisirs et les séjours.</p>
+        <ul class="vr-puces"><li>Un générateur d'annonce et un calcul du budget</li><li>Les guides : service civique, apprenti, aides</li><li>La déclaration de l'accueil, pas à pas</li></ul>
+        <div class="vr-actions"><button type="button" class="bouton-r" data-onglet-vers="abonnement">Débloquer avec l'abonnement</button><span>ou le Pass recrutement, pour une saison</span></div>
+      </div>
     </section>
     <section class="carte-compte co-outils" id="bloc-outils" data-onglet="outils" hidden aria-labelledby="t-outils">
       <h2 id="t-outils">La boîte à outils</h2>
