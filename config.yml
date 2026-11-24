@@ -69,10 +69,15 @@ abonnement:
   # le lien fondateur se ferme tout seul après 10 paiements
   paiement_fondateur: https://buy.stripe.com/dRmdRafmW6886lL7d8e7m02
   liens_stripe: [plink_1UaMsiKIAmufAQXGfqHfwFYK, plink_1UaMzrKIAmufAQXGhXgOnrPD]
-  # Pass recrutement : paiement unique, toutes les fonctions de l'abonnement pendant 1 à 5 mois (outils/abonnements.py)
-  pass_mois_prix: "15 €"
-  pass_mois_max: 5
-  pass_mois: https://buy.stripe.com/aFa28sgr08gg8tT1SOe7m05
+  # Pass recrutement : paiement unique, toutes les fonctions de l'abonnement pendant 1, 2 ou 3 mois, un lien Stripe par durée
+  # (on choisit la durée sur le site, Stripe affiche le prix fixe). L'ancien lien « au mois » reste reconnu (anciens paiements).
+  pass_mois_prix: "19 €"
+  pass_mois_max: 3
+  pass:
+    - {mois: 1, prix: "19 €", lien: "https://buy.stripe.com/00w5kEdeO8gg25v694e7m07", plink: plink_1UfLcJKIAmufAQXGMccpKRVK}
+    - {mois: 2, prix: "29 €", lien: "https://buy.stripe.com/5kQ3cwcaK6889xX8hce7m08", plink: plink_1UfLcNKIAmufAQXGaKQkyUvO}
+    - {mois: 3, prix: "35 €", lien: "https://buy.stripe.com/bJe00kdeO1RSfWl694e7m09", plink: plink_1UfLcRKIAmufAQXGfbEY9SEd}
+  pass_mois: https://buy.stripe.com/00w5kEdeO8gg25v694e7m07
   lien_pass_mois: plink_1UcoRtKIAmufAQXGGbhTWC07
   # espace des abonnés Stripe (factures, carte, nombre de centres, arrêt) : lien de connexion du portail client
   # (Stripe → Paramètres → Facturation → Portail client → « Lien de connexion »)

@@ -34,7 +34,7 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 
 ## Pass recrutement
 
-Le **Pass recrutement** ({{ site.abonnement.pass_mois_prix }} par mois, de 1 à {{ site.abonnement.pass_mois_max }} mois au choix, paiement unique par carte) donne tout ce que comprend l'abonnement, pour un centre, pendant le nombre de mois choisi, à partir du jour du paiement (ou de la fin de la période déjà payée). Il ne se renouvelle pas. Les conditions de vérification et de remboursement sont les mêmes que pour l'abonnement.
+Le **Pass recrutement** (19 € pour 1 mois, 29 € pour 2 mois, 35 € pour 3 mois, paiement unique par carte) donne tout ce que comprend l'abonnement, pour un centre, pendant le nombre de mois choisi, à partir du jour du paiement (ou de la fin de la période déjà payée). Il ne se renouvelle pas. Les conditions de vérification et de remboursement sont les mêmes que pour l'abonnement.
 
 Fil Roug'Anim ne prend aucune commission sur les recrutements et n'intervient pas dans le contrat entre la structure et le candidat.
 

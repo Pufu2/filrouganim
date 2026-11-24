@@ -1302,27 +1302,31 @@
       var n = structure.centres_payes || 1;
       $("abo-detail").textContent = n + (n > 1 ? " centres payés" : " centre payé (votre structure)") + (structure.fondatrice ? " · tarif fondateur, à vie" : "") +
         (nbCentres > n ? ". Vous avez " + nbCentres + " centres : ajoutez-en " + (nbCentres - n) + " à l'abonnement depuis l'espace abonnés (quantité), ou écrivez-nous." : ".");
-      ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture", "abo-ete"].forEach(function (id) { $(id).hidden = true; });
+      $("ab2").hidden = true; $("bloc-abonnement").hidden = false;
       return;
     }
-    ["abo-nb-champ", "abo-total", "abo-payer", "abo-facture"].forEach(function (id) { $(id).hidden = false; });
+    // pas encore abonnée : deux cartes, l'abonnement et le Pass (la durée se choisit ici, Stripe affiche ensuite le prix fixe)
+    b.hidden = true; $("ab2").hidden = false;
     if (placesFondatrices === null) {
       var r = await sb.rpc("places_fondatrices");
       placesFondatrices = r.error ? 0 : r.data;
     }
     var fond = placesFondatrices > 0;
     var p1 = fond ? 39.5 : 79, p2 = fond ? 19.75 : 39.5;
-    $("abo-sur").textContent = fond ? "Offre fondateurs · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Passer à l'abonnement";
-    $("abo-titre").textContent = euros(p1) + " par an" + (fond ? ", à vie" : "");
-    $("abo-detail").textContent = (fond ? "Moitié prix, à vie, pour les 10 premières structures. " : "") + "Votre page et une offre restent gratuites. L'abonnement ajoute : les demandes des animateurs de votre secteur (annuaire inversé) ; leurs profils complets, et chaque lundi un e-mail avec les nouveaux animateurs près de chez vous ; les offres illimitées, « à la une » en tête des listes ; des réponses toutes prêtes aux candidats ; l'étiquette « Partenaire » en tête de l'annuaire et sur votre page ; tous vos séjours et accueils en ligne ; toutes les demandes des familles avec leurs coordonnées ; le calendrier de l'année et « Qui vous accueille » sur votre page ; la boîte à outils ; vos centres en plus (" + euros(p2) + " par an chacun). Sans engagement : par carte ou sur facture.";
+    $("ab2-sur").textContent = fond ? "Abonnement · offre fondateurs" : "Abonnement";
+    $("ab2-prix").textContent = euros(p1);
+    $("ab2-unite").textContent = fond ? "par an, à vie" : "par an";
+    $("ab2-sous").textContent = fond ? "Moitié prix pour les 10 premières structures · plus que " + placesFondatrices + " place" + (placesFondatrices > 1 ? "s" : "") : "Pour recruter toute l'année";
     var champ = $("abo-nb");
     if (!champ.dataset.touche) champ.value = nbCentres;
     function maj() {
       var nb = Math.max(1, Math.min(30, parseInt(champ.value, 10) || 1));
-      $("abo-total").textContent = nb > 1 ? "Total : " + euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (à indiquer en « quantité » sur la page de paiement)." : "Total : " + euros(p1) + " par an.";
+      $("abo-total").textContent = nb > 1 ? euros(p1 + (nb - 1) * p2) + " par an pour " + nb + " centres (indiquez " + nb + " en quantité au paiement)" : "Chaque centre en plus : " + euros(p2) + " par an";
+      $("abo-payer").textContent = "Payer " + euros(p1 + (nb - 1) * p2) + " par carte";
       var q = new URLSearchParams({ client_reference_id: idEspace(), prefilled_email: utilisateur.email, locale: "fr" });
       $("abo-payer").href = (fond ? A.paiement_fondateur : A.paiement) + "?" + q.toString();
-      if (A.pass_mois) { $("abo-ete").href = A.pass_mois + "?" + q.toString(); $("abo-ete").hidden = false; }
+      var choisi = document.querySelector('#ab2 .ab2-mois [aria-checked="true"]');
+      if (choisi) { $("abo-ete").href = choisi.dataset.lien + "?" + q.toString(); $("abo-ete").textContent = "Payer " + choisi.dataset.prix; $("ab2-pass-prix").textContent = choisi.dataset.prix; $("ab2-pass-unite").textContent = "pour " + choisi.dataset.mois + " mois"; }
       var corps = "Bonjour,\n\nNous souhaitons régler l'abonnement Fil Roug'Anim sur facture.\n\n" +
         "Structure : " + (structure.nom || "") + "\nSIRET, RNA ou n° de déclaration : " + (structure.identifiant || "") +
         "\nNombre de centres : " + nb + "\nAdresse de facturation : \nService et n° d'engagement (Chorus Pro, si besoin) : \n" +
@@ -1330,6 +1334,10 @@
       $("abo-facture").href = "mailto:" + L.email_site + "?subject=" + encodeURIComponent("Abonnement sur facture : " + (structure.nom || "")) + "&body=" + encodeURIComponent(corps);
     }
     if (!champ.dataset.ecoute) { champ.dataset.ecoute = "1"; champ.addEventListener("input", function () { champ.dataset.touche = "1"; maj(); }); }
+    Array.prototype.forEach.call(document.querySelectorAll("#ab2 .ab2-mois button"), function (bt) {
+      if (bt.dataset.ecoute) return; bt.dataset.ecoute = "1";
+      bt.addEventListener("click", function () { Array.prototype.forEach.call(bt.parentNode.children, function (x) { x.setAttribute("aria-checked", x === bt ? "true" : "false"); }); maj(); });
+    });
     maj();
   }
 

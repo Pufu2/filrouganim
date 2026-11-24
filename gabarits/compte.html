@@ -360,14 +360,36 @@
         <p class="abo-detail" id="abo-detail"></p>
       </div>
       <div class="abo-actions" id="abo-actions">
-        <label class="abo-nb" id="abo-nb-champ"><span>Nombre de centres, le vôtre compris</span><input type="number" id="abo-nb" min="1" max="30" value="1"></label>
-        <p class="abo-total" id="abo-total"></p>
-        <a class="bouton-r" id="abo-payer" href="#">Payer par carte <span aria-hidden="true">→</span></a>
-        <a class="abo-facture" id="abo-facture" href="#">Payer sur facture (virement, mandat administratif, Chorus Pro)</a>
-        <a class="abo-ete" id="abo-ete" href="#" hidden><b>Juste pour une saison ? Pass recrutement · {{ site.abonnement.pass_mois_prix }} par mois</b>, de 1 à {{ site.abonnement.pass_mois_max }} mois au choix : tout l'abonnement dès aujourd'hui, une seule fois, sans renouvellement <span aria-hidden="true">→</span></a>
-        <a class="abo-cgv" href="{{ lien('/conditions-de-vente/') }}" target="_blank" rel="noopener">Conditions de vente</a>
-        <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement <span aria-hidden="true">↗</span>{% else %}Factures, nombre de centres, arrêt : écrivez-nous{% endif %}</a>
+        <a class="abo-facture" id="abo-portail" href="{{ site.abonnement.portail or ('mailto:' ~ site.email) }}" target="_blank" rel="noopener" hidden>{% if site.abonnement.portail %}Factures, carte, arrêt de l'abonnement{% else %}Une question sur votre abonnement ? Écrivez-nous{% endif %}</a>
       </div>
+    </div>
+    <div class="ab2" id="ab2" data-onglet="abonnement" hidden>
+      <article class="ab2-carte ab2-an">
+        <p class="ab2-sur" id="ab2-sur">Abonnement</p>
+        <p class="ab2-prix"><b id="ab2-prix"></b><span id="ab2-unite">par an</span></p>
+        <p class="ab2-sous" id="ab2-sous">Pour recruter toute l'année</p>
+        <ul class="ab2-liste">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Les demandes des animateurs de votre secteur</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Leurs profils complets et leur contact</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Offres et séjours illimités, toutes les demandes des familles</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>« Partenaire » en tête de l'annuaire, et la boîte à outils</li>
+        </ul>
+        <label class="ab2-nb"><span>Nombre de centres</span><input type="number" id="abo-nb" min="1" max="30" value="1"></label>
+        <p class="ab2-total" id="abo-total"></p>
+        <a class="ab2-bouton ab2-bouton-r" id="abo-payer" href="#">Payer par carte</a>
+        <a class="ab2-lien" id="abo-facture" href="#">Payer sur facture (mairie, association)</a>
+      </article>
+      <article class="ab2-carte ab2-pass">
+        <p class="ab2-sur">Pass recrutement</p>
+        <p class="ab2-prix"><b id="ab2-pass-prix">{{ site.abonnement.pass[0].prix }}</b><span id="ab2-pass-unite">pour 1 mois</span></p>
+        <p class="ab2-sous">Pour une saison : tout l'abonnement, sans renouvellement</p>
+        <div class="ab2-mois" role="radiogroup" aria-label="Durée du Pass">
+          {% for p in site.abonnement.pass %}<button type="button" role="radio" aria-checked="{{ 'true' if loop.first else 'false' }}" data-lien="{{ p.lien }}" data-prix="{{ p.prix }}" data-mois="{{ p.mois }}"><b>{{ p.mois }} mois</b><small>{{ p.prix }}</small></button>{% endfor %}
+        </div>
+        <a class="ab2-bouton" id="abo-ete" href="#">Payer {{ site.abonnement.pass[0].prix }}</a>
+        <p class="ab2-note">À partir d'aujourd'hui · paiement unique</p>
+      </article>
+      <p class="ab2-confiance"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Paiement sécurisé par Stripe</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Sans engagement</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Facture envoyée par e-mail</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Activé en quelques secondes</span><a href="{{ lien('/conditions-de-vente/') }}" target="_blank" rel="noopener">Conditions de vente</a></p>
     </div>
     <div class="tuiles" id="tuiles-structure" data-onglet="aucun"></div>
 

@@ -246,7 +246,7 @@ def main():
             continue
         par_abonnement[session["subscription"]] = sid
 
-    # 1 bis. le Pass recrutement (paiement unique) : toutes les fonctions de l'abonnement pendant 1 à 5 mois,
+    # 1 bis. le Pass recrutement (paiement unique) : toutes les fonctions de l'abonnement pendant 1 à 3 mois (un lien Stripe par durée ; l ancien lien au mois reste reconnu),
     #        à partir d'aujourd'hui ou de la fin de ce qui est déjà payé ; et la formule partenaire d'un organisme :
     #        on prévient l'administration (l'activation se fait dans organismes.yml). Chaque paiement n'est compté
     #        qu'une fois : sa marque [fin de l'identifiant Stripe] est gardée dans evenements_admin.
@@ -261,14 +261,17 @@ def main():
         return dt.date(a, m, min(d.day, jours))
     for session in tout("checkout/sessions", cle_stripe, status="complete", **{"created[gte]": depuis}):
         marque = f"[{session['id'][-10:]}]"
-        if lien_pass and session.get("payment_link") == lien_pass and session.get("payment_status") == "paid":
+        passes = {p["plink"]: p["mois"] for p in abonnement.get("pass") or []}
+        if session.get("payment_link") in passes or (lien_pass and session.get("payment_link") == lien_pass) and session.get("payment_status") == "paid":
+            if session.get("payment_status") != "paid":
+                continue
             sid = (session.get("client_reference_id") or "").strip()
             if not UUID.match(sid) or sid not in structures:
                 print(f"Pass {session['id']} sans structure reconnue : à rattacher à la main.")
                 continue
             if deja(marque):
                 continue
-            mois = max(1, round((session.get("amount_total") or prix_mois) / prix_mois))
+            mois = passes.get(session.get("payment_link")) or max(1, round((session.get("amount_total") or prix_mois) / prix_mois))
             depart = max(dt.date.today(), dt.date.fromisoformat(structures[sid]["abonnement_fin"]) if structures[sid].get("abonnement_fin") else dt.date.today())
             fin = plus_mois(depart, mois).isoformat()
             print(f"{structures[sid]['nom']} : Pass {mois} mois, jusqu'au {fin}")
@@ -675,7 +678,7 @@ def sejours_relances(cle_sb):
                 html_c = (f"<p>Bonjour,</p><p><b>{n} demande{'s' if n > 1 else ''} de place</b> pour vos séjours {'attendent' if n > 1 else 'attend'} votre réponse. "
                           "Les familles ne savent pas encore si vous avez de la place : leurs coordonnées sont masquées tant que les demandes ne sont pas débloquées.</p>"
                           f"<p><a href=\"{lien}\" style=\"{BOUTON}\">Débloquer les demandes</a></p>"
-                          "<p>L'abonnement, ou le Pass recrutement au mois sans engagement, affiche toutes les demandes, les nouvelles comme les anciennes.</p>"
+                          "<p>L'abonnement, ou le Pass recrutement (1 à 3 mois, sans engagement), affiche toutes les demandes, les nouvelles comme les anciennes.</p>"
                           "<p style=\"color:#6b6264;font-size:13px\">Vous recevez ce rappel le lundi, tant que des demandes vous attendent. Il s'arrête dès qu'elles sont débloquées.</p>")
                 try:
                     envoyer(cle_brevo, exp, CONFIG["nom"], st["email_contact"], sujet, texte, html_c)
