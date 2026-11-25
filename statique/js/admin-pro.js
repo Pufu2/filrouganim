@@ -1436,9 +1436,10 @@
     k2.appendChild(el("p", "ap-petit", "Pour les pages indexées avant le 25 novembre 2026, la date est celle du dernier passage de Google."));
   }
   async function demandee(u) {
-    var maintenant = new Date().toISOString();
-    var r = await E.sb.from("admin_indexation").upsert({ url: u, demandee_le: maintenant });
+    // par la fonction de la base (la table n'accepte pas la création directe d'une ligne depuis le navigateur)
+    var r = await E.sb.rpc("indexation_demandee", { u: u });
     if (r && r.error) { E.message(E.erreur(r.error), true); return; }
+    var maintenant = r.data || new Date().toISOString();
     var x = (IDX || []).filter(function (y) { return y.url === u; })[0]; if (x) x.demandee_le = maintenant; else (IDX = IDX || []).push({ url: u, demandee_le: maintenant });
     E.message("Noté : Google repassera dans les jours qui viennent."); indexation();
   }

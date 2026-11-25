@@ -1271,3 +1271,4 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- à 8 h 13 (pg_cron « rappeler-fin-pass », 5 jours avant la fin d'un Pass) ; accuse_demande (animateur) ; bienvenue_parent.
 -- v55 (appliquée à la main) : admin_indexation.indexee_le (le jour où le relevé voit la page indexée pour la première fois ;
 -- pour les pages déjà indexées, rempli avec le dernier passage de Google) : le journal de l'onglet Indexation.
+-- v56 (appliquée par migration) : indexation_demandee(u), réservée à l'admin : note la demande d'indexation d'une page (« C'est demandé »).
