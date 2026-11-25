@@ -2518,21 +2518,22 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .pa-check li.fait span { color: #8a8d93; text-decoration: line-through; }
 @media (max-width: 760px) { .pa-duo { grid-template-columns: minmax(0, 1fr); } .pa-check li { flex-wrap: wrap; } }
 
-/* Une page du site ouverte dans le panneau d'un espace connecté (?espace=1) : ni menu, ni pied, ni barre des liens */
-html.embarque .entete, html.embarque .pied, html.embarque .ft, html.embarque .fil-ariane { display: none !important; }
-html.embarque .tete { padding-top: 26px; }
-html.embarque .fs-haut-in { padding-top: 26px; }
-html.embarque .le-cote { top: 16px; }
-html.embarque .fs-sections, html.embarque .le-lettres { top: 0; }
-
-/* Le panneau des espaces : une page du site s'ouvre par-dessus l'espace, sans le quitter */
-.esp-panneau { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: flex-end; background: rgba(23, 25, 29, .5); }
-.esp-panneau[hidden] { display: none; }
-.esp-panneau-boite { display: flex; flex-direction: column; width: min(980px, 100%); height: 100%; background: #f4f4f2; box-shadow: -30px 0 60px -30px rgba(0, 0, 0, .5); animation: esp-entre .22s ease-out; }
-@keyframes esp-entre { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-.esp-panneau-barre { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border-bottom: 1px solid rgba(23, 25, 29, .09); }
-.esp-panneau-barre b { flex: 1; min-width: 0; font-weight: 600; color: #17191d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.esp-panneau-barre a { font-size: .88rem; color: #6c7077; white-space: nowrap; }
-.esp-panneau-barre button { height: 36px; padding: 0 14px; border-radius: 9px; border: 1px solid rgba(23, 25, 29, .15); background: #fff; font: inherit; font-weight: 500; cursor: pointer; }
-.esp-panneau iframe { flex: 1; width: 100%; border: 0; background: #f4f4f2; }
-@media (max-width: 700px) { .esp-panneau-barre a { display: none; } }
+/* Une page du site lue dans l'espace (compte.js, ouvrirLecture) : dans la fenêtre de fiche, en blocs de l'espace */
+.esp-lecture { background: #f4f4f2; border-radius: 16px; padding: 26px; }
+.esp-lecture-charge { color: #6c7077; }
+.esp-lecture-tete { margin-bottom: 16px; }
+.esp-lecture-tete h2 { margin: 2px 0 6px; font: 600 1.6rem/1.2 var(--titres); letter-spacing: -.02em; color: #17191d; }
+.esp-lecture-chapo { margin: 0; color: #4a4e56; }
+.esp-lecture .le-texte { padding: 28px 30px; }
+.esp-lecture .le-ruban { margin: 0 0 16px; }
+.esp-lecture > .fs, .esp-lecture > div > .fs { border-radius: 16px; overflow: hidden; }
+.esp-lecture-pied { margin: 16px 0 0; font-size: .9rem; }
+.esp-lecture-pied a { color: #a8162a; }
+@media (max-width: 700px) { .esp-lecture { padding: 14px; } .esp-lecture .le-texte { padding: 20px 16px; } }
+/* les formulaires du site, en bloc dans un onglet de l'espace (« Décrire ce que je cherche », « Décrire mon besoin ») */
+.esp-bloc-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+.esp-bloc-tete h2 { margin: 2px 0 4px; font: 600 1.3rem/1.25 var(--titres); color: #17191d; }
+.esp-bloc-tete p:not(.fs-sur) { margin: 0; color: #6c7077; font-size: .92rem; }
+.esp-bloc-demande .dm-cote .as-boite + .as-boite { display: none; }
+.esp-bloc-demande .dm .cadre { width: 100%; max-width: none; padding: 0; }
+.esp-bloc-demande .dm-grille { gap: 20px; }

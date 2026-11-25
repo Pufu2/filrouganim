@@ -8,7 +8,10 @@
   var racine = document.getElementById("demande");
   if (!racine || !window.supabase) return;
   var L = JSON.parse(document.getElementById("dm-libelles").textContent);
-  var sb = window.supabase.createClient(racine.dataset.url, racine.dataset.cle, { auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true } });
+  // dans l'espace animateur (onglet « Mes demandes ») : le même client que l'espace, déjà connecté
+  var dansEspace = !!racine.closest("#bloc-nouvelle-demande");
+  var sb = dansEspace && window.FRA_ESPACE ? window.FRA_ESPACE.sb
+         : window.supabase.createClient(racine.dataset.url, racine.dataset.cle, { auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true } });
   var BROUILLON = "fra-demande";
   var form = document.getElementById("f-demande"), etapes = Array.prototype.slice.call(form.querySelectorAll(".etape"));
   var n = 0, utilisateur = null;
@@ -146,6 +149,7 @@
       "Elle part dès qu'une structure de votre zone s'inscrit (30 jours au plus). Elle vous répondra directement à " + d.email_contact + ".";
     message("");
     racine.scrollIntoView({ block: "start", behavior: "smooth" });
+    document.dispatchEvent(new CustomEvent("fra-demande-envoyee"));
   }
   form.addEventListener("submit", function (e) { e.preventDefault(); if (utilisateur) envoyer(); });
 
@@ -180,11 +184,11 @@
     if (PERIODES_DE[p.get("type")]) remplir({ periodes: PERIODES_DE[p.get("type")] });
     var s = await sb.auth.getSession();
     utilisateur = s.data && s.data.session ? s.data.session.user : null;
-    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    if (location.hash && !dansEspace) history.replaceState(null, "", location.pathname + location.search);
     if (utilisateur && !form.elements.email_contact.value) form.elements.email_contact.value = utilisateur.email || "";
     if (utilisateur && !form.elements.prenom.value) form.elements.prenom.value = (utilisateur.user_metadata && utilisateur.user_metadata.given_name) || "";
     apercu();
-    if (p.get("envoyer") && utilisateur && br) { aller(etapes.length - 1); envoyer(); return; }
+    if (p.get("envoyer") && utilisateur && br && !dansEspace) { aller(etapes.length - 1); envoyer(); return; }
     var debut = p.get("poste") ? (p.get("dep") ? 2 : 1) : 0;
     aller(debut);
   })();

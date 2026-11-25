@@ -2927,42 +2927,82 @@
     message("Votre compte et vos données sont supprimés.");
   }
 
-  /* -- Rester dans l'espace : un lien vers une page du site (guide, exemple, formulaire, conditions) s'ouvre dans un
-        panneau par-dessus l'espace, sans le menu du site (?espace=1). Le logo, les liens marqués data-sortie et les sites
-        extérieurs (Stripe, factures…) gardent leur comportement. -- */
-  var panneau = null, panneauFormulaire = false;
-  function ouvrirPanneau(u, titre) {
-    if (!panneau) {
-      panneau = el("div", "esp-panneau"); panneau.setAttribute("role", "dialog"); panneau.setAttribute("aria-modal", "true");
-      var boite = el("div", "esp-panneau-boite"), barre = el("div", "esp-panneau-barre");
-      barre.appendChild(el("b")); var ext = el("a", null, "Ouvrir dans un onglet ↗"); ext.target = "_blank"; ext.rel = "noopener"; barre.appendChild(ext);
-      var fe = el("button", null, "Fermer"); fe.type = "button"; fe.addEventListener("click", fermerPanneau); barre.appendChild(fe);
-      var fr = document.createElement("iframe"); fr.title = "Page du site";
-      fr.addEventListener("load", function () { try { if (/\/demande\//.test(fr.contentWindow.location.pathname)) panneauFormulaire = true; } catch (e) {} });
-      boite.appendChild(barre); boite.appendChild(fr); panneau.appendChild(boite); document.body.appendChild(panneau);
-      panneau.addEventListener("click", function (e) { if (e.target === panneau) fermerPanneau(); });
-      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && panneau && !panneau.hidden) fermerPanneau(); });
+  /* -- Rester dans l'espace : un lien vers une page du site ne fait pas quitter l'espace.
+        · les formulaires (« Décrire ce que je cherche », « Décrire mon besoin ») sont des blocs des onglets ;
+        · les guides, exemples, fiches, offres et conditions s'ouvrent dans la fenêtre de fiche de l'espace, avec leur seul
+          contenu (le haut, le texte ou la fiche), sans le menu ni le pied du site ;
+        · les pages qui ont besoin de leur propre outil (catalogue des séjours, calculateur des aides) s'ouvrent dans un
+          onglet à côté, l'espace reste ouvert.
+        Le logo, les liens marqués data-sortie et les sites extérieurs (Stripe, factures…) gardent leur comportement. -- */
+  var A_COTE = ["/enfants/", "/enfants/aides/", "/se-former/sessions/", "/trouver-un-poste/"];
+  var A_RETIRER = "script, .fil-ariane, .fs-sections, .le-suite, .le-pouce, .lien3, .rc2-fin, .le-som-mobile, .le-cote, .tp-recherche, .hb-cherche, .ill-haut, .sjf-reserver, .fs-mobile-boutons";
+  async function ouvrirLecture(u) {
+    var page = el("div", "esp-lecture"); page.appendChild(el("p", "esp-lecture-charge", "Chargement…")); ouvrirFiche(page);
+    try {
+      var rep = await fetch(u.pathname + u.search, { credentials: "same-origin" });
+      if (!rep.ok) throw new Error(rep.status);
+      var doc = new DOMParser().parseFromString(await rep.text(), "text/html");
+      var main = doc.querySelector("main#contenu"); if (!main) throw new Error("vide");
+      Array.prototype.forEach.call(main.querySelectorAll(A_RETIRER), function (x) { x.remove(); });
+      page.textContent = "";
+      var art = main.querySelector("article.le-texte, .le-faq");
+      if (art) {
+        // une page de lecture : la rubrique, le titre, le chapeau, puis le texte, dans les blocs de l'espace
+        var tete = el("div", "esp-lecture-tete"), sur = main.querySelector(".fs-puce-fort, .tp-sur");
+        if (sur) tete.appendChild(el("p", "fs-sur", sur.textContent.trim()));
+        var h1 = main.querySelector("h1"); tete.appendChild(el("h2", null, h1 ? h1.textContent.trim() : ""));
+        var ch = main.querySelector(".fs-accroche, .chapo"); if (ch) tete.appendChild(el("p", "esp-lecture-chapo", ch.textContent.trim()));
+        page.appendChild(tete);
+        var ruban = main.querySelector(".le-ruban"); if (ruban) page.appendChild(document.importNode(ruban, true));
+        page.appendChild(document.importNode(art, true));
+      } else {
+        // une fiche (structure, séjour, offre, exemple) : la fiche telle quelle, comme l'aperçu d'une page dans l'espace
+        Array.prototype.forEach.call(main.children, function (x) { page.appendChild(document.importNode(x, true)); });
+      }
+      var pied = el("p", "esp-lecture-pied"), lien = el("a", null, "Voir la page complète sur le site ↗");
+      lien.href = u.pathname + u.search; lien.target = "_blank"; lien.rel = "noopener"; lien.setAttribute("data-sortie", ""); pied.appendChild(lien); page.appendChild(pied);
+      if (window.FicheFRA) window.FicheFRA.preparer(page);
+      $("fiche-voile").scrollTop = 0;
+    } catch (err) {
+      fermerFiche(); window.open(u.pathname + u.search, "_blank", "noopener");
     }
-    var dedans = new URL(u.toString()); dedans.searchParams.set("espace", "1");
-    panneau.querySelector("b").textContent = titre || "Fil Roug'Anim";
-    var ext2 = panneau.querySelector(".esp-panneau-barre a"); ext2.href = u.toString();
-    panneau.querySelector("iframe").src = dedans.toString();
-    panneau.hidden = false; document.documentElement.style.overflow = "hidden";
   }
-  function fermerPanneau() {
-    if (!panneau) return;
-    panneau.hidden = true; document.documentElement.style.overflow = ""; panneau.querySelector("iframe").src = "about:blank";
-    // après un formulaire envoyé dans le panneau (demande d'animateur, besoin d'une famille) : l'espace se met à jour
-    if (panneauFormulaire) { panneauFormulaire = false; location.reload(); }
+
+  // « Décrire ce que je cherche » : dans l'espace animateur, le formulaire est un bloc de l'onglet « Mes demandes »
+  function ouvrirNouvelleDemande() {
+    var b = $("bloc-nouvelle-demande"); if (!b || !$("v-candidat") || $("v-candidat").hidden) return false;
+    montrerOnglet("v-candidat", "demandes");
+    b.hidden = false; b.scrollIntoView({ block: "start", behavior: "smooth" });
+    return true;
   }
+  // « Décrire mon besoin » : dans l'espace parent, le formulaire est un bloc de l'onglet « Demandes et inscriptions »
+  function ouvrirNouveauBesoin() {
+    var b = $("bloc-nouveau-besoin"); if (!b || !$("v-parent") || $("v-parent").hidden) return false;
+    montrerOnglet("v-parent", "inscriptions");
+    var f = $("enf-form"), pa = window.FRA_PARENT && window.FRA_PARENT.compte ? window.FRA_PARENT.compte() : null;
+    if (f && pa && !f.elements.parent_nom.value) f.elements.parent_nom.value = pa.nom || "";
+    if (f && utilisateur && !f.elements.email.value) f.elements.email.value = utilisateur.email || "";
+    if (f && pa && pa.departement && !f.elements.departement.value) f.elements.departement.value = pa.departement;
+    if (f && pa && pa.ville && !f.elements.ville.value) f.elements.ville.value = pa.ville;
+    b.hidden = false; b.scrollIntoView({ block: "start", behavior: "smooth" });
+    return true;
+  }
+  if ($("fermer-nouveau-besoin")) $("fermer-nouveau-besoin").addEventListener("click", function () { $("bloc-nouveau-besoin").hidden = true; });
+  if ($("fermer-nouvelle-demande")) $("fermer-nouvelle-demande").addEventListener("click", function () { $("bloc-nouvelle-demande").hidden = true; });
+  document.addEventListener("fra-demande-envoyee", function () { if (!$("v-candidat").hidden) mesDemandes(); });
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest("a[href]");
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
-    if (!a.closest("#contenu") || a.closest(".co-marque") || a.closest(".esp-panneau") || a.hasAttribute("data-sortie") || a.hasAttribute("download")) return;
+    if (!a.closest("#contenu") || a.closest(".co-marque") || a.hasAttribute("data-sortie") || a.hasAttribute("download")) return;
     var u; try { u = new URL(a.href, location.href); } catch (x) { return; }
     if (u.origin !== location.origin || /^\/compte\//.test(u.pathname) || u.pathname === "/" || /\.(pdf|jpg|png|csv)$/i.test(u.pathname)) return;
+    if (u.pathname === "/trouver-un-poste/demande/" && ouvrirNouvelleDemande()) { e.preventDefault(); return; }
+    if (u.pathname === "/enfants/demande/" && ouvrirNouveauBesoin()) { e.preventDefault(); return; }
     e.preventDefault();
-    ouvrirPanneau(u, (a.textContent || "").replace(/[→↗]/g, "").trim());
+    // « Toutes les offres » depuis l'espace animateur : l'onglet « Offres pour moi »
+    if (u.pathname === "/trouver-un-poste/offres/" && $("v-candidat") && !$("v-candidat").hidden) { fermerFiche(); montrerOnglet("v-candidat", "offres"); return; }
+    if (A_COTE.indexOf(u.pathname) >= 0) { window.open(u.pathname + u.search + u.hash, "_blank", "noopener"); return; }
+    ouvrirLecture(u);
   });
 
   // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace

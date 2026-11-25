@@ -216,6 +216,14 @@
       <div id="liste-mes-demandes" class="liste-compte"></div>
     </div>
 
+    {# « Décrire ce que je cherche », dans l'espace : le même formulaire que la page publique, en bloc de l'onglet #}
+    <section class="carte-compte esp-bloc-demande" id="bloc-nouvelle-demande" data-onglet="demandes" hidden aria-labelledby="t-nouvelle-demande">
+      <div class="esp-bloc-tete"><div><p class="fs-sur">Nouvelle demande</p><h2 id="t-nouvelle-demande">Décrivez le poste que vous cherchez</h2>
+        <p>Votre demande part chez les 3 structures vérifiées les plus proches, qui vous répondent directement.</p></div>
+        <button type="button" class="bouton-texte" id="fermer-nouvelle-demande">Fermer</button></div>
+      {% include "bloc-demande.html" %}
+    </section>
+
     <div class="carte-compte" id="bloc-offres-pour-toi" data-onglet="offres" hidden>
       <div id="liste-offres-pour-toi" class="liste-compte"></div>
     </div>
@@ -806,6 +814,13 @@
     <p class="statut" id="statut-parent" hidden></p>
     <section class="og-page" id="pa-tableau" data-onglet="tableau"></section>
     <section class="og-page" id="pa-inscriptions" data-onglet="inscriptions"></section>
+    {# « Décrire mon besoin », dans l'espace parent : le même formulaire que la page publique, en bloc de l'onglet #}
+    <section class="carte-compte esp-bloc-demande esp-bloc-besoin" id="bloc-nouveau-besoin" data-onglet="inscriptions" hidden aria-labelledby="t-nouveau-besoin">
+      <div class="esp-bloc-tete"><div><p class="fs-sur">Décrire mon besoin</p><h2 id="t-nouveau-besoin">Décrivez ce que vous cherchez pour votre enfant</h2>
+        <p>Votre demande part chez les structures vérifiées de votre secteur, qui vous répondent directement. Gratuit.</p></div>
+        <button type="button" class="bouton-texte" id="fermer-nouveau-besoin">Fermer</button></div>
+      <div class="sjc">{% include "bloc-besoin.html" %}</div>
+    </section>
     <section class="og-page" id="pa-carnet" data-onglet="carnet"></section>
     <section class="og-page" id="pa-enfants" data-onglet="enfants"></section>
     <section class="og-page" id="pa-favoris" data-onglet="favoris"></section>
@@ -877,6 +892,7 @@
 <script src="{{ statique('js/parent.js') }}"></script>
 <script src="{{ statique('js/sejours-espace.js') }}"></script>
 <script src="{{ statique('js/compte.js') }}"></script>
+<script src="{{ statique('js/demande.js') }}" defer></script>
 <script src="{{ statique('js/visite.js') }}" defer></script>
 <script src="{{ statique('js/admin-stats.js') }}"></script>
 <script src="{{ statique('js/admin-pro.js') }}"></script>

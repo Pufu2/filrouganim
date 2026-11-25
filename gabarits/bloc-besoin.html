@@ -1,0 +1,72 @@
+{# « Décrivez ce que vous cherchez pour votre enfant » (l'annuaire inversé des parents, deposer_besoin dans la base),
+   partagé par la page publique (gabarits/enfants-demande.html) et l'espace parent (gabarits/compte.html). Sans compte. #}
+  <form class="enf-form" id="enf-form" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}" novalidate>
+    <fieldset class="sjc-q"><legend><span>1</span>Pour quel âge ?</legend>
+      <p class="sjc-sous">Un ou plusieurs enfants : touchez chaque âge.</p>
+      <div class="sjc-choix sjc-petits" data-ages>{% for a in range(3, 18) %}<button type="button" data-v="{{ a }}">{{ a }} ans</button>{% endfor %}</div>
+    </fieldset>
+    <fieldset class="sjc-q"><legend><span>2</span>Vous cherchez…</legend>
+      <div class="sjc-choix" data-types>
+        <button type="button" data-v="accueils">Un accueil de loisirs<small>vacances, mercredis</small></button>
+        <button type="button" data-v="periscolaire">Le périscolaire<small>matin, midi, soir</small></button>
+        <button type="button" data-v="sejours">Un séjour, une colo<small>avec nuits</small></button>
+      </div>
+      <label class="enf-champ">Quand ?<select name="quand"><option value="">Je ne sais pas encore</option>{% for q in ["Les mercredis", "Le périscolaire, toute l'année", "Vacances d'hiver", "Vacances de printemps", "Juillet", "Août", "Vacances de la Toussaint", "Vacances de Noël"] %}<option>{{ q }}</option>{% endfor %}</select></label>
+    </fieldset>
+    <fieldset class="sjc-q"><legend><span>3</span>Où ?</legend>
+      <div class="enf-2">
+        <label class="enf-champ">Votre ville<input name="ville" maxlength="80" autocomplete="address-level2" placeholder="ex. Créteil"></label>
+        <label class="enf-champ">Département<select name="departement" required><option value="">Choisissez</option>{% for d in departements | sort(attribute="code") %}<option value="{{ d.code }}">{{ d.code }} · {{ d.nom }}</option>{% endfor %}</select></label>
+      </div>
+    </fieldset>
+    <fieldset class="sjc-q"><legend><span>4</span>Vos coordonnées</legend>
+      <div class="enf-2">
+        <label class="enf-champ">Votre nom<input name="parent_nom" required maxlength="120" autocomplete="name"></label>
+        <label class="enf-champ">Votre e-mail<input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+        <label class="enf-champ">Téléphone <small>(conseillé)</small><input name="telephone" type="tel" maxlength="40" autocomplete="tel"></label>
+      </div>
+      <label class="enf-champ">Un mot pour les structures <small>(facultatif)</small><textarea name="message" rows="3" maxlength="1500" placeholder="Horaires, besoins particuliers, fratrie… (pas d'information de santé)"></textarea></label>
+      <label class="sjf-piege" aria-hidden="true">Ne pas remplir<input name="site_web" tabindex="-1" autocomplete="off"></label>
+      <label class="case-accord"><input type="checkbox" name="consentement" required> J'accepte que ma demande et mes coordonnées soient transmises aux structures de mon secteur choisies par Fil Roug'Anim (5 au plus). <a href="{{ lien('/confidentialite/') }}" target="_blank" rel="noopener">Confidentialité</a></label>
+    </fieldset>
+    <button type="submit" class="bouton-r enf-envoyer">Envoyer ma demande</button>
+    <p class="sjf-f-retour" id="enf-retour" role="status" hidden></p>
+  </form>
+  <div class="enf-merci" id="enf-merci" hidden>
+    <p class="sjf-merci-ic" aria-hidden="true">✓</p>
+    <h2>Demande envoyée !</h2>
+    <p id="enf-merci-t"></p>
+    <p class="sjf-merci-parent">Pour retrouver vos demandes et leurs réponses au même endroit : <a href="{{ lien('/compte/') }}?inscription=1&amp;role=parent">créez votre espace parent</a> avec la même adresse e-mail (gratuit).</p>
+    <a class="bouton-r" href="{{ lien('/enfants/') }}">Voir les offres en attendant</a>
+  </div>
+<script>
+(function () {
+  var f = document.getElementById("enf-form"), r = document.getElementById("enf-retour"); if (!f) return;
+  var dansEspace = !!f.closest("#bloc-nouveau-besoin");
+  var ages = [], types = [];
+  function bascule(g, liste) { g.addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; var i = liste.indexOf(b.dataset.v); if (i >= 0) liste.splice(i, 1); else liste.push(b.dataset.v); b.classList.toggle("sjc-on", i < 0); b.setAttribute("aria-pressed", i < 0 ? "true" : "false"); r.hidden = true; }); }
+  bascule(f.querySelector("[data-ages]"), ages); bascule(f.querySelector("[data-types]"), types);
+  var q = new URLSearchParams(location.search); if (q.get("dep")) f.elements.departement.value = q.get("dep");
+  function dire(t, ko) { r.hidden = false; r.textContent = t; r.className = "sjf-f-retour " + (ko ? "sjf-ko" : "sjf-ok"); }
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (f.elements.site_web.value) return;
+    if (!ages.length) { dire("Touchez l'âge de votre enfant (étape 1).", true); return; }
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    var d = { parent_nom: f.elements.parent_nom.value.trim(), email: f.elements.email.value.trim(), telephone: f.elements.telephone.value.trim(), ville: f.elements.ville.value.trim(),
+              departement: f.elements.departement.value, ages: ages, types: types, quand: f.elements.quand.value, message: f.elements.message.value.trim(), consentement: f.elements.consentement.checked };
+    var b = f.querySelector("button[type=submit]"); b.disabled = true; dire("Envoi…");
+    fetch(f.dataset.url + "/rest/v1/rpc/deposer_besoin", { method: "POST", headers: { "Content-Type": "application/json", apikey: f.dataset.cle }, body: JSON.stringify({ d: d }) })
+      .then(function (x) { return x.json().then(function (j) { if (!x.ok) throw new Error(j && j.message || "erreur"); return j; }); })
+      .then(function (j) {
+        f.hidden = true; document.getElementById("enf-merci").hidden = false;
+        document.getElementById("enf-merci-t").textContent = j.structures ? "Votre demande est partie chez " + j.structures + " structure" + (j.structures > 1 ? "s" : "") + " de votre secteur. Elles vous répondent directement. Vous recevez aussi un récapitulatif par e-mail."
+          : "Votre demande est enregistrée. Aucune structure de votre secteur n'est encore inscrite pour ce que vous cherchez : nous la transmettons dès qu'il y en a une. Vous recevez un récapitulatif par e-mail.";
+        if (dansEspace) { f.parentNode.scrollIntoView({ block: "start", behavior: "smooth" }); document.dispatchEvent(new CustomEvent("fra-besoin-envoye")); }
+        else window.scrollTo({ top: 0, behavior: "smooth" });
+      })
+      .catch(function (err) { var t = String(err && err.message || ""); dire(/[a-zé]/i.test(t) && t !== "erreur" && !/fetch/i.test(t) ? t : "L'envoi n'a pas marché. Réessayez dans un instant.", true); })
+      .then(function () { b.disabled = false; });
+  });
+})();
+</script>
