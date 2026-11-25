@@ -90,3 +90,14 @@ collection pour garder une unité. Collection retenue : **unDraw** (undraw.co, u
 attribution), recolorée dans la teinte de la partie (`#6c63ff` remplacé par `--theme`, gris clairs en crème). Fichiers
 dans `statique/illus/`. Usage : la carte claire à droite du haut (`.en3-illus`) et le haut des cartes (`.en3-vignette`),
 sur la partie parents seulement.
+
+Où on en met (une seule par page, jamais sur les pages de liste) :
+- **le haut des pages d'entrée**, fondue dans le fond foncé (`m.ill_haut("nom")` → `statique/illus/<nom>-nuit.svg`, recolorée
+  pour le noir : gris clairs en ombres, traits en crème, accent dans la couleur de la partie) : se former, offres,
+  structures, annuaire, aides, demande, blog, organismes partenaires ; « Inscrire mon enfant » a sa scène à elle ;
+- **les vignettes des cartes d'orientation** (version claire `<nom>.svg` sur fond crème) : les 4 usages de l'accueil,
+  les 3 types d'accueil de « Inscrire mon enfant » ;
+- **les messages « rien trouvé »** (`.aucune`) : `vide.svg`.
+Pour en ajouter une : la prendre sur undraw.co, la passer dans le script de recoloration (fond clair et fond foncé,
+accent `#d61f35` ou `#ee8a2f` pour la partie parents).
+

@@ -594,3 +594,6 @@
   </a>
 </li>
 {% endmacro %}
+
+{# Une illustration fondue dans le haut foncé d'une page d'entrée (docs/CHARTE.md, § 6) : statique/illus/<nom>-nuit.svg #}
+{% macro ill_haut(nom) %}<figure class="ill-haut" aria-hidden="true"><img src="{{ statique('illus/' ~ nom ~ '-nuit.svg') }}" alt="" width="440" height="330"></figure>{% endmacro %}

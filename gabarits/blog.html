@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
 {% block tete_plus %}<p class="tete-petit"><a href="{{ lien('/blog/rss.xml') }}">S'abonner au flux RSS</a></p>{% endblock %}
+{% block tete_ill %}{{ m.ill_haut("blog") }}{% endblock %}
 {% block contenu %}
 <section class="bande bande-papier">
   <div class="cadre">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
 {# /enfants/aides/ : les aides pour partir en colo ou en accueil de loisirs (donnees/aides.yml), et un calculateur du reste
    à payer, sans rien envoyer. Les montants et les règles sont revus chaque année dans donnees/aides.yml. #}
 {% set pc = AIDES_REGLES.pass_colo or {} %}
@@ -7,6 +8,7 @@
 {% block h1 %}Les aides pour <em>partir</em>{% endblock %}
 {% block tete_chapo %}<p class="chapo">Pass Colo, aide de la CAF, Chèques-Vacances, comité d'entreprise, mairie : une colo coûte souvent bien moins cher qu'on ne le pense. Voici qui peut en profiter, combien, et comment les demander.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+{% block tete_ill %}{{ m.ill_haut("aides") }}{% endblock %}
 {% block contenu %}
 <div class="sjc">
   <div class="cadre">
