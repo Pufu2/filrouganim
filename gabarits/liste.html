@@ -136,6 +136,21 @@
 {{ m.explorer(lien, departements, periodes, types, aujourdhui, toutes_sessions) }}
 {% endif %}
 
+{# Les autres publics du département : les structures qui recrutent, les parents. Des liens vers les pages qui existent. #}
+{% if page.departement %}{% set d = page.departement %}
+{% set u_st = '/recruter/animateurs-bafa/' ~ d.slug ~ '/' %}{% set u_cl = '/enfants/centre-de-loisirs/' ~ d.slug ~ '/' %}{% set u_co = '/enfants/colonie-de-vacances/' ~ d.slug ~ '/' %}
+{% if page_existe(u_st) or page_existe(u_cl) %}
+<div class="fs lien3">
+  <div class="cadre">
+    <div class="fs-tt"><p class="fs-sur">{{ d.nom }}, côté accueils</p><h2>Vous recrutez, ou vous cherchez pour votre enfant ?</h2></div>
+    <ul class="le-cartes le-cartes-2">
+      {% if page_existe(u_st) %}<li><a class="fs-carte" href="{{ lien(u_st) }}"><small>Structures</small><b>Recruter des animateurs · {{ d.nom }}</b><span>Les stagiaires BAFA du département cherchent leur stage pratique : publiez votre offre gratuitement, avec une page pour votre structure.</span><em>Recruter <span aria-hidden="true">→</span></em></a></li>{% endif %}
+      {% if page_existe(u_cl) %}<li><a class="fs-carte" href="{{ lien(u_co if page_existe(u_co) else u_cl) }}"><small>Parents</small><b>Colos et centres de loisirs · {{ d.nom }}</b><span>Les accueils et les séjours pour les 3-17 ans, les aides pour partir, et une demande de place en ligne, gratuite.</span><em>Inscrire mon enfant <span aria-hidden="true">→</span></em></a></li>{% endif %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+{% endif %}
 {% set est_psc = page.famille == 'psc1' or page.url.startswith('/se-former/sessions/psc1/') %}
 {% if not est_psc %}
 <section class="bande bande-blanc">

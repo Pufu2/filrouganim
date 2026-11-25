@@ -113,7 +113,7 @@
       </div>
     </section>
 
-    {{ m.le_cartes(articles | selectattr("categorie", "equalto", "Parents") | list, page.url, lien, sur="Parents", max=6, titre="Les guides des parents", tt_sur="Bien choisir, bien préparer") }}
+    {{ m.le_cartes((site.guides | selectattr("partie", "equalto", "enfants") | list) + (articles | selectattr("categorie", "equalto", "Parents") | list), page.url, lien, sur="Parents", max=9, titre="Les guides des parents", tt_sur="Bien choisir, bien préparer") }}
 
     <section class="fs-s en2-s" id="questions">
       <div class="fs-tt"><p class="fs-sur">En bref</p><h2>Les questions des parents</h2></div>

@@ -2297,3 +2297,6 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .en2-aides .fs-sur { margin: 0; }
 @media (max-width: 980px) { .en2-aides { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .en2-aides { grid-template-columns: minmax(0, 1fr); } .en2-cta { flex-direction: column; align-items: stretch; text-align: center; } }
+/* Pages de sessions : le pont vers les structures et les parents du département */
+.lien3 { padding: 46px 0 50px; }
+.lien3 .fs-tt { margin-bottom: 16px; }

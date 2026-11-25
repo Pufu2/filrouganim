@@ -8,7 +8,7 @@
   "/se-former/sessions/organismes/": "structure", "/trouver-un-poste/": "profil", "/trouver-un-poste/exemple-de-profil/": "etoile", "/recruter/#structures": "structure", "/trouver-un-poste/offres/#animateurs": "profil",
   "/trouver-un-poste/trouver-son-stage-pratique/": "cible", "/trouver-un-poste/preparer-son-entretien/": "bulle", "/trouver-un-poste/le-projet-pedagogique/": "livre",
   "/trouver-un-poste/contrat-d-engagement-educatif/": "contrat", "/outils/salaire-cee/": "calcul", "/outils/mon-parcours-bafa/": "calendrier",
-  "/trouver-un-poste/preparer-sa-valise-de-colo/": "valise", "/compte/?inscription=1": "structure", "/recruter/exemple-de-page-structure/": "etoile",
+  "/trouver-un-poste/preparer-sa-valise-de-colo/": "valise", "/enfants/trousseau-de-colo/": "valise", "/compte/?inscription=1": "structure", "/recruter/exemple-de-page-structure/": "etoile",
   "/chiffres/": "chiffres", "/outils/taux-d-encadrement/": "calcul", "/outils/": "outil"} %}
 {% set ICONES_TITRES = {"Les formations": "diplome", "En faire son métier": "ecole", "Bien s'y prendre": "livre", "Chercher autrement": "loupe",
   "Être trouvé": "profil", "Décrocher le poste": "cible", "Partir serein": "valise", "Votre structure": "structure", "Outils gratuits": "outil"} %}
@@ -112,8 +112,7 @@
           <p class="mm-titre">{{ ico("loupe") }}Chercher</p>
           {{ lien_menu("/trouver-un-poste/offres/#animateurs", "Les animateurs qui cherchent", "Leurs demandes, près de chez vous") }}
           {{ lien_menu("/recruter/animateurs-bafa/", "Recruter des animateurs", "Par département") }}
-          {{ lien_menu("/recruter/saisonniers-ete/", "Saisonniers d'été", "Par région") }}
-          {{ lien_menu("/recruter/stagiaire-bafa/", "Accueillir un stagiaire BAFA", "Par département") }}
+          {{ lien_menu("/recruter/#structures", "Les structures déjà inscrites", "Leur page, leurs offres") }}
         </div>
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("fleche") }}Passer à l'action</p>
@@ -124,8 +123,8 @@
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
           {{ lien_menu("/outils/taux-d-encadrement/", "Calculer le taux d'encadrement") }}
-          {{ lien_menu("/recruter/reussir-son-recrutement/", "Réussir son recrutement") }}
-          {{ lien_menu("/recruter/aides-pour-recruter/", "Les aides pour recruter") }}
+          {{ lien_menu("/recruter/remplir-ses-sejours/", "Remplir ses séjours") }}
+          {{ lien_menu("/recruter/declarer-son-accueil/", "Déclarer son accueil (ACM)") }}
           {{ lien_menu("/chiffres/", "Les chiffres du site") }}
         </div>
         <div class="mm-bas">
@@ -163,9 +162,9 @@
         <div class="mm-colonne">
           <p class="mm-titre">{{ ico("livre") }}Bien s'y prendre</p>
           {{ lien_menu("/enfants/aides/", "Les aides pour partir") }}
-          {{ lien_menu("/blog/premiere-colo-a-quel-age/", "Première colo : à quel âge ?") }}
-          {{ lien_menu("/blog/colo-serieuse-les-questions-a-poser/", "Les 7 questions à poser") }}
-          {{ lien_menu("/blog/centre-de-loisirs-colo-mini-camp-differences/", "Centre de loisirs ou colo ?") }}
+          {{ lien_menu("/enfants/colo-pas-chere/", "Une colo pas chère") }}
+          {{ lien_menu("/enfants/trousseau-de-colo/", "Le trousseau de colo") }}
+          {{ lien_menu("/enfants/fiche-sanitaire-de-liaison/", "La fiche sanitaire de liaison") }}
         </div>
         <div class="mm-bas">
           <a class="mm-ccm" href="{{ lien('/comment-ca-marche/') }}#enfant">{{ ico("question") }}<span>Comment ça marche ?</span><small>Le parcours en 3 étapes</small></a>

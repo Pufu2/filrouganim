@@ -118,8 +118,8 @@
       </ol>
     </section>
 
-    {% set guides_st = (articles | selectattr("categorie", "equalto", "Structures") | list) + (site.guides | selectattr("url", "in", ["/trouver-un-poste/contrat-d-engagement-educatif/", "/trouver-un-poste/le-projet-pedagogique/"]) | list) %}
-    {{ m.le_cartes(guides_st, page.url, lien, sur="Guide", max=6, titre="Les guides des structures", tt_sur="Bien recruter, bien accueillir", classe="le-cartes-4" if guides_st | length == 4 else "") }}
+    {% set guides_st = (site.guides | selectattr("partie", "equalto", "structures") | list) + (articles | selectattr("categorie", "equalto", "Structures") | list) + (site.guides | selectattr("url", "in", ["/trouver-un-poste/contrat-d-engagement-educatif/", "/trouver-un-poste/le-projet-pedagogique/"]) | list) %}
+    {{ m.le_cartes(guides_st, page.url, lien, sur="Guide", max=8, titre="Les guides des structures", tt_sur="Bien recruter, bien accueillir", classe="le-cartes-4" if guides_st | length in (4, 8) else "") }}
 
     <section class="fs-s" id="questions">
       <div class="fs-tt"><p class="fs-sur">En bref</p><h2>Vos questions</h2></div>

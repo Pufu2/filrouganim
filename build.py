@@ -1158,6 +1158,13 @@ class Site:
                 vz.append(("Les autres villes du département", [(n, u) for n, u in par_cle.get(cle, []) if u != url][:16]))
             else:
                 vz.append(("Les autres régions", [(n, u) for n, u in par_cle.get(cle, []) if u != url]))
+            # les guides du public, sur toutes ses pages locales
+            if pub == "parent":
+                vz.append(("Les guides des parents", [("Une colo pas chère", "/enfants/colo-pas-chere/"), ("Le trousseau de colo", "/enfants/trousseau-de-colo/"),
+                                                      ("La fiche sanitaire", "/enfants/fiche-sanitaire-de-liaison/"), ("Les aides pour partir", "/enfants/aides/")]))
+            elif pub == "struct":
+                vz.append(("Les guides des structures", [("Déclarer son accueil", "/recruter/declarer-son-accueil/"), ("Remplir ses séjours", "/recruter/remplir-ses-sejours/"),
+                                                         ("Les taux d'encadrement", "/blog/taux-d-encadrement-les-regles/"), ("Le contrat d'engagement éducatif", "/trouver-un-poste/contrat-d-engagement-educatif/")]))
             local["voisins"] = vz
             for q in faq:
                 q["r_rendu"] = q["r"]
@@ -1795,8 +1802,9 @@ class Site:
                      fil=[SF])
 
         # ---- guides : chacun dans sa partie (« partie: se-former » ou « partie: trouver-un-poste »)
-        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/offres/")}
-        PREFIXES = {"se-former": "/se-former/", "trouver-un-poste": "/trouver-un-poste/"}
+        PARTIES = {"se-former": SF, "trouver-un-poste": ("Animateurs & directeurs", "/trouver-un-poste/offres/"),
+                   "enfants": ("Inscrire mon enfant", "/enfants/"), "structures": ("Structures", "/recruter/")}
+        PREFIXES = {"se-former": "/se-former/", "trouver-un-poste": "/trouver-un-poste/", "enfants": "/enfants/", "structures": "/recruter/"}
         guides = []
         for f in sorted((RACINE / "contenu" / "guides").glob("*.md")):
             entete, corps = lire_markdown(f)
@@ -1898,7 +1906,7 @@ class Site:
         # « Trouver un séjour » est devenu « Inscrire mon enfant » : les anciennes adresses /sejours/… renvoient vers /enfants/…
         for pg in [x for x in self.pages if x["url"].startswith("/enfants/")]:
             self.ajouter("/sejours/" + pg["url"][len("/enfants/"):], "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers=pg["url"])
-        for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'declarer-son-accueil', 'reussir-son-recrutement']]:
+        for ancienne in ["/recruter/boite-a-outils/", "/outils/annonce-animateur/", "/outils/budget-equipe/"] + [f"/recruter/{g}/" for g in ['recruter-un-service-civique', 'recruter-un-apprenti', 'aides-pour-recruter', 'accueillir-un-stagiaire-bafa', 'reussir-son-recrutement']]:
             self.ajouter(ancienne, "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/")
         self.ajouter("/recruter/animateurs/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/trouver-un-poste/offres/#animateurs")
         if ex.get("profil"):
@@ -3045,6 +3053,9 @@ class Site:
         shutil.copytree(RACINE / "statique", SORTIE, dirs_exist_ok=True)
         self.declarer()
         self.dedoublonner()
+        # les adresses des vraies pages (pas les redirections), pour ne faire de liens que vers ce qui existe
+        urls_pages = {p["url"] for p in self.pages if p.get("gabarit") != "redirection.html"}
+        self.env.globals["page_existe"] = lambda u: u in urls_pages
         for page in self.pages:
             cible = SORTIE / fichier_de_sortie(page["url"])
             cible.parent.mkdir(parents=True, exist_ok=True)
