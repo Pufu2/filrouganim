@@ -22,7 +22,8 @@
 <div class="fs en3 theme-soleil">
   <header class="fs-haut en3-haut">
     <div class="fs-haut-fond" aria-hidden="true"></div>
-    <div class="cadre fs-haut-in">
+    <div class="cadre fs-haut-in en3-grille">
+      <div class="en3-texte">
       <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane"><a href="{{ lien('/') }}">Accueil</a><span aria-hidden="true">·</span><span aria-current="page">Inscrire mon enfant</span></nav>
       <ul class="fs-puces"><li class="fs-puce-fort">Inscrire mon enfant</li><li>Colos</li><li>Centres de loisirs</li><li>Périscolaire</li><li>3 à 17 ans</li></ul>
       <h1>Colos et centres de loisirs pour votre enfant</h1>
@@ -50,6 +51,8 @@
     </div>
   </form>
 </div>
+      </div>
+      <figure class="en3-illus" aria-hidden="true"><img src="{{ statique('illus/haut-camping.svg') }}" alt="" width="560" height="420"></figure>
     </div>
   </header>
   <div class="cadre">
@@ -117,9 +120,9 @@
     <section class="fs-s en2-s" id="types">
       <div class="fs-tt"><p class="fs-sur">Près de chez vous</p><h2>Colo, centre de loisirs ou périscolaire ?</h2></div>
       <ul class="le-cartes">
-        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/colonie-de-vacances/') }}"><span class="fs-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L12 5l9 15z"/><path d="M12 5l-3 15M12 5l3 15M2 20h20"/></svg></span><small>Vacances, avec hébergement</small><b>Colonies de vacances</b><span>Séjours et mini-camps de quelques jours à trois semaines, de 4 à 17 ans, par département.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
-        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/centre-de-loisirs/') }}"><span class="fs-k"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="9" r="1.4"/><circle cx="12" cy="6.5" r="1.4"/><circle cx="16" cy="9" r="1.4"/><path d="M12 21a9 9 0 1 1 9-9c0 2-1.5 3-3 3h-2a2 2 0 0 0-1 3.7A2 2 0 0 1 12 21z"/></svg></span><small>Mercredis et vacances</small><b>Centres de loisirs</b><span>Les accueils de loisirs à la journée, de 3 à 17 ans : horaires, prix selon le quotient, inscription.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
-        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/periscolaire/') }}"><span class="fs-k"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="14" rx="4"/><path d="M9 7V5a3 3 0 0 1 6 0v2M9 13h6"/></svg></span><small>Avant et après l'école</small><b>Périscolaire</b><span>Matin, midi et soir les jours d'école : qui l'organise, ce que ça coûte, comment s'inscrire.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/colonie-de-vacances/') }}"><span class="en3-vignette"><img src="{{ statique('illus/colo.svg') }}" alt="" loading="lazy"></span><small>Vacances, avec hébergement</small><b>Colonies de vacances</b><span>Séjours et mini-camps de quelques jours à trois semaines, de 4 à 17 ans, par département.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/centre-de-loisirs/') }}"><span class="en3-vignette"><img src="{{ statique('illus/centre-de-loisirs.svg') }}" alt="" loading="lazy"></span><small>Mercredis et vacances</small><b>Centres de loisirs</b><span>Les accueils de loisirs à la journée, de 3 à 17 ans : horaires, prix selon le quotient, inscription.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+        <li><a class="fs-carte en3-type" href="{{ lien('/enfants/periscolaire/') }}"><span class="en3-vignette"><img src="{{ statique('illus/periscolaire.svg') }}" alt="" loading="lazy"></span><small>Avant et après l'école</small><b>Périscolaire</b><span>Matin, midi et soir les jours d'école : qui l'organise, ce que ça coûte, comment s'inscrire.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
       </ul>
     </section>
 

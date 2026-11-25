@@ -2422,12 +2422,18 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
    ========================================================================================= */
 .theme-soleil { --theme: #ee8a2f; --theme-fonce: #b9561a; }
 .en3 { background: #f4f4f2; }
-/* le haut : le dégradé « soleil » à droite, fondu dans le noir comme sur les fiches */
-.theme-soleil .fs-haut-fond, .le.theme-soleil .fs-haut-fond { inset: 0 0 0 42%; background: linear-gradient(135deg, #ffc35c, #f39a3d 38%, #e0602d 72%, #a8162a); }
-.theme-soleil .fs-haut-fond::before, .le.theme-soleil .fs-haut-fond::before { display: block; background: radial-gradient(circle at 80% 18%, rgba(255, 244, 214, .5), transparent 42%), radial-gradient(circle at 30% 115%, rgba(255, 255, 255, .12), transparent 45%); }
-.le.theme-soleil .fs-haut-fond::after { display: block; }
+/* le haut : les halos du site, avec une lueur chaude ; sur « Inscrire mon enfant », une illustration unDraw
+   (licence libre, recolorée) dans une carte claire à droite — statique/illus/ */
+.theme-soleil .fs-haut-fond, .le.theme-soleil .fs-haut-fond, .tete-soleil::before { inset: 0; background: radial-gradient(ellipse 620px 460px at 92% 0%, rgba(238, 138, 47, .32), transparent 70%), radial-gradient(ellipse 680px 420px at 0% 110%, rgba(120, 125, 135, .2), transparent 70%); }
+.theme-soleil .fs-haut-fond::before, .theme-soleil .fs-haut-fond::after, .le.theme-soleil .fs-haut-fond::before, .le.theme-soleil .fs-haut-fond::after { display: none; }
 .tete-soleil { position: relative; overflow: hidden; }
-.tete-soleil::before { content: ""; position: absolute; inset: 0 0 0 42%; background: linear-gradient(90deg, #17191d 0%, rgba(23, 25, 29, .86) 22%, rgba(23, 25, 29, .25) 62%, rgba(23, 25, 29, .4)), radial-gradient(circle at 80% 18%, rgba(255, 244, 214, .45), transparent 42%), linear-gradient(135deg, #ffc35c, #f39a3d 38%, #e0602d 72%, #a8162a); }
+.tete-soleil::before { content: ""; position: absolute; }
+.en3-grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 48px; align-items: center; padding-top: 34px !important; }
+.en3-illus { margin: 0; padding: 26px; border-radius: 24px; background: #fff6ea; box-shadow: 0 30px 60px -34px rgba(0, 0, 0, .6); }
+.en3-illus img { display: block; width: 100%; height: auto; }
+.en3-vignette { display: flex; align-items: center; justify-content: center; height: 150px; margin: -20px -22px 14px; border-radius: 16px 16px 0 0; background: #fff6ea; padding: 18px; }
+.en3-vignette img { max-height: 100%; max-width: 100%; }
+.en3-type { overflow: hidden; }
 .tete-soleil > * { position: relative; z-index: 1; }
 .theme-soleil .le-texte h2::before, .theme-soleil .fs-sur { color: var(--theme-fonce); }
 .theme-soleil .le-texte ul > li::before { background: var(--theme); }
@@ -2445,8 +2451,7 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .theme-soleil .rc2-etapes i { background: color-mix(in srgb, var(--theme) 16%, #fff); color: var(--theme-fonce); }
 @media (max-width: 980px) { .en3-ruban { --n: 2; } .en3-ruban > a:nth-child(3) { border-left: 0; } .en3-ruban > a:nth-child(n+3) { border-top: 1px solid var(--fs-t); } }
 @media (max-width: 700px) {
-  .theme-soleil .fs-haut-fond, .le.theme-soleil .fs-haut-fond { inset: 0; opacity: .35; }
-  .tete-soleil::before { inset: 0; opacity: .35; }
+  .en3-grille { grid-template-columns: minmax(0, 1fr); } .en3-illus { display: none; }
   .en3-haut .fs-haut-in { padding-bottom: 96px; }
   .en3-ruban { --n: 1; } .en3-ruban > a { border-left: 0 !important; border-top: 1px solid var(--fs-t); } .en3-ruban > a:first-child { border-top: 0; }
   .en3-bande { flex-direction: column; align-items: stretch; }

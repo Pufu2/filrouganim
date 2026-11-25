@@ -82,3 +82,11 @@ Les pages pas encore refaites (sessions, écoles, accueil, blog, outils, chiffre
 #f4f4f2, titres de section à la taille de `.fs-tt`, textes dans des cartes blanches, listes de liens en cartes, questions
 comme `.le-faq`, étapes comme `.rc2-etapes`, encart Jeuphorie comme `.le-pouce`. Une page qu'on refait passe sur un modèle
 (§ 3) ; la couche reste pour les autres.
+
+## 6. Les illustrations
+
+On ne dessine pas nos propres illustrations : on prend des illustrations existantes sous licence libre, d'une seule
+collection pour garder une unité. Collection retenue : **unDraw** (undraw.co, usage libre même commercial, sans
+attribution), recolorée dans la teinte de la partie (`#6c63ff` remplacé par `--theme`, gris clairs en crème). Fichiers
+dans `statique/illus/`. Usage : la carte claire à droite du haut (`.en3-illus`) et le haut des cartes (`.en3-vignette`),
+sur la partie parents seulement.
