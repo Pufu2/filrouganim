@@ -38,7 +38,6 @@ jobs:
         env:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-          COPIE_EMAIL: ${{ secrets.COPIE_EMAIL }}
           EVENEMENT: ${{ github.event_name }}
           LOT: ${{ inputs.lot }}
           ESSAI: ${{ inputs.essai }}
