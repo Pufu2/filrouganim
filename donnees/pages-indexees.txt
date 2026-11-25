@@ -575,6 +575,7 @@
 /se-former/ecoles/bpjeps/var/la-garde/
 /se-former/ecoles/bpjeps/var/la-seyne-sur-mer/
 /se-former/ecoles/bpjeps/var/saint-raphael/
+/se-former/ecoles/bpjeps/var/toulon/
 /se-former/ecoles/bpjeps/vaucluse/
 /se-former/ecoles/bpjeps/vaucluse/avignon/
 /se-former/ecoles/bpjeps/vendee/
@@ -954,7 +955,6 @@
 /se-former/sessions/ardeche/approfondissement/
 /se-former/sessions/ardeche/formation-generale/
 /se-former/sessions/ardeche/psc1/
-/se-former/sessions/ardeche/psc1/annonay/
 /se-former/sessions/ardeche/psc1/guilherand-granges/
 /se-former/sessions/ardeche/psc1/saint-peray/
 /se-former/sessions/ardeche/psc1/tournon-sur-rhone/
@@ -1983,8 +1983,6 @@
 /se-former/sessions/paris/paris-19e/
 /se-former/sessions/paris/paris-7e/
 /se-former/sessions/paris/psc1/
-/se-former/sessions/paris/psc1/paris-13e/
-/se-former/sessions/paris/psc1/paris-16e/
 /se-former/sessions/paris/psc1/paris-4e/
 /se-former/sessions/paris/psc1/paris-7e/
 /se-former/sessions/paris/vacances-hiver-2027/
