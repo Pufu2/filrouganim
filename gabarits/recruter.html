@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% import "morceaux.html" as m with context %}
-{# Structures, dans le même style que « Animateurs & directeurs » (modèle : page annuaire de jasonmarinho.com) :
-   le haut foncé, la bande de l'offre fondateurs, les cartes d'exemple (page structure et profil de candidat), puis le détail. #}
+{# La page d'entrée des structures (modèle 4 « portail » de docs/CHARTE.md) : le haut foncé et ses deux boutons, le ruban
+   de ce qui est gratuit, les deux usages (recruter, remplir ses séjours), gratuit ou abonné, les structures déjà là,
+   les 3 étapes, les guides des structures, les questions (données structurées FAQ), et un dernier appel. #}
 {% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
 {% set st = EXEMPLES.structure %}
 {# la carte d'une structure dans l'annuaire : les abonnées (en tête de liste) portent l'étiquette « Partenaire » #}
@@ -20,50 +21,121 @@
 </li>
 {% endmacro %}
 {% set creer = lien('/compte/') ~ '?inscription=1&role=structure' %}
-{% block tete_note %}<p class="tp-sur">Structures · votre page, vos offres, les candidats</p>{% endblock %}
-{% block h1 %}Recrutez et faites-vous <em>connaître</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Accueils de loisirs, séjours, périscolaire : présentez votre structure sur sa propre page, publiez vos offres là où les jeunes cherchent leur BAFA, et trouvez vos animateurs et directeurs parmi les profils de votre secteur.</p>{% endblock %}
-{% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
+
+{% set ab = site.abonnement %}
+{% set FAQ = [
+  ("Combien coûte Fil Roug'Anim pour une structure ?", "Rien pour commencer : votre page, une offre en ligne, un séjour ou accueil en ligne, votre première demande de famille et une demande d'animateur de votre secteur sont gratuits, sans limite de durée. Pour tout débloquer : le Pass recrutement (19 € pour 1 mois, 29 € pour 2 mois, 35 € pour 3 mois, sans renouvellement) ou l'abonnement à " ~ ab.prix ~ " par an."),
+  ("Prenez-vous une commission sur les recrutements ou les inscriptions ?", "Non, aucune. Les familles et les animateurs vous contactent directement, et Fil Roug'Anim n'intervient ni dans le contrat ni dans le paiement du séjour."),
+  ("Qui peut créer une page ?", "Les accueils de loisirs, organisateurs de séjours et de colos, services périscolaires, associations, mairies et entreprises qui accueillent des mineurs. Chaque structure est vérifiée à la main (SIRET, RNA ou numéro de déclaration de l'accueil), en général sous 2 jours ouvrés."),
+  ("Comment les familles trouvent-elles mes séjours ?", "Vos séjours et accueils apparaissent dans « Inscrire mon enfant » et sur les pages de votre département et de votre ville. Les parents demandent une place en ligne, sans compte, et vous recevez leur demande par e-mail."),
+  ("Comment trouver des animateurs et des stagiaires BAFA ?", "Publiez votre offre : elle s'affiche aussi sur les pages des sessions BAFA de votre département, là où les jeunes cherchent leur formation et leur stage pratique. Avec le Pass ou l'abonnement, vous voyez en plus les profils des animateurs de votre secteur et leurs demandes."),
+  ("Une mairie peut-elle payer sur facture ?", "Oui. Les collectivités et les associations peuvent régler l'abonnement sur facture : virement, mandat administratif ou Chorus Pro, sous 30 jours."),
+] %}
+{% block schema %}{% set ents = [] %}{% for q, r in FAQ %}{% set _ = ents.append({"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": r}}) %}{% endfor %}<script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents} | tojson }}</script>{% endblock %}
+{% block tete %}{% endblock %}
 {% block contenu %}
-<div class="tp-recherche"><div class="cadre">
-  <div class="rc-fondateurs" id="fondateurs">
-    <div class="rc-fondateurs-texte">
-      <p class="rc-fondateurs-sur">{{ m.icone("etape") }}Offre fondateurs · {% if restantes > 0 %}plus que {{ restantes }} place{{ 's' if restantes > 1 }}{% else %}complet{% endif %}</p>
-      <p><b>Votre page et une offre : gratuit.</b> L'abonnement ajoute les demandes des animateurs de votre secteur, leurs profils complets et les offres illimitées : {% if restantes > 0 %}<b>{{ site.abonnement.prix_fondateur }} par an, à vie</b>, pour les {{ site.fondateurs.places }} premières structures, au lieu de {{ site.abonnement.prix }}. {% else %}<b>{{ site.abonnement.prix }} par an.</b> {% endif %}Chaque centre en plus : moitié prix. Sans commission, arrêt à tout moment.</p>
+{% set ic_ok %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{% endset %}
+<div class="fs le rc2 theme-rouge">
+  <header class="fs-haut le-haut le-haut-ruban">
+    <div class="fs-haut-fond" aria-hidden="true"></div>
+    <div class="cadre fs-haut-in">
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane"><a href="{{ lien('/') }}">Accueil</a><span aria-hidden="true">·</span><span aria-current="page">Structures</span></nav>
+      <ul class="fs-puces"><li class="fs-puce-fort">Structures</li><li>Accueils de loisirs</li><li>Séjours et colos</li><li>Périscolaire</li></ul>
+      <h1>Recrutez vos animateurs, remplissez vos séjours</h1>
+      <p class="fs-accroche">Une page pour votre structure, vos offres là où les jeunes cherchent leur BAFA, et vos séjours là où les parents cherchent une colo. Gratuit pour commencer, sans commission.</p>
+      <p class="lc2-actions"><a class="fs-btn fs-btn-r" href="{{ creer }}">Créer la page de ma structure <span aria-hidden="true">→</span></a><a class="fs-btn lc2-btn-clair" href="{{ lien('/recruter/exemple-de-page-structure/') }}">Voir un exemple de page</a></p>
     </div>
-    <a class="tp-bande-bouton rc-creer" href="{{ creer }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-6z"/></svg>Créer le compte de ma structure</a>
-  </div>
-</div></div>
+  </header>
 
-<section class="bande bande-papier rc-annuaire" id="structures" aria-label="Les structures">
   <div class="cadre">
-    <ul class="annuaire-cartes" id="annuaire">
-    {% for x in annuaire_structures %}{{ carte(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
-    {% if st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
-    </ul>
-  </div>
-</section>
-
-<section class="bande bande-papier rc-infos" aria-labelledby="t-inclus">
-  <div class="cadre">
-    <h2 id="t-inclus" class="rc-titre-cartes">Ce que votre page vous <em>apporte</em></h2>
-    <ul class="rc-atouts">
-      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><b>Une page à votre image</b><span>Projet, publics, activités, photos et offres, sur une page lisible par Google. <a href="{{ lien('/recruter/exemple-de-page-structure/') }}">Un exemple</a></span></li>
-      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M9 7V5h6v2"/></svg></span><b>Vos offres, par vous-même</b><span>Écrites, modifiées ou mises en pause depuis votre espace, en ligne dans l'heure.</span></li>
-      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c.8-3.4 3.2-5 6-5s5.2 1.6 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c2.4 0 4.2 1.3 5 4"/></svg></span><b>Les profils des candidats</b><span>Stagiaires BAFA, animateurs, directeurs : filtrez par département et diplôme, lisez leur CV.</span></li>
-      <li><span class="rc-atout-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/></svg></span><b>Là où l'on cherche</b><span>Vos offres sur les pages des sessions BAFA de votre département.</span></li>
+    <ul class="fs-ruban sjf-ruban le-ruban rc2-ruban">
+      <li><small>Pour commencer</small><b>Gratuit</b><em>page, offre, séjour, demandes</em></li>
+      <li><small>Vérification</small><b>Sous 2 jours</b><em>à la main, pour la confiance</em></li>
+      <li><small>Commission</small><b>Aucune</b><em>ni sur les recrutements, ni sur les séjours</em></li>
+      <li><small>Pour tout débloquer</small><b>Dès 19 €</b><em>Pass d'un mois, sans engagement</em></li>
     </ul>
 
-    <h2 class="rc-titre-cartes rc-titre-etapes">En ligne en <em>3 étapes</em></h2>
-    <ol class="rc-etapes">
-      <li><b>Le compte</b><span>Avec Google, ou une adresse e-mail et un mot de passe.</span></li>
-      <li><b>La fiche</b><span>Étape par étape, avec l'aperçu de votre page. Gratuit, sans carte bancaire.</span></li>
-      <li><b>En ligne</b><span>Nous vérifions la structure (SIRET, RNA ou n° de déclaration) sous 2 jours ouvrés, puis votre page et votre offre sont visibles. L'abonnement, quand vous voulez, par carte ou sur facture.</span></li>
-    </ol>
+    <section class="fs-s" id="usages">
+      <div class="fs-tt"><p class="fs-sur">Deux usages</p><h2>Ce que Fil Roug'Anim fait pour vous</h2></div>
+      <div class="fs-portes">
+        <div class="fs-carte fs-porte">
+          <div class="fs-porte-t"><h3>Trouver vos animateurs</h3><small>Animateurs, stagiaires BAFA, directeurs et adjoints</small></div>
+          <div class="fs-rang"><span><b>Vos offres, là où ils cherchent</b><small>Sur les pages des sessions BAFA de votre département, vues chaque jour par les jeunes en formation.</small></span></div>
+          <div class="fs-rang"><span><b>Les demandes des animateurs</b><small>Ceux qui décrivent le poste qu'ils cherchent dans votre secteur arrivent chez vous.</small></span></div>
+          <div class="fs-rang"><span><b>Les profils et les CV</b><small>Diplômes, disponibilités, départements : vous écrivez directement aux candidats.</small></span></div>
+          <a class="fs-btn fs-btn-b fs-btn-large" href="{{ lien('/recruter/animateurs-bafa/') }}">Recruter dans mon département <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="fs-carte fs-porte">
+          <div class="fs-porte-t"><h3>Remplir vos séjours et vos accueils</h3><small>Colos, mini-camps, accueils de loisirs, périscolaire</small></div>
+          <div class="fs-rang"><span><b>Vos séjours devant les parents</b><small>Dans « Inscrire mon enfant » et sur les pages de votre ville et de votre département.</small></span></div>
+          <div class="fs-rang"><span><b>Les demandes de place en direct</b><small>Les familles demandent une place en ligne, sans compte : vous recevez leurs coordonnées.</small></span></div>
+          <div class="fs-rang"><span><b>Les aides mises en avant</b><small>Pass Colo, VACAF, CSE : les parents voient tout de suite ce qu'il leur restera à payer.</small></span></div>
+          <a class="fs-btn fs-btn-b fs-btn-large" href="{{ lien('/recruter/sejours/') }}">Publier mes séjours <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
 
-    <p class="rs-pour-vous">Vous organisez des <b>séjours</b> ou un <b>accueil de loisirs</b> ? Publiez-les gratuitement : les familles vous demandent une place. <a href="{{ lien('/recruter/sejours/') }}">Voir comment ça marche →</a></p>
+    <section class="fs-s" id="formules">
+      <div class="fs-tt"><p class="fs-sur">Formules</p><h2>Gratuit, ou tout débloqué</h2><p>Commencez gratuitement. Passez au Pass ou à l'abonnement le jour où vous recrutez ou remplissez vos séjours.</p></div>
+      <div class="fs-carte rc2-formules">
+        <div class="le-table"><table>
+          <thead><tr><th></th><th>Gratuit</th><th>Pass ou abonnement</th></tr></thead>
+          <tbody>
+            <tr><td>Votre page (projet, publics, photos)</td><td>{{ ic_ok }}</td><td>{{ ic_ok }}</td></tr>
+            <tr><td>Offres d'emploi et de stage</td><td>1 en ligne</td><td><b>Illimitées</b>, à la une</td></tr>
+            <tr><td>Séjours et accueils publiés</td><td>1 en ligne</td><td><b>Illimités</b></td></tr>
+            <tr><td>Demandes de place des familles</td><td>la 1re en entier</td><td><b>Toutes</b>, avec les coordonnées</td></tr>
+            <tr><td>Demandes et profils des animateurs</td><td>1 demande</td><td><b>Toutes</b>, avec les CV</td></tr>
+            <tr><td>Calendrier de l'année, « Qui vous accueille »</td><td>–</td><td>{{ ic_ok }}</td></tr>
+            <tr><td>Étiquette « Partenaire », en tête de l'annuaire</td><td>–</td><td>{{ ic_ok }}</td></tr>
+          </tbody>
+        </table></div>
+        <div class="rc2-prix">
+          <div><small>Gratuit</small><b>0 €</b><span>sans limite de durée</span></div>
+          <div><small>Pass recrutement</small><b>19 €</b><span>1 mois · 29 € les 2 mois · 35 € les 3 mois, sans renouvellement</span></div>
+          <div><small>Abonnement</small><b>{{ ab.prix }}</b><span>par an et par centre · sur facture pour les collectivités</span></div>
+        </div>
+      </div>
+      <p class="le-tout"><a href="{{ lien('/conditions-de-vente/') }}">Le détail dans les conditions de vente <span aria-hidden="true">→</span></a></p>
+    </section>
 
+    {% if annuaire_structures or st %}
+    <section class="fs-s rc-annuaire" id="structures">
+      <div class="fs-tt"><p class="fs-sur">Annuaire</p><h2>Elles sont déjà sur Fil Roug'Anim</h2></div>
+      <ul class="annuaire-cartes" id="annuaire">
+      {% for x in annuaire_structures %}{{ carte(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
+      {% if st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <section class="fs-s" id="etapes">
+      <div class="fs-tt"><p class="fs-sur">Mise en ligne</p><h2>En ligne en 3 étapes</h2></div>
+      <ol class="rc2-etapes">
+        <li class="fs-carte"><i>1</i><b>Le compte</b><span>Avec Google, ou une adresse e-mail et un mot de passe.</span></li>
+        <li class="fs-carte"><i>2</i><b>La fiche</b><span>Étape par étape, avec l'aperçu de votre page. Gratuit, sans carte bancaire.</span></li>
+        <li class="fs-carte"><i>3</i><b>En ligne</b><span>Nous vérifions la structure (SIRET, RNA ou numéro de déclaration) sous 2 jours ouvrés, puis tout est visible.</span></li>
+      </ol>
+    </section>
+
+    {% set guides_st = (articles | selectattr("categorie", "equalto", "Structures") | list) + (site.guides | selectattr("url", "in", ["/trouver-un-poste/contrat-d-engagement-educatif/", "/trouver-un-poste/le-projet-pedagogique/"]) | list) %}
+    {{ m.le_cartes(guides_st, page.url, lien, sur="Guide", max=6, titre="Les guides des structures", tt_sur="Bien recruter, bien accueillir", classe="le-cartes-4" if guides_st | length == 4 else "") }}
+
+    <section class="fs-s" id="questions">
+      <div class="fs-tt"><p class="fs-sur">En bref</p><h2>Vos questions</h2></div>
+      <div class="fs-carte le-faq">
+        {% for q, r in FAQ %}<details{% if loop.first %} open{% endif %}><summary>{{ q }}</summary><p>{{ r }}</p></details>{% endfor %}
+      </div>
+    </section>
+
+    <section class="fs-s rc2-fin">
+      <div>
+        <p class="fs-sur">Prêt ?</p>
+        <h2>Votre page en ligne cette semaine</h2>
+        <p>Gratuit, sans carte bancaire. Vous passez au Pass ou à l'abonnement seulement si vous en avez besoin.</p>
+      </div>
+      <a class="fs-btn fs-btn-r" href="{{ creer }}">Créer la page de ma structure <span aria-hidden="true">→</span></a>
+    </section>
   </div>
-</section>
-
+</div>
 {% endblock %}

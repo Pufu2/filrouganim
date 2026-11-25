@@ -3,8 +3,17 @@
    le type et le lieu pour filtrer (statique/js/sejours.js), « Décrire mon besoin » (l'annuaire inversé des parents),
    l'alerte quand rien ne correspond, et les aides. Les questions par âge et par période sont en réserve (sejours-questions.js).
    Les séjours viennent de la base à chaque publication (build.py, carte_sejour). #}
+{% set FAQ_P = [
+  ("À partir de quel âge partir en colo ?", "Certains séjours accueillent les enfants dès 4 ans, mais la plupart des colos commencent vers 6 ans. Pour un premier départ, beaucoup de familles choisissent un séjour court entre 6 et 9 ans.", ("Première colo, à quel âge ?", "/blog/premiere-colo-a-quel-age/")),
+  ("Quelles aides pour payer une colo ?", "Le Pass Colo (jusqu'à 350 € l'année des 11 ans, selon le quotient familial), l'aide aux vacances de votre CAF, votre CSE, les Chèques-Vacances et parfois la mairie. Elles se cumulent souvent.", ("Les aides et le calculateur", "/enfants/aides/")),
+  ("Quelle différence entre centre de loisirs et colo ?", "Le centre de loisirs accueille les enfants à la journée, le mercredi et pendant les vacances ; la colo est un séjour avec hébergement, de quelques jours à trois semaines.", ("Centre de loisirs ou colo ?", "/blog/centre-de-loisirs-colo-mini-camp-differences/")),
+  ("Comment savoir si une colo est sérieuse ?", "Un séjour de vacances doit être déclaré auprès de l'État, avec une équipe encadrée par un directeur diplômé et un nombre d'animateurs fixé par la loi. Demandez le numéro de déclaration et le projet pédagogique.", ("Les 7 questions à poser", "/blog/colo-serieuse-les-questions-a-poser/")),
+  ("Combien d'animateurs pour encadrer les enfants ?", "En séjour de vacances : un animateur pour 8 enfants de moins de 6 ans, et un pour 12 enfants de 6 ans et plus. L'équipe compte au moins la moitié de diplômés BAFA ou équivalent.", ("Les taux d'encadrement", "/blog/taux-d-encadrement-les-regles/")),
+  ("Demander une place sur Fil Roug'Anim, c'est payant ?", "Non. La demande est gratuite et sans compte : elle part chez la structure, qui vous répond directement. Vous inscrivez ensuite votre enfant avec elle, à son prix.", ("Décrire mon besoin", "/enfants/demande/")),
+] %}
+{% block schema %}{% set ents = [] %}{% for q, r, u in FAQ_P %}{% set _ = ents.append({"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": r}}) %}{% endfor %}<script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents} | tojson }}</script>{% endblock %}
 {% block tete_note %}<p class="tp-sur">Colos, accueils de loisirs, périscolaire · 3 à 17 ans</p>{% endblock %}
-{% block h1 %}Inscrire mon <em>enfant</em>{% endblock %}
+{% block h1 %}Colos et centres de loisirs pour votre <em>enfant</em>{% endblock %}
 {% block tete_chapo %}<p class="chapo">Les colos, les accueils de loisirs et le périscolaire proposés par des structures vérifiées. Demandez une place en ligne, gratuitement : la structure vous répond directement.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
@@ -69,11 +78,58 @@
     </nav>
     {% endif %}
 
-    <section class="sjc-aides" aria-labelledby="t-sjc-aides">
-      <h2 id="t-sjc-aides">Les aides pour <em>partir</em></h2>
-      <ul>{% for k, a in AIDES.items() %}<li><b>{{ a.nom }}</b><span>{{ a.texte }}</span>{% if a.lien %}<a href="{{ a.lien }}" target="_blank" rel="noopener">En savoir plus ↗</a>{% endif %}</li>{% endfor %}</ul>
+
+
+  </div>
+</div>
+<div class="fs le en2">
+  <div class="cadre">
+    <section class="fs-s en2-s" id="comment">
+      <div class="fs-tt"><p class="fs-sur">Comment ça marche</p><h2>Une place pour votre enfant, en 3 étapes</h2></div>
+      <ol class="rc2-etapes">
+        <li class="fs-carte"><i>1</i><b>Cherchez, ou décrivez</b><span>Trouvez une colo ou un accueil près de chez vous. Rien ne correspond ? Décrivez ce que vous cherchez : âge, dates, envies.</span></li>
+        <li class="fs-carte"><i>2</i><b>La structure vous répond</b><span>Votre demande part chez des structures vérifiées, qui vous écrivent directement. Sans compte, sans frais.</span></li>
+        <li class="fs-carte"><i>3</i><b>Vous inscrivez votre enfant</b><span>Avec la structure, à son prix, sans intermédiaire. Les aides (Pass Colo, CAF, CSE) se déduisent comme d'habitude.</span></li>
+      </ol>
+      <p class="en2-cta"><a class="fs-btn fs-btn-r" href="{{ lien('/enfants/demande/') }}">Décrire mon besoin <span aria-hidden="true">→</span></a><span>Gratuit, en 2 minutes</span></p>
     </section>
 
+    <section class="fs-s en2-s" id="types">
+      <div class="fs-tt"><p class="fs-sur">Près de chez vous</p><h2>Colo, centre de loisirs ou périscolaire ?</h2></div>
+      <ul class="le-cartes">
+        <li><a class="fs-carte" href="{{ lien('/enfants/colonie-de-vacances/') }}"><small>Vacances, avec hébergement</small><b>Colonies de vacances</b><span>Séjours et mini-camps de quelques jours à trois semaines, de 4 à 17 ans, par département.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+        <li><a class="fs-carte" href="{{ lien('/enfants/centre-de-loisirs/') }}"><small>Mercredis et vacances</small><b>Centres de loisirs</b><span>Les accueils de loisirs à la journée, de 3 à 17 ans : horaires, prix selon le quotient, inscription.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+        <li><a class="fs-carte" href="{{ lien('/enfants/periscolaire/') }}"><small>Avant et après l'école</small><b>Périscolaire</b><span>Matin, midi et soir les jours d'école : qui l'organise, ce que ça coûte, comment s'inscrire.</span><em>Voir par département <span aria-hidden="true">→</span></em></a></li>
+      </ul>
+    </section>
+
+    <section class="fs-s en2-s" id="aides">
+      <div class="fs-tt"><p class="fs-sur">Payer moins</p><h2>Les aides pour partir</h2><p>Plusieurs aides se cumulent souvent. Le calculateur vous donne le reste à payer en quelques secondes.</p></div>
+      <div class="en2-aides">
+        {% for k in ["pass_colo", "vacaf", "ce"] if AIDES.get(k) %}{% set a = AIDES[k] %}
+        <div class="fs-carte"><p class="fs-sur">{{ a.nom }}</p><b>{{ a.court }}</b><span>{{ a.texte | resume(170) }}</span></div>
+        {% endfor %}
+        <a class="en2-calc" href="{{ lien('/enfants/aides/') }}"><p class="fs-sur">Calculateur</p><b>Combien vous restera-t-il à payer ?</b><span>Prix du séjour, quotient familial, âge de l'enfant : le calcul se fait ici, rien n'est envoyé.</span><em>Calculer <span aria-hidden="true">→</span></em></a>
+      </div>
+    </section>
+
+    {{ m.le_cartes(articles | selectattr("categorie", "equalto", "Parents") | list, page.url, lien, sur="Parents", max=6, titre="Les guides des parents", tt_sur="Bien choisir, bien préparer") }}
+
+    <section class="fs-s en2-s" id="questions">
+      <div class="fs-tt"><p class="fs-sur">En bref</p><h2>Les questions des parents</h2></div>
+      <div class="fs-carte le-faq">
+        {% for q, r, u in FAQ_P %}<details{% if loop.first %} open{% endif %}><summary>{{ q }}</summary><p>{{ r }} <a href="{{ lien(u[1]) }}">{{ u[0] }} <span aria-hidden="true">→</span></a></p></details>{% endfor %}
+      </div>
+    </section>
+
+    <section class="fs-s rc2-fin">
+      <div>
+        <p class="fs-sur">Vous êtes une structure ?</p>
+        <h2>Publiez vos séjours et vos accueils</h2>
+        <p>Colos, mini-camps, accueils de loisirs : les familles de votre secteur vous demandent une place en ligne. Gratuit pour commencer, sans commission.</p>
+      </div>
+      <a class="fs-btn fs-btn-r" href="{{ lien('/recruter/sejours/') }}">Publier mes séjours <span aria-hidden="true">→</span></a>
+    </section>
   </div>
 </div>
 <script type="application/json" id="sjc-donnees">{{ {"cartes": page.cartes, "exemple": page.exemple, "envies": SEJ_ENVIES, "types": SEJ_TYPES, "deps": page.deps_noms} | tojson }}</script>

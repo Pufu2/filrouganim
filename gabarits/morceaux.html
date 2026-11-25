@@ -551,12 +551,12 @@
 {% endmacro %}
 
 {# « Pour aller plus loin » : des cartes blanches (rubrique en petit, titre, résumé, Lire →) #}
-{% macro le_cartes(elements, url_page, lien, sur="Guide", max=3, titre="À lire ensuite", tt_sur="Pour aller plus loin") %}
+{% macro le_cartes(elements, url_page, lien, sur="Guide", max=3, titre="À lire ensuite", tt_sur="Pour aller plus loin", classe="") %}
 {% set liste = elements | rejectattr("url", "equalto", url_page) | list %}
 {% if liste %}
 <section class="fs-s le-suite">
   <div class="fs-tt"><p class="fs-sur">{{ tt_sur }}</p><h2>{{ titre }}</h2></div>
-  <ul class="le-cartes">
+  <ul class="le-cartes {{ classe }}">
     {% for g in liste[:max] %}
     <li><a class="fs-carte" href="{{ lien(g.url) }}">
       <small>{{ g.categorie or g.sur or sur }}</small>

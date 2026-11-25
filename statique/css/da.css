@@ -2090,6 +2090,7 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .le-cartes span { color: var(--fs-d); font-size: .9rem; line-height: 1.5; }
 .le-cartes em { margin-top: auto; padding-top: 8px; font-style: normal; font-size: .88rem; font-weight: 500; color: #a8162a; }
 .le-cartes-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.le-cartes-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .le-tout { margin: 16px 0 0; font-size: .92rem; }
 .le-tout a { color: #a8162a; font-weight: 500; text-decoration: none; }
 .le-pouce { display: flex; align-items: center; gap: 16px; margin-top: 28px; padding: 16px 20px; }
@@ -2232,3 +2233,67 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
   .lc2-liste .s-date { grid-row: 1 / span 2; align-self: start; }
   .lc2-actions .fs-btn { flex: 1 1 100%; }
 }
+
+/* =========================================================================================
+   Page Structures (gabarits/recruter.html ; modèle 4 de docs/CHARTE.md) et Parents (gabarits/sejours.html)
+   ========================================================================================= */
+.rc2-ruban em { color: var(--fs-d); }
+.rc2 .fs-porte .fs-rang { align-items: flex-start; }
+.rc2 .fs-porte .fs-rang small { line-height: 1.5; }
+.rc2 .fs-porte .fs-btn-large { margin-top: 18px; }
+.rc2-formules { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); overflow: hidden; }
+.rc2-formules .le-table { margin: 0; border: 0; border-radius: 0; }
+.rc2-formules td:nth-child(n+2), .rc2-formules th:nth-child(n+2) { text-align: center; }
+.rc2-formules td svg { width: 18px; height: 18px; fill: none; stroke: #1f8a4c; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; }
+.rc2-formules td:last-child { background: #fdf6f7; }
+.rc2-formules td b { color: #a8162a; font-weight: 600; }
+.rc2-prix { display: flex; flex-direction: column; border-left: 1px solid var(--fs-t); }
+.rc2-prix > div { flex: 1; padding: 20px 24px; border-top: 1px solid var(--fs-t); display: flex; flex-direction: column; justify-content: center; }
+.rc2-prix > div:first-child { border-top: 0; }
+.rc2-prix small { font-size: .74rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #d61f35; }
+.rc2-prix b { font-size: 1.7rem; font-weight: 600; letter-spacing: -.02em; color: var(--fs-e); line-height: 1.2; }
+.rc2-prix span { font-size: .86rem; color: var(--fs-d); }
+.rc2-etapes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.rc2-etapes li { padding: 22px 24px; display: flex; flex-direction: column; gap: 4px; }
+.rc2-etapes i { width: 34px; height: 34px; margin-bottom: 10px; border-radius: 50%; display: grid; place-items: center; background: #fbecee; color: #a8162a; font-style: normal; font-weight: 600; }
+.rc2-etapes b { font-size: 1.08rem; font-weight: 600; color: var(--fs-e); }
+.rc2-etapes span { color: var(--fs-d); font-size: .92rem; line-height: 1.5; }
+.rc2 .rc-annuaire .annuaire-cartes { margin: 0; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.rc2-fin { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 34px 38px; border-radius: 18px; background-color: #17191d; background-image: var(--halos); color: #fff; }
+.rc2-fin h2 { margin: 0 0 6px; font: 600 1.6rem/1.2 var(--titres); color: #fff; letter-spacing: -.02em; }
+.rc2-fin p:not(.fs-sur) { margin: 0; color: #c9ccd1; max-width: 560px; }
+.rc2-fin .fs-sur { color: #ff6b7d; }
+.rc2-fin .fs-btn { height: 46px; padding: 0 22px; font-size: .98rem; flex: none; }
+@media (max-width: 980px) {
+  .rc2-formules { grid-template-columns: minmax(0, 1fr); }
+  .rc2-prix { border-left: 0; border-top: 1px solid var(--fs-t); }
+  .rc2-etapes { grid-template-columns: minmax(0, 1fr); }
+  .rc2 .fs-portes { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .rc2-fin { flex-direction: column; align-items: stretch; padding: 26px 22px; }
+  .rc2-formules td, .rc2-formules th { padding: 10px 8px; font-size: .84rem; }
+  .rc2-formules td:first-child { width: 42%; }
+  .rc2 .rc-annuaire .annuaire-cartes { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .rc2-formules th { white-space: normal; letter-spacing: .04em; }
+  .rc2 .ac-image { aspect-ratio: 16 / 9; }
+  .rc2 .ac-type { display: none; }
+}
+/* « Inscrire mon enfant » : sous les résultats, le guide des parents */
+.en2 { padding-top: 10px; }
+.en2-s:first-child { margin-top: 30px; }
+.en2-cta { display: flex; align-items: center; gap: 14px; margin: 18px 0 0; }
+.en2-cta .fs-btn { height: 44px; padding: 0 20px; }
+.en2-cta span { color: var(--fs-d); font-size: .9rem; }
+.en2-aides { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.en2-aides > div, .en2-calc { display: flex; flex-direction: column; gap: 6px; padding: 20px 22px; }
+.en2-aides b { font-size: 1.02rem; font-weight: 600; line-height: 1.35; color: var(--fs-e); }
+.en2-aides span { color: var(--fs-d); font-size: .88rem; line-height: 1.5; }
+.en2-calc { border-radius: 16px; background-color: #17191d; background-image: radial-gradient(ellipse 260px 200px at 100% 0%, rgba(214, 31, 53, .4), transparent 70%); text-decoration: none; }
+.en2-calc .fs-sur { color: #ff6b7d; margin: 0; }
+.en2-calc b { color: #fff; }
+.en2-calc span { color: #c9ccd1; }
+.en2-calc em { margin-top: auto; padding-top: 8px; font-style: normal; font-weight: 500; color: #fff; }
+.en2-aides .fs-sur { margin: 0; }
+@media (max-width: 980px) { .en2-aides { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .en2-aides { grid-template-columns: minmax(0, 1fr); } .en2-cta { flex-direction: column; align-items: stretch; text-align: center; } }

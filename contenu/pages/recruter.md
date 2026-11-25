@@ -1,7 +1,7 @@
 ---
 court: Structures
 gabarit: recruter.html
-titre: "Recruter des animateurs et des stagiaires BAFA"
+titre: "Structures : recrutez vos animateurs, remplissez vos séjours"
 url: /recruter/
-description: "Centres de loisirs, organisateurs de séjours : publiez vous-même vos offres de stages pratiques et de jobs là où les jeunes cherchent leur BAFA, et consultez les profils des animateurs de votre secteur. Offre fondateurs : moitié prix à vie."
+description: "Accueils de loisirs, colos, périscolaire : une page gratuite pour votre structure, vos offres devant les jeunes en formation BAFA et vos séjours devant les parents. Sans commission, vérifiée sous 2 jours."
 ---

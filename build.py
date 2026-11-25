@@ -1319,11 +1319,12 @@ class Site:
                 "ph": (sj.get("photos") or [None])[0], "s": sj["structure"]["nom"], "une": bool(sj["structure"].get("abonnee")), "ex": bool(sj.get("exemple"))}
 
     def page_catalogue_sejours(self):
-        """/enfants/ : la recherche en gros boutons, sur tous les séjours à venir. Indexée à partir de 3 offres."""
+        """/enfants/ : la recherche en gros boutons, sur tous les séjours à venir, puis le guide des parents (comment ça
+        marche, types d'accueil, aides, guides, questions). Toujours indexée : le guide tient même sans séjour."""
         cartes = [self.carte_sejour(sj) for sj in self.sejours if sj["a_venir"]]
         ex = next((p["sejour"] for p in self.pages if p["url"] == "/enfants/exemple/"), None)
-        self.ajouter("/enfants/", "sejours.html", titre="Inscrire mon enfant : colos, accueils de loisirs et périscolaire",
-                     h1="Inscrire mon enfant", indexer=len(cartes) >= 3, cartes=cartes, deps_noms={c: d["nom"] for c, d in self.departements.items()}, exemple=self.carte_sejour(ex) if ex else None,
+        self.ajouter("/enfants/", "sejours.html", titre="Colo et centre de loisirs : trouver une place pour son enfant",
+                     h1="Colos et centres de loisirs pour votre enfant", indexer=True, cartes=cartes, deps_noms={c: d["nom"] for c, d in self.departements.items()}, exemple=self.carte_sejour(ex) if ex else None,
                      description="Colos, mini-séjours et accueils de loisirs pour les 3-17 ans : cherchez par âge, période et envies, voyez les aides (Pass Colo, VACAF) et demandez une place en ligne, sans frais.",
                      fil=[("Inscrire mon enfant", "/enfants/")])
         self.ajouter("/enfants/demande/", "enfants-demande.html", titre="Décrivez ce que vous cherchez pour votre enfant",
