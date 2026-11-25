@@ -77,12 +77,18 @@ STOP = "Vous ne souhaitez plus recevoir nos messages ? Répondez « stop »."
 
 def animateurs(base, cle):
     """Les animateurs qui cherchent : demandes de l'annuaire inversé et fiches publiées (poste, département, zone)."""
-    dem = appel(f"{base}/demandes?select=poste,departement,ville,zone,cree_le", cle) or []
-    fiches = appel(f"{base}/profils?select=poste_recherche,departement,ville,code_commune,mobilite,cree_le&publie=is.true", cle) or []
+    try:  # personnes_agees : l'animateur est ouvert à l'animation auprès des personnes âgées (EHPAD, résidences)
+        dem = appel(f"{base}/demandes?select=poste,departement,ville,zone,cree_le,personnes_agees", cle) or []
+        fiches = appel(f"{base}/profils?select=poste_recherche,departement,ville,code_commune,mobilite,cree_le,personnes_agees"
+                       "&publie=is.true", cle) or []
+    except urllib.error.HTTPError:
+        dem = appel(f"{base}/demandes?select=poste,departement,ville,zone,cree_le", cle) or []
+        fiches = appel(f"{base}/profils?select=poste_recherche,departement,ville,code_commune,mobilite,cree_le&publie=is.true", cle) or []
     for f in fiches:
         dem.append({"poste": "animateur-stagiaire" if "stag" in (f.get("poste_recherche") or "").lower() else "animateur",
                     "departement": f.get("departement"), "ville": f.get("ville"), "code_commune": f.get("code_commune"),
-                    "zone": [z for z in (f.get("mobilite") or []) if z != "france"], "cree_le": f.get("cree_le"), "fiche": True})
+                    "zone": [z for z in (f.get("mobilite") or []) if z != "france"], "cree_le": f.get("cree_le"), "fiche": True,
+                    "personnes_agees": f.get("personnes_agees")})
     return dem
 
 
@@ -103,7 +109,34 @@ def message(x, d, demandes, site, relance, familles=None):
         except Exception:
             pass
     mairie = (x.get("nom") or "").lower().startswith("mairie")
-    if mairie:
+    ehpad = bool(re.search(r"·\s*(ehpad|résidence|residence|personnes âgées)", x.get("ville") or "", re.I))
+    if ehpad:
+        # établissements pour personnes âgées : seulement les animateurs qui ont coché « ouvert aux personnes âgées »
+        pa = [m for m in demandes if m.get("personnes_agees") and (m["departement"] == d or d in (m.get("zone") or []))]
+        if not pa:
+            return None
+        n = len(pa)
+        s, verbe = ("s" if n > 1 else ""), ("se disent" if n > 1 else "se dit")
+        ab = yaml.safe_load((RACINE / "config.yml").read_text(encoding="utf-8")).get("abonnement") or {}
+        prix_ab, prix_pass = ab.get("prix_fondateur") or ab.get("prix") or "39,50 €", ab.get("pass_mois_prix") or "19 €"
+        lieu = LIEU.get(d, "près de chez vous")
+        sujet = (("Rappel : " if relance else "") + (f"{n} animateurs prêts à animer auprès de vos résidents" if n > 1
+                                                       else "un animateur prêt à animer auprès de vos résidents"))
+        sujet = sujet[0].upper() + sujet[1:]
+        cle = (f"En ce moment, {n} animateur{s} {lieu} {verbe}{toujours} ouvert{s} à l'animation auprès des personnes âgées "
+               "(EHPAD, résidences).")
+        offre = ("Votre établissement peut créer sa page gratuitement, publier une offre et ouvrir gratuitement une demande "
+                 "d'animateur de votre secteur. Ensuite, l'abonnement (dès {prix_ab} par an) ou "
+                 f"le Pass recrutement (dès {prix_pass} pour un mois, sans engagement) donne accès à toutes les demandes et aux "
+                 "profils des animateurs de votre secteur. Aucune commission.")
+        if relance:
+            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. Pourriez-vous le transmettre à "
+                     "la personne chargée de l'animation ?", cle, offre, "C'est notre dernier message à ce sujet."]
+        else:
+            paras = ["Pourriez-vous transmettre ce message à la personne chargée de l'animation ?",
+                     f"Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent. {cle}", offre]
+        bouton = "Créer la page de votre établissement (2 minutes)"
+    elif mairie:
         qui = (f"{n} stagiaire{s} BAFA" if stag == n else
                f"{n} animateur{s}" + (f", dont {stag} stagiaire{'s' if stag > 1 else ''} BAFA," if stag else ""))
         lieu = LIEU.get(d, "en Île-de-France")
@@ -213,7 +246,11 @@ def traiter(lot, essai=False, relance=False, delai=7, prospects=None):
             if ecart < dt.timedelta(days=delai):
                 trop_tot += 1
                 continue
-        sujet, texte, corps, phrase = message(x, d, demandes, site, relance, familles)
+        m = message(x, d, demandes, site, relance, familles)
+        if m is None:  # établissement pour personnes âgées sans animateur ouvert aux personnes âgées dans son secteur
+            ignores += 1
+            continue
+        sujet, texte, corps, phrase = m
         modele = (sujet, texte)
         if modele not in vus:
             vus.add(modele)
