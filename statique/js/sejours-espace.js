@@ -180,7 +180,7 @@
     var ret = el("button", "bouton-texte", "← Mes séjours"); ret.type = "button"; ret.addEventListener("click", function () { carnetDe = null; liste(); }); t.appendChild(ret);
     t.appendChild(el("h2", null, "Carnet de séjour · " + s.titre));
     var nb = demandes.filter(function (d) { return d.sejour_id === s.id && d.statut === "acceptee"; }).length;
-    t.appendChild(el("p", "petit", "Racontez la journée en quelques lignes : activités, sorties, veillée, la météo… Chaque nouvelle part par e-mail aux familles dont l'enfant a une place confirmée (« Accepter » dans les demandes), et s'affiche dans leur espace parent. " +
+    t.appendChild(el("p", "petit", "Racontez la journée en quelques lignes : activités, sorties, veillée, la météo… Chaque nouvelle part par e-mail aux familles dont l'enfant a une place confirmée (« Accepter » dans les demandes) et à celles qui ont entré le code du séjour, et s'affiche dans leur espace parent. " +
       (nb ? nb + " famille" + (nb > 1 ? "s" : "") + " recevr" + (nb > 1 ? "ont" : "a") + " la nouvelle." : "Aucune place confirmée pour l'instant : acceptez les demandes pour que les familles reçoivent le carnet.")));
     tete.appendChild(t); c.appendChild(tete);
     var cols = el("div", "sj-carnet"); c.appendChild(cols);
@@ -220,6 +220,28 @@
       var ch = el("button", "bouton-texte", "Changer le lien"); ch.type = "button"; ch.addEventListener("click", function () { if (confirm("L'ancien lien ne marchera plus. Continuer ?")) montrerLien(true); }); zl.appendChild(ch);
     }
     var vl = el("button", "bouton-blanc", "Afficher le lien"); vl.type = "button"; vl.addEventListener("click", function () { montrerLien(false); }); zl.appendChild(vl);
+    // le code des familles : un code par session, à donner aux familles (même celles qui ne sont pas passées par Fil Roug'Anim)
+    var kf = el("div", "carte-compte"); cols.appendChild(kf); kf.appendChild(el("h3", null, "Le code des familles"));
+    kf.appendChild(el("p", "petit", "Toutes les familles de la session peuvent suivre le carnet avec ce code, même celles qui ont inscrit leur enfant ailleurs que sur Fil Roug'Anim : elles lisent les nouvelles et peuvent les recevoir par e-mail, sans compte. Donnez-le avant le départ (e-mail, convocation)."));
+    var sess = (dates[s.id] || []).filter(function (d) { return d.fin >= new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10); });
+    if (!sess.length) kf.appendChild(el("p", "og-vide", "Ajoutez d'abord les dates du séjour."));
+    sess.forEach(function (d) {
+      var ligne = el("div", "sj-code"); kf.appendChild(ligne);
+      ligne.appendChild(el("p", "sj-code-t", periode(d)));
+      var z = el("div", "sj-lien"); ligne.appendChild(z);
+      async function montrerCode(nouveau) {
+        var r = await E.sb.rpc("code_famille", { did: d.id, nouveau: !!nouveau });
+        if (r.error) return E.message(E.erreur(r.error), true);
+        var code = r.data, u = location.origin + "/enfants/carnet/?code=" + code;
+        var msg = "Suivez le séjour « " + s.titre + " » (" + periode(d) + ") : l'équipe y raconte les journées.\nOuvrez " + u + "\n(code du séjour : " + code + "). Vous pouvez y recevoir chaque nouvelle par e-mail, sans créer de compte.";
+        z.textContent = "";
+        var ip = el("input", "sj-code-v"); ip.readOnly = true; ip.value = code; ip.addEventListener("focus", function () { ip.select(); }); z.appendChild(ip);
+        function copier(b, txt) { (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { b.textContent = "Copié !"; }, function () { ip.select(); }); }
+        var cm = el("button", "bouton-blanc", "Copier le message pour les familles"); cm.type = "button"; cm.addEventListener("click", function () { copier(cm, msg); }); z.appendChild(cm);
+        var ch = el("button", "bouton-texte", "Changer le code"); ch.type = "button"; ch.addEventListener("click", function () { if (confirm("L'ancien code ne marchera plus pour les familles qui ne l'ont pas encore utilisé. Continuer ?")) montrerCode(true); }); z.appendChild(ch);
+      }
+      var vb = el("button", "bouton-blanc", "Afficher le code"); vb.type = "button"; vb.addEventListener("click", function () { montrerCode(false); }); z.appendChild(vb);
+    });
     // les nouvelles déjà envoyées
     var kh = el("div", "carte-compte sj-carnet-fil"); c.appendChild(kh); kh.appendChild(el("h3", null, "Déjà envoyées"));
     var r = await E.sb.from("carnet_sejour").select("id,jour,titre,texte,auteur,cree_le").eq("sejour_id", s.id).order("cree_le", { ascending: false }).limit(60);

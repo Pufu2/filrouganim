@@ -691,7 +691,8 @@ def sejours_relances(cle_sb):
 TYPES_EVT = {"profil": ("Nouvelle fiche animateur", "Nouvelles fiches animateurs"), "structure": ("Nouvelle structure", "Nouvelles structures"),
              "paiement": ("Abonnement payé", "Abonnements payés"), "demande": ("Nouvelle demande (annuaire inversé)", "Nouvelles demandes (annuaire inversé)"),
              "organisme": ("Organisme intéressé par la formule partenaire", "Organismes intéressés par la formule partenaire"),
-             "sejour": ("Demande de place en séjour", "Demandes de place en séjour")}
+             "sejour": ("Demande de place en séjour", "Demandes de place en séjour"),
+             "parent": ("Nouvel espace parent", "Nouveaux espaces parents"), "compte": ("Nouveau compte créé", "Nouveaux comptes créés")}
 
 
 def prevenir_admin(cle_sb):
@@ -717,7 +718,7 @@ def prevenir_admin(cle_sb):
     sujet = "Fil Roug'Anim : " + ", ".join(titres)
     admin = CONFIG["url"].rstrip("/") + "/compte/?role=admin"
     texte, html_c = [], []
-    for k in ["organisme", "paiement", "structure", "profil", "demande", "sejour"]:
+    for k in ["organisme", "paiement", "structure", "profil", "parent", "demande", "sejour", "compte"]:
         if k not in groupes:
             continue
         texte.append(TYPES_EVT[k][1 if len(groupes[k]) > 1 else 0] + " :")

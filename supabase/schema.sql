@@ -1252,3 +1252,8 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 --    et ouverte par ouvrir_demande_offerte(did) (la structure est ajoutée aux destinataires) ;
 --  * sejour_recoit_demandes(sid) : la fiche séjour prévient la famille avant l'envoi.
 -- (fonctions appliquées dans la base : migrations v49_formule_gratuite et v49b_sejour_recoit)
+-- v51 (appliquée par migration) : evenements_admin accepte « parent » (trigger noter_parent sur comptes_parents) et « compte »
+-- (trigger noter_compte sur auth.users) ; le code famille du carnet de séjour : table codes_famille (une par session, aucune
+-- lecture publique), code_famille(did, nouveau) pour la structure, carnet_famille(code) et suivre_carnet(code, email) /
+-- arreter_carnet(jeton) pour les familles sans compte (table carnet_abonnes), ajouter_code_carnet(code) pour un parent
+-- connecté (table carnet_suivis) ; mon_carnet() et prevenir_carnet() tiennent compte des deux.

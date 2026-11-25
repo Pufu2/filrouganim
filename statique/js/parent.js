@@ -63,6 +63,54 @@
     // 3. la dernière nouvelle du carnet
     if (carnet.length) { var k3 = carte(c, "La dernière nouvelle", "Le carnet", "carnet"), x = carnet[0];
       k3.appendChild(el("p", "pa-c-sur", E.dateFr(x.jour) + " · " + x.sejour)); if (x.titre) k3.appendChild(el("h3", null, x.titre)); k3.appendChild(el("p", "pa-c-texte", x.texte)); }
+    if (!compte) return;
+    var duo = el("div", "pa-duo"); c.appendChild(duo);
+    // 4. mes enfants : l'âge cette année, ce à quoi ils ont droit (Pass Colo l'année des 11 ans, report l'année des 12 ans)
+    var k4 = carte(duo, "Mes enfants", enfants.length ? "Gérer" : "Ajouter", "enfants");
+    if (!enfants.length) k4.appendChild(el("p", "og-vide", "Ajoutez vos enfants : vous verrez ici les aides auxquelles ils ont droit et les séjours de leur âge."));
+    enfants.forEach(function (x) {
+      var a = age(x.annee_naissance), l = el("div", "pa-enfant"), t = el("div");
+      l.appendChild(el("span", "pa-enfant-i", (x.prenom || "?").charAt(0).toUpperCase()));
+      t.appendChild(el("b", null, x.prenom)); t.appendChild(el("small", null, a ? a + " ans cette année" : "Année de naissance non précisée"));
+      var badges = el("div", "pa-badges");
+      if (a === 11) badges.appendChild(el("span", "tb2-etat tb2-etat-vert", "Pass Colo : jusqu'à 350 €"));
+      else if (a === 12) badges.appendChild(el("span", "tb2-etat tb2-etat-jaune", "Pass Colo : encore possible s'il n'a pas servi"));
+      if (a && a >= 4 && a <= 17) badges.appendChild(el("span", "tb2-etat tb2-etat-gris", a < 6 ? "Mini-séjours dès 4 ans" : a < 12 ? "Colos 6-11 ans" : "Séjours ados"));
+      t.appendChild(badges); l.appendChild(t); k4.appendChild(l);
+    });
+    if (enfants.some(function (x) { var a = age(x.annee_naissance); return a === 11 || a === 12; })) {
+      var ap = el("a", "tb2-lien pa-k-pied", "Calculer le reste à payer avec les aides →"); ap.href = "/enfants/aides/"; k4.appendChild(ap); }
+    // 5. suivre un séjour avec le code donné par la structure
+    var k5 = carte(duo, "Suivre un séjour", null);
+    k5.appendChild(el("p", "petit", "La structure vous a donné un code pour le carnet de séjour ? Entrez-le : les nouvelles de l'équipe arrivent ici et par e-mail, même si vous avez inscrit votre enfant ailleurs."));
+    k5.appendChild(formCode());
+    // 6. préparer le départ : une liste à cocher, gardée dans ce navigateur
+    var k6 = carte(c, "Préparer le départ");
+    var cles = [["fiche", "Remplir la fiche sanitaire de liaison", "/enfants/fiche-sanitaire-de-liaison/"], ["valise", "Préparer la valise avec lui, et tout marquer à son nom", "/enfants/trousseau-de-colo/"],
+                ["aides", "Demander les aides (Pass Colo, CAF, CSE)", "/enfants/aides/"], ["papiers", "Glisser les papiers : carte Vitale, ordonnances, pièce d'identité", "/enfants/trousseau-de-colo/"],
+                ["parler", "En parler sans dramatiser : le programme, l'équipe, les nouvelles", "/blog/preparer-le-premier-depart-de-son-enfant/"]];
+    var faits = {}; try { faits = JSON.parse(localStorage.getItem("fra-depart") || "{}"); } catch (e) {}
+    var ul = el("ul", "pa-check"); k6.appendChild(ul);
+    cles.forEach(function (x) {
+      var li = el("li"), lab = el("label"), cb = el("input"); cb.type = "checkbox"; cb.checked = !!faits[x[0]];
+      cb.addEventListener("change", function () { faits[x[0]] = cb.checked; try { localStorage.setItem("fra-depart", JSON.stringify(faits)); } catch (e) {} li.classList.toggle("fait", cb.checked); });
+      lab.appendChild(cb); lab.appendChild(el("span", null, x[1])); li.appendChild(lab);
+      var a = el("a", "tb2-lien", "Le guide →"); a.href = x[2]; li.appendChild(a); if (cb.checked) li.classList.add("fait"); ul.appendChild(li);
+    });
+  }
+  // le petit formulaire « code du séjour » (accueil de l'espace et onglet carnet)
+  function formCode() {
+    var f = el("form", "pa-code"), ip = el("input"); ip.name = "code"; ip.placeholder = "Code du séjour"; ip.required = true; ip.maxLength = 12; ip.autocomplete = "off"; ip.setAttribute("autocapitalize", "characters");
+    var b = el("button", "bouton-blanc", "Suivre"); b.type = "submit"; f.appendChild(ip); f.appendChild(b);
+    f.addEventListener("submit", async function (e) { e.preventDefault(); await ajouterCode(ip.value); });
+    return f;
+  }
+  async function ajouterCode(v) {
+    var code = String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (!code) return;
+    var r = await E.sb.rpc("ajouter_code_carnet", { code: code });
+    if (r.error) return E.message(E.erreur(r.error), true);
+    E.message("C'est noté : les nouvelles de « " + r.data.titre + " » arrivent dans votre carnet et par e-mail.");
+    await tout();
   }
   function tableInscriptions(liste, court) {
     var t = el("div", "ls-table ls-pa-i"), e = el("div", "ls-rang ls-entete");
@@ -131,8 +179,9 @@
   /* ---------- le carnet de séjour ---------- */
   function pageCarnet() {
     var c = $("pa-carnet"); c.textContent = "";
+    if (compte) { var kc = el("div", "carte-compte pa-code-k"); kc.appendChild(el("p", "petit", "Un code donné par la structure ? Entrez-le pour suivre le séjour ici et par e-mail.")); kc.appendChild(formCode()); c.appendChild(kc); }
     var k = el("div", "carte-compte"); c.appendChild(k);
-    if (!carnet.length) { k.appendChild(el("p", "og-vide", inscriptions.some(function (i) { return i.statut === "acceptee"; }) ? "Pas encore de nouvelle : elles arrivent pendant le séjour." : "Le carnet s'ouvre quand une structure confirme une place pour votre enfant.")); return; }
+    if (!carnet.length) { k.appendChild(el("p", "og-vide", inscriptions.some(function (i) { return i.statut === "acceptee"; }) ? "Pas encore de nouvelle : elles arrivent pendant le séjour." : "Le carnet s'ouvre quand une structure confirme une place, ou avec le code du séjour qu'elle vous donne pour votre enfant.")); return; }
     var fil = el("ol", "pa-carnet");
     carnet.forEach(function (x) {
       var li = el("li"); li.appendChild(el("p", "pa-c-sur", E.dateFr(x.jour) + " · " + x.sejour + (x.auteur ? " · " + x.auteur : "")));
@@ -161,7 +210,12 @@
     if (window.FRA_PARENT.apres) window.FRA_PARENT.apres(compte);
   }
   window.FRA_PARENT = {
-    ouvrir: async function (ctx) { E = window.FRA_ESPACE; C = ctx; await tout(); return compte; },
+    ouvrir: async function (ctx) {
+      E = window.FRA_ESPACE; C = ctx; await tout();
+      var m = location.search.match(/[?&]code=([A-Za-z0-9-]{4,16})/);
+      if (m && compte) { await ajouterCode(m[1]); try { history.replaceState(null, "", location.pathname + "?onglet=carnet"); } catch (e) {} }
+      return compte;
+    },
     compte: function () { return compte; }, inscriptions: function () { return inscriptions; }
   };
 })();

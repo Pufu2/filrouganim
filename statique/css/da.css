@@ -2476,3 +2476,44 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .ac-b { overflow: hidden; }
 .ac-b-ill { display: flex; align-items: center; justify-content: center; height: 132px; margin: -24px -24px 12px; padding: 16px; background: #f7f1e8; }
 .ac-b-ill img { max-width: 100%; max-height: 100%; }
+
+/* Le carnet de séjour côté familles (gabarits/enfants-carnet.html) : le code, puis les nouvelles */
+.cf { max-width: 760px; margin: 0 auto; padding-bottom: 40px; }
+.cf-code, .cf-carnet { background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; padding: 24px 26px; }
+.cf-code label { display: block; font-weight: 600; color: #17191d; margin-bottom: 8px; }
+.cf-ligne { display: flex; gap: 10px; flex-wrap: wrap; }
+.cf-ligne input { flex: 1 1 220px; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid rgba(23, 25, 29, .18); border-radius: 10px; font: inherit; font-size: 1.05rem; }
+#cf-q { letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+.cf-ligne .bouton-r { height: 48px; padding: 0 20px; border: 0; border-radius: 10px; }
+.cf-aide { margin: 10px 0 0; color: #6c7077; font-size: .88rem; }
+.cf-carnet { margin-top: 16px; }
+.cf-tete h2 { margin: 2px 0 2px; font: 600 1.5rem/1.2 var(--titres); color: #17191d; }
+.cf-tete p:not(.fs-sur) { margin: 0; color: #6c7077; }
+.cf-suivre { display: grid; gap: 10px; margin: 18px 0 8px; padding: 16px 18px; border-radius: 14px; background: #fdf3e7; }
+.cf-suivre b { display: block; color: #17191d; } .cf-suivre span { color: #6c7077; font-size: .9rem; }
+.cf-vide, .cf-espace { color: #6c7077; font-size: .92rem; }
+.cf-espace a { color: #a8162a; }
+@media (max-width: 700px) { .cf-code, .cf-carnet { padding: 18px; } }
+.sj-code { padding: 12px 0; border-top: 1px solid rgba(23, 25, 29, .09); }
+.sj-code:first-of-type { border-top: 0; }
+.sj-code-t { margin: 0 0 8px; font-weight: 500; color: #17191d; }
+.sj-code-v { max-width: 150px; letter-spacing: .14em; font-weight: 600; text-transform: uppercase; }
+/* l'espace parent : mes enfants, suivre un séjour, préparer le départ */
+.pa-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pa-duo > .pa-k { margin: 0; }
+.pa-enfant { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid rgba(23, 25, 29, .08); }
+.pa-enfant:first-of-type { border-top: 0; }
+.pa-enfant-i { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #fdf0e1; color: #b9561a; font-weight: 600; }
+.pa-enfant b { display: block; color: #17191d; } .pa-enfant small { color: #6c7077; }
+.pa-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.pa-k-pied { display: inline-block; margin-top: 10px; }
+.pa-code { display: flex; gap: 8px; margin-top: 10px; }
+.pa-code input { flex: 1; min-width: 0; height: 42px; padding: 0 12px; border: 1px solid rgba(23, 25, 29, .18); border-radius: 10px; font: inherit; letter-spacing: .1em; text-transform: uppercase; }
+.pa-code-k { margin-bottom: 16px; }
+.pa-check { list-style: none; margin: 0; padding: 0; }
+.pa-check li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid rgba(23, 25, 29, .08); }
+.pa-check li:first-child { border-top: 0; }
+.pa-check label { display: flex; gap: 10px; align-items: center; cursor: pointer; color: #17191d; }
+.pa-check input { width: 18px; height: 18px; accent-color: #ee8a2f; flex: none; }
+.pa-check li.fait span { color: #8a8d93; text-decoration: line-through; }
+@media (max-width: 760px) { .pa-duo { grid-template-columns: minmax(0, 1fr); } .pa-check li { flex-wrap: wrap; } }

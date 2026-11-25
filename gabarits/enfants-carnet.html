@@ -1,14 +1,39 @@
 {% extends "base.html" %}
-{# Le carnet de séjour pour l'équipe : le directeur ou un animateur écrit la nouvelle du jour depuis son téléphone, sans compte,
-   avec le lien secret donné par la structure (?j=…). Fonctions carnet_equipe et ecrire_carnet de la base ;
-   chaque nouvelle part par e-mail aux familles dont l'enfant a une place confirmée. Page non indexée. #}
-{% block tete_note %}<p class="tp-sur">Carnet de séjour · pour l'équipe</p>{% endblock %}
-{% block h1 %}La nouvelle du <em>jour</em>{% endblock %}
-{% block tete_chapo %}<p class="chapo">Quelques lignes sur la journée : les familles les reçoivent par e-mail et dans leur espace parent.</p>{% endblock %}
+{# Le carnet de séjour, deux usages sur la même adresse (page non indexée) :
+   - les familles (par défaut) : le code donné par la structure ouvre les nouvelles du séjour, sans compte, et l'inscription
+     pour les recevoir par e-mail (carnet_famille, suivre_carnet ; ?code=… pré-rempli, ?arret=… pour ne plus les recevoir) ;
+   - l'équipe (?j=…) : le directeur ou un animateur écrit la nouvelle du jour depuis son téléphone (carnet_equipe, ecrire_carnet). #}
+{% block tete_classe %} tete-soleil{% endblock %}
+{% block tete_note %}<p class="tp-sur" id="cj-sur">Inscrire mon enfant · carnet de séjour</p>{% endblock %}
+{% block h1 %}<span id="cj-h1">Le carnet de séjour</span>{% endblock %}
+{% block tete_chapo %}<p class="chapo" id="cj-chapo">Les nouvelles de la journée, racontées par l'équipe. Entrez le code que la structure vous a donné : pas besoin de compte.</p>{% endblock %}
 {% block tete_plus %}<div class="tp-espace" aria-hidden="true"></div>{% endblock %}
 {% block contenu %}
 <div class="sjc"><div class="cadre cj-carnet" id="cj" data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}">
-  <p class="cj-etat" id="cj-etat" role="status">Chargement…</p>
+  <p class="cj-etat" id="cj-etat" role="status" hidden>Chargement…</p>
+
+  {# les familles #}
+  <div class="cf" id="cf" hidden>
+    <form class="cf-code" id="cf-code">
+      <label for="cf-q">Le code du séjour</label>
+      <div class="cf-ligne"><input id="cf-q" name="code" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ex. K7MP2QXA" required><button type="submit" class="bouton-r">Ouvrir le carnet</button></div>
+      <p class="cf-aide">La structure donne ce code aux familles avant le départ (par e-mail, sur la convocation). Il ne montre que les nouvelles du séjour : aucune donnée sur les enfants.</p>
+      <p class="cj-retour sjf-ko" id="cf-erreur" role="alert" hidden></p>
+    </form>
+    <section class="cf-carnet" id="cf-carnet" hidden>
+      <div class="cf-tete"><p class="fs-sur" id="cf-dates"></p><h2 id="cf-titre"></h2><p id="cf-structure"></p></div>
+      <form class="cf-suivre" id="cf-suivre">
+        <div><b>Recevoir chaque nouvelle par e-mail</b><span>Un e-mail à chaque nouvelle de l'équipe, pendant le séjour. Arrêt en un clic.</span></div>
+        <div class="cf-ligne"><label class="sr" for="cf-email">Votre e-mail</label><input id="cf-email" type="email" required maxlength="200" placeholder="Votre e-mail" autocomplete="email"><button type="submit" class="bouton-r">M'inscrire</button></div>
+        <p class="cj-retour" id="cf-suivre-retour" role="status" hidden></p>
+      </form>
+      <ol class="pa-carnet" id="cf-liste"></ol>
+      <p class="cf-vide" id="cf-vide" hidden>Pas encore de nouvelle : l'équipe raconte les journées pendant le séjour. Inscrivez-vous pour les recevoir dès qu'elles arrivent.</p>
+      <p class="cf-espace">Vous avez un espace parent ? <a id="cf-lien-espace" href="/compte/?onglet=carnet">Ajoutez ce code dans votre espace</a> : les nouvelles y arrivent aussi.</p>
+    </section>
+  </div>
+
+  {# l'équipe #}
   <form class="formulaire cj-form" id="cj-form" hidden>
     <p class="cj-sejour" id="cj-sejour"></p>
     <label class="champ" id="cj-l-date" hidden><span>Session</span><select name="date_id"></select></label>
