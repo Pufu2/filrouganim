@@ -86,7 +86,7 @@ def animateurs(base, cle):
     return dem
 
 
-def message(x, d, demandes, site, relance):
+def message(x, d, demandes, site, relance, familles=None):
     """Objet, texte brut, HTML et phrase-clé du message pour une structure (premier envoi ou relance)."""
     pour = [m for m in demandes if d == "idf" or m["departement"] == d or d in (m.get("zone") or [])] or demandes
     n = len(pour)
@@ -124,23 +124,32 @@ def message(x, d, demandes, site, relance):
                      "Votre service peut créer sa page gratuitement : les demandes du secteur arrivent alors directement chez vous."]
         bouton = "Créer la page de votre service"
     else:
+        # structures (colos, accueils de loisirs, centres sociaux, MJC…) : les familles d'abord, les animateurs ensuite
         qui = (f"{n} stagiaire{s} BAFA" if stag == n else
                f"{n} animateur{s}" + (f", dont {stag} stagiaire{'s' if stag > 1 else ''} BAFA," if stag else ""))
         lieux = liste(sorted({LIEU.get(m["departement"], "en Île-de-France") for m in pour}))
-        sujet = f"{'Rappel : ' if relance else ''}{n} animateur{s} {verbe} un poste près de chez vous"
-        cle = f"En ce moment, {qui} {verbe}{toujours} un poste {lieux}."
+        nf = sum(1 for f in (familles or []) if f.get("departement") == d)
+        lieu = LIEU.get(d, "près de chez vous")
+        fam = (f" En ce moment, {nf} famille{'s' if nf > 1 else ''} {'cherchent' if nf > 1 else 'cherche'}{toujours} une place "
+               f"{lieu}." if nf else "")
+        cle = f"Côté recrutement, {qui} {verbe}{toujours} un poste {lieux}."
+        sujet = (("Rappel : " if relance else "") +
+                 (f"{nf} famille{'s' if nf > 1 else ''} {'cherchent' if nf > 1 else 'cherche'} un séjour près de chez vous" if nf
+                  else "vos séjours et accueils visibles par les familles, gratuitement"))
+        sujet = sujet[0].upper() + sujet[1:]
         if relance:
-            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. {cle}",
-                     "Votre page et une offre sont gratuites. Dès que votre page est vérifiée, vous voyez les animateurs qui "
-                     "cherchent déjà près de chez vous, et les nouvelles demandes de votre secteur arrivent directement chez vous.",
+            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}.{fam}",
+                     "Sur Fil Roug'Anim, vous publiez gratuitement vos séjours et vos accueils : les familles les trouvent près "
+                     "de chez elles et inscrivent leurs enfants en ligne, et les demandes arrivent directement chez vous.",
+                     f"{cle} Dès que votre page est vérifiée, vous voyez aussi les animateurs qui cherchent déjà près de chez vous.",
                      "C'est notre dernier message à ce sujet."]
         else:
-            paras = ["Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent, et leur demande part chez les "
-                     f"structures les plus proches. {cle} {'Ils n’ont' if n > 1 else 'Il n’a'} encore reçu aucune réponse : "
-                     "aucune structure de votre secteur n'est inscrite.",
-                     "Votre page et une offre sont gratuites. Une fois votre structure vérifiée, les demandes de votre secteur "
-                     "arrivent directement chez vous."]
-        bouton = "Créer la page de votre structure (2 minutes)"
+            paras = ["Sur Fil Roug'Anim, les familles trouvent les séjours et les accueils de loisirs près de chez elles et "
+                     f"inscrivent leurs enfants en ligne.{fam}",
+                     "Votre page, vos séjours et vos accueils sont publiés gratuitement : les demandes d'inscription des familles "
+                     "arrivent directement chez vous.",
+                     f"{cle} Une fois votre structure vérifiée, leurs demandes arrivent aussi chez vous."]
+        bouton = "Publier vos séjours et créer votre page (2 minutes)"
     texte = ("Bonjour,\n\n" + "\n\n".join(paras) + f"\n\n{bouton} : {lien}\n\n"
              f"Bonne journée,\nL'équipe Fil Roug'Anim\n{site}\n\n{STOP}\n")
     corps = ("<p>Bonjour,</p>" + "".join(f"<p>{html.escape(t)}</p>" for t in paras) + f'<p><a href="{lien}">{html.escape(bouton)}</a></p>'
@@ -164,6 +173,12 @@ def traiter(lot, essai=False, relance=False, delai=7, prospects=None):
     auto = lot.startswith("auto")
 
     demandes = animateurs(base, cle)
+    # les familles qui cherchent une place (besoins déposés sur le site ces 90 derniers jours), par département
+    depuis_f = (maintenant - dt.timedelta(days=90)).strftime("%Y-%m-%dT%H:%M:%S")
+    try:
+        familles = appel(f"{base}/besoins_familles?select=departement&cree_le=gte.{depuis_f}", cle) or []
+    except Exception:
+        familles = []
     if prospects is None:
         statut = "contacte" if relance else "a_contacter"
         prospects = appel(f"{base}/admin_prospects?select=cle,nom,email,ville,statut,etapes,note&type=eq.organisateur"
@@ -191,7 +206,7 @@ def traiter(lot, essai=False, relance=False, delai=7, prospects=None):
             if ecart < dt.timedelta(days=delai):
                 trop_tot += 1
                 continue
-        sujet, texte, corps, phrase = message(x, d, demandes, site, relance)
+        sujet, texte, corps, phrase = message(x, d, demandes, site, relance, familles)
         modele = (sujet, texte)
         if modele not in vus:
             vus.add(modele)
