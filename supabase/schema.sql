@@ -1264,3 +1264,8 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- v53 (appliquée par migration) : type et accueil « ehpad », public « personnes-agees » ; est_ehpad(sid) ; un EHPAD ne voit
 -- dans demandes_du_secteur()/_apercu() que les demandes personnes_agees ; structures_de_la_zone(z, dep, n, pa) : les demandes
 -- personnes_agees vont d'abord aux EHPAD abonnés, les autres ne vont pas chez un établissement qui n'est qu'un EHPAD.
+-- v54 (appliquée par migration) : mail_page(corps, bouton, lien, apres) (mise en page commune) ; alerter_admin (chaque
+-- evenements_admin part tout de suite à alertes@, le relevé GitHub reste en secours) ; bienvenue_animateur (fiche publiée et
+-- vérifiée) ; accuse_structure (fiche reçue, avant vérification) ; admin_info_manquante(sid, motif) ; structures.acces_type
+-- ('pass' | 'abonnement') et rappel_pass_le, acces_actif (e-mail « actif » à chaque paiement), rappeler_fin_pass() chaque jour
+-- à 8 h 13 (pg_cron « rappeler-fin-pass », 5 jours avant la fin d'un Pass) ; accuse_demande (animateur) ; bienvenue_parent.

@@ -36,10 +36,12 @@ def main():
         "smtp_host": "smtp-relay.brevo.com", "smtp_port": "587", "smtp_user": login, "smtp_pass": cle,
         "smtp_max_frequency": 60,
         "rate_limit_email_sent": 30,
-        "mailer_subjects_magic_link": "Ton lien de connexion à Fil Roug'Anim",
+        "mailer_subjects_magic_link": "Votre lien de connexion à Fil Roug'Anim",
         "mailer_templates_magic_link_content": (emails / "magic-link.html").read_text(encoding="utf-8"),
-        "mailer_subjects_confirmation": "Bienvenue sur Fil Roug'Anim : confirme ton adresse",
+        "mailer_subjects_confirmation": "Bienvenue sur Fil Roug'Anim : confirmez votre adresse",
         "mailer_templates_confirmation_content": (emails / "confirmation.html").read_text(encoding="utf-8"),
+        "mailer_subjects_recovery": "Choisissez votre nouveau mot de passe Fil Roug'Anim",
+        "mailer_templates_recovery_content": (emails / "nouveau-mot-de-passe.html").read_text(encoding="utf-8"),
     }
     req = urllib.request.Request(f"https://api.supabase.com/v1/projects/{projet}/config/auth",
                                  data=json.dumps(reglages).encode(), method="PATCH",
@@ -51,7 +53,7 @@ def main():
         sys.exit(f"Supabase refuse les réglages ({e.code}) : {e.read().decode(errors='ignore')[:500]}")
     print("Réglages enregistrés :")
     for k in ["smtp_host", "smtp_port", "smtp_admin_email", "smtp_sender_name", "rate_limit_email_sent",
-              "mailer_subjects_magic_link", "mailer_subjects_confirmation"]:
+              "mailer_subjects_magic_link", "mailer_subjects_confirmation", "mailer_subjects_recovery"]:
         print(f"  {k} = {rendu.get(k)}")
 
 

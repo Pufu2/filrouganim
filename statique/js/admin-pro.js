@@ -939,6 +939,13 @@
       return [cellule(s.nom || "Sans nom", s.email_contact), cellule(s.ville, s.departement), cellule(s.identifiant || "non donné", s.site || ""), cellule(depuis(s.cree_le), paye(s) ? "abonnée jusqu'au " + E.dateFr(s.abonnement_fin) : "formule gratuite"),
         actions([["✓ Vérifier", function () { A.modifier("structures", s.id, { verifiee: true }); }, null, "ap-fort"], ["Espace", function () { ouvrirEspace("structure", s.id); }],
                  s.email_contact ? ["✉ Écrire", null, "mailto:" + s.email_contact + "?subject=" + encodeURIComponent("Votre page sur Fil Roug'Anim")] : null,
+                 s.email_contact ? ["Il manque une information", async function () {
+                   var motif = prompt("Qu'est-ce qui manque ou bloque ? (la phrase part telle quelle à " + s.email_contact + ")", "le numéro SIRET ne correspond pas à la structure indiquée");
+                   if (!motif) return;
+                   var r = await E.sb.rpc("admin_info_manquante", { sid: s.id, motif: motif });
+                   if (r.error) return E.message(E.erreur(r.error), true);
+                   E.message("C'est envoyé à " + s.email_contact + ".");
+                 }] : null,
                  ["Supprimer", function () { A.supprimer("structures", s.id, s.nom); }, null, "ap-danger"]])];
     }));
     var s1 = el("p", "ap-titre-s"); s1.appendChild(el("i", "ap-dot")); s1.appendChild(document.createTextNode("En ligne dans l'annuaire · " + enLigne.length + " dont " + abonnees.length + " abonnée" + (abonnees.length > 1 ? "s" : ""))); w.appendChild(s1);
