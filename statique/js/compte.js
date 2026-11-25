@@ -381,13 +381,44 @@
       var ec = $("espace-compte"); ec.insertBefore(barre, ec.firstChild);
       var voile = el("div", "app-voile"); voile.addEventListener("click", function () { document.body.classList.remove("menu-ouvert"); }); ec.appendChild(voile);
     }
+    majDock();
     var mp2 = $("app-ma-page");
     mp2.hidden = !(vueApp === "v-structure" && pageEnLigne(structure) && structure.slug && structure.page_publique);
     if (!mp2.hidden) mp2.href = L.lien_structures + structure.slug + "/";
     majTitreApp();
   }
+  // téléphone : les 4 premières rubriques de l'espace en bas de l'écran, sous le pouce, et « Menu » pour les autres
+  // (les boutons renvoient aux mêmes boutons du menu ; caché sur ordinateur et dans l'administration)
+  function majDock() {
+    var dock = $("app-dock");
+    if (!dock) {
+      dock = el("nav", "app-dock"); dock.id = "app-dock"; dock.setAttribute("aria-label", "Rubriques principales");
+      $("espace-compte").appendChild(dock);
+    }
+    dock.hidden = !vueApp || vueApp === "v-admin";
+    if (dock.hidden || dock.dataset.vue === vueApp) return;
+    dock.dataset.vue = vueApp;
+    dock.textContent = "";
+    var nav = $(vueApp).querySelector(".co-nav");
+    Array.prototype.filter.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) { return !b.hidden && b.dataset.ongletVers !== "guide"; }).slice(0, 4).forEach(function (b) {
+      var d = el("button", "app-dock-b"); d.type = "button"; d.dataset.dock = b.dataset.ongletVers;
+      var ic = b.querySelector("svg"); if (ic) d.appendChild(ic.cloneNode(true));
+      d.appendChild(el("span", null, (b.querySelector("span") || b).textContent));
+      d.addEventListener("click", function () { b.click(); window.scrollTo(0, 0); });
+      dock.appendChild(d);
+    });
+    var m = el("button", "app-dock-b"); m.type = "button"; m.setAttribute("aria-label", "Toutes les rubriques");
+    m.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+    m.appendChild(el("span", null, "Menu"));
+    m.addEventListener("click", function () { document.body.classList.toggle("menu-ouvert"); });
+    dock.appendChild(m);
+  }
   function majTitreApp() {
     if (!vueApp) return;
+    var dk = $("app-dock"), cour = $(vueApp).querySelector(".co-nav [aria-current]");
+    if (dk) Array.prototype.forEach.call(dk.querySelectorAll("[data-dock]"), function (d) {
+      if (cour && d.dataset.dock === cour.dataset.ongletVers) d.setAttribute("aria-current", "page"); else d.removeAttribute("aria-current");
+    });
     var c = $(vueApp).querySelector(".co-nav [aria-current] span");
     $("app-barre").querySelector(".app-titre").textContent = c ? c.textContent : "Mon espace";
     var n = Array.prototype.reduce.call($(vueApp).querySelectorAll(".co-nav .co-pastille:not([hidden]):not(.co-pastille-neutre)"), function (a, p) { return a + (parseInt(p.textContent, 10) || 1); }, 0);

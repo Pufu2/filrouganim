@@ -73,3 +73,34 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !p.hidden) { montrer(false); b.focus(); } });
 })();
 
+
+// Téléphone : les longues listes de liens (pied de page, « par ville », « par vacances »…) se replient derrière leur titre.
+// Les liens restent dans la page ; un toucher sur le titre les déplie. Rien ne change sur ordinateur.
+(function () {
+  var tel = window.matchMedia("(max-width: 700px)");
+  var titres = Array.prototype.slice.call(document.querySelectorAll(".ft-cat > .ft-cat-t, .ft-explore-h, .cadre.explorer > div > h3"));
+  if (!titres.length) return;
+  function basculer(t) {
+    var bloc = t.closest(".ft-cat, .ft-explore, .explorer > div"), oui = t.getAttribute("aria-expanded") !== "true";
+    t.setAttribute("aria-expanded", oui ? "true" : "false");
+    bloc.classList.toggle("tel-ouvert", oui);
+  }
+  function regler() {
+    titres.forEach(function (t) {
+      var bloc = t.closest(".ft-cat, .ft-explore, .explorer > div");
+      if (tel.matches) {
+        bloc.classList.add("tel-repli");
+        if (!t.hasAttribute("aria-expanded")) { t.setAttribute("role", "button"); t.tabIndex = 0; t.setAttribute("aria-expanded", "false"); }
+      } else {
+        bloc.classList.remove("tel-repli", "tel-ouvert");
+        t.removeAttribute("role"); t.removeAttribute("tabindex"); t.removeAttribute("aria-expanded");
+      }
+    });
+  }
+  titres.forEach(function (t) {
+    t.addEventListener("click", function () { if (tel.matches) basculer(t); });
+    t.addEventListener("keydown", function (e) { if (tel.matches && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); basculer(t); } });
+  });
+  regler();
+  tel.addEventListener("change", regler);
+})();
