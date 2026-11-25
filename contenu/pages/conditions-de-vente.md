@@ -30,7 +30,7 @@ Pour chaque centre payé, pendant toute la durée de l'abonnement, en plus de ce
 - tous ses séjours et accueils en ligne, et toutes les demandes de place des familles avec leurs coordonnées ;
 - sur sa page, le calendrier de l'année et le bloc « Qui vous accueille » ;
 - la boîte à outils (guides, générateur d'annonce, budget de l'équipe) et les pages de ses centres en plus ;
-- **toutes les demandes de place des familles en entier**, sans limite : à partir de la 3e demande, sans abonnement ni Pass, les demandes continuent d'arriver mais les coordonnées de la famille restent masquées ; elles s'affichent toutes, anciennes comprises, dès le paiement.
+- **toutes les demandes de place des familles en entier**, sans limite : à partir de la 2e demande, sans abonnement ni Pass, les demandes continuent d'arriver mais les coordonnées de la famille restent masquées ; elles s'affichent toutes, anciennes comprises, dès le paiement.
 
 ## Pass recrutement
 
