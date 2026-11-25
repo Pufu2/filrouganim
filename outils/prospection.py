@@ -124,8 +124,8 @@ def message(x, d, demandes, site, relance):
                      "Votre service peut créer sa page gratuitement : les demandes du secteur arrivent alors directement chez vous."]
         bouton = "Créer la page de votre service"
     else:
-        qui = f"{n} animateur{s}" + (f", dont {stag} stagiaire{'s' if stag > 1 else ''} BAFA," if stag and stag < n else
-                                     (" stagiaires BAFA" if stag == n and n > 1 else (" stagiaire BAFA" if stag else "")))
+        qui = (f"{n} stagiaire{s} BAFA" if stag == n else
+               f"{n} animateur{s}" + (f", dont {stag} stagiaire{'s' if stag > 1 else ''} BAFA," if stag else ""))
         lieux = liste(sorted({LIEU.get(m["departement"], "en Île-de-France") for m in pour}))
         sujet = f"{'Rappel : ' if relance else ''}{n} animateur{s} {verbe} un poste près de chez vous"
         cle = f"En ce moment, {qui} {verbe}{toujours} un poste {lieux}."

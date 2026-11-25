@@ -2,7 +2,8 @@
 """Prospection automatique, chaque matin : pour chaque nouvel animateur (fiche publiée ou demande de l'annuaire inversé)
 dans un département où aucune structure vérifiée n'est inscrite, les mairies les plus proches (annuaire officiel
 service-public.fr) reçoivent le message de prospection. Elles sont notées dans admin_prospects (« lot auto-AAAA-MM-JJ »),
-et une mairie déjà présente dans la liste n'est jamais réécrite. Les lots automatiques sont relancés une seule fois,
+et une mairie déjà présente dans la liste n'est jamais réécrite. Les structures ajoutées à la main avec une note
+« lot auto-AAAA-MM-JJ · … » (accueils de loisirs trouvés par recherche web autour des nouveaux animateurs) partent aussi. Les lots automatiques sont relancés une seule fois,
 7 jours après le premier message, s'ils n'ont pas répondu (statut resté « contacte »).
 
 Usage (GitHub Actions ; voir .github/workflows/prospection-auto.yml) :
@@ -160,16 +161,22 @@ def main():
     lignes = [{"cle": m["cle"], "type": "organisateur", "nom": m["nom"], "email": m["email"],
                "ville": f"{m['commune']} ({m['dep']}) · accueils de loisirs et périscolaire", "statut": "a_contacter", "etapes": [],
                "note": f"lot {lot} · annuaire officiel service-public.fr" + (f" · {m['site']}" if m["site"] else "")} for m in choisies]
-    envoyes = 0
-    if lignes:
-        if args.essai:
-            envoyes = P.traiter(lot, essai=True, prospects=lignes)
-        else:
+    # en attente : les structures ajoutées à la main dans un lot automatique (accueils de loisirs, centres sociaux, MJC,
+    # associations trouvés par recherche web autour des nouveaux animateurs), pas encore écrites
+    attente = [x for x in (P.appel(f"{base}/admin_prospects?select=cle,nom,email,ville,statut,etapes,note&type=eq.organisateur"
+                                   f"&statut=eq.a_contacter&email=not.is.null", cle) or [])
+               if (x.get("note") or "").startswith("lot auto-")]
+    if args.essai:
+        envoyes = P.traiter("auto", essai=True, prospects=lignes + attente) if (lignes or attente) else 0
+    else:
+        if lignes:
             req = urllib.request.Request(f"{base}/admin_prospects?on_conflict=cle", method="POST", data=json.dumps(lignes).encode(),
                                          headers={"apikey": cle, "Authorization": f"Bearer {cle}", "Content-Type": "application/json",
                                                   "Prefer": "return=minimal,resolution=ignore-duplicates"})
             urllib.request.urlopen(req, timeout=60).read()
-            envoyes = P.traiter(lot)
+        envoyes = P.traiter("auto") if (lignes or attente) else 0
+    if attente:
+        print(f"  {len(attente)} structure(s) ajoutée(s) à la main dans un lot automatique, envoyée(s) avec ce lancement.")
     relances = P.traiter("auto", essai=args.essai, relance=True, delai=7)
 
     for ligne, ms, rem in recap:
