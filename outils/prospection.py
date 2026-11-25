@@ -147,14 +147,14 @@ def message(x, d, demandes, site, relance, familles=None):
                      "L'inscription sur Fil Roug'Anim est gratuite, avec un premier séjour, accueil de loisirs ou périscolaire en ligne : "
                      f"les familles le trouvent près de chez elles et vous demandent une place, et la première demande vous arrive en entier. {payant}",
                      f"{cle} Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous, et "
-                     "vous pouvez ouvrir gratuitement la demande de l'un d'eux.",
+                     f"vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}.",
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = ["Sur Fil Roug'Anim, les familles trouvent les séjours, les accueils de loisirs et le périscolaire près de chez "
                      f"elles et vous demandent une place en ligne.{fam}",
                      "L'inscription est gratuite : votre page, un séjour ou accueil en ligne, et la première demande d'une famille "
                      f"en entier (nom, e-mail, téléphone). {payant}",
-                     f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement la demande de l'un d'eux."]
+                     f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}."]
         bouton = "Publier votre premier séjour ou accueil (inscription gratuite)"
         lien = f"{site}/recruter/sejours/"
     texte = ("Bonjour,\n\n" + "\n\n".join(paras) + f"\n\n{bouton} : {lien}\n\n"
