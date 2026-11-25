@@ -944,7 +944,7 @@
      Candidat (animateur, directeur)
      ==================================================================================== */
   var CHAMPS_PROFIL = ["prenom", "annee_naissance", "email_contact", "departement", "ville", "code_commune", "poste_recherche", "dispo_debut", "dispo_fin", "disponibilites",
-                       "diplomes", "recherche", "experiences", "activites", "permis_b", "mobilite", "presentation", "publie", "resume_public", "seize_ans", "alertes"];
+                       "diplomes", "recherche", "experiences", "activites", "permis_b", "personnes_agees", "mobilite", "presentation", "publie", "resume_public", "seize_ans", "alertes"];
   var assistantProfil = Assistant($("bloc-profil"), apercuProfil);
   var cvAEnvoyer = null;
   // l'espace des organismes de formation : tout est dans statique/js/organisme.js
@@ -1437,6 +1437,9 @@
     if (a.indexOf("periscolaire") >= 0) return "periscolaire";
     if (a.indexOf("accueil-de-jeunes") >= 0) return "accueil-de-jeunes";
     if (a.indexOf("sejours") >= 0 || a.indexOf("mini-camps") >= 0) return "sejours";
+    if (a.indexOf("sejours-adaptes") >= 0) return "sejours-adaptes";
+    if (a.indexOf("stages-vacances") >= 0) return "club";
+    if (a.indexOf("camps") >= 0) return "mouvement";
     return ["association", "collectivite"].indexOf(d.statut) >= 0 ? d.statut : "autre";
   }
   // au moins un accueil coché, et des âges dans l'ordre
@@ -1858,8 +1861,9 @@
       s3.appendChild(k3);
     }
     // ce qu'il sait faire
-    if ((p.experiences || []).length || (p.activites || []).length) {
+    if ((p.experiences || []).length || (p.activites || []).length || p.personnes_agees) {
       var s4 = sect(pr, "L'expérience", "Ce que " + qui + " sait faire"), k4 = el("div", "fs-carte fs-bloc-t");
+      if (p.personnes_agees) k4.appendChild(el("p", "fs-sous", "Ouvert·e aussi à l'animation auprès des personnes âgées (EHPAD, résidences)"));
       if ((p.experiences || []).length) { k4.appendChild(el("p", "fs-sous", "Ses expériences")); var u1 = el("ul", "fa-puces"); p.experiences.forEach(function (x) { u1.appendChild(el("li", null, libelle("experiences", x))); }); k4.appendChild(u1); }
       if ((p.activites || []).length) { k4.appendChild(el("p", "fs-sous", "Ses activités et talents")); var u2 = el("ul", "fa-puces fa-puces-douces"); p.activites.forEach(function (x) { u2.appendChild(el("li", null, majuscule(x))); }); k4.appendChild(u2); }
       s4.appendChild(k4);
@@ -2091,7 +2095,7 @@
   }
 
   /* -- candidats (structures vérifiées seulement : la base refuse les autres) -- */
-  var CHAMPS_VUS = "id,prenom,departement,ville,poste_recherche,mobilite,diplomes,recherche,experiences,activites,permis_b," +
+  var CHAMPS_VUS = "id,prenom,departement,ville,poste_recherche,mobilite,diplomes,recherche,experiences,activites,permis_b,personnes_agees," +
                    "dispo_debut,dispo_fin,disponibilites,presentation,email_contact,maj_le,cv_nom,annee_naissance,qualifications";
   async function chargerCandidats() {
     var f = $("f-candidats");

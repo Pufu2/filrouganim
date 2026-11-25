@@ -1257,3 +1257,7 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- lecture publique), code_famille(did, nouveau) pour la structure, carnet_famille(code) et suivre_carnet(code, email) /
 -- arreter_carnet(jeton) pour les familles sans compte (table carnet_abonnes), ajouter_code_carnet(code) pour un parent
 -- connecté (table carnet_suivis) ; mon_carnet() et prevenir_carnet() tiennent compte des deux.
+-- v52 (appliquée par migration) : structures.type accepte « sejours-adaptes », « club », « mouvement » ; accueils accepte
+-- « sejours-adaptes », « stages-vacances », « camps » ; publics accepte « adultes ». profils.personnes_agees et
+-- demandes.personnes_agees (booléens, faux par défaut) : l'animateur est ouvert à l'animation auprès des personnes âgées ;
+-- envoyer_demande() le lit dans d ->> 'personnes_agees'.

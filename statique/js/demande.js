@@ -132,7 +132,8 @@
     var z = zone(d);
     var corps = { poste: d.poste, departement: d.departement, ville: d.ville, zone: z, partout: d.etendue === "partout", periodes: d.periodes,
                   dispo_debut: d.dispo_debut, dispo_fin: d.dispo_fin, diplomes: d.diplomes, experiences: d.experiences,
-                  message: d.message, prenom: d.prenom, annee_naissance: d.annee_naissance, email_contact: d.email_contact, seize_ans: d.seize_ans };
+                  message: d.message, prenom: d.prenom, annee_naissance: d.annee_naissance, email_contact: d.email_contact, seize_ans: d.seize_ans,
+                  personnes_agees: !!(document.querySelector('[name="personnes_agees"]') || {}).checked };
     var b = $("dm-envoyer"); b.disabled = true;
     var r = await sb.rpc("envoyer_demande", { d: corps });
     b.disabled = false;

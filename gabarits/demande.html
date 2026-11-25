@@ -62,6 +62,7 @@
           <legend class="etape-q">Votre expérience</legend>
           <p class="etape-aide">Avec quels publics, dans quels accueils (même en stage ou bénévole)&nbsp;? Rien encore ? Passez, c'est normal pour un premier stage.</p>
           <div class="cases">{% for v, l in EXPERIENCES %}<label><input type="checkbox" name="experiences" value="{{ v }}"> {{ l }}</label>{% endfor %}</div>
+          <label class="case-accord dm-agees"><input type="checkbox" name="personnes_agees"> Je suis ouvert·e aussi à l'animation auprès des personnes âgées (EHPAD, résidences)</label>
         </fieldset>
         <fieldset class="etape" data-titre="Votre message">
           <legend class="etape-q">Quelques mots pour les structures</legend>
