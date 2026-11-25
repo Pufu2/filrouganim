@@ -2340,3 +2340,77 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .an2-recherche { margin-top: -30px; }
 .an2-recherche + .cadre .an2-nb { margin-top: 26px; }
 .an2 .tp-recherche .cadre { max-width: 780px; }
+
+/* =========================================================================================
+   HARMONIE (docs/CHARTE.md, § 5) : les anciens éléments des pages pas encore refaites prennent le langage de la charte.
+   Fond #f4f4f2 partout, titres de section comme .fs-tt, textes dans des cartes blanches, listes de liens en puces,
+   questions comme .le-faq, étapes comme .rc2-etapes, encart Jeuphorie comme .le-pouce. Rien ne change dans le HTML.
+   ========================================================================================= */
+.tete { padding-top: 22px; }
+.tete .cadre { padding-bottom: 54px; }
+.tete .fil-ariane { font-size: 13px; gap: 6px; margin-bottom: 26px; }
+.tete .fil-ariane a { color: #c9ccd1; }
+.tete h1 { font-weight: 600; font-size: clamp(2rem, 4.2vw, 3.05rem); line-height: 1.08; letter-spacing: -.035em; max-width: 880px; margin: 10px 0 14px; }
+.tete .chapo { font-size: 1.1rem; color: #d6d8dc; max-width: 720px; }
+.tete .tp-sur, .tete .note-main { display: inline-block; padding: 4px 11px; border-radius: 99px; background: #fff; color: #17191d !important; font: 500 .82rem/1.4 var(--texte) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.tete .chiffres { gap: 8px 10px; margin-top: 22px; }
+.tete .chiffres li { padding: 8px 14px; border-radius: 12px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .1); color: #c9ccd1; font-size: .9rem; }
+.tete .chiffres b { font-size: 1.15rem; font-weight: 600; }
+.tete .chiffres-fiche li { background: rgba(255, 255, 255, .07); }
+
+.bande { padding: 48px 0; }
+.bande-papier, .bande-sable, .bande-blanc { background: #f4f4f2; border: 0; }
+.bande + .bande { padding-top: 8px; }
+.bande > .cadre > h2, .bande > .cadre > .note-main + h2, .bande .cadre > h2:first-child { margin: 0 0 18px; font: 600 1.75rem/1.2 var(--titres); letter-spacing: -.02em; color: #17191d; }
+.bande .note-main { margin: 0 0 4px; font-size: .74rem !important; font-weight: 600 !important; letter-spacing: .12em !important; text-transform: uppercase; color: #d61f35 !important; }
+.bande .cadre.texte { background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; padding: 34px 40px; max-width: 860px; color: #2a2d33; line-height: 1.7; }
+.bande .cadre.texte > :first-child { margin-top: 0; }
+.bande .cadre.texte > :last-child { margin-bottom: 0; }
+.bande .cadre.texte a { color: #a8162a; }
+@media (max-width: 700px) { .bande .cadre.texte { padding: 22px 20px; margin-left: 16px; margin-right: 16px; } }
+
+/* les listes de liens « Explorer » : des cartes, des puces */
+.explorer { gap: 16px; align-items: start; }
+.explorer > div { background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; padding: 20px 22px; }
+.bande .explorer h3, .explorer h3 { margin: 0 0 10px; font: 600 .74rem/1.4 var(--texte) !important; letter-spacing: .12em !important; text-transform: uppercase; color: #d61f35 !important; }
+.explorer li { padding: 7px 0; border-bottom: 1px solid rgba(23, 25, 29, .07); }
+.explorer li:last-child { border-bottom: 0; }
+.explorer a { font-weight: 500; font-size: .93rem; }
+.explorer small { font-size: .8rem; padding: 1px 7px; border-radius: 99px; background: #f4f4f2; }
+
+/* les cartes de liens, les articles */
+.cartes-liens a, .article-carte { border: 1px solid rgba(23, 25, 29, .09) !important; border-radius: 16px !important; box-shadow: none !important; transition: border-color .15s, transform .15s, box-shadow .15s; }
+.cartes-liens a:hover, .article-carte:hover { border-color: rgba(23, 25, 29, .22) !important; transform: translateY(-2px); box-shadow: 0 14px 30px -20px rgba(23, 25, 29, .35) !important; }
+.article-sur { font-size: .72rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #d61f35 !important; }
+.article-carte h2, .article-carte h3 { font-weight: 600; letter-spacing: -.01em; }
+
+/* les questions */
+.faq { gap: 0; max-width: none; background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; padding: 4px 26px; }
+.faq details { border: 0 !important; border-top: 1px solid rgba(23, 25, 29, .09) !important; border-radius: 0; padding: 0; background: none; }
+.faq details:first-child { border-top: 0 !important; }
+.faq summary { padding: 17px 36px 17px 0; position: relative; font-weight: 500; color: #17191d; }
+.faq summary::after { content: "" !important; position: absolute; right: 2px; top: 50%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: #f4f4f2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317191d' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 7v10M7 12h10'/%3E%3C/svg%3E") center / 14px no-repeat; transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); background-color: #fbecee; }
+.faq details p { margin: -4px 0 18px; color: #3a3d43; line-height: 1.7; max-width: 680px; }
+
+/* l'essentiel en chiffres */
+.bref { gap: 0; background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; overflow: hidden; }
+.bref li { background: none; border: 0; border-left: 1px solid rgba(23, 25, 29, .09); border-radius: 0; padding: 18px 20px; }
+.bref li:first-child { border-left: 0; }
+.bref b { font-weight: 600; color: #17191d; letter-spacing: -.02em; }
+@media (max-width: 700px) { .bref li { border-left: 0; border-top: 1px solid rgba(23, 25, 29, .09); } .bref li:first-child { border-top: 0; } }
+
+/* les étapes */
+.trois-pas li { background: #fff; border: 1px solid rgba(23, 25, 29, .09); border-radius: 16px; padding: 22px 22px 20px 70px; }
+.trois-pas li::before { left: 20px; top: 20px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #fbecee; color: #a8162a; font: 600 .95rem/1 var(--texte); }
+.trois-pas b { font-weight: 600; font-size: 1.05rem; }
+.trois-pas a { font-weight: 500; color: #a8162a; }
+
+/* l'encart Jeuphorie */
+.encart-jeuphorie { max-width: none; border-radius: 16px; border-color: rgba(23, 25, 29, .09); padding: 16px 20px; color: #6c7077; font-size: .92rem; }
+.encart-jeuphorie .note-main { display: inline !important; margin-right: 6px; font-size: .92rem !important; letter-spacing: 0 !important; text-transform: none !important; color: #17191d !important; font-weight: 600 !important; }
+.encart-jeuphorie a { color: #a8162a; }
+
+/* les sessions et les offres en liste : cartes de la charte */
+.session { border: 1px solid rgba(23, 25, 29, .09); border-radius: 14px; box-shadow: none; }
+.session:hover { border-color: rgba(23, 25, 29, .2); }

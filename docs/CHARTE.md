@@ -74,3 +74,11 @@ ronds de couleur). Pas d'emoji dans l'interface.
 - Responsive : 980px (une colonne, la colonne de côté passe sous le texte, sommaire replié en haut) et 700px
   (cartes sur une colonne, marges 16-20px). Aucune largeur fixe qui déborde ; vérifier `scrollWidth = 390`.
 - Vérifier chaque modèle modifié en capture (1440 et 390) avant de le dire fini.
+
+## 5. L'harmonie des anciennes pages
+
+Les pages pas encore refaites (sessions, écoles, accueil, blog, outils, chiffres…) gardent leur HTML, mais une couche
+« HARMONIE » à la fin de `da.css` leur donne le langage de la charte : haut foncé avec rubrique en pastille, fond
+#f4f4f2, titres de section à la taille de `.fs-tt`, textes dans des cartes blanches, listes de liens en cartes, questions
+comme `.le-faq`, étapes comme `.rc2-etapes`, encart Jeuphorie comme `.le-pouce`. Une page qu'on refait passe sur un modèle
+(§ 3) ; la couche reste pour les autres.
