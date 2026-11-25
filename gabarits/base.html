@@ -20,6 +20,8 @@
 <link rel="apple-touch-icon" href="{{ statique('apple-touch-icon.png') }}">
 <link rel="preload" href="{{ statique('polices/inter-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ statique('polices/inter-latin-600-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+{# ouverte dans le panneau d'un espace connecté (?espace=1) : sans le menu ni le pied du site #}
+<script>if(/[?&]espace=1(&|$)/.test(location.search))document.documentElement.classList.add("embarque");</script>
 <link rel="stylesheet" href="{{ statique('css/site.css') }}">
 <link rel="stylesheet" href="{{ statique('css/da.css') }}">
 {% if fil_jsonld %}<script type="application/ld+json">{{ fil_jsonld | safe }}</script>{% endif %}
@@ -201,5 +203,11 @@ try { if (!localStorage.getItem("fra-provenance")) {
 <script src="{{ statique('js/menu.js') }}" defer></script>
 {% if site.supabase and site.supabase.url %}<script src="{{ statique('js/clics.js') }}" defer data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></script>{% endif %}
 <script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>=e.offsetHeight);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
+<script>(function(){if(!document.documentElement.classList.contains("embarque"))return;
+// dans le panneau : les liens du site restent dans le panneau (sans menu), l'espace connecté et les sites extérieurs s'ouvrent en grand
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;var u;try{u=new URL(a.href,location.href)}catch(x){return}
+if(u.origin!==location.origin){a.target="_blank";a.rel="noopener";return}
+if(/^\/compte\//.test(u.pathname)){a.target="_top";return}
+if(!u.searchParams.has("espace")){u.searchParams.set("espace","1");a.href=u.toString()}},true)})();</script>
 </body>
 </html>

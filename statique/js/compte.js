@@ -160,12 +160,12 @@
     var acts = el("div", "co-e-actions");
     (d.actions || []).forEach(function (a, i) {
       var b;
-      if (a[2] === 2) { b = el("a", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.href = a[1]; if (/^\/|^http/.test(a[1]) && a[1].indexOf("/compte/") < 0) { b.target = "_blank"; b.rel = "noopener"; } }
+      if (a[2] === 2) { b = el("a", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.href = a[1]; if (/^http/.test(a[1]) && a[1].indexOf(location.host) < 0) { b.target = "_blank"; b.rel = "noopener"; } }
       else if (a[2] === 1) { b = el("button", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.type = "button"; b.addEventListener("click", function () { var c = v.querySelector(a[1]); if (c) { c.click(); var bl = c.closest("[data-onglet]"); if (bl) allerA(bl.id); } }); }
       else { b = el("button", i === 0 ? "bouton-r" : "bouton-blanc", a[0]); b.type = "button"; b.dataset.ongletVers = a[1]; }
       acts.appendChild(b);
     });
-    if (d.guide) { var gd = el("a", "co-e-guide", "✦ " + d.guide[0]); gd.href = d.guide[1]; gd.target = "_blank"; gd.rel = "noopener"; acts.appendChild(gd); }
+    if (d.guide) { var gd = el("a", "co-e-guide", "✦ " + d.guide[0]); gd.href = d.guide[1]; acts.appendChild(gd); }
     if (acts.children.length) g.appendChild(acts);
     e.appendChild(g);
     var r = d.resume;
@@ -2926,6 +2926,44 @@
     montrer("v-connexion");
     message("Votre compte et vos données sont supprimés.");
   }
+
+  /* -- Rester dans l'espace : un lien vers une page du site (guide, exemple, formulaire, conditions) s'ouvre dans un
+        panneau par-dessus l'espace, sans le menu du site (?espace=1). Le logo, les liens marqués data-sortie et les sites
+        extérieurs (Stripe, factures…) gardent leur comportement. -- */
+  var panneau = null, panneauFormulaire = false;
+  function ouvrirPanneau(u, titre) {
+    if (!panneau) {
+      panneau = el("div", "esp-panneau"); panneau.setAttribute("role", "dialog"); panneau.setAttribute("aria-modal", "true");
+      var boite = el("div", "esp-panneau-boite"), barre = el("div", "esp-panneau-barre");
+      barre.appendChild(el("b")); var ext = el("a", null, "Ouvrir dans un onglet ↗"); ext.target = "_blank"; ext.rel = "noopener"; barre.appendChild(ext);
+      var fe = el("button", null, "Fermer"); fe.type = "button"; fe.addEventListener("click", fermerPanneau); barre.appendChild(fe);
+      var fr = document.createElement("iframe"); fr.title = "Page du site";
+      fr.addEventListener("load", function () { try { if (/\/demande\//.test(fr.contentWindow.location.pathname)) panneauFormulaire = true; } catch (e) {} });
+      boite.appendChild(barre); boite.appendChild(fr); panneau.appendChild(boite); document.body.appendChild(panneau);
+      panneau.addEventListener("click", function (e) { if (e.target === panneau) fermerPanneau(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && panneau && !panneau.hidden) fermerPanneau(); });
+    }
+    var dedans = new URL(u.toString()); dedans.searchParams.set("espace", "1");
+    panneau.querySelector("b").textContent = titre || "Fil Roug'Anim";
+    var ext2 = panneau.querySelector(".esp-panneau-barre a"); ext2.href = u.toString();
+    panneau.querySelector("iframe").src = dedans.toString();
+    panneau.hidden = false; document.documentElement.style.overflow = "hidden";
+  }
+  function fermerPanneau() {
+    if (!panneau) return;
+    panneau.hidden = true; document.documentElement.style.overflow = ""; panneau.querySelector("iframe").src = "about:blank";
+    // après un formulaire envoyé dans le panneau (demande d'animateur, besoin d'une famille) : l'espace se met à jour
+    if (panneauFormulaire) { panneauFormulaire = false; location.reload(); }
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (!a.closest("#contenu") || a.closest(".co-marque") || a.closest(".esp-panneau") || a.hasAttribute("data-sortie") || a.hasAttribute("download")) return;
+    var u; try { u = new URL(a.href, location.href); } catch (x) { return; }
+    if (u.origin !== location.origin || /^\/compte\//.test(u.pathname) || u.pathname === "/" || /\.(pdf|jpg|png|csv)$/i.test(u.pathname)) return;
+    e.preventDefault();
+    ouvrirPanneau(u, (a.textContent || "").replace(/[→↗]/g, "").trim());
+  });
 
   // ce que l'espace admin (admin.js) réutilise : le client de la base et les briques de l'espace
   window.FRA_ESPACE = { sb: sb, el: el, ouvrirFiche: ouvrirFiche, fermerFiche: fermerFiche, message: message, erreur: erreurLisible,
