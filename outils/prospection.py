@@ -125,8 +125,8 @@ def message(x, d, demandes, site, relance, familles=None):
         sujet = sujet[0].upper() + sujet[1:]
         cle = (f"En ce moment, {n} animateur{s} {lieu} {verbe}{toujours} ouvert{s} à l'animation auprès des personnes âgées "
                "(EHPAD, résidences).")
-        offre = ("Votre établissement peut créer sa page gratuitement, publier une offre et ouvrir gratuitement "
-                 f"{'la demande de l’un d’eux' if n > 1 else 'sa demande'}. Ensuite, l'abonnement (dès {prix_ab} par an) ou "
+        offre = ("Votre établissement peut créer sa page gratuitement, publier une offre et ouvrir gratuitement une demande "
+                 "d'animateur de votre secteur. Ensuite, l'abonnement (dès {prix_ab} par an) ou "
                  f"le Pass recrutement (dès {prix_pass} pour un mois, sans engagement) donne accès à toutes les demandes et aux "
                  "profils des animateurs de votre secteur. Aucune commission.")
         if relance:
