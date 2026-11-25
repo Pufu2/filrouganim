@@ -140,20 +140,21 @@ def message(x, d, demandes, site, relance, familles=None):
                   else "vos séjours et accueils devant les familles de votre secteur"))
         sujet = sujet[0].upper() + sujet[1:]
         payant = (f"Ensuite, l'abonnement (dès {prix_ab} par an) ou le Pass recrutement (dès {prix_pass} pour un mois, sans "
-                  "engagement) vous donne les coordonnées de toutes les familles et vous permet de publier tous vos séjours, "
-                  "sans commission.")
+                  "engagement) vous donne toutes les demandes de place des familles avec leurs coordonnées, tous vos séjours en "
+                  "ligne et l'accès aux profils des animateurs de votre secteur. Aucune commission.")
         if relance:
             paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}.{fam}",
                      "L'inscription sur Fil Roug'Anim est gratuite, avec un premier séjour ou accueil en ligne : les familles le "
                      f"trouvent près de chez elles et vous demandent une place, et la première demande vous arrive en entier. {payant}",
-                     f"{cle} Dès que votre page est vérifiée, vous voyez aussi les animateurs qui cherchent déjà près de chez vous.",
+                     f"{cle} Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous, et "
+                     "vous pouvez ouvrir gratuitement la demande de l'un d'eux.",
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = ["Sur Fil Roug'Anim, les familles trouvent les séjours et les accueils de loisirs près de chez elles et vous "
                      f"demandent une place en ligne.{fam}",
                      "L'inscription est gratuite : votre page, un séjour ou accueil en ligne, et la première demande d'une famille "
                      f"en entier (nom, e-mail, téléphone). {payant}",
-                     f"{cle} Une fois votre structure vérifiée, leurs demandes arrivent aussi chez vous."]
+                     f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement la demande de l'un d'eux."]
         bouton = "Publier votre premier séjour (inscription gratuite)"
         lien = f"{site}/recruter/sejours/"
     texte = ("Bonjour,\n\n" + "\n\n".join(paras) + f"\n\n{bouton} : {lien}\n\n"
