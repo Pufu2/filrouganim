@@ -1433,6 +1433,7 @@
   // le « type » d'avant, gardé pour les pages et les filtres : déduit de ce qu'elle organise
   function typeDe(d) {
     var a = d.accueils || [];
+    if (a.indexOf("ehpad") >= 0 && a.every(function (x) { return x === "ehpad" || x === "autre"; })) return "ehpad";
     if (a.indexOf("extrascolaire") >= 0) return "accueil-de-loisirs";
     if (a.indexOf("periscolaire") >= 0) return "periscolaire";
     if (a.indexOf("accueil-de-jeunes") >= 0) return "accueil-de-jeunes";
@@ -1446,6 +1447,11 @@
   function controlerStructure() {
     var f = $("f-structure"), cases = f.querySelectorAll('[name="accueils"]'), une = Array.prototype.some.call(cases, function (c) { return c.checked; });
     cases[0].setCustomValidity(une ? "" : "Cochez au moins ce que vous organisez.");
+    // un EHPAD ou une résidence seuls : pas d'âge d'enfants à donner
+    var seulEhpad = Array.prototype.some.call(cases, function (c) { return c.checked && c.value === "ehpad"; }) &&
+                    !Array.prototype.some.call(cases, function (c) { return c.checked && c.value !== "ehpad" && c.value !== "autre"; });
+    f.age_min.required = f.age_max.required = !seulEhpad;
+    var blocAges = f.age_min.closest(".champ"); if (blocAges) blocAges.hidden = seulEhpad;
     var a = f.age_min.value, b = f.age_max.value;
     f.age_max.setCustomValidity(a !== "" && b !== "" && +b < +a ? "L'âge maximum doit être plus grand que l'âge minimum." : "");
     Array.prototype.forEach.call(f.querySelectorAll("[data-ages]"), function (x) { x.setAttribute("aria-pressed", x.dataset.ages === a + "-" + b ? "true" : "false"); });
@@ -2101,7 +2107,10 @@
     var f = $("f-candidats");
     var fav = await sb.from("favoris").select("profil_id").eq("structure_id", idEspace());
     favoris = (fav.data || []).map(function (x) { return x.profil_id; });
-    var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).eq("verifie", true).order("maj_le", { ascending: false }).limit(100);
+    var q = sb.from("profils").select(CHAMPS_VUS).eq("publie", true).eq("verifie", true);
+    // un EHPAD ou une résidence voit d'abord les animateurs ouverts à l'animation auprès des personnes âgées
+    if (structure && (structure.type === "ehpad" || (structure.accueils || []).indexOf("ehpad") >= 0)) q = q.order("personnes_agees", { ascending: false });
+    q = q.order("maj_le", { ascending: false }).limit(100);
     if (f.dep.value) q = q.or("departement.eq." + f.dep.value + ",mobilite.cs.{" + f.dep.value + "}");
     if (f.diplome.value) q = q.contains("diplomes", [f.diplome.value]);
     if (f.cherche.value) q = q.contains("recherche", [f.cherche.value]);

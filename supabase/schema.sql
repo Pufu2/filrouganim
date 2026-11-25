@@ -1261,3 +1261,6 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- « sejours-adaptes », « stages-vacances », « camps » ; publics accepte « adultes ». profils.personnes_agees et
 -- demandes.personnes_agees (booléens, faux par défaut) : l'animateur est ouvert à l'animation auprès des personnes âgées ;
 -- envoyer_demande() le lit dans d ->> 'personnes_agees'.
+-- v53 (appliquée par migration) : type et accueil « ehpad », public « personnes-agees » ; est_ehpad(sid) ; un EHPAD ne voit
+-- dans demandes_du_secteur()/_apercu() que les demandes personnes_agees ; structures_de_la_zone(z, dep, n, pa) : les demandes
+-- personnes_agees vont d'abord aux EHPAD abonnés, les autres ne vont pas chez un établissement qui n'est qu'un EHPAD.

@@ -133,14 +133,15 @@ def paragraphes(texte):
 # Libellés partagés avec la page Mon compte (gabarits/compte.html)
 TYPES_STRUCTURE = {"accueil-de-loisirs": "Accueil de loisirs", "sejours": "Organisateur de séjours", "accueil-de-jeunes": "Accueil de jeunes",
                    "periscolaire": "Accueil périscolaire", "association": "Association", "collectivite": "Collectivité", "autre": "Structure d'animation",
-                   "sejours-adaptes": "Séjours adaptés (VAO)", "club": "Club ou école (stages vacances)", "mouvement": "Mouvement de jeunesse"}
+                   "sejours-adaptes": "Séjours adaptés (VAO)", "club": "Club ou école (stages vacances)", "mouvement": "Mouvement de jeunesse",
+                   "ehpad": "EHPAD, résidence pour personnes âgées"}
 # les trois familles de structures (accueil, onglets) : des mots qui se distinguent vraiment
 FAMILLES_STRUCTURE = [("periscolaire", "Périscolaire"), ("extrascolaire", "Extrascolaire"), ("sejours", "Séjours")]
 FAMILLE_DE = {"periscolaire": "periscolaire", "accueil-de-loisirs": "extrascolaire", "accueil-de-jeunes": "extrascolaire", "sejours": "sejours",
               "sejours-adaptes": "sejours", "club": "extrascolaire", "mouvement": "sejours"}
 # ce qu'organise une structure (plusieurs choix possibles) et son statut (version 14 du schéma)
 ACCUEILS = {"periscolaire": "Périscolaire", "extrascolaire": "Extrascolaire", "accueil-de-jeunes": "Accueil de jeunes", "sejours": "Séjours",
-            "mini-camps": "Mini-camps", "sejours-adaptes": "Séjours adaptés", "stages-vacances": "Stages vacances", "camps": "Camps", "autre": "Autre accueil"}
+            "mini-camps": "Mini-camps", "sejours-adaptes": "Séjours adaptés", "stages-vacances": "Stages vacances", "camps": "Camps", "ehpad": "EHPAD, résidence", "autre": "Autre accueil"}
 STATUTS = {"association": "Association", "collectivite": "Collectivité", "entreprise": "Entreprise", "autre": "Autre"}
 FAMILLE_ACCUEIL = {"periscolaire": "periscolaire", "extrascolaire": "extrascolaire", "accueil-de-jeunes": "extrascolaire", "sejours": "sejours",
                    "mini-camps": "sejours", "sejours-adaptes": "sejours", "stages-vacances": "extrascolaire", "camps": "sejours"}
@@ -165,7 +166,7 @@ def ages_structure(st):
         return None
     return f"{a} an{'s' if a > 1 else ''}" if a == b else f"{a} à {b} ans"
 PUBLICS = {"3-5": "3-5 ans", "6-11": "6-11 ans", "12-14": "12-14 ans", "15-17": "15-17 ans", "handicap": "Enfants en situation de handicap",
-           "familles": "Familles", "18-25": "18-25 ans", "adultes": "Adultes (séjours adaptés)"}
+           "familles": "Familles", "18-25": "18-25 ans", "adultes": "Adultes (séjours adaptés)", "personnes-agees": "Personnes âgées"}
 DIPLOMES_PROFIL = {"stagiaire-bafa": "Stagiaire BAFA", "bafa": "BAFA", "stagiaire-bafd": "Stagiaire BAFD", "bafd": "BAFD", "psc1": "PSC1",
                    "surveillant-baignade": "Surveillant de baignade", "cqp-ap": "CQP animateur périscolaire", "cpjeps": "CPJEPS",
                    "bpjeps": "BPJEPS", "dejeps": "DEJEPS", "desjeps": "DESJEPS", "autre": "Autre diplôme"}
