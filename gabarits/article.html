@@ -4,6 +4,7 @@
 {% set a = page.article %}
 {% set cat = a.categorie or "Conseils" %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
+{% block le_theme %}{{ "theme-soleil" if cat == "Parents" else "theme-rouge" }}{% endblock %}
 {% block le_puces %}<li class="fs-puce-fort">{{ cat }}</li>{% if contenu %}<li>{{ contenu | temps_lecture }} min de lecture</li>{% endif %}<li>{% if a.mis_a_jour %}Mis à jour le {{ a.mis_a_jour | date_fr }}{% else %}Publié le {{ a.date | date_fr }}{% endif %}</li>{% endblock %}
 {% block le_texte %}
 <article class="fs-carte le-texte">

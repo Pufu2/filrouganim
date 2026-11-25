@@ -55,7 +55,7 @@
 <main id="contenu">
 {# Le haut de chaque page : une bande foncée avec le fil d'Ariane, le titre et l'essentiel #}
 {% block tete %}
-<section class="tete">
+<section class="tete{% block tete_classe %}{% endblock %}">
   <div class="cadre">
     {% if page.fil %}
     <nav class="fil-ariane" aria-label="Fil d'Ariane">

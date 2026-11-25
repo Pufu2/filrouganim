@@ -2,6 +2,7 @@
 {# Un guide (contenu/guides/*.md) en mise en page « lecture » (docs/CHARTE.md). La carte d'action et « À lire ensuite »
    suivent la partie du guide : se former, animateurs, parents (enfants) ou structures. #}
 {% set partie = page.entete.partie %}
+{% block le_theme %}{{ "theme-soleil" if partie == "enfants" else "theme-rouge" }}{% endblock %}
 {% block le_puces %}<li class="fs-puce-fort">{{ {"enfants": "Guide des parents", "structures": "Guide des structures"}.get(partie, "Guide") }}</li><li>{{ contenu | default('') | temps_lecture }} min de lecture</li><li>Mis à jour le {{ page.entete.mis_a_jour | date_fr }}</li>{% endblock %}
 {% block le_texte_fin %}<p class="le-maj">Ce guide cite ses sources officielles au fil du texte. Une erreur, un changement de règle ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a>.</p>{% endblock %}
 {% block le_cote %}

@@ -30,7 +30,7 @@
   {% if b.vide %}<p class="fs-vide lc2-vide">{{ b.vide }}</p>{% endif %}
   {% if b.lien %}<p class="lc2-lien"><a href="{{ lien(b.lien[1]) }}">{{ b.lien[0] }} <span aria-hidden="true">→</span></a></p>{% endif %}
 {% endmacro %}
-<div class="fs le lc2 lc-{{ L.public }} theme-rouge">
+<div class="fs le lc2 lc-{{ L.public }} {{ 'theme-soleil' if L.public == 'parent' else 'theme-rouge' }}">
   <header class="fs-haut le-haut{% if chiffres %} le-haut-ruban{% endif %}">
     <div class="fs-haut-fond" aria-hidden="true"></div>
     <div class="cadre fs-haut-in">

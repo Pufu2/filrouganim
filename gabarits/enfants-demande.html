@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {# L'annuaire inversé des parents : « Décrivez ce que vous cherchez pour votre enfant », la demande part chez les
    structures vérifiées les plus proches (deposer_besoin dans la base), qui répondent directement. Sans compte. #}
+{% block tete_classe %} tete-soleil{% endblock %}
 {% block tete_note %}<p class="tp-sur">Inscrire mon enfant · décrire mon besoin</p>{% endblock %}
 {% block h1 %}Décrivez ce que vous cherchez, <em>les structures vous répondent</em>{% endblock %}
 {% block tete_chapo %}<p class="chapo">Un accueil de loisirs pour les vacances ou les mercredis, le périscolaire, une colo cet été ? En deux minutes, votre demande part chez les structures vérifiées de votre secteur qui proposent ce que vous cherchez (5 au plus). Elles vous répondent directement. Gratuit, sans compte.</p>{% endblock %}

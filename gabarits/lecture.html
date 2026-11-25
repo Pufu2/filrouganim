@@ -8,7 +8,7 @@
 {% set som = texte_rendu | sommaire %}
 {% block tete %}{% endblock %}
 {% block contenu %}
-<div class="fs le theme-rouge">
+<div class="fs le {% block le_theme %}theme-rouge{% endblock %}">
   <header class="fs-haut le-haut{% block le_haut_classe %}{% endblock %}">
     <div class="fs-haut-fond" aria-hidden="true"></div>
     <div class="cadre fs-haut-in">
