@@ -10,12 +10,11 @@ Usage (GitHub Actions ; voir .github/workflows/prospection-auto.yml) :
     python3 outils/prospection_auto.py           # importe et envoie
 
 Garde-fous : 30 mairies au plus par animateur, à 15 km au plus de sa commune (dans son département ou sa zone),
-100 e-mails au plus par jour. Les animateurs ne sont jamais nommés. Un récapitulatif part à COPIE_EMAIL.
+100 e-mails au plus par jour. Les animateurs ne sont jamais nommés. L'e-mail type part à COPIE_EMAIL.
 """
 
 import argparse
 import datetime as dt
-import html
 import json
 import math
 import os
@@ -173,25 +172,6 @@ def main():
             envoyes = P.traiter(lot)
     relances = P.traiter("auto", essai=args.essai, relance=True, delai=7)
 
-    if copie and cle_brevo and (recap or relances):
-        tag = "[Aperçu essai] " if args.essai else ""
-        sujet = f"{tag}Prospection auto : {envoyes} mairie(s) contactée(s), {relances} relance(s)"
-        t, h = [], []
-        for ligne, ms, rem in recap:
-            t.append(f"- Nouvel animateur ({ligne}) : {len(ms)} mairie(s)" + (f" — {rem}" if rem else "")
-                     + ("".join(f"\n    {m['nom']} <{m['email']}>" for m in ms)))
-            h.append(f"<li>Nouvel animateur ({html.escape(ligne)}) : {len(ms)} mairie(s)" + (f" — {html.escape(rem)}" if rem else "")
-                     + "<ul>" + "".join(f"<li>{html.escape(m['nom'])} &lt;{html.escape(m['email'])}&gt;</li>" for m in ms) + "</ul></li>")
-        t.append(f"Relances des lots automatiques : {relances}.")
-        h.append(f"<li>Relances des lots automatiques : {relances}.</li>")
-        if args.essai:
-            t.insert(0, "Essai : rien n'est parti aux mairies.")
-            h.insert(0, "<li><b>Essai : rien n'est parti aux mairies.</b></li>")
-        try:
-            P.envoyer(cle_brevo, config.get("email") or "contact@filrouganim.fr", config["nom"], copie, sujet,
-                      "\n".join(t), "<ul>" + "".join(h) + "</ul>")
-        except Exception as e:
-            print(f"Récapitulatif non envoyé ({e})", file=sys.stderr)
     for ligne, ms, rem in recap:
         print(f"  {ligne} : {len(ms)} mairie(s)" + (f" — {rem}" if rem else ""))
     print(f"Prospection auto : {envoyes} premier(s) message(s), {relances} relance(s){' (essai)' if args.essai else ''}.")
