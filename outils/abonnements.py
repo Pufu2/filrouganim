@@ -717,7 +717,7 @@ def prevenir_admin(cle_sb):
     sujet = "Fil Roug'Anim : " + ", ".join(titres)
     admin = CONFIG["url"].rstrip("/") + "/compte/?role=admin"
     texte, html_c = [], []
-    for k in ["organisme", "paiement", "structure", "profil", "demande"]:
+    for k in ["organisme", "paiement", "structure", "profil", "demande", "sejour"]:
         if k not in groupes:
             continue
         texte.append(TYPES_EVT[k][1 if len(groupes[k]) > 1 else 0] + " :")
