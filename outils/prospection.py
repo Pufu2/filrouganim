@@ -9,8 +9,8 @@ Usage (GitHub Actions, à la demande ; voir .github/workflows/prospection.yml) :
     python3 outils/prospection.py --lot 1 --relance [--essai] # une seule relance, aux structures du lot restées « contacté »
                                                               # depuis au moins 7 jours (--delai) sans réponse
 
-Copie de contrôle : si la variable COPIE_EMAIL (secret GitHub) est définie, chaque modèle de message différent est
-aussi envoyé à cette adresse (« [Copie] » ou « [Aperçu essai] » dans l'objet), une fois par lancement.
+Copie de contrôle : si la variable COPIE_EMAIL (secret GitHub) est définie, un exemple du message (l'e-mail type) est
+aussi envoyé à cette adresse (« [Copie] » ou « [Aperçu essai] » dans l'objet), une seule fois par lancement.
 
 Démarchage entre professionnels : l'expéditeur est identifié, le message concerne leur métier, et on peut refuser
 la suite en répondant « stop ». Les animateurs ne sont jamais nommés : le poste et le département seulement.
@@ -197,7 +197,7 @@ def traiter(lot, essai=False, relance=False, delai=7, prospects=None):
             vus.add(modele)
             if essai:
                 print(f"\n----- modèle (ex. {x['cle']}) -----\nObjet : {sujet}\n\n{texte}-----")
-            if copie and cle_brevo:
+            if copie and cle_brevo and not copies:  # un seul e-mail type par lancement, pour voir à quoi il ressemble
                 tag = "[Aperçu essai]" if essai else "[Copie]"
                 note = f"{tag} Modèle envoyé par exemple à {x['nom']} <{x['email']}> ({'relance' if relance else 'premier envoi'}, lot {lot})"
                 try:
