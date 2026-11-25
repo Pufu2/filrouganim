@@ -9,7 +9,7 @@
 {% block scripts %}<script src="{{ statique('js/lecture.js') }}" defer></script>{% endblock %}
 {% block contenu %}
 <div class="fs le an2 theme-rouge">
-  <header class="fs-haut le-haut">
+  <header class="fs-haut le-haut an2-haut">
     <div class="fs-haut-fond" aria-hidden="true"></div>
     <div class="cadre fs-haut-in">
       <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
@@ -22,14 +22,28 @@
   </header>
 
   <div class="cadre">
-    <form class="fs-carte an2-cherche" role="search" onsubmit="return false">
-      <label class="sr" for="an-q">Chercher une structure</label>
-      <span class="an2-champ">{{ m.icone("cherche") }}<input id="an-q" type="search" placeholder="Nom, ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search"></span>
-      <span class="an2-puces" role="group" aria-label="Type d'accueil">
-        <button type="button" data-an-type="" aria-pressed="true">Tout</button>
-        {% for k, nom in FAMILLES_STRUCTURE %}<button type="button" data-an-type="{{ k }}" aria-pressed="false">{{ "Accueils de loisirs" if k == "extrascolaire" else nom }}</button>{% endfor %}
-      </span>
+  </div>
+  <div class="tp-recherche an2-recherche"><div class="cadre">
+    <form class="tp-barre" role="search" aria-label="Chercher une structure" onsubmit="return false">
+      <div class="tp-champ">{{ m.icone("lieu") }}<label class="sr" for="an-q">Où cherchez-vous ?</label>
+        <input id="an-q" type="search" placeholder="Nom, ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search">
+      </div>
+      <button class="tp-filtres" type="button" aria-haspopup="dialog" aria-controls="an-ff" data-an-ouvrir>{{ m.icone("reglages") }}Filtres <span class="pastille-n" data-an-nbf hidden>1</span></button>
+      <div class="tp-voile" id="an-ff" hidden>
+        <div class="ff" role="dialog" aria-modal="true" aria-labelledby="an-ff-t">
+          <div class="ff-tete"><h2 id="an-ff-t">Filtres</h2><button class="ff-fermer" type="button" data-an-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+          <div class="ff-corps">
+            <div class="ff-groupe"><h3>Le type d'accueil</h3><div class="ff-puces">
+              <button class="ff-puce" type="button" data-an-type="" aria-pressed="true">Tout</button>
+              {% for k, nom in FAMILLES_STRUCTURE %}<button class="ff-puce" type="button" data-an-type="{{ k }}" aria-pressed="false">{{ "Accueils de loisirs" if k == "extrascolaire" else nom }}</button>{% endfor %}
+            </div></div>
+          </div>
+          <div class="ff-pied"><button class="lien-effacer" type="button" data-an-effacer>Tout effacer</button><button class="bouton-r" type="button" data-an-fermer>Voir les structures <span aria-hidden="true">→</span></button></div>
+        </div>
+      </div>
     </form>
+  </div></div>
+  <div class="cadre">
     <p class="an2-nb" id="an-nb" role="status" aria-live="polite">{{ liste | length }} structure{{ 's' if liste | length > 1 }}</p>
 
     <ul class="annuaire-cartes an2-cartes" id="annuaire">

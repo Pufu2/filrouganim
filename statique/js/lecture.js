@@ -62,10 +62,20 @@
     if (vide) vide.hidden = n > 0;
   }
   champ.addEventListener("input", filtrer);
+  var voile = document.getElementById("an-ff"), pastille = document.querySelector("[data-an-nbf]");
+  function fermer() { if (voile) voile.hidden = true; }
+  var ouvrir = document.querySelector("[data-an-ouvrir]");
+  if (ouvrir && voile) ouvrir.addEventListener("click", function () { voile.hidden = false; });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-an-fermer]"), function (b) { b.addEventListener("click", fermer); });
+  if (voile) voile.addEventListener("click", function (e) { if (e.target === voile) fermer(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermer(); });
+  var effacer = document.querySelector("[data-an-effacer]");
+  if (effacer) effacer.addEventListener("click", function () { champ.value = ""; puces[0].click(); });
   Array.prototype.forEach.call(puces, function (b) {
     b.addEventListener("click", function () {
       type = b.dataset.anType;
       Array.prototype.forEach.call(puces, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      if (pastille) pastille.hidden = !type;
       filtrer();
     });
   });
