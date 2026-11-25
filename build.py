@@ -1209,7 +1209,7 @@ class Site:
                      "actions": [], "blocs": [], "voisins": [], "hub": {"groupes": groupes, "tous": tous, "vedettes": vedettes, "trouve": ce_qu_on_trouve,
                                                                           "lieu": "région" if cle[1] == "ete" else "département"}}
             fil0 = {"anim": TP, "struct": REC, "parent": ENF}[pub]
-            self.ajouter(base, "local.html", titre=f"{titre} : toute la France, département par département", h1=f"{titre}, partout en France",
+            self.ajouter(base, "local.html", titre=f"{titre} : tous les départements", h1=f"{titre}, partout en France",
                          description=f"{titre} : choisissez votre département ou votre région pour voir les offres, les structures et les informations utiles près de chez vous.",
                          intro="Tapez votre département ou votre ville : chaque page rassemble ce qui existe près de chez vous.", local=local, fil=[fil0, (titre, base)])
         self.pages_locales_liens = {k: BASES[k] for k in BASES}
@@ -2796,7 +2796,7 @@ class Site:
                          f"Les sessions BAFD {a}{c} : formation générale et perfectionnement, dates, lieu, formule et prix, organisme par organisme."),
                 "bsb": (f"BSB surveillant de baignade {nom}{c} : dates et prix", f"Le BSB, surveillant de baignade, {a}",
                         f"Les sessions de qualification surveillant de baignade (BSB) du BAFA {a}{c} : 8 jours, dates, lieu, formule et prix."),
-                "psc1": (f"PSC (ex-PSC1) {nom}{c} : formation premiers secours, dates et prix", f"Se former au PSC {a}",
+                "psc1": (f"Formation PSC1 {nom}{c} : premiers secours, dates et prix", f"Se former au PSC {a}",
                          f"Les formations PSC aux premiers secours (ex-PSC1) {a}{c} : une journée, dates, ville, prix et organisme. Utile pour le BAFA."),
             }[cle]
 
@@ -2977,6 +2977,11 @@ class Site:
         # une ville du même nom que son département (Paris dans Paris, « Gard » dans le Gard…) : même contenu que la page
         # du département, donc une page en double pour Google. On renvoie vers la page du département.
         morceaux = [m for m in url.split("/") if m]
+        # pareil pour /se-former/sessions/paris/bafd/paris/ : la ville du même nom, sous une formation du département
+        if gabarit != "redirection.html" and len(morceaux) >= 5 and morceaux[1] == "sessions" and morceaux[-1] == morceaux[-3]:
+            self.pages.append({"url": url, "gabarit": "redirection.html", "titre": "Cette page a changé d'adresse", "indexer": False,
+                               "description": self.config["description"], "vers": "/" + "/".join(morceaux[:-1]) + "/"})
+            return
         if gabarit != "redirection.html" and len(morceaux) >= 3 and morceaux[-1] == morceaux[-2]:
             self.pages.append({"url": url, "gabarit": "redirection.html", "titre": "Cette page a changé d'adresse", "indexer": False,
                                "description": self.config["description"], "vers": "/" + "/".join(morceaux[:-1]) + "/"})
@@ -3059,10 +3064,22 @@ class Site:
         # les adresses des vraies pages (pas les redirections), pour ne faire de liens que vers ce qui existe
         urls_pages = {p["url"] for p in self.pages if p.get("gabarit") != "redirection.html"}
         self.env.globals["page_existe"] = lambda u: u in urls_pages
+        # un lien vers une page qui a changé d'adresse va directement à la nouvelle (pas de détour pour Google)
+        redirs = {p["url"]: p["vers"] for p in self.pages if p.get("gabarit") == "redirection.html" and p.get("vers", "").startswith("/")}
+        def suivre(m):
+            u = m.group(1)
+            for _ in range(3):
+                if u not in redirs:
+                    break
+                u = redirs[u]
+            return f'href="{u}'
         for page in self.pages:
             cible = SORTIE / fichier_de_sortie(page["url"])
             cible.parent.mkdir(parents=True, exist_ok=True)
-            cible.write_text(self.rendre_page(page), encoding="utf-8")
+            rendu = self.rendre_page(page)
+            if page.get("gabarit") != "redirection.html" and not self.apercu:
+                rendu = re.sub(r'href="(/[^"#?]*)', suivre, rendu)
+            cible.write_text(rendu, encoding="utf-8")
         self.ecrire_donnees_recherche()
         self.ecrire_pied_liens()
         self.ecrire_lieux_google()
