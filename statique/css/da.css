@@ -2537,3 +2537,23 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .esp-bloc-demande .dm-cote .as-boite + .as-boite { display: none; }
 .esp-bloc-demande .dm .cadre { width: 100%; max-width: none; padding: 0; }
 .esp-bloc-demande .dm-grille { gap: 20px; }
+/* Espace admin : la liste du QG défile sans rogner le liseré de la demande choisie ; les titres de section ne collent plus au bord */
+#ad-qg .ap-qg-items { padding: 4px 6px 8px 4px; }
+body.en-app .ap-titre-s { padding: 0 4px; }
+/* Espace admin, Indexation : le journal jour par jour */
+.ap-journal { align-items: start; }
+.ap-journal-j { margin: 14px 0 6px; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #6c7077; }
+.ap-journal-l { list-style: none; margin: 0; padding: 0; }
+.ap-journal-l li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(23, 25, 29, .07); font-size: .86rem; }
+.ap-journal-l li:first-child { border-top: 0; }
+.ap-journal-l a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #17191d; }
+.ap-journal-l .ap-etiq { flex: none; }
+.ap-journal-barres { display: flex; align-items: flex-end; gap: 4px; height: 60px; margin: 4px 0 10px; }
+.ap-journal-barres span { flex: 1; border-radius: 4px 4px 0 0; background: #ececec; }
+.ap-journal-barres span.on { background: #3f7d58; }
+.ap-journal-d { border-top: 1px solid rgba(23, 25, 29, .07); }
+.ap-journal-d summary { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; cursor: pointer; list-style: none; font-size: .9rem; }
+.ap-journal-d summary::-webkit-details-marker { display: none; }
+.ls-qui { min-width: 0; } .ls-qui b, .ls-qui small { overflow-wrap: anywhere; }
+.ls-doux { overflow-wrap: anywhere; min-width: 0; }
+.ap-pros-cases > div { min-width: 0; } .ap-pros-cases span { overflow-wrap: anywhere; hyphens: auto; font-size: .78rem; }

@@ -1354,6 +1354,7 @@
       var v = carte(c, "Premier relevé à venir");
       v.appendChild(el("p", "ap-petit", "La vérification se fait dans « Relever les chiffres » (toutes les 6 heures), avec la même clé Search Console que vos chiffres. Les premiers résultats arrivent au prochain relevé ; tout le plan du site est vu en 2 à 3 jours."));
     }
+    journalIndexation(c, L);
     // par rubrique
     var rubs = {}; L.forEach(function (x) { var k = rubrique(x.url); rubs[k] = rubs[k] || [0, 0, 0]; rubs[k][0]++; if (x.etatIx === "indexee") rubs[k][1]++; if (x.etatIx !== "jamais") rubs[k][2]++; });
     var cr = carte(c, "Par rubrique", "indexées / vérifiées");
@@ -1391,6 +1392,48 @@
     sr.addEventListener("change", function () { ix.rub = sr.value; remplir(); });
     remplir();
     var p = document.querySelector('[data-pastille-admin="indexation"]'); if (p) { p.hidden = !n("a_soumettre"); p.textContent = n("a_soumettre") > 99 ? "99+" : n("a_soumettre"); }
+  }
+  /* Le journal de l'indexation, jour par jour : ce que vous avez demandé à Google (« C'est demandé ») et ce qu'il en a fait,
+     puis les pages que Google a indexées chaque jour. Le relevé revoit chaque jour les pages demandées (outils/indexation.py). */
+  function journalIndexation(c, L) {
+    var jour = function (x) { return iso(x); }, aujIso = iso(new Date().toISOString());
+    var jours14 = []; for (var i = 0; i < 14; i++) jours14.push(iso(new Date(Date.now() - i * 864e5).toISOString()));
+    var libJour = function (d) { return d === aujIso ? "Aujourd'hui" : d === jours14[1] ? "Hier" : new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }); };
+    var chemin = function (u) { return u.replace("https://filrouganim.fr", "") || "/"; };
+    var duo = grille(c, "ap-g2 ap-journal");
+    // 1. vos demandes, et la réponse de Google
+    var dem = L.filter(function (x) { return x.demandee_le && jour(x.demandee_le) >= jours14[13]; });
+    var nOk = compte(dem, function (x) { return x.etatIx === "indexee"; });
+    var k1 = carte(duo, "Vos demandes d'indexation", dem.length ? nOk + " indexée" + (nOk > 1 ? "s" : "") + " sur " + dem.length + " demandée" + (dem.length > 1 ? "s" : "") + " en 14 jours" : "14 derniers jours");
+    if (!dem.length) k1.appendChild(el("p", "ap-petit", "Quand vous demandez l'indexation d'une page dans la Search Console, cliquez sur « C'est demandé » (dans « Inspecter » ou dans la liste) : la page apparaît ici, jour par jour, et le relevé vous dit chaque jour si Google l'a indexée."));
+    jours14.forEach(function (d) {
+      var l = dem.filter(function (x) { return jour(x.demandee_le) === d; }); if (!l.length) return;
+      k1.appendChild(el("p", "ap-journal-j", libJour(d) + " · " + l.length + " page" + (l.length > 1 ? "s" : "")));
+      var ul = el("ul", "ap-journal-l"); k1.appendChild(ul);
+      l.forEach(function (x) {
+        var li = el("li"), a = el("a", null, chemin(x.url)); a.href = x.url; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a);
+        var attente = Math.round((Date.now() - new Date(x.demandee_le)) / 864e5);
+        if (x.etatIx === "indexee") li.appendChild(etiquette("Indexée" + (x.indexee_le ? " le " + E.dateFr(iso(x.indexee_le)) : ""), "ok"));
+        else if (x.verifie_le && x.verifie_le > x.demandee_le && attente >= 7) li.appendChild(etiquette("Toujours pas indexée après " + attente + " j : à revoir", "rose"));
+        else li.appendChild(etiquette(x.verifie_le && x.verifie_le > x.demandee_le ? "Pas encore · revue " + depuis(x.verifie_le) : "En attente du prochain relevé", "jaune"));
+        ul.appendChild(li);
+      });
+    });
+    // 2. ce que Google a indexé chaque jour
+    var nv = L.filter(function (x) { return x.etatIx === "indexee" && x.indexee_le && jour(x.indexee_le) >= jours14[13]; });
+    var k2 = carte(duo, "Indexées par Google, jour par jour", nv.length + " page" + (nv.length > 1 ? "s" : "") + " en 14 jours");
+    var barres = el("div", "ap-journal-barres"); k2.appendChild(barres);
+    var max = 1; var parJour = jours14.map(function (d) { var n = compte(nv, function (x) { return jour(x.indexee_le) === d; }); if (n > max) max = n; return [d, n]; });
+    parJour.slice().reverse().forEach(function (x) { var b = el("span", null); b.style.height = Math.max(4, Math.round(x[1] / max * 56)) + "px"; b.title = libJour(x[0]) + " : " + x[1]; if (x[1]) b.className = "on"; barres.appendChild(b); });
+    parJour.forEach(function (x) {
+      if (!x[1]) return;
+      var dt = el("details", "ap-journal-d"), sm = el("summary"); sm.appendChild(el("b", null, libJour(x[0]))); sm.appendChild(etiquette("+ " + x[1], "ok")); dt.appendChild(sm);
+      var ul = el("ul", "ap-journal-l");
+      nv.filter(function (y) { return jour(y.indexee_le) === x[0]; }).slice(0, 80).forEach(function (y) { var li = el("li"), a = el("a", null, chemin(y.url)); a.href = y.url; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a); if (y.demandee_le) li.appendChild(etiquette("demandée", "neutre")); ul.appendChild(li); });
+      dt.appendChild(ul); k2.appendChild(dt);
+    });
+    if (!nv.length) k2.appendChild(el("p", "ap-petit", "Rien de neuf ces 14 derniers jours."));
+    k2.appendChild(el("p", "ap-petit", "Pour les pages indexées avant le 25 novembre 2026, la date est celle du dernier passage de Google."));
   }
   async function demandee(u) {
     var maintenant = new Date().toISOString();

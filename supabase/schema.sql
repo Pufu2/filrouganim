@@ -1269,3 +1269,5 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- vérifiée) ; accuse_structure (fiche reçue, avant vérification) ; admin_info_manquante(sid, motif) ; structures.acces_type
 -- ('pass' | 'abonnement') et rappel_pass_le, acces_actif (e-mail « actif » à chaque paiement), rappeler_fin_pass() chaque jour
 -- à 8 h 13 (pg_cron « rappeler-fin-pass », 5 jours avant la fin d'un Pass) ; accuse_demande (animateur) ; bienvenue_parent.
+-- v55 (appliquée à la main) : admin_indexation.indexee_le (le jour où le relevé voit la page indexée pour la première fois ;
+-- pour les pages déjà indexées, rempli avec le dernier passage de Google) : le journal de l'onglet Indexation.

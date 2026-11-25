@@ -59,19 +59,28 @@ def main():
     connus = {}
     debut = 0
     while True:  # la base renvoie 1 000 lignes au plus par appel
-        lot = appel(f"{base}/rest/v1/admin_indexation?select=url,couverture,verifie_le,lien&order=url&offset={debut}&limit=1000", entetes=sb) or []
+        lot = appel(f"{base}/rest/v1/admin_indexation?select=url,couverture,verifie_le,lien,demandee_le,indexee_le&order=url&offset={debut}&limit=1000", entetes=sb) or []
         connus.update({x["url"]: x for x in lot})
         if len(lot) < 1000:
             break
         debut += 1000
     maintenant = dt.datetime.now(dt.timezone.utc)
 
+    def est_indexee(x):
+        return (x.get("couverture") or "").lower().startswith(("submitted and indexed", "indexed", "envoyée et indexée", "indexée"))
+
     def priorite(u):
         x = connus.get(u)
         if not x or not x.get("verifie_le"):
             return (0, 0)
         age = (maintenant - dt.datetime.fromisoformat(x["verifie_le"].replace("Z", "+00:00"))).days
-        indexee = (x.get("couverture") or "").lower().startswith(("submitted and indexed", "indexed", "envoyée et indexée", "indexée"))
+        indexee = est_indexee(x)
+        # une page dont l'indexation a été demandée (« C'est demandé » dans l'espace admin) et pas encore indexée :
+        # revue en premier, une fois par jour, pour dire vite si Google l'a prise
+        if x.get("demandee_le") and not indexee:
+            heures = (maintenant - dt.datetime.fromisoformat(x["verifie_le"].replace("Z", "+00:00"))).total_seconds() / 3600
+            if x["verifie_le"] < x["demandee_le"] or heures >= 20:
+                return (-1, 0)
         if not x.get("lien"):
             return (1, -age)  # pas encore de lien direct vers la page d'inspection de la Search Console
         if indexee:
@@ -128,6 +137,11 @@ def main():
     if any(r and r.get("erreur") == 429 for r in resultats):
         print("Quota de Google atteint pour aujourd'hui : la suite au prochain passage")
     lignes = [r for r in resultats if r and "url" in r]
+    # le jour où Google a indexé la page (la première fois qu'on la voit indexée) : le journal des demandes l'affiche
+    for r in lignes:
+        avant = connus.get(r["url"]) or {}
+        r["indexee_le"] = ((avant.get("indexee_le") if est_indexee(avant) and avant.get("indexee_le") else maintenant.isoformat())
+                           if est_indexee(r) else None)
     for i in range(0, len(lignes), 200):
         appel(f"{base}/rest/v1/admin_indexation?on_conflict=url", "POST",
               {**sb, "Prefer": "resolution=merge-duplicates,return=minimal"}, lignes[i:i + 200])
