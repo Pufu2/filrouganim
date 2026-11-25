@@ -88,7 +88,6 @@ ecoles:
   - {organisme_nom: "ARFAMSTA FuturOsud-FEA", diplome: BPJEPS, specialite: "asec", ville: "Saint-Clair-du-Rhône", departement: "38", derniere_rentree: 2026-11-03}
   - {organisme_nom: "CEMEA", diplome: BPJEPS, specialite: "asec", ville: "Saint-Martin-d'Hères", departement: "38", derniere_rentree: 2026-11-24}
   - {organisme_nom: "Jura Sport Formation", diplome: BPJEPS, specialite: "asec", ville: "Lons-le-Saunier", departement: "39", derniere_rentree: 2026-09-28}
-  - {organisme_nom: "GRETA CFA Aquitaine", diplome: BPJEPS, specialite: "asec", ville: "Mont-de-Marsan", departement: "40", derniere_rentree: 2026-10-21}
   - {organisme_nom: "Respire", diplome: BPJEPS, specialite: "asec", ville: "Blois", departement: "41", derniere_rentree: 2026-10-05}
   - {organisme_nom: "Maison Familiale Rurale Montbrison", diplome: BPJEPS, specialite: "asec", ville: "Montbrison", departement: "42", derniere_rentree: 2026-11-05}
   - {organisme_nom: "ADMJC 42", diplome: BPJEPS, specialite: "asec", ville: "Montrond-les-Bains", departement: "42", derniere_rentree: 2026-10-12}
@@ -205,6 +204,7 @@ ecoles:
   - {organisme_nom: "L'ADAPT Val d'Oise", diplome: BPJEPS, specialite: "asec", ville: "Sarcelles", departement: "95", derniere_rentree: 2026-01-05}
   - {organisme_nom: "Les Francas", diplome: CC-ACM, specialite: null, ville: "Montluçon", departement: "03", derniere_rentree: 2026-03-23}
   - {organisme_nom: "Horizon", diplome: CC-ACM, specialite: null, ville: "Antibes", departement: "06", derniere_rentree: 2026-09-21}
+  - {organisme_nom: "Montpellier Université Club Omnisport (MUC)", diplome: CC-ACM, specialite: null, ville: "Millau", departement: "12", derniere_rentree: 2026-11-27}
   - {organisme_nom: "Adequations", diplome: CC-ACM, specialite: null, ville: "Aix-en-Provence", departement: "13", derniere_rentree: 2026-09-07}
   - {organisme_nom: "Formatic Association", diplome: CC-ACM, specialite: null, ville: "Arles", departement: "13", derniere_rentree: 2026-09-21}
   - {organisme_nom: "CEMEA PACA", diplome: CC-ACM, specialite: null, ville: "Marseille", departement: "13", derniere_rentree: 2026-10-05}
