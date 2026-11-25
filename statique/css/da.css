@@ -2429,8 +2429,9 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 .tete-soleil { position: relative; overflow: hidden; }
 .tete-soleil::before { content: ""; position: absolute; }
 .en3-grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 48px; align-items: center; padding-top: 34px !important; }
-.en3-illus { margin: 0; padding: 26px; border-radius: 24px; background: #fff6ea; box-shadow: 0 30px 60px -34px rgba(0, 0, 0, .6); }
-.en3-illus img { display: block; width: 100%; height: auto; }
+.en3-illus { position: relative; margin: 0 -10px -6px 0; align-self: end; }
+.en3-illus::before { content: ""; position: absolute; inset: 8% 4% 0 10%; background: radial-gradient(ellipse at 55% 60%, rgba(238, 138, 47, .32), transparent 65%); filter: blur(10px); }
+.en3-illus img { position: relative; display: block; width: 100%; height: auto; -webkit-mask-image: radial-gradient(ellipse 72% 70% at 52% 52%, #000 58%, transparent 100%); mask-image: radial-gradient(ellipse 72% 70% at 52% 52%, #000 58%, transparent 100%); }
 .en3-vignette { display: flex; align-items: center; justify-content: center; height: 150px; margin: -20px -22px 14px; border-radius: 16px 16px 0 0; background: #fff6ea; padding: 18px; }
 .en3-vignette img { max-height: 100%; max-width: 100%; }
 .en3-type { overflow: hidden; }
