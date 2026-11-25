@@ -3,23 +3,8 @@
 {# La page d'entrée des structures (modèle 4 « portail » de docs/CHARTE.md) : le haut foncé et ses deux boutons, le ruban
    de ce qui est gratuit, les deux usages (recruter, remplir ses séjours), gratuit ou abonné, les structures déjà là,
    les 3 étapes, les guides des structures, les questions (données structurées FAQ), et un dernier appel. #}
-{% set restantes = site.fondateurs.places - site.fondateurs.reservees %}
 {% set st = EXEMPLES.structure %}
-{# la carte d'une structure dans l'annuaire : les abonnées (en tête de liste) portent l'étiquette « Partenaire » #}
-{% macro carte(st, url, exemple=False) %}
-{% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
-<li class="ac{% if st.abonnee %} ac-partenaire{% endif %} theme-{{ st.couleur or 'rouge' }}" data-type="{{ familles_structure(st) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }} {{ nature_structure(st) }}">
-  <a href="{{ url }}">
-    <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ nature_structure(st) }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% elif st.abonnee %}<span class="ac-exemple ac-une">Partenaire</span>{% endif %}</span>
-    <span class="ac-corps">
-      <b class="ac-nom">{{ st.nom }}</b>
-      <span class="ac-lieu">{{ st.ville }} · {{ departements | selectattr("code", "equalto", st.departement) | map(attribute="nom") | first }}</span>
-      <span class="ac-details">{% if ages_structure(st) %}{{ ages_structure(st) | capitalize }}{% for p in st.publics or [] if p in ["handicap", "familles"] %} · {{ PUBLICS.get(p, p) }}{% endfor %}{% elif st.publics %}{% for p in st.publics[:3] %}{{ PUBLICS.get(p, p) }}{{ " · " if not loop.last }}{% endfor %}{% endif %}</span>
-    </span>
-    <span class="ac-pied"><span>{% if st.offres %}<b>{{ st.offres | length }}</b> offre{{ 's' if st.offres | length > 1 }} en ce moment{% else %}Pas d'offre en ce moment{% endif %}</span><span class="ac-voir">Voir la fiche <span aria-hidden="true">→</span></span></span>
-  </a>
-</li>
-{% endmacro %}
+
 {% set creer = lien('/compte/') ~ '?inscription=1&role=structure' %}
 
 {% set ab = site.abonnement %}
@@ -33,6 +18,7 @@
 ] %}
 {% block schema %}{% set ents = [] %}{% for q, r in FAQ %}{% set _ = ents.append({"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": r}}) %}{% endfor %}<script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents} | tojson }}</script>{% endblock %}
 {% block tete %}{% endblock %}
+{% block scripts %}<script src="{{ statique('js/lecture.js') }}" defer></script>{% endblock %}
 {% block contenu %}
 {% set ic_ok %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{% endset %}
 <div class="fs le rc2 theme-rouge">
@@ -55,6 +41,13 @@
       <li><small>Pour tout débloquer</small><b>Dès 19 €</b><em>Pass d'un mois, sans engagement</em></li>
     </ul>
 
+    <nav class="fs-sections" aria-label="Sections de la page">
+      <div class="fs-sections-liens">
+        <a href="#usages">Ce qu'on fait pour vous</a><a href="#tarifs">Tarifs</a><a href="#etapes">Mise en ligne</a><a href="#guides">Guides</a><a href="#questions">Questions</a><a href="{{ lien('/recruter/structures/') }}">L'annuaire</a>
+      </div>
+      <div class="fs-sections-boutons"><a class="fs-btn fs-btn-r" href="{{ creer }}">Créer ma page</a></div>
+    </nav>
+
     <section class="fs-s" id="usages">
       <div class="fs-tt"><p class="fs-sur">Deux usages</p><h2>Ce que Fil Roug'Anim fait pour vous</h2></div>
       <div class="fs-portes">
@@ -75,8 +68,8 @@
       </div>
     </section>
 
-    <section class="fs-s" id="formules">
-      <div class="fs-tt"><p class="fs-sur">Formules</p><h2>Gratuit, ou tout débloqué</h2><p>Commencez gratuitement. Passez au Pass ou à l'abonnement le jour où vous recrutez ou remplissez vos séjours.</p></div>
+    <section class="fs-s" id="tarifs">
+      <div class="fs-tt"><p class="fs-sur">Tarifs</p><h2>Gratuit, ou tout débloqué</h2><p>Commencez gratuitement. Passez au Pass ou à l'abonnement le jour où vous recrutez ou remplissez vos séjours.</p></div>
       <div class="fs-carte rc2-formules">
         <div class="le-table"><table>
           <thead><tr><th></th><th>Gratuit</th><th>Pass ou abonnement</th></tr></thead>
@@ -99,13 +92,14 @@
       <p class="le-tout"><a href="{{ lien('/conditions-de-vente/') }}">Le détail dans les conditions de vente <span aria-hidden="true">→</span></a></p>
     </section>
 
-    {% if annuaire_structures or st %}
-    <section class="fs-s rc-annuaire" id="structures">
-      <div class="fs-tt"><p class="fs-sur">Annuaire</p><h2>Elles sont déjà sur Fil Roug'Anim</h2></div>
-      <ul class="annuaire-cartes" id="annuaire">
-      {% for x in annuaire_structures %}{{ carte(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
-      {% if st %}{{ carte(st, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
-      </ul>
+    {% set deja = annuaire_structures[:4] %}
+    {% if deja %}
+    <section class="fs-s" id="structures">
+      <a class="fs-carte rc2-deja" href="{{ lien('/recruter/structures/') }}">
+        <span class="rc2-deja-logos" aria-hidden="true">{% for x in deja %}{% set _m = x.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}<i class="theme-{{ x.couleur or 'rouge' }}">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</i>{% endfor %}</span>
+        <span class="rc2-deja-t"><b>Elles sont déjà sur Fil Roug'Anim</b><small>{{ annuaire_structures | length }} structure{{ 's' if annuaire_structures | length > 1 }} vérifiée{{ 's' if annuaire_structures | length > 1 }} : leur page, leurs offres, leurs séjours.</small></span>
+        <em>Voir l'annuaire <span aria-hidden="true">→</span></em>
+      </a>
     </section>
     {% endif %}
 
@@ -119,7 +113,7 @@
     </section>
 
     {% set guides_st = (site.guides | selectattr("partie", "equalto", "structures") | list) + (articles | selectattr("categorie", "equalto", "Structures") | list) + (site.guides | selectattr("url", "in", ["/trouver-un-poste/contrat-d-engagement-educatif/", "/trouver-un-poste/le-projet-pedagogique/"]) | list) %}
-    {{ m.le_cartes(guides_st, page.url, lien, sur="Guide", max=8, titre="Les guides des structures", tt_sur="Bien recruter, bien accueillir", classe="le-cartes-4" if guides_st | length in (4, 8) else "") }}
+    <div id="guides">{{ m.le_cartes(guides_st, page.url, lien, sur="Guide", max=8, titre="Les guides des structures", tt_sur="Bien recruter, bien accueillir", classe="le-cartes-4" if guides_st | length in (4, 8) else "") }}</div>
 
     <section class="fs-s" id="questions">
       <div class="fs-tt"><p class="fs-sur">En bref</p><h2>Vos questions</h2></div>

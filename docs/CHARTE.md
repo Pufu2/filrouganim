@@ -59,7 +59,10 @@ ronds de couleur). Pas d'emoji dans l'interface.
    Blocs à remplir : `le_puces`, `le_chapo`, `le_ruban`, `le_texte` (ou `le_texte_fin`), `le_cote`, `le_suite`.
 3. **Liste / local** (`liste.html`, `local.html`, `ecoles.html`) : haut foncé, ruban de chiffres, recherche ou
    filtres, résultats en cartes ou rangées dans des `.fs-carte`, voisins en puces.
-4. **Portail** (pages `hub`) : recherche en tête, « les plus actifs » en cartes, régions repliées.
+4. **Portail** (pages `hub`, `/recruter/`, `/enfants/`, l'annuaire `/recruter/structures/`) : haut foncé, recherche ou
+   ruban, barre des sections qui suit (`.fs-sections`, surlignée par `lecture.js`), blocs `.fs-s`, questions, dernier
+   appel `.rc2-fin`. Un annuaire a sa propre page (pour ceux qui cherchent), séparée de la page qui présente le service
+   (pour ceux qui s'inscrivent).
 5. **Espace connecté** (`compte.html`) : tableau de bord `.tb2-*`, formulaires `.fm-*`, verrous `.vr-*`, visite
    guidée `visite.js`.
 

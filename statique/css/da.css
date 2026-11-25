@@ -2274,7 +2274,7 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
   .rc2-fin { flex-direction: column; align-items: stretch; padding: 26px 22px; }
   .rc2-formules td, .rc2-formules th { padding: 10px 8px; font-size: .84rem; }
   .rc2-formules td:first-child { width: 42%; }
-  .rc2 .rc-annuaire .annuaire-cartes { grid-template-columns: 1fr 1fr; gap: 12px; }
+
   .rc2-formules th { white-space: normal; letter-spacing: .04em; }
   .rc2 .ac-image { aspect-ratio: 16 / 9; }
   .rc2 .ac-type { display: none; }
@@ -2300,3 +2300,39 @@ body.en-app .assistant .as-plan-etapes li[data-verrou="1"] span::after { content
 /* Pages de sessions : le pont vers les structures et les parents du département */
 .lien3 { padding: 46px 0 50px; }
 .lien3 .fs-tt { margin-bottom: 16px; }
+/* Page Structures : le renvoi vers l'annuaire ; l'annuaire lui-même (gabarits/annuaire.html) */
+#guides { scroll-margin-top: calc(var(--haut-entete, 64px) + 64px); }
+.rc2-deja { display: flex; align-items: center; gap: 20px; padding: 18px 24px; color: inherit; text-decoration: none; transition: border-color .15s; }
+.rc2-deja:hover { border-color: rgba(23, 25, 29, .25); }
+.rc2-deja-logos { display: flex; flex: none; }
+.rc2-deja-logos i { width: 44px; height: 44px; margin-left: -10px; border-radius: 50%; border: 3px solid #fff; display: grid; place-items: center; background: color-mix(in srgb, var(--theme) 16%, #fff); color: var(--theme-fonce); font-style: normal; font-size: .82rem; font-weight: 600; }
+.rc2-deja-logos i:first-child { margin-left: 0; }
+.rc2-deja-t { flex: 1; min-width: 0; }
+.rc2-deja-t b { display: block; font-weight: 600; color: var(--fs-e); }
+.rc2-deja-t small { display: block; color: var(--fs-d); font-size: .9rem; }
+.rc2-deja em { flex: none; font-style: normal; font-weight: 500; color: #a8162a; }
+.rc2 .fs-sections-boutons .fs-btn { height: 34px; padding: 0 14px; font-size: .86rem; }
+.an2-cherche { position: relative; z-index: 2; margin-top: -30px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px; box-shadow: 0 24px 50px -30px rgba(23, 25, 29, .4); }
+.an2-champ { flex: 1 1 320px; display: flex; align-items: center; gap: 10px; padding: 0 12px; height: 46px; border-radius: 10px; background: #f6f6f4; }
+.an2-champ .icone { width: 18px; height: 18px; fill: none; stroke: var(--fs-d); stroke-width: 1.8; flex: none; }
+.an2-champ input { flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 1rem; color: var(--fs-e); outline: none; }
+.an2-puces { display: flex; flex-wrap: wrap; gap: 6px; }
+.an2-puces button { height: 36px; padding: 0 14px; border-radius: 99px; border: 1px solid rgba(23, 25, 29, .14); background: #fff; font: inherit; font-size: .88rem; color: var(--fs-e); cursor: pointer; }
+.an2-puces button[aria-pressed="true"] { background: #17191d; border-color: #17191d; color: #fff; }
+.an2-nb { margin: 22px 0 12px; color: var(--fs-d); font-size: .9rem; }
+.an2-cartes { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.an2-vide { border: 0; }
+.an2-vide a { color: #a8162a; }
+.an2-porte { gap: 6px; color: inherit; text-decoration: none; }
+.an2-porte b { font-size: 1.15rem; font-weight: 600; color: var(--fs-e); }
+.an2-porte span { color: var(--fs-d); font-size: .92rem; }
+.an2-porte em { margin-top: 10px; font-style: normal; font-weight: 500; color: #a8162a; }
+@media (max-width: 700px) {
+  .rc2-deja { flex-wrap: wrap; }
+  .an2-cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .an2 .ac-pied, .rc2 .ac-pied { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .an2 .ac-image { aspect-ratio: 16 / 9; } .an2 .ac-type { display: none; }
+  .an2 .fs-portes { grid-template-columns: minmax(0, 1fr); }
+  .rc2 .fs-sections-boutons { display: none; }
+}
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

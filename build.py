@@ -1858,7 +1858,7 @@ class Site:
                      fil=[("Animateurs & directeurs", "/trouver-un-poste/offres/"), ("Décrire ce que je cherche", "/trouver-un-poste/demande/")])
         # pages publiques des structures vérifiées, et les exemples fictifs
         TP = ("Animateurs & directeurs", "/trouver-un-poste/offres/")
-        STR = ("Structures", "/recruter/")   # l'annuaire des structures est sur /recruter/
+        STR = ("L'annuaire des structures", "/recruter/structures/")
         structures = self.structures_en_ligne()
         # les places fondatrices qui restent : comptées dans la base (structures qui ont payé au tarif fondateur)
         places = self.lire_supabase("rpc/places_fondatrices", "places fondatrices")
@@ -1886,9 +1886,12 @@ class Site:
                              description=(c.get("accroche") or f"{c['nom']}, un centre de {st['nom']} à {c['ville']}.") + " Ses offres de stages et de jobs d'animation.",
                              structure=cst, point=self.point_structure(cst), fil=[STR, (st["nom"], url), (c["nom"], c["url"])])
         ex = self.donnees.get("exemples", {})
-        # l'annuaire des structures est sur /recruter/ (les abonnées en tête) : l'ancienne page y renvoie
+        # l'annuaire des structures a sa page (les abonnées en tête), indexée à partir de 5 structures ; l'ancienne adresse y renvoie
         self.annuaire_structures = structures
-        self.ajouter("/trouver-un-poste/structures/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/#structures")
+        self.ajouter("/recruter/structures/", "annuaire.html", titre="Annuaire des structures d'accueil : centres de loisirs, colos",
+                     description="Accueils de loisirs, organisateurs de colos et de séjours, périscolaire : l'annuaire des structures vérifiées, leur projet, leurs offres pour les animateurs et leurs séjours pour les enfants.",
+                     indexer=len(structures) >= 5, structures=structures, fil=[("Structures", "/recruter/"), ("L'annuaire", "/recruter/structures/")])
+        self.ajouter("/trouver-un-poste/structures/", "redirection.html", titre="Cette page a changé d'adresse", indexer=False, vers="/recruter/structures/")
         if ex.get("structure"):
             st = dict(ex["structure"], exemple=True)
             st["offres"] = [dict(o, debut=en_date(o["debut"])) for o in st.pop("offres", [])]

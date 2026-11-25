@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% import "morceaux.html" as m with context %}
+{# L'annuaire des structures (/recruter/structures/) : pour les animateurs qui cherchent un employeur et les parents qui
+   cherchent un accueil. Le haut foncé, la recherche (nom, ville, département) et les types d'accueil, puis les cartes
+   (partenaires en tête). La présentation pour les structures est sur /recruter/. #}
+{% set ex = EXEMPLES.structure %}
+{% set liste = page.structures %}
+{% block tete %}{% endblock %}
+{% block scripts %}<script src="{{ statique('js/lecture.js') }}" defer></script>{% endblock %}
+{% block contenu %}
+<div class="fs le an2 theme-rouge">
+  <header class="fs-haut le-haut">
+    <div class="fs-haut-fond" aria-hidden="true"></div>
+    <div class="cadre fs-haut-in">
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
+        <a href="{{ lien('/') }}">Accueil</a>{% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+      </nav>
+      <ul class="fs-puces"><li class="fs-puce-fort">Annuaire</li><li>{{ liste | length }} structure{{ 's' if liste | length > 1 }} vérifiée{{ 's' if liste | length > 1 }}</li></ul>
+      <h1>L'annuaire des structures d'accueil</h1>
+      <p class="fs-accroche">Accueils de loisirs, organisateurs de séjours, périscolaire : leur projet, leurs offres pour les animateurs et leurs séjours pour les enfants. Chaque structure est vérifiée à la main.</p>
+    </div>
+  </header>
+
+  <div class="cadre">
+    <form class="fs-carte an2-cherche" role="search" onsubmit="return false">
+      <label class="sr" for="an-q">Chercher une structure</label>
+      <span class="an2-champ">{{ m.icone("cherche") }}<input id="an-q" type="search" placeholder="Nom, ville ou département : Lyon, 93, Gironde…" autocomplete="off" enterkeyhint="search"></span>
+      <span class="an2-puces" role="group" aria-label="Type d'accueil">
+        <button type="button" data-an-type="" aria-pressed="true">Tout</button>
+        {% for k, nom in FAMILLES_STRUCTURE %}<button type="button" data-an-type="{{ k }}" aria-pressed="false">{{ "Accueils de loisirs" if k == "extrascolaire" else nom }}</button>{% endfor %}
+      </span>
+    </form>
+    <p class="an2-nb" id="an-nb" role="status" aria-live="polite">{{ liste | length }} structure{{ 's' if liste | length > 1 }}</p>
+
+    <ul class="annuaire-cartes an2-cartes" id="annuaire">
+      {% for x in liste %}{{ m.carte_structure(x, lien('/trouver-un-poste/structures/' ~ x.slug ~ '/')) }}{% endfor %}
+      {% if ex %}{{ m.carte_structure(ex, lien('/recruter/exemple-de-page-structure/'), exemple=True) }}{% endif %}
+    </ul>
+    <p class="fs-vide an2-vide" id="an-vide" hidden>Aucune structure ne correspond pour l'instant. Animateur ? <a href="{{ lien('/compte/') }}?inscription=1">Créez votre profil</a> : les structures de votre secteur vous trouveront. Parent ? <a href="{{ lien('/enfants/demande/') }}">Décrivez ce que vous cherchez</a>.</p>
+
+    <section class="fs-s an2-portes">
+      <div class="fs-portes">
+        <a class="fs-carte fs-porte an2-porte" href="{{ lien('/trouver-un-poste/offres/') }}"><small class="fs-sur">Animateurs et directeurs</small><b>Les offres de stages et de jobs</b><span>Toutes les annonces des structures vérifiées, par département et par type de contrat.</span><em>Voir les offres <span aria-hidden="true">→</span></em></a>
+        <a class="fs-carte fs-porte an2-porte" href="{{ lien('/enfants/') }}"><small class="fs-sur">Parents</small><b>Les colos et les accueils de loisirs</b><span>Les séjours et les accueils des structures, et une demande de place en ligne, gratuite et sans compte.</span><em>Inscrire mon enfant <span aria-hidden="true">→</span></em></a>
+      </div>
+    </section>
+
+    <section class="fs-s rc2-fin">
+      <div>
+        <p class="fs-sur">Vous êtes une structure ?</p>
+        <h2>Votre page dans l'annuaire, gratuitement</h2>
+        <p>Votre projet, vos offres devant les jeunes en formation BAFA, vos séjours devant les parents. Vérifiée sous 2 jours, sans commission.</p>
+      </div>
+      <a class="fs-btn fs-btn-r" href="{{ lien('/compte/') }}?inscription=1&amp;role=structure">Créer la page de ma structure <span aria-hidden="true">→</span></a>
+    </section>
+  </div>
+</div>
+{% endblock %}
