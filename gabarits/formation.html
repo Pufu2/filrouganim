@@ -1,26 +1,19 @@
-{% extends "base.html" %}
-{% import "morceaux.html" as m with context %}
-{% block tete_note %}<p class="note-main">{{ page.entete.nom }}</p>{% endblock %}
-{% block tete_chapo %}{% endblock %}
-{% block tete_plus %}
-<ul class="chiffres chiffres-fiche">
-  <li><span>Accès</span><b>{{ page.entete.age }}</b></li>
-  <li><span>Durée</span><b>{{ page.entete.duree }}</b></li>
-  <li><span>Niveau</span><b>{{ page.entete.niveau }}</b></li>
+{% extends "lecture.html" %}
+{# La fiche d'une formation (contenu/formations/*.md) : le ruban (accès, durée, niveau), le texte, les sessions à côté #}
+{% set e = page.entete %}
+{% block le_haut_classe %} le-haut-ruban{% endblock %}
+{% block le_puces %}<li class="fs-puce-fort">Formation</li><li>{{ e.nom }}</li>{% endblock %}
+{% block le_ruban %}
+<ul class="fs-ruban sjf-ruban le-ruban">
+  <li><small>Accès</small><b>{{ e.age }}</b></li>
+  <li><small>Durée</small><b>{{ e.duree }}</b></li>
+  <li><small>Niveau</small><b>{{ e.niveau }}</b></li>
+  {% if e.sessions %}<li class="le-ruban-action"><a class="fs-btn fs-btn-r" href="{{ lien(e.sessions) }}">Voir les sessions <span aria-hidden="true">→</span></a></li>{% endif %}
 </ul>
-{% if page.entete.sessions %}<p><a class="bouton-r" href="{{ lien(page.entete.sessions) }}">Voir les sessions <span aria-hidden="true">→</span></a></p>{% endif %}
 {% endblock %}
-{% block contenu %}
-<section class="bande bande-papier">
-  <article class="cadre texte">
-    {{ contenu | safe }}
-    <p class="petit">Mis à jour le {{ page.entete.mis_a_jour | date_fr }}. Ce résumé ne remplace pas les textes officiels cités.</p>
-  </article>
-</section>
-<section class="bande bande-sable">
-  <div class="cadre">
-    <h2>Les autres formations</h2>
-    {{ m.cartes_liens(site.formations, page.url, lien) }}
-  </div>
-</section>
+{% block le_texte_fin %}<p class="le-maj">Mis à jour le {{ e.mis_a_jour | date_fr }}. Ce résumé ne remplace pas les textes officiels cités.</p>{% endblock %}
+{% block le_cote %}
+{% if e.sessions %}{{ m.le_action("Les sessions", e.court ~ " : les sessions", "Les dates, les lieux et les prix relevés chez les organismes, mis à jour chaque nuit.", "Voir les sessions", e.sessions, lien, ("Financer sa formation", "/se-former/financer-son-bafa/") if e.court in ("BAFA", "BAFD") else None) }}
+{% else %}{{ m.le_action("Se former", "Les écoles et les centres", "Les organismes qui préparent à ce diplôme, par région.", "Voir les formations", "/se-former/", lien) }}{% endif %}
 {% endblock %}
+{% block le_suite %}{{ m.le_cartes(site.formations, page.url, lien, sur="Formation", max=4, titre="Les autres formations", tt_sur="Comparer") }}{% endblock %}

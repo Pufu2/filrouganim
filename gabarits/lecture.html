@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{# La mise en page « lecture » (docs/CHARTE.md, modèle 2) : guides, articles, fiches formation, pages fixes, FAQ, lexique.
+   Le haut foncé (rubrique, titre, chapeau, temps de lecture), un ruban de repères s'il y en a, le texte dans une carte
+   blanche, à côté un sommaire qui suit et une carte d'action ; en bas « Pour aller plus loin » en cartes.
+   Les gabarits enfants remplissent : le_sur, le_puces, le_chapo, le_ruban, le_texte, le_cote, le_suite. #}
+{% import "morceaux.html" as m with context %}
+{% set texte_rendu = contenu | default('') | habiller %}
+{% set som = texte_rendu | sommaire %}
+{% block tete %}{% endblock %}
+{% block contenu %}
+<div class="fs le theme-rouge">
+  <header class="fs-haut le-haut{% block le_haut_classe %}{% endblock %}">
+    <div class="fs-haut-fond" aria-hidden="true"></div>
+    <div class="cadre fs-haut-in">
+      {% if page.fil %}
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
+        <a href="{{ lien('/') }}">Accueil</a>
+        {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+      </nav>
+      {% endif %}
+      <ul class="fs-puces">{% block le_puces %}{% endblock %}</ul>
+      <h1>{{ page.h1 or page.titre }}</h1>
+      {% block le_chapo %}{% if page.description %}<p class="fs-accroche">{{ page.description }}</p>{% endif %}{% endblock %}
+      {% block le_haut_plus %}{% endblock %}
+    </div>
+  </header>
+
+  <div class="cadre">
+    {% block le_ruban %}{% endblock %}
+
+    <div class="le-grille{% if not som and not self.le_cote() | trim %} le-seul{% endif %}">
+      <div class="le-corps">
+        {% if som | length >= 3 %}
+        <details class="le-som-mobile">
+          <summary>Sommaire <span>{{ som | length }} parties</span></summary>
+          <ol>{% for i, t in som %}<li><a href="#{{ i }}">{{ t }}</a></li>{% endfor %}</ol>
+        </details>
+        {% endif %}
+        {% block le_texte %}
+        <article class="fs-carte le-texte">
+          {{ texte_rendu | safe }}
+          {% block le_texte_fin %}{% endblock %}
+        </article>
+        {% endblock %}
+      </div>
+      {% if som | length >= 3 or self.le_cote() | trim %}
+      <aside class="le-cote">
+        {% if som | length >= 3 %}
+        <nav class="fs-carte le-som" aria-label="Sommaire">
+          <p class="fs-sur">Sommaire</p>
+          <ol>{% for i, t in som %}<li><a href="#{{ i }}">{{ t }}</a></li>{% endfor %}</ol>
+        </nav>
+        {% endif %}
+        {% block le_cote %}{% endblock %}
+      </aside>
+      {% endif %}
+    </div>
+
+    {% block le_suite %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ statique('js/lecture.js') }}" defer></script>{% endblock %}

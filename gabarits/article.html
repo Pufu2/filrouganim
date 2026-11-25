@@ -1,33 +1,44 @@
-{% extends "base.html" %}
-{% import "morceaux.html" as m with context %}
+{% extends "lecture.html" %}
+{# Un article du blog (contenu/blog/*.md) ou un bilan du mois, en mise en page « lecture » (docs/CHARTE.md).
+   La carte d'action suit le public de l'article : parents, structures, ou futurs animateurs. #}
+{% set a = page.article %}
+{% set cat = a.categorie or "Conseils" %}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block tete_chapo %}<p class="chapo">{{ page.description }}</p><p class="tete-petit">{{ page.article.categorie or "Conseils" }} · publié le {{ page.article.date | date_fr }}{% if page.article.mis_a_jour %} · mis à jour le {{ page.article.mis_a_jour | date_fr }}{% endif %} · les chiffres sont recalculés chaque nuit</p>{% endblock %}
-{% block contenu %}
-<section class="bande bande-papier">
-  <article class="cadre texte">
-    {% if contenu %}{{ contenu | safe }}{% else %}{% set b = page.article.bilan %}
-    <p>Chaque mois, Fil Roug'Anim fait le point sur les sessions relevées chez les organismes de formation. Voici la photo prise le {{ b.date | date_fr }}.</p>
-    <h2>{{ b.total }} sessions à venir</h2>
-    <p>Ce jour-là, le site comptait <strong>{{ b.total }} sessions</strong> à venir chez {{ b.organismes }} organismes : {{ b.fg.n }} formations générales du BAFA, {{ b.appro.n }} approfondissements, {{ b.qualif.n }} qualifications, {{ b.bafd.n }} sessions BAFD et {{ b.psc.n }} formations PSC.</p>
-    <h2>Les prix médians</h2>
-    <table><thead><tr><th>Formation</th><th>Prix médian</th><th>Du moins cher au plus cher</th></tr></thead><tbody>
-    {% for nom, x in [("Formation générale BAFA", b.fg), ("Approfondissement BAFA", b.appro), ("Qualification BAFA", b.qualif), ("BAFD", b.bafd), ("PSC", b.psc)] if x.med %}<tr><td>{{ nom }}</td><td>{{ x.med | euros }}</td><td>{{ x.min | euros }} à {{ x.max | euros }}</td></tr>{% endfor %}
-    </tbody></table>
-    <p>Le prix médian coupe les sessions en deux : la moitié coûte moins, l'autre moitié plus.</p>
-    {% if b.deps_plus_fournis %}<h2>Les départements où le choix est le plus grand</h2>
-    <p>Pour la formation générale du BAFA : {% for d in b.deps_plus_fournis %}{{ d.nom }} ({{ d.n }} sessions){{ ", " if not loop.last else "." }}{% endfor %}</p>{% endif %}
-    {% if b.themes %}<h2>Les thèmes d'approfondissement les plus proposés</h2>
-    <ol>{% for t in b.themes[:6] %}<li><a href="/se-former/sessions/approfondissement/{{ t.id }}/">{{ t.nom }}</a> : {{ t.n }} sessions</li>{% endfor %}</ol>{% endif %}
-    <p><a href="/se-former/sessions/">Voir les sessions d'aujourd'hui</a> · <a href="/se-former/financer-son-bafa/">Financer son BAFA</a></p>
-    {% endif %}
-  </article>
-</section>
-<section class="bande bande-sable">
-  <div class="cadre">
-    <h2>À lire aussi</h2>
-    <ul class="articles articles-petits">{% for a in articles if a.url != page.url %}{% if loop.index <= 3 %}<li class="article-carte"><p class="article-sur">{{ a.categorie or "Conseils" }}</p><h3><a href="{{ lien(a.url) }}">{{ a.titre }}</a></h3></li>{% endif %}{% endfor %}</ul>
-    <p><a href="{{ lien('/blog/') }}">Tous les articles <span aria-hidden="true">→</span></a></p>
-    {{ m.encart_jeuphorie(site) }}
-  </div>
-</section>
+{% block le_puces %}<li class="fs-puce-fort">{{ cat }}</li>{% if contenu %}<li>{{ contenu | temps_lecture }} min de lecture</li>{% endif %}<li>{% if a.mis_a_jour %}Mis à jour le {{ a.mis_a_jour | date_fr }}{% else %}Publié le {{ a.date | date_fr }}{% endif %}</li>{% endblock %}
+{% block le_texte %}
+<article class="fs-carte le-texte">
+  {% if contenu %}{{ texte_rendu | safe }}{% else %}{% set b = a.bilan %}
+  <p>Chaque mois, Fil Roug'Anim fait le point sur les sessions relevées chez les organismes de formation. Voici la photo prise le {{ b.date | date_fr }}.</p>
+  <h2 id="sessions">{{ b.total }} sessions à venir</h2>
+  <p>Ce jour-là, le site comptait <strong>{{ b.total }} sessions</strong> à venir chez {{ b.organismes }} organismes : {{ b.fg.n }} formations générales du BAFA, {{ b.appro.n }} approfondissements, {{ b.qualif.n }} qualifications, {{ b.bafd.n }} sessions BAFD et {{ b.psc.n }} formations PSC.</p>
+  <h2 id="prix">Les prix médians</h2>
+  <div class="le-table"><table><thead><tr><th>Formation</th><th>Prix médian</th><th>Du moins cher au plus cher</th></tr></thead><tbody>
+  {% for nom, x in [("Formation générale BAFA", b.fg), ("Approfondissement BAFA", b.appro), ("Qualification BAFA", b.qualif), ("BAFD", b.bafd), ("PSC", b.psc)] if x.med %}<tr><td>{{ nom }}</td><td>{{ x.med | euros }}</td><td>{{ x.min | euros }} à {{ x.max | euros }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  <p>Le prix médian coupe les sessions en deux : la moitié coûte moins, l'autre moitié plus.</p>
+  {% if b.deps_plus_fournis %}<h2 id="departements">Les départements où le choix est le plus grand</h2>
+  <p>Pour la formation générale du BAFA : {% for d in b.deps_plus_fournis %}{{ d.nom }} ({{ d.n }} sessions){{ ", " if not loop.last else "." }}{% endfor %}</p>{% endif %}
+  {% if b.themes %}<h2 id="themes">Les thèmes d'approfondissement les plus proposés</h2>
+  <ol>{% for t in b.themes[:6] %}<li><a href="{{ lien('/se-former/sessions/approfondissement/' ~ t.id ~ '/') }}">{{ t.nom }}</a> : {{ t.n }} sessions</li>{% endfor %}</ol>{% endif %}
+  {% endif %}
+  <p class="le-maj">{{ cat }} · publié le {{ a.date | date_fr }}{% if a.mis_a_jour %}, mis à jour le {{ a.mis_a_jour | date_fr }}{% endif %}. Les chiffres cités sont recalculés chaque nuit à partir des sessions relevées.</p>
+</article>
+{% endblock %}
+{% block le_cote %}
+{% if cat == "Parents" %}
+{{ m.le_action("Inscrire mon enfant", "Colos et centres de loisirs", "Les séjours et les accueils des structures vérifiées, près de chez vous. La demande part sans compte.", "Voir les séjours", "/enfants/", lien) }}
+{% elif cat == "Structures" %}
+{{ m.le_action("Structures", "Recruter vos animateurs", "Des animateurs et des stagiaires BAFA disponibles, par département. Publier une offre est gratuit.", "Recruter", "/recruter/", lien) }}
+{% elif cat in ("Métiers", "Sur le terrain") %}
+{{ m.le_action("Stages et jobs", "Les offres près de chez vous", "Stages pratiques, jobs d'été, postes en accueil de loisirs : les annonces des structures vérifiées.", "Voir les offres", "/trouver-un-poste/offres/", lien, ("Créer mon profil gratuit", "/compte/?inscription=1")) }}
+{% else %}
+{{ m.le_action("Se former", "Trouver une session", "BAFA, BAFD, PSC : les sessions des organismes, près de chez vous, avec leurs prix. Mises à jour chaque nuit.", "Voir les sessions", "/se-former/sessions/", lien, ("Financer son BAFA", "/se-former/financer-son-bafa/")) }}
+{% endif %}
+{% endblock %}
+{% block le_suite %}
+{% set memes = articles | selectattr("categorie", "equalto", a.categorie) | rejectattr("url", "equalto", page.url) | list %}
+{% set autres = articles | rejectattr("categorie", "equalto", a.categorie) | rejectattr("bilan") | list %}
+{{ m.le_cartes((memes + autres), page.url, lien, sur="Article", titre="D'autres articles", tt_sur="Le blog") }}
+<p class="le-tout"><a href="{{ lien('/blog/') }}">Tous les articles <span aria-hidden="true">→</span></a></p>
+{{ m.le_pouce(site) }}
 {% endblock %}

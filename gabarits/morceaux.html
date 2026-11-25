@@ -537,3 +537,44 @@
               </span>
             </a>
 {% endmacro %}
+
+{# ---- Mise en page « lecture » (docs/CHARTE.md) ---- #}
+{# La carte d'action de la colonne de côté : foncée, un titre, une phrase, un bouton rouge, un lien secondaire #}
+{% macro le_action(sur, titre, texte, bouton, url, lien, second=None) %}
+<div class="le-action">
+  <p class="fs-sur">{{ sur }}</p>
+  <p class="le-action-t">{{ titre }}</p>
+  <p>{{ texte }}</p>
+  <a class="fs-btn fs-btn-r fs-btn-large" href="{{ lien(url) }}">{{ bouton }} <span aria-hidden="true">→</span></a>
+  {% if second %}<a class="le-action-2" href="{{ lien(second[1]) }}">{{ second[0] }}</a>{% endif %}
+</div>
+{% endmacro %}
+
+{# « Pour aller plus loin » : des cartes blanches (rubrique en petit, titre, résumé, Lire →) #}
+{% macro le_cartes(elements, url_page, lien, sur="Guide", max=3, titre="À lire ensuite", tt_sur="Pour aller plus loin") %}
+{% set liste = elements | rejectattr("url", "equalto", url_page) | list %}
+{% if liste %}
+<section class="fs-s le-suite">
+  <div class="fs-tt"><p class="fs-sur">{{ tt_sur }}</p><h2>{{ titre }}</h2></div>
+  <ul class="le-cartes">
+    {% for g in liste[:max] %}
+    <li><a class="fs-carte" href="{{ lien(g.url) }}">
+      <small>{{ g.categorie or g.sur or sur }}</small>
+      <b>{{ g.court or g.titre }}</b>
+      {% if g.resume %}<span>{{ g.resume }}</span>{% endif %}
+      <em>Lire <span aria-hidden="true">→</span></em>
+    </a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endmacro %}
+
+{# Le coup de pouce Jeuphorie, en bandeau fin #}
+{% macro le_pouce(site) %}
+<aside class="le-pouce fs-carte">
+  <span class="le-pouce-k" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span>
+  <p><b>Un coup de pouce</b> {{ site.jeuphorie.texte }}</p>
+  <a class="fs-btn fs-btn-b" href="{{ site.jeuphorie.url }}" rel="noopener">Voir les jeux</a>
+</aside>
+{% endmacro %}

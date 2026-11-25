@@ -29,6 +29,7 @@ from urllib.parse import quote
 from pathlib import Path
 
 import markdown
+from html import unescape as html_unescape
 import yaml
 from markupsafe import Markup
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -91,6 +92,28 @@ def convertir_markdown(texte):
     rendu = md.convert(texte)
     # [[à compléter : ...]] devient une zone surlignée, bien visible
     return re.sub(r"\[\[(.+?)\]\]", r'<mark class="a-completer">\1</mark>', rendu)
+
+
+def sommaire(html):
+    """Les intertitres (h2) d'un texte rendu : [(id, texte)], pour le sommaire des pages de lecture."""
+    return [(i, html_unescape(re.sub(r"<[^>]+>", "", t)).strip()) for i, t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', html or "")
+            if not re.match(r"Sources?\b", t)]
+
+
+def temps_lecture(html):
+    """Minutes de lecture (220 mots par minute, 1 au moins)."""
+    return max(1, round(len(re.sub(r"<[^>]+>", " ", html or "").split()) / 220))
+
+
+def habiller(html):
+    """Habille un texte rendu pour la mise en page « lecture » (docs/CHARTE.md) : les tableaux défilent dans un cadre,
+    les lignes « Source(s) : » passent en petit, la première phrase devient le chapeau."""
+    # un tableau sans en-tête (« | | | ») est une liste clé : valeur
+    html = re.sub(r'<table>\s*<thead>\s*<tr>\s*(?:<th[^>]*>\s*</th>\s*)+</tr>\s*</thead>', '<table class="le-cles">', html or "")
+    html = re.sub(r"<table( class=\"le-cles\")?>", lambda m: f'<div class="le-table"><table{m.group(1) or ""}>', html)
+    html = html.replace("</table>", "</table></div>")
+    html = re.sub(r"<p>(Sources? ?:)", r'<p class="le-source">\1', html)
+    return html
 
 
 # ---------------------------------------------------------------- outils
@@ -355,7 +378,7 @@ class Site:
         self.env.filters.update(date_fr=date_fr, euros=euros, resume=resume,
                                 majuscule=lambda t: t[:1].upper() + t[1:] if t else t,
                                 mois_court=lambda d: MOIS_COURTS[en_date(d).month - 1],
-                                markdown=convertir_markdown, paragraphes=paragraphes,
+                                markdown=convertir_markdown, paragraphes=paragraphes, sommaire=sommaire, temps_lecture=temps_lecture, habiller=habiller,
                                 milliers=lambda n: f"{int(n or 0):,}".replace(",", "\u202f"))
         self.env.globals.update(AIDES={k: v for k, v in (self.donnees.get('aides') or {}).items() if k != 'regles'}, AIDES_REGLES=(self.donnees.get('aides') or {}).get('regles') or {}, SEJ_TYPES=SEJ_TYPES, SEJ_ENVIES=SEJ_ENVIES, SEJ_HEBERG=SEJ_HEBERG, SEJ_UNITES=SEJ_UNITES, SEJ_TRANSPORT=SEJ_TRANSPORT, EXEMPLES=self.donnees.get("exemples") or {}, CENTRES_DEP=self.centres_dep, DIPLOMES_PROFIL_NOMS=DIPLOMES_PROFIL, dates_fr=dates_fr, FORMULES=FORMULES, OUTILS=OUTILS, TYPES_STRUCTURE=TYPES_STRUCTURE, FAMILLES_STRUCTURE=FAMILLES_STRUCTURE, FAMILLE_DE=FAMILLE_DE,
                                 PUBLICS=PUBLICS, ACCUEILS_ST=list(ACCUEILS.items()), STATUTS=STATUTS, familles_structure=familles_structure, nature_structure=nature_structure, ages_structure=ages_structure, DIPLOMES_PROFIL=DIPLOMES_PROFIL, RECHERCHE=RECHERCHE, EXPERIENCES=EXPERIENCES, CONTRATS=CONTRATS,

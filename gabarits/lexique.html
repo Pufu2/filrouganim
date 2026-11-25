@@ -1,22 +1,45 @@
-{% extends "base.html" %}
+{% extends "lecture.html" %}
+{# Le lexique (docs/CHARTE.md, modèle 2) : un mot = une définition en grand, les liens utiles en rangées, les mots voisins
+   en cartes ; la page d'accueil du lexique range tous les mots par lettre, chacun avec sa définition courte. #}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block tete_chapo %}{% if page.intro %}<p class="chapo">{{ page.intro }}</p>{% endif %}{% endblock %}
-{% block contenu %}
+{% block le_haut_classe %} le-haut-court{% endblock %}
+{% block le_puces %}<li class="fs-puce-fort">Lexique</li>{% if not page.terme %}<li>{{ page.termes | length }} mots</li>{% endif %}{% endblock %}
+{% block le_chapo %}{% if page.intro %}<p class="fs-accroche">{{ page.intro }}</p>{% endif %}{% endblock %}
+{% block le_texte %}
 {% if page.terme %}{% set t = page.terme %}
-<section class="bande bande-papier">
-  <article class="cadre texte">
-    <p class="definition">{{ t.definition }}</p>
-    {% if t.liens %}<ul class="lexique-liens">{% for titre, u in t.liens %}<li><a href="{{ lien(u) }}">{{ titre }} <span aria-hidden="true">→</span></a></li>{% endfor %}</ul>{% endif %}
-    {% if page.voir %}<h2>Voir aussi</h2>
-    <dl class="lexique-voir">{% for v in page.voir %}<dt><a href="{{ lien(v.url) }}">{{ v.terme }}</a></dt><dd>{{ v.definition | resume(150) }}</dd>{% endfor %}</dl>{% endif %}
-  </article>
+<article class="fs-carte le-texte le-def">
+  <p class="fs-sur">Définition</p>
+  <p class="le-def-t">{{ t.definition }}</p>
+  {% if t.liens %}
+  <div class="le-def-liens">
+    {% for titre, u in t.liens %}<a class="fs-rang" href="{{ lien(u) }}"><b>{{ titre }}</b><span class="fs-lp" aria-hidden="true">→</span></a>{% endfor %}
+  </div>
+  {% endif %}
+</article>
+{% if page.voir %}
+<section class="fs-s le-voir">
+  <div class="fs-tt"><p class="fs-sur">À connaître aussi</p><h2>Les mots voisins</h2></div>
+  <ul class="le-cartes">{% for v in page.voir %}<li><a class="fs-carte" href="{{ lien(v.url) }}"><small>Lexique</small><b>{{ v.terme }}</b><span>{{ v.definition | resume(130) }}</span><em>Lire <span aria-hidden="true">→</span></em></a></li>{% endfor %}</ul>
 </section>
 {% endif %}
-<section class="bande bande-sable">
-  <div class="cadre explorer">
-    <div class="explorer-large"><h3>{{ "Tout le lexique" if page.terme else "Les mots, de A à Z" }}</h3>
-      <ul class="colonnes">{% for x in page.termes | sort(attribute="court") %}{% if x.url != page.url %}<li><a href="{{ lien(x.url) }}">{{ x.terme }}</a></li>{% endif %}{% endfor %}</ul>
-    </div>
-  </div>
+{% else %}
+{% set groupes = [] %}{% for x in page.termes %}{% set l = x.terme[0] | upper | replace("É", "E") | replace("È", "E") | replace("À", "A") %}{% if not groupes or groupes[-1][0] != l %}{% set _ = groupes.append([l, []]) %}{% endif %}{% set _ = groupes[-1][1].append(x) %}{% endfor %}
+<nav class="le-lettres" aria-label="Lettres">{% for l, xs in groupes %}<a href="#lettre-{{ l | lower }}">{{ l }}</a>{% endfor %}</nav>
+{% for l, xs in groupes %}
+<section class="le-lettre" id="lettre-{{ l | lower }}">
+  <h2>{{ l }}</h2>
+  <ul class="le-cartes le-cartes-2">{% for x in xs %}<li><a class="fs-carte" href="{{ lien(x.url) }}"><b>{{ x.terme }}</b><span>{{ x.definition | resume(120) }}</span></a></li>{% endfor %}</ul>
 </section>
+{% endfor %}
+{% endif %}
+{% endblock %}
+{% block le_cote %}
+{% if page.terme %}
+<nav class="fs-carte le-som le-az" aria-label="Tout le lexique">
+  <p class="fs-sur">Tout le lexique</p>
+  <ul>{% for x in page.termes | sort(attribute="court") if x.url != page.url %}<li><a href="{{ lien(x.url) }}">{{ x.terme }}</a></li>{% endfor %}</ul>
+</nav>
+{% else %}
+{{ m.le_action("Se former", "Trouver une session", "BAFA, BAFD, PSC : les sessions des organismes, près de chez vous, avec leurs prix.", "Voir les sessions", "/se-former/sessions/", lien, ("Les étapes du BAFA", "/se-former/etapes-du-bafa/")) }}
+{% endif %}
 {% endblock %}

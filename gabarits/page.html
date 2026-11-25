@@ -1,9 +1,4 @@
-{% extends "base.html" %}
-{% block tete_chapo %}{% if page.description %}<p class="chapo">{{ page.description }}</p>{% endif %}{% endblock %}
-{% block contenu %}
-<section class="bande bande-papier">
-  <article class="cadre texte">
-    {{ contenu | safe }}
-  </article>
-</section>
-{% endblock %}
+{% extends "lecture.html" %}
+{# Les pages fixes (à propos, contact, pages légales) en mise en page « lecture » (docs/CHARTE.md) #}
+{% block le_haut_classe %} le-haut-court{% endblock %}
+{% block le_puces %}{% if page.entete and page.entete.mis_a_jour %}<li>Mis à jour le {{ page.entete.mis_a_jour | date_fr }}</li>{% endif %}{% endblock %}

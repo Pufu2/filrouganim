@@ -5,17 +5,66 @@
    de formation proches, dates des vacances de la zone, départements voisins. Trois publics :
    « anim » (animateurs et directeurs), « struct » (structures qui recrutent), « parent » (inscrire son enfant). #}
 {% set L = page.local %}
-{% block tete_note %}<p class="tp-sur">{{ L.sur }}</p>{% endblock %}
-{% block tete_chapo %}<p class="chapo">{{ page.intro }}</p>
-{% if L.chiffres %}<ul class="lc-chiffres">{% for n, t in L.chiffres %}<li><b>{{ n }}</b><span>{{ t }}</span></li>{% endfor %}</ul>{% endif %}
-<p class="lc-actions">{% for t, u, fort in L.actions %}<a class="{{ 'bouton-r' if fort else 'bouton-blanc' }}" href="{{ lien(u) if u.startswith('/') else u }}">{{ t }}</a>{% endfor %}</p>{% endblock %}
 {% block scripts %}{% if L.hub %}<script>document.querySelector("[data-hub]").addEventListener("submit",function(e){e.preventDefault();var v=document.getElementById("hb-q").value.trim().toLowerCase(),o=[].slice.call(document.querySelectorAll("#hb-liste option"));var t=o.filter(function(x){return x.value.toLowerCase()===v})[0]||o.filter(function(x){return x.value.toLowerCase().indexOf(v)>=0})[0];if(t)location.href=t.dataset.u});</script>{% endif %}{% endblock %}
+{% block schema %}{% if page.schema_faq %}<script type="application/ld+json">{{ page.schema_faq | safe }}</script>{% endif %}{% endblock %}
+{% block tete %}{% endblock %}
 {% block contenu %}
-<div class="lc lc-{{ L.public }}">
+{# Modèle 3 de docs/CHARTE.md : haut foncé, ruban des chiffres, barre des sections, puis chaque bloc en section :
+   texte à gauche et données à droite (sessions, offres, structures, vacances) ; les blocs sans données vont deux par deux. #}
+{% set ns = namespace(g=[]) %}
+{% set chiffres = (L.chiffres or []) | rejectattr(0, "in", [0, "0"]) | list %}
+{% for b in L.blocs %}
+  {% set data = b.offres or b.sessions or b.structures or b.sejours or b.vacances %}
+  {% if data or b.large or not ns.g or ns.g[-1][0] != "t" or ns.g[-1][1] | length >= 2 %}{% set ns.g = ns.g + [["d" if (data or b.large) else "t", [b]]] %}{% else %}{% set _ = ns.g[-1][1].append(b) %}{% endif %}
+{% endfor %}
+{% macro donnees(b) %}
+  {% if b.offres %}<div class="sessions lc2-liste">{% for o in b.offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
+  {% if b.sessions %}<div class="sessions lc2-liste">{% for s in b.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}</div>{% endif %}
+  {% if b.structures %}<div class="lc2-rangs">{% for st in b.structures %}<a class="fs-rang" href="{{ lien(st.url) }}"><span><b>{{ st.nom }}</b><small>{{ st.sous }}</small></span><span class="fs-lp" aria-hidden="true">→</span></a>{% endfor %}</div>{% endif %}
+  {% if b.sejours %}<div class="lc2-rangs">{% for sj in b.sejours %}<a class="fs-rang" href="{{ lien(sj.url) }}"><span><b>{{ sj.titre }}</b><small>{{ sj.sous }}</small></span><span class="fs-lp" aria-hidden="true">→</span></a>{% endfor %}</div>{% endif %}
+  {% if b.vacances %}<div class="le-table lc2-vac"><table class="le-cles"><tbody>{% for nom, dates in b.vacances %}<tr><td>{{ nom }}</td><td>{{ dates }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endmacro %}
+{% macro texte(b) %}
+  {% for p in b.paras or [] %}<p>{{ p }}</p>{% endfor %}
+  {% if b.points %}<ul class="lc2-points">{% for p in b.points %}<li>{% if p is string %}{{ p }}{% else %}<b>{{ p[0] }}</b> {{ p[1] }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if b.vide %}<p class="fs-vide lc2-vide">{{ b.vide }}</p>{% endif %}
+  {% if b.lien %}<p class="lc2-lien"><a href="{{ lien(b.lien[1]) }}">{{ b.lien[0] }} <span aria-hidden="true">→</span></a></p>{% endif %}
+{% endmacro %}
+<div class="fs le lc2 lc-{{ L.public }} theme-rouge">
+  <header class="fs-haut le-haut{% if chiffres %} le-haut-ruban{% endif %}">
+    <div class="fs-haut-fond" aria-hidden="true"></div>
+    <div class="cadre fs-haut-in">
+      {% if page.fil %}
+      <nav class="fil-ariane fs-ariane" aria-label="Fil d'Ariane">
+        <a href="{{ lien('/') }}">Accueil</a>
+        {% for nom, url in page.fil %}<span aria-hidden="true">·</span>{% if loop.last %}<span aria-current="page">{{ nom }}</span>{% else %}<a href="{{ lien(url) }}">{{ nom }}</a>{% endif %}{% endfor %}
+      </nav>
+      {% endif %}
+      <ul class="fs-puces"><li class="fs-puce-fort">{{ L.sur }}</li></ul>
+      <h1>{{ page.h1 or page.titre }}</h1>
+      {% if page.intro %}<p class="fs-accroche">{{ page.intro }}</p>{% endif %}
+      {% if L.actions %}<p class="lc2-actions">{% for t, u, fort in L.actions %}<a class="fs-btn {{ 'fs-btn-r' if fort else 'lc2-btn-clair' }}" href="{{ lien(u) if u.startswith('/') else u }}">{{ t }}{% if fort %} <span aria-hidden="true">→</span>{% endif %}</a>{% endfor %}</p>{% endif %}
+    </div>
+  </header>
+
   <div class="cadre">
+    {% if chiffres %}
+    <ul class="fs-ruban sjf-ruban le-ruban lc2-ruban">{% for n, t in chiffres %}<li><b>{{ n }}</b><small>{{ t }}</small></li>{% endfor %}</ul>
+    {% endif %}
+
+    {% if ns.g | length >= 3 %}
+    <nav class="fs-sections" aria-label="Sections de la page">
+      <div class="fs-sections-liens">
+        {% set vus = [] %}
+        {% for kind, bs in ns.g %}{% set lab = bs[0].titre.split(" · ")[0] %}{% if lab not in vus %}{% set _ = vus.append(lab) %}<a href="#lc-g{{ loop.index }}">{{ lab | resume(30) }}</a>{% endif %}{% endfor %}
+        {% if page.faq_page %}<a href="#lc-faq">Questions</a>{% endif %}
+      </div>
+    </nav>
+    {% endif %}
+
     {% if L.hub %}{% set H = L.hub %}
     {# une page portail : chercher, les plus fournis, puis toutes les régions #}
-    <section class="hb">
+    <section class="hb fs-s">
       <form class="hb-cherche" role="search" data-hub>
         <label for="hb-q" class="sr-only">Votre {{ H.lieu }}</label>
         <input id="hb-q" list="hb-liste" placeholder="Votre {{ H.lieu }} : Yvelines, 69, Gironde…" autocomplete="off">
@@ -33,28 +82,51 @@
       </div>
     </section>
     {% endif %}
-    {% for b in L.blocs %}
-    <section class="lc-bloc{% if b.large %} lc-large{% endif %}" aria-labelledby="lc-t{{ loop.index }}">
-      <h2 id="lc-t{{ loop.index }}">{{ b.titre }}</h2>
-      {% for p in b.paras or [] %}<p>{{ p }}</p>{% endfor %}
-      {% if b.points %}<ul class="lc-points">{% for p in b.points %}<li>{% if p is string %}{{ p }}{% else %}<b>{{ p[0] }}</b> {{ p[1] }}{% endif %}</li>{% endfor %}</ul>{% endif %}
-      {% if b.offres %}<div class="sessions">{% for o in b.offres %}{{ m.carte_offre(o, lien) }}{% endfor %}</div>{% endif %}
-      {% if b.sessions %}<div class="sessions">{% for s in b.sessions %}{{ m.carte_session(s, lien) }}{% endfor %}</div>{% endif %}
-      {% if b.structures %}<ul class="lc-structures">{% for st in b.structures %}<li><a href="{{ lien(st.url) }}"><b>{{ st.nom }}</b><span>{{ st.sous }}</span></a></li>{% endfor %}</ul>{% endif %}
-      {% if b.sejours %}<ul class="lc-structures">{% for sj in b.sejours %}<li><a href="{{ lien(sj.url) }}"><b>{{ sj.titre }}</b><span>{{ sj.sous }}</span></a></li>{% endfor %}</ul>{% endif %}
-      {% if b.vacances %}<table class="lc-vacances"><caption class="sr-only">Les dates des vacances scolaires</caption><tbody>{% for nom, dates in b.vacances %}<tr><th scope="row">{{ nom }}</th><td>{{ dates }}</td></tr>{% endfor %}</tbody></table>{% endif %}
-      {% if b.vide %}<p class="lc-vide">{{ b.vide }}</p>{% endif %}
-      {% if b.lien %}<p class="lc-lien"><a href="{{ lien(b.lien[1]) }}">{{ b.lien[0] }} <span aria-hidden="true">→</span></a></p>{% endif %}
+
+    {% for kind, bs in ns.g %}
+    {% if kind == "d" %}{% set b = bs[0] %}{% set p = b.titre.split(" · ", 1) %}
+    <section class="fs-s lc2-s" id="lc-g{{ loop.index }}" aria-labelledby="lc-t{{ loop.index }}">
+      <div class="fs-tt">{% if p | length > 1 %}<p class="fs-sur">{{ p[0] }}</p>{% endif %}<h2 id="lc-t{{ loop.index }}">{{ p[-1] }}</h2></div>
+      {% set a_donnees = b.offres or b.sessions or b.structures or b.sejours or b.vacances %}
+      {% set a_texte = b.paras or b.points or b.vide or b.lien %}
+      <div class="lc2-duo{% if not a_donnees or not a_texte %} lc2-duo-1{% endif %}">
+        {% if a_texte %}<div class="fs-carte lc2-txt">{{ texte(b) }}</div>{% endif %}
+        {% if a_donnees %}<div class="fs-carte lc2-data">{{ donnees(b) }}</div>{% endif %}
+      </div>
     </section>
+    {% else %}
+    <section class="fs-s lc2-s" id="lc-g{{ loop.index }}">
+      <div class="lc2-paire{% if bs | length == 1 %} lc2-paire-1{% endif %}">
+        {% set gi = loop.index %}
+        {% for b in bs %}{% set p = b.titre.split(" · ", 1) %}
+        <article class="fs-carte lc2-txt">
+          {% if p | length > 1 %}<p class="fs-sur">{{ p[0] }}</p>{% endif %}
+          <h2 id="lc-t{{ gi }}-{{ loop.index }}">{{ p[-1] }}</h2>
+          {{ texte(b) }}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
     {% endfor %}
 
-    {% if page.faq_page %}<section class="lc-bloc lc-large" aria-labelledby="lc-faq"><h2 id="lc-faq">Questions fréquentes</h2>{{ m.faq(page.faq_page, lien) }}</section>{% endif %}
+    {% if page.faq_page %}
+    <section class="fs-s" id="lc-faq" aria-labelledby="lc-faq-t">
+      <div class="fs-tt"><p class="fs-sur">En bref</p><h2 id="lc-faq-t">Questions fréquentes</h2></div>
+      <div class="fs-carte le-faq">
+        {% for q in page.faq_page %}<details><summary>{{ q.q }}</summary><p>{{ q.r_rendu }}{% if q.lien %} <a href="{{ lien(q.lien[1]) }}">{{ q.lien[0] }} <span aria-hidden="true">→</span></a>{% endif %}</p></details>{% endfor %}
+      </div>
+    </section>
+    {% endif %}
 
-    <nav class="lc-voisins" aria-label="Pages proches">
-      {% for titre, liens in L.voisins if liens %}
-      <div><p class="sjc-v-t">{{ titre }}</p><ul>{% for t, u in liens %}<li><a href="{{ lien(u) }}">{{ t }}</a></li>{% endfor %}</ul></div>
+    {% set vs = L.voisins | selectattr(1) | list %}
+    {% if vs %}
+    <nav class="fs-s lc2-voisins" aria-label="Pages proches">
+      {% for titre, liens in vs %}
+      <div class="fs-carte"><p class="fs-sur">{{ titre }}</p><ul>{% for t, u in liens %}<li><a href="{{ lien(u) }}">{{ t }}</a></li>{% endfor %}</ul></div>
       {% endfor %}
     </nav>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

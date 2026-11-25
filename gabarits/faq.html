@@ -1,12 +1,20 @@
-{% extends "base.html" %}
-{% import "morceaux.html" as m with context %}
+{% extends "lecture.html" %}
+{# La FAQ en mise en page « lecture » : les questions repliées dans une carte, une action à côté #}
 {% block schema %}{% if page.schema %}<script type="application/ld+json">{{ page.schema | safe }}</script>{% endif %}{% endblock %}
-{% block tete_chapo %}<p class="chapo">Des réponses courtes. Chaque réponse renvoie vers le guide qui cite la source officielle.</p>{% endblock %}
-{% block contenu %}
-<section class="bande bande-papier">
-  <div class="cadre">
-    {{ m.faq(page.faq, lien) }}
-    <p class="petit">Une question manque ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a>.</p>
-  </div>
-</section>
+{% block le_puces %}<li class="fs-puce-fort">Questions fréquentes</li><li>{{ page.faq | length }} réponses</li>{% endblock %}
+{% block le_chapo %}<p class="fs-accroche">Des réponses courtes. Chaque réponse renvoie vers le guide qui cite la source officielle.</p>{% endblock %}
+{% block le_texte %}
+<div class="fs-carte le-faq">
+  {% for q in page.faq %}
+  <details{% if loop.first %} open{% endif %}>
+    <summary>{{ q.q }}</summary>
+    <p>{{ q.r_rendu }}{% if q.lien %} <a href="{{ lien(q.lien[1]) }}">{{ q.lien[0] }} <span aria-hidden="true">→</span></a>{% endif %}</p>
+  </details>
+  {% endfor %}
+</div>
+<p class="le-maj">Une question manque ? <a href="{{ lien('/contact/') }}">Écrivez-moi</a>.</p>
 {% endblock %}
+{% block le_cote %}
+{{ m.le_action("Se former", "Trouver une session", "BAFA, BAFD, PSC : les sessions des organismes, près de chez vous, avec leurs prix.", "Voir les sessions", "/se-former/sessions/", lien, ("Financer son BAFA", "/se-former/financer-son-bafa/")) }}
+{% endblock %}
+{% block le_suite %}{{ m.le_cartes(site.guides | selectattr("partie", "equalto", "se-former") | list, page.url, lien, titre="Les guides pour aller plus loin", max=3) }}{% endblock %}
