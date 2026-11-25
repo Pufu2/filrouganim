@@ -125,10 +125,12 @@ def message(x, d, demandes, site, relance, familles=None):
         sujet = sujet[0].upper() + sujet[1:]
         cle = (f"En ce moment, {n} animateur{s} {lieu} {verbe}{toujours} ouvert{s} à l'animation auprès des personnes âgées "
                "(EHPAD, résidences).")
-        offre = ("Votre établissement peut créer sa page gratuitement, publier une offre et ouvrir gratuitement une demande "
-                 "d'animateur de votre secteur. Ensuite, l'abonnement (dès {prix_ab} par an) ou "
-                 f"le Pass recrutement (dès {prix_pass} pour un mois, sans engagement) donne accès à toutes les demandes et aux "
-                 "profils des animateurs de votre secteur. Aucune commission.")
+        nd = sum(1 for m in pa if not m.get("fiche"))  # demandes ouvrables (les fiches se voient avec l'abonnement)
+        gratuit = (f"créer sa page, publier une offre et ouvrir {'la demande de l’un d’eux' if n > 1 else 'sa demande'}" if nd
+                   else "créer sa page et publier une offre")
+        offre = (f"Votre établissement peut {gratuit}, gratuitement. Ensuite, l'abonnement (dès {prix_ab} par an) ou "
+                 f"le Pass recrutement (dès {prix_pass} pour un mois, sans engagement) donne accès à toutes leurs demandes et à "
+                 "leurs profils, en tête de liste pour votre établissement. Aucune commission.")
         if relance:
             paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. Pourriez-vous le transmettre à "
                      "la personne chargée de l'animation ?", cle, offre, "C'est notre dernier message à ce sujet."]
