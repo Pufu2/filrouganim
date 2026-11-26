@@ -1929,7 +1929,6 @@
 /se-former/sessions/paris/paris-7e/
 /se-former/sessions/paris/psc1/
 /se-former/sessions/paris/psc1/paris-4e/
-/se-former/sessions/paris/psc1/paris-7e/
 /se-former/sessions/paris/vacances-hiver-2027/
 /se-former/sessions/paris/vacances-noel-2026/
 /se-former/sessions/paris/vacances-printemps-2027/
