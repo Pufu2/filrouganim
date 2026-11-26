@@ -267,8 +267,7 @@
         }
         liste.forEach(function (v) {
           var b = el("button", "ab-m-sugg-l"); b.type = "button";
-          var im = el("img"); im.src = dossier + "lieu.png"; im.alt = ""; im.width = 30; im.height = 30;
-          b.appendChild(el("span", "ab-m-sugg-ic")).appendChild(im);
+          b.appendChild(el("span", "ab-m-sugg-ic")).innerHTML = svg('<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>');
           var t = el("span"); t.appendChild(el("b", null, v[0])); t.appendChild(el("small", null, v[1])); b.appendChild(t);
           b.addEventListener("click", function () { etat.ou = v[0]; racine.classList.remove("tel-cherche-anim"); dessinerModale("quand"); });
           zone.appendChild(b);

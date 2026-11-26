@@ -305,8 +305,12 @@ html.tel-cherche-anim .ab-m-icone { animation: ab-icone .574s cubic-bezier(.2, 0
 html.tel-cherche-anim .ab-m-onglet[aria-pressed="true"]::after { animation: ab-apparait .15s linear .1s backwards; }
 @keyframes ab-icone { from { scale: .4; } }
 @keyframes ab-apparait { from { opacity: 0; } }
-.ab-m-x { position: absolute; top: calc(18px + env(safe-area-inset-top)); right: 14px; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid #b0b0b0; border-radius: 50%; background: #fff; cursor: pointer; }
+.ab-m-x { position: absolute; top: calc(14px + env(safe-area-inset-top)); right: 12px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, .9); box-shadow: 0 2px 4px rgba(0, 0, 0, .18); cursor: pointer; transition: transform .25s cubic-bezier(.2, 0, 0, 1), box-shadow .25s; }
+.ab-m-x:active { transform: scale(.92); box-shadow: none; background: #fff; }
 .ab-m-x svg { width: 12px; height: 12px; fill: none; stroke: #222; stroke-width: 3; stroke-linecap: round; }
+html.tel-ab .tel-pilule { transition: transform .25s cubic-bezier(.2, 0, 0, 1); }
+html.tel-ab .tel-pilule:active { transform: scale(.97); }
 .ab-m-corps { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 12px 16px; display: flex; flex-direction: column; gap: 12px; }
 .ab-m-carte { flex: none; background: #fff; border-radius: 16px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 2px 6px rgba(0, 0, 0, .08); }
 .ab-m-carte.ouverte { display: flex; flex-direction: column; padding: 24px 20px 12px; border-radius: 32px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .16); }
@@ -326,8 +330,8 @@ html.tel-cherche-anim .ab-m-carte { animation: ab-descend .5s cubic-bezier(.2, 0
 .ab-m-sugg::-webkit-scrollbar { display: none; }
 .ab-m-sugg-t { margin: 18px 0 8px; color: #222; font-size: .75rem; font-weight: 500; }
 .ab-m-sugg-l { display: flex; align-items: center; gap: 16px; width: 100%; padding: 8px 0; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
-.ab-m-sugg-ic { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: #f2f2f2; }
-.ab-m-sugg-ic img { width: 24px; height: 24px; }
+.ab-m-sugg-ic { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: #f0f3f8; }
+.ab-m-sugg-ic svg { width: 22px; height: 22px; fill: none; stroke: #3b5573; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .ab-m-sugg-l > span:last-child { display: flex; flex-direction: column; min-width: 0; }
 .ab-m-sugg-l b { color: #222; font-size: .95rem; font-weight: 500; }
 .ab-m-sugg-l small { color: #6a6a6a; font-size: .85rem; }
@@ -342,7 +346,7 @@ html.tel-cherche-anim .ab-m-carte { animation: ab-descend .5s cubic-bezier(.2, 0
 .ab-m-pied { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px calc(12px + env(safe-area-inset-bottom)) 6px; background: transparent; }
 html.tel-cherche-anim .ab-m-pied { animation: ab-monte .5s cubic-bezier(.2, 0, 0, 1) backwards; }
 @keyframes ab-monte { from { transform: translateY(100px); opacity: 0; } }
-.ab-m-effacer { height: 48px; padding: 14px; border: 0; border-radius: 12px; background: none; color: #222; font: 500 16px/20px var(--texte); text-decoration: none; cursor: pointer; }
+.ab-m-effacer { height: 48px; padding: 14px; border: 0; border-radius: 12px; background: none; color: #6a6a6a; font: 400 15px/20px var(--texte); text-decoration: none; cursor: pointer; }
 .ab-m-chercher { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 14px 24px; border: 0; border-radius: 12px;
   background: linear-gradient(to right, #e5283f 0%, #d61f35 50%, #bd122a 100%); color: #fff; font: 500 16px/20px var(--texte); cursor: pointer; }
 .ab-m-chercher svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
