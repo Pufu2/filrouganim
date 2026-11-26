@@ -15,8 +15,6 @@
 {% macro lien_menu(url, titre, sous=None) %}<a href="{{ lien(url) }}"{% if page.url == url %} aria-current="page"{% endif %}>{{ ico(ICONES.get(url, "fleche")) }}<span class="mm-lien-texte"><b>{{ titre }}</b>{% if sous %}<small>{{ sous }}</small>{% endif %}</span></a>{% endmacro %}
 {% set vacances = periodes | selectattr("fin", "ge", aujourdhui) | list %}
 <nav class="mm" id="menu-principal" aria-label="Menu principal">
-  {# téléphone : le menu s'ouvre en feuille depuis le bas ; un titre et une croix en haut (cachés sur ordinateur) #}
-  <div class="mm-tel mm-tel-tete"><p>Menu</p><button type="button" class="mm-tel-fermer" aria-label="Fermer le menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="mm-item">
     <button class="mm-bouton" type="button" aria-expanded="false" aria-controls="mm-former" data-href="{{ lien('/se-former/sessions/') }}"{% if page.url.startswith('/se-former/') %} data-actif{% endif %}>Se former<svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg></button>
     <div class="mm-panneau" id="mm-former" hidden>
@@ -174,18 +172,5 @@
         </div>
       </div>
     </div>
-  </div>
-  {# téléphone : le compte, puis les pages du pied de page (le pied lui-même est caché sur téléphone) #}
-  <div class="mm-tel mm-tel-pied">
-    {% if site.comptes_ouverts %}<div class="mm-tel-compte"><a class="mm-tel-espace" href="{{ lien('/compte/') }}">Mon espace</a><a class="mm-tel-commencer" href="{{ lien('/compte/') }}?inscription=1">Créer mon compte</a></div>{% endif %}
-    <div class="mm-tel-liens">
-      <a href="{{ lien('/comment-ca-marche/') }}">Comment ça marche</a>
-      <a href="{{ lien('/a-propos/') }}">Qui fait Fil Roug'Anim ?</a>
-      <a href="{{ lien('/blog/') }}">Le blog</a>
-      <a href="{{ lien('/outils/') }}">Outils gratuits</a>
-      <a href="{{ lien('/chiffres/') }}">Les chiffres du site</a>
-      <a href="{{ lien('/contact/') }}">Contact</a>
-    </div>
-    <p class="mm-tel-legal"><a href="{{ lien('/mentions-legales/') }}">Mentions légales</a> · <a href="{{ lien('/confidentialite/') }}">Confidentialité</a> · <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a> · <a href="{{ lien('/conditions-de-vente/') }}">Conditions de vente</a></p>
   </div>
 </nav>

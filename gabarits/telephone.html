@@ -1,0 +1,44 @@
+{# Téléphone (≤ 700px) : la barre du haut façon application (recherche en pilule, catégories de la partie, bouton du compte),
+   la feuille de recherche plein écran, et les quelques liens du bas. Tout est caché au-dessus de 700px (da.css).
+   La recherche elle-même reste celle de la page : telephone.js déplace son formulaire dans la feuille, rien n'est refait. #}
+{% from "menu.html" import ico with context %}
+{% set u = page.url or '/' %}
+{% set rub = 'accueil' if u == '/' else 'former' if u.startswith('/se-former/') else 'poste' if (u.startswith('/trouver-un-poste/') or u.startswith('/recruter/structures/')) else 'recruter' if u.startswith('/recruter/') else 'enfants' if u.startswith('/enfants/') else '' %}
+{% set PILULES = {
+  'former': ("Trouver une session", "Partout en France · BAFA, BAFD, PSC…", "/se-former/sessions/"),
+  'poste': ("Trouver un poste", "Stages, jobs d'été, postes à l'année", "/trouver-un-poste/offres/"),
+  'recruter': ("Recruter des animateurs", "Dans votre département", "/recruter/animateurs-bafa/"),
+  'enfants': ("Trouver une place", "Colos, accueils de loisirs, périscolaire", "/enfants/"),
+  'accueil': ("Que cherchez-vous ?", "Une formation, un poste, une place", "/"),
+  '': ("Que cherchez-vous ?", "Une formation, un poste, une place", "/")} %}
+{% set CATS = {
+  'former': [("/se-former/sessions/", "Toutes", "loupe"), ("/se-former/sessions/bafa/", "BAFA", "diplome"), ("/se-former/sessions/bafd/", "BAFD", "etoile"),
+             ("/se-former/sessions/psc1/", "PSC", "croix"), ("/se-former/sessions/bsb/", "BSB", "eau"), ("/se-former/ecoles/", "Diplômes pros", "ecole"),
+             ("/trouver-un-poste/demande/", "Stage pratique", "cible"), ("/se-former/financer-son-bafa/", "Financer", "euro")],
+  'poste': [("/trouver-un-poste/offres/", "Offres", "loupe"), ("/recruter/structures/", "Structures", "structure"), ("/trouver-un-poste/emploi-animateur/", "Par département", "carte"),
+            ("/trouver-un-poste/job-ete-animateur/", "Job d'été", "valise"), ("/trouver-un-poste/demande/", "Ma demande", "annonce"), ("/compte/?inscription=1&role=candidat", "Ma fiche", "profil")],
+  'recruter': [("/recruter/", "Recruter", "structure"), ("/trouver-un-poste/offres/#animateurs", "Animateurs", "profil"), ("/recruter/animateurs-bafa/", "Par département", "carte"),
+               ("/recruter/sejours/", "Séjours", "valise"), ("/recruter/exemple-de-page-structure/", "Exemple", "etoile"), ("/outils/taux-d-encadrement/", "Encadrement", "calcul")],
+  'enfants': [("/enfants/", "Tout", "loupe"), ("/enfants/?type=accueils", "Accueils de loisirs", "villes"), ("/enfants/?type=periscolaire", "Périscolaire", "ecole"),
+              ("/enfants/?type=sejours", "Colos", "valise"), ("/enfants/centre-de-loisirs/", "Par département", "carte"), ("/enfants/demande/", "Mon besoin", "annonce"),
+              ("/enfants/aides/", "Les aides", "euro")]} %}
+{% set pil = PILULES[rub] %}
+<div class="tel-barre" data-rub="{{ rub or 'autre' }}">
+  <div class="tel-barre-l">
+    <a class="tel-pilule" href="{{ lien(pil[2]) }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/></svg>
+      <span><b>{{ pil[0] }}</b><small data-tel-lieu>{{ pil[1] }}</small></span>
+    </a>
+    <button type="button" class="tel-rond tel-filtres" aria-label="Filtres" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+    <a class="tel-rond tel-compte" href="{{ lien('/compte/') }}" aria-label="Mon espace, connexion"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg></a>
+  </div>
+  {% if CATS[rub] %}
+  <nav class="tel-cats" aria-label="{{ pil[0] }}">
+    {% for url, nom, ic in CATS[rub] %}<a href="{{ lien(url) }}" data-cat="{{ url }}"{% if url == u %} aria-current="page"{% endif %}>{{ ico(ic) }}<span>{{ nom }}</span></a>{% endfor %}
+  </nav>
+  {% endif %}
+</div>
+<div class="tel-feuille" role="dialog" aria-modal="true" aria-label="{{ pil[0] }}">
+  <div class="tel-feuille-tete"><button type="button" class="tel-rond tel-feuille-fermer" aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><p>{{ pil[0] }}</p></div>
+  <div class="tel-feuille-corps"></div>
+</div>

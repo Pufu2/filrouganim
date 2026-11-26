@@ -1,74 +1,100 @@
 /* =========================================================================================
    FIL ROUG'ANIM SUR TÉLÉPHONE
    Cette feuille n'est chargée que sous 700px (media="(max-width: 700px)" dans base.html) : l'ordinateur ne peut pas bouger.
-   L'esprit : une application. Un haut fin et sombre, une barre d'onglets en bas avec le logo au milieu, le menu en
-   feuille qui monte du bas, des titres nets, des listes en lignes, des boutons à la taille du pouce (48px),
-   les rangées de pastilles qui défilent de côté, le haut et le bas qui s'effacent quand on lit.
+   L'esprit : une application, à la manière d'Airbnb. En haut, la recherche en pilule, les catégories de la partie qui
+   défilent de côté et le rond du compte (gabarits/telephone.html) ; en bas, les onglets des 4 parties avec le logo
+   (l'accueil) au milieu. Sur les pages de recherche, plus de grand haut sombre : la recherche s'ouvre en feuille plein écran.
+   En descendant, la barre du haut se resserre et les onglets du bas s'effacent (statique/js/telephone.js).
    Couleurs et police : celles de la charte (docs/CHARTE.md), rien de nouveau.
    ========================================================================================= */
-:root { --tel-onglets: 62px; --tel-haut: 56px; --tel-marge: 16px; --tel-r: 18px; }
-html { -webkit-text-size-adjust: 100%; }
-body { -webkit-tap-highlight-color: transparent; }
+:root { --tel-onglets: 62px; --tel-marge: 16px; --tel-r: 18px; --tel-barre-h: 0px; }
+html { -webkit-text-size-adjust: 100%; background: #fff; overflow-anchor: none; }
+body { -webkit-tap-highlight-color: transparent; background: #f4f4f2; min-height: 100dvh; }
 body:not(.en-app) { padding-bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom)); }
 html.tel-sans-onglets body { padding-bottom: 0; }
 .cadre { width: calc(100% - 2 * var(--tel-marge)); }
 
-/* ---------- le haut : une barre fine, pleine largeur, qui s'efface quand on descend ---------- */
-header.jm-entete { padding: 0; background: var(--nuit); transition: transform .28s ease; }
-header.jm-entete .jm-barre, header.jm-entete.defile .jm-barre { width: 100%; height: var(--tel-haut); padding: 0 8px 0 var(--tel-marge); border: 0; border-radius: 0; box-shadow: none; background: var(--nuit); }
-header.jm-entete.defile { box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
-header.jm-entete .logo-n img { height: 26px; }
-header.jm-entete .logo-mot { font-size: 17px; }
-header.jm-entete .jm-st-boite, header.jm-entete .mm-tiroir { display: none; }
-header.jm-entete .bouton-espace { display: inline-flex; width: 44px; min-height: 44px; height: 44px; padding: 0; justify-content: center; font-size: 0; gap: 0; border: 0; border-radius: 50%; background: transparent; }
-header.jm-entete .bouton-espace .icone { width: 22px; height: 22px; padding: 0; }
-header.jm-entete .bouton-espace::before { content: ""; position: absolute; width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, .1); }
-header.jm-entete .bouton-espace { position: relative; }
-html.tel-cache header.jm-entete { transform: translateY(-100%); }
-html.tel-cache .fs-sections, html.tel-cache .le-lettres { top: 0 !important; }
-.fs-sections, .le-lettres { transition: top .28s ease; }
+/* ---------- l'ancien haut (logo, menu) et le pied de page : remplacés par la barre de recherche et les onglets ---------- */
+header.jm-entete, footer.pied.ft { display: none !important; }
 
-/* ---------- la barre d'onglets du bas : le logo au milieu (comme Airbnb) ---------- */
+/* ---------- la barre du haut : la recherche en pilule, le rond du compte, les catégories (comme Airbnb) ---------- */
+.tel-barre { display: block; position: sticky; top: 0; z-index: 900; padding: calc(10px + env(safe-area-inset-top)) 0 0; background: #fff; transition: box-shadow .2s; }
+html.tel-defile .tel-barre { box-shadow: 0 1px 0 rgba(23, 25, 29, .08), 0 6px 16px -12px rgba(23, 25, 29, .25); }
+.tel-barre-l { display: flex; align-items: center; gap: 8px; padding: 0 var(--tel-marge) 10px; }
+.tel-pilule { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 18px; border-radius: 99px; background: #fff;
+  border: 1px solid rgba(23, 25, 29, .08); box-shadow: 0 3px 12px -2px rgba(23, 25, 29, .14); color: var(--nuit); text-decoration: none; }
+.tel-pilule svg { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--nuit); stroke-width: 2.2; stroke-linecap: round; }
+.tel-pilule span { display: flex; flex-direction: column; min-width: 0; }
+.tel-pilule b { font-size: .95rem; font-weight: 600; line-height: 1.25; }
+.tel-pilule small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #70747c; font-size: .8rem; line-height: 1.3; }
+.tel-pilule small.tel-lieu-plein { color: var(--nuit); }
+.tel-rond { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid rgba(23, 25, 29, .14); background: #fff; color: var(--nuit); cursor: pointer; }
+.tel-rond[hidden] { display: none; }
+.tel-rond svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tel-cats { display: flex; gap: 26px; overflow-x: auto; scrollbar-width: none; padding: 0 var(--tel-marge); border-bottom: 1px solid rgba(23, 25, 29, .08); }
+.tel-cats::-webkit-scrollbar { display: none; }
+.tel-cats a { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 2px 0 11px; color: #70747c; font-size: .76rem; font-weight: 500;
+  text-decoration: none; white-space: nowrap; opacity: .85; }
+.tel-cats .jm-ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: height .25s, opacity .2s, margin .25s; }
+.tel-cats a[aria-current] { color: var(--nuit); opacity: 1; font-weight: 600; }
+.tel-cats a[aria-current]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--nuit); }
+html.tel-compact .tel-cats .jm-ico { height: 0; opacity: 0; margin-bottom: -6px; }
+html.tel-compact .tel-barre-l { padding-bottom: 8px; }
+html.tel-compact .tel-pilule { min-height: 48px; }
+.fs-sections, .le-lettres { top: var(--tel-barre-h) !important; }
+
+/* ---------- la feuille de recherche : plein écran, la recherche de la page dedans ---------- */
+.tel-feuille { display: block; position: fixed; inset: 0; z-index: 1000; overflow-y: auto; overscroll-behavior: contain; padding: env(safe-area-inset-top) 0 24px;
+  background: #f4f4f2; visibility: hidden; opacity: 0; transition: opacity .2s, visibility 0s .2s; }
+html.tel-cherche .tel-feuille { visibility: visible; opacity: 1; transition: opacity .2s; }
+html.tel-cherche body { overflow: hidden; }
+.tel-feuille .ff-voile, .tel-feuille .tp-voile { visibility: visible; }
+.ff-voile, .tp-voile { z-index: 1100 !important; }
+.tel-feuille-tete { display: flex; align-items: center; gap: 12px; padding: 12px var(--tel-marge); }
+.tel-feuille-tete p { margin: 0; font: 600 1.15rem/1.2 var(--titres); color: var(--nuit); }
+.tel-feuille-corps { padding: 6px var(--tel-marge) 0; }
+.tel-feuille-corps > * { margin: 0 !important; width: 100% !important; max-width: none !important; }
+.tel-feuille-corps :is(form.rv, .tp-barre, .hb-cherche, .ac-carte) { padding: 20px 18px !important; border-radius: 24px !important; background: #fff !important; border: 0 !important;
+  box-shadow: 0 8px 28px -10px rgba(23, 25, 29, .25) !important; }
+.tel-feuille-corps :is(.tp-barre, .hb-cherche) { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.tel-feuille-corps :is(.tp-champ, .rv-champ) { width: 100%; }
+.tel-feuille-corps input:not([type=checkbox]):not([type=radio]), .tel-feuille-corps select { min-height: 52px; font-size: 16px; }
+.tel-feuille-corps button { min-height: 48px; }
+
+/* ---------- les pages de recherche (accueil, sessions, offres, structures, parents) : la barre de recherche suffit,
+   le grand haut sombre est retiré de l'écran (son titre reste lu par les lecteurs d'écran et par Google) ---------- */
+body:has(main :is(.recherche-une, .tp-recherche, .en3-cherche, .hb-cherche, .ac-hero-d, .rc2)) main :is(section.tete, .fs-haut),
+html.tel-a-recherche main :is(section.tete, .fs-haut) {
+  position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; clip-path: inset(50%) !important;
+  white-space: nowrap !important; padding: 0 !important; margin: 0 !important; border: 0 !important; }
+main .recherche-une, main .recherche-une-page { margin-top: 0 !important; padding-top: 14px; }
+main .recherche-une .cadre { gap: 8px; }
+main .tp-recherche { margin-top: 0 !important; padding-top: 14px; background: none; }
+main .fs-ruban { margin-top: 14px !important; }
+main .hb { margin-top: 0; }
+
+/* ---------- la barre d'onglets du bas : Se former, Animateurs, le logo (l'accueil), Structures, Parents ---------- */
 .tel-onglets { position: fixed; z-index: 950; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   height: calc(var(--tel-onglets) + env(safe-area-inset-bottom)); padding: 0 4px env(safe-area-inset-bottom);
-  background: rgba(255, 255, 255, .96); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
+  background: rgba(255, 255, 255, .97); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
   border-top: 1px solid rgba(23, 25, 29, .08); transition: transform .28s ease; }
-.tel-onglets > a, .tel-onglets > button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 6px 2px 4px; border: 0; background: none;
-  color: #70747c; font: 500 11px/1.1 var(--texte); letter-spacing: 0; text-decoration: none; cursor: pointer; }
+.tel-onglets > a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 6px 2px 4px;
+  color: #70747c; font: 500 11px/1.1 var(--texte); text-decoration: none; }
 .tel-onglets svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .tel-onglets span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tel-onglets [aria-current], .tel-onglets [aria-expanded="true"] { color: var(--fil); font-weight: 600; }
+.tel-onglets [aria-current] { color: var(--fil); font-weight: 600; }
 .tel-onglets [aria-current] svg { stroke-width: 2; }
 .tel-onglet-logo img { width: auto; height: 26px; filter: grayscale(1) opacity(.62); transition: filter .2s; }
 .tel-onglet-logo[aria-current] img { filter: none; }
 html.tel-cache .tel-onglets { transform: translateY(100%); }
-html.tel-sans-onglets .tel-onglets, html.ff-ouverte .tel-onglets, body.en-app .tel-onglets, body.en-parcours .tel-onglets { display: none; }
+html.tel-sans-onglets .tel-onglets, html.ff-ouverte .tel-onglets, html.tel-cherche .tel-onglets, body.en-app .tel-onglets, body.en-parcours .tel-onglets { display: none; }
+body.en-app .tel-barre, body.en-app .tel-pied, body.en-parcours .tel-barre { display: none; }
 
-/* ---------- le menu : une feuille qui monte du bas, au-dessus d'un voile ---------- */
-header.jm-entete .mm.mm-visible { position: fixed; top: auto; left: 0; right: 0; bottom: 0; max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
-  display: block; padding: 0 0 calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 12px); border: 0; border-radius: 24px 24px 0 0; background: #fff;
-  box-shadow: 0 0 0 100vmax rgba(23, 25, 29, .5); animation: tel-monte .28s cubic-bezier(.2, .8, .2, 1); }
-@keyframes tel-monte { from { transform: translateY(40%); opacity: .4; } to { transform: none; opacity: 1; } }
-.mm-tel { display: block; }
-.mm-tel-tete { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 10px 8px var(--tel-marge); background: #fff; }
-.mm-tel-tete::before { content: ""; position: absolute; top: 7px; left: 50%; width: 38px; height: 4px; margin-left: -19px; border-radius: 4px; background: #dcdde0; }
-.mm-tel-tete p { margin: 0; font: 600 1.35rem/1 var(--titres); letter-spacing: -.02em; color: var(--nuit); }
-.mm-tel-fermer { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #f1f1f2; color: var(--nuit); cursor: pointer; }
-.mm-tel-fermer svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-header.jm-entete .mm-item { border-bottom: 1px solid #f0f0f1; }
-header.jm-entete .mm-bouton { min-height: 56px; padding: 0 var(--tel-marge); font-size: 1.05rem; font-weight: 600; }
-.mm-tel-pied { padding: 18px var(--tel-marge) 0; }
-.mm-tel-compte { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
-.mm-tel-compte a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; font-weight: 600; font-size: .95rem; text-decoration: none; }
-.mm-tel-espace { background: #f1f1f2; color: var(--nuit); }
-.mm-tel-commencer { background: var(--fil); color: #fff; }
-.mm-tel-liens { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
-.mm-tel-liens a { display: flex; align-items: center; min-height: 44px; color: #3a3d44; font-size: .93rem; text-decoration: none; }
-.mm-tel-legal { margin: 14px 0 0; color: #9a9da4; font-size: .78rem; line-height: 1.9; }
-.mm-tel-legal a { color: #70747c; text-decoration: none; }
-
-/* ---------- le pied de page : caché (ses pages sont dans le menu ; ses liens restent dans la page pour Google) ---------- */
-footer.pied.ft { display: none; }
+/* ---------- les quelques liens du bas, à la place du pied de page ---------- */
+.tel-pied { display: flex; flex-wrap: wrap; gap: 0 18px; padding: 26px var(--tel-marge) 22px; border-top: 1px solid rgba(23, 25, 29, .08); }
+.tel-pied a { display: inline-flex; align-items: center; min-height: 40px; color: #4a4e56; font-size: .88rem; text-decoration: none; }
+.tel-pied small { flex-basis: 100%; margin-top: 8px; color: #9a9da4; font-size: .76rem; line-height: 1.5; }
+.tel-pied small a { min-height: 0; color: #70747c; font-size: inherit; }
 
 /* ---------- le haut des pages : plus court, un « ‹ retour » à la place du fil d'Ariane, les pastilles qui défilent ---------- */
 .tete .cadre, body:not(.en-app) .tete .cadre { padding-bottom: 30px; }

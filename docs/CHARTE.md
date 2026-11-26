@@ -104,19 +104,27 @@ accent `#d61f35` ou `#ee8a2f` pour la partie parents).
 
 ## 7. Le téléphone
 
-Sous 700px, le site se comporte comme une application. Tout est dans `statique/css/telephone.css`, chargée seulement
-sous 700px (`media="(max-width: 700px)"` dans `base.html`) : l'ordinateur et la tablette ne peuvent pas bouger. Le
-comportement est dans `statique/js/telephone.js` (et les replis de listes dans `menu.js`).
+Sous 700px, le site se comporte comme une application, à la manière d'Airbnb. Tout est dans `statique/css/telephone.css`,
+chargée seulement sous 700px (`media="(max-width: 700px)"` dans `base.html`) : l'ordinateur et la tablette ne peuvent pas
+bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephone.html`, le comportement dans
+`statique/js/telephone.js` (les replis de listes dans `menu.js`).
 
-- **Le haut** : une barre fine et sombre pleine largeur (logo, rond « Mon espace »), sans menu ni chiffres. Le fil d'Ariane
-  devient un seul « ‹ page parente ». Les pastilles du haut défilent sur une ligne.
-- **La barre d'onglets du bas** (`.tel-onglets`, dans `base.html`) : Se former, Offres, le logo au milieu (Accueil, gris quand on
-  est ailleurs, en couleur quand on y est), Enfants, Menu. Une page qui a sa propre barre d'action en bas (fiche séjour) la cache.
-- **Le menu** s'ouvre en feuille depuis le bas (titre, croix, les 4 parties, le compte, les pages du pied, les mentions).
-- **Le pied de page** est caché : ses pages sont dans le menu, ses liens restent dans la page.
-- **En lisant**, le haut et la barre du bas s'effacent quand on descend et reviennent dès qu'on remonte.
+- **Plus d'ancien haut ni de pied de page.** À leur place : en haut, la **recherche en pilule** (le titre de la partie, le lieu
+  choisi), un rond **Filtres** quand la page en a, le rond du **compte** (connexion, Mon espace) ; dessous, les **catégories** de la
+  partie (icône + nom, celle en cours soulignée) qui défilent de côté. En bas de page, une ligne de liens (comment ça marche,
+  contact, mentions légales…).
+- **La pilule ouvre la recherche de la page en feuille plein écran** : c'est le formulaire de la page lui-même, déplacé dans la
+  feuille (rien n'est refait). Sur une page sans recherche, la pilule mène à la recherche de sa partie.
+- **Les pages de recherche** (accueil, sessions, offres, structures, parents, annuaire) n'ont plus de grand haut sombre : la
+  barre suffit (le titre reste lu par les lecteurs d'écran et par Google). Les autres pages (guides, fiches) gardent leur haut,
+  avec un seul « ‹ page parente » à la place du fil d'Ariane.
+- **La barre d'onglets du bas** : Se former, Animateurs, le logo au milieu (l'accueil, gris ailleurs, en couleur quand on y
+  est), Structures, Parents. Une page qui a sa propre barre d'action en bas (fiche séjour) la cache.
+- **En descendant**, la barre du haut se resserre (les icônes des catégories s'effacent) et les onglets du bas se cachent ; ils
+  reviennent dès qu'on remonte.
+- **Fond** : blanc sous les barres (haut et bas, la couleur du téléphone suit), #f4f4f2 pour la page.
 - **Les familles de cartes** (atouts, aides, étapes) défilent de côté, la suivante dépasse. Les cartes « à lire » et les longues
   listes de liens deviennent des lignes ; les listes « par ville », « par vacances »… se replient derrière leur titre.
-- **Boutons** : 48px de haut, rayon 12px ; cartes : rayon 18px.
+- **Boutons** : 48px de haut, rayon 12px ; cartes : rayon 18px ; pilule : rayon complet, ombre douce.
 - **Mon espace** : la barre du bas remplace celle du haut ; le logo au milieu ouvre le tableau de bord, de part et d'autre les
   3 rubriques suivantes du menu de l'espace, et « Menu » pour le reste.
