@@ -363,3 +363,16 @@ html.tel-ab .ff-pied { justify-content: space-between !important; border-top: 1p
 html.tel-ab .ff-pied .bouton-r { background: #222 !important; border-color: #222 !important; border-radius: 10px; }
 html.tel-ab main .recherche-une + :is(section, div) { padding-top: 4px !important; margin-top: 0 !important; }
 .ab-m-onglet:first-child { margin-left: auto; } .ab-m-onglet:last-child { margin-right: auto; }
+
+/* la carte « Où ? » qui s'ouvre en grand quand on fait défiler les villes ; la fermeture, tout remonte et s'efface */
+.ab-m-carte.ouverte { transition: height .35s cubic-bezier(.2, 0, 0, 1); }
+.ab-m-carte:not(.ouverte) { transition: opacity .25s, transform .3s cubic-bezier(.2, 0, 0, 1); }
+.ab-m.ab-m-grand .ab-m-carte:not(.ouverte) { opacity: 0; transform: translateY(40px); pointer-events: none; }
+.ab-m.ab-m-grand .ab-m-carte.ouverte:has(.ab-m-sugg) { min-height: 0; }
+html.tel-cherche-sort .tel-feuille { animation: ab-fond-sort .32s cubic-bezier(.2, 0, 0, 1) forwards; }
+@keyframes ab-fond-sort { to { background-color: rgba(240, 240, 240, 0); -webkit-backdrop-filter: blur(0) saturate(1); backdrop-filter: blur(0) saturate(1); } }
+html.tel-cherche-sort .ab-m-carte, html.tel-cherche-sort .ab-m-haut { animation: ab-remonte .3s cubic-bezier(.2, 0, 0, 1) forwards; animation-delay: calc((2 - var(--i, 0)) * 30ms); }
+html.tel-cherche-sort .ab-m-haut { animation-delay: 60ms; }
+html.tel-cherche-sort .ab-m-pied { animation: ab-descend-bas .3s cubic-bezier(.2, 0, 0, 1) forwards; }
+@keyframes ab-remonte { to { transform: translateY(-100px); opacity: 0; } }
+@keyframes ab-descend-bas { to { transform: translateY(100px); opacity: 0; } }

@@ -200,8 +200,16 @@
   function lire() { ["ou", "diplome", "type", "mois", "annee"].forEach(function (k) { etat[k] = form.elements[k] ? form.elements[k].value : ""; }); }
   var m = el("div", "ab-m");
   feuille.textContent = ""; feuille.appendChild(m); feuille.classList.add("tel-ab-feuille");
-  function fermerModale() { racine.classList.remove("tel-cherche", "tel-cherche-anim"); }
+  // fermer : tout remonte et s'efface (le contraire de l'ouverture), puis la fenêtre disparaît
+  var sortie = null;
+  function fermerModale() {
+    if (!racine.classList.contains("tel-cherche") || sortie) return;
+    racine.classList.remove("tel-cherche-anim");
+    racine.classList.add("tel-cherche-sort");
+    sortie = setTimeout(function () { racine.classList.remove("tel-cherche", "tel-cherche-sort"); sortie = null; }, 320);
+  }
   function ouvrirModale() {
+    if (sortie) { clearTimeout(sortie); sortie = null; racine.classList.remove("tel-cherche-sort"); }
     lire(); dessinerModale("ou");
     racine.classList.add("tel-cherche");
     racine.classList.remove("tel-cherche-anim"); void m.offsetWidth; racine.classList.add("tel-cherche-anim");
@@ -211,7 +219,7 @@
   function options(sel, test) { return Array.prototype.filter.call(sel.options, function (o) { return o.value && test(o); }); }
   function nomOption(o) { return o.textContent.replace(/\s*\(\d+\)$/, ""); }
   function dessinerModale(ouverte) {
-    m.textContent = "";
+    m.textContent = ""; m.classList.remove("ab-m-grand");
     var haut = el("div", "ab-m-haut");
     var ong = el("div", "ab-m-onglets");
     options(form.elements.diplome, function () { return true; }).forEach(function (o, i) {
@@ -276,6 +284,13 @@
       champ.addEventListener("input", function () { etat.ou = champ.value; suggerer(); });
       champ.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); etat.ou = champ.value; chercher(); } });
       suggerer();
+      // en faisant défiler les villes, la carte « Où ? » s'ouvre en grand (les autres questions s'effacent) ; revenue en haut, elle reprend sa taille
+      zone.addEventListener("scroll", function () {
+        var grand = zone.scrollTop > 6;
+        if (grand === m.classList.contains("ab-m-grand")) return;
+        if (grand) { c.style.height = c.offsetHeight + "px"; void c.offsetHeight; m.classList.add("ab-m-grand"); c.style.height = (corps.clientHeight - 16) + "px"; }
+        else { m.classList.remove("ab-m-grand"); c.style.height = ""; }
+      }, { passive: true });
       var bas = el("span", "ab-m-sugg-plus"); bas.innerHTML = svg('<path d="M6 9l6 6 6-6"/>'); c.appendChild(bas);
     });
     var mois = form.elements.mois, annee = form.elements.annee;
