@@ -1,11 +1,11 @@
 name: Prospection
 
 # à la demande : un lot d'e-mails aux structures repérées près des demandes d'animateurs (ou sa relance unique).
-# chaque matin : prospection automatique autour des nouveaux animateurs (outils/prospection_auto.py).
+# toutes les 3 heures : prospection automatique autour des nouveaux animateurs (outils/prospection_auto.py) ; sans
+# risque de doublon, seules les structures jamais écrites partent, et la relance unique à J+7.
 on:
   schedule:
-    # 9 h 43 à Paris en hiver (10 h 43 en été)
-    - cron: "43 8 * * *"
+    - cron: "17 */3 * * *"
   workflow_dispatch:
     inputs:
       lot:
@@ -34,10 +34,17 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - id: jour
+        run: echo "jour=$(date +%F)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: .cache-annuaire
+          key: annuaire-${{ steps.jour.outputs.jour }}
       - name: Envoyer
         env:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          ANNUAIRE_CACHE: .cache-annuaire/mairies.json
           EVENEMENT: ${{ github.event_name }}
           LOT: ${{ inputs.lot }}
           ESSAI: ${{ inputs.essai }}
