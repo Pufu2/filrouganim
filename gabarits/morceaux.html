@@ -482,7 +482,7 @@
 
 {# Une offre d'emploi dans une liste (pages Trouver un poste, offres, sessions du département) #}
 {% macro carte_offre(o, lien) %}
-<article class="session offre" data-dep="{{ o.departement }}" data-contrat="{{ o.contrat }}" data-poste="{{ o.poste }}" data-mois="{{ o.debut.strftime('%Y-%m') }}">
+<article class="session offre" data-dep="{{ o.departement }}" data-g="{{ point(o.departement, o.ville) | tojson | e }}" data-contrat="{{ o.contrat }}" data-poste="{{ o.poste }}" data-mois="{{ o.debut.strftime('%Y-%m') }}">
   <p class="s-date" aria-hidden="true"><b>{{ o.debut.day }}</b><span>{{ o.debut | mois_court }}</span></p>
   <div class="s-corps">
     <h3 class="s-titre"><a href="{{ lien('/trouver-un-poste/offres/' ~ o.id ~ '/') }}">{{ o.intitule }}</a></h3>
@@ -582,7 +582,7 @@
 {# La carte d'une structure dans l'annuaire (/recruter/structures/ et /recruter/) : les abonnées portent « Partenaire » #}
 {% macro carte_structure(st, url, exemple=False) %}
 {% set _m = st.nom.replace("L'", "").split() | reject("in", ["des", "de", "du", "la", "le", "les", "et"]) | list %}
-<li class="ac{% if st.abonnee %} ac-partenaire{% endif %}{% if exemple %} ac-ex{% endif %} theme-{{ st.couleur or 'rouge' }}" data-type="{{ familles_structure(st) }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }} {{ nature_structure(st) }}">
+<li class="ac{% if st.abonnee %} ac-partenaire{% endif %}{% if exemple %} ac-ex{% endif %} theme-{{ st.couleur or 'rouge' }}" data-type="{{ familles_structure(st) }}" data-g="{{ point(st.departement, st.ville) | tojson | e }}" data-texte="{{ st.nom }} {{ st.ville }} {{ st.departement }} {{ departements | selectattr('code', 'equalto', st.departement) | map(attribute='nom') | first }} {{ TYPES_STRUCTURE.get(st.type, '') }} {{ nature_structure(st) }}">
   <a href="{{ url }}">
     <span class="ac-image" aria-hidden="true"><span class="ac-initiales">{{ (_m[0][0] ~ (_m[1][0] if _m | length > 1 else "")) | upper }}</span><span class="ac-type">{{ nature_structure(st) }}</span>{% if exemple %}<span class="ac-exemple">Exemple</span>{% elif st.abonnee %}<span class="ac-exemple ac-une">Partenaire</span>{% endif %}</span>
     <span class="ac-corps">

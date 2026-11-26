@@ -13,7 +13,8 @@
   var boutonFiltres = barre.querySelector(".tel-filtres");
 
   // les pages de sessions (Se former) : copie de la page de résultats d'Airbnb, réglée dans telephone-sessions.js
-  var ab = !!document.querySelector("main form.recherche.rv");
+  // pages de recherche façon Airbnb : sessions (telephone-sessions.js), offres, annuaire des structures, enfants (telephone-annuaires.js)
+  var ab = !!document.querySelector("main form.recherche.rv, main #filtres-offres, main #sjc-filtres, main .an2-recherche form");
   if (ab && tel.matches) racine.classList.add("tel-ab");
 
   // une page qui a déjà sa barre d'action en bas (fiche séjour : « Demander une place ») garde la sienne
@@ -33,7 +34,7 @@
   /* -- la recherche de la page : son formulaire passe dans la feuille, la pilule l'ouvre -- */
   var SELECTEURS = [".ac-hero-d .ac-carte", "form.recherche.rv", "#filtres-offres", "#sjc-filtres", ".an2-recherche form", ".hb-cherche"];
   var bloc = null, place = null;
-  for (var i = 0; i < SELECTEURS.length && !bloc; i++) if (!(ab && SELECTEURS[i] === "form.recherche.rv")) bloc = document.querySelector("main " + SELECTEURS[i]);
+  for (var i = 0; i < SELECTEURS.length && !bloc; i++) if (!ab) bloc = document.querySelector("main " + SELECTEURS[i]);
   function champ() { return bloc && bloc.querySelector('input[type="search"], input[type="text"], input:not([type])'); }
   function majLieu() {
     var c = champ();

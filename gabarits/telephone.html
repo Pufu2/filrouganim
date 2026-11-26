@@ -46,3 +46,9 @@
   <div class="tel-feuille-tete"><button type="button" class="tel-rond tel-feuille-fermer" aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><p>{{ pil[0] }}</p></div>
   <div class="tel-feuille-corps"></div>
 </div>
+{# les pages de recherche façon Airbnb (offres, annuaire des structures, enfants) : les départements pour « Où ? » et le centre
+   de chaque département (pour placer sur la carte les animateurs, dont on ne connaît que le département) #}
+{% if u in ('/trouver-un-poste/offres/', '/recruter/structures/', '/enfants/') %}
+<script type="application/json" id="tel-deps">[{% for d in departements | sort(attribute="code") %}{{ (d.nom ~ " (" ~ d.code ~ ")") | tojson }}{{ "," if not loop.last }}{% endfor %}]</script>
+<script type="application/json" id="tel-centres">{{ CENTRES_DEP | tojson }}</script>
+{% endif %}

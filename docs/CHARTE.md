@@ -135,3 +135,11 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
   ou tirer la feuille la remonte. Un prix touché montre la session en bas de l'écran. La pilule ouvre la recherche plein écran
   (les formations en onglets, « Où ? » avec ses suggestions, « Quand », « Étape », Tout effacer / Rechercher). Les onglets du
   bas restent visibles pendant qu'on fait défiler la liste.
+- **Animateurs (les offres), Structures (l'annuaire) et Parents (/enfants/)** : exactement la même page que « Se former »
+  (`statique/js/telephone-annuaires.js`, une configuration par page) : pilule, carte derrière (les offres et les structures
+  à leur ville, les animateurs au centre de leur département, les séjours avec leur prix), liste en feuille, « Carte », fiche
+  en bas, recherche plein écran avec les mêmes effets (onglets : les postes, les types d'accueil, les types d'offre).
+- **Les fenêtres « Filtres »** (toutes ces pages) : icônes 3D en couleur sur les choix (Fluent Emoji de Microsoft, licence MIT,
+  `statique/illus/icones/`), le premier groupe en tuiles comme « Nos recommandations » d'Airbnb, titres de groupe nets,
+  « Tout effacer » souligné et bouton noir en bas.
+

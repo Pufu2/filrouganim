@@ -1326,7 +1326,8 @@ class Site:
                 "v": sj.get("ville") or "", "dep": sj.get("departement") or "", "p": sj.get("pays") or "FR", "r": sj.get("region_dest") or "",
                 "tr": [t.get("ville") for t in sj.get("transport") or [] if t.get("ville")], "px": sj.get("prix_min"), "pu": sj.get("prix_unite") or "sejour",
                 "ai": sj.get("aides") or [], "pc": (max([b["montant"] for b in pc.get("baremes", [])] or [0]) if pass_ok else None),
-                "ph": (sj.get("photos") or [None])[0], "s": sj["structure"]["nom"], "une": bool(sj["structure"].get("abonnee")), "ex": bool(sj.get("exemple"))}
+                "ph": (sj.get("photos") or [None])[0], "s": sj["structure"]["nom"], "une": bool(sj["structure"].get("abonnee")), "ex": bool(sj.get("exemple")),
+                "g": (self.geo.get(f"{sj.get('departement')}|{sj.get('ville')}") or self.centres_dep.get(sj.get("departement") or "")) if (sj.get("pays") or "FR") == "FR" else None}
 
     def page_catalogue_sejours(self):
         """/enfants/ : la recherche en gros boutons, sur tous les séjours à venir, puis le guide des parents (comment ça
@@ -3067,6 +3068,8 @@ class Site:
         # les adresses des vraies pages (pas les redirections), pour ne faire de liens que vers ce qui existe
         urls_pages = {p["url"] for p in self.pages if p.get("gabarit") != "redirection.html"}
         self.env.globals["page_existe"] = lambda u: u in urls_pages
+        # la position d'une ville (sa commune connue, sinon le centre du département) : cartes du téléphone (data-g)
+        self.env.globals["point"] = lambda dep, ville=None: self.geo.get(f"{dep}|{ville}") or self.centres_dep.get(dep or "")
         # un lien vers une page qui a changé d'adresse va directement à la nouvelle (pas de détour pour Google)
         redirs = {p["url"]: p["vers"] for p in self.pages if p.get("gabarit") == "redirection.html" and p.get("vers", "").startswith("/")}
         def suivre(m):
