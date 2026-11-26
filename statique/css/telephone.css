@@ -88,13 +88,7 @@ main .hb { margin-top: 0; }
 .tel-onglet-logo[aria-current] img { filter: none; }
 html.tel-cache .tel-onglets { transform: translateY(100%); }
 html.tel-sans-onglets .tel-onglets, html.ff-ouverte .tel-onglets, html.tel-cherche .tel-onglets, body.en-app .tel-onglets, body.en-parcours .tel-onglets { display: none; }
-body.en-app .tel-barre, body.en-app .tel-pied, body.en-parcours .tel-barre { display: none; }
-
-/* ---------- les quelques liens du bas, à la place du pied de page ---------- */
-.tel-pied { display: flex; flex-wrap: wrap; gap: 0 18px; padding: 26px var(--tel-marge) 22px; border-top: 1px solid rgba(23, 25, 29, .08); }
-.tel-pied a { display: inline-flex; align-items: center; min-height: 40px; color: #4a4e56; font-size: .88rem; text-decoration: none; }
-.tel-pied small { flex-basis: 100%; margin-top: 8px; color: #9a9da4; font-size: .76rem; line-height: 1.5; }
-.tel-pied small a { min-height: 0; color: #70747c; font-size: inherit; }
+body.en-app .tel-barre, body.en-parcours .tel-barre { display: none; }
 
 /* ---------- le haut des pages : plus court, un « ‹ retour » à la place du fil d'Ariane, les pastilles qui défilent ---------- */
 .tete .cadre, body:not(.en-app) .tete .cadre { padding-bottom: 30px; }

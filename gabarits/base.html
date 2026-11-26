@@ -77,11 +77,6 @@
 {% endblock %}
 {% block contenu %}{% endblock %}
 </main>
-{# téléphone : le pied de page est caché ; ces quelques liens le remplacent (cachés au-dessus de 700px) #}
-<nav class="tel-pied" aria-label="Informations">
-  <a href="{{ lien('/comment-ca-marche/') }}">Comment ça marche</a><a href="{{ lien('/a-propos/') }}">Qui sommes-nous</a><a href="{{ lien('/blog/') }}">Le blog</a><a href="{{ lien('/outils/') }}">Outils</a><a href="{{ lien('/chiffres/') }}">Les chiffres</a><a href="{{ lien('/contact/') }}">Contact</a>
-  <small><a href="{{ lien('/mentions-legales/') }}">Mentions légales</a> · <a href="{{ lien('/confidentialite/') }}">Confidentialité</a> · <a href="{{ lien('/conditions-utilisation/') }}">Conditions d'utilisation</a> · <a href="{{ lien('/conditions-de-vente/') }}">Conditions de vente</a></small>
-</nav>
 {% if page.url != '/compte/' %}
 <footer class="pied ft">
   <div class="cadre ft-in">

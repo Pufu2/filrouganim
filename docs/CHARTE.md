@@ -111,8 +111,7 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
 
 - **Plus d'ancien haut ni de pied de page.** À leur place : en haut, la **recherche en pilule** (le titre de la partie, le lieu
   choisi), un rond **Filtres** quand la page en a, le rond du **compte** (connexion, Mon espace) ; dessous, les **catégories** de la
-  partie (icône + nom, celle en cours soulignée) qui défilent de côté. En bas de page, une ligne de liens (comment ça marche,
-  contact, mentions légales…).
+  partie (icône + nom, celle en cours soulignée) qui défilent de côté.
 - **La pilule ouvre la recherche de la page en feuille plein écran** : c'est le formulaire de la page lui-même, déplacé dans la
   feuille (rien n'est refait). Sur une page sans recherche, la pilule mène à la recherche de sa partie.
 - **Les pages de recherche** (accueil, sessions, offres, structures, parents, annuaire) n'ont plus de grand haut sombre : la

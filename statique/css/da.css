@@ -2559,4 +2559,4 @@ body.en-app .ap-titre-s { padding: 0 4px; }
 .ap-pros-cases > div { min-width: 0; } .ap-pros-cases span { overflow-wrap: anywhere; hyphens: auto; font-size: .78rem; }
 
 /* Téléphone : tout est dans statique/css/telephone.css (chargée seulement sous 700px). Ici, ce qui doit rester caché ailleurs. */
-.tel-onglets, .app-dock, .tel-barre, .tel-feuille, .tel-pied { display: none; }
+.tel-onglets, .app-dock, .tel-barre, .tel-feuille { display: none; }
