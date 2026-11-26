@@ -295,9 +295,9 @@ html.tel-ab.tel-cherche-anim .tel-feuille { animation: ab-fond .45s cubic-bezier
 .ab-m-haut { position: relative; display: flex; align-items: flex-start; padding: calc(8px + env(safe-area-inset-top)) 56px 0 8px; }
 .ab-m-onglets { flex: 1; min-width: 0; display: flex; justify-content: flex-start; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .ab-m-onglets::-webkit-scrollbar { display: none; }
-.ab-m-onglet { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 72px; padding: 4px 0 12px; border: 0; background: none; color: #6a6a6a; font: 500 .8rem/1.2 var(--texte); cursor: pointer; }
-.ab-m-icone { display: grid; place-items: center; width: 50px; height: 50px; }
-.ab-m-icone img { width: 46px; height: 46px; object-fit: contain; transition: transform .2s; }
+.ab-m-onglet { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 64px; padding: 4px 0 12px; border: 0; background: none; color: #6a6a6a; font: 500 .8rem/1.2 var(--texte); cursor: pointer; }
+.ab-m-icone { display: grid; place-items: center; width: 38px; height: 38px; }
+.ab-m-icone img { width: 32px; height: 32px; object-fit: contain; transition: transform .2s; }
 .ab-m-onglet[aria-pressed="true"] { color: #222; font-weight: 600; }
 .ab-m-onglet[aria-pressed="true"] .ab-m-icone img { transform: scale(1.08); }
 .ab-m-onglet[aria-pressed="true"]::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: 2px; height: 3px; border-radius: 3px; background: #222; }
@@ -327,7 +327,7 @@ html.tel-cherche-anim .ab-m-carte { animation: ab-descend .5s cubic-bezier(.2, 0
 .ab-m-sugg-t { margin: 18px 0 8px; color: #222; font-size: .75rem; font-weight: 500; }
 .ab-m-sugg-l { display: flex; align-items: center; gap: 16px; width: 100%; padding: 8px 0; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
 .ab-m-sugg-ic { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: #f2f2f2; }
-.ab-m-sugg-ic img { width: 30px; height: 30px; }
+.ab-m-sugg-ic img { width: 24px; height: 24px; }
 .ab-m-sugg-l > span:last-child { display: flex; flex-direction: column; min-width: 0; }
 .ab-m-sugg-l b { color: #222; font-size: .95rem; font-weight: 500; }
 .ab-m-sugg-l small { color: #6a6a6a; font-size: .85rem; }
