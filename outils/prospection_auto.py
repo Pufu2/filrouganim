@@ -11,7 +11,7 @@ Usage (GitHub Actions ; voir .github/workflows/prospection-auto.yml) :
     python3 outils/prospection_auto.py           # importe et envoie
 
 Garde-fous : 30 mairies au plus par animateur, à 15 km au plus de sa commune (dans son département ou sa zone),
-100 e-mails au plus par jour. Les animateurs ne sont jamais nommés. L'e-mail type part à COPIE_EMAIL.
+100 mairies au plus par jour, tous lancements confondus. Les animateurs ne sont jamais nommés. L'e-mail type part à COPIE_EMAIL.
 """
 
 import argparse
@@ -59,7 +59,25 @@ def liste_py(v):
 
 
 def mairies():
-    """Toutes les mairies de l'annuaire officiel qui ont une adresse e-mail et des coordonnées."""
+    """Toutes les mairies de l'annuaire officiel qui ont une adresse e-mail et des coordonnées. Gardées pour la journée dans
+    ANNUAIRE_CACHE (cache GitHub Actions) : le workflow passe toutes les 3 heures, l'annuaire n'est téléchargé qu'une fois."""
+    cache = Path(os.environ.get("ANNUAIRE_CACHE") or "") if os.environ.get("ANNUAIRE_CACHE") else None
+    jour = dt.date.today().isoformat()
+    if cache and cache.exists():
+        try:
+            c = json.loads(cache.read_text(encoding="utf-8"))
+            if c.get("jour") == jour:
+                return [dict(m, pos=tuple(m["pos"])) for m in c["mairies"]]
+        except Exception:
+            pass
+    res = _mairies()
+    if cache:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(json.dumps({"jour": jour, "mairies": res}), encoding="utf-8")
+    return res
+
+
+def _mairies():
     with tempfile.TemporaryDirectory() as tmp:
         arch = Path(tmp) / "all.tar.bz2"
         req = urllib.request.Request(SOURCE, headers={"User-Agent": "filrouganim-prospection"})
@@ -133,7 +151,10 @@ def main():
 
     recap, choisies = [], []
     if a_traiter:
-        connues = P.appel(f"{base}/admin_prospects?select=cle,email", cle) or []
+        connues = P.appel(f"{base}/admin_prospects?select=cle,email,note", cle) or []
+        # 100 mairies au plus par jour, tous lancements confondus (le workflow passe toutes les 3 heures)
+        deja = sum(1 for c in connues if (c.get("note") or "").startswith(f"lot {lot} · annuaire officiel"))
+        plafond = max(0, PAR_JOUR - deja)
         cles = {c["cle"] for c in connues}
         emails = {(c.get("email") or "").lower() for c in connues}
         toutes = mairies()
@@ -150,7 +171,7 @@ def main():
                 proches = [x for x in proches if x[0] <= RAYON_KM]
             pour_lui = []
             for _, m in proches[:PAR_ANIMATEUR]:
-                if m["cle"] in cles or m["email"].lower() in emails or len(choisies) >= PAR_JOUR:
+                if m["cle"] in cles or m["email"].lower() in emails or len(choisies) >= plafond:
                     continue
                 cles.add(m["cle"])
                 emails.add(m["email"].lower())
