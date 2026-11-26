@@ -213,3 +213,4 @@ body.en-app .tb2-chiffres span, body.en-app .tb2-chiffres small { overflow-wrap:
 .tel-repli.tel-ouvert > h3::after { transform: rotate(45deg); }
 .tel-repli:not(.tel-ouvert) > :not(:first-child) { display: none !important; }
 .cadre.explorer > div + div { box-shadow: inset 0 1px 0 rgba(23, 25, 29, .09) !important; }
+main > .ac-usages:first-of-type, main > section.tete + .ac-usages { padding-top: 22px !important; margin-top: 0 !important; }
