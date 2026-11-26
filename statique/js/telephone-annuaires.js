@@ -190,98 +190,14 @@
   }
   mesurer(); window.addEventListener("resize", mesurer);
 
-  /* ---------- la carte ---------- */
-  var fiche = el("div", "tel-ab-fiche"); fiche.hidden = true; document.body.appendChild(fiche);
-  function cacherFiche() { fiche.hidden = true; fiche.textContent = ""; if (zone) Array.prototype.forEach.call(zone.querySelectorAll(".pin.ouverte"), function (p) { p.classList.remove("ouverte"); }); }
-  var cadreCarte = el("div", "tel-ab-carte"), zone = el("div", "carte-sessions"); cadreCarte.appendChild(zone);
-  document.body.insertBefore(cadreCarte, document.body.firstChild);
-  var plan = null, calque = null, signature = "", centres = json("tel-centres") || {};
-  function charger(src, type) {
-    return new Promise(function (ok, ko) {
-      var t = document.createElement(type === "css" ? "link" : "script");
-      if (type === "css") { t.rel = "stylesheet"; t.href = src; ok(); } else { t.src = src; t.onload = ok; t.onerror = ko; }
-      document.head.appendChild(t);
-    });
-  }
-  function dessinerCarte() {
-    if (!plan) return;
-    var pts = cfg.points(centres), groupes = {};
-    pts.forEach(function (p) { var k = p.g[0].toFixed(3) + "," + p.g[1].toFixed(3); (groupes[k] = groupes[k] || []).push(p); });
-    var sig = Object.keys(groupes).sort().join("|") + "#" + pts.length;
-    if (sig === signature) return;
-    signature = sig; calque.clearLayers(); cacherFiche();
-    var L = window.L, coins = Object.keys(groupes).map(function (k) { return groupes[k][0].g; });
-    // la vue d'abord (Leaflet ne dessine les étiquettes qu'une fois la carte placée), sur la partie visible au-dessus de la liste
-    var cache = Math.max(0, window.innerHeight - (parseInt(getComputedStyle(racine).getPropertyValue("--ab-feuille"), 10) || 0));
-    if (coins.length) plan.fitBounds(coins, { paddingTopLeft: [40, 30], paddingBottomRight: [40, cache + 30], maxZoom: 11 });
-    else plan.fitBounds([[42.3, -4.8], [51.1, 8.2]], { paddingBottomRight: [0, cache] });
-    Object.keys(groupes).forEach(function (k) {
-      var g = groupes[k], p0 = g[0];
-      var mk = L.marker(p0.g, { icon: L.divIcon({ className: "bulle-icone", iconSize: [0, 0], html: '<span class="pin pin-prix' + (p0.profil ? " pin-profil" : "") + '"></span>' }), riseOnHover: true }).addTo(calque);
-      var sp = mk.getElement().querySelector(".pin");
-      sp.textContent = p0.etiq; if (g.length > 1) sp.appendChild(el("small", null, "· " + g.length));
-      mk.on("click", function () {
-        cacherFiche(); sp.classList.add("ouverte");
-        var k2 = 0, boite = el("div", "tel-ab-fiche-in");
-        var dessiner = function () {
-          boite.textContent = "";
-          var x = el("button", "tel-ab-fiche-x"); x.type = "button"; x.setAttribute("aria-label", "Fermer"); x.innerHTML = svg('<path d="M6 6l12 12M18 6L6 18"/>');
-          x.addEventListener("click", cacherFiche); boite.appendChild(x);
-          var cadre = el(g[k2].cadre === "annuaire-cartes an2-cartes" || g[k2].cadre === "tp-cartes" ? "ul" : "div", g[k2].cadre);
-          var copie = g[k2].el.cloneNode(true); copie.hidden = false; copie.removeAttribute("id"); cadre.appendChild(copie); boite.appendChild(cadre);
-          // les boutons de la copie (« Voir le profil »…) font ce que font ceux de la carte d'origine
-          var orig = g[k2].el;
-          copie.addEventListener("click", function (e) {
-            var b = e.target.closest && e.target.closest("button"); if (!b || b.classList.contains("tel-ab-fiche-x")) return;
-            var i = Array.prototype.indexOf.call(copie.querySelectorAll("button"), b), o2 = orig.querySelectorAll("button")[i];
-            if (o2) { e.preventDefault(); cacherFiche(); o2.click(); }
-          });
-          if (g.length > 1) {
-            var nav = el("div", "tel-ab-fiche-nav");
-            [["‹", -1, "Précédent"], ["›", 1, "Suivant"]].forEach(function (f, i) {
-              var b = el("button", null, f[0]); b.type = "button"; b.setAttribute("aria-label", f[2]);
-              b.addEventListener("click", function () { k2 = (k2 + f[1] + g.length) % g.length; dessiner(); });
-              nav.appendChild(b); if (i === 0) nav.appendChild(el("span", null, (k2 + 1) + " / " + g.length));
-            });
-            boite.appendChild(nav);
-          }
-        };
-        dessiner(); fiche.appendChild(boite); fiche.hidden = false;
-      });
-    });
-  }
+  /* ---------- pas de carte ici (elle est réservée à « Se former ») : la liste commence sous la barre ---------- */
+  racine.classList.add("tel-sans-carte");
+  tete.querySelector(".tel-ab-poignee").remove();
   var attente = null;
-  function plusTard() { clearTimeout(attente); attente = setTimeout(function () { dessinerCarte(); titre.textContent = cfg.titre(); majPilule(); }, 120); }
-  (window.L ? Promise.resolve() : charger(barre.dataset.leafletCss, "css").then(function () { return charger(barre.dataset.leafletJs, "js"); })).then(function () {
-    var L = window.L;
-    plan = L.map(zone, { zoomControl: false, attributionControl: true, maxZoom: 15, minZoom: 5 });
-    L.tileLayer(barre.dataset.tuiles, { maxZoom: 18, minZoom: 4, attribution: '&copy; <a href="https://www.ign.fr/">IGN</a>' }).addTo(plan);
-    calque = L.layerGroup().addTo(plan);
-    plan.on("click", cacherFiche);
-    dessinerCarte();
-  }).catch(function (e) { if (window.console) console.warn("carte", e); });
+  function plusTard() { clearTimeout(attente); attente = setTimeout(function () { titre.textContent = cfg.titre(); majPilule(); }, 120); }
   titre.textContent = cfg.titre();
-  // la liste change (filtre de la page, animateurs arrivés du serveur) : la carte et le titre suivent
   if (cfg.liste) new MutationObserver(plusTard).observe(cfg.liste, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   Array.prototype.forEach.call(document.querySelectorAll("#compte-offres, #an-nb, #sjc-nb"), function (x) { new MutationObserver(plusTard).observe(x, { childList: true, characterData: true, subtree: true }); });
-
-  /* ---------- liste ou carte ---------- */
-  var boutonCarte = el("button", "tel-ab-bouton-carte"); boutonCarte.type = "button";
-  boutonCarte.innerHTML = "<span>Carte</span>" + svg('<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>');
-  document.body.appendChild(boutonCarte);
-  function redim() { if (plan) setTimeout(function () { plan.invalidateSize(); }, 360); }
-  function modeCarte(oui) { cacherFiche(); window.scrollTo(0, 0); racine.classList.toggle("tel-carte", oui); majBouton(); redim(); }
-  function majBouton() { boutonCarte.classList.toggle("visible", !racine.classList.contains("tel-carte") && window.scrollY > 80); }
-  boutonCarte.addEventListener("click", function () { modeCarte(true); });
-  tete.addEventListener("click", function () { if (racine.classList.contains("tel-carte")) modeCarte(false); });
-  var y0 = null;
-  tete.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
-  tete.addEventListener("touchend", function (e) {
-    if (y0 === null) return; var dy = e.changedTouches[0].clientY - y0; y0 = null;
-    if (!racine.classList.contains("tel-carte") && dy > 50 && window.scrollY < 10) modeCarte(true);
-    else if (racine.classList.contains("tel-carte") && dy < -40) modeCarte(false);
-  });
-  window.addEventListener("scroll", majBouton, { passive: true }); majBouton();
 
   /* ---------- la recherche plein écran (même fenêtre et mêmes effets que « Se former ») ---------- */
   var populaires = json("villes-populaires") || [], lieux = json("tel-deps") || [];
@@ -396,6 +312,6 @@
   }
   function chercher() {
     cfg.appliquer(etat);
-    fermerModale(); majPilule(); racine.classList.remove("tel-carte"); window.scrollTo(0, 0); plusTard();
+    fermerModale(); majPilule(); window.scrollTo(0, 0); plusTard();
   }
 })();
