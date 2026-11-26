@@ -331,6 +331,8 @@
   function initCarte() {
     if (plan || !window.L || !carteEl || carteEl.offsetParent === null) return;
     plan = L.map(carteEl, { scrollWheelZoom: true, maxZoom: 15, minZoom: 5, zoomControl: false });
+    window.FRA_PLAN = plan;  // le téléphone (telephone.js) montre la fiche d'une session en bas de l'écran, comme Airbnb
+    document.dispatchEvent(new CustomEvent("sessions:carte"));
     L.control.zoom({ position: "topright" }).addTo(plan);
     bouger(function () { plan.fitBounds(FRANCE); });
     L.tileLayer(carteEl.dataset.tuiles, { maxZoom: 18, minZoom: 4,

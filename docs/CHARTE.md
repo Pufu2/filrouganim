@@ -127,3 +127,11 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
 - **Boutons** : 48px de haut, rayon 12px ; cartes : rayon 18px ; pilule : rayon complet, ombre douce.
 - **Mon espace** : la barre du bas remplace celle du haut ; le logo au milieu ouvre le tableau de bord, de part et d'autre les
   3 rubriques suivantes du menu de l'espace, et « Menu » pour le reste.
+- **Se former (pages de sessions) : la copie de la page de résultats d'Airbnb** (`statique/js/telephone-sessions.js`). En haut :
+  ← retour, la pilule centrée (le lieu ; les dates · la formation), le bouton des filtres, les pastilles rapides (qui s'effacent
+  quand on fait défiler). Derrière : la carte avec les prix (celle de filtres.js sur la page de recherche ; sur les pages de
+  département ou de ville, une carte des sessions de la page). Devant : la liste dans une feuille blanche arrondie (poignée,
+  « N sessions à venir ») qui monte sur la carte. Le bouton noir « Carte » replie la feuille en bas (sans onglets) ; toucher
+  ou tirer la feuille la remonte. Un prix touché montre la session en bas de l'écran. La pilule ouvre la recherche plein écran
+  (les formations en onglets, « Où ? » avec ses suggestions, « Quand », « Étape », Tout effacer / Rechercher). Les onglets du
+  bas restent visibles pendant qu'on fait défiler la liste.

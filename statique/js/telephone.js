@@ -12,6 +12,10 @@
   var lieu = barre.querySelector("[data-tel-lieu]");
   var boutonFiltres = barre.querySelector(".tel-filtres");
 
+  // les pages de sessions (Se former) : copie de la page de résultats d'Airbnb, réglée dans telephone-sessions.js
+  var ab = !!document.querySelector("main form.recherche.rv");
+  if (ab && tel.matches) racine.classList.add("tel-ab");
+
   // une page qui a déjà sa barre d'action en bas (fiche séjour : « Demander une place ») garde la sienne
   if (document.querySelector(".sjf-barre")) racine.classList.add("tel-sans-onglets");
 
@@ -29,7 +33,7 @@
   /* -- la recherche de la page : son formulaire passe dans la feuille, la pilule l'ouvre -- */
   var SELECTEURS = [".ac-hero-d .ac-carte", "form.recherche.rv", "#filtres-offres", "#sjc-filtres", ".an2-recherche form", ".hb-cherche"];
   var bloc = null, place = null;
-  for (var i = 0; i < SELECTEURS.length && !bloc; i++) bloc = document.querySelector("main " + SELECTEURS[i]);
+  for (var i = 0; i < SELECTEURS.length && !bloc; i++) if (!(ab && SELECTEURS[i] === "form.recherche.rv")) bloc = document.querySelector("main " + SELECTEURS[i]);
   function champ() { return bloc && bloc.querySelector('input[type="search"], input[type="text"], input:not([type])'); }
   function majLieu() {
     var c = champ();
@@ -86,7 +90,8 @@
     racine.classList.toggle("tel-defile", y > 4);
     var compact = y > 40;
     if (compact !== racine.classList.contains("tel-compact")) { racine.classList.toggle("tel-compact", compact); setTimeout(mesurer, 260); }
-    if (!tel.matches || racine.classList.contains("ff-ouverte") || racine.classList.contains("tel-cherche")) { racine.classList.remove("tel-cache"); dernier = y; return; }
+    // (pages de sessions : comme chez Airbnb, les onglets du bas restent là pendant qu'on fait défiler la liste)
+    if (!tel.matches || ab || racine.classList.contains("ff-ouverte") || racine.classList.contains("tel-cherche")) { racine.classList.remove("tel-cache"); dernier = y; return; }
     if (y < 120) racine.classList.remove("tel-cache");
     else if (d > 6) racine.classList.add("tel-cache");
     else if (d < -6) racine.classList.remove("tel-cache");
