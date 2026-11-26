@@ -1,0 +1,189 @@
+/* =========================================================================================
+   FIL ROUG'ANIM SUR TÉLÉPHONE
+   Cette feuille n'est chargée que sous 700px (media="(max-width: 700px)" dans base.html) : l'ordinateur ne peut pas bouger.
+   L'esprit : une application. Un haut fin et sombre, une barre d'onglets en bas avec le logo au milieu, le menu en
+   feuille qui monte du bas, des titres nets, des listes en lignes, des boutons à la taille du pouce (48px),
+   les rangées de pastilles qui défilent de côté, le haut et le bas qui s'effacent quand on lit.
+   Couleurs et police : celles de la charte (docs/CHARTE.md), rien de nouveau.
+   ========================================================================================= */
+:root { --tel-onglets: 62px; --tel-haut: 56px; --tel-marge: 16px; --tel-r: 18px; }
+html { -webkit-text-size-adjust: 100%; }
+body { -webkit-tap-highlight-color: transparent; }
+body:not(.en-app) { padding-bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom)); }
+html.tel-sans-onglets body { padding-bottom: 0; }
+.cadre { width: calc(100% - 2 * var(--tel-marge)); }
+
+/* ---------- le haut : une barre fine, pleine largeur, qui s'efface quand on descend ---------- */
+header.jm-entete { padding: 0; background: var(--nuit); transition: transform .28s ease; }
+header.jm-entete .jm-barre, header.jm-entete.defile .jm-barre { width: 100%; height: var(--tel-haut); padding: 0 8px 0 var(--tel-marge); border: 0; border-radius: 0; box-shadow: none; background: var(--nuit); }
+header.jm-entete.defile { box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+header.jm-entete .logo-n img { height: 26px; }
+header.jm-entete .logo-mot { font-size: 17px; }
+header.jm-entete .jm-st-boite, header.jm-entete .mm-tiroir { display: none; }
+header.jm-entete .bouton-espace { display: inline-flex; width: 44px; min-height: 44px; height: 44px; padding: 0; justify-content: center; font-size: 0; gap: 0; border: 0; border-radius: 50%; background: transparent; }
+header.jm-entete .bouton-espace .icone { width: 22px; height: 22px; padding: 0; }
+header.jm-entete .bouton-espace::before { content: ""; position: absolute; width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, .1); }
+header.jm-entete .bouton-espace { position: relative; }
+html.tel-cache header.jm-entete { transform: translateY(-100%); }
+html.tel-cache .fs-sections, html.tel-cache .le-lettres { top: 0 !important; }
+.fs-sections, .le-lettres { transition: top .28s ease; }
+
+/* ---------- la barre d'onglets du bas : le logo au milieu (comme Airbnb) ---------- */
+.tel-onglets { position: fixed; z-index: 950; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: calc(var(--tel-onglets) + env(safe-area-inset-bottom)); padding: 0 4px env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, .96); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
+  border-top: 1px solid rgba(23, 25, 29, .08); transition: transform .28s ease; }
+.tel-onglets > a, .tel-onglets > button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 6px 2px 4px; border: 0; background: none;
+  color: #70747c; font: 500 11px/1.1 var(--texte); letter-spacing: 0; text-decoration: none; cursor: pointer; }
+.tel-onglets svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.tel-onglets span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tel-onglets [aria-current], .tel-onglets [aria-expanded="true"] { color: var(--fil); font-weight: 600; }
+.tel-onglets [aria-current] svg { stroke-width: 2; }
+.tel-onglet-logo img { width: auto; height: 26px; filter: grayscale(1) opacity(.62); transition: filter .2s; }
+.tel-onglet-logo[aria-current] img { filter: none; }
+html.tel-cache .tel-onglets { transform: translateY(100%); }
+html.tel-sans-onglets .tel-onglets, html.ff-ouverte .tel-onglets, body.en-app .tel-onglets, body.en-parcours .tel-onglets { display: none; }
+
+/* ---------- le menu : une feuille qui monte du bas, au-dessus d'un voile ---------- */
+header.jm-entete .mm.mm-visible { position: fixed; top: auto; left: 0; right: 0; bottom: 0; max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain;
+  display: block; padding: 0 0 calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 12px); border: 0; border-radius: 24px 24px 0 0; background: #fff;
+  box-shadow: 0 0 0 100vmax rgba(23, 25, 29, .5); animation: tel-monte .28s cubic-bezier(.2, .8, .2, 1); }
+@keyframes tel-monte { from { transform: translateY(40%); opacity: .4; } to { transform: none; opacity: 1; } }
+.mm-tel { display: block; }
+.mm-tel-tete { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 18px 10px 8px var(--tel-marge); background: #fff; }
+.mm-tel-tete::before { content: ""; position: absolute; top: 7px; left: 50%; width: 38px; height: 4px; margin-left: -19px; border-radius: 4px; background: #dcdde0; }
+.mm-tel-tete p { margin: 0; font: 600 1.35rem/1 var(--titres); letter-spacing: -.02em; color: var(--nuit); }
+.mm-tel-fermer { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #f1f1f2; color: var(--nuit); cursor: pointer; }
+.mm-tel-fermer svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+header.jm-entete .mm-item { border-bottom: 1px solid #f0f0f1; }
+header.jm-entete .mm-bouton { min-height: 56px; padding: 0 var(--tel-marge); font-size: 1.05rem; font-weight: 600; }
+.mm-tel-pied { padding: 18px var(--tel-marge) 0; }
+.mm-tel-compte { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.mm-tel-compte a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; font-weight: 600; font-size: .95rem; text-decoration: none; }
+.mm-tel-espace { background: #f1f1f2; color: var(--nuit); }
+.mm-tel-commencer { background: var(--fil); color: #fff; }
+.mm-tel-liens { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.mm-tel-liens a { display: flex; align-items: center; min-height: 44px; color: #3a3d44; font-size: .93rem; text-decoration: none; }
+.mm-tel-legal { margin: 14px 0 0; color: #9a9da4; font-size: .78rem; line-height: 1.9; }
+.mm-tel-legal a { color: #70747c; text-decoration: none; }
+
+/* ---------- le pied de page : caché (ses pages sont dans le menu ; ses liens restent dans la page pour Google) ---------- */
+footer.pied.ft { display: none; }
+
+/* ---------- le haut des pages : plus court, un « ‹ retour » à la place du fil d'Ariane, les pastilles qui défilent ---------- */
+.tete .cadre, body:not(.en-app) .tete .cadre { padding-bottom: 30px; }
+.tete { padding-top: 14px; }
+.fs-haut-in { padding-top: 14px; }
+.fil-ariane, .tete .fil-ariane, .fs-ariane { display: flex; flex-wrap: nowrap; margin: 0 0 18px; font-size: 0; gap: 0; }
+.fil-ariane > *, .fil-ariane span { display: none; }
+.fil-ariane > a:last-of-type { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 12px 0 8px; border-radius: 99px; background: rgba(255, 255, 255, .1);
+  color: #e4e6e9; font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.fil-ariane > a:last-of-type::before { content: "‹"; font-size: 20px; line-height: 1; margin-top: -2px; }
+.fs-puces, .tete .chiffres { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-left: calc(-1 * var(--tel-marge)); margin-right: calc(-1 * var(--tel-marge)); padding: 0 var(--tel-marge); }
+.fs-puces::-webkit-scrollbar, .tete .chiffres::-webkit-scrollbar { display: none; }
+.fs-puces li, .tete .chiffres li { flex: none; white-space: nowrap; }
+.fs-puces { margin-top: 0; }
+.le .fs-puces { margin-top: 0; }
+.tete h1, .fs-haut h1 { font-size: 1.8rem; line-height: 1.14; letter-spacing: -.025em; }
+.tete .chapo, .fs-accroche, .fs-haut .le-chapo { font-size: 1rem; line-height: 1.55; }
+
+/* ---------- les sections : un rythme régulier, des titres nets ---------- */
+.bande { padding-top: 36px; padding-bottom: 36px; }
+.fs-s { margin-top: 36px; }
+.fs-tt h2, .bande h2, .fs-s h2 { font-size: 1.42rem; line-height: 1.2; letter-spacing: -.02em; }
+.fs-sur, .note-main, .cb-sur { font-size: .7rem; }
+
+/* ---------- cartes et boutons : arrondis d'application, cibles de 48px ---------- */
+.fs-carte, .session, .tp-carte, .le-texte, .le-faq, .faq, .bref, .cb, .le-action, .fs-ruban { border-radius: var(--tel-r) !important; }
+.bouton-r, .bouton-n, .bouton-contour, .bouton-blanc, .fs-btn, .tp-bande-bouton, .voir-plus, .cb-bouton { min-height: 48px; border-radius: 12px; }
+.fs-btn { height: 48px; }
+.voir-plus { width: 100%; }
+
+/* ---------- la fiche séjour : sa barre « Demander une place » remplace les onglets ---------- */
+.sjf-barre { padding: 10px var(--tel-marge) calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(23, 25, 29, .08); box-shadow: none; }
+.sjf-barre .fp-bouton-principal { min-height: 48px; border-radius: 12px; padding: 0 22px; }
+
+/* ---------- ce qui était déjà réglé pour le téléphone ---------- */
+/* les listes de liens des pages de sessions : une carte, des lignes repliées */
+.cadre.explorer { gap: 0 !important; padding: 0 !important; background: #fff; border: 1px solid var(--fs-t); border-radius: 16px; overflow: hidden; }
+.cadre.explorer > div { margin: 0 !important; padding: 0 18px !important; border: 0 !important; border-top: 1px solid var(--fs-t) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+.cadre.explorer > div:first-child { border-top: 0 !important; }
+.cadre.explorer > div > h3 { font-size: .98rem !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--fs-e) !important; font-weight: 500 !important; }
+.cadre.explorer > div.tel-ouvert { padding-bottom: 10px !important; }
+
+/* l'accueil : les quatre usages en lignes (vignette, titre, phrase, flèche) */
+.ac-b > span.ac-b-ill { grid-area: ic !important; width: 64px; height: 64px; margin: 0 !important; padding: 6px; border-radius: 12px; }
+.ac-b { grid-template-columns: 64px minmax(0, 1fr) auto !important; }
+/* l'accueil : les chiffres, sans la liste ni le graphique (sur /chiffres/) */
+.cb .cb-deux { display: none; }
+.cb .cb-tuiles b { white-space: nowrap; }
+
+/* les profils d'animateurs (offres, recruter) : la tête de carte en bandeau fin */
+.an-carte .tp-carte-haut, .tp-carte-exemple .tp-carte-haut, #animateurs-of .tp-carte-haut { height: 72px; padding: 0 16px; place-items: center start; }
+.an-carte .tp-avatar, .tp-carte-exemple .tp-avatar, #animateurs-of .tp-avatar { width: 48px; height: 48px; font-size: 20px; box-shadow: none; }
+.an-carte .an-badge, .tp-carte-exemple .an-badge { top: 50%; left: auto; right: 14px; transform: translateY(-50%); }
+
+
+/* les cartes « à lire » (guides, pour aller plus loin) : une carte, une ligne par guide (surtitre, titre, flèche) */
+.le-cartes, .le-cartes-2, .le-voir .le-cartes { gap: 0; background: #fff; border: 1px solid var(--fs-t); border-radius: 16px; overflow: hidden; }
+.le-cartes > li + li { border-top: 1px solid var(--fs-t); }
+.le-cartes a.fs-carte { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; align-items: center; padding: 14px 18px; border: 0; border-radius: 0 !important; box-shadow: none !important; transform: none !important; }
+.le-cartes a.fs-carte > :not(em) { grid-column: 1; }
+.le-cartes a.fs-carte > span { display: none; }
+.le-cartes a.fs-carte > b { font-size: 1rem; }
+.le-cartes a.fs-carte > em { grid-column: 2; grid-row: 1 / span 2; margin: 0; padding: 0; font-size: 0; }
+.le-cartes a.fs-carte > em span { display: inline; font-size: 1.15rem; color: #a8162a; }
+.le-cartes a.en3-type { grid-template-columns: 60px minmax(0, 1fr) auto; column-gap: 14px; }
+.le-cartes a.en3-type > :not(em):not(.en3-vignette) { grid-column: 2; }
+.le-cartes a.en3-type > .en3-vignette { display: flex; grid-column: 1; grid-row: 1 / span 2; width: 60px; height: 60px; margin: 0; padding: 6px; border-radius: 12px; }
+.le-cartes a.en3-type > em { grid-column: 3; }
+/* Recruter : « Elles sont déjà là » sur deux lignes ; les étapes avec le numéro à gauche du titre */
+.rc2-deja { flex-wrap: wrap; gap: 10px 14px; padding: 16px 18px; }
+.rc2-deja-t { flex: 1 1 0; min-width: 0; }
+.rc2-deja > em { flex-basis: 100%; }
+.rc2-etapes li { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 14px; row-gap: 2px; padding: 16px 18px; }
+.rc2-etapes li > i { grid-row: 1 / span 2; margin: 0; }
+.rc2-etapes li > :not(i) { grid-column: 2; }
+.tp-carte-exemple .tp-badge-exemple { top: 50%; left: auto; right: 14px; transform: translateY(-50%); }
+
+/* ---------- Mon espace : la barre du bas remplace celle du haut, le logo au milieu ---------- */
+body.en-app .espace-compte :is(.bouton-r, .bouton-contour, .bouton-n, .fs-btn) { min-height: 44px; }
+body.en-app:not(.en-parcours) #app-barre { display: none; }
+body.en-app #espace-compte { padding-top: 10px; padding-bottom: calc(var(--tel-onglets) + 20px + env(safe-area-inset-bottom)); }
+.app-dock:not([hidden]) { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: calc(var(--tel-onglets) + env(safe-area-inset-bottom)); padding: 0 4px env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, .96); -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px); border-top: 1px solid rgba(23, 25, 29, .08); }
+.app-dock-b { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 6px 2px 4px; border: 0; background: none;
+  color: #70747c; font: 500 11px/1.1 var(--texte); cursor: pointer; }
+.app-dock-b svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.app-dock-b span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-dock-b[aria-current], .app-dock-menu[aria-expanded="true"] { color: var(--fil); font-weight: 600; }
+.app-dock-logo img { height: 26px; width: auto; filter: grayscale(1) opacity(.62); transition: filter .2s; }
+.app-dock-logo[aria-current] img { filter: none; }
+body.en-parcours .app-dock { display: none; }
+body.en-app.menu-ouvert .co-onglets > .co-nav { bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 12px) !important; }
+
+/* ---------- les carrousels : les cartes d'une même famille défilent de côté (la suivante dépasse, on devine qu'il y en a d'autres) ---------- */
+:is(.rc-atouts, .en2-aides, .trois-pas, .rc2-etapes) { display: grid !important; grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: 80%; gap: 10px !important;
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+  margin-left: calc(-1 * var(--tel-marge)) !important; margin-right: calc(-1 * var(--tel-marge)) !important; padding: 2px var(--tel-marge) 8px !important; scroll-padding-inline: var(--tel-marge); }
+:is(.rc-atouts, .en2-aides, .trois-pas, .rc2-etapes)::-webkit-scrollbar { display: none; }
+:is(.rc-atouts, .en2-aides, .trois-pas, .rc2-etapes) > * { scroll-snap-align: start; min-width: 0; margin: 0 !important; }
+
+/* ---------- petits réglages ---------- */
+.fs-exemple { margin-bottom: 16px !important; }
+
+/* ---------- Mon espace : l'en-tête de chaque rubrique en carte d'application, ses boutons pleine largeur ---------- */
+body.en-app .co-entete h2 { font-size: 1.5rem !important; letter-spacing: -.02em; }
+body.en-app .co-e-actions { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8px !important; width: 100%; }
+body.en-app .co-e-actions > :is(a, button) { width: 100%; min-height: 48px !important; height: auto !important; padding: 10px 12px !important; border-radius: 12px !important;
+  font-size: .9rem !important; line-height: 1.2; justify-content: center; text-align: center; white-space: normal; }
+body.en-app .co-e-actions > :only-child, body.en-app .co-e-actions > .co-e-guide { grid-column: 1 / -1; }
+body.en-app .tb2-chiffres span, body.en-app .tb2-chiffres small { overflow-wrap: anywhere; }
+
+/* ---------- les replis (posés par menu.js) : le titre devient une ligne qu'on touche, avec un + qui tourne ---------- */
+.tel-repli > h3 { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; margin: 0 !important; cursor: pointer; }
+.tel-repli > h3::after { content: "+"; flex: none; font: 400 1.35rem/1 var(--texte); color: #9a9da4; transition: transform .2s; }
+.tel-repli.tel-ouvert > h3::after { transform: rotate(45deg); }
+.tel-repli:not(.tel-ouvert) > :not(:first-child) { display: none !important; }
+.cadre.explorer > div + div { box-shadow: inset 0 1px 0 rgba(23, 25, 29, .09) !important; }

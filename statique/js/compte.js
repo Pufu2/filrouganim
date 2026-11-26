@@ -387,8 +387,10 @@
     if (!mp2.hidden) mp2.href = L.lien_structures + structure.slug + "/";
     majTitreApp();
   }
-  // téléphone : les 4 premières rubriques de l'espace en bas de l'écran, sous le pouce, et « Menu » pour les autres
+  // téléphone : la barre du bas remplace celle du haut, comme une application ; le logo au milieu ouvre le tableau de bord
+  // (comme Airbnb), de part et d'autre les 3 rubriques suivantes du menu, et « Menu » pour toutes les autres
   // (les boutons renvoient aux mêmes boutons du menu ; caché sur ordinateur et dans l'administration)
+  function courtNom(t) { t = t.replace(/^(Mes|Mon|Ma)\s+/, ""); t = t.split(/\s+/)[0]; return t.charAt(0).toUpperCase() + t.slice(1); }
   function majDock() {
     var dock = $("app-dock");
     if (!dock) {
@@ -400,17 +402,25 @@
     dock.dataset.vue = vueApp;
     dock.textContent = "";
     var nav = $(vueApp).querySelector(".co-nav");
-    Array.prototype.filter.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) { return !b.hidden && b.dataset.ongletVers !== "guide"; }).slice(0, 4).forEach(function (b) {
-      var d = el("button", "app-dock-b"); d.type = "button"; d.dataset.dock = b.dataset.ongletVers;
-      var ic = b.querySelector("svg"); if (ic) d.appendChild(ic.cloneNode(true));
-      d.appendChild(el("span", null, (b.querySelector("span") || b).textContent));
-      d.addEventListener("click", function () { b.click(); window.scrollTo(0, 0); });
+    var liste = Array.prototype.filter.call(nav.querySelectorAll("[data-onglet-vers]"), function (b) { return !b.hidden && b.dataset.ongletVers !== "guide"; });
+    var tableau = liste.filter(function (b) { return b.dataset.ongletVers === "tableau"; })[0];
+    var autres = liste.filter(function (b) { return b !== tableau; }).slice(0, 3);
+    function onglet(b, logo) {
+      var d = el("button", "app-dock-b" + (logo ? " app-dock-logo" : "")); d.type = "button"; d.dataset.dock = b.dataset.ongletVers;
+      if (logo) { var im = document.createElement("img"); im.src = L.marque || "/marque-sombre.png"; im.alt = ""; d.appendChild(im); }
+      else { var ic = b.querySelector("svg"); if (ic) d.appendChild(ic.cloneNode(true)); }
+      d.appendChild(el("span", null, logo ? "Accueil" : courtNom((b.querySelector("span") || b).textContent)));
+      d.addEventListener("click", function () { document.body.classList.remove("menu-ouvert"); b.click(); window.scrollTo(0, 0); });
       dock.appendChild(d);
-    });
-    var m = el("button", "app-dock-b"); m.type = "button"; m.setAttribute("aria-label", "Toutes les rubriques");
+    }
+    if (autres[0]) onglet(autres[0]);
+    if (autres[1]) onglet(autres[1]);
+    if (tableau) onglet(tableau, true);
+    if (autres[2]) onglet(autres[2]);
+    var m = el("button", "app-dock-b app-dock-menu"); m.type = "button"; m.setAttribute("aria-label", "Toutes les rubriques et mon compte");
     m.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
     m.appendChild(el("span", null, "Menu"));
-    m.addEventListener("click", function () { document.body.classList.toggle("menu-ouvert"); });
+    m.addEventListener("click", function () { document.body.classList.toggle("menu-ouvert"); m.setAttribute("aria-expanded", document.body.classList.contains("menu-ouvert") ? "true" : "false"); });
     dock.appendChild(m);
   }
   function majTitreApp() {

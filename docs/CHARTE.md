@@ -101,3 +101,22 @@ Où on en met (une seule par page, jamais sur les pages de liste) :
 Pour en ajouter une : la prendre sur undraw.co, la passer dans le script de recoloration (fond clair et fond foncé,
 accent `#d61f35` ou `#ee8a2f` pour la partie parents).
 
+
+## 7. Le téléphone
+
+Sous 700px, le site se comporte comme une application. Tout est dans `statique/css/telephone.css`, chargée seulement
+sous 700px (`media="(max-width: 700px)"` dans `base.html`) : l'ordinateur et la tablette ne peuvent pas bouger. Le
+comportement est dans `statique/js/telephone.js` (et les replis de listes dans `menu.js`).
+
+- **Le haut** : une barre fine et sombre pleine largeur (logo, rond « Mon espace »), sans menu ni chiffres. Le fil d'Ariane
+  devient un seul « ‹ page parente ». Les pastilles du haut défilent sur une ligne.
+- **La barre d'onglets du bas** (`.tel-onglets`, dans `base.html`) : Se former, Offres, le logo au milieu (Accueil, gris quand on
+  est ailleurs, en couleur quand on y est), Enfants, Menu. Une page qui a sa propre barre d'action en bas (fiche séjour) la cache.
+- **Le menu** s'ouvre en feuille depuis le bas (titre, croix, les 4 parties, le compte, les pages du pied, les mentions).
+- **Le pied de page** est caché : ses pages sont dans le menu, ses liens restent dans la page.
+- **En lisant**, le haut et la barre du bas s'effacent quand on descend et reviennent dès qu'on remonte.
+- **Les familles de cartes** (atouts, aides, étapes) défilent de côté, la suivante dépasse. Les cartes « à lire » et les longues
+  listes de liens deviennent des lignes ; les listes « par ville », « par vacances »… se replient derrière leur titre.
+- **Boutons** : 48px de haut, rayon 12px ; cartes : rayon 18px.
+- **Mon espace** : la barre du bas remplace celle du haut ; le logo au milieu ouvre le tableau de bord, de part et d'autre les
+  3 rubriques suivantes du menu de l'espace, et « Menu » pour le reste.
