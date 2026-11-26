@@ -24,7 +24,7 @@
               ("/enfants/aides/", "Les aides", "euro")]} %}
 {% set pil = PILULES[rub] %}
 <div class="tel-barre" data-rub="{{ rub or 'autre' }}" data-leaflet-css="{{ statique('js/leaflet-1.9.4/leaflet.css') }}" data-leaflet-js="{{ statique('js/leaflet-1.9.4/leaflet.js') }}"
-  data-sessions="{{ lien('/se-former/sessions/sessions.json') }}" data-accueil="{{ lien('/') }}"
+  data-sessions="{{ lien('/se-former/sessions/sessions.json') }}" data-accueil="{{ lien('/') }}" data-icones="{{ lien('/illus/icones/') }}"
   data-tuiles="https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png">
   <div class="tel-barre-l">
     {# pages de sessions (façon page de résultats d'Airbnb) : une flèche de retour à gauche de la pilule #}

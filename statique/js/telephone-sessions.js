@@ -185,32 +185,42 @@
   window.addEventListener("scroll", majBouton, { passive: true });
   majBouton();
 
-  /* ---------- la recherche plein écran (la pilule) : formations en onglets, « Où ? », « Quand », « Étape » ---------- */
-  var ICONES = { BAFA: '<path d="M3 9l9-4 9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/>',
-    BAFD: '<path d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4L12 16.3 7.2 18.9l1-5.4-4-3.8 5.4-.7z"/>',
-    PSC1: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/>',
-    BSB: '<path d="M3 15c2 0 2-1.5 4.5-1.5S10 15 12 15s2-1.5 4.5-1.5S19 15 21 15M3 19c2 0 2-1.5 4.5-1.5S10 19 12 19s2-1.5 4.5-1.5S19 19 21 19"/><circle cx="12" cy="7" r="2.5"/>' };
-  var ECOLE = '<path d="M4 10l8-5 8 5M6 10v8h12v-8M10 18v-4h4v4"/>';
+  /* ---------- la recherche plein écran (la pilule), copie de celle d'Airbnb ----------
+     En haut, les formations en onglets (icônes 3D en couleur, statique/illus/icones/, licence MIT), la croix ; dessous, une
+     carte ouverte (« Où ? » d'abord : la case, sans ouvrir le clavier, et les villes suggérées) et les autres repliées en
+     une ligne (« Quand », « Étape ») ; en bas, « Tout effacer » et « Rechercher ». À l'ouverture : le fond se floute, les
+     icônes grandissent l'une après l'autre, les cartes descendent, le bas monte ; la fermeture est immédiate. */
+  var ICONES = { BAFA: "bafa", BAFD: "bafd", BSB: "bsb", CPJEPS: "cpjeps", BPJEPS: "bpjeps", DEJEPS: "dejeps", DESJEPS: "desjeps", PSC1: "psc" };
+  var dossier = barre.dataset.icones || "/illus/icones/";
+  var populaires = [];
+  try { populaires = JSON.parse(document.getElementById("villes-populaires").textContent) || []; } catch (e) {}
+  var lieux = Array.prototype.map.call(form.querySelectorAll("datalist option"), function (o) { return { texte: o.value, dep: o.dataset.dep || "" }; });
+  function sansAccents(t) { return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
   var etat = {};
   function lire() { ["ou", "diplome", "type", "mois", "annee"].forEach(function (k) { etat[k] = form.elements[k] ? form.elements[k].value : ""; }); }
   var m = el("div", "ab-m");
   feuille.textContent = ""; feuille.appendChild(m); feuille.classList.add("tel-ab-feuille");
-  function fermerModale() { racine.classList.remove("tel-cherche"); }
-  function ouvrirModale() { lire(); dessinerModale("ou"); racine.classList.add("tel-cherche"); }
+  function fermerModale() { racine.classList.remove("tel-cherche", "tel-cherche-anim"); }
+  function ouvrirModale() {
+    lire(); dessinerModale("ou");
+    racine.classList.add("tel-cherche");
+    racine.classList.remove("tel-cherche-anim"); void m.offsetWidth; racine.classList.add("tel-cherche-anim");
+  }
   pilule.addEventListener("click", function (e) { if (!tel.matches) return; e.preventDefault(); ouvrirModale(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && racine.classList.contains("tel-cherche")) fermerModale(); });
   function options(sel, test) { return Array.prototype.filter.call(sel.options, function (o) { return o.value && test(o); }); }
+  function nomOption(o) { return o.textContent.replace(/\s*\(\d+\)$/, ""); }
   function dessinerModale(ouverte) {
     m.textContent = "";
-    // en haut : les formations, comme les onglets Logements / Hôtels / Expériences, et la croix
     var haut = el("div", "ab-m-haut");
     var ong = el("div", "ab-m-onglets");
-    options(form.elements.diplome, function () { return true; }).forEach(function (o) {
-      var b = el("button", "ab-m-onglet"); b.type = "button";
-      b.innerHTML = svg(ICONES[o.value] || ECOLE);
-      b.appendChild(el("span", null, o.textContent.replace(/\s*\(\d+\)$/, "")));
+    options(form.elements.diplome, function () { return true; }).forEach(function (o, i) {
+      var b = el("button", "ab-m-onglet"); b.type = "button"; b.style.setProperty("--i", i);
+      var im = el("img"); im.src = dossier + (ICONES[o.value] || "bpjeps") + ".png"; im.alt = ""; im.width = 56; im.height = 56;
+      b.appendChild(el("span", "ab-m-icone")).appendChild(im);
+      b.appendChild(el("span", "ab-m-nom", nomOption(o)));
       if (etat.diplome === o.value) b.setAttribute("aria-pressed", "true");
-      b.addEventListener("click", function () { etat.diplome = etat.diplome === o.value ? "" : o.value; etat.type = ""; dessinerModale(ouverte); });
+      b.addEventListener("click", function () { etat.diplome = etat.diplome === o.value ? "" : o.value; etat.type = ""; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
       ong.appendChild(b);
     });
     haut.appendChild(ong);
@@ -220,86 +230,91 @@
     m.appendChild(haut);
     var corps = el("div", "ab-m-corps");
     m.appendChild(corps);
-    // une carte par question : ouverte (grand titre et choix) ou repliée (une ligne : la question, la réponse)
+    var rang = 0;
     function carteQ(cle, question, reponse, remplir) {
-      var c = el("section", "ab-m-carte" + (ouverte === cle ? " ouverte" : ""));
+      var c = el("section", "ab-m-carte" + (ouverte === cle ? " ouverte" : "")); c.style.setProperty("--i", rang++);
       if (ouverte === cle) { c.appendChild(el("h2", null, question + " ?")); remplir(c); }
       else {
         var l = el("button", "ab-m-ligne"); l.type = "button";
         l.appendChild(el("span", null, question)); l.appendChild(el("b", null, reponse));
-        l.addEventListener("click", function () { dessinerModale(cle); });
+        l.addEventListener("click", function () { racine.classList.remove("tel-cherche-anim"); dessinerModale(cle); });
         c.appendChild(l);
       }
       corps.appendChild(c);
     }
     carteQ("ou", "Où", etat.ou || "Partout en France", function (c) {
-      var boite = el("div", "ab-m-champ");
+      var boite = el("label", "ab-m-champ");
       boite.innerHTML = svg('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>');
-      var champ = el("input"); champ.type = "search"; champ.placeholder = "Ville, département ou code postal"; champ.value = etat.ou; champ.setAttribute("data-villes", "");
-      champ.setAttribute("enterkeyhint", "search"); champ.autocomplete = "off";
-      champ.addEventListener("input", function () { etat.ou = champ.value; });
-      champ.addEventListener("change", function () { etat.ou = champ.value; });
-      champ.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); etat.ou = champ.value; chercher(); } });
+      var champ = el("input"); champ.type = "search"; champ.placeholder = "Ville, département ou code postal"; champ.value = etat.ou;
+      champ.setAttribute("enterkeyhint", "search"); champ.autocomplete = "off"; champ.setAttribute("aria-label", "Où ?");
       boite.appendChild(champ);
-      var dl = form.querySelector("datalist"); if (dl) boite.appendChild(dl.cloneNode(true));
       c.appendChild(boite);
-      if (window.FRA_VILLES) window.FRA_VILLES(champ);
-      setTimeout(function () { champ.focus(); }, 80);
+      var zone = el("div", "ab-m-sugg");
+      c.appendChild(zone);
+      // les suggestions, dans la carte (pas de clavier à l'ouverture : la case ne prend le focus que si on la touche)
+      function suggerer() {
+        zone.textContent = "";
+        var q = sansAccents(champ.value.trim()), liste;
+        if (!q || q === sansAccents(etat.ou) && etat.ou && !champ.matches(":focus")) {
+          zone.appendChild(el("p", "ab-m-sugg-t", "Les villes les plus demandées"));
+          liste = populaires.map(function (v) { return [v.texte, v.n.toLocaleString("fr-FR") + (v.n > 1 ? " sessions" : " session")]; });
+        } else {
+          var mots = q.replace(/[()]/g, " ").split(/\s+/).filter(Boolean);
+          liste = lieux.filter(function (o) { var k = sansAccents(o.texte); return mots.every(function (w) { return k.indexOf(w) !== -1; }); })
+            .sort(function (a, b) { return (sansAccents(b.texte).indexOf(q) === 0) - (sansAccents(a.texte).indexOf(q) === 0) || a.texte.length - b.texte.length; })
+            .slice(0, 8).map(function (o) { return [o.texte, o.dep.slice(0, 2) === "r:" ? "Région" : o.dep.slice(0, 2) === "v:" ? "Ville" : "Département"]; });
+          zone.appendChild(el("p", "ab-m-sugg-t", liste.length ? "Suggestions" : "Aucun lieu ne correspond"));
+        }
+        liste.forEach(function (v) {
+          var b = el("button", "ab-m-sugg-l"); b.type = "button";
+          var im = el("img"); im.src = dossier + "lieu.png"; im.alt = ""; im.width = 30; im.height = 30;
+          b.appendChild(el("span", "ab-m-sugg-ic")).appendChild(im);
+          var t = el("span"); t.appendChild(el("b", null, v[0])); t.appendChild(el("small", null, v[1])); b.appendChild(t);
+          b.addEventListener("click", function () { etat.ou = v[0]; racine.classList.remove("tel-cherche-anim"); dessinerModale("quand"); });
+          zone.appendChild(b);
+        });
+      }
+      champ.addEventListener("input", function () { etat.ou = champ.value; suggerer(); });
+      champ.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); etat.ou = champ.value; chercher(); } });
+      suggerer();
+      var bas = el("span", "ab-m-sugg-plus"); bas.innerHTML = svg('<path d="M6 9l6 6 6-6"/>'); c.appendChild(bas);
     });
     var mois = form.elements.mois, annee = form.elements.annee;
     var choixMois = Array.prototype.filter.call(mois.options, function (o) { return o.value === etat.mois; })[0];
     carteQ("quand", "Quand", etat.mois && choixMois ? choixMois.textContent + (etat.annee ? " " + etat.annee : "") : (etat.annee || "Toutes les dates"), function (c) {
-      var vacs = options(mois, function (o) { return /^v:/.test(o.value); });
-      if (vacs.length && ["", "BAFA", "BAFD", "BSB", "PSC1"].indexOf(etat.diplome) !== -1) {
-        c.appendChild(el("p", "ab-m-sous", "Vacances scolaires"));
+      function puces(titre, liste, cle) {
+        if (!liste.length) return;
+        c.appendChild(el("p", "ab-m-sous", titre));
         var l = el("div", "ab-m-puces");
-        vacs.forEach(function (o) {
+        liste.forEach(function (o) {
           var b = el("button", "ab-m-puce", o.textContent); b.type = "button";
-          if (etat.mois === o.value) b.setAttribute("aria-pressed", "true");
-          b.addEventListener("click", function () { etat.mois = etat.mois === o.value ? "" : o.value; dessinerModale("quand"); });
+          if (etat[cle] === o.value) b.setAttribute("aria-pressed", "true");
+          b.addEventListener("click", function () { etat[cle] = etat[cle] === o.value ? "" : o.value; racine.classList.remove("tel-cherche-anim"); dessinerModale("quand"); });
           l.appendChild(b);
         });
         c.appendChild(l);
       }
-      c.appendChild(el("p", "ab-m-sous", "Mois"));
-      var l2 = el("div", "ab-m-puces");
-      options(mois, function (o) { return /^m:/.test(o.value); }).forEach(function (o) {
-        var b = el("button", "ab-m-puce", o.textContent); b.type = "button";
-        if (etat.mois === o.value) b.setAttribute("aria-pressed", "true");
-        b.addEventListener("click", function () { etat.mois = etat.mois === o.value ? "" : o.value; dessinerModale("quand"); });
-        l2.appendChild(b);
-      });
-      c.appendChild(l2);
+      if (["", "BAFA", "BAFD", "BSB", "PSC1"].indexOf(etat.diplome) !== -1) puces("Vacances scolaires", options(mois, function (o) { return /^v:/.test(o.value); }), "mois");
+      puces("Mois", options(mois, function (o) { return /^m:/.test(o.value); }), "mois");
       var ans = options(annee, function () { return true; });
-      if (ans.length > 1) {
-        c.appendChild(el("p", "ab-m-sous", "Année"));
-        var l3 = el("div", "ab-m-puces");
-        ans.forEach(function (o) {
-          var b = el("button", "ab-m-puce", o.textContent); b.type = "button";
-          if (etat.annee === o.value) b.setAttribute("aria-pressed", "true");
-          b.addEventListener("click", function () { etat.annee = etat.annee === o.value ? "" : o.value; dessinerModale("quand"); });
-          l3.appendChild(b);
-        });
-        c.appendChild(l3);
-      }
+      if (ans.length > 1) puces("Année", ans, "annee");
     });
     var etapes = options(form.elements.type, function (o) { return o.parentNode.tagName === "OPTGROUP" && o.parentNode.dataset.diplome === etat.diplome; });
     var choixType = etapes.filter(function (o) { return o.value === etat.type; })[0];
-    carteQ("etape", "Étape", choixType ? choixType.textContent : (etat.diplome ? "Toutes" : "Choisissez une formation"), function (c) {
+    carteQ("etape", "Étape", choixType ? nomOption(choixType) : (etat.diplome ? "Toutes" : "Choisir une formation"), function (c) {
       if (!etapes.length) { c.appendChild(el("p", "ab-m-vide", etat.diplome ? "Une seule formule pour cette formation." : "Choisissez d'abord une formation, en haut.")); return; }
       var l = el("div", "ab-m-puces");
       etapes.forEach(function (o) {
-        var b = el("button", "ab-m-puce", o.textContent.replace(/\s*\(\d+\)$/, "")); b.type = "button";
+        var b = el("button", "ab-m-puce", nomOption(o)); b.type = "button";
         if (etat.type === o.value) b.setAttribute("aria-pressed", "true");
-        b.addEventListener("click", function () { etat.type = etat.type === o.value ? "" : o.value; dessinerModale("etape"); });
+        b.addEventListener("click", function () { etat.type = etat.type === o.value ? "" : o.value; racine.classList.remove("tel-cherche-anim"); dessinerModale("etape"); });
         l.appendChild(b);
       });
       c.appendChild(l);
     });
-    // en bas : Tout effacer, Rechercher
     var pied = el("div", "ab-m-pied");
     var eff = el("button", "ab-m-effacer", "Tout effacer"); eff.type = "button";
-    eff.addEventListener("click", function () { etat = { ou: "", diplome: "", type: "", mois: "", annee: "" }; dessinerModale(ouverte); });
+    eff.addEventListener("click", function () { etat = { ou: "", diplome: "", type: "", mois: "", annee: "" }; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
     var go = el("button", "ab-m-chercher"); go.type = "button";
     go.innerHTML = svg('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'); go.appendChild(el("span", null, "Rechercher"));
     go.addEventListener("click", chercher);

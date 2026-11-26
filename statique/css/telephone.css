@@ -231,7 +231,8 @@ html.tel-ab .tel-rond { width: 40px; height: 40px; border: 0; background: none; 
 html.tel-ab .tel-rond svg { width: 20px; height: 20px; stroke-width: 1.8; }
 html.tel-ab .tel-compte { display: none; }
 html.tel-ab .tel-retour[hidden], html.tel-ab .tel-filtres[hidden] { display: grid; visibility: hidden; }
-/* les pastilles rapides : des boutons bordés, sans icône ; elles s'effacent dès qu'on fait défiler la liste */
+html.tel-ab .tel-cats { display: none !important; }
+/* (ancien réglage des pastilles, gardé si on les remet) les pastilles rapides : des boutons bordés, sans icône ; elles s'effacent dès qu'on fait défiler la liste */
 html.tel-ab .tel-cats { gap: 8px; padding: 0 16px 12px; border: 0; max-height: 60px; transition: max-height .25s ease, padding .25s ease, opacity .2s; }
 html.tel-ab .tel-cats a { flex-direction: row; padding: 0 14px; height: 34px; border: 1px solid #ddd; border-radius: 99px; color: #222; font-size: .82rem; font-weight: 400; opacity: 1; background: #fff; }
 html.tel-ab .tel-cats .jm-ico { display: none; }
@@ -283,48 +284,68 @@ html.tel-carte .tel-ab-fiche { bottom: calc(74px + env(safe-area-inset-bottom));
 .tel-ab-fiche-x svg { width: 14px; height: 14px; fill: none; stroke: #222; stroke-width: 2.4; stroke-linecap: round; }
 .tel-ab-fiche-nav { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 4px 0 8px; color: #6a6a6a; font-size: .8rem; }
 .tel-ab-fiche-nav button { width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 50%; background: #fff; font-size: 1.1rem; line-height: 1; }
-/* la recherche plein écran */
-html.tel-ab .tel-feuille { background: #f7f7f7; padding: 0; overflow: hidden; }
+/* la recherche plein écran, copie d'Airbnb (mesures prises sur leur page) : fond gris clair translucide et flouté,
+   onglets à icônes 3D, carte ouverte arrondie à 32px, lignes repliées de 56px, bas transparent avec « Tout effacer » et
+   le bouton en dégradé. Ouverture : fond 450ms, icônes .4 → 1 décalées de 50ms, cartes -100px → 0 et bas +100px → 0 en
+   500ms, décalées de 50ms. Fermeture immédiate. */
+html.tel-ab .tel-feuille { background: rgba(240, 240, 240, .86); -webkit-backdrop-filter: blur(12px) saturate(3); backdrop-filter: blur(12px) saturate(3); padding: 0; overflow: hidden; opacity: 1; transition: none; }
+html.tel-ab.tel-cherche-anim .tel-feuille { animation: ab-fond .45s cubic-bezier(.2, 0, 0, 1); }
+@keyframes ab-fond { from { background-color: rgba(240, 240, 240, 0); -webkit-backdrop-filter: blur(0) saturate(1); backdrop-filter: blur(0) saturate(1); } }
 .ab-m { display: flex; flex-direction: column; height: 100%; }
-.ab-m-haut { display: flex; align-items: flex-start; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 12px 6px 4px; }
-.ab-m-onglets { flex: 1; min-width: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.ab-m-haut { position: relative; display: flex; align-items: flex-start; padding: calc(8px + env(safe-area-inset-top)) 56px 0 8px; }
+.ab-m-onglets { flex: 1; min-width: 0; display: flex; justify-content: flex-start; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .ab-m-onglets::-webkit-scrollbar { display: none; }
-.ab-m-onglet { flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 64px; padding: 6px 8px 10px; border: 0; background: none; color: #6a6a6a; font: 500 .78rem/1 var(--texte); position: relative; cursor: pointer; }
-.ab-m-onglet svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ab-m-onglet { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 72px; padding: 4px 0 12px; border: 0; background: none; color: #6a6a6a; font: 500 .8rem/1.2 var(--texte); cursor: pointer; }
+.ab-m-icone { display: grid; place-items: center; width: 50px; height: 50px; }
+.ab-m-icone img { width: 46px; height: 46px; object-fit: contain; transition: transform .2s; }
 .ab-m-onglet[aria-pressed="true"] { color: #222; font-weight: 600; }
-.ab-m-onglet[aria-pressed="true"] svg { stroke: var(--fil); }
-.ab-m-onglet[aria-pressed="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 2px; background: #222; border-radius: 2px; }
-.ab-m-x { flex: none; width: 36px; height: 36px; margin-top: 8px; display: grid; place-items: center; border: 1px solid #ddd; border-radius: 50%; background: #fff; cursor: pointer; }
-.ab-m-x svg { width: 14px; height: 14px; fill: none; stroke: #222; stroke-width: 2.4; stroke-linecap: round; }
-.ab-m-corps { flex: 1; overflow-y: auto; padding: 8px 12px 20px; display: flex; flex-direction: column; gap: 12px; }
-.ab-m-carte { background: #fff; border-radius: 16px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 2px 8px rgba(0, 0, 0, .08); }
-.ab-m-carte.ouverte { padding: 22px 20px 20px; border-radius: 24px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .15); }
-.ab-m-carte h2 { margin: 0 0 16px; font: 700 1.55rem/1.1 var(--titres); letter-spacing: -.02em; color: #222; }
+.ab-m-onglet[aria-pressed="true"] .ab-m-icone img { transform: scale(1.08); }
+.ab-m-onglet[aria-pressed="true"]::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: 2px; height: 3px; border-radius: 3px; background: #222; }
+html.tel-cherche-anim .ab-m-icone { animation: ab-icone .574s cubic-bezier(.2, 0, 0, 1) backwards; animation-delay: calc(var(--i, 0) * 50ms); }
+html.tel-cherche-anim .ab-m-onglet[aria-pressed="true"]::after { animation: ab-apparait .15s linear .1s backwards; }
+@keyframes ab-icone { from { scale: .4; } }
+@keyframes ab-apparait { from { opacity: 0; } }
+.ab-m-x { position: absolute; top: calc(18px + env(safe-area-inset-top)); right: 14px; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid #b0b0b0; border-radius: 50%; background: #fff; cursor: pointer; }
+.ab-m-x svg { width: 12px; height: 12px; fill: none; stroke: #222; stroke-width: 3; stroke-linecap: round; }
+.ab-m-corps { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.ab-m-carte { flex: none; background: #fff; border-radius: 16px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 2px 6px rgba(0, 0, 0, .08); }
+.ab-m-carte.ouverte { display: flex; flex-direction: column; padding: 24px 20px 12px; border-radius: 32px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .16); }
+.ab-m-carte.ouverte:has(.ab-m-sugg) { height: min(352px, calc(100dvh - 330px)); min-height: 290px; }
+html.tel-cherche-anim .ab-m-carte { animation: ab-descend .5s cubic-bezier(.2, 0, 0, 1) backwards; animation-delay: calc(var(--i, 0) * 50ms); }
+@keyframes ab-descend { from { transform: translateY(-100px); opacity: 0; } }
+.ab-m-carte h2 { margin: 0 0 16px; font: 800 1.6rem/1.1 var(--titres); letter-spacing: -.02em; color: #222; }
 .ab-m-ligne { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; padding: 0 20px; border: 0; background: none; font: inherit; cursor: pointer; }
-.ab-m-ligne span { color: #6a6a6a; font-size: .9rem; }
-.ab-m-ligne b { color: #222; font-size: .9rem; font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* « Où ? » : la case bordée, puis les suggestions dans la carte elle-même (comme « Suggestions de destinations ») */
-.ab-m-champ { position: relative; display: flex; flex-wrap: wrap; }
-.ab-m-champ > svg { position: absolute; left: 16px; top: 19px; width: 18px; height: 18px; fill: none; stroke: #222; stroke-width: 2.2; stroke-linecap: round; pointer-events: none; }
-.ab-m-champ input { flex: 1 1 100%; min-width: 0; height: 56px; padding: 0 16px 0 44px; border: 1px solid #b0b0b0; border-radius: 12px; outline: 0; background: #fff; font: 500 16px var(--texte); color: #222; }
-.ab-m-champ input:focus { border-color: #222; box-shadow: inset 0 0 0 1px #222; }
-.ab-m-champ .villes-liste { position: static !important; flex: 1 1 100%; width: auto !important; max-height: none !important; margin: 14px 0 0 !important; padding: 0 !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; background: none !important; display: flex; flex-direction: column; }
-.ab-m-champ .villes-liste[hidden] { display: none; }
-.ab-m-champ .villes-titre { margin: 0 0 6px !important; padding: 0 !important; font-size: .78rem !important; color: #222 !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 500; }
-.ab-m-champ .villes-choix { display: grid !important; grid-template-columns: 48px 1fr; grid-template-rows: auto auto; column-gap: 14px; align-items: center; min-height: 64px; padding: 6px 0 !important; border: 0 !important; background: none !important; text-align: left; }
-.ab-m-champ .villes-choix .icone { grid-row: 1 / span 2; width: 48px !important; height: 48px !important; padding: 13px; border-radius: 10px; background: #ebebeb; stroke: #222 !important; }
-.ab-m-champ .villes-choix b { font-weight: 500 !important; color: #222; font-size: .95rem; }
-.ab-m-champ .villes-choix span { color: #6a6a6a; font-size: .85rem; }
-.ab-m-sous { margin: 14px 0 8px; color: #6a6a6a; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
-.ab-m-sous:first-of-type { margin-top: 0; }
+.ab-m-ligne span { color: #6a6a6a; font-size: .875rem; font-weight: 500; }
+.ab-m-ligne b { color: #222; font-size: .875rem; font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-m-champ { position: relative; display: flex; align-items: center; gap: 12px; flex: none; height: 56px; padding: 0 16px; border: 1px solid #b0b0b0; border-radius: 12px; cursor: text; }
+.ab-m-champ > svg { width: 18px; height: 18px; flex: none; fill: none; stroke: #222; stroke-width: 2.4; stroke-linecap: round; }
+.ab-m-champ input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: none; font: 500 16px var(--texte); color: #222; }
+.ab-m-champ input::placeholder { color: #6a6a6a; font-weight: 400; }
+.ab-m-champ:focus-within { border-color: #222; box-shadow: inset 0 0 0 1px #222; }
+.ab-m-sugg { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -20px; padding: 0 20px; scrollbar-width: none; -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+.ab-m-sugg::-webkit-scrollbar { display: none; }
+.ab-m-sugg-t { margin: 18px 0 8px; color: #222; font-size: .75rem; font-weight: 500; }
+.ab-m-sugg-l { display: flex; align-items: center; gap: 16px; width: 100%; padding: 8px 0; border: 0; background: none; text-align: left; font: inherit; cursor: pointer; }
+.ab-m-sugg-ic { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: #f2f2f2; }
+.ab-m-sugg-ic img { width: 30px; height: 30px; }
+.ab-m-sugg-l > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.ab-m-sugg-l b { color: #222; font-size: .95rem; font-weight: 500; }
+.ab-m-sugg-l small { color: #6a6a6a; font-size: .85rem; }
+.ab-m-sugg-plus { display: grid; place-items: center; height: 22px; color: #6a6a6a; }
+.ab-m-sugg-plus svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ab-m-sous { margin: 16px 0 8px; color: #222; font-size: .75rem; font-weight: 500; }
+.ab-m-carte h2 + .ab-m-sous { margin-top: 0; }
 .ab-m-puces { display: flex; flex-wrap: wrap; gap: 8px; }
-.ab-m-puce { min-height: 40px; padding: 0 16px; border: 1px solid #ddd; border-radius: 99px; background: #fff; color: #222; font: 400 .88rem var(--texte); cursor: pointer; }
-.ab-m-puce[aria-pressed="true"] { border-color: #222; background: #222; color: #fff; }
-.ab-m-vide { margin: 0; color: #6a6a6a; font-size: .9rem; }
-.ab-m-pied { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid #ebebeb; }
-.ab-m-effacer { border: 0; background: none; padding: 10px 0; color: #222; font: 600 1rem var(--texte); text-decoration: underline; cursor: pointer; }
-.ab-m-chercher { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 10px; background: var(--fil); color: #fff; font: 600 1rem var(--texte); cursor: pointer; }
-.ab-m-chercher svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.ab-m-puce { min-height: 40px; padding: 0 16px; border: 1px solid #ddd; border-radius: 99px; background: #fff; color: #222; font: 400 .875rem var(--texte); cursor: pointer; }
+.ab-m-puce[aria-pressed="true"] { border-color: #222; box-shadow: inset 0 0 0 1px #222; background: #f7f7f7; font-weight: 600; }
+.ab-m-vide { margin: 0 0 8px; color: #6a6a6a; font-size: .9rem; }
+.ab-m-pied { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px calc(12px + env(safe-area-inset-bottom)) 6px; background: transparent; }
+html.tel-cherche-anim .ab-m-pied { animation: ab-monte .5s cubic-bezier(.2, 0, 0, 1) backwards; }
+@keyframes ab-monte { from { transform: translateY(100px); opacity: 0; } }
+.ab-m-effacer { height: 48px; padding: 14px; border: 0; border-radius: 12px; background: none; color: #222; font: 500 16px/20px var(--texte); text-decoration: none; cursor: pointer; }
+.ab-m-chercher { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 14px 24px; border: 0; border-radius: 12px;
+  background: linear-gradient(to right, #e5283f 0%, #d61f35 50%, #bd122a 100%); color: #fff; font: 500 16px/20px var(--texte); cursor: pointer; }
+.ab-m-chercher svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
 /* les filtres, en feuille comme chez Airbnb : titre centré, croix, Tout effacer / bouton noir */
 html.tel-ab .ff-voile:not([hidden]) { display: block !important; background: rgba(0, 0, 0, .45) !important; }
 html.tel-ab .ff { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: calc(12px + env(safe-area-inset-top)) !important; width: auto !important; max-width: none !important;
@@ -337,3 +358,4 @@ html.tel-ab .ff-corps { flex: 1; overflow-y: auto; }
 html.tel-ab .ff-pied { justify-content: space-between !important; border-top: 1px solid #ebebeb; padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important; }
 html.tel-ab .ff-pied .bouton-r { background: #222 !important; border-color: #222 !important; border-radius: 10px; }
 html.tel-ab main .recherche-une + :is(section, div) { padding-top: 4px !important; margin-top: 0 !important; }
+.ab-m-onglet:first-child { margin-left: auto; } .ab-m-onglet:last-child { margin-right: auto; }
