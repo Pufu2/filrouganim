@@ -204,15 +204,17 @@
   var sortie = null;
   function fermerModale() {
     if (!racine.classList.contains("tel-cherche") || sortie) return;
-    racine.classList.remove("tel-cherche-anim");
-    racine.classList.add("tel-cherche-sort");
-    sortie = setTimeout(function () { racine.classList.remove("tel-cherche", "tel-cherche-sort"); sortie = null; }, 320);
+    racine.classList.remove("tel-cherche-anim"); racine.classList.add("tel-cherche-sort");
+    sortie = true;
+    // la grande carte remonte dans la barre de recherche (telephone.js, FRA_MORPH), le reste glisse et s'efface
+    window.FRA_MORPH("fermer", m.querySelector(".ab-m-carte.ouverte"), pilule, function () { racine.classList.remove("tel-cherche", "tel-cherche-sort"); sortie = null; });
   }
   function ouvrirModale() {
-    if (sortie) { clearTimeout(sortie); sortie = null; racine.classList.remove("tel-cherche-sort"); }
+    if (sortie) return;
     lire(); dessinerModale("ou");
-    racine.classList.add("tel-cherche");
-    racine.classList.remove("tel-cherche-anim"); void m.offsetWidth; racine.classList.add("tel-cherche-anim");
+    racine.classList.add("tel-cherche"); racine.classList.remove("tel-cherche-anim"); void m.offsetWidth; racine.classList.add("tel-cherche-anim");
+    // la barre de recherche s'ouvre en grande carte « Où ? »
+    window.FRA_MORPH("ouvrir", m.querySelector(".ab-m-carte.ouverte"), pilule);
   }
   pilule.addEventListener("click", function (e) { if (!tel.matches) return; e.preventDefault(); ouvrirModale(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && racine.classList.contains("tel-cherche")) fermerModale(); });

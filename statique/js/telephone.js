@@ -2,6 +2,30 @@
 // plein écran, la barre d'onglets du bas qui s'efface quand on lit. Sur ordinateur, rien de visible (tout est caché par da.css).
 (function () {
   "use strict";
+  /* -- la recherche qui sort de la barre et y retourne (comme l'application Airbnb) : une carte blanche « fantôme » passe
+     de la pilule à la grande carte « Où ? » (ouverture) ou de la grande carte à la pilule (fermeture), en 380ms, pendant que
+     le reste glisse et s'efface (telephone.css : tel-cherche-anim, tel-cherche-sort). Partagé par les trois scripts. -- */
+  var DUREE = 380, COURBE = "cubic-bezier(.2, 0, 0, 1)";
+  window.FRA_MORPH = function (sens, carte, pilule, fini) {
+    if (!carte || !pilule || !carte.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { if (fini) fini(); return; }
+    var a = pilule.getBoundingClientRect(), b = carte.getBoundingClientRect();
+    if (!a.width || !b.width) { if (fini) fini(); return; }
+    var f = document.createElement("div"); f.className = "tel-fantome";
+    var t = pilule.querySelector("span"); if (t) { var c = t.cloneNode(true); c.className = "tel-fantome-t"; f.appendChild(c); }
+    document.body.appendChild(f);
+    var petit = { left: a.left + "px", top: a.top + "px", width: a.width + "px", height: a.height + "px", borderRadius: (a.height / 2) + "px", boxShadow: "0 3px 12px -2px rgba(23,25,29,.14)" };
+    var grand = { left: b.left + "px", top: b.top + "px", width: b.width + "px", height: b.height + "px", borderRadius: "32px", boxShadow: "0 8px 24px rgba(0,0,0,.16)" };
+    var de = sens === "ouvrir" ? petit : grand, vers = sens === "ouvrir" ? grand : petit;
+    carte.classList.add("tel-morph-cache");
+    f.animate([de, vers], { duration: DUREE, easing: COURBE, fill: "forwards" });
+    if (t) f.firstChild.animate(sens === "ouvrir" ? [{ opacity: 1 }, { opacity: 0, offset: .35 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 0, offset: .55 }, { opacity: 1 }], { duration: DUREE, fill: "forwards" });
+    setTimeout(function () {
+      carte.classList.remove("tel-morph-cache");
+      if (sens === "ouvrir" && carte.animate) carte.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: "ease-out" });
+      f.remove(); if (sens === "fermer" && pilule.blur) pilule.blur(); if (fini) fini();
+    }, DUREE);
+  };
+
   var tel = window.matchMedia("(max-width: 700px)");
   var racine = document.documentElement;
   var barre = document.querySelector(".tel-barre");
@@ -52,9 +76,17 @@
   }
   function ouvrir() {
     racine.classList.add("tel-cherche");
-    var c = champ(); if (c) setTimeout(function () { c.focus(); }, 60);
+    window.FRA_MORPH("ouvrir", corps.firstElementChild, pilule);
   }
-  function fermer() { racine.classList.remove("tel-cherche"); majLieu(); }
+  var sortie = false;
+  function fermer() {
+    if (!racine.classList.contains("tel-cherche") || sortie) return;
+    sortie = true; racine.classList.add("tel-cherche-sort");
+    window.FRA_MORPH("fermer", corps.firstElementChild, pilule, function () {
+      feuille.style.transition = "none"; racine.classList.remove("tel-cherche", "tel-cherche-sort"); void feuille.offsetWidth; feuille.style.transition = "";
+      sortie = false; majLieu();
+    });
+  }
   if (bloc) {
     ranger();
     majLieu();

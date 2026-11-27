@@ -369,13 +369,28 @@ html.tel-ab main .recherche-une + :is(section, div) { padding-top: 4px !importan
 .ab-m-carte:not(.ouverte) { transition: opacity .25s, transform .3s cubic-bezier(.2, 0, 0, 1); }
 .ab-m.ab-m-grand .ab-m-carte:not(.ouverte) { opacity: 0; transform: translateY(40px); pointer-events: none; }
 .ab-m.ab-m-grand .ab-m-carte.ouverte:has(.ab-m-sugg) { min-height: 0; }
-html.tel-cherche-sort .tel-feuille { animation: ab-fond-sort .32s cubic-bezier(.2, 0, 0, 1) forwards; }
+/* la fermeture, comme l'application Airbnb : la grande carte remonte et se fond dans la barre de recherche (le « fantôme »,
+   telephone.js FRA_MORPH), les autres questions et le bas glissent vers le bas en s'effaçant, les onglets remontent, le flou
+   du fond disparaît ; à l'ouverture, la barre s'ouvre en grande carte et le reste arrive comme avant. 380ms. */
+.tel-fantome { position: fixed; z-index: 1001; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fff; pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .16); }
+.tel-fantome-t { display: flex; flex-direction: column; align-items: center; min-width: 0; max-width: 100%; padding: 0 20px; text-align: center; white-space: nowrap; }
+.tel-fantome-t b { font-size: .94rem; font-weight: 600; color: #222; }
+.tel-fantome-t small { overflow: hidden; text-overflow: ellipsis; max-width: 100%; color: #6a6a6a; font-size: .8rem; }
+.tel-morph-cache { visibility: hidden !important; animation: none !important; }
+html.tel-cherche-anim .ab-m-carte.ouverte { animation: none; }
+html.tel-cherche-sort .tel-feuille { animation: ab-fond-sort .38s cubic-bezier(.2, 0, 0, 1) forwards; }
 @keyframes ab-fond-sort { to { background-color: rgba(240, 240, 240, 0); -webkit-backdrop-filter: blur(0) saturate(1); backdrop-filter: blur(0) saturate(1); } }
-html.tel-cherche-sort .ab-m-carte, html.tel-cherche-sort .ab-m-haut { animation: ab-remonte .3s cubic-bezier(.2, 0, 0, 1) forwards; animation-delay: calc((2 - var(--i, 0)) * 30ms); }
-html.tel-cherche-sort .ab-m-haut { animation-delay: 60ms; }
+html.tel-cherche-sort .ab-m-carte:not(.ouverte) { animation: ab-glisse-bas .3s cubic-bezier(.2, 0, 0, 1) forwards; animation-delay: calc(var(--i, 0) * 25ms); }
+html.tel-cherche-sort .ab-m-haut { animation: ab-remonte .3s cubic-bezier(.2, 0, 0, 1) forwards; }
 html.tel-cherche-sort .ab-m-pied { animation: ab-descend-bas .3s cubic-bezier(.2, 0, 0, 1) forwards; }
-@keyframes ab-remonte { to { transform: translateY(-100px); opacity: 0; } }
+@keyframes ab-remonte { to { transform: translateY(-24px); opacity: 0; } }
+@keyframes ab-glisse-bas { to { transform: translateY(40px); opacity: 0; } }
 @keyframes ab-descend-bas { to { transform: translateY(100px); opacity: 0; } }
+/* l'accueil : la même chose avec sa propre feuille */
+html.tel-cherche-sort:not(.tel-ab) .tel-feuille { animation: ab-fond-sort-acc .38s cubic-bezier(.2, 0, 0, 1) forwards; }
+@keyframes ab-fond-sort-acc { to { background-color: rgba(244, 244, 242, 0); } }
+html.tel-cherche-sort:not(.tel-ab) .tel-feuille-tete { animation: ab-remonte .3s cubic-bezier(.2, 0, 0, 1) forwards; }
 
 /* =========================================================================================
    ANIMATEURS, STRUCTURES, PARENTS : la même page que « Se former » (statique/js/telephone-annuaires.js)
