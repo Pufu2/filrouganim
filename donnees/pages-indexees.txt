@@ -18,6 +18,7 @@
 /conditions-utilisation/
 /confidentialite/
 /contact/
+/enfants/
 /enfants/aides/
 /enfants/centre-de-loisirs/ain/
 /enfants/centre-de-loisirs/ain/jasseron/
@@ -137,6 +138,7 @@
 /enfants/centre-de-loisirs/yvelines/maule/
 /enfants/centre-de-loisirs/yvelines/saint-germain-en-laye/
 /enfants/centre-de-loisirs/yvelines/versailles/
+/enfants/colo-pas-chere/
 /enfants/colonie-de-vacances/
 /enfants/colonie-de-vacances/alpes-maritimes/
 /enfants/colonie-de-vacances/aube/
@@ -174,6 +176,7 @@
 /enfants/colonie-de-vacances/var/
 /enfants/colonie-de-vacances/vienne/
 /enfants/demande/
+/enfants/periscolaire/
 /enfants/periscolaire/ain/
 /enfants/periscolaire/aisne/
 /enfants/periscolaire/alpes-de-haute-provence/
@@ -222,11 +225,15 @@
 /lexique/education-populaire/
 /lexique/financement/
 /lexique/grand-jeu/
+/lexique/internat/
 /lexique/jury-bafa/
 /lexique/organisme-habilite/
+/lexique/perfectionnement/
+/lexique/periscolaire/
 /lexique/projet-educatif/
 /lexique/projet-pedagogique/
 /lexique/psc/
+/lexique/qualification/
 /lexique/sejour-court/
 /lexique/sejour-de-vacances/
 /lexique/stage-pratique/
@@ -241,6 +248,7 @@
 /outils/salaire-cee/
 /outils/taux-d-encadrement/
 /recruter/
+/recruter/animateurs-bafa/
 /recruter/animateurs-bafa/aisne/
 /recruter/animateurs-bafa/alpes-de-haute-provence/
 /recruter/animateurs-bafa/alpes-maritimes/
@@ -464,6 +472,7 @@
 /se-former/ecoles/bpjeps/oise/
 /se-former/ecoles/bpjeps/oise/agnetz/
 /se-former/ecoles/bpjeps/oise/beauvais/
+/se-former/ecoles/bpjeps/oise/creil/
 /se-former/ecoles/bpjeps/orne/
 /se-former/ecoles/bpjeps/paris/
 /se-former/ecoles/bpjeps/pas-de-calais/
@@ -802,6 +811,7 @@
 /se-former/ecoles/desjeps/doubs/
 /se-former/ecoles/desjeps/doubs/montbeliard/
 /se-former/ecoles/desjeps/gironde/begles/
+/se-former/ecoles/desjeps/grand-est/
 /se-former/ecoles/desjeps/hauts-de-france/
 /se-former/ecoles/desjeps/hauts-de-seine/
 /se-former/ecoles/desjeps/hauts-de-seine/asnieres-sur-seine/
@@ -926,6 +936,7 @@
 /se-former/sessions/ariege/psc1/pamiers/
 /se-former/sessions/ariege/vacances-hiver-2027/
 /se-former/sessions/ariege/vacances-noel-2026/
+/se-former/sessions/aube/
 /se-former/sessions/aube/approfondissement/
 /se-former/sessions/aube/formation-generale/
 /se-former/sessions/aube/la-chapelle-saint-luc/
@@ -1095,6 +1106,7 @@
 /se-former/sessions/charente/psc1/barbezieux-saint-hilaire/
 /se-former/sessions/charente/ruffec/
 /se-former/sessions/charente/vacances-hiver-2027/
+/se-former/sessions/cher/
 /se-former/sessions/cher/approfondissement/
 /se-former/sessions/cher/bourges/
 /se-former/sessions/cher/formation-generale/
@@ -2321,6 +2333,7 @@
 /se-former/surveillant-de-baignade/
 /se-former/villes/
 /trouver-un-poste/contrat-d-engagement-educatif/
+/trouver-un-poste/demande/
 /trouver-un-poste/emploi-animateur/ain/bourg-en-bresse/
 /trouver-un-poste/emploi-animateur/ain/jasseron/
 /trouver-un-poste/emploi-animateur/aisne/chauny/
