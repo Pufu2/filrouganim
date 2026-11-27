@@ -449,3 +449,103 @@ html.tel-ab main .en3 .en3-bande { margin-top: 4px !important; }
 /* Animateurs, Structures, Parents : pas de carte ; la liste commence sous la barre de recherche */
 html.tel-ab.tel-sans-carte main#contenu { margin-top: var(--ab-haut, 82px); border-radius: 0; box-shadow: none; min-height: 0; }
 html.tel-ab.tel-sans-carte .tel-ab-tete { padding: 14px 16px 6px; cursor: default; }
+
+/* =========================================================================================
+   ANIMATEURS : LE STYLE « LUMIÈRE » (inspiré de bonchoeur.fr, dans nos couleurs) — telephone-annuaires.js
+   Fond crème, lumières floues rouge / orange / rose derrière le haut et la barre (qui reste transparente, même en
+   défilant), titre en Fraunces avec la fin en italique rouge, cartes en verre, petites cartes de couleur par animateur.
+   ========================================================================================= */
+html.tel-anim, html.tel-anim body { background: #f6f4ef; }
+html.tel-anim .tel-barre, html.tel-anim.tel-defile .tel-barre { background: transparent !important; box-shadow: none !important; }
+html.tel-anim .tel-pilule { background: rgba(255, 255, 255, .62); border: 1px solid rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 22px -10px rgba(120, 40, 40, .22); }
+html.tel-anim .tel-rond { background: rgba(255, 255, 255, .5); border-radius: 50%; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.tel-lumieres { position: absolute; z-index: 0; left: 0; right: 0; top: 0; height: 560px; overflow: hidden; pointer-events: none; }
+.tel-lum { position: absolute; border-radius: 50%; filter: blur(30px); animation: tel-derive 18s ease-in-out infinite alternate; }
+.tel-lum-a { width: 340px; height: 340px; top: -110px; left: -80px; background: radial-gradient(circle, rgba(214, 31, 53, .30), transparent 65%); }
+.tel-lum-b { width: 320px; height: 320px; top: -70px; right: -120px; background: radial-gradient(circle, rgba(238, 138, 47, .32), transparent 65%); animation-delay: -6s; }
+.tel-lum-c { width: 260px; height: 260px; top: 150px; left: 90px; background: radial-gradient(circle, rgba(240, 120, 160, .22), transparent 65%); animation-delay: -12s; }
+@keyframes tel-derive { 50% { transform: translate(24px, 18px) scale(1.06); } 100% { transform: translate(-16px, 30px) scale(.96); } }
+html.tel-anim main#contenu { position: relative; z-index: 1; background: transparent !important; }
+html.tel-anim main :is(.bande, .tp-cartes-bande, .tp-recherche) { background: transparent !important; }
+html.tel-anim .tel-ab-tete { display: none; }
+html.tel-anim main .tp-bande, html.tel-anim main .tp-sans-offre, html.tel-anim main #animateurs-of { display: none !important; }
+.tel-anim-tete { padding: 6px 16px 4px; }
+.tel-sur { margin: 0 0 6px; font: 600 11px/1 var(--texte); letter-spacing: .14em; text-transform: uppercase; color: var(--fil); }
+.tel-titre { margin: 0 0 16px; font: 600 30px/1.08 "Fraunces", Georgia, serif; letter-spacing: -.02em; color: var(--nuit); }
+.tel-titre em { font-style: italic; color: var(--fil); }
+/* le profil : une petite carte de verre */
+.tel-cta { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 12px; border-radius: 20px; background: rgba(255, 255, 255, .6); border: 1px solid rgba(255, 255, 255, .85);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 6px 20px -12px rgba(23, 25, 29, .25); color: inherit; text-decoration: none; }
+.tel-cta-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ff6a5c, var(--fil)); }
+.tel-cta-ic svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tel-cta-t { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 13px; line-height: 1.35; color: #3a3d44; }
+.tel-cta-t b { color: var(--nuit); font-size: 14px; }
+.tel-cta-b { flex: none; padding: 9px 13px; border-radius: 99px; background: var(--nuit); color: #fff; font: 600 12.5px var(--texte); }
+/* les rangées par poste */
+html.tel-anim main .tp-cartes-bande > .cadre { width: 100%; padding: 0 16px; }
+.tel-anims { margin: 4px 0 0; }
+.tel-anim-groupe { margin-top: 20px; }
+.tel-anim-gt { display: flex; justify-content: space-between; align-items: baseline; margin: 0 2px 10px; }
+.tel-anim-gt h3 { margin: 0; font: 600 19px/1.2 "Fraunces", Georgia, serif; color: var(--nuit); }
+.tel-anim-gt h3 small { margin-left: 6px; font: 500 13px var(--texte); color: var(--fs-d, #6c7077); }
+.tel-tout { border: 0; background: none; padding: 4px 0; color: var(--fil-fonce, #a8162a); font: 600 12.5px var(--texte); cursor: pointer; }
+.tel-rail { display: flex; gap: 10px; margin: 0 -16px; padding: 2px 16px 8px; scroll-padding-inline: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.tel-rail::-webkit-scrollbar { display: none; }
+.tel-grille .tel-rail { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; margin: 0; padding: 2px 0 8px; }
+.tel-pc { position: relative; flex: none; width: 152px; scroll-snap-align: start; overflow: hidden; border-radius: 20px; background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 10px 24px -16px rgba(23, 25, 29, .35); }
+.tel-grille .tel-pc { width: auto; }
+.tel-pc-h { position: relative; height: 64px; overflow: hidden; }
+.tel-pc-h::before, .tel-pc-h::after { content: ""; position: absolute; border-radius: 50%; filter: blur(16px); }
+.tel-pc-h::before { width: 130px; height: 130px; left: -30px; top: -50px; }
+.tel-pc-h::after { width: 120px; height: 120px; right: -30px; top: -30px; }
+.tel-pc-tag { position: absolute; z-index: 1; top: 8px; left: 8px; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 99px;
+  background: rgba(255, 255, 255, .75); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font: 600 10.5px var(--texte); color: #222; }
+.tel-pc-av { position: absolute; z-index: 2; left: 12px; top: 40px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 3px solid #fff; font: 600 19px/1 "Fraunces", Georgia, serif; }
+.tel-pc-c { position: relative; z-index: 1; padding: 24px 12px 12px; background: #fff; }
+.tel-pc-c b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 16px/1.2 "Fraunces", Georgia, serif; color: var(--nuit); text-transform: capitalize; }
+.tel-pc-l { display: block; margin: 1px 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #6c7077; font-size: 11.5px; }
+.tel-pc-chips { display: flex; flex-wrap: wrap; gap: 4px; min-height: 21px; }
+.tel-chip { padding: 3px 8px; border-radius: 99px; background: rgba(23, 25, 29, .05); color: #3a3d44; font-size: 11px; }
+.tel-chip-r { background: #fbeef0; color: #a8162a; }
+.tel-pc-bt { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11.5px; }
+.tel-pc-voir { padding: 0; border: 0; background: none; color: #a8162a; font: 600 11.5px var(--texte); text-decoration: none; cursor: pointer; }
+.tel-pc-cad { display: inline-flex; align-items: center; gap: 3px; color: #a3a6ac; }
+.tel-pc-cad svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; }
+/* les teintes : le haut de la carte et l'initiale */
+.tel-t-rose .tel-pc-h { background: #fbe7ea; } .tel-t-rose .tel-pc-h::before { background: radial-gradient(circle, rgba(214, 31, 53, .35), transparent 65%); } .tel-t-rose .tel-pc-h::after { background: radial-gradient(circle, rgba(238, 138, 47, .3), transparent 65%); }
+.tel-t-lavande .tel-pc-h { background: #e9e5f6; } .tel-t-lavande .tel-pc-h::before { background: radial-gradient(circle, rgba(120, 100, 220, .35), transparent 65%); } .tel-t-lavande .tel-pc-h::after { background: radial-gradient(circle, rgba(240, 120, 160, .25), transparent 65%); }
+.tel-t-ciel .tel-pc-h { background: #e2ecf8; } .tel-t-ciel .tel-pc-h::before { background: radial-gradient(circle, rgba(44, 95, 158, .3), transparent 65%); } .tel-t-ciel .tel-pc-h::after { background: radial-gradient(circle, rgba(120, 180, 230, .35), transparent 65%); }
+.tel-t-peche .tel-pc-h { background: #f8e3d6; } .tel-t-peche .tel-pc-h::before { background: radial-gradient(circle, rgba(238, 138, 47, .4), transparent 65%); } .tel-t-peche .tel-pc-h::after { background: radial-gradient(circle, rgba(214, 31, 53, .25), transparent 65%); }
+.tel-t-menthe .tel-pc-h { background: #e1f0e6; } .tel-t-menthe .tel-pc-h::before { background: radial-gradient(circle, rgba(63, 154, 95, .35), transparent 65%); } .tel-t-menthe .tel-pc-h::after { background: radial-gradient(circle, rgba(240, 190, 90, .35), transparent 65%); }
+.tel-t-sable .tel-pc-h { background: #fbeed6; } .tel-t-sable .tel-pc-h::before { background: radial-gradient(circle, rgba(240, 180, 60, .45), transparent 65%); } .tel-t-sable .tel-pc-h::after { background: radial-gradient(circle, rgba(238, 138, 47, .3), transparent 65%); }
+:is(.tel-pc-av, .tel-pile-av).tel-t-rose, .tel-t-rose .tel-pc-av { background: #fbeef0; color: #a8162a; }
+:is(.tel-pc-av, .tel-pile-av).tel-t-lavande, .tel-t-lavande .tel-pc-av { background: #ece9f5; color: #4b3f8a; }
+:is(.tel-pc-av, .tel-pile-av).tel-t-ciel, .tel-t-ciel .tel-pc-av { background: #e7eff8; color: #29507c; }
+:is(.tel-pc-av, .tel-pile-av).tel-t-peche, .tel-t-peche .tel-pc-av { background: #f6e7dc; color: #8c4a22; }
+:is(.tel-pc-av, .tel-pile-av).tel-t-menthe, .tel-t-menthe .tel-pc-av { background: #e6f1ea; color: #2f6b45; }
+:is(.tel-pc-av, .tel-pile-av).tel-t-sable, .tel-t-sable .tel-pc-av { background: #fbf1dc; color: #9a5b10; }
+/* la fin « Vous recrutez ? » : une carte claire en verre */
+.tel-fin { margin: 26px 0 8px; padding: 22px; border-radius: 28px; background: rgba(255, 255, 255, .7); border: 1px solid rgba(255, 255, 255, .9);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 14px 34px -20px rgba(23, 25, 29, .35); }
+.tel-pile { display: flex; margin-bottom: 14px; }
+.tel-pile-av, .tel-pile-plus { display: grid; place-items: center; width: 36px; height: 36px; margin-left: -8px; border-radius: 50%; border: 3px solid #fff; font: 600 15px/1 "Fraunces", Georgia, serif; }
+.tel-pile > :first-child { margin-left: 0; }
+.tel-pile-plus { background: var(--nuit); color: #fff; font: 600 11px var(--texte); }
+.tel-fin h3 { margin: 0 0 6px; font: 600 22px/1.15 "Fraunces", Georgia, serif; color: var(--nuit); }
+.tel-fin h3 em { font-style: italic; color: var(--fil); }
+.tel-fin p { margin: 0 0 16px; color: #6c7077; font-size: 13.5px; line-height: 1.5; }
+.tel-fin-b { display: flex; gap: 8px; }
+.tel-fin-b a { flex: 1; display: grid; place-items: center; min-height: 48px; padding: 8px 10px; border-radius: 12px; text-align: center; font: 600 13.5px/1.2 var(--texte); text-decoration: none; }
+.tel-fin-n { background: var(--nuit); color: #fff; }
+.tel-fin-c { background: rgba(23, 25, 29, .06); color: var(--nuit); }
+html.tel-anim main .tp-recherche { display: none !important; }
+html.tel-anim main .tp-cartes-bande { padding-top: 0 !important; margin-top: 0 !important; }
+html.tel-anim main .tp-cartes-bande > .cadre > .of-compte { display: none !important; }
+html.tel-anim .tel-anim-tete h2.tel-titre { margin: 0 0 16px !important; font: 600 30px/1.08 "Fraunces", Georgia, serif !important; letter-spacing: -.02em !important; font-synthesis: style; }
+html.tel-anim .tel-titre em, html.tel-anim .tel-fin h3 em { font-style: italic; font-synthesis: style; }
+html.tel-anim .tel-anim-gt h3 { font-size: 19px !important; }
+html.tel-anim .tel-fin h3 { font-size: 22px !important; }
+.tel-rail { align-items: flex-start; }
+html.tel-anim h2.tel-titre em, html.tel-anim .tel-fin h3 em { font-style: italic !important; }

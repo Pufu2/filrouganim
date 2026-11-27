@@ -199,6 +199,92 @@
   if (cfg.liste) new MutationObserver(plusTard).observe(cfg.liste, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
   Array.prototype.forEach.call(document.querySelectorAll("#compte-offres, #an-nb, #sjc-nb"), function (x) { new MutationObserver(plusTard).observe(x, { childList: true, characterData: true, subtree: true }); });
 
+  /* ---------- Animateurs (/trouver-un-poste/offres/) : le style « lumière » (docs/CHARTE.md § 7) ----------
+     Des lumières floues derrière le haut et la barre (transparente), un titre en Fraunces, le profil en petite carte de verre,
+     les animateurs en petites cartes de couleur rangées par poste (une rangée qui défile par poste), et la fin « Vous
+     recrutez ? » en carte claire. Les cartes d'origine (animateurs.js) restent dans la page, cachées : « Voir » ouvre leur fiche. */
+  if (ofForm) (function () {
+    racine.classList.add("tel-anim");
+    var lum = el("div", "tel-lumieres"); lum.setAttribute("aria-hidden", "true");
+    ["a", "b", "c"].forEach(function (k) { lum.appendChild(el("span", "tel-lum tel-lum-" + k)); });
+    document.body.insertBefore(lum, document.body.firstChild);
+    // le haut : surtitre, titre ; puis le profil en petite carte
+    var bandeau = el("div", "tel-anim-tete");
+    bandeau.appendChild(el("p", "tel-sur", "Ils cherchent un poste"));
+    var h = el("h2", "tel-titre"); bandeau.appendChild(h);
+    var cta = el("a", "tel-cta"); cta.href = (document.querySelector(".tp-bande-bouton") || {}).href || "/compte/?inscription=1";
+    cta.innerHTML = '<span class="tel-cta-ic">' + svg('<path d="M4 12l16-8-6 16-2-6z"/>') + '</span>';
+    var t = el("span", "tel-cta-t"); t.appendChild(el("b", null, "Les structures viennent à vous")); t.appendChild(el("span", null, "Votre profil, vu dans votre secteur.")); cta.appendChild(t);
+    cta.appendChild(el("span", "tel-cta-b", "Créer mon profil"));
+    bandeau.appendChild(cta);
+    tete.parentNode.insertBefore(bandeau, tete.nextSibling);
+    // les rangées par poste
+    var ul = document.getElementById("animateurs-of"); if (!ul) return;
+    var vue = el("div", "tel-anims"); ul.parentNode.insertBefore(vue, ul);
+    var TEINTES = ["rose", "lavande", "ciel", "peche", "menthe", "sable"];
+    var MOIS = { janvier: "janv.", fevrier: "févr.", mars: "mars", avril: "avr.", mai: "mai", juin: "juin", juillet: "juil.", aout: "août", septembre: "sept.", octobre: "oct.", novembre: "nov.", decembre: "déc." };
+    function lire(li) {
+      var n = li.querySelector("h2"), lieu = (li.querySelector(".tp-carte-lieu") || {}).textContent || "", det = (li.querySelector(".tp-carte-detail") || {}).textContent || "";
+      var parts = det.split(" · "), dispo = parts.filter(function (x) { return /^disponible/i.test(x.trim()); })[0] || "";
+      var dips = parts.filter(function (x) { return x && !/^disponible/i.test(x.trim()); });
+      var m = lieu.match(/^(.*?)\s*\((\w{2,3})\)/), poste = lieu.split(" · ").slice(1).join(" · ");
+      var d = sans(dispo).match(/du (\d+)(?:er)? ([a-z]+)/), tag = d ? "Dès le " + (d[1] === "1" ? "1er" : d[1]) + " " + (MOIS[d[2]] || d[2]) : "";
+      var tout = sans(det + " " + poste), groupe = /bafd|direct/.test(tout) ? "Direction" : /stagiaire bafa|stage pratique/.test(tout) ? "Stage pratique BAFA" : "Animateurs";
+      return { nom: n ? n.textContent.trim() : "", lieu: m ? m[1] + " · " + m[2] : lieu.split(" · ")[0], dips: dips.slice(0, 2), tag: tag, groupe: groupe,
+        exemple: li.classList.contains("tp-carte-exemple"), lien: li.querySelector("h2 a"), voir: li.querySelector(".an-voir") };
+    }
+    function dessiner() {
+      var lis = Array.prototype.filter.call(ul.children, function (li) { return li.matches(".an-carte, .tp-carte-exemple") && !li.hidden; });
+      var groupes = { "Stage pratique BAFA": [], "Animateurs": [], "Direction": [] };
+      lis.forEach(function (li) { var x = lire(li); groupes[x.groupe].push(x); });
+      var n = lis.filter(function (li) { return !li.classList.contains("tp-carte-exemple"); }).length;
+      h.textContent = n + " animateur" + (n > 1 ? "s " : " "); h.appendChild(el("em", null, ofOu.value ? "près de chez vous" : "disponibles"));
+      vue.textContent = ""; var k = 0;
+      Object.keys(groupes).forEach(function (g) {
+        if (!groupes[g].length) return;
+        var sec = el("section", "tel-anim-groupe"), ht = el("div", "tel-anim-gt");
+        var h3 = el("h3", null, g); h3.appendChild(el("small", null, String(groupes[g].length))); ht.appendChild(h3);
+        var rail = el("div", "tel-rail");
+        if (groupes[g].length > 2) { var tv = el("button", "tel-tout", "Tout voir"); tv.type = "button"; tv.addEventListener("click", function () { var o = sec.classList.toggle("tel-grille"); tv.textContent = o ? "Moins" : "Tout voir"; }); ht.appendChild(tv); }
+        sec.appendChild(ht);
+        groupes[g].forEach(function (x) {
+          var c = el("article", "tel-pc tel-t-" + TEINTES[k++ % TEINTES.length]);
+          var hd = el("div", "tel-pc-h"); hd.appendChild(el("span", "tel-pc-tag", x.exemple ? "Exemple" : (x.tag || "Inscrit sur le site"))); c.appendChild(hd);
+          c.appendChild(el("span", "tel-pc-av", (x.nom || "?").charAt(0).toUpperCase()));
+          var co = el("div", "tel-pc-c"); co.appendChild(el("b", null, x.nom)); co.appendChild(el("span", "tel-pc-l", x.lieu));
+          var ch = el("div", "tel-pc-chips"); x.dips.forEach(function (d0, i) { ch.appendChild(el("span", "tel-chip" + (i === 0 ? " tel-chip-r" : ""), d0.replace(/^stagiaire /i, "Stagiaire "))); }); co.appendChild(ch);
+          var bt = el("div", "tel-pc-bt"); var v = el(x.exemple ? "a" : "button", "tel-pc-voir", "Voir →");
+          if (x.exemple && x.lien) v.href = x.lien.href; else { v.type = "button"; v.addEventListener("click", function () { if (x.voir) x.voir.click(); }); }
+          bt.appendChild(v); var cad = el("span", "tel-pc-cad"); cad.innerHTML = svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'); cad.appendChild(document.createTextNode("abonnés")); bt.appendChild(cad);
+          co.appendChild(bt); c.appendChild(co);
+          rail.appendChild(c);
+        });
+        sec.appendChild(rail); vue.appendChild(sec);
+      });
+      majFin(lis);
+    }
+    // la fin « Vous recrutez ? » : la carte claire, avec les initiales des animateurs
+    var fin = null, avant = document.querySelector(".tp-sans-offre");
+    function majFin(lis) {
+      if (!avant) return;
+      var lienFin = avant.querySelector("a");
+      if (!fin) { fin = el("section", "tel-fin"); avant.parentNode.insertBefore(fin, avant.nextSibling); }
+      fin.textContent = "";
+      var pile = el("div", "tel-pile"), noms = lis.filter(function (li) { return !li.classList.contains("tp-carte-exemple"); }).map(function (li) { return lire(li).nom; });
+      noms.slice(0, 4).forEach(function (nm, i) { pile.appendChild(el("span", "tel-pile-av tel-t-" + TEINTES[i % TEINTES.length], nm.charAt(0).toUpperCase())); });
+      if (noms.length > 4) pile.appendChild(el("span", "tel-pile-plus", "+" + (noms.length - 4)));
+      fin.appendChild(pile);
+      var h3 = el("h3", null, "Vous recrutez ? "); h3.appendChild(el("em", null, "Ils sont prêts.")); fin.appendChild(h3);
+      fin.appendChild(el("p", null, avant.firstChild && avant.firstChild.nodeType === 3 ? avant.firstChild.textContent.trim() : "Chaque animateur en résumé : la fiche complète, le CV et l'e-mail sont réservés aux structures vérifiées et abonnées."));
+      var bts = el("div", "tel-fin-b"), a1 = el("a", "tel-fin-n", "Voir l'offre fondateurs"); a1.href = lienFin ? lienFin.href : "/recruter/";
+      var a2 = el("a", "tel-fin-c", "En savoir plus"); a2.href = (barre.dataset.accueil || "/") + "comment-ca-marche/#structure";
+      bts.appendChild(a1); bts.appendChild(a2); fin.appendChild(bts);
+    }
+    dessiner();
+    new MutationObserver(function () { clearTimeout(dessiner._t); dessiner._t = setTimeout(dessiner, 80); }).observe(ul, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+    ofOu.addEventListener("change", function () { setTimeout(dessiner, 50); });
+  })();
+
   /* ---------- la recherche plein écran (même fenêtre et mêmes effets que « Se former ») ---------- */
   var populaires = json("villes-populaires") || [], lieux = json("tel-deps") || [];
   var etat = {};
