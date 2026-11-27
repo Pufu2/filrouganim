@@ -281,7 +281,7 @@
       if (!b || b.querySelector(".tel-gratuit")) return;
       var g = el("p", "tel-gratuit");
       g.innerHTML = svg('<path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/>');
-      var t2 = el("span"); t2.appendChild(el("b", null, "Compte gratuit pour les structures")); t2.appendChild(document.createTextNode(" : 2 demandes d'animateurs offertes, sans carte bancaire."));
+      var t2 = el("span"); t2.appendChild(el("b", null, "Compte gratuit pour les structures")); t2.appendChild(document.createTextNode(" : une demande d'animateur offerte (profil complet et contact), sans carte bancaire."));
       g.appendChild(t2);
       var bt = b.querySelector(".an-boutons"); b.insertBefore(g, bt);
     }).observe(document.body, { childList: true, subtree: true });
