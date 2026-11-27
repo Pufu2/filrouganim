@@ -150,13 +150,16 @@ def message(x, d, demandes, site, relance, familles=None):
             paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}. Pourriez-vous le transmettre au "
                      "service enfance-jeunesse ?",
                      f"{cle} Si votre service recrute pour les vacances ou le périscolaire, il peut créer sa page gratuitement : "
-                     "les demandes du secteur arrivent alors directement chez vous.",
+                     "les demandes du secteur arrivent alors directement chez vous. Il peut aussi y publier ses accueils "
+                     "(périscolaire, mercredis, vacances) : les familles demandent une place en ligne.",
                      "Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous.",
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = ["Pourriez-vous transmettre ce message au service enfance-jeunesse ?",
                      f"Sur Fil Roug'Anim, des animateurs décrivent le poste qu'ils cherchent. {cle}",
-                     "Votre service peut créer sa page gratuitement : les demandes du secteur arrivent alors directement chez vous."]
+                     "Votre service peut aussi y publier gratuitement ses accueils (périscolaire, mercredis, vacances) : des "
+                     "familles cherchent déjà une place pour leur enfant sur le site, et elles vous la demandent en ligne.",
+                     "Votre page est gratuite : les demandes du secteur, animateurs comme familles, arrivent directement chez vous."]
         bouton = "Créer la page de votre service"
     else:
         # structures (colos, accueils de loisirs, centres sociaux, MJC…) : les familles d'abord, les animateurs ensuite
@@ -178,15 +181,19 @@ def message(x, d, demandes, site, relance, familles=None):
                   "engagement) vous donne toutes les demandes de place des familles avec leurs coordonnées, tous vos séjours en "
                   "ligne et l'accès aux profils des animateurs de votre secteur. Aucune commission.")
         if relance:
-            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}.{fam}",
+            paras = [f"Nous nous permettons de revenir vers vous au sujet de notre message{date}."
+                     + (fam or " Des familles cherchent déjà une colo, un accueil de loisirs ou une place en périscolaire pour "
+                        "leur enfant sur Fil Roug'Anim."),
                      "L'inscription sur Fil Roug'Anim est gratuite, avec un premier séjour, accueil de loisirs ou périscolaire en ligne : "
                      f"les familles le trouvent près de chez elles et vous demandent une place, et la première demande vous arrive en entier. {payant}",
                      f"{cle} Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous, et "
                      f"vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}.",
                      "C'est notre dernier message à ce sujet."]
         else:
-            paras = ["Sur Fil Roug'Anim, les familles trouvent les séjours, les accueils de loisirs et le périscolaire près de chez "
-                     f"elles et vous demandent une place en ligne.{fam}",
+            paras = [(f"Sur Fil Roug'Anim, des familles cherchent déjà une colo, un accueil de loisirs ou une place en "
+                      "périscolaire pour leur enfant : elles trouvent les structures près de chez elles et vous demandent une "
+                      "place en ligne." if not nf else "Sur Fil Roug'Anim, les familles trouvent les séjours, les accueils de "
+                      f"loisirs et le périscolaire près de chez elles et vous demandent une place en ligne.{fam}"),
                      "L'inscription est gratuite : votre page, un séjour ou accueil en ligne, et la première demande d'une famille "
                      f"en entier (nom, e-mail, téléphone). {payant}",
                      f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}."]
