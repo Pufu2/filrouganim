@@ -650,13 +650,17 @@ html.tel-ab:not(.tel-sans-carte) .tel-pilule { background: rgba(255, 255, 255, .
 html.tel-ab:not(.tel-sans-carte) .tel-rond { border-radius: 50%; background: rgba(255, 255, 255, .82) !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(0, 0, 0, .12); }
 /* la feuille : crème, avec une lumière douce qui monte du bas des sessions */
 html.tel-ab:not(.tel-sans-carte) main#contenu { background: #f6f4ef !important; }
-/* sous la liste des sessions : les mêmes halos lumineux flous qu'en haut des autres pages (rouge, orange, rose), un ou deux par section */
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une) { position: relative; isolation: isolate; }
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before,
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after {
-  content: ""; position: absolute; z-index: -1; width: 320px; height: 320px; border-radius: 50%; filter: blur(30px); pointer-events: none; }
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before { top: -40px; left: -110px; background: radial-gradient(circle, rgba(214, 31, 53, .30), transparent 65%); }
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after { bottom: -60px; right: -120px; background: radial-gradient(circle, rgba(238, 138, 47, .32), transparent 65%); }
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):nth-child(even):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before { left: auto; right: -110px; background: radial-gradient(circle, rgba(240, 120, 160, .26), transparent 65%); }
-html.tel-ab:not(.tel-sans-carte) main > :is(section, div):nth-child(even):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after { right: auto; left: -120px; }
+/* tout le fond de la feuille des formations : les halos lumineux flous (rouge, orange, rose), dès le haut, sous la carte,
+   derrière les sessions et jusqu'en bas ; les cartes des sessions restent blanches */
+html.tel-ab:not(.tel-sans-carte) main#contenu { isolation: isolate;
+  background: radial-gradient(260px 260px at 0% 120px, rgba(214, 31, 53, .20), transparent 70%),
+    radial-gradient(280px 280px at 100% 520px, rgba(238, 138, 47, .24), transparent 70%),
+    radial-gradient(260px 260px at 10% 1000px, rgba(240, 120, 160, .20), transparent 70%),
+    radial-gradient(280px 280px at 95% 1500px, rgba(214, 31, 53, .16), transparent 70%),
+    radial-gradient(280px 280px at 0% 2100px, rgba(238, 138, 47, .22), transparent 70%),
+    radial-gradient(260px 260px at 100% 2700px, rgba(240, 120, 160, .20), transparent 70%),
+    radial-gradient(280px 280px at 5% 3300px, rgba(214, 31, 53, .16), transparent 70%),
+    radial-gradient(280px 280px at 100% 3900px, rgba(238, 138, 47, .22), transparent 70%),
+    radial-gradient(260px 260px at 0% 4500px, rgba(240, 120, 160, .20), transparent 70%),
+    radial-gradient(280px 280px at 95% 5100px, rgba(214, 31, 53, .16), transparent 70%), #f6f4ef !important; }
 html.tel-ab:not(.tel-sans-carte) main#contenu { overflow: hidden; }
