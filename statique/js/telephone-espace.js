@@ -146,12 +146,31 @@
       b.classList.toggle("tel-esp-ferme", !!(c && c.classList.contains("co-ferme")));
     });
   }
+  // les pages vides : un bouton qui dit quoi faire (le texte reste celui du site)
+  var VIDES = [
+    { v: "v-structure", sel: ".co-vide", si: /publiez une offre/, b: "Mes offres", o: "offres" },
+    { v: "v-parent", sel: ".og-vide", si: /^Rien de gardé/, b: "Voir les offres", u: "/enfants/" },
+    { v: "v-organisme", sel: ".og-vide", si: /Mes départements/, b: "Mes départements", o: "zones" }
+  ];
+  function boutonsVides(v) {
+    VIDES.forEach(function (x) {
+      if (x.v !== v.id) return;
+      Array.prototype.forEach.call(v.querySelectorAll(x.sel), function (p) {
+        var bloc = p.classList.contains("co-vide") ? p : p.parentNode;
+        if (!x.si.test(p.textContent.trim()) || bloc.querySelector(".tel-esp-action")) return;
+        var b;
+        if (x.o) { b = el("button", "bouton-r tel-esp-action", x.b); b.type = "button"; b.dataset.ongletVers = x.o; }
+        else { b = el("a", "bouton-r tel-esp-action", x.b); b.href = x.u; }
+        if (p.classList.contains("co-vide")) p.appendChild(b); else p.parentNode.insertBefore(b, p.nextSibling);
+      });
+    });
+  }
   function regarder() {
     var v = vueVisible();
     if (!v || !document.body.classList.contains("en-app")) { racine.classList.remove("tel-espace"); return; }
     racine.classList.add("tel-espace");
     racine.dataset.espace = v.id;
-    construire(v); majPastilles(v);
+    construire(v); majPastilles(v); boutonsVides(v);
     var cour = v.querySelector(".co-nav [aria-current]");
     racine.classList.toggle("tel-esp-tableau", !!(cour && cour.dataset.ongletVers === "tableau"));
   }

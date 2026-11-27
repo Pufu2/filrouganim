@@ -970,3 +970,20 @@ html.tel-espace .assistant .as-pied .as-enregistrer { background: none !importan
 html.tel-espace .assistant .as-pied :is(.as-suivant, .as-fin) { flex: 1; max-width: 220px; }
 html.tel-espace .assistant .as-pied, html.tel-espace .assistant .as-pied .as-pied-droite { flex-direction: row !important; flex-wrap: nowrap !important; }
 html.tel-espace .assistant .as-pied .as-pied-droite > :is(.as-suivant, .as-fin) { flex: 1 1 auto; justify-content: center; border-radius: 14px !important; }
+/* les pages vides : le bouton qui dit quoi faire */
+html.tel-espace .tel-esp-action { display: flex !important; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 14px; border-radius: 14px !important; font-size: 15px; }
+/* le menu fermé reste vraiment caché (pas seulement poussé hors de l'écran) */
+html.tel-espace body.en-app:not(.menu-ouvert) .co-onglets > .co-nav { visibility: hidden; transition: transform .32s cubic-bezier(.2, .8, .2, 1), visibility 0s .32s !important; }
+/* les listes de l'espace (offres, candidatures) : une carte par ligne, les actions en vrais boutons */
+html.tel-espace .ls-table .ls-entete { display: none !important; }
+html.tel-espace .ls-table .ls-rang:not(.ls-entete) { display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px !important; padding: 14px 16px !important;
+  border: 1px solid rgba(23, 25, 29, .07) !important; border-radius: 18px; background: #fff; box-shadow: 0 8px 20px -16px rgba(23, 25, 29, .4); }
+html.tel-espace .ls-table .ls-rang > .ls-qui { flex: 1 0 100%; }
+html.tel-espace .ls-table .ls-rang > .ls-qui b { font-size: 16px; }
+html.tel-espace .ls-table .ls-rang > .ls-doux { font-size: 13px; }
+html.tel-espace .ls-table .ls-rang > .ls-doux:empty, html.tel-espace .ls-table .ls-rang > .ls-doux:is([data-nc-offre]) { display: none; }
+html.tel-espace .ls-table .ls-rang > .ls-fin { flex: 1 0 100%; display: flex; gap: 8px; margin-top: 6px; }
+html.tel-espace .ls-table .ls-rang > .ls-fin > :is(button, a) { flex: 1; min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: #f4f2ee; text-decoration: none; font-size: 14px; }
+html.tel-espace .cd-ligne { margin: 0 0 12px !important; padding: 14px !important; border: 1px solid rgba(23, 25, 29, .07) !important; border-radius: 20px; background: #fff; box-shadow: 0 8px 20px -16px rgba(23, 25, 29, .4); }
+html.tel-espace .cd-ligne .profil-candidat { padding: 0 !important; margin: 0 0 8px !important; border: 0 !important; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.tel-espace .cd-ligne select { min-height: 46px; border-radius: 12px; }
