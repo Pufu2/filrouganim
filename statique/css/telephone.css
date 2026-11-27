@@ -995,3 +995,10 @@ html.tel-espace .sj-carte .sj-photo { height: 150px !important; aspect-ratio: au
 html.tel-espace .sj-carte .sj-etat { display: inline-flex !important; width: auto !important; align-self: flex-start; padding: 3px 10px !important; border-radius: 99px !important; }
 html.tel-espace .sj-carte .sj-actions { display: flex !important; flex-wrap: wrap; gap: 8px; }
 html.tel-espace .sj-carte .sj-actions > :is(button, a) { flex: 1 1 calc(50% - 4px); min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: #f4f2ee; text-decoration: none; }
+/* la visite guidée : une bulle de verre, le titre en Fraunces, des boutons faciles à toucher */
+html.tel-espace .vg-bulle { border-radius: 22px !important; padding: 18px !important; background: rgba(255, 255, 255, .96) !important; box-shadow: 0 20px 50px -12px rgba(23, 25, 29, .45) !important; }
+html.tel-espace .vg-bulle h2, html.tel-espace .vg-bulle h3, html.tel-espace .vg-bulle strong:first-child { font-family: "Fraunces", Georgia, serif !important; font-size: 1.25rem !important; }
+html.tel-espace .vg-bulle p { font-size: 14.5px !important; line-height: 1.5 !important; }
+html.tel-espace .vg-bulle .vg-boutons button { min-height: 44px !important; padding: 0 18px !important; border-radius: 12px !important; font-size: 15px !important; }
+html.tel-espace .vg-bulle .vg-suivant { outline: none !important; box-shadow: none !important; }
+html.tel-espace .vg-bulle .vg-ignorer { min-height: 36px; padding: 0 4px; font-size: 13px !important; }

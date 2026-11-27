@@ -154,4 +154,9 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
   l'onglet, avec la pastille des nouveautés et un cadenas si la rubrique est réservée à l'abonnement) et celles du site (guides,
   outils, recherches : elles s'ouvrent dans la fenêtre de fiche de l'espace, ou à côté, sans quitter l'espace). La liste des
   tuiles de chaque espace est dans `TUILES` ; une fonction nouvelle du site s'y ajoute en une ligne.
+  Le menu ☰ est une feuille de verre qui monte au-dessus de la barre du bas (qui reste visible, « Menu » le referme). Les
+  formulaires à étapes (profil, page, fiche) : étapes en pastilles collées en haut, « Enregistrer / Continuer » collés au-dessus
+  de la barre du bas, l'aperçu seulement par son bouton. Les listes (offres, candidatures, séjours, inscriptions) sont des cartes,
+  une par ligne, actions en vrais boutons. Une page vide a toujours un bouton qui dit quoi faire (`VIDES` dans
+  telephone-espace.js). La visite guidée : bulle de verre, titre en Fraunces, boutons de 44px.
 
