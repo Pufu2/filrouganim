@@ -210,8 +210,7 @@
     document.body.insertBefore(lum, document.body.firstChild);
     // le haut : surtitre, titre ; puis le profil en petite carte
     var bandeau = el("div", "tel-anim-tete");
-    bandeau.appendChild(el("p", "tel-sur", "Ils cherchent un poste"));
-    var h = el("h2", "tel-titre"); bandeau.appendChild(h);
+    var h = el("h2", "tel-titre");  // (le titre n'est plus affiché : seule la carte du profil reste en haut)
     var cta = el("a", "tel-cta"); cta.href = (document.querySelector(".tp-bande-bouton") || {}).href || "/compte/?inscription=1";
     cta.innerHTML = '<span class="tel-cta-ic">' + svg('<path d="M4 12l16-8-6 16-2-6z"/>') + '</span>';
     var t = el("span", "tel-cta-t"); t.appendChild(el("b", null, "Les structures viennent à vous")); t.appendChild(el("span", null, "Votre profil, vu dans votre secteur.")); cta.appendChild(t);
@@ -238,7 +237,6 @@
       var groupes = { "Stage pratique BAFA": [], "Animateurs": [], "Direction": [] };
       lis.forEach(function (li) { var x = lire(li); groupes[x.groupe].push(x); });
       var n = lis.filter(function (li) { return !li.classList.contains("tp-carte-exemple"); }).length;
-      h.textContent = n + " animateur" + (n > 1 ? "s " : " "); h.appendChild(el("em", null, ofOu.value ? "près de chez vous" : "disponibles"));
       vue.textContent = ""; var k = 0;
       Object.keys(groupes).forEach(function (g) {
         if (!groupes[g].length) return;
@@ -280,6 +278,16 @@
       var a2 = el("a", "tel-fin-c", "En savoir plus"); a2.href = (barre.dataset.accueil || "/") + "comment-ca-marche/#structure";
       bts.appendChild(a1); bts.appendChild(a2); fin.appendChild(bts);
     }
+    // la fiche d'un animateur (animateurs.js) : en feuille compacte (telephone.css), avec ce que le compte gratuit d'une structure ouvre
+    new MutationObserver(function () {
+      var b = document.querySelector(".an-voile:not([hidden]) .an-bulle");
+      if (!b || b.querySelector(".tel-gratuit")) return;
+      var g = el("p", "tel-gratuit");
+      g.innerHTML = svg('<path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/>');
+      var t2 = el("span"); t2.appendChild(el("b", null, "Compte gratuit pour les structures")); t2.appendChild(document.createTextNode(" : 2 demandes d'animateurs offertes, sans carte bancaire."));
+      g.appendChild(t2);
+      var bt = b.querySelector(".an-boutons"); b.insertBefore(g, bt);
+    }).observe(document.body, { childList: true, subtree: true });
     dessiner();
     new MutationObserver(function () { clearTimeout(dessiner._t); dessiner._t = setTimeout(dessiner, 80); }).observe(ul, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
     ofOu.addEventListener("change", function () { setTimeout(dessiner, 50); });

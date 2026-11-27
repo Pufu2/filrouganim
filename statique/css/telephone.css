@@ -549,3 +549,35 @@ html.tel-anim .tel-anim-gt h3 { font-size: 19px !important; }
 html.tel-anim .tel-fin h3 { font-size: 22px !important; }
 .tel-rail { align-items: flex-start; }
 html.tel-anim h2.tel-titre em, html.tel-anim .tel-fin h3 em { font-style: italic !important; }
+
+/* la fiche d'un animateur (animateurs.js) : une feuille compacte qui monte du bas, dans le style « lumière » */
+html.tel-ab .an-voile:not([hidden]) { display: flex !important; align-items: flex-end; padding: 0 !important; background: rgba(23, 25, 29, .4) !important; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+html.tel-ab .an-fiche { position: relative; width: 100% !important; max-height: 86dvh; overflow-y: auto; margin: 0 !important; padding: 22px 18px calc(18px + env(safe-area-inset-bottom)) !important;
+  border-radius: 26px 26px 0 0 !important; background: #f6f4ef !important; box-shadow: 0 -10px 40px rgba(0, 0, 0, .2) !important; animation: tel-monte .32s cubic-bezier(.2, .8, .2, 1); isolation: isolate; }
+html.tel-ab .an-fiche::before { content: ""; position: absolute; z-index: -1; left: -60px; top: -90px; width: 300px; height: 260px; border-radius: 50%; filter: blur(30px);
+  background: radial-gradient(circle, rgba(214, 31, 53, .22), transparent 65%), radial-gradient(circle at 80% 40%, rgba(238, 138, 47, .25), transparent 60%); pointer-events: none; }
+html.tel-ab .an-fiche::after { content: ""; position: absolute; top: 8px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: 4px; background: rgba(23, 25, 29, .15); }
+html.tel-ab .an-fermer { top: 14px !important; right: 14px !important; width: 34px !important; height: 34px !important; border: 0 !important; background: rgba(255, 255, 255, .8) !important; box-shadow: 0 2px 6px rgba(0, 0, 0, .12); }
+html.tel-ab .an-tete { gap: 12px !important; margin: 4px 44px 12px 0 !important; }
+html.tel-ab .an-avatar { width: 52px !important; height: 52px !important; font: 600 22px/1 "Fraunces", Georgia, serif !important; background: #fbeef0 !important; color: #a8162a !important; box-shadow: none !important; }
+html.tel-ab .an-tete h2 { margin: 0 !important; font: 600 22px/1.15 "Fraunces", Georgia, serif !important; text-transform: capitalize; }
+html.tel-ab .an-sous { margin: 2px 0 0 !important; color: #6c7077 !important; font: 400 12.5px/1.4 var(--texte) !important; }
+html.tel-ab .an-puces { gap: 5px !important; margin: 0 0 12px !important; }
+html.tel-ab .an-puces li { padding: 4px 10px !important; border: 0 !important; border-radius: 99px !important; background: #fbeef0 !important; color: #a8162a !important; font-size: 11.5px !important; }
+html.tel-ab .an-puces li + li { background: rgba(23, 25, 29, .06) !important; color: #3a3d44 !important; }
+html.tel-ab .an-lignes { gap: 4px 12px !important; margin: 0 0 14px !important; padding: 12px 14px; border-radius: 16px; background: rgba(255, 255, 255, .7); font-size: 12.5px !important; }
+html.tel-ab .an-lignes dt { color: #6c7077; }
+html.tel-ab .an-verrou { display: block !important; border: 0 !important; border-radius: 20px !important; background: #fff !important; box-shadow: 0 10px 26px -16px rgba(23, 25, 29, .3); }
+html.tel-ab .an-flou { display: none !important; }
+html.tel-ab .an-bulle { position: static !important; align-items: stretch !important; text-align: left !important; padding: 16px !important; background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.tel-ab .an-bulle > svg { width: 20px !important; height: 20px !important; margin: 0 0 6px !important; stroke: #a8162a !important; }
+html.tel-ab .an-bulle-t { margin: 0 0 4px !important; font: 600 16px/1.25 "Fraunces", Georgia, serif !important; }
+html.tel-ab .an-bulle-p { max-width: none !important; margin: 0 0 12px !important; font-size: 12.5px !important; color: #6c7077 !important; }
+.tel-gratuit { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 12px; padding: 10px 12px; border-radius: 14px; background: #e6f4ea; color: #24563a; font-size: 12.5px; line-height: 1.4; }
+.tel-gratuit svg { flex: none; width: 18px; height: 18px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tel-gratuit b { color: #1d4a31; }
+html.tel-ab .an-boutons { display: grid !important; gap: 8px !important; justify-content: stretch !important; }
+html.tel-ab .an-boutons a { display: grid; place-items: center; min-height: 46px; border-radius: 12px !important; font-size: 14px !important; }
+html.tel-ab .an-boutons .bouton-r { background: #222 !important; border-color: #222 !important; color: #fff !important; }
+html.tel-ab .an-boutons .bouton-blanc { background: rgba(23, 25, 29, .06) !important; border: 0 !important; color: #222 !important; }
+html.tel-anim .tel-anim-tete { padding-top: 10px; }
