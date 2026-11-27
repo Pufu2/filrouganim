@@ -181,6 +181,8 @@ body.en-app #espace-compte { padding-top: 10px; padding-bottom: calc(var(--tel-o
 .app-dock-logo img { height: 26px; width: auto; filter: grayscale(1) opacity(.62); transition: filter .2s; }
 .app-dock-logo[aria-current] img { filter: none; }
 body.en-parcours .app-dock { display: none; }
+/* le menu ouvert : la barre du bas reste au-dessus du voile (le bouton « Menu » le referme) */
+body.en-app.menu-ouvert .app-dock:not([hidden]) { z-index: 1200; display: grid !important; }
 body.en-app.menu-ouvert .co-onglets > .co-nav { bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 12px) !important; }
 
 /* ---------- les carrousels : les cartes d'une même famille défilent de côté (la suivante dépasse, on devine qu'il y en a d'autres) ---------- */
@@ -926,3 +928,45 @@ html.tel-espace body.en-app .co-onglets .co-entete, html.tel-espace body.en-app 
 /* (la règle de da.css « body.en-app :is(…, #v-admin > .ad-bloc) » a la force d'un identifiant : on cible #espace-compte) */
 html.tel-espace #espace-compte .co-entete { background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 html.tel-espace #espace-compte :is(.carte-compte, .tb-carte) { background: rgba(255, 255, 255, .74) !important; border-color: rgba(255, 255, 255, .9) !important; }
+
+/* =========================================================================================
+   MON ESPACE : le menu ☰ en feuille qui monte du bas ; les formulaires à étapes (profil, page, fiche) simples à remplir
+   ========================================================================================= */
+/* le menu : une feuille de verre au-dessus de la barre du bas, des lignes de 48px, les rubriques fermées avec leur cadenas */
+html.tel-espace body.en-app .co-onglets > .co-nav { top: auto !important; left: 8px !important; right: 8px !important; width: auto !important; bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 8px) !important;
+  max-height: 72dvh; overflow-y: auto; padding: 14px 10px 10px !important; border-radius: 24px !important; background: rgba(255, 255, 255, .92) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); box-shadow: 0 20px 50px -10px rgba(23, 25, 29, .35) !important;
+  transform: translateY(calc(100% + 120px)) !important; transition: transform .32s cubic-bezier(.2, .8, .2, 1) !important; }
+html.tel-espace body.en-app.menu-ouvert .co-onglets > .co-nav { transform: none !important; }
+html.tel-espace body.en-app .co-nav .co-marque { display: none !important; }
+html.tel-espace body.en-app .co-nav [data-onglet-vers] { min-height: 48px !important; padding: 10px 14px !important; border-radius: 14px !important; font-size: 15px !important; color: #2a2d33 !important; }
+html.tel-espace body.en-app .co-nav [data-onglet-vers] svg { width: 20px !important; height: 20px !important; }
+html.tel-espace body.en-app .co-nav [data-onglet-vers][aria-current] { background: rgba(214, 31, 53, .08) !important; color: #a8162a !important; font-weight: 600 !important; }
+html.tel-espace body.en-app .co-nav [data-onglet-vers][aria-current] svg { color: #d61f35 !important; }
+html.tel-espace body.en-app .co-nav .co-groupe { height: 1px !important; margin: 8px 12px !important; }
+html.tel-espace body.en-app .co-nav .co-moi { margin-top: 8px; padding-top: 8px; }
+html.tel-espace body.en-app .co-nav .co-moi-bouton { min-height: 52px; }
+html.tel-espace body.en-app.menu-ouvert .app-voile { background: rgba(23, 25, 29, .3) !important; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+/* les formulaires à étapes : l'aperçu à part (bouton du haut), les étapes en pastilles collées en haut, le bas collé sous le pouce */
+html.tel-espace .assistant:not(.as-parcours) .assistant-cote { display: none !important; }
+html.tel-espace .assistant:not(.as-parcours) .assistant-corps { padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+html.tel-espace .assistant .as-onglets:not([hidden]) { position: sticky; top: 0; z-index: 30; display: flex !important; gap: 6px; margin: 0 -16px 12px !important; padding: calc(8px + env(safe-area-inset-top)) 16px 10px !important;
+  overflow-x: auto; scrollbar-width: none; border: 0 !important; background: rgba(246, 244, 239, .82) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+html.tel-espace .assistant .as-onglets::-webkit-scrollbar { display: none; }
+html.tel-espace .assistant .as-onglets > * { flex: none; min-height: 38px; padding: 0 14px !important; border: 1px solid rgba(23, 25, 29, .1) !important; border-radius: 99px !important; background: rgba(255, 255, 255, .8) !important;
+  font-size: 13px !important; white-space: nowrap; }
+html.tel-espace .assistant .as-onglets > [aria-current], html.tel-espace .assistant .as-onglets > .actif, html.tel-espace .assistant .as-onglets > [aria-selected="true"] { background: #222 !important; border-color: #222 !important; color: #fff !important; }
+html.tel-espace .assistant .as-onglets > * :is(b, i, span:first-child) { border-color: currentColor !important; }
+html.tel-espace .assistant fieldset { padding: 18px 16px !important; border: 1px solid rgba(255, 255, 255, .9) !important; border-radius: 20px !important; background: rgba(255, 255, 255, .78) !important;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 12px 28px -20px rgba(23, 25, 29, .35); }
+html.tel-espace .assistant fieldset legend, html.tel-espace .assistant .as-q, html.tel-espace .assistant fieldset > h3 { font: 600 1.3rem/1.2 "Fraunces", Georgia, serif !important; }
+html.tel-espace .assistant .as-pied { position: sticky; bottom: calc(var(--tel-onglets) + env(safe-area-inset-bottom) + 6px); z-index: 30; display: flex; align-items: center; gap: 8px;
+  margin: 14px -6px 0 !important; padding: 10px !important; border: 1px solid rgba(255, 255, 255, .9) !important; border-radius: 20px; background: rgba(255, 255, 255, .9) !important;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 10px 30px -12px rgba(23, 25, 29, .35); }
+html.tel-espace .assistant .as-pied .as-retour { flex: none; min-height: 46px; padding: 0 10px; font-size: 14px; color: #6c7077; }
+html.tel-espace .assistant .as-pied .as-pied-droite { flex: 1; display: flex; gap: 8px; justify-content: flex-end; margin: 0 !important; }
+html.tel-espace .assistant .as-pied .as-pied-droite > button { min-height: 46px !important; padding: 0 16px !important; }
+html.tel-espace .assistant .as-pied .as-enregistrer { background: none !important; border: 0 !important; color: #3a3d44 !important; padding: 0 8px !important; text-decoration: underline; text-underline-offset: 3px; }
+html.tel-espace .assistant .as-pied :is(.as-suivant, .as-fin) { flex: 1; max-width: 220px; }
+html.tel-espace .assistant .as-pied, html.tel-espace .assistant .as-pied .as-pied-droite { flex-direction: row !important; flex-wrap: nowrap !important; }
+html.tel-espace .assistant .as-pied .as-pied-droite > :is(.as-suivant, .as-fin) { flex: 1 1 auto; justify-content: center; border-radius: 14px !important; }
