@@ -747,3 +747,4 @@ html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 22px) !impo
 /* plus d'air entre la barre de recherche et le contenu (les rangées gardent leurs écarts) */
 html.tel-sans-carte main#contenu, html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 40px) !important; }
 html:not(.tel-ab):not(.tel-diplome) main#contenu { margin-top: 14px; }
+html.tel-anim .tel-anim-tete { padding-bottom: 14px !important; }
