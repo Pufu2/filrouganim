@@ -16,6 +16,7 @@
 /comment-ca-marche/
 /conditions-de-vente/
 /conditions-utilisation/
+/confidentialite/
 /contact/
 /enfants/aides/
 /enfants/centre-de-loisirs/ain/
@@ -217,6 +218,7 @@
 /lexique/cpjeps/
 /lexique/declaration-acm/
 /lexique/dejeps/
+/lexique/desjeps/
 /lexique/education-populaire/
 /lexique/financement/
 /lexique/grand-jeu/
@@ -847,7 +849,6 @@
 /se-former/sessions/ain/sainte-croix/
 /se-former/sessions/ain/vacances-hiver-2027/
 /se-former/sessions/aisne/
-/se-former/sessions/aisne/psc1/saint-quentin/
 /se-former/sessions/aisne/saint-erme-outre-et-ramecourt/
 /se-former/sessions/aisne/saint-quentin/
 /se-former/sessions/aisne/sorbais/
@@ -913,8 +914,6 @@
 /se-former/sessions/ardennes/donchery/
 /se-former/sessions/ardennes/formation-generale/
 /se-former/sessions/ardennes/lucquy/
-/se-former/sessions/ardennes/psc1/
-/se-former/sessions/ardennes/psc1/damouzy/
 /se-former/sessions/ardennes/saint-laurent/
 /se-former/sessions/ardennes/vacances-hiver-2027/
 /se-former/sessions/ardennes/vacances-printemps-2027/
@@ -937,7 +936,6 @@
 /se-former/sessions/aude/bsb/narbonne/
 /se-former/sessions/aude/pezens/
 /se-former/sessions/aude/psc1/
-/se-former/sessions/aude/psc1/limoux/
 /se-former/sessions/aude/psc1/narbonne/
 /se-former/sessions/aude/vacances-hiver-2027/
 /se-former/sessions/auvergne-rhone-alpes/
@@ -983,7 +981,6 @@
 /se-former/sessions/bas-rhin/approfondissement/
 /se-former/sessions/bas-rhin/bafd/
 /se-former/sessions/bas-rhin/haguenau/
-/se-former/sessions/bas-rhin/rhinau/
 /se-former/sessions/bas-rhin/strasbourg/
 /se-former/sessions/bas-rhin/vacances-noel-2026/
 /se-former/sessions/bas-rhin/walbourg/
@@ -1007,6 +1004,7 @@
 /se-former/sessions/bouches-du-rhone/plan-de-cuques/
 /se-former/sessions/bouches-du-rhone/port-saint-louis-du-rhone/
 /se-former/sessions/bouches-du-rhone/psc1/
+/se-former/sessions/bouches-du-rhone/psc1/aix-en-provence/
 /se-former/sessions/bouches-du-rhone/psc1/la-ciotat/
 /se-former/sessions/bouches-du-rhone/psc1/marseille/
 /se-former/sessions/bouches-du-rhone/puyloubier/
@@ -1100,9 +1098,6 @@
 /se-former/sessions/cher/approfondissement/
 /se-former/sessions/cher/bourges/
 /se-former/sessions/cher/formation-generale/
-/se-former/sessions/cher/psc1/
-/se-former/sessions/cher/psc1/bourges/
-/se-former/sessions/cher/psc1/saint-amand-montrond/
 /se-former/sessions/cher/vacances-hiver-2027/
 /se-former/sessions/cher/vacances-printemps-2027/
 /se-former/sessions/correze/
@@ -1136,6 +1131,7 @@
 /se-former/sessions/cotes-d-armor/pleneuf-val-andre/
 /se-former/sessions/cotes-d-armor/plerin/
 /se-former/sessions/cotes-d-armor/psc1/
+/se-former/sessions/cotes-d-armor/psc1/lannion/
 /se-former/sessions/cotes-d-armor/psc1/saint-brieuc/
 /se-former/sessions/cotes-d-armor/saint-brieuc/
 /se-former/sessions/cotes-d-armor/vacances-ete-2027/
@@ -1161,8 +1157,6 @@
 /se-former/sessions/dordogne/bafd/
 /se-former/sessions/dordogne/issigeac/
 /se-former/sessions/dordogne/montrem/
-/se-former/sessions/dordogne/psc1/
-/se-former/sessions/dordogne/psc1/sarliac-sur-l-isle/
 /se-former/sessions/dordogne/vacances-printemps-2027/
 /se-former/sessions/doubs/
 /se-former/sessions/doubs/approfondissement/
@@ -1172,10 +1166,6 @@
 /se-former/sessions/doubs/formation-generale/
 /se-former/sessions/doubs/morre/
 /se-former/sessions/doubs/pontarlier/
-/se-former/sessions/doubs/psc1/
-/se-former/sessions/doubs/psc1/besancon/
-/se-former/sessions/doubs/psc1/chalezeule/
-/se-former/sessions/doubs/psc1/pontarlier/
 /se-former/sessions/doubs/vacances-ete-2027/
 /se-former/sessions/doubs/vacances-hiver-2027/
 /se-former/sessions/doubs/vacances-noel-2026/
@@ -1183,12 +1173,11 @@
 /se-former/sessions/drome/
 /se-former/sessions/drome/anneyron/
 /se-former/sessions/drome/approfondissement/
-/se-former/sessions/drome/bafd/
-/se-former/sessions/drome/bafd/montelimar/
 /se-former/sessions/drome/die/
 /se-former/sessions/drome/formation-generale/
 /se-former/sessions/drome/psc1/
 /se-former/sessions/drome/psc1/les-tourrettes/
+/se-former/sessions/drome/psc1/romans-sur-isere/
 /se-former/sessions/drome/psc1/tain-l-hermitage/
 /se-former/sessions/drome/psc1/valence/
 /se-former/sessions/drome/vacances-hiver-2027/
@@ -1196,7 +1185,6 @@
 /se-former/sessions/essonne/
 /se-former/sessions/essonne/approfondissement/
 /se-former/sessions/essonne/bafd/
-/se-former/sessions/essonne/bafd/boutigny-sur-essonne/
 /se-former/sessions/essonne/bafd/evry-courcouronnes/
 /se-former/sessions/essonne/bafd/mennecy/
 /se-former/sessions/essonne/bures-sur-yvette/
@@ -1212,7 +1200,6 @@
 /se-former/sessions/essonne/montlhery/
 /se-former/sessions/essonne/psc1/
 /se-former/sessions/essonne/psc1/dourdan/
-/se-former/sessions/essonne/psc1/yerres/
 /se-former/sessions/essonne/quincy-sous-senart/
 /se-former/sessions/essonne/savigny-sur-orge/
 /se-former/sessions/essonne/vacances-hiver-2027/
@@ -1232,8 +1219,6 @@
 /se-former/sessions/eure/psc1/breteuil/
 /se-former/sessions/eure/psc1/daubeuf-la-campagne/
 /se-former/sessions/eure/psc1/evreux/
-/se-former/sessions/eure/psc1/pont-audemer/
-/se-former/sessions/eure/psc1/val-de-reuil/
 /se-former/sessions/eure/vacances-ete-2027/
 /se-former/sessions/eure/vacances-hiver-2027/
 /se-former/sessions/eure/vacances-noel-2026/
@@ -1254,6 +1239,7 @@
 /se-former/sessions/finistere/pleyben/
 /se-former/sessions/finistere/plougasnou/
 /se-former/sessions/finistere/plougastel-daoulas/
+/se-former/sessions/finistere/psc1/
 /se-former/sessions/finistere/quimper/
 /se-former/sessions/finistere/saint-pol-de-leon/
 /se-former/sessions/finistere/saint-renan/
@@ -1284,7 +1270,6 @@
 /se-former/sessions/gironde/bafd/bordeaux/
 /se-former/sessions/gironde/bafd/fargues-saint-hilaire/
 /se-former/sessions/gironde/bafd/lanton/
-/se-former/sessions/gironde/bafd/talence/
 /se-former/sessions/gironde/bordeaux/
 /se-former/sessions/gironde/bsb/
 /se-former/sessions/gironde/bsb/ambares-et-lagrave/
@@ -1340,7 +1325,6 @@
 /se-former/sessions/haute-garonne/l-union/
 /se-former/sessions/haute-garonne/muret/
 /se-former/sessions/haute-garonne/psc1/
-/se-former/sessions/haute-garonne/psc1/saint-gaudens/
 /se-former/sessions/haute-garonne/psc1/toulouse/
 /se-former/sessions/haute-garonne/rieumes/
 /se-former/sessions/haute-garonne/saint-orens-de-gameville/
@@ -1352,9 +1336,6 @@
 /se-former/sessions/haute-loire/chadrac/
 /se-former/sessions/haute-loire/le-chambon-sur-lignon/
 /se-former/sessions/haute-loire/le-puy-en-velay/
-/se-former/sessions/haute-loire/psc1/
-/se-former/sessions/haute-loire/psc1/le-puy-en-velay/
-/se-former/sessions/haute-loire/psc1/vorey/
 /se-former/sessions/haute-loire/saint-front/
 /se-former/sessions/haute-loire/vacances-hiver-2027/
 /se-former/sessions/haute-loire/vals-pres-le-puy/
@@ -1371,6 +1352,8 @@
 /se-former/sessions/haute-savoie/annecy-le-vieux/
 /se-former/sessions/haute-savoie/annecy/
 /se-former/sessions/haute-savoie/approfondissement/
+/se-former/sessions/haute-savoie/bafd/
+/se-former/sessions/haute-savoie/bafd/annecy/
 /se-former/sessions/haute-savoie/clarafond-arcine/
 /se-former/sessions/haute-savoie/formation-generale/
 /se-former/sessions/haute-savoie/la-balme-de-sillingy/
@@ -1396,7 +1379,6 @@
 /se-former/sessions/haute-vienne/psc1/isle/
 /se-former/sessions/haute-vienne/psc1/limoges/
 /se-former/sessions/haute-vienne/vacances-hiver-2027/
-/se-former/sessions/haute-vienne/vacances-noel-2026/
 /se-former/sessions/haute-vienne/vacances-printemps-2027/
 /se-former/sessions/haute-vienne/verneuil-sur-vienne/
 /se-former/sessions/hautes-alpes/
@@ -1475,8 +1457,6 @@
 /se-former/sessions/herault/perols/
 /se-former/sessions/herault/pezenas/
 /se-former/sessions/herault/psc1/
-/se-former/sessions/herault/psc1/agde/
-/se-former/sessions/herault/psc1/clermont-l-herault/
 /se-former/sessions/herault/psc1/lunel/
 /se-former/sessions/herault/psc1/montpellier/
 /se-former/sessions/herault/psc1/sete/
@@ -1518,9 +1498,6 @@
 /se-former/sessions/ille-et-vilaine/montauban-de-bretagne/
 /se-former/sessions/ille-et-vilaine/montgermont/
 /se-former/sessions/ille-et-vilaine/noyal-chatillon-sur-seiche/
-/se-former/sessions/ille-et-vilaine/psc1/
-/se-former/sessions/ille-et-vilaine/psc1/redon/
-/se-former/sessions/ille-et-vilaine/psc1/saint-malo/
 /se-former/sessions/ille-et-vilaine/rennes/
 /se-former/sessions/ille-et-vilaine/saint-lunaire/
 /se-former/sessions/ille-et-vilaine/vacances-hiver-2027/
@@ -1540,7 +1517,6 @@
 /se-former/sessions/indre-et-loire/loches/
 /se-former/sessions/indre-et-loire/psc1/
 /se-former/sessions/indre-et-loire/psc1/chateau-renault/
-/se-former/sessions/indre-et-loire/psc1/chinon/
 /se-former/sessions/indre-et-loire/psc1/rochecorbon/
 /se-former/sessions/indre-et-loire/tours/
 /se-former/sessions/indre-et-loire/vacances-noel-2026/
@@ -1570,7 +1546,6 @@
 /se-former/sessions/jura/
 /se-former/sessions/jura/approfondissement/
 /se-former/sessions/jura/chaux-des-crotenay/
-/se-former/sessions/jura/doucier/
 /se-former/sessions/jura/psc1/
 /se-former/sessions/jura/psc1/champagnole/
 /se-former/sessions/jura/vacances-printemps-2027/
@@ -1630,8 +1605,6 @@
 /se-former/sessions/loire/mornand-en-forez/
 /se-former/sessions/loire/perreux/
 /se-former/sessions/loire/psc1/
-/se-former/sessions/loire/psc1/le-chambon-feugerolles/
-/se-former/sessions/loire/psc1/montbrison/
 /se-former/sessions/loire/psc1/saint-etienne/
 /se-former/sessions/loire/roanne/
 /se-former/sessions/loire/saint-etienne/
@@ -1648,6 +1621,7 @@
 /se-former/sessions/loiret/lorris/
 /se-former/sessions/loiret/orleans/
 /se-former/sessions/loiret/psc1/
+/se-former/sessions/loiret/psc1/amilly/
 /se-former/sessions/loiret/psc1/sully-sur-loire/
 /se-former/sessions/loiret/saint-jean-de-braye/
 /se-former/sessions/loiret/st-jean-le-blanc/
@@ -1668,7 +1642,6 @@
 /se-former/sessions/lot-et-garonne/vacances-noel-2026/
 /se-former/sessions/lot/
 /se-former/sessions/lot/approfondissement/
-/se-former/sessions/lot/cahors/
 /se-former/sessions/lot/figeac/
 /se-former/sessions/lot/formation-generale/
 /se-former/sessions/lot/le-montat/
@@ -1724,6 +1697,7 @@
 /se-former/sessions/mayenne/formation-generale/
 /se-former/sessions/mayenne/laval/
 /se-former/sessions/mayenne/psc1/
+/se-former/sessions/mayenne/psc1/chateau-gontier-sur-mayenne/
 /se-former/sessions/mayenne/psc1/laval/
 /se-former/sessions/mayenne/vacances-ete-2027/
 /se-former/sessions/mayenne/vacances-hiver-2027/
@@ -1755,6 +1729,7 @@
 /se-former/sessions/morbihan/bafd/
 /se-former/sessions/morbihan/bafd/lorient/
 /se-former/sessions/morbihan/bafd/saint-pierre-quiberon/
+/se-former/sessions/morbihan/bafd/vannes/
 /se-former/sessions/morbihan/brandivy/
 /se-former/sessions/morbihan/formation-generale/
 /se-former/sessions/morbihan/guidel/
@@ -1763,6 +1738,7 @@
 /se-former/sessions/morbihan/malansac/
 /se-former/sessions/morbihan/penestin/
 /se-former/sessions/morbihan/psc1/
+/se-former/sessions/morbihan/psc1/lorient/
 /se-former/sessions/morbihan/psc1/questembert/
 /se-former/sessions/morbihan/saint-pierre-quiberon/
 /se-former/sessions/morbihan/vacances-ete-2027/
@@ -1786,10 +1762,6 @@
 /se-former/sessions/moselle/vacances-hiver-2027/
 /se-former/sessions/moselle/vacances-noel-2026/
 /se-former/sessions/moselle/vacances-printemps-2027/
-/se-former/sessions/nievre/psc1/
-/se-former/sessions/nievre/psc1/cosne-cours-sur-loire/
-/se-former/sessions/nievre/psc1/la-charite-sur-loire/
-/se-former/sessions/nievre/psc1/nevers/
 /se-former/sessions/nievre/saxi-bourdon/
 /se-former/sessions/nord/
 /se-former/sessions/nord/aniche/
@@ -1825,7 +1797,6 @@
 /se-former/sessions/nord/loon-plage/
 /se-former/sessions/nord/marcq-en-baroeul/
 /se-former/sessions/nord/marquette-lez-lille/
-/se-former/sessions/nord/mons-en-barul/
 /se-former/sessions/nord/mouvaux/
 /se-former/sessions/nord/neuville-saint-remy/
 /se-former/sessions/nord/orchies/
@@ -1834,7 +1805,6 @@
 /se-former/sessions/nord/psc1/ferriere-la-grande/
 /se-former/sessions/nord/psc1/lille/
 /se-former/sessions/nord/psc1/roubaix/
-/se-former/sessions/nord/psc1/wervicq-sud/
 /se-former/sessions/nord/roubaix/
 /se-former/sessions/nord/saint-andre-lez-lille/
 /se-former/sessions/nord/saint-pol-sur-mer/
@@ -1854,6 +1824,7 @@
 /se-former/sessions/normandie/approfondissement/accueil-de-loisirs/
 /se-former/sessions/normandie/approfondissement/expression-spectacle/
 /se-former/sessions/normandie/approfondissement/jeux/
+/se-former/sessions/normandie/approfondissement/multi-activites/
 /se-former/sessions/normandie/approfondissement/nature-plein-air/
 /se-former/sessions/normandie/approfondissement/petite-enfance/
 /se-former/sessions/normandie/approfondissement/sejours/
@@ -1890,12 +1861,10 @@
 /se-former/sessions/oise/
 /se-former/sessions/oise/approfondissement/
 /se-former/sessions/oise/bafd/
-/se-former/sessions/oise/bafd/beauvais/
 /se-former/sessions/oise/bafd/compiegne/
 /se-former/sessions/oise/beauvais/
 /se-former/sessions/oise/compiegne/
 /se-former/sessions/oise/formation-generale/
-/se-former/sessions/oise/montataire/
 /se-former/sessions/oise/nogent-sur-oise/
 /se-former/sessions/oise/vacances-hiver-2027/
 /se-former/sessions/oise/vacances-noel-2026/
@@ -1914,7 +1883,6 @@
 /se-former/sessions/paris/
 /se-former/sessions/paris/approfondissement/
 /se-former/sessions/paris/bafd/
-/se-former/sessions/paris/bafd/paris-10e/
 /se-former/sessions/paris/bafd/paris-14e/
 /se-former/sessions/paris/bagneux/
 /se-former/sessions/paris/formation-generale/
@@ -1928,7 +1896,10 @@
 /se-former/sessions/paris/paris-19e/
 /se-former/sessions/paris/paris-7e/
 /se-former/sessions/paris/psc1/
-/se-former/sessions/paris/psc1/paris-4e/
+/se-former/sessions/paris/psc1/paris-13e/
+/se-former/sessions/paris/psc1/paris-16e/
+/se-former/sessions/paris/psc1/paris-2e/
+/se-former/sessions/paris/psc1/paris-7e/
 /se-former/sessions/paris/vacances-hiver-2027/
 /se-former/sessions/paris/vacances-noel-2026/
 /se-former/sessions/paris/vacances-printemps-2027/
@@ -2007,7 +1978,6 @@
 /se-former/sessions/puy-de-dome/la-bourboule/
 /se-former/sessions/puy-de-dome/psc1/
 /se-former/sessions/puy-de-dome/psc1/le-cendre/
-/se-former/sessions/puy-de-dome/psc1/riom/
 /se-former/sessions/puy-de-dome/riom/
 /se-former/sessions/puy-de-dome/saint-ours-les-roches/
 /se-former/sessions/puy-de-dome/thiers/
@@ -2022,6 +1992,7 @@
 /se-former/sessions/pyrenees-atlantiques/bayonne/
 /se-former/sessions/pyrenees-atlantiques/bsb/anglet/
 /se-former/sessions/pyrenees-atlantiques/ciboure/
+/se-former/sessions/pyrenees-atlantiques/psc1/
 /se-former/sessions/pyrenees-atlantiques/vacances-ete-2027/
 /se-former/sessions/pyrenees-orientales/
 /se-former/sessions/pyrenees-orientales/arboussols/
@@ -2063,12 +2034,10 @@
 /se-former/sessions/saone-et-loire/bafd/
 /se-former/sessions/saone-et-loire/chalon-sur-saone/
 /se-former/sessions/saone-et-loire/formation-generale/
-/se-former/sessions/saone-et-loire/louhans/
 /se-former/sessions/saone-et-loire/psc1/
 /se-former/sessions/saone-et-loire/psc1/bourbon-lancy/
 /se-former/sessions/saone-et-loire/psc1/chalon-sur-saone/
 /se-former/sessions/saone-et-loire/psc1/cluny/
-/se-former/sessions/saone-et-loire/psc1/la-clayette/
 /se-former/sessions/saone-et-loire/psc1/macon/
 /se-former/sessions/saone-et-loire/psc1/matour/
 /se-former/sessions/saone-et-loire/psc1/paray-le-monial/
@@ -2084,7 +2053,6 @@
 /se-former/sessions/sarthe/bsb/neufchatel-en-saosnois/
 /se-former/sessions/sarthe/juigne-sur-sarthe/
 /se-former/sessions/sarthe/laigne-saint-gervais/
-/se-former/sessions/sarthe/psc1/parigne-l-eveque/
 /se-former/sessions/sarthe/sable-sur-sarthe/
 /se-former/sessions/savoie/
 /se-former/sessions/savoie/approfondissement/
@@ -2093,7 +2061,6 @@
 /se-former/sessions/savoie/bourg-saint-maurice/
 /se-former/sessions/savoie/chambery/
 /se-former/sessions/savoie/formation-generale/
-/se-former/sessions/savoie/jacob-bellecombette/
 /se-former/sessions/savoie/la-motte-servolex/
 /se-former/sessions/savoie/modane/
 /se-former/sessions/savoie/psc1/
@@ -2106,7 +2073,6 @@
 /se-former/sessions/seine-et-marne/annet-sur-marne/
 /se-former/sessions/seine-et-marne/approfondissement/
 /se-former/sessions/seine-et-marne/bafd/
-/se-former/sessions/seine-et-marne/bafd/lagny-sur-marne/
 /se-former/sessions/seine-et-marne/bafd/melun/
 /se-former/sessions/seine-et-marne/bafd/quincy-voisins/
 /se-former/sessions/seine-et-marne/brie-comte-robert/
@@ -2128,7 +2094,6 @@
 /se-former/sessions/seine-et-marne/souppes-sur-loing/
 /se-former/sessions/seine-et-marne/torcy/
 /se-former/sessions/seine-et-marne/vacances-noel-2026/
-/se-former/sessions/seine-et-marne/varennes-sur-seine/
 /se-former/sessions/seine-et-marne/vaux-le-penil/
 /se-former/sessions/seine-et-marne/vert-saint-denis/
 /se-former/sessions/seine-maritime/
@@ -2154,16 +2119,12 @@
 /se-former/sessions/seine-maritime/vattetot-sur-mer/
 /se-former/sessions/seine-saint-denis/
 /se-former/sessions/seine-saint-denis/approfondissement/
-/se-former/sessions/seine-saint-denis/bafd/
-/se-former/sessions/seine-saint-denis/bafd/saint-denis/
-/se-former/sessions/seine-saint-denis/bafd/saint-ouen-sur-seine/
 /se-former/sessions/seine-saint-denis/bobigny/
 /se-former/sessions/seine-saint-denis/formation-generale/
 /se-former/sessions/seine-saint-denis/montfermeil/
 /se-former/sessions/seine-saint-denis/noisy-le-grand/
 /se-former/sessions/seine-saint-denis/psc1/
 /se-former/sessions/seine-saint-denis/psc1/livry-gargan/
-/se-former/sessions/seine-saint-denis/psc1/sevran/
 /se-former/sessions/seine-saint-denis/saint-ouen-sur-seine/
 /se-former/sessions/seine-saint-denis/vacances-hiver-2027/
 /se-former/sessions/seine-saint-denis/vacances-noel-2026/
@@ -2177,8 +2138,6 @@
 /se-former/sessions/somme/bsb/
 /se-former/sessions/somme/bsb/amiens/
 /se-former/sessions/somme/formation-generale/
-/se-former/sessions/somme/psc1/
-/se-former/sessions/somme/psc1/abbeville/
 /se-former/sessions/somme/vacances-hiver-2027/
 /se-former/sessions/somme/vacances-noel-2026/
 /se-former/sessions/somme/vacances-printemps-2027/
@@ -2190,7 +2149,6 @@
 /se-former/sessions/tarn-et-garonne/bsb/
 /se-former/sessions/tarn-et-garonne/formation-generale/
 /se-former/sessions/tarn-et-garonne/montauban/
-/se-former/sessions/tarn-et-garonne/psc1/montauban/
 /se-former/sessions/tarn-et-garonne/vacances-hiver-2027/
 /se-former/sessions/tarn-et-garonne/vacances-noel-2026/
 /se-former/sessions/tarn/
@@ -2220,8 +2178,6 @@
 /se-former/sessions/val-d-oise/
 /se-former/sessions/val-d-oise/approfondissement/
 /se-former/sessions/val-d-oise/beauchamp/
-/se-former/sessions/val-d-oise/bsb/
-/se-former/sessions/val-d-oise/bsb/taverny/
 /se-former/sessions/val-d-oise/courdimanche/
 /se-former/sessions/val-d-oise/eaubonne/
 /se-former/sessions/val-d-oise/enghien-les-bains/
@@ -2232,7 +2188,6 @@
 /se-former/sessions/val-d-oise/psc1/
 /se-former/sessions/val-d-oise/psc1/cergy/
 /se-former/sessions/val-d-oise/psc1/epiais-rhus/
-/se-former/sessions/val-d-oise/psc1/fosses/
 /se-former/sessions/val-d-oise/psc1/pontoise/
 /se-former/sessions/val-d-oise/psc1/saint-clair-sur-epte/
 /se-former/sessions/val-d-oise/psc1/villiers-le-bel/
@@ -2247,7 +2202,6 @@
 /se-former/sessions/val-de-marne/maisons-alfort/
 /se-former/sessions/val-de-marne/psc1/limeil-brevannes/
 /se-former/sessions/val-de-marne/psc1/saint-maur-des-fosses/
-/se-former/sessions/val-de-marne/psc1/villejuif/
 /se-former/sessions/val-de-marne/saint-mande/
 /se-former/sessions/val-de-marne/sucy-en-brie/
 /se-former/sessions/val-de-marne/villeneuve-le-roi/
@@ -2261,7 +2215,6 @@
 /se-former/sessions/var/gonfaron/
 /se-former/sessions/var/hyeres/
 /se-former/sessions/var/la-roque-esclapon/
-/se-former/sessions/var/la-seyne-sur-mer/
 /se-former/sessions/var/le-beausset/
 /se-former/sessions/var/ollieres/
 /se-former/sessions/var/plan-daups-ste-baume/
@@ -2282,9 +2235,8 @@
 /se-former/sessions/vaucluse/bafd/beaumont-du-ventoux/
 /se-former/sessions/vaucluse/carpentras/
 /se-former/sessions/vaucluse/jonquieres/
-/se-former/sessions/vaucluse/l-isle-sur-la-sorgue/
 /se-former/sessions/vaucluse/psc1/
-/se-former/sessions/vaucluse/psc1/carpentras/
+/se-former/sessions/vaucluse/psc1/avignon/
 /se-former/sessions/vaucluse/psc1/orange/
 /se-former/sessions/vaucluse/vacances-hiver-2027/
 /se-former/sessions/vaucluse/vacances-noel-2026/
@@ -2301,6 +2253,7 @@
 /se-former/sessions/vendee/fontenay-le-comte/
 /se-former/sessions/vendee/la-roche-sur-yon/
 /se-former/sessions/vendee/psc1/commequiers/
+/se-former/sessions/vendee/psc1/fontenay-le-comte/
 /se-former/sessions/vendee/psc1/la-roche-sur-yon/
 /se-former/sessions/vendee/psc1/les-sables-d-olonne/
 /se-former/sessions/vendee/psc1/lucon/
@@ -2321,7 +2274,6 @@
 /se-former/sessions/vienne/poitiers/
 /se-former/sessions/vienne/psc1/
 /se-former/sessions/vienne/psc1/chatellerault/
-/se-former/sessions/vienne/psc1/civray/
 /se-former/sessions/vienne/psc1/poitiers/
 /se-former/sessions/vienne/vacances-ete-2027/
 /se-former/sessions/vienne/vacances-hiver-2027/
@@ -2352,14 +2304,10 @@
 /se-former/sessions/yvelines/formation-generale/
 /se-former/sessions/yvelines/jouars-pontchartrain/
 /se-former/sessions/yvelines/jouy-en-josas/
-/se-former/sessions/yvelines/la-celle-saint-cloud/
 /se-former/sessions/yvelines/les-mureaux/
 /se-former/sessions/yvelines/maisons-laffitte/
 /se-former/sessions/yvelines/mantes-la-jolie/
 /se-former/sessions/yvelines/maule/
-/se-former/sessions/yvelines/psc1/houilles/
-/se-former/sessions/yvelines/psc1/les-mureaux/
-/se-former/sessions/yvelines/psc1/neauphle-le-chateau/
 /se-former/sessions/yvelines/psc1/versailles/
 /se-former/sessions/yvelines/rambouillet/
 /se-former/sessions/yvelines/saint-germain-en-laye/
@@ -2377,7 +2325,6 @@
 /trouver-un-poste/emploi-animateur/ain/jasseron/
 /trouver-un-poste/emploi-animateur/aisne/chauny/
 /trouver-un-poste/emploi-animateur/allier/vichy/
-/trouver-un-poste/emploi-animateur/alpes-de-haute-provence/manosque/
 /trouver-un-poste/emploi-animateur/ardeche/annonay/
 /trouver-un-poste/emploi-animateur/ardennes/
 /trouver-un-poste/emploi-animateur/ardennes/saint-laurent/
