@@ -581,3 +581,60 @@ html.tel-ab .an-boutons a { display: grid; place-items: center; min-height: 46px
 html.tel-ab .an-boutons .bouton-r { background: #222 !important; border-color: #222 !important; color: #fff !important; }
 html.tel-ab .an-boutons .bouton-blanc { background: rgba(23, 25, 29, .06) !important; border: 0 !important; color: #222 !important; }
 html.tel-anim .tel-anim-tete { padding-top: 10px; }
+
+/* =========================================================================================
+   LE STYLE « LUMIÈRE » SUR TOUTES LES PAGES (sauf Mon espace et la carte de « Se former »)
+   Fond crème, lumières floues derrière le haut, barre transparente (seule la pilule en verre flotte), hauts de page clairs
+   (plus de bandeau sombre, sauf sur une photo), titres en Fraunces, cartes en verre.
+   ========================================================================================= */
+html:not(.tel-ab), html:not(.tel-ab) body, html.tel-sans-carte, html.tel-sans-carte body { background: #f6f4ef; }
+body.en-app .tel-lumieres, html.tel-ab:not(.tel-sans-carte) .tel-lumieres { display: none; }
+html:not(.tel-ab) main#contenu { position: relative; z-index: 1; }
+/* la barre : transparente ; la pilule, les ronds et les catégories en verre */
+html:not(.tel-ab) .tel-barre, html:not(.tel-ab).tel-defile .tel-barre, html.tel-sans-carte .tel-barre { background: transparent !important; box-shadow: none !important; }
+html:not(.tel-ab) .tel-pilule, html.tel-sans-carte .tel-pilule { background: rgba(255, 255, 255, .62); border: 1px solid rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 22px -10px rgba(120, 40, 40, .22); }
+html:not(.tel-ab) .tel-rond, html.tel-sans-carte .tel-rond { border: 0; background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+html:not(.tel-ab) .tel-cats { gap: 8px; padding: 2px 16px 10px; border: 0; }
+html:not(.tel-ab) .tel-cats a { flex-direction: row; gap: 6px; padding: 0 12px; height: 36px; border-radius: 99px; background: rgba(255, 255, 255, .6); border: 1px solid rgba(255, 255, 255, .85);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #3a3d44; font-size: .78rem; opacity: 1; }
+html:not(.tel-ab) .tel-cats .jm-ico { width: 16px; height: 16px; }
+html:not(.tel-ab) .tel-cats a[aria-current] { background: #222; border-color: #222; color: #fff; }
+html:not(.tel-ab) .tel-cats a[aria-current]::after { display: none; }
+html.tel-compact:not(.tel-ab) .tel-cats .jm-ico { height: 16px; opacity: 1; margin: 0; }
+/* les hauts de page : clairs (une photo garde son voile sombre) */
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) { background: transparent !important; background-image: none !important; color: var(--nuit) !important; }
+html:not(.tel-ab) main .fs-haut:not(.fs-haut-photo) .fs-haut-fond { display: none !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(h1, h1 *) { color: var(--nuit) !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) h1 em { color: var(--fil) !important; font-style: italic !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut) h1 { font-family: "Fraunces", Georgia, serif !important; font-weight: 600 !important; font-size: 2rem !important; line-height: 1.08 !important; letter-spacing: -.02em !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.chapo, .fs-accroche, .tete-petit, p:not([class])) { color: #4a4e56 !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.note-main, .tp-sur, .fs-sur) { color: var(--fil) !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) .fil-ariane > a:last-of-type { background: rgba(255, 255, 255, .62); border: 1px solid rgba(255, 255, 255, .85); color: #3a3d44; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.fs-puces li, .chiffres li) { background: rgba(255, 255, 255, .6) !important; border: 1px solid rgba(255, 255, 255, .85) !important; color: #3a3d44 !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.fs-puces .fs-puce-fort) { background: #222 !important; border-color: #222 !important; color: #fff !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) .chiffres b { color: var(--nuit) !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.fs-exemple) { background: rgba(255, 255, 255, .6) !important; color: #6b4a10 !important; border: 1px solid rgba(240, 190, 90, .4) !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.sjf-par, .sjf-par a, .sjf-badges span, .fs-haut-in > p) { color: #4a4e56 !important; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) a:not(.fs-btn):not(.bouton-r) { color: inherit; }
+html:not(.tel-ab) main :is(section.tete, .fs-haut:not(.fs-haut-photo)) :is(.fs-btn-b, .bouton-blanc, .bouton-contour) { background: rgba(255, 255, 255, .7) !important; color: var(--nuit) !important; border-color: rgba(23, 25, 29, .12) !important; }
+html:not(.tel-ab) .tete .cadre, html:not(.tel-ab) body:not(.en-app) .tete .cadre { padding-bottom: 18px; }
+html:not(.tel-ab) main .fs-ruban { margin-top: 6px !important; background: rgba(255, 255, 255, .72) !important; border: 1px solid rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 14px 30px -22px rgba(23, 25, 29, .35) !important; }
+html:not(.tel-ab) main :is(.fs-haut-in) { padding-bottom: 22px !important; }
+/* les fonds de section : transparents, la page crème partout */
+html:not(.tel-ab) main :is(.bande, .bande-papier, .bande-blanc, .bande-sable, .fs, .cb-bande, .ac-usages, .tp-cartes-bande) { background: transparent !important; }
+/* les titres : en Fraunces, la fin en italique rouge */
+html:not(.tel-ab) main :is(.fs-tt h2, .bande h2, .fs-s h2, .cb h2, .ac-usages h2, .le-texte h2) { font-family: "Fraunces", Georgia, serif !important; font-weight: 600 !important; letter-spacing: -.015em !important; }
+html:not(.tel-ab) main :is(h2, h3) em { font-style: italic !important; color: var(--fil); }
+/* les cartes : en verre clair */
+html:not(.tel-ab) main :is(.fs-carte, .le-texte, .le-faq, .fs-faq, .faq, .ac-b, .cb, .rc-atouts li, .session, .tp-carte, .sjc-carte, .le-action:not(.le-action-sombre), .ac-carte, .en3-bande, .tp-bande, .encart-jeuphorie, .trois-pas li, .rc2-etapes li, .bref, .explorer, .cadre.explorer) {
+  background-color: rgba(255, 255, 255, .74) !important; border-color: rgba(255, 255, 255, .9) !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 12px 28px -20px rgba(23, 25, 29, .35) !important; }
+/* pages de recherche sans carte (Animateurs, Structures, Parents) : la barre fixe reste transparente, les lumières passent dessous */
+html.tel-sans-carte .tel-lumieres { position: fixed; z-index: 0; height: 520px; }
+html.tel-sans-carte main#contenu { position: relative; z-index: 1; background: transparent !important; }
+html.tel-sans-carte .tel-ab-tete { background: transparent; }
+html.tel-sans-carte main :is(.fs, .le, .an2, .sjc, .en3, .bande) { background: transparent !important; }
+html.tel-sans-carte main :is(.ac a, .an2-cartes .ac a, .sjc-carte, .fs-carte, .en3-bande) { background-color: rgba(255, 255, 255, .74) !important; border-color: rgba(255, 255, 255, .9) !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+html.tel-sans-carte .tel-ab-titre { font: 600 19px/1.2 "Fraunces", Georgia, serif; text-align: left; color: var(--nuit); }
+html.tel-sans-carte .tel-ab-tete { padding: 10px 18px 8px !important; }

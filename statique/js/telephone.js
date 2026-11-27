@@ -41,6 +41,13 @@
   var ab = !!document.querySelector("main form.recherche.rv, main #filtres-offres, main #sjc-filtres, main .an2-recherche form");
   if (ab && tel.matches) racine.classList.add("tel-ab");
 
+  // le style « lumière » (telephone.css) : des lumières floues derrière le haut de chaque page
+  if (tel.matches && !document.querySelector(".tel-lumieres")) {
+    var lum = document.createElement("div"); lum.className = "tel-lumieres"; lum.setAttribute("aria-hidden", "true");
+    ["a", "b", "c"].forEach(function (k) { var x = document.createElement("span"); x.className = "tel-lum tel-lum-" + k; lum.appendChild(x); });
+    document.body.insertBefore(lum, document.body.firstChild);
+  }
+
   // une page qui a déjà sa barre d'action en bas (fiche séjour : « Demander une place ») garde la sienne
   if (document.querySelector(".sjf-barre")) racine.classList.add("tel-sans-onglets");
 

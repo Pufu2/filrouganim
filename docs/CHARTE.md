@@ -142,7 +142,8 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
 - **Les fenêtres « Filtres »** (toutes ces pages) : icônes 3D en couleur sur les choix (Fluent Emoji de Microsoft, licence MIT,
   `statique/illus/icones/`), le premier groupe en tuiles comme « Nos recommandations » d'Airbnb, titres de groupe nets,
   « Tout effacer » souligné et bouton noir en bas.
-- **Le style « lumière »** (inspiré de bonchoeur.fr, dans nos couleurs), d'abord sur Animateurs : fond crème #f6f4ef, lumières
+- **Le style « lumière »** (inspiré de bonchoeur.fr, dans nos couleurs), sur toutes les pages du téléphone (sauf Mon espace et
+  la carte de « Se former ») : hauts de page clairs (plus de bandeau sombre, sauf sur une photo), titres en Fraunces, fond crème #f6f4ef, lumières
   floues rouge / orange / rose qui dérivent derrière le haut, barre de recherche transparente (même en défilant : seule la
   pilule, en verre, flotte), titre en Fraunces avec la fin en italique rouge, cartes en verre (blanc translucide + flou),
   animateurs en petites cartes de couleur (rose, lavande, ciel, pêche, menthe, sable) rangées par poste dans des rangées qui

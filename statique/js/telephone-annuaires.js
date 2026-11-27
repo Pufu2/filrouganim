@@ -205,9 +205,6 @@
      recrutez ? » en carte claire. Les cartes d'origine (animateurs.js) restent dans la page, cachées : « Voir » ouvre leur fiche. */
   if (ofForm) (function () {
     racine.classList.add("tel-anim");
-    var lum = el("div", "tel-lumieres"); lum.setAttribute("aria-hidden", "true");
-    ["a", "b", "c"].forEach(function (k) { lum.appendChild(el("span", "tel-lum tel-lum-" + k)); });
-    document.body.insertBefore(lum, document.body.firstChild);
     // le haut : surtitre, titre ; puis le profil en petite carte
     var bandeau = el("div", "tel-anim-tete");
     var h = el("h2", "tel-titre");  // (le titre n'est plus affiché : seule la carte du profil reste en haut)
