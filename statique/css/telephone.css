@@ -1002,3 +1002,8 @@ html.tel-espace .vg-bulle p { font-size: 14.5px !important; line-height: 1.5 !im
 html.tel-espace .vg-bulle .vg-boutons button { min-height: 44px !important; padding: 0 18px !important; border-radius: 12px !important; font-size: 15px !important; }
 html.tel-espace .vg-bulle .vg-suivant { outline: none !important; box-shadow: none !important; }
 html.tel-espace .vg-bulle .vg-ignorer { min-height: 36px; padding: 0 4px; font-size: 13px !important; }
+/* Mes enfants (parent) : prénom et année l'un sous l'autre, « Ajouter » en grand bouton */
+html.tel-espace form.pa-ajout { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; }
+html.tel-espace form.pa-ajout > * { width: 100% !important; min-height: 48px; }
+html.tel-espace form.pa-ajout > button { border-radius: 14px !important; }
+html.tel-espace form.pa-ajout > button { justify-content: center; text-align: center; font-size: 15px; }
