@@ -1007,3 +1007,15 @@ html.tel-espace form.pa-ajout { display: grid !important; grid-template-columns:
 html.tel-espace form.pa-ajout > * { width: 100% !important; min-height: 48px; }
 html.tel-espace form.pa-ajout > button { border-radius: 14px !important; }
 html.tel-espace form.pa-ajout > button { justify-content: center; text-align: center; font-size: 15px; }
+/* l'administration : les tableaux en cartes, une par ligne, le nom de la colonne au-dessus de chaque valeur */
+html.tel-espace table.ap-table.tel-cartes, html.tel-espace table.ap-table.tel-cartes tbody { display: block; width: 100%; }
+html.tel-espace table.ap-table.tel-cartes thead { display: none; }
+html.tel-espace table.ap-table.tel-cartes tr { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin: 0 0 10px; padding: 14px 16px; border: 1px solid rgba(23, 25, 29, .07); border-radius: 18px; background: #fff; box-shadow: 0 8px 20px -16px rgba(23, 25, 29, .4); }
+html.tel-espace table.ap-table.tel-cartes td { display: block; padding: 0 !important; border: 0 !important; min-width: 0; overflow-wrap: anywhere; }
+html.tel-espace table.ap-table.tel-cartes td:first-child, html.tel-espace table.ap-table.tel-cartes td:has(.ap-boutons) { grid-column: 1 / -1; }
+html.tel-espace table.ap-table.tel-cartes td:first-child { font-size: 15px; }
+html.tel-espace table.ap-table.tel-cartes td[data-col]:not(:first-child)::before { content: attr(data-col); display: block; margin-bottom: 2px; font-size: 11px; letter-spacing: .02em; color: #8a8e95; }
+html.tel-espace table.ap-table.tel-cartes td:empty { display: none; }
+html.tel-espace table.ap-table.tel-cartes .ap-boutons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start !important; }
+html.tel-espace table.ap-table.tel-cartes .ap-boutons > * { flex: 1 1 auto; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; }
+html.tel-espace .ap-table-boite:has(table.tel-cartes) { overflow: visible !important; border: 0 !important; background: none !important; box-shadow: none !important; }

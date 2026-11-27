@@ -229,12 +229,24 @@
       if (cour && cour.dataset.ongletVers === b.dataset.dock) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
     });
   }
+  // les tableaux de l'administration deviennent des cartes : chaque case reçoit le nom de sa colonne (sauf la prospection)
+  function etiqueterTableaux(v) {
+    if (v.id !== "v-admin") return;
+    Array.prototype.forEach.call(v.querySelectorAll("table.ap-table"), function (t) {
+      if (t.closest("#ad-prospection")) return;
+      var noms = Array.prototype.map.call(t.querySelectorAll("thead th"), function (th) { return th.textContent.trim(); });
+      t.classList.add("tel-cartes");
+      Array.prototype.forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+        Array.prototype.forEach.call(tr.children, function (td, i) { if (noms[i] && !td.dataset.col) td.dataset.col = noms[i]; });
+      });
+    });
+  }
   function regarder() {
     var v = vueVisible();
     if (!v || !document.body.classList.contains("en-app")) { racine.classList.remove("tel-espace"); var d = document.getElementById("tel-dock-admin"); if (d) d.hidden = true; return; }
     racine.classList.add("tel-espace");
     racine.dataset.espace = v.id;
-    construire(v); majPastilles(v); boutonsVides(v);
+    construire(v); majPastilles(v); boutonsVides(v); etiqueterTableaux(v);
     var cour = v.querySelector(".co-nav [data-onglet-vers][aria-current]");
     racine.classList.toggle("tel-esp-tableau", !!(cour && cour.dataset.ongletVers === accueilDe(v)));
     dockAdmin(v, cour);
@@ -244,6 +256,6 @@
   }
   var attente = null;
   new MutationObserver(function () { clearTimeout(attente); attente = setTimeout(regarder, 60); })
-    .observe(document.body, { attributes: true, subtree: true, attributeFilter: ["hidden", "class"] });
+    .observe(document.body, { attributes: true, childList: true, subtree: true, attributeFilter: ["hidden", "class"] });
   regarder();
 })();
