@@ -744,3 +744,6 @@ html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 22px) !impo
 .tel-rail { align-items: flex-start !important; padding-bottom: 4px !important; }
 .tel-pc-chips { min-height: 0 !important; }
 .tel-pc-chips { flex-wrap: nowrap !important; overflow: hidden; } .tel-pc-chips .tel-chip { flex: none; white-space: nowrap; } .tel-pc-c b { white-space: nowrap; }
+/* plus d'air entre la barre de recherche et le contenu (les rangées gardent leurs écarts) */
+html.tel-sans-carte main#contenu, html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 40px) !important; }
+html:not(.tel-ab):not(.tel-diplome) main#contenu { margin-top: 14px; }
