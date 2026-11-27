@@ -35,6 +35,9 @@ SOURCE = "https://lecomarquage.service-public.gouv.fr/donnees_locales_v4/all_lat
 DEBUT = dt.datetime(2026, 11, 21, tzinfo=dt.timezone.utc)  # les animateurs inscrits avant sont traités à la main
 FENETRE = dt.timedelta(days=3)  # rattrape un matin manqué ; les mairies déjà écrites ne le sont jamais deux fois
 RAYON_KM, PAR_ANIMATEUR, PAR_JOUR = 15, 30, 100
+# intercommunalités (communautés de communes, d'agglomération…) : elles gèrent souvent les accueils de loisirs et le
+# périscolaire de plusieurs communes ; les 3 plus proches de l'animateur, dans un rayon de 25 km
+RAYON_EPCI_KM, EPCI_PAR_ANIMATEUR = 25, 3
 
 
 def simple(t):
@@ -66,14 +69,14 @@ def mairies():
     if cache and cache.exists():
         try:
             c = json.loads(cache.read_text(encoding="utf-8"))
-            if c.get("jour") == jour:
+            if c.get("jour") == jour and c.get("version") == 2:
                 return [dict(m, pos=tuple(m["pos"])) for m in c["mairies"]]
         except Exception:
             pass
     res = _mairies()
     if cache:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps({"jour": jour, "mairies": res}), encoding="utf-8")
+        cache.write_text(json.dumps({"jour": jour, "version": 2, "mairies": res}), encoding="utf-8")
     return res
 
 
@@ -90,7 +93,9 @@ def _mairies():
     res = []
     for s in services:
         pivot = liste_py(s.get("pivot"))
-        if not any(isinstance(p, dict) and p.get("type_service_local") == "mairie" for p in pivot):
+        types = {p.get("type_service_local") for p in pivot if isinstance(p, dict)}
+        kind = "mairie" if "mairie" in types else ("epci" if "epci" in types else None)
+        if not kind:
             continue
         courriels = [c for c in liste_py(s.get("adresse_courriel")) if "@" in (c or "")]
         adr = next((a for a in liste_py(s.get("adresse")) if a.get("latitude") and a.get("longitude")), None)
@@ -106,9 +111,11 @@ def _mairies():
         # la commune vient du nom du service (« Mairie - Eckbolsheim ») : l'adresse peut être celle d'un bureau distributeur
         commune = re.sub(r"^mairie( d[ée]l[ée]gu[ée]e)?\s*-\s*", "", s.get("nom") or "", flags=re.I).strip() \
             or re.sub(r"\s+cedex.*$", "", adr.get("nom_commune") or "", flags=re.I).strip()
+        if kind == "epci":  # intercommunalité : la commune est celle de son siège
+            commune = re.sub(r"\s+cedex.*$", "", adr.get("nom_commune") or "", flags=re.I).strip() or commune
         res.append({"insee": insee, "dep": dep, "commune": commune, "cle_commune": simple(commune), "cle_postale": simple(adr.get("nom_commune")), "email": courriels[0].strip(),
                     "pos": pos, "site": site, "nom": s.get("nom") or f"Mairie - {commune}",
-                    "cle": "orga:" + simple(s.get("nom") or f"Mairie - {commune}")})
+                    "cle": "orga:" + simple(s.get("nom") or f"Mairie - {commune}"), "kind": kind})
     return res
 
 
@@ -157,7 +164,9 @@ def main():
         plafond = max(0, PAR_JOUR - deja)
         cles = {c["cle"] for c in connues}
         emails = {(c.get("email") or "").lower() for c in connues}
-        toutes = mairies()
+        annuaire = mairies()
+        toutes = [m for m in annuaire if m.get("kind", "mairie") == "mairie"]
+        epcis = [m for m in annuaire if m.get("kind") == "epci"]
         print(f"Annuaire officiel : {len(toutes)} mairies avec une adresse e-mail.")
         for a in a_traiter:
             pos, ville, precis = situer(a, toutes)
@@ -177,10 +186,18 @@ def main():
                 emails.add(m["email"].lower())
                 pour_lui.append(m)
                 choisies.append(m)
+            for d_km, m in sorted(((km(pos, e["pos"]), e) for e in epcis if e["dep"] in deps), key=lambda x: x[0])[:EPCI_PAR_ANIMATEUR]:
+                if d_km > RAYON_EPCI_KM or m["cle"] in cles or m["email"].lower() in emails or len(choisies) >= plafond:
+                    continue
+                cles.add(m["cle"])
+                emails.add(m["email"].lower())
+                pour_lui.append(m)
+                choisies.append(m)
             recap.append((ligne, pour_lui, "" if precis else "pas de commune : mairies les plus centrales du département"))
 
     lignes = [{"cle": m["cle"], "type": "organisateur", "nom": m["nom"], "email": m["email"],
-               "ville": f"{m['commune']} ({m['dep']}) · accueils de loisirs et périscolaire", "statut": "a_contacter", "etapes": [],
+               "ville": f"{m['commune']} ({m['dep']}) · " + ("intercommunalité, accueils de loisirs et périscolaire" if m.get("kind") == "epci"
+                                                            else "accueils de loisirs et périscolaire"), "statut": "a_contacter", "etapes": [],
                "note": f"lot {lot} · annuaire officiel service-public.fr" + (f" · {m['site']}" if m["site"] else "")} for m in choisies]
     # en attente : les structures ajoutées à la main dans un lot automatique (accueils de loisirs, centres sociaux, MJC,
     # associations trouvés par recherche web autour des nouveaux animateurs), pas encore écrites

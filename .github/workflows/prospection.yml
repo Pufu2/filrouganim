@@ -39,7 +39,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .cache-annuaire
-          key: annuaire-${{ steps.jour.outputs.jour }}
+          key: annuaire-v2-${{ steps.jour.outputs.jour }}
       - name: Envoyer
         env:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
