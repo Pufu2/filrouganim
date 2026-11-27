@@ -52,3 +52,8 @@
 <script type="application/json" id="tel-deps">[{% for d in departements | sort(attribute="code") %}{{ (d.nom ~ " (" ~ d.code ~ ")") | tojson }}{{ "," if not loop.last }}{% endfor %}]</script>
 <script type="application/json" id="tel-centres">{{ CENTRES_DEP | tojson }}</script>
 {% endif %}
+{# les diplômes (pages « Se former » : le bloc « Tous les diplômes » et les pages de chaque diplôme, sans barre de recherche) #}
+{% if u.startswith('/se-former/') %}
+{% set ICDIP = {"bafa": "bafa", "bafd": "bafd", "psc1": "psc", "surveillant-de-baignade": "bsb", "cpjeps": "cpjeps", "bpjeps": "bpjeps", "dejeps": "dejeps", "desjeps": "desjeps"} %}
+<script type="application/json" id="tel-diplomes">[{% for f in site.formations or [] %}{% set k = f.url.strip('/').split('/')[-1] %}{{ {"court": f.court, "resume": f.resume, "url": lien(f.url), "ic": ICDIP.get(k, "diplome"), "ici": f.url == u, "age": f.age, "duree": f.duree, "niveau": f.niveau} | tojson }}{{ "," if not loop.last }}{% endfor %}]</script>
+{% endif %}
