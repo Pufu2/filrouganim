@@ -169,14 +169,14 @@
 
   /* ---------- le haut : ← retour, la pilule, les filtres ---------- */
   var retour = barre.querySelector(".tel-retour");
-  retour.hidden = false;
+  retour.hidden = true;  // (plus de flèche retour : la barre du bas suffit)
   retour.addEventListener("click", function () {
     var meme = false;
     try { meme = document.referrer && new URL(document.referrer).host === location.host; } catch (e) {}
     if (meme && history.length > 1) history.back(); else location.href = barre.dataset.accueil || "/";
   });
   var filtresBtn = barre.querySelector(".tel-filtres");
-  if (filtresBtn && cfg.voile) { filtresBtn.hidden = false; filtresBtn.addEventListener("click", cfg.filtres); }
+  // (plus de bouton des filtres : la recherche plein écran les contient tous)
   function majPilule() { var t = cfg.pilule(cfg.lire()); pilule.querySelector("b").textContent = t[0]; pilule.querySelector("small").textContent = t[1]; }
   majPilule();
 

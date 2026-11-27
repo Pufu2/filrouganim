@@ -24,14 +24,14 @@
 
   /* ---------- le haut : ← retour, la pilule, les filtres ---------- */
   var retour = barre.querySelector(".tel-retour");
-  retour.hidden = false;
+  retour.hidden = true;  // (plus de flèche retour : la barre du bas suffit)
   retour.addEventListener("click", function () {
     var meme = false;
     try { meme = document.referrer && new URL(document.referrer).host === location.host; } catch (e) {}
     if (meme && history.length > 1) history.back(); else location.href = barre.dataset.accueil || "/";
   });
   var filtresBtn = barre.querySelector(".tel-filtres"), ouvrirFiltres = form.querySelector("[data-ouvrir]");
-  if (filtresBtn && ouvrirFiltres) { filtresBtn.hidden = false; filtresBtn.addEventListener("click", function () { ouvrirFiltres.click(); }); }
+  // (plus de bouton des filtres : la recherche plein écran les contient tous)
   function majPilule() {
     pilule.querySelector("b").textContent = form.elements.ou.value.trim() || "Partout en France";
     pilule.querySelector("small").textContent = texteChoix(form.elements.mois, "Toutes les dates") + " · " + texteChoix(form.elements.diplome, "Toutes les formations");
@@ -197,7 +197,7 @@
   var lieux = Array.prototype.map.call(form.querySelectorAll("datalist option"), function (o) { return { texte: o.value, dep: o.dataset.dep || "" }; });
   function sansAccents(t) { return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
   var etat = {};
-  function lire() { ["ou", "diplome", "type", "mois", "annee"].forEach(function (k) { etat[k] = form.elements[k] ? form.elements[k].value : ""; }); }
+  function lire() { ["ou", "diplome", "type", "mois", "annee", "budget", "q"].forEach(function (k) { etat[k] = form.elements[k] ? form.elements[k].value : ""; }); }
   var m = el("div", "ab-m");
   feuille.textContent = ""; feuille.appendChild(m); feuille.classList.add("tel-ab-feuille");
   // fermer : tout remonte et s'efface (le contraire de l'ouverture), puis la fenêtre disparaît
@@ -230,7 +230,7 @@
       b.appendChild(el("span", "ab-m-icone")).appendChild(im);
       b.appendChild(el("span", "ab-m-nom", nomOption(o)));
       if (etat.diplome === o.value) b.setAttribute("aria-pressed", "true");
-      b.addEventListener("click", function () { etat.diplome = etat.diplome === o.value ? "" : o.value; etat.type = ""; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
+      b.addEventListener("click", function () { etat.diplome = etat.diplome === o.value ? "" : o.value; etat.type = ""; etat.budget = ""; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
       ong.appendChild(b);
     });
     haut.appendChild(ong);
@@ -328,9 +328,32 @@
       });
       c.appendChild(l);
     });
+    // le budget (les montants de la formation choisie) et le mot-clé : les autres filtres de la page, ici aussi
+    var budgets = options(form.elements.budget, function (o) { return (o.dataset.diplome || "") === etat.diplome; });
+    var choixB = budgets.filter(function (o) { return o.value === etat.budget; })[0];
+    if (budgets.length) carteQ("budget", "Budget", choixB ? choixB.textContent : "Tous les prix", function (c) {
+      var l = el("div", "ab-m-puces");
+      budgets.forEach(function (o) {
+        var b = el("button", "ab-m-puce"); b.type = "button";
+        var im = el("img"); im.src = dossier + "budget.png"; im.alt = ""; im.width = 16; im.height = 16; b.appendChild(im);
+        b.appendChild(document.createTextNode(o.textContent));
+        if (etat.budget === o.value) b.setAttribute("aria-pressed", "true");
+        b.addEventListener("click", function () { etat.budget = etat.budget === o.value ? "" : o.value; racine.classList.remove("tel-cherche-anim"); dessinerModale("budget"); });
+        l.appendChild(b);
+      });
+      c.appendChild(l);
+    });
+    if (form.elements.q) carteQ("mot", "Mot-clé", etat.q || "Organisme, thème…", function (c) {
+      var boite = el("label", "ab-m-champ");
+      boite.innerHTML = svg('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>');
+      var ch = el("input"); ch.type = "search"; ch.placeholder = "Organisme, thème, ville…"; ch.value = etat.q || ""; ch.setAttribute("aria-label", "Mot-clé"); ch.autocomplete = "off";
+      ch.addEventListener("input", function () { etat.q = ch.value; });
+      ch.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); chercher(); } });
+      boite.appendChild(ch); c.appendChild(boite);
+    });
     var pied = el("div", "ab-m-pied");
     var eff = el("button", "ab-m-effacer", "Tout effacer"); eff.type = "button";
-    eff.addEventListener("click", function () { etat = { ou: "", diplome: "", type: "", mois: "", annee: "" }; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
+    eff.addEventListener("click", function () { etat = { ou: "", diplome: "", type: "", mois: "", annee: "", budget: "", q: "" }; racine.classList.remove("tel-cherche-anim"); dessinerModale(ouverte); });
     var go = el("button", "ab-m-chercher"); go.type = "button";
     go.innerHTML = svg('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'); go.appendChild(el("span", null, "Rechercher"));
     go.addEventListener("click", chercher);
@@ -339,7 +362,8 @@
   }
   function chercher() {
     var f = form.elements;
-    ["diplome", "type", "mois", "annee"].forEach(function (k) { if (f[k] && f[k].value !== etat[k]) { f[k].value = etat[k]; f[k].dispatchEvent(new Event("change", { bubbles: true })); } });
+    ["diplome", "type", "mois", "annee", "budget"].forEach(function (k) { if (f[k] && f[k].value !== (etat[k] || "")) { f[k].value = etat[k] || ""; f[k].dispatchEvent(new Event("change", { bubbles: true })); } });
+    if (f.q && f.q.value !== (etat.q || "")) { f.q.value = etat.q || ""; f.q.dispatchEvent(new Event("input", { bubbles: true })); }
     if (f.ou.value !== etat.ou) {
       f.ou.value = etat.ou;
       f.ou.dispatchEvent(new Event("input", { bubbles: true }));

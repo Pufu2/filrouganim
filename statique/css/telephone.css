@@ -230,7 +230,7 @@ html.tel-ab .tel-pilule small { color: #6a6a6a; font-size: .8rem; }
 html.tel-ab .tel-rond { width: 40px; height: 40px; border: 0; background: none; }
 html.tel-ab .tel-rond svg { width: 20px; height: 20px; stroke-width: 1.8; }
 html.tel-ab .tel-compte { display: none; }
-html.tel-ab .tel-retour[hidden], html.tel-ab .tel-filtres[hidden] { display: grid; visibility: hidden; }
+html.tel-ab .tel-retour[hidden], html.tel-ab .tel-filtres[hidden] { display: none !important; }
 html.tel-ab .tel-cats { display: none !important; }
 /* (ancien réglage des pastilles, gardé si on les remet) les pastilles rapides : des boutons bordés, sans icône ; elles s'effacent dès qu'on fait défiler la liste */
 html.tel-ab .tel-cats { gap: 8px; padding: 0 16px 12px; border: 0; max-height: 60px; transition: max-height .25s ease, padding .25s ease, opacity .2s; }
@@ -723,3 +723,18 @@ html.tel-diplome main .le-texte ol li::after { content: ""; position: absolute; 
 html.tel-diplome main .le-texte ol li:last-child::after { display: none; }
 html.tel-diplome main .le-suite { display: none !important; }
 html.tel-diplome .tel-dips { margin: 26px 0 10px; }
+
+/* Se former : sans « Le parcours », et la ligne du classement en petite note claire (pas en tuiles comme les diplômes) */
+html.tel-ab main :is(section, div):has(> .cadre > .parcours-diplome), html.tel-ab main .parcours-diplome { display: none !important; }
+html.tel-ab main .resultats-liste > p.petit, html.tel-ab main .resultats-liste ~ p.petit, html.tel-ab main .cadre > p.petit:has(a[href*="classement"]), html.tel-ab main .cadre > p.petit:has(a[href*="/se-former/sessions/"]) {
+  display: flex; align-items: center; gap: 8px; margin: 10px 2px 0 !important; padding: 0; color: #8a8e96; font-size: 12px; line-height: 1.4; }
+html.tel-ab main :is(.resultats-liste > p.petit, .cadre > p.petit:has(a[href*="classement"]), .cadre > p.petit:has(a[href*="/se-former/sessions/"]))::before {
+  content: "i"; flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(23, 25, 29, .07); color: #6c7077; font: 600 11px/1 Georgia, serif; font-style: italic; }
+html.tel-ab main :is(.resultats-liste > p.petit, .cadre > p.petit) a { color: #6c7077 !important; text-decoration: underline; text-decoration-color: rgba(23, 25, 29, .2); }
+html.tel-ab main .liste-suite { margin: 10px 0 0 !important; padding: 12px 14px !important; border: 0 !important; border-radius: 14px !important; background: rgba(255, 255, 255, .6) !important; font-size: 13px; }
+html.tel-ab main .liste-suite a { color: var(--fil-fonce, #a8162a); font-weight: 600; }
+/* les espaces : de l'air sous la barre (pages sans carte) et entre les rangées d'animateurs */
+html.tel-sans-carte main#contenu { margin-top: calc(var(--ab-haut, 82px) + 10px) !important; }
+html.tel-anim .tel-anim-tete { padding-top: 6px !important; }
+.tel-anim-groupe { margin-top: 28px !important; }
+.tel-anim-groupe:first-child { margin-top: 24px !important; }

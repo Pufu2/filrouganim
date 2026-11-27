@@ -23,7 +23,7 @@
       if (sauf && d.ici) return;
       var a = el("a", "tel-dip"); a.href = d.url;
       a.appendChild(el("span", "tel-dip-ic")).appendChild(icone(d.ic, 40));
-      a.appendChild(el("b", null, d.court));
+      a.appendChild(el("b", null, d.ic === "bsb" ? "BSB" : d.court));
       if (d.age) a.appendChild(el("small", null, d.age));
       g.appendChild(a);
     });
