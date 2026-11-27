@@ -987,3 +987,11 @@ html.tel-espace .ls-table .ls-rang > .ls-fin > :is(button, a) { flex: 1; min-hei
 html.tel-espace .cd-ligne { margin: 0 0 12px !important; padding: 14px !important; border: 1px solid rgba(23, 25, 29, .07) !important; border-radius: 20px; background: #fff; box-shadow: 0 8px 20px -16px rgba(23, 25, 29, .4); }
 html.tel-espace .cd-ligne .profil-candidat { padding: 0 !important; margin: 0 0 8px !important; border: 0 !important; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
 html.tel-espace .cd-ligne select { min-height: 46px; border-radius: 12px; }
+html.tel-espace .ls-table .ls-rang > .ls-fin > .ls-postuler { background: #d61f35 !important; color: #fff !important; font-weight: 600; }
+html.tel-espace .ls-table .ls-rang > .ls-fin > .ls-danger { color: #a8162a !important; }
+/* les séjours de la structure : une photo moins haute, l'état en petite pastille, les actions en boutons */
+html.tel-espace .sj-carte { border-radius: 20px !important; overflow: hidden; }
+html.tel-espace .sj-carte .sj-photo { height: 150px !important; aspect-ratio: auto !important; }
+html.tel-espace .sj-carte .sj-etat { display: inline-flex !important; width: auto !important; align-self: flex-start; padding: 3px 10px !important; border-radius: 99px !important; }
+html.tel-espace .sj-carte .sj-actions { display: flex !important; flex-wrap: wrap; gap: 8px; }
+html.tel-espace .sj-carte .sj-actions > :is(button, a) { flex: 1 1 calc(50% - 4px); min-height: 42px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: #f4f2ee; text-decoration: none; }
