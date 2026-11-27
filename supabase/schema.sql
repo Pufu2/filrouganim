@@ -1272,3 +1272,6 @@ grant insert (journee_jour, journee, accueil_prenom, accueil_role, accueil_phras
 -- v55 (appliquée à la main) : admin_indexation.indexee_le (le jour où le relevé voit la page indexée pour la première fois ;
 -- pour les pages déjà indexées, rempli avec le dernier passage de Google) : le journal de l'onglet Indexation.
 -- v56 (appliquée par migration) : indexation_demandee(u), réservée à l'admin : note la demande d'indexation d'une page (« C'est demandé »).
+-- v57 (appliquée par migration) : politique « demande offerte : lire » sur demandes : une structure vérifiée, même gratuite,
+-- lit la demande ouverte avec ouvrir_demande_offerte (structures.demande_offerte), et seulement celle-là (« demandes reçues :
+-- lire » reste réservée aux abonnées). Sans elle, la demande offerte disparaissait de l'espace d'une structure gratuite.
