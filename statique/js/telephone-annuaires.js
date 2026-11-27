@@ -290,6 +290,90 @@
     ofOu.addEventListener("change", function () { setTimeout(dessiner, 50); });
   })();
 
+  /* ---------- Structures (l'annuaire) et Parents : les mêmes rangées que les animateurs (petites cartes de couleur,
+     une rangée qui défile par type, « Tout voir » en grille). Les cartes d'origine restent dans la page, cachées. ---------- */
+  var TEINTES2 = ["rose", "lavande", "ciel", "peche", "menthe", "sable"];
+  function rangees(vue, groupes, apres) {
+    vue.textContent = ""; var k = 0, n = 0;
+    groupes.forEach(function (g) {
+      if (!g.items.length) return;
+      var sec = el("section", "tel-anim-groupe"), ht = el("div", "tel-anim-gt");
+      var h3 = el("h3", null, g.titre); h3.appendChild(el("small", null, String(g.items.length))); ht.appendChild(h3);
+      if (g.items.length > 2) { var tv = el("button", "tel-tout", "Tout voir"); tv.type = "button"; tv.addEventListener("click", function () { var o = sec.classList.toggle("tel-grille"); tv.textContent = o ? "Moins" : "Tout voir"; }); ht.appendChild(tv); }
+      sec.appendChild(ht);
+      var rail = el("div", "tel-rail");
+      g.items.forEach(function (x) {
+        n++;
+        var c = el("a", "tel-pc tel-t-" + TEINTES2[k++ % TEINTES2.length]); c.href = x.href;
+        var hd = el("div", "tel-pc-h" + (x.photo ? " tel-pc-photo" : ""));
+        if (x.photo) hd.style.backgroundImage = "url(" + JSON.stringify(x.photo) + ")";
+        if (x.tag) hd.appendChild(el("span", "tel-pc-tag", x.tag));
+        c.appendChild(hd);
+        c.appendChild(el("span", "tel-pc-av" + (x.ini.length > 1 ? " tel-pc-av2" : ""), x.ini));
+        var co = el("div", "tel-pc-c"); co.appendChild(el("b", null, x.nom)); co.appendChild(el("span", "tel-pc-l", x.lieu));
+        var ch = el("div", "tel-pc-chips"); (x.chips || []).forEach(function (d0, i) { if (d0) ch.appendChild(el("span", "tel-chip" + (i === 0 ? " tel-chip-r" : ""), d0)); }); co.appendChild(ch);
+        var bt = el("div", "tel-pc-bt"); bt.appendChild(el("span", "tel-pc-voir", x.voir || "Voir →")); if (x.droite) bt.appendChild(el("span", "tel-pc-cad", x.droite));
+        co.appendChild(bt); c.appendChild(co); rail.appendChild(c);
+      });
+      sec.appendChild(rail); vue.appendChild(sec);
+    });
+    if (apres) apres(n);
+  }
+  if (anForm) (function () {
+    racine.classList.add("tel-anim", "tel-annuaire");
+    var ul = document.getElementById("annuaire"); if (!ul) return;
+    var vue = el("div", "tel-anims"); ul.parentNode.insertBefore(vue, ul);
+    var TYPES = [["extrascolaire", "Accueils de loisirs"], ["periscolaire", "Périscolaire"], ["sejours", "Séjours et colos"]];
+    function dessinerSt() {
+      var lis = Array.prototype.filter.call(ul.querySelectorAll("li.ac"), function (li) { return !li.hidden; });
+      var groupes = TYPES.map(function (t) { return { titre: t[1], items: [] }; }), autres = { titre: "Autres structures", items: [] };
+      lis.forEach(function (li) {
+        var a = li.querySelector("a"), types = (li.dataset.type || "").split(" ");
+        var i = TYPES.map(function (t) { return t[0]; }).filter(function (t) { return types.indexOf(t) >= 0; })[0];
+        var offres = (li.querySelector(".ac-pied span") || {}).textContent || "";
+        var x = { href: a ? a.href : "#", ini: ((li.querySelector(".ac-initiales") || {}).textContent || "?").trim(), nom: ((li.querySelector(".ac-nom") || {}).textContent || "").trim(),
+          lieu: ((li.querySelector(".ac-lieu") || {}).textContent || "").trim(), tag: li.classList.contains("ac-ex") ? "Exemple" : li.classList.contains("ac-partenaire") ? "Partenaire" : "Vérifiée",
+          chips: [((li.querySelector(".ac-type") || {}).textContent || "").trim().split(" · ")[0], (/^\d/.test(offres.trim()) ? offres.trim().replace(/ en ce moment/, "") : "")], voir: "Voir la fiche →" };
+        (i ? groupes[TYPES.map(function (t) { return t[0]; }).indexOf(i)] : autres).items.push(x);
+      });
+      rangees(vue, groupes.concat([autres]));
+    }
+    dessinerSt();
+    new MutationObserver(function () { clearTimeout(dessinerSt._t); dessinerSt._t = setTimeout(dessinerSt, 80); }).observe(ul, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+  })();
+  if (sjForm) (function () {
+    racine.classList.add("tel-anim", "tel-parents");
+    var res = document.getElementById("sjc-resultats"); if (!res) return;
+    var D2 = json("sjc-donnees") || {}, parL = {}, photos = (document.getElementById("sjc") || { dataset: {} }).dataset.photos || "";
+    (D2.cartes || []).concat(D2.exemple ? [D2.exemple] : []).forEach(function (c) { parL[c.u] = c; });
+    var vue = el("div", "tel-anims"); res.parentNode.insertBefore(vue, res);
+    var GR = [["Séjours et colos", ["sejour", "mini_sejour"]], ["Accueils de loisirs", ["accueil_vacances", "accueil_mercredis"]], ["Périscolaire", ["accueil_periscolaire"]]];
+    function dessinerSj() {
+      var groupes = GR.map(function (g) { return { titre: g[0], items: [] }; });
+      Array.prototype.forEach.call(res.querySelectorAll("a.sjc-carte"), function (a) {
+        var c = parL[a.getAttribute("href")]; if (!c) return;
+        var i = GR.map(function (g) { return g[1].indexOf(c.ty) >= 0; }).indexOf(true); if (i < 0) i = 0;
+        var mots = (c.s || "").replace("L'", "").split(" ").filter(function (w) { return w.length > 2; });
+        groupes[i].items.push({ href: a.href, photo: c.ph ? photos + c.ph : null, ini: ((mots[0] || "?")[0] + ((mots[1] || "")[0] || "")).toUpperCase(),
+          nom: c.t, lieu: (c.p === "FR" ? c.v + (c.dep ? " · " + c.dep : "") : c.p), tag: c.ex ? "Exemple" : (c.px != null ? "dès " + Math.round(c.px) + " €" : ""),
+          chips: [c.a[0] + "-" + c.a[1] + " ans", c.pc ? "Pass Colo" : ""], voir: "Voir →", droite: c.s });
+      });
+      rangees(vue, groupes);
+    }
+    dessinerSj();
+    new MutationObserver(function () { clearTimeout(dessinerSj._t); dessinerSj._t = setTimeout(dessinerSj, 80); }).observe(res, { childList: true, subtree: true });
+    Array.prototype.forEach.call(document.querySelectorAll("main .le-faq details[open]"), function (x) { x.open = false; });
+    // « Vous ne trouvez pas ? » : la même petite carte de verre que « Créer mon profil » chez les animateurs
+    var bande = document.querySelector("main .en3-bande");
+    if (bande) {
+      var cta = el("a", "tel-cta"); cta.href = ((bande.querySelector("a") || {}).href) || "/enfants/demande/";
+      cta.innerHTML = '<span class="tel-cta-ic">' + svg('<path d="M4 12l16-8-6 16-2-6z"/>') + '</span>';
+      var t = el("span", "tel-cta-t"); t.appendChild(el("b", null, "Vous ne trouvez pas ?")); t.appendChild(el("span", null, "Les structures proches vous répondent.")); cta.appendChild(t);
+      cta.appendChild(el("span", "tel-cta-b", "Décrire mon besoin"));
+      var tt = el("div", "tel-anim-tete"); tt.appendChild(cta); vue.parentNode.insertBefore(tt, vue);
+    }
+  })();
+
   /* ---------- la recherche plein écran (même fenêtre et mêmes effets que « Se former ») ---------- */
   var populaires = json("villes-populaires") || [], lieux = json("tel-deps") || [];
   var etat = {};

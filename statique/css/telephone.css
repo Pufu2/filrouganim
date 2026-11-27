@@ -812,3 +812,57 @@ html.tel-recruter main .fs-haut-in { padding-top: 4px !important; }
 html.tel-recruter main #tarifs .rc2-prix { flex-direction: column; margin: 0; padding: 0; overflow: visible; }
 html.tel-recruter main #tarifs .rc2-prix > div { width: auto; }
 html.tel-recruter main #tarifs .rc2-prix > div:nth-child(2) b { color: #fff !important; }
+
+/* =========================================================================================
+   STRUCTURES (annuaire) ET PARENTS : les rangées des animateurs ; les listes d'origine cachées ; pages allégées
+   ========================================================================================= */
+a.tel-pc { color: inherit; text-decoration: none; }
+.tel-pc-photo { background-size: cover; background-position: center; }
+.tel-pc-photo::before, .tel-pc-photo::after { display: none; }
+.tel-pc-av2 { font-size: 15px !important; letter-spacing: -.02em; }
+html.tel-annuaire main #annuaire, html.tel-annuaire main .an2-vide:not([hidden]) ~ .tel-anims { display: none !important; }
+html.tel-annuaire main .an2-portes { display: none !important; }
+html.tel-parents main #sjc-resultats, html.tel-parents main .sjc-voisines, html.tel-parents main .en3-bande { display: none !important; }
+html.tel-parents main .tel-anim-tete { padding: 0 !important; margin-bottom: 4px; }
+html.tel-parents main .sjc > .cadre { width: 100%; padding: 0 16px; }
+.tel-pc .tel-pc-c b { white-space: normal !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.4em; font-size: 15px !important; }
+.tel-pc .tel-pc-cad { max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Parents : le bas de page allégé (étapes en carrousel, textes d'introduction cachés, guides limités, questions repliées) */
+html.tel-parents main .en2-s .fs-tt p:not(.fs-sur) { display: none; }
+html.tel-parents main #types { display: none !important; }
+html.tel-parents main .le-suite .le-cartes > li:nth-child(n+5) { display: none; }
+html.tel-parents main .en2-aides > .fs-carte > span { display: none; }
+html.tel-parents main .en2-cta span { display: none; }
+html.tel-parents main .fs-s { margin-top: 30px !important; }
+/* Structures : le bouton vers l'annuaire (icône claire) */
+.tel-cta-ic-clair { background: #fbf4ee !important; }
+.tel-cta-ic-clair img { width: 26px; height: 26px; }
+html.tel-recruter .tel-vers-annuaire { margin-top: 14px; }
+
+/* =========================================================================================
+   LA BARRE D'ONGLETS DU BAS, PLUS FLUIDE : l'onglet actif a son icône pleine et un petit rebond (comme Airbnb :
+   scale .8 → 1, couleur en 300ms), le doigt fait enfoncer l'onglet, la pastille sous l'onglet actif glisse en place
+   ========================================================================================= */
+.tel-onglets > a { position: relative; transition: color .3s cubic-bezier(.2, 0, 0, 1); -webkit-tap-highlight-color: transparent; }
+.tel-onglets > a:active { transform: scale(.92); transition: transform .1s; }
+.tel-onglets svg, .tel-onglet-logo img { transition: transform .3s cubic-bezier(.2, 0, 0, 1), fill .3s, stroke-width .3s, filter .3s; }
+.tel-onglets [aria-current] svg { fill: rgba(214, 31, 53, .14); stroke-width: 2.1; }
+.tel-onglets [aria-current]::before { content: ""; position: absolute; top: 0; left: 50%; width: 24px; height: 3px; margin-left: -12px; border-radius: 0 0 3px 3px; background: var(--fil);
+  animation: tel-trait .35s cubic-bezier(.2, 0, 0, 1); }
+@keyframes tel-trait { from { transform: scaleX(0); opacity: 0; } }
+.tel-onglets .tel-pop svg, .tel-onglets .tel-pop img, .tel-onglets [aria-current] svg { animation: tel-rebond .55s cubic-bezier(.2, 0, 0, 1); }
+@keyframes tel-rebond { from { transform: scale(.8); } 60% { transform: scale(1.08); } }
+.tel-onglet-logo img { height: 28px !important; }
+.tel-onglets > a > span { transition: font-weight .3s; }
+/* Parents : le haut caché ne laisse plus de vide ; l'alerte en carte claire ; les aides sans hauteur imposée ; titres en Fraunces */
+html.tel-parents main .en3 .fs-haut-in, html.tel-parents main .en3 > .cadre:empty { display: none !important; }
+html.tel-parents main .en3 { min-height: 0 !important; padding: 0 !important; margin: 0 !important; }
+html.tel-parents main .sjc-alerte { margin-top: 22px !important; padding: 18px !important; border-radius: 22px !important; background: rgba(255, 255, 255, .74) !important; color: var(--nuit) !important;
+  border: 1px solid rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 12px 28px -20px rgba(23, 25, 29, .35) !important; }
+html.tel-parents main .sjc-alerte h2 { color: var(--nuit) !important; font: 600 1.15rem/1.25 "Fraunces", Georgia, serif !important; }
+html.tel-parents main .sjc-alerte p { color: #6c7077 !important; font-size: .88rem; }
+html.tel-parents main .en2-aides > * { min-height: 0 !important; }
+html.tel-anim main :is(.fs-tt h2, .rc2-fin h2) { font-family: "Fraunces", Georgia, serif !important; font-weight: 600 !important; letter-spacing: -.015em !important; }
+/* Structures : une seule étiquette de type sur la carte */
+html.tel-annuaire .tel-pc-chips .tel-chip-r { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+html.tel-parents main .en2-aides { align-items: start !important; } html.tel-parents main .en2-aides .en2-calc > span { display: none; }

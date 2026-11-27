@@ -59,6 +59,35 @@
       var prix = document.querySelector("main #tarifs .rc2-prix"); if (prix) prix.parentNode.insertBefore(prix, d);
     }
     Array.prototype.forEach.call(document.querySelectorAll("main #questions details[open]"), function (x) { x.open = false; });
+    // l'annuaire des structures : une carte bien visible, juste sous les boutons du haut
+    var act = document.querySelector("main .lc2-actions");
+    if (act && !document.querySelector(".tel-vers-annuaire")) {
+      var a = document.createElement("a"); a.className = "tel-cta tel-vers-annuaire"; a.href = "/recruter/structures/";
+      var ic = document.createElement("span"); ic.className = "tel-cta-ic tel-cta-ic-clair"; ic.appendChild(im("structure")); a.appendChild(ic);
+      var t = document.createElement("span"); t.className = "tel-cta-t";
+      var b = document.createElement("b"); b.textContent = "L'annuaire des structures"; t.appendChild(b);
+      t.appendChild(document.createTextNode("Leur page, leurs offres, leurs séjours.")); a.appendChild(t);
+      var go = document.createElement("span"); go.className = "tel-cta-b"; go.textContent = "Voir"; a.appendChild(go);
+      act.parentNode.insertBefore(a, act.nextSibling);
+    }
+  })();
+
+  // la barre d'onglets du bas, plus fluide : l'onglet touché s'allume tout de suite (avant le chargement de la page, avec le
+  // petit rebond de l'icône), et la page visée se précharge dès que le doigt se pose
+  (function () {
+    var ong = document.querySelector(".tel-onglets"); if (!ong) return;
+    var vus = {};
+    function precharger(a) {
+      if (!a || vus[a.href] || a.href === location.href) return; vus[a.href] = 1;
+      var l = document.createElement("link"); l.rel = "prefetch"; l.href = a.href; document.head.appendChild(l);
+    }
+    ong.addEventListener("touchstart", function (e) { precharger(e.target.closest("a")); }, { passive: true });
+    ong.addEventListener("mouseover", function (e) { precharger(e.target.closest("a")); });
+    ong.addEventListener("click", function (e) {
+      var a = e.target.closest("a"); if (!a) return;
+      Array.prototype.forEach.call(ong.querySelectorAll("a"), function (x) { x.removeAttribute("aria-current"); x.classList.remove("tel-pop"); });
+      a.setAttribute("aria-current", "page"); void a.offsetWidth; a.classList.add("tel-pop");
+    });
   })();
 
   // le style « lumière » (telephone.css) : des lumières floues derrière le haut de chaque page
