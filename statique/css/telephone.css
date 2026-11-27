@@ -649,11 +649,19 @@ html.tel-ab:not(.tel-sans-carte) .tel-pilule { background: rgba(255, 255, 255, .
   box-shadow: 0 2px 6px rgba(0, 0, 0, .08), 0 10px 26px -10px rgba(23, 25, 29, .3); }
 html.tel-ab:not(.tel-sans-carte) .tel-rond { border-radius: 50%; background: rgba(255, 255, 255, .82) !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(0, 0, 0, .12); }
 /* la feuille : crème, avec une lumière douce qui monte du bas des sessions */
-html.tel-ab:not(.tel-sans-carte) main#contenu { background: #fbfaf7 !important; overflow: hidden; }
-html.tel-ab:not(.tel-sans-carte) main#contenu::after { content: ""; position: absolute; z-index: -1; left: -40%; right: -40%; bottom: 0; height: 1600px; pointer-events: none;
-  background: radial-gradient(40% 30% at 15% 70%, rgba(214, 31, 53, .10), transparent 70%), radial-gradient(40% 28% at 85% 50%, rgba(238, 138, 47, .12), transparent 70%),
-    radial-gradient(38% 25% at 40% 92%, rgba(240, 120, 160, .10), transparent 70%); }
-html.tel-ab:not(.tel-sans-carte) main#contenu { isolation: isolate; }
+html.tel-ab:not(.tel-sans-carte) main#contenu { background: #f6f4ef !important; }
+/* sous la liste des sessions : les mêmes halos lumineux flous qu'en haut des autres pages (rouge, orange, rose), un ou deux par section */
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une) { position: relative; isolation: isolate; }
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before,
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after {
+  content: ""; position: absolute; z-index: -1; width: 320px; height: 320px; border-radius: 50%; filter: blur(30px); pointer-events: none; }
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before { top: -40px; left: -110px; background: radial-gradient(circle, rgba(214, 31, 53, .30), transparent 65%); }
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after { bottom: -60px; right: -120px; background: radial-gradient(circle, rgba(238, 138, 47, .32), transparent 65%); }
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):nth-child(even):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::before { left: auto; right: -110px; background: radial-gradient(circle, rgba(240, 120, 160, .26), transparent 65%); }
+html.tel-ab:not(.tel-sans-carte) main > :is(section, div):nth-child(even):not(:has(.sessions)):not(.tel-ab-tete):not(.recherche-une)::after { right: auto; left: -120px; }
+html.tel-ab:not(.tel-sans-carte) main#contenu { overflow: hidden; }
+html.tel-ab:not(.tel-sans-carte) main :is(.fs-sur, .note-main) { color: var(--fil) !important; }
+html.tel-ab:not(.tel-sans-carte) main :is(.bande h2, .fs-tt h2) em { color: var(--fil); font-style: italic; }
 html.tel-ab:not(.tel-sans-carte) main :is(.bande h2, .fs-tt h2, .fs-s h2) { font-family: "Fraunces", Georgia, serif !important; font-weight: 600 !important; letter-spacing: -.015em !important; }
 html.tel-ab:not(.tel-sans-carte) main :is(.bref, .faq, .le-faq, .explorer, .cadre.explorer, .fs-carte, .trois-pas li, .encart-jeuphorie, .liste-suite) {
   background-color: rgba(255, 255, 255, .72) !important; border-color: rgba(255, 255, 255, .9) !important; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
