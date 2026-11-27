@@ -63,7 +63,7 @@ html.tel-cherche body { overflow: hidden; }
 
 /* ---------- les pages de recherche (accueil, sessions, offres, structures, parents) : la barre de recherche suffit,
    le grand haut sombre est retiré de l'écran (son titre reste lu par les lecteurs d'écran et par Google) ---------- */
-body:has(main :is(.recherche-une, .tp-recherche, .en3-cherche, .hb-cherche, .ac-hero-d, .rc2)) main :is(section.tete, .fs-haut),
+body:has(main :is(.recherche-une, .tp-recherche, .en3-cherche, .hb-cherche, .ac-hero-d)) main :is(section.tete, .fs-haut),
 html.tel-a-recherche main :is(section.tete, .fs-haut) {
   position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; clip-path: inset(50%) !important;
   white-space: nowrap !important; padding: 0 !important; margin: 0 !important; border: 0 !important; }
@@ -748,3 +748,67 @@ html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 22px) !impo
 html.tel-sans-carte main#contenu, html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 40px) !important; }
 html:not(.tel-ab):not(.tel-diplome) main#contenu { margin-top: 14px; }
 html.tel-anim .tel-anim-tete { padding-bottom: 14px !important; }
+
+/* =========================================================================================
+   PARTOUT : plus de rangée de catégories sous la barre, plus de barre de sections, plus de bouton de connexion en haut,
+   plus de fil d'Ariane (la barre d'onglets du bas suffit pour se repérer)
+   ========================================================================================= */
+.tel-cats, .tel-compte, main .fs-sections, main .le-lettres:not(.le-az) { display: none !important; }
+main :is(.fil-ariane, .fs-ariane) { display: none !important; }
+
+/* =========================================================================================
+   STRUCTURES (/recruter/) : plus légère à lire — les mêmes textes, rangés en tuiles et en cartes (telephone.js : tel-recruter)
+   ========================================================================================= */
+html.tel-recruter main .ill-haut, html.tel-recruter main .fs-puces { display: none !important; }
+html.tel-recruter main .fs-haut-in { padding-bottom: 10px !important; }
+html.tel-recruter main .fs-haut h1 { font-size: 1.9rem !important; }
+html.tel-recruter main .lc2-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0 0; }
+html.tel-recruter main .lc2-actions .fs-btn { width: 100%; height: 50px; border-radius: 14px; }
+html.tel-recruter main .lc2-actions .lc2-btn-clair { height: auto; padding: 4px; background: none !important; border: 0 !important; color: #a8162a !important; font-weight: 600; }
+/* l'essentiel : quatre tuiles à icônes, deux par ligne, sans les phrases d'explication */
+html.tel-recruter main .rc2-ruban { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px; margin: 6px 0 0 !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; overflow: visible; }
+html.tel-recruter main .rc2-ruban > li { display: flex; flex-direction: column; gap: 3px; padding: 12px !important; border: 0 !important; border-radius: 16px; background: rgba(255, 255, 255, .74);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 10px 24px -18px rgba(23, 25, 29, .35); }
+html.tel-recruter main .rc2-ruban img { width: 26px; height: 26px; margin-bottom: 4px; }
+html.tel-recruter main .rc2-ruban small { font-size: 10.5px !important; }
+html.tel-recruter main .rc2-ruban b { font: 600 17px/1.15 "Fraunces", Georgia, serif !important; }
+html.tel-recruter main .rc2-ruban em { display: none; }
+/* les deux usages : une icône, le titre, trois points courts (sans les phrases), le bouton */
+html.tel-recruter main #usages .fs-portes { display: grid; gap: 12px; }
+html.tel-recruter main #usages .fs-porte { padding: 18px 16px !important; }
+html.tel-recruter main #usages .fs-porte-t { display: grid; grid-template-columns: 34px 1fr; column-gap: 10px; align-items: center; margin-bottom: 8px; }
+html.tel-recruter main #usages .fs-porte-t img { grid-row: 1 / span 2; width: 34px; height: 34px; }
+html.tel-recruter main #usages .fs-porte-t h3 { margin: 0; font: 600 1.1rem/1.2 "Fraunces", Georgia, serif; }
+html.tel-recruter main #usages .fs-porte-t small { font-size: 12px; color: #6c7077; }
+html.tel-recruter main #usages .fs-rang { padding: 7px 0 !important; border: 0 !important; }
+html.tel-recruter main #usages .fs-rang b { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: .93rem; }
+html.tel-recruter main #usages .fs-rang b::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; background: #e6f4ea url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f6b45' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 12px no-repeat; }
+html.tel-recruter main #usages .fs-rang small { display: none; }
+html.tel-recruter main #usages .fs-btn { margin-top: 10px; height: 46px; border-radius: 12px; }
+/* les tarifs : trois cartes de prix qui défilent ; le tableau détaillé replié dessous */
+html.tel-recruter main #tarifs .fs-tt p:not(.fs-sur) { display: none; }
+html.tel-recruter main #tarifs .rc2-formules { padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.tel-recruter main #tarifs .rc2-prix { display: flex !important; gap: 10px; margin: 0 -16px; padding: 2px 16px 8px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border: 0 !important; }
+html.tel-recruter main #tarifs .rc2-prix::-webkit-scrollbar { display: none; }
+html.tel-recruter main #tarifs .rc2-prix > div { flex: none; width: 74%; scroll-snap-align: start; padding: 16px !important; border: 0 !important; border-radius: 18px; background: rgba(255, 255, 255, .78);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 12px 26px -18px rgba(23, 25, 29, .35); }
+html.tel-recruter main #tarifs .rc2-prix > div:nth-child(2) { background: linear-gradient(150deg, #24272d, #121418); color: #fff; }
+html.tel-recruter main #tarifs .rc2-prix > div:nth-child(2) :is(small, span) { color: #c4c7ce !important; }
+html.tel-recruter main #tarifs .rc2-prix b { display: block; margin: 4px 0; font: 600 30px/1 "Fraunces", Georgia, serif !important; }
+html.tel-recruter main #tarifs .rc2-prix span { font-size: 12.5px; line-height: 1.4; }
+.tel-detail { margin-top: 10px; border-radius: 16px; background: rgba(255, 255, 255, .6); }
+.tel-detail > summary { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding: 0 16px; cursor: pointer; list-style: none; font-weight: 600; font-size: .92rem; }
+.tel-detail > summary::-webkit-details-marker { display: none; }
+.tel-detail > summary::after { content: "+"; font-weight: 400; font-size: 1.3rem; color: #9a9da4; transition: transform .2s; }
+.tel-detail[open] > summary::after { transform: rotate(45deg); }
+.tel-detail .le-table { margin: 0 8px 10px; }
+.tel-detail table { font-size: 12.5px; }
+/* l'annuaire, les étapes, les guides (4 visibles), les questions : plus serrés */
+html.tel-recruter main .fs-s { margin-top: 30px !important; }
+html.tel-recruter main #guides .le-cartes > li:nth-child(n+5) { display: none; }
+html.tel-recruter main .le-faq summary { font-size: .93rem; }
+/* Structures : le haut (titre, phrase, bouton) reste visible ; les trois prix l'un sous l'autre */
+html.tel-recruter main .fs-haut-in { padding-top: 4px !important; }
+html.tel-recruter main #tarifs .rc2-prix { flex-direction: column; margin: 0; padding: 0; overflow: visible; }
+html.tel-recruter main #tarifs .rc2-prix > div { width: auto; }
+html.tel-recruter main #tarifs .rc2-prix > div:nth-child(2) b { color: #fff !important; }

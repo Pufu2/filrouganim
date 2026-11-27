@@ -41,6 +41,26 @@
   var ab = !!document.querySelector("main form.recherche.rv, main #filtres-offres, main #sjc-filtres, main .an2-recherche form");
   if (ab && tel.matches) racine.classList.add("tel-ab");
 
+  // la page Structures (/recruter/) : plus légère à lire (telephone.css, tel-recruter) — mêmes textes, rangés autrement :
+  // l'essentiel en tuiles à icônes, les tarifs en trois cartes (le tableau détaillé replié), les questions toutes repliées
+  if (tel.matches && /^\/recruter\/$/.test(location.pathname)) (function () {
+    racine.classList.add("tel-recruter");
+    var dossier = (document.querySelector(".tel-barre") || { dataset: {} }).dataset.icones || "/illus/icones/";
+    function im(n) { var i = document.createElement("img"); i.src = dossier + n + ".png"; i.alt = ""; i.width = 28; i.height = 28; return i; }
+    var IC = ["tout", "structure", "coin", "budget"];
+    Array.prototype.forEach.call(document.querySelectorAll("main .rc2-ruban > li"), function (li, k) { li.insertBefore(im(IC[k] === "coin" ? "benevole" : IC[k]), li.firstChild); });
+    var P = ["animateur", "sejours"];
+    Array.prototype.forEach.call(document.querySelectorAll("main #usages .fs-porte"), function (c, k) { var t = c.querySelector(".fs-porte-t"); if (t) t.insertBefore(im(P[k] || "structure"), t.firstChild); });
+    var tab = document.querySelector("main #tarifs .le-table");
+    if (tab && !tab.closest("details")) {
+      var d = document.createElement("details"); d.className = "tel-detail";
+      var sm = document.createElement("summary"); sm.textContent = "Ce que comprend chaque formule"; d.appendChild(sm);
+      tab.parentNode.insertBefore(d, tab); d.appendChild(tab);
+      var prix = document.querySelector("main #tarifs .rc2-prix"); if (prix) prix.parentNode.insertBefore(prix, d);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("main #questions details[open]"), function (x) { x.open = false; });
+  })();
+
   // le style « lumière » (telephone.css) : des lumières floues derrière le haut de chaque page
   if (tel.matches && !document.querySelector(".tel-lumieres")) {
     var lum = document.createElement("div"); lum.className = "tel-lumieres"; lum.setAttribute("aria-hidden", "true");
