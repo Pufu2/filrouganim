@@ -736,5 +736,11 @@ html.tel-ab main .liste-suite a { color: var(--fil-fonce, #a8162a); font-weight:
 /* les espaces : de l'air sous la barre (pages sans carte) et entre les rangées d'animateurs */
 html.tel-sans-carte main#contenu { margin-top: calc(var(--ab-haut, 82px) + 10px) !important; }
 html.tel-anim .tel-anim-tete { padding-top: 6px !important; }
-.tel-anim-groupe { margin-top: 28px !important; }
-.tel-anim-groupe:first-child { margin-top: 24px !important; }
+/* Animateurs : de l'air sous la barre, des rangées serrées (cartes de même hauteur, titre proche de sa rangée) */
+html.tel-anim main#contenu { margin-top: calc(var(--ab-haut, 82px) + 22px) !important; }
+.tel-anim-groupe { margin-top: 18px !important; }
+.tel-anim-groupe:first-child { margin-top: 22px !important; }
+.tel-anim-gt { margin-bottom: 8px !important; }
+.tel-rail { align-items: flex-start !important; padding-bottom: 4px !important; }
+.tel-pc-chips { min-height: 0 !important; }
+.tel-pc-chips { flex-wrap: nowrap !important; overflow: hidden; } .tel-pc-chips .tel-chip { flex: none; white-space: nowrap; } .tel-pc-c b { white-space: nowrap; }
