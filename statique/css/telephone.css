@@ -866,3 +866,63 @@ html.tel-anim main :is(.fs-tt h2, .rc2-fin h2) { font-family: "Fraunces", Georgi
 /* Structures : une seule étiquette de type sur la carte */
 html.tel-annuaire .tel-pc-chips .tel-chip-r { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 html.tel-parents main .en2-aides { align-items: start !important; } html.tel-parents main .en2-aides .en2-calc > span { display: none; }
+
+/* =========================================================================================
+   MON ESPACE SUR TÉLÉPHONE (telephone-espace.js : tel-espace) — le style du site : fond crème et halos, titres en
+   Fraunces, cartes en verre, icônes 3D ; le tableau de bord devient l'accueil de l'espace : « Bonjour », puis toutes les
+   fonctions (de l'espace et du site) en tuiles rangées par usage. Gros boutons, une action principale par écran.
+   ========================================================================================= */
+html.tel-espace body.en-app { background: #f6f4ef !important; }
+html.tel-espace body.en-app .tel-lumieres { display: block !important; position: fixed; z-index: 0; }
+html.tel-espace body.en-app #espace-compte { position: relative; z-index: 1; padding-top: calc(14px + env(safe-area-inset-top)) !important; }
+/* l'en-tête de chaque rubrique : sans cadre, un grand titre en Fraunces, une ligne, les boutons */
+html.tel-espace .co-entete { padding: 6px 2px 4px !important; margin: 0 0 14px !important; background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.tel-espace .co-entete .co-e-sur { font-size: 11px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--fil) !important; }
+html.tel-espace .co-entete .co-e-sur svg { display: none; }
+html.tel-espace .co-entete h2 { font: 600 1.75rem/1.12 "Fraunces", Georgia, serif !important; letter-spacing: -.02em !important; color: var(--nuit) !important; }
+html.tel-espace .co-entete .co-e-p { font-size: .92rem !important; line-height: 1.45; color: #5d6168 !important; }
+html.tel-espace .co-e-resume { display: none !important; }
+html.tel-espace.tel-esp-tableau .co-entete { display: none !important; }
+/* les cartes : en verre */
+html.tel-espace :is(.carte-compte, .tb-carte, .tb2-carte, .fm-bloc, .vr, .vr-carte, .tb-tuile, .co-vide, .ligne-compte) {
+  background: rgba(255, 255, 255, .74) !important; border: 1px solid rgba(255, 255, 255, .9) !important; border-radius: 20px !important;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 12px 28px -20px rgba(23, 25, 29, .35) !important; }
+html.tel-espace :is(.carte-compte, .tb-carte, .tb2-carte) :is(h2, h3).tb-titre, html.tel-espace :is(.tb2-t h2, .carte-compte > h2) { font: 600 1.15rem/1.25 "Fraunces", Georgia, serif !important; }
+/* les boutons : à la taille du doigt, arrondis, l'action principale en rouge */
+html.tel-espace #espace-compte :is(.bouton-r, .bouton-blanc, .bouton-contour, .bouton-n) { min-height: 48px; border-radius: 14px !important; font-weight: 600; }
+html.tel-espace #espace-compte .bouton-blanc { background: rgba(23, 25, 29, .06) !important; border-color: transparent !important; color: var(--nuit) !important; }
+html.tel-espace #espace-compte :is(input:not([type=checkbox]):not([type=radio]), select, textarea) { min-height: 48px; font-size: 16px !important; border-radius: 12px !important; }
+/* l'accueil de l'espace */
+.tel-esp-accueil { margin: 0 0 18px; }
+.tel-esp-bonjour { padding: 8px 2px 6px; }
+.tel-esp-bonjour h2 { margin: 0; font: 600 2rem/1.08 "Fraunces", Georgia, serif; letter-spacing: -.02em; color: var(--nuit); }
+.tel-esp-bonjour h2 em { font-style: italic; color: var(--fil); }
+.tel-esp-bonjour p { margin: 4px 0 0; color: #6c7077; font-size: .9rem; text-transform: capitalize; }
+.tel-esp-groupe { margin-top: 20px; }
+.tel-esp-groupe h3 { margin: 0 2px 10px; font: 600 11px/1 var(--texte); letter-spacing: .14em; text-transform: uppercase; color: var(--fil); }
+.tel-esp-tuiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tel-esp-tuile { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-height: 108px; padding: 12px 10px 10px; border: 1px solid rgba(255, 255, 255, .9); border-radius: 18px;
+  background: rgba(255, 255, 255, .74); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 10px 24px -18px rgba(23, 25, 29, .35);
+  color: var(--nuit); text-align: left; text-decoration: none; font: inherit; cursor: pointer; transition: transform .12s; -webkit-tap-highlight-color: transparent; }
+.tel-esp-tuile:active { transform: scale(.96); }
+.tel-esp-ic { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 6px; border-radius: 13px; background: #fbf4ee; }
+.tel-esp-ic img { width: 30px; height: 30px; }
+.tel-esp-tuile b { font-size: 13px; font-weight: 600; line-height: 1.2; }
+.tel-esp-tuile small { color: #6c7077; font-size: 11px; line-height: 1.25; }
+.tel-esp-pastille { position: absolute; top: 8px; right: 8px; min-width: 22px; height: 22px; padding: 0 6px; display: grid; place-items: center; border-radius: 99px; background: var(--fil); color: #fff; font: 600 11px/1 var(--texte); font-style: normal; }
+.tel-esp-ferme::after { content: ""; position: absolute; top: 10px; right: 10px; width: 16px; height: 16px; opacity: .45;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317191d' stroke-width='2' stroke-linecap='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center / contain no-repeat; }
+/* la barre du bas de l'espace : comme celle du site */
+html.tel-espace .app-dock:not([hidden]) { background: rgba(255, 255, 255, .97) !important; }
+html.tel-espace .app-dock-b[aria-current] svg { fill: rgba(214, 31, 53, .14); stroke-width: 2.1; }
+html.tel-espace .app-dock-b:active { transform: scale(.92); }
+/* l'en-tête des rubriques sans aucun cadre ; ses boutons l'un sous l'autre, pleine largeur */
+html.tel-espace .co-entete, html.tel-espace .co-entete > *, html.tel-espace .co-e-texte { background: none !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.tel-espace .co-e-actions { grid-template-columns: 1fr !important; margin-top: 12px; }
+html.tel-espace .co-e-actions > .co-e-guide { min-height: 0 !important; padding: 4px !important; background: none !important; border: 0 !important; color: #a8162a !important; font-weight: 600 !important; }
+/* les messages « rien ici » : l'illustration plus petite */
+html.tel-espace .aucune img, html.tel-espace .co-vide img, html.tel-espace [class*="vide"] img { max-width: 110px !important; height: auto !important; }
+html.tel-espace body.en-app .co-onglets .co-entete, html.tel-espace body.en-app .co-entete.co-entete-seul { background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+/* (la règle de da.css « body.en-app :is(…, #v-admin > .ad-bloc) » a la force d'un identifiant : on cible #espace-compte) */
+html.tel-espace #espace-compte .co-entete { background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.tel-espace #espace-compte :is(.carte-compte, .tb-carte) { background: rgba(255, 255, 255, .74) !important; border-color: rgba(255, 255, 255, .9) !important; }

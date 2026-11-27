@@ -215,6 +215,7 @@ try { if (!localStorage.getItem("fra-provenance")) {
 <script src="{{ statique('js/telephone-sessions.js') }}" defer></script>
 <script src="{{ statique('js/telephone-annuaires.js') }}" defer></script>
 <script src="{{ statique('js/telephone-diplomes.js') }}" defer></script>
+{% if page.url == '/compte/' %}<script src="{{ statique('js/telephone-espace.js') }}" defer></script>{% endif %}
 {% if site.supabase and site.supabase.url %}<script src="{{ statique('js/clics.js') }}" defer data-url="{{ site.supabase.url }}" data-cle="{{ site.supabase.cle }}"></script>{% endif %}
 <script>(function(){var e=document.querySelector(".entete"),r=document.documentElement;if(!e)return;var f=function(){e.classList.toggle("defile",window.scrollY>=e.offsetHeight);r.style.setProperty("--haut-entete",e.offsetHeight+"px")};f();window.addEventListener("scroll",f,{passive:true});window.addEventListener("resize",f)})();</script>
 </body>
