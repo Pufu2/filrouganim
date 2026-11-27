@@ -47,18 +47,15 @@
       ["Les familles", [
         { o: "sejours", ic: "sejours", t: "Séjours et accueils", s: "Publier, les dates" },
         { o: "familles", ic: "enfant", t: "Demandes des familles", s: "Les places demandées" },
-        { u: "/recruter/remplir-ses-sejours/", ic: "guide", t: "Remplir ses séjours", s: "Le guide" }
+        { u: "/recruter/remplir-ses-sejours/", ic: "guide", t: "Remplir ses séjours", s: "Le guide" },
+        { u: "/outils/taux-d-encadrement/", ic: "calcul", t: "Taux d'encadrement", s: "Combien d'animateurs" },
+        { u: "/recruter/declarer-son-accueil/", ic: "fiche", t: "Déclarer son accueil", s: "Le guide ACM" }
       ]],
       ["Ma structure", [
         { o: "page", ic: "maison", t: "Ma page et mes centres", s: "Ce que voient les candidats" },
         { o: "abonnement", ic: "carte-bancaire", t: "Abonnement et factures", s: "Formules, paiements" },
         { o: "outils", ic: "outils", t: "Boîte à outils", s: "Conseils, annonces" },
         { u: "/recruter/structures/", ic: "structure", t: "L'annuaire", s: "Les autres structures" }
-      ]],
-      ["Outils gratuits", [
-        { u: "/outils/taux-d-encadrement/", ic: "calcul", t: "Taux d'encadrement", s: "Combien d'animateurs" },
-        { u: "/outils/salaire-cee/", ic: "argent", t: "Vérifier un CEE", s: "Le minimum par jour" },
-        { u: "/recruter/declarer-son-accueil/", ic: "fiche", t: "Déclarer son accueil", s: "Le guide ACM" }
       ]]
     ],
     "v-parent": [
@@ -79,6 +76,38 @@
         { u: "/enfants/fiche-sanitaire-de-liaison/", ic: "fiche", t: "La fiche sanitaire", s: "Le guide" }
       ]]
     ],
+    "v-admin": [
+      ["Aujourd'hui", [
+        { o: "qg", ic: "courrier", t: "QG demandes", s: "Ce qui attend une réponse" },
+        { o: "afaire", ic: "fiche", t: "À vérifier et relancer", s: "Fiches, offres, relances" },
+        { o: "sante", ic: "reglages", t: "État de santé", s: "Ce qui doit marcher" }
+      ]],
+      ["Membres", [
+        { o: "comptes", ic: "profils", t: "Membres", s: "Tous les comptes" },
+        { o: "animateurs", ic: "animateur", t: "Animateurs", s: "Les profils" },
+        { o: "parents", ic: "enfant", t: "Parents", s: "Les comptes parents" },
+        { o: "structures", ic: "structure", t: "Pros", s: "Structures à vérifier" },
+        { o: "organismes", ic: "bafa", t: "Organismes", s: "Les formations" },
+        { o: "sejours", ic: "sejours", t: "Séjours", s: "Côté familles" }
+      ]],
+      ["Croissance", [
+        { o: "ventes", ic: "argent", t: "Ventes", s: "Abonnements, dépenses" },
+        { o: "prospection", ic: "envoi", t: "Prospection", s: "Les futurs clients" },
+        { o: "visibilite", ic: "chercher", t: "Visibilité", s: "Google" },
+        { o: "provenance", ic: "carte", t: "Provenance", s: "D'où viennent les visiteurs" },
+        { o: "indexation", ic: "lien", t: "Indexation", s: "Les pages dans Google" },
+        { o: "stats", ic: "stats", t: "Statistiques", s: "Le détail" },
+        { o: "reseaux", ic: "bulle", t: "Réseaux sociaux", s: "Les posts prêts" }
+      ]],
+      ["Contenu", [
+        { o: "offres", ic: "annonce", t: "Offres", s: "Toutes les offres" },
+        { o: "demandes", ic: "candidatures", t: "Toutes les demandes", s: "L'annuaire inversé" },
+        { o: "annuaires", ic: "accord", t: "Annuaires inversés", s: "Étape par étape" },
+        { o: "site", ic: "guide", t: "Contenus du site", s: "Articles et guides" },
+        { o: "actualites", ic: "idee", t: "Actualités", s: "Publier une nouvelle" },
+        { o: "contenus", ic: "outils", t: "Guides et conseils", s: "Pour les abonnés" }
+      ]]
+    ],
     "v-organisme": [
       ["Mon partenariat", [
         { o: "fiche", ic: "fiche", t: "Ma fiche", s: "Ce que voient les jeunes" },
@@ -93,6 +122,7 @@
     ]
   };
 
+  function accueilDe(v) { return v.id === "v-admin" ? "accueil" : "tableau"; }
   function vueVisible() { return document.querySelector(".compte-vue.co-onglets:not([hidden])"); }
   function nomCompte() { var b = document.querySelector(".co-moi-t b"); return b ? b.textContent.trim() : ""; }
 
@@ -100,14 +130,14 @@
     if (v.querySelector(".tel-esp-accueil")) return;
     var groupes = TUILES[v.id]; if (!groupes) return;
     var nav = v.querySelector(".co-nav");
-    var s = el("section", "tel-esp-accueil"); s.dataset.onglet = "tableau";
+    var s = el("section", "tel-esp-accueil"); s.dataset.onglet = accueilDe(v);
     // le bonjour : le prénom ou le nom du compte, et la date
     var t = el("div", "tel-esp-bonjour");
     var n = nomCompte(), prenom = v.id === "v-structure" || v.id === "v-organisme" ? n : n.split(" ")[0];
     var h = el("h2", null, "Bonjour"); if (prenom && !/^Mon |^Ma /.test(prenom)) { h.appendChild(document.createTextNode(" ")); h.appendChild(el("em", null, prenom)); }
     t.appendChild(h);
     t.appendChild(el("p", null, new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })));
-    s.appendChild(t);
+    if (v.id !== "v-admin") s.appendChild(t);  // l'administration a déjà son « Bonjour » (le point du jour)
     groupes.forEach(function (g) {
       var bloc = el("div", "tel-esp-groupe");
       bloc.appendChild(el("h3", null, g[0]));
@@ -134,10 +164,11 @@
       bloc.appendChild(grille); s.appendChild(bloc);
     });
     // juste après l'en-tête de la rubrique (ou en tête de la vue)
-    var apres = v.querySelector(".co-entete");
+    var pageAdmin = v.id === "v-admin" && v.querySelector('[data-onglet="accueil"]');
+    var apres = pageAdmin ? pageAdmin.firstElementChild : v.querySelector(".co-entete");
     if (apres) apres.parentNode.insertBefore(s, apres.nextSibling); else v.insertBefore(s, v.firstChild);
-    var actuel = nav && nav.querySelector("[aria-current]");
-    s.classList.toggle("hors-onglet", !actuel || actuel.dataset.ongletVers !== "tableau");
+    var actuel = nav && nav.querySelector("[data-onglet-vers][aria-current]");
+    s.classList.toggle("hors-onglet", !actuel || actuel.dataset.ongletVers !== accueilDe(v));
   }
   // les pastilles (nombres de nouveautés) arrivent après le chargement : on les recopie sur les tuiles
   function majPastilles(v) {
@@ -169,14 +200,47 @@
       });
     });
   }
+  // l'administration n'a pas de barre du bas dans compte.js : sur le téléphone, la même que les autres espaces
+  var DOCK_ADMIN = [["qg", "QG"], ["afaire", "À vérifier"], ["accueil", "Accueil"], ["comptes", "Membres"]];
+  function dockAdmin(v, cour) {
+    var d = document.getElementById("tel-dock-admin");
+    if (v.id !== "v-admin") { if (d) d.hidden = true; return; }
+    var nav = v.querySelector(".co-nav");
+    if (!d) {
+      d = el("nav", "app-dock"); d.id = "tel-dock-admin"; d.setAttribute("aria-label", "Rubriques principales");
+      DOCK_ADMIN.forEach(function (x) {
+        var cible = nav.querySelector('[data-onglet-vers="' + x[0] + '"]'); if (!cible) return;
+        var b = el("button", "app-dock-b" + (x[0] === "accueil" ? " app-dock-logo" : "")); b.type = "button"; b.dataset.dock = x[0];
+        if (x[0] === "accueil") { var im = el("img"); im.src = "/marque-sombre.png"; im.alt = ""; b.appendChild(im); }
+        else { var ic = cible.querySelector("svg"); if (ic) b.appendChild(ic.cloneNode(true)); }
+        b.appendChild(el("span", null, x[1]));
+        b.addEventListener("click", function () { document.body.classList.remove("menu-ouvert"); cible.click(); window.scrollTo(0, 0); });
+        d.appendChild(b);
+      });
+      var m = el("button", "app-dock-b app-dock-menu"); m.type = "button"; m.setAttribute("aria-label", "Toutes les rubriques");
+      m.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+      m.appendChild(el("span", null, "Menu"));
+      m.addEventListener("click", function () { document.body.classList.toggle("menu-ouvert"); m.setAttribute("aria-expanded", document.body.classList.contains("menu-ouvert") ? "true" : "false"); });
+      d.appendChild(m);
+      (document.getElementById("espace-compte") || document.body).appendChild(d);
+    }
+    d.hidden = false;
+    Array.prototype.forEach.call(d.querySelectorAll("[data-dock]"), function (b) {
+      if (cour && cour.dataset.ongletVers === b.dataset.dock) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+  }
   function regarder() {
     var v = vueVisible();
-    if (!v || !document.body.classList.contains("en-app")) { racine.classList.remove("tel-espace"); return; }
+    if (!v || !document.body.classList.contains("en-app")) { racine.classList.remove("tel-espace"); var d = document.getElementById("tel-dock-admin"); if (d) d.hidden = true; return; }
     racine.classList.add("tel-espace");
     racine.dataset.espace = v.id;
     construire(v); majPastilles(v); boutonsVides(v);
-    var cour = v.querySelector(".co-nav [aria-current]");
-    racine.classList.toggle("tel-esp-tableau", !!(cour && cour.dataset.ongletVers === "tableau"));
+    var cour = v.querySelector(".co-nav [data-onglet-vers][aria-current]");
+    racine.classList.toggle("tel-esp-tableau", !!(cour && cour.dataset.ongletVers === accueilDe(v)));
+    dockAdmin(v, cour);
+    // l'accueil en tuiles suit l'onglet ouvert, même s'il est né après le premier affichage
+    var acc = v.querySelector(".tel-esp-accueil");
+    if (acc && cour) acc.classList.toggle("hors-onglet", cour.dataset.ongletVers !== accueilDe(v));
   }
   var attente = null;
   new MutationObserver(function () { clearTimeout(attente); attente = setTimeout(regarder, 60); })

@@ -159,4 +159,6 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
   de la barre du bas, l'aperçu seulement par son bouton. Les listes (offres, candidatures, séjours, inscriptions) sont des cartes,
   une par ligne, actions en vrais boutons. Une page vide a toujours un bouton qui dit quoi faire (`VIDES` dans
   telephone-espace.js). La visite guidée : bulle de verre, titre en Fraunces, boutons de 44px.
+  L'administration a sur téléphone la même barre du bas (QG, À vérifier, logo = Vue d'ensemble, Membres, Menu : créée par
+  telephone-espace.js, compte.js n'en fait pas pour elle) et ses rubriques en tuiles sous le « Bonjour » de la vue d'ensemble.
 
