@@ -121,7 +121,11 @@
           var past = cible.querySelector(".co-pastille:not([hidden])");
           if (cible.classList.contains("co-ferme")) b.classList.add("tel-esp-ferme");
           if (past && past.textContent.trim() && !past.classList.contains("co-pastille-neutre")) b.appendChild(el("i", "tel-esp-pastille", past.textContent.trim()));
-        } else { b = el("a", "tel-esp-tuile"); b.href = x.u; }
+        } else {
+          b = el("a", "tel-esp-tuile"); b.href = x.u;
+          // les outils (calculs) ont besoin de leur page : ils s'ouvrent à côté, comme les sessions
+          if (/^\/outils\//.test(x.u)) { b.target = "_blank"; b.rel = "noopener"; b.setAttribute("data-sortie", ""); }
+        }
         var ic = el("span", "tel-esp-ic"); ic.appendChild(icone(x.ic, 34)); b.appendChild(ic);
         b.appendChild(el("b", null, x.t));
         if (x.s) b.appendChild(el("small", null, x.s));
