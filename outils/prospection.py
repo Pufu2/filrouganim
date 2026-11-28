@@ -94,7 +94,8 @@ def animateurs(base, cle):
 
 def message(x, d, demandes, site, relance, familles=None):
     """Objet, texte brut, HTML et phrase-clé du message pour une structure (premier envoi ou relance)."""
-    pour = [m for m in demandes if d == "idf" or m["departement"] == d or d in (m.get("zone") or [])] or demandes
+    local = [m for m in demandes if d == "idf" or m["departement"] == d or d in (m.get("zone") or [])]
+    pour = local or demandes  # sans animateur dans le département : on parle des animateurs du site, sans lieu
     n = len(pour)
     stag = sum(1 for m in pour if m.get("poste") == "animateur-stagiaire")
     s = "s" if n > 1 else ""
@@ -170,7 +171,9 @@ def message(x, d, demandes, site, relance, familles=None):
         lieu = LIEU.get(d, "près de chez vous")
         fam = (f" En ce moment, {nf} famille{'s' if nf > 1 else ''} {'cherchent' if nf > 1 else 'cherche'}{toujours} une place "
                f"{lieu}." if nf else "")
-        cle = f"Côté recrutement, {qui} {verbe}{toujours} un poste {lieux}."
+        cle = (f"Côté recrutement, {qui} {verbe}{toujours} un poste {lieux}." if local else
+               f"Côté recrutement, {qui} {verbe}{toujours} un poste sur Fil Roug'Anim : une fois votre structure vérifiée, "
+               "vous verrez celles de votre secteur dès qu'elles arrivent.")
         ab = yaml.safe_load((RACINE / "config.yml").read_text(encoding="utf-8")).get("abonnement") or {}
         prix_ab, prix_pass = ab.get("prix_fondateur") or ab.get("prix") or "39,50 €", ab.get("pass_mois_prix") or "19 €"
         sujet = (("Rappel : " if relance else "") +
@@ -186,8 +189,8 @@ def message(x, d, demandes, site, relance, familles=None):
                         "leur enfant sur Fil Roug'Anim."),
                      "L'inscription sur Fil Roug'Anim est gratuite, avec un premier séjour, accueil de loisirs ou périscolaire en ligne : "
                      f"les familles le trouvent près de chez elles et vous demandent une place, et la première demande vous arrive en entier. {payant}",
-                     f"{cle} Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous, et "
-                     f"vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}.",
+                     (f"{cle} Dès que votre page est vérifiée, vous voyez les animateurs qui cherchent déjà près de chez vous, et "
+                      f"vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}." if local else cle),
                      "C'est notre dernier message à ce sujet."]
         else:
             paras = [(f"Sur Fil Roug'Anim, des familles cherchent déjà une colo, un accueil de loisirs ou une place en "
@@ -196,7 +199,8 @@ def message(x, d, demandes, site, relance, familles=None):
                       f"loisirs et le périscolaire près de chez elles et vous demandent une place en ligne.{fam}"),
                      "L'inscription est gratuite : votre page, un séjour ou accueil en ligne, et la première demande d'une famille "
                      f"en entier (nom, e-mail, téléphone). {payant}",
-                     f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}."]
+                     (f"{cle} Une fois votre structure vérifiée, vous pouvez ouvrir gratuitement {'la demande de l’un d’eux' if n > 1 else 'sa demande'}."
+                      if local else cle)]
         bouton = "Publier votre premier séjour ou accueil (inscription gratuite)"
         lien = f"{site}/recruter/sejours/"
     texte = ("Bonjour,\n\n" + "\n\n".join(paras) + f"\n\n{bouton} : {lien}\n\n"
