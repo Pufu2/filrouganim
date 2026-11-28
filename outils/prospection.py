@@ -176,7 +176,7 @@ def message(x, d, demandes, site, relance, familles=None):
                f"{lieu}." if nf else "")
         cle = (f"Côté recrutement, {qui} {verbe}{toujours} un poste {lieux}." if local else
                f"Côté recrutement, {qui} {verbe}{toujours} un poste sur Fil Roug'Anim : une fois votre structure vérifiée, "
-               "vous verrez celles de votre secteur dès qu'elles arrivent.")
+               "vous verrez les demandes d'animateurs de votre secteur dès qu'elles arrivent.")
         ab = yaml.safe_load((RACINE / "config.yml").read_text(encoding="utf-8")).get("abonnement") or {}
         prix_ab, prix_pass = ab.get("prix_fondateur") or ab.get("prix") or "39,50 €", ab.get("pass_mois_prix") or "19 €"
         sujet = (("Rappel : " if relance else "") +
