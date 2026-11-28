@@ -94,7 +94,10 @@ def animateurs(base, cle):
 
 def message(x, d, demandes, site, relance, familles=None):
     """Objet, texte brut, HTML et phrase-clé du message pour une structure (premier envoi ou relance)."""
-    local = [m for m in demandes if d == "idf" or m["departement"] == d or d in (m.get("zone") or [])]
+    if d == "idf":  # organisateur de toute l'Île-de-France : les animateurs qui cherchent en Île-de-France seulement
+        local = [m for m in demandes if m["departement"] in IDF or set(m.get("zone") or []) & set(IDF)]
+    else:
+        local = [m for m in demandes if m["departement"] == d or d in (m.get("zone") or [])]
     pour = local or demandes  # sans animateur dans le département : on parle des animateurs du site, sans lieu
     n = len(pour)
     stag = sum(1 for m in pour if m.get("poste") == "animateur-stagiaire")
