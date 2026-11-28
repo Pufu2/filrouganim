@@ -1,17 +1,17 @@
 # Chiffres publics de visibilité du site (visiteurs, Google, comptes créés).
 # Fichier écrit chaque nuit par outils/audience.py : ne pas modifier à la main. Voir docs/CHIFFRES.md.
-mis_a_jour: '2026-11-27'
+mis_a_jour: '2026-11-28'
 chiffres:
-  impressions_28j: 15071
+  impressions_28j: 16379
   impressions_evolution: null
-  clics_28j: 569
+  clics_28j: 615
   clics_evolution: null
   impressions_par_mois:
   - mois: 2026-10
     n: 0
   - mois: 2026-11
-    n: 15071
-  visiteurs_30j: 2714
+    n: 16379
+  visiteurs_30j: 2858
   visiteurs_evolution: null
   animateurs: 10
   structures: 1
@@ -162,17 +162,16 @@ chiffres:
   - - '2026-11-24'
     - 1561
     - 64
-  gsc_du: '2026-10-28'
-  gsc_au: '2026-11-24'
-  recherches_total: 946
-  recherches_premiere_page: 184
+  - - '2026-11-25'
+    - 1308
+    - 46
+  gsc_du: '2026-10-29'
+  gsc_au: '2026-11-25'
+  recherches_total: 989
+  recherches_premiere_page: 194
   pages_vues_google: 1000
-  pages_premiere_page_n: 717
+  pages_premiere_page_n: 723
   recherches:
-  - recherche: ou faire son stage pratique bafa
-    impressions: 1
-    clics: 1
-    place: 1.0
   - recherche: 56 ans
     impressions: 1
     clics: 0
@@ -182,6 +181,10 @@ chiffres:
     clics: 0
     place: 1.0
   - recherche: date
+    impressions: 1
+    clics: 0
+    place: 1.0
+  - recherche: est-ce que c'est rémunéré ?
     impressions: 1
     clics: 0
     place: 1.0
@@ -281,6 +284,10 @@ chiffres:
     impressions: 2
     clics: 0
     place: 3.0
+  - recherche: bpjeps rouen
+    impressions: 1
+    clics: 1
+    place: 3.0
   - recherche: alternance cpjeps
     impressions: 1
     clics: 0
@@ -289,7 +296,15 @@ chiffres:
     impressions: 1
     clics: 0
     place: 3.0
+  - recherche: externat
+    impressions: 1
+    clics: 0
+    place: 3.0
   - recherche: formation bafa colmar
+    impressions: 1
+    clics: 0
+    place: 3.0
+  - recherche: formation moselle
     impressions: 1
     clics: 0
     place: 3.0
@@ -305,14 +320,6 @@ chiffres:
     impressions: 2
     clics: 0
     place: 3.5
-  - recherche: bpjeps normandie
-    impressions: 2
-    clics: 0
-    place: 4.0
-  - recherche: prochaines dates de sessions
-    impressions: 2
-    clics: 0
-    place: 4.0
   - recherche: juillet 2027
     impressions: 1
     clics: 1
@@ -325,10 +332,6 @@ chiffres:
     impressions: 1
     clics: 0
     place: 4.0
-  - recherche: armentieres
-    impressions: 1
-    clics: 0
-    place: 4.0
   pages_premiere_page:
   - url: /se-former/ecoles/cpjeps/haute-garonne/toulouse/
     impressions: 5
@@ -337,6 +340,10 @@ chiffres:
   - url: /se-former/ecoles/bpjeps/aude/
     impressions: 3
     clics: 0
+    place: 1.0
+  - url: /se-former/sessions/bsb/
+    impressions: 2
+    clics: 2
     place: 1.0
   - url: /se-former/sessions/alpes-maritimes/bsb/
     impressions: 2
@@ -375,10 +382,6 @@ chiffres:
     clics: 1
     place: 1.0
   - url: /se-former/ecoles/desjeps/hauts-de-france/
-    impressions: 1
-    clics: 1
-    place: 1.0
-  - url: /se-former/sessions/bsb/
     impressions: 1
     clics: 1
     place: 1.0
@@ -430,11 +433,11 @@ chiffres:
     impressions: 1
     clics: 0
     place: 1.0
-  - url: /se-former/ecoles/bpjeps/auvergne-rhone-alpes/
+  - url: /recruter/saisonniers-ete/bourgogne-franche-comte/
     impressions: 1
     clics: 0
     place: 1.0
-  - url: /se-former/ecoles/bpjeps/calvados/colombelles/
+  - url: /se-former/ecoles/bpjeps/auvergne-rhone-alpes/
     impressions: 1
     clics: 0
     place: 1.0
@@ -454,11 +457,23 @@ chiffres:
     impressions: 1
     clics: 0
     place: 1.0
+  - url: /se-former/ecoles/bpjeps/meurthe-et-moselle/nancy/
+    impressions: 1
+    clics: 0
+    place: 1.0
+  - url: /se-former/ecoles/bpjeps/puy-de-dome/
+    impressions: 1
+    clics: 0
+    place: 1.0
   - url: /se-former/ecoles/bpjeps/savoie/la-ravoire/
     impressions: 1
     clics: 0
     place: 1.0
   - url: /se-former/ecoles/bpjeps/savoie/savoie/
+    impressions: 1
+    clics: 0
+    place: 1.0
+  - url: /se-former/ecoles/bpjeps/vosges/
     impressions: 1
     clics: 0
     place: 1.0
@@ -514,6 +529,10 @@ chiffres:
     impressions: 1
     clics: 0
     place: 1.0
+  - url: /se-former/sessions/ain/psc1/saint-maurice-de-beynost/
+    impressions: 1
+    clics: 0
+    place: 1.0
   - url: /se-former/sessions/ariege/approfondissement/
     impressions: 1
     clics: 0
@@ -523,10 +542,6 @@ chiffres:
     clics: 0
     place: 1.0
   - url: /se-former/sessions/bafd/mai-2027/
-    impressions: 1
-    clics: 0
-    place: 1.0
-  - url: /se-former/sessions/centre-val-de-loire/psc1/
     impressions: 1
     clics: 0
     place: 1.0
@@ -555,13 +570,13 @@ chiffres:
     clics: 1
     place: 1.7
   - url: /se-former/sessions/ile-de-france/bsb/
-    impressions: 4
+    impressions: 5
     clics: 1
-    place: 2.0
+    place: 1.8
   - url: /trouver-un-poste/stage-pratique-bafa/gironde/
-    impressions: 3
+    impressions: 4
     clics: 2
-    place: 2.0
+    place: 1.8
   - url: /se-former/ecoles/bpjeps/dordogne/douville/
     impressions: 3
     clics: 0
@@ -662,15 +677,11 @@ chiffres:
     impressions: 2
     clics: 0
     place: 2.5
-  - url: /se-former/ecoles/bpjeps/var/
-    impressions: 6
-    clics: 0
-    place: 2.7
   - url: /se-former/sessions/gironde/fargues-saint-hilaire/
     impressions: 3
     clics: 1
     place: 2.7
-  - url: /se-former/sessions/charente-maritime/la-rochelle-les-minimes/
+  - url: /lexique/
     impressions: 3
     clics: 0
     place: 2.7
@@ -691,9 +702,9 @@ chiffres:
     clics: 1
     place: 2.8
   - url: /se-former/sessions/alpes-maritimes/vacances-noel-2026/
-    impressions: 8
+    impressions: 9
     clics: 2
-    place: 3.0
+    place: 2.9
   - url: /se-former/sessions/bourgogne-franche-comte/
     impressions: 4
     clics: 0
@@ -703,6 +714,10 @@ chiffres:
     clics: 1
     place: 3.0
   - url: /recruter/stagiaire-bafa/val-d-oise/
+    impressions: 3
+    clics: 0
+    place: 3.0
+  - url: /se-former/ecoles/bpjeps/calvados/colombelles/
     impressions: 3
     clics: 0
     place: 3.0
@@ -718,7 +733,7 @@ chiffres:
     impressions: 2
     clics: 1
     place: 3.0
-  - url: /se-former/sessions/cantal/approfondissement/
+  - url: /se-former/sessions/seine-maritime/petit-couronne/
     impressions: 2
     clics: 1
     place: 3.0
@@ -734,15 +749,15 @@ chiffres:
     impressions: 2
     clics: 0
     place: 3.0
+  - url: /se-former/sessions/deux-sevres/lezay/
+    impressions: 1
+    clics: 1
+    place: 3.0
   - url: /se-former/sessions/hauts-de-seine/bafd/rueil-malmaison/
     impressions: 1
     clics: 1
     place: 3.0
   - url: /blog/bilan-2026-11/
-    impressions: 1
-    clics: 0
-    place: 3.0
-  - url: /enfants/centre-de-loisirs/hauts-de-seine/sceaux/
     impressions: 1
     clics: 0
     place: 3.0
@@ -790,14 +805,18 @@ chiffres:
     impressions: 1
     clics: 0
     place: 3.0
-  - url: /se-former/sessions/haute-savoie/vacances-noel-2026/
-    impressions: 19
-    clics: 4
-    place: 3.1
-  - url: /se-former/sessions/nord/genech/
-    impressions: 11
-    clics: 1
+  - url: /se-former/sessions/bouches-du-rhone/plan-de-cuques/
+    impressions: 5
+    clics: 2
     place: 3.2
+  - url: /se-former/sessions/haute-savoie/vacances-noel-2026/
+    impressions: 21
+    clics: 4
+    place: 3.3
+  - url: /se-former/sessions/nord/wattignies/
+    impressions: 9
+    clics: 3
+    place: 3.3
   - url: /se-former/sessions/cotes-d-armor/lannion/
     impressions: 7
     clics: 1
@@ -805,14 +824,6 @@ chiffres:
   - url: /se-former/sessions/haute-savoie/le-grand-bornand/
     impressions: 7
     clics: 1
-    place: 3.3
-  - url: /se-former/sessions/bretagne/vacances-printemps-2027/
-    impressions: 6
-    clics: 0
-    place: 3.3
-  - url: /se-former/sessions/bouches-du-rhone/plan-de-cuques/
-    impressions: 3
-    clics: 2
     place: 3.3
   - url: /trouver-un-poste/emploi-animateur/hauts-de-seine/colombes/
     impressions: 3
@@ -826,11 +837,23 @@ chiffres:
     impressions: 7
     clics: 1
     place: 3.4
+  - url: /se-former/ecoles/bpjeps/var/
+    impressions: 7
+    clics: 0
+    place: 3.4
+  - url: /se-former/sessions/pas-de-calais/vacances-noel-2026/
+    impressions: 11
+    clics: 6
+    place: 3.5
   - url: /se-former/ecoles/cpjeps/seine-et-marne/
     impressions: 4
     clics: 1
     place: 3.5
   - url: /se-former/ecoles/bpjeps/gironde/ambares-et-lagrave/
+    impressions: 4
+    clics: 0
+    place: 3.5
+  - url: /se-former/ecoles/bpjeps/maine-et-loire/
     impressions: 4
     clics: 0
     place: 3.5
@@ -858,17 +881,13 @@ chiffres:
     impressions: 24
     clics: 4
     place: 3.6
-  - url: /se-former/sessions/nord/wattignies/
-    impressions: 8
-    clics: 3
-    place: 3.6
   - url: /se-former/sessions/bafd/decembre-2026/
-    impressions: 12
+    impressions: 14
     clics: 0
-    place: 3.7
-  - url: /se-former/sessions/vosges/psc1/
-    impressions: 6
-    clics: 1
+    place: 3.6
+  - url: /se-former/sessions/nord/genech/
+    impressions: 19
+    clics: 3
     place: 3.7
   - url: /se-former/ecoles/cpjeps/pyrenees-atlantiques/pyrenees-atlantiques/
     impressions: 6
@@ -894,6 +913,10 @@ chiffres:
     impressions: 11
     clics: 2
     place: 3.8
+  - url: /se-former/sessions/hauts-de-seine/vanves/
+    impressions: 8
+    clics: 1
+    place: 3.8
   - url: /se-former/sessions/jura/chaux-des-crotenay/
     impressions: 8
     clics: 1
@@ -901,6 +924,10 @@ chiffres:
   - url: /se-former/sessions/nord/armentieres/
     impressions: 8
     clics: 1
+    place: 3.8
+  - url: /se-former/ecoles/cpjeps/var/
+    impressions: 6
+    clics: 0
     place: 3.8
   - url: /se-former/sessions/haut-rhin/stosswihr/
     impressions: 5
@@ -910,25 +937,25 @@ chiffres:
     impressions: 4
     clics: 2
     place: 3.8
-  - url: /se-former/sessions/pas-de-calais/vacances-noel-2026/
-    impressions: 9
-    clics: 5
-    place: 4.0
+  - url: /se-former/sessions/morbihan/vacances-ete-2027/
+    impressions: 18
+    clics: 2
+    place: 3.9
+  - url: /se-former/sessions/bafa/avril-2027/
+    impressions: 17
+    clics: 0
+    place: 3.9
   - url: /se-former/sessions/auvergne-rhone-alpes/vacances-noel-2026/
     impressions: 8
     clics: 0
-    place: 4.0
-  - url: /se-former/sessions/hauts-de-seine/vanves/
-    impressions: 6
-    clics: 1
     place: 4.0
   - url: /se-former/sessions/herault/perols/
     impressions: 5
     clics: 2
     place: 4.0
-  - url: /se-former/sessions/ille-et-vilaine/breal-sous-montfort/
+  - url: /recruter/stagiaire-bafa/vendee/
     impressions: 3
-    clics: 2
+    clics: 1
     place: 4.0
   - url: /se-former/sessions/essonne/quincy-sous-senart/
     impressions: 3
@@ -978,7 +1005,7 @@ chiffres:
     impressions: 2
     clics: 0
     place: 4.0
-  - url: /se-former/sessions/ardeche/psc1/saint-peray/
+  - url: /se-former/ecoles/desjeps/maine-et-loire/
     impressions: 2
     clics: 0
     place: 4.0
@@ -1006,6 +1033,10 @@ chiffres:
     impressions: 1
     clics: 0
     place: 4.0
+  - url: /se-former/ecoles/cpjeps/rhone/lyon/
+    impressions: 1
+    clics: 0
+    place: 4.0
   - url: /se-former/ecoles/dejeps/seine-saint-denis/
     impressions: 1
     clics: 0
@@ -1015,6 +1046,10 @@ chiffres:
     clics: 0
     place: 4.0
   - url: /se-former/ecoles/desjeps/pas-de-calais/
+    impressions: 1
+    clics: 0
+    place: 4.0
+  - url: /se-former/sessions/ardeche/psc1/guilherand-granges/
     impressions: 1
     clics: 0
     place: 4.0
@@ -1046,10 +1081,6 @@ chiffres:
     impressions: 19
     clics: 2
     place: 4.1
-  - url: /se-former/sessions/bafa/avril-2027/
-    impressions: 15
-    clics: 0
-    place: 4.1
   - url: /se-former/sessions/seine-et-marne/torcy/
     impressions: 13
     clics: 1
@@ -1066,9 +1097,13 @@ chiffres:
     impressions: 5
     clics: 1
     place: 4.2
-  - url: /se-former/ecoles/cpjeps/var/
+  - url: /trouver-un-poste/stage-pratique-bafa/finistere/
     impressions: 5
-    clics: 0
+    clics: 1
+    place: 4.2
+  - url: /se-former/sessions/ille-et-vilaine/breal-sous-montfort/
+    impressions: 4
+    clics: 2
     place: 4.2
   - url: /se-former/sessions/cotes-d-armor/vacances-hiver-2027/
     impressions: 4
@@ -1078,9 +1113,17 @@ chiffres:
     impressions: 4
     clics: 1
     place: 4.2
+  - url: /se-former/sessions/territoire-de-belfort/psc1/belfort/
+    impressions: 4
+    clics: 1
+    place: 4.2
   - url: /se-former/sessions/pas-de-calais/calais/
     impressions: 15
     clics: 1
+    place: 4.3
+  - url: /se-former/sessions/pyrenees-orientales/psc1/
+    impressions: 14
+    clics: 5
     place: 4.3
   - url: /se-former/sessions/herault/vacances-noel-2026/
     impressions: 3
@@ -1090,443 +1133,439 @@ chiffres:
     impressions: 3
     clics: 0
     place: 4.3
-  - url: /enfants/colonie-de-vacances/seine-maritime/
-    impressions: 3
-    clics: 0
-    place: 4.3
-  - url: /enfants/periscolaire/ain/
-    impressions: 3
-    clics: 0
-    place: 4.3
-  - url: /se-former/ecoles/bpjeps/maine-et-loire/
-    impressions: 3
-    clics: 0
-    place: 4.3
-  - url: /se-former/sessions/allier/vacances-printemps-2027/
-    impressions: 3
-    clics: 0
-    place: 4.3
-  - url: /se-former/sessions/pyrenees-orientales/psc1/
-    impressions: 13
-    clics: 4
-    place: 4.4
-  - url: /se-former/sessions/cotes-d-armor/plerin/
-    impressions: 10
-    clics: 1
-    place: 4.4
-  - url: /se-former/sessions/aveyron/vacances-hiver-2027/
-    impressions: 10
-    clics: 2
-    place: 4.5
-  - url: /se-former/ecoles/cpjeps/val-d-oise/
-    impressions: 4
-    clics: 1
-    place: 4.5
-  - url: /se-former/sessions/seine-saint-denis/vacances-noel-2026/
-    impressions: 4
-    clics: 1
-    place: 4.5
-  - url: /recruter/stagiaire-bafa/vendee/
-    impressions: 2
-    clics: 1
-    place: 4.5
   pages_google:
   - - /se-former/sessions/bouches-du-rhone/marseille/
-    - 751
-    - 6
-    - 27.3
+    - 810
+    - 8
+    - 26.6
   - - /se-former/questions-frequentes/
-    - 413
+    - 477
     - 0
-    - 66.6
+    - 67.5
   - - /se-former/financer-son-bafa/
-    - 257
+    - 290
     - 0
-    - 61.9
-  - - /blog/combien-coute-le-bafa/
-    - 236
-    - 0
-    - 31.4
+    - 62.2
   - - /outils/mon-parcours-bafa/
-    - 232
+    - 250
     - 0
-    - 56.4
-  - - /se-former/psc1/
-    - 128
+    - 56.7
+  - - /blog/combien-coute-le-bafa/
+    - 245
     - 0
-    - 53.2
+    - 31.5
   - - /blog/passer-son-bafa-pendant-les-vacances/
-    - 127
+    - 133
     - 2
-    - 11.6
+    - 11.5
+  - - /se-former/psc1/
+    - 132
+    - 0
+    - 53.9
+  - - /se-former/sessions/pas-de-calais/arras/
+    - 120
+    - 1
+    - 8.3
   - - /se-former/bafa/
     - 118
     - 0
     - 50.2
-  - - /se-former/sessions/pas-de-calais/arras/
-    - 112
-    - 1
-    - 8.5
-  - - /se-former/sessions/loire/saint-etienne/
-    - 100
-    - 4
-    - 9.7
+  - - /outils/taux-d-encadrement/
+    - 107
+    - 0
+    - 21.0
   - - /se-former/sessions/herault/beziers/
-    - 98
+    - 106
     - 6
     - 7.2
-  - - /se-former/villes/
-    - 95
-    - 1
-    - 40.4
-  - - /outils/taux-d-encadrement/
-    - 94
-    - 0
-    - 22.9
+  - - /se-former/sessions/loire/saint-etienne/
+    - 105
+    - 4
+    - 9.7
   - - /se-former/sessions/aube/troyes/
-    - 87
-    - 2
-    - 9.2
-  - - /se-former/sessions/cote-d-or/psc1/
-    - 87
-    - 2
-    - 29.0
-  - - /se-former/sessions/provence-alpes-cote-d-azur/approfondissement/
-    - 87
+    - 102
+    - 3
+    - 9.1
+  - - /se-former/villes/
+    - 102
     - 1
-    - 49.9
+    - 41.8
+  - - /se-former/sessions/cote-d-or/psc1/
+    - 94
+    - 2
+    - 28.2
+  - - /se-former/sessions/val-d-oise/approfondissement/
+    - 88
+    - 6
+    - 11.9
   - - /se-former/sessions/finistere/brest/
-    - 82
+    - 88
     - 5
     - 6.3
-  - - /se-former/sessions/val-d-oise/approfondissement/
-    - 80
-    - 6
-    - 12.4
-  - - /se-former/sessions/cotes-d-armor/psc1/
-    - 78
+  - - /se-former/sessions/provence-alpes-cote-d-azur/approfondissement/
+    - 88
     - 1
-    - 8.8
+    - 49.4
   - - /se-former/sessions/herault/montpellier/
-    - 77
+    - 86
     - 4
     - 7.7
+  - - /se-former/sessions/cotes-d-armor/psc1/
+    - 83
+    - 1
+    - 8.8
+  - - /se-former/cpjeps/
+    - 80
+    - 0
+    - 47.9
+  - - /lexique/sejour-court/
+    - 77
+    - 0
+    - 22.8
+  - - /se-former/sessions/somme/psc1/
+    - 75
+    - 1
+    - 11.8
   - - /se-former/sessions/bouches-du-rhone/arles/
     - 75
     - 0
     - 28.2
-  - - /lexique/sejour-court/
-    - 73
-    - 0
-    - 22.6
-  - - /se-former/sessions/somme/psc1/
-    - 70
-    - 1
-    - 12.2
   - - /enfants/centre-de-loisirs/paris/paris-17e/
     - 70
     - 0
     - 47.6
-  - - /se-former/cpjeps/
-    - 70
-    - 0
-    - 48.8
-  - - /se-former/sessions/alpes-maritimes/
-    - 62
-    - 2
-    - 10.7
+  - - /se-former/sessions/haute-vienne/limoges/
+    - 67
+    - 4
+    - 11.4
   - - /se-former/sessions/cotes-d-armor/formation-generale/
-    - 62
+    - 67
     - 2
     - 9.4
-  - - /se-former/sessions/yonne/
-    - 59
-    - 2
-    - 7.5
-  - - /se-former/sessions/haute-vienne/limoges/
-    - 58
-    - 4
-    - 11.8
   - - /se-former/sessions/hauts-de-seine/
-    - 58
-    - 3
-    - 5.9
-  - - /se-former/sessions/nord/tourcoing/
-    - 56
-    - 1
-    - 7.8
-  - - /trouver-un-poste/contrat-d-engagement-educatif/
-    - 55
+    - 65
+    - 4
+    - 5.6
+  - - /se-former/sessions/alpes-maritimes/
+    - 65
     - 2
-    - 29.4
-  - - /se-former/sessions/haute-savoie/vacances-hiver-2027/
-    - 54
+    - 10.5
+  - - /se-former/sessions/nord/tourcoing/
+    - 64
     - 1
-    - 4.8
+    - 7.9
+  - - /se-former/sessions/yonne/
+    - 63
+    - 2
+    - 7.4
+  - - /trouver-un-poste/contrat-d-engagement-educatif/
+    - 63
+    - 2
+    - 27.3
   - - /se-former/sessions/bafa/aout-2027/
-    - 53
+    - 59
     - 0
     - 7.1
-  - - /se-former/sessions/val-de-marne/
-    - 51
-    - 4
-    - 7.6
-  - - /lexique/grand-jeu/
-    - 50
-    - 1
-    - 26.4
   - - /se-former/sessions/aisne/saint-quentin/
-    - 49
+    - 56
     - 4
-    - 6.8
+    - 6.5
+  - - /se-former/sessions/haute-savoie/vacances-hiver-2027/
+    - 55
+    - 1
+    - 4.7
+  - - /se-former/sessions/val-de-marne/
+    - 53
+    - 5
+    - 7.5
   - - /se-former/sessions/eure-et-loir/
-    - 49
+    - 52
     - 3
-    - 9.1
+    - 8.9
+  - - /
+    - 51
+    - 14
+    - 25.6
+  - - /lexique/grand-jeu/
+    - 51
+    - 1
+    - 27.1
   - - /blog/reussir-son-stage-pratique-bafa/
     - 49
     - 0
     - 68.8
+  - - /se-former/sessions/rhone/villeurbanne/
+    - 48
+    - 2
+    - 12.9
   - - /se-former/sessions/saone-et-loire/chalon-sur-saone/
-    - 47
+    - 48
     - 2
     - 7.8
-  - - /se-former/sessions/seine-et-marne/
-    - 44
-    - 2
-    - 6.5
-  - - /
-    - 43
-    - 11
-    - 27.3
-  - - /se-former/sessions/rhone/villeurbanne/
-    - 43
-    - 2
-    - 13.2
-  - - /se-former/sessions/herault/
-    - 42
+  - - /se-former/sessions/seine-saint-denis/
+    - 47
     - 3
-    - 6.0
-  - - /se-former/sessions/maine-et-loire/angers/
-    - 42
-    - 2
-    - 5.7
-  - - /se-former/sessions/oise/nogent-sur-oise/
-    - 41
-    - 7
     - 6.5
-  - - /se-former/sessions/haute-savoie/
-    - 40
-    - 5
+  - - /se-former/sessions/seine-et-marne/
+    - 47
+    - 2
+    - 6.6
+  - - /se-former/sessions/maine-et-loire/angers/
+    - 45
+    - 2
     - 5.8
+  - - /se-former/sessions/haute-savoie/
+    - 44
+    - 7
+    - 5.5
+  - - /enfants/centre-de-loisirs/haute-garonne/toulouse/
+    - 44
+    - 0
+    - 49.7
+  - - /se-former/sessions/herault/
+    - 43
+    - 4
+    - 5.9
+  - - /se-former/sessions/bafa/decembre-2026/
+    - 43
+    - 3
+    - 5.5
+  - - /se-former/sessions/saone-et-loire/formation-generale/
+    - 43
+    - 1
+    - 14.7
+  - - /se-former/sessions/seine-et-marne/psc1/
+    - 43
+    - 1
+    - 7.6
+  - - /se-former/sessions/oise/nogent-sur-oise/
+    - 42
+    - 7
+    - 6.4
+  - - /se-former/sessions/bafa/juillet-2027/
+    - 41
+    - 3
+    - 5.4
   - - /se-former/sessions/bouches-du-rhone/bafd/
     - 40
     - 1
     - 64.8
-  - - /se-former/sessions/seine-et-marne/psc1/
+  - - /se-former/sessions/nord/hazebrouck/
     - 40
     - 1
-    - 8.0
-  - - /se-former/sessions/seine-saint-denis/
+    - 6.2
+  - - /se-former/sessions/val-de-marne/maisons-alfort/
     - 39
     - 3
-    - 6.3
-  - - /se-former/sessions/saone-et-loire/formation-generale/
+    - 9.5
+  - - /se-former/sessions/loire/roanne/
     - 39
     - 1
-    - 15.1
+    - 6.7
+  - - /enfants/centre-de-loisirs/paris/paris-19e/
+    - 39
+    - 0
+    - 46.2
   - - /enfants/colonie-de-vacances/alpes-de-haute-provence/
     - 39
     - 0
     - 45.6
-  - - /se-former/sessions/bafa/decembre-2026/
+  - - /se-former/sessions/paris/
     - 38
-    - 3
-    - 5.1
-  - - /se-former/sessions/bafa/juillet-2027/
+    - 4
+    - 5.9
+  - - /se-former/sessions/nord/lille/
     - 38
-    - 3
-    - 5.4
-  - - /enfants/centre-de-loisirs/paris/paris-19e/
-    - 38
-    - 0
-    - 47.3
+    - 1
+    - 7.8
   - - /lexique/aide-caf/
     - 38
     - 0
     - 64.9
-  - - /se-former/sessions/val-de-marne/maisons-alfort/
-    - 37
-    - 3
-    - 9.5
-  - - /se-former/sessions/loire/roanne/
-    - 36
-    - 1
-    - 6.8
-  - - /se-former/sessions/nord/lille/
-    - 36
-    - 1
-    - 7.9
-  - - /enfants/centre-de-loisirs/haute-garonne/toulouse/
-    - 36
-    - 0
-    - 56.4
   - - /se-former/etapes-du-bafa/
-    - 36
+    - 38
     - 0
-    - 49.3
+    - 47.2
   - - /se-former/sessions/bouches-du-rhone/formation-generale/
+    - 38
+    - 0
+    - 42.6
+  - - /se-former/sessions/val-de-marne/creteil/
+    - 36
+    - 3
+    - 9.8
+  - - /blog/quel-approfondissement-bafa-choisir/
     - 36
     - 0
-    - 43.1
-  - - /se-former/sessions/paris/
+    - 7.8
+  - - /se-former/sessions/gers/
     - 35
     - 3
-    - 5.9
+    - 7.0
   - - /se-former/sessions/rhone/vacances-noel-2026/
     - 35
     - 2
     - 6.0
-  - - /se-former/sessions/nord/hazebrouck/
-    - 35
-    - 1
-    - 6.3
   - - /se-former/sessions/ain/approfondissement/
     - 35
     - 0
     - 11.8
-  - - /se-former/sessions/gers/
-    - 34
-    - 3
-    - 7.2
-  - - /se-former/sessions/val-de-marne/creteil/
-    - 34
-    - 3
-    - 10.0
+  - - /se-former/sessions/allier/psc1/
+    - 35
+    - 0
+    - 9.1
   - - /se-former/sessions/meurthe-et-moselle/nancy/
     - 34
     - 1
     - 7.2
-  - - /blog/quel-approfondissement-bafa-choisir/
+  - - /trouver-un-poste/stage-pratique-bafa/
+    - 34
+    - 1
+    - 36.9
+  - - /se-former/ecoles/bpjeps/provence-alpes-cote-d-azur/
     - 34
     - 0
-    - 8.1
-  - - /se-former/sessions/allier/psc1/
-    - 34
+    - 8.0
+  - - /se-former/sessions/nord/dunkerque/
+    - 33
+    - 1
+    - 6.6
+  - - /se-former/sessions/bas-rhin/strasbourg/
+    - 33
     - 0
-    - 9.1
+    - 9.9
+  - - /se-former/sessions/haute-garonne/bsb/toulouse/
+    - 32
+    - 6
+    - 11.2
+  - - /se-former/ecoles/bpjeps/rhone/
+    - 32
+    - 3
+    - 27.4
+  - - /se-former/sessions/moselle/
+    - 32
+    - 3
+    - 6.0
+  - - /se-former/sessions/oise/formation-generale/
+    - 32
+    - 1
+    - 11.7
+  - - /se-former/sessions/seine-maritime/
+    - 32
+    - 1
+    - 7.9
   - - /se-former/sessions/bafa/septembre-2027/
     - 32
     - 0
     - 7.7
-  - - /se-former/sessions/moselle/
+  - - /se-former/sessions/rhone/
     - 31
-    - 3
-    - 6.1
+    - 2
+    - 6.7
+  - - /se-former/sessions/bouches-du-rhone/
+    - 31
+    - 1
+    - 6.5
+  - - /se-former/sessions/bouches-du-rhone/psc1/la-ciotat/
+    - 31
+    - 1
+    - 10.5
   - - /se-former/sessions/herault/psc1/clermont-l-herault/
     - 31
     - 1
     - 21.6
-  - - /se-former/sessions/bas-rhin/strasbourg/
-    - 31
-    - 0
-    - 10.2
-  - - /se-former/ecoles/bpjeps/rhone/
-    - 30
-    - 3
-    - 26.1
-  - - /se-former/sessions/rhone/
-    - 30
-    - 2
-    - 6.6
-  - - /se-former/sessions/bouches-du-rhone/psc1/la-ciotat/
-    - 30
-    - 1
-    - 10.1
-  - - /se-former/sessions/nord/dunkerque/
-    - 30
-    - 1
-    - 6.6
-  - - /se-former/sessions/haute-garonne/bsb/toulouse/
-    - 29
-    - 6
-    - 11.0
-  - - /se-former/sessions/seine-maritime/
-    - 29
-    - 1
-    - 7.7
   - - /se-former/sessions/var/vacances-hiver-2027/
-    - 29
+    - 31
     - 1
     - 5.9
+  - - /se-former/sessions/vaucluse/psc1/avignon/
+    - 31
+    - 1
+    - 28.6
+  - - /se-former/ecoles/bpjeps/alpes-maritimes/
+    - 31
+    - 0
+    - 7.9
   - - /se-former/sessions/paris/vacances-hiver-2027/
-    - 28
+    - 30
     - 5
-    - 4.7
-  - - /se-former/sessions/bouches-du-rhone/
+    - 5.0
+  - - /se-former/sessions/tarn/castres/
+    - 30
+    - 4
+    - 8.5
+  - - /se-former/sessions/nord/vacances-ete-2027/
+    - 30
+    - 3
+    - 5.9
+  - - /se-former/sessions/seine-saint-denis/psc1/sevran/
+    - 30
+    - 1
+    - 11.4
+  - - /se-former/sessions/yvelines/bafd/
+    - 29
+    - 3
+    - 15.2
+  - - /se-former/sessions/haute-loire/approfondissement/
+    - 28
+    - 4
+    - 6.8
+  - - /se-former/sessions/pyrenees-orientales/argeles-sur-mer/
+    - 28
+    - 4
+    - 9.5
+  - - /se-former/sessions/allier/approfondissement/
+    - 28
+    - 3
+    - 9.3
+  - - /se-former/sessions/loire-atlantique/
+    - 28
+    - 3
+    - 6.7
+  - - /se-former/sessions/bafa/
     - 28
     - 1
-    - 6.8
+    - 24.7
   - - /se-former/sessions/hauts-de-seine/psc1/clamart/
     - 28
     - 1
     - 15.1
-  - - /se-former/sessions/seine-saint-denis/psc1/sevran/
-    - 28
+  - - /se-former/sessions/indre-et-loire/
+    - 27
     - 1
-    - 12.1
-  - - /se-former/sessions/vaucluse/psc1/avignon/
-    - 28
-    - 1
-    - 28.9
-  - - /se-former/sessions/pyrenees-orientales/argeles-sur-mer/
-    - 27
-    - 4
-    - 9.6
-  - - /se-former/sessions/tarn/castres/
-    - 27
-    - 4
-    - 8.7
-  - - /se-former/sessions/yvelines/bafd/
-    - 27
-    - 3
-    - 15.8
-  - - /se-former/sessions/nord/vacances-ete-2027/
-    - 27
-    - 2
-    - 6.5
-  - - /se-former/ecoles/bpjeps/provence-alpes-cote-d-azur/
+    - 5.3
+  - - /blog/periscolaire-comment-ca-marche/
     - 27
     - 0
-    - 8.1
-  - - /se-former/sessions/loire-atlantique/
-    - 26
-    - 3
-    - 6.6
-  - - /se-former/sessions/allier/approfondissement/
+    - 16.0
+  - - /se-former/ecoles/bpjeps/normandie/
     - 26
     - 2
-    - 9.8
+    - 12.6
+  - - /se-former/sessions/charente/
+    - 26
+    - 1
+    - 6.2
+  - - /se-former/sessions/drome/psc1/romans-sur-isere/
+    - 26
+    - 1
+    - 13.1
   - - /lexique/organisme-habilite/
     - 26
     - 0
     - 50.7
-  - - /se-former/ecoles/bpjeps/alpes-maritimes/
-    - 26
-    - 0
-    - 7.8
-  - - /se-former/sessions/bafa/
+  - - /se-former/sessions/charente-maritime/vacances-hiver-2027/
     - 25
     - 1
-    - 25.8
+    - 7.0
+  - - /se-former/sessions/loiret/orleans/
+    - 25
+    - 1
+    - 6.6
   - - /se-former/sessions/yvelines/mantes-la-jolie/
     - 25
     - 1
     - 7.2
-  - - /trouver-un-poste/stage-pratique-bafa/
-    - 25
-    - 1
-    - 37.8
   - - /se-former/sessions/bafa/janvier-2027/
     - 25
     - 0
@@ -1535,74 +1574,86 @@ chiffres:
     - 24
     - 4
     - 3.6
-  - - /se-former/sessions/haute-loire/approfondissement/
+  - - /se-former/sessions/ardennes/
     - 24
-    - 3
-    - 7.2
-  - - /se-former/sessions/indre-et-loire/
+    - 2
+    - 6.9
+  - - /se-former/sessions/vaucluse/
     - 24
-    - 1
-    - 5.3
+    - 2
+    - 20.5
   - - /se-former/sessions/vosges/
     - 24
     - 1
     - 6.3
-  - - /se-former/sessions/vaucluse/
-    - 23
-    - 2
-    - 21.0
-  - - /se-former/sessions/loiret/orleans/
+  - - /se-former/ecoles/bpjeps/gironde/gironde/
+    - 24
+    - 0
+    - 14.7
+  - - /se-former/sessions/aude/
     - 23
     - 1
-    - 6.3
-  - - /se-former/ecoles/bpjeps/gironde/gironde/
-    - 23
-    - 0
-    - 15.0
+    - 9.6
   - - /se-former/sessions/loire-atlantique/vacances-noel-2026/
     - 22
     - 3
     - 7.0
-  - - /se-former/sessions/ardennes/
-    - 22
-    - 2
-    - 7.1
-  - - /se-former/sessions/charente/
-    - 22
-    - 1
-    - 6.5
   - - /se-former/sessions/alpes-maritimes/approfondissement/
-    - 21
+    - 22
     - 1
-    - 17.9
-  - - /se-former/sessions/aude/
-    - 21
-    - 1
-    - 10.0
-  - - /se-former/sessions/charente-maritime/vacances-hiver-2027/
-    - 21
-    - 1
-    - 7.2
+    - 17.1
   - - /se-former/sessions/gironde/bsb/
-    - 21
+    - 22
     - 1
-    - 24.6
+    - 23.5
+  - - /se-former/sessions/loir-et-cher/
+    - 22
+    - 1
+    - 6.0
+  - - /se-former/sessions/seine-maritime/elbeuf/
+    - 22
+    - 1
+    - 8.3
+  - - /enfants/centre-de-loisirs/ain/
+    - 22
+    - 0
+    - 44.7
+  - - /se-former/sessions/haute-savoie/vacances-noel-2026/
+    - 21
+    - 4
+    - 3.3
+  - - /se-former/sessions/hauts-de-seine/sceaux/
+    - 21
+    - 2
+    - 7.3
+  - - /se-former/sessions/pas-de-calais/saint-omer/
+    - 21
+    - 2
+    - 5.8
   - - /se-former/sessions/paris/approfondissement/
     - 21
     - 1
     - 30.5
-  - - /se-former/sessions/seine-maritime/elbeuf/
-    - 21
-    - 1
-    - 8.3
-  - - /se-former/sessions/charente-maritime/rochefort/
+  - - /enfants/centre-de-loisirs/seine-maritime/darnetal/
     - 21
     - 0
-    - 21.3
+    - 10.5
+  - - /se-former/ecoles/bpjeps/ain/
+    - 21
+    - 0
+    - 7.1
+  - - /se-former/sessions/drome/vacances-hiver-2027/
+    - 20
+    - 2
+    - 5.8
   - - /se-former/sessions/meurthe-et-moselle/formation-generale/
     - 20
     - 2
     - 14.8
+  - - /se-former/sessions/oise/vacances-hiver-2027/
+    - 20
+    - 2
+    - 6.2
   - - /se-former/sessions/alpes-maritimes/cannes/
     - 20
     - 1
@@ -1611,22 +1662,14 @@ chiffres:
     - 20
     - 1
     - 5.5
-  - - /se-former/sessions/pas-de-calais/saint-omer/
-    - 20
-    - 1
-    - 5.8
-  - - /se-former/ecoles/bpjeps/ain/
-    - 20
-    - 0
-    - 7.2
-  - - /se-former/sessions/cantal/aurillac/
-    - 20
-    - 0
-    - 8.3
-  - - /se-former/sessions/haute-savoie/vacances-noel-2026/
+  - - /se-former/sessions/nord/genech/
     - 19
-    - 4
-    - 3.1
+    - 3
+    - 3.7
+  - - /se-former/sessions/val-d-oise/garges-les-gonesse/
+    - 19
+    - 3
+    - 9.3
   - - /se-former/sessions/hauts-de-france/bafd/
     - 19
     - 2
@@ -1635,14 +1678,30 @@ chiffres:
     - 19
     - 2
     - 9.3
+  - - /se-former/sessions/pyrenees-atlantiques/approfondissement/
+    - 19
+    - 2
+    - 7.8
   - - /se-former/sessions/rhone/vacances-hiver-2027/
     - 19
     - 2
     - 4.1
+  - - /se-former/sessions/cotes-d-armor/saint-brieuc/
+    - 19
+    - 1
+    - 6.4
+  - - /se-former/sessions/haute-garonne/vacances-noel-2026/
+    - 19
+    - 1
+    - 7.2
   - - /se-former/sessions/landes/saint-vincent-de-paul/
     - 19
     - 1
     - 5.4
+  - - /se-former/sessions/savoie/chambery/
+    - 19
+    - 1
+    - 8.7
   - - /lexique/cee/
     - 19
     - 0
@@ -1655,62 +1714,62 @@ chiffres:
     - 19
     - 0
     - 64.5
-  - - /se-former/sessions/bretagne/vacances-hiver-2027/
+  - - /se-former/sessions/ariege/psc1/
     - 19
     - 0
-    - 8.1
-  - - /se-former/ecoles/bpjeps/normandie/
+    - 13.1
+  - - /se-former/sessions/aube/formation-generale/
+    - 19
+    - 0
+    - 11.8
+  - - /se-former/sessions/morbihan/vacances-ete-2027/
     - 18
-    - 1
-    - 12.3
-  - - /se-former/sessions/cotes-d-armor/saint-brieuc/
+    - 2
+    - 3.9
+  - - /se-former/sessions/orne/
+    - 18
+    - 2
+    - 6.3
+  - - /se-former/sessions/var/formation-generale/
+    - 18
+    - 2
+    - 6.3
+  - - /se-former/sessions/ain/
     - 18
     - 1
     - 6.7
-  - - /se-former/sessions/haute-garonne/vacances-noel-2026/
+  - - /se-former/sessions/alpes-de-haute-provence/
     - 18
     - 1
-    - 7.1
-  - - /se-former/sessions/hauts-de-seine/sceaux/
+    - 23.7
+  - - /se-former/sessions/haute-garonne/psc1/toulouse/
     - 18
     - 1
-    - 7.9
-  - - /enfants/centre-de-loisirs/ain/
-    - 18
-    - 0
-    - 38.7
-  - - /enfants/centre-de-loisirs/seine-maritime/darnetal/
-    - 18
-    - 0
-    - 10.8
+    - 8.5
   - - /recruter/
     - 18
     - 0
     - 37.9
+  - - /se-former/ecoles/bpjeps/finistere/brest/
+    - 18
+    - 0
+    - 7.2
+  - - /se-former/sessions/ardennes/charleville-mezieres/
+    - 18
+    - 0
+    - 9.2
   - - /se-former/sessions/bouches-du-rhone/port-saint-louis-du-rhone/
     - 18
     - 0
     - 48.9
-  - - /se-former/sessions/val-d-oise/garges-les-gonesse/
-    - 17
-    - 3
-    - 9.5
-  - - /se-former/sessions/orne/
+  - - /se-former/sessions/hauts-de-france/vacances-noel-2026/
     - 17
     - 2
-    - 6.4
-  - - /se-former/sessions/pyrenees-atlantiques/approfondissement/
-    - 17
-    - 2
-    - 7.6
-  - - /se-former/sessions/alpes-de-haute-provence/
+    - 4.9
+  - - /se-former/ecoles/bpjeps/morbihan/
     - 17
     - 1
-    - 25.0
-  - - /se-former/sessions/haute-garonne/psc1/toulouse/
-    - 17
-    - 1
-    - 8.9
+    - 6.6
   - - /se-former/sessions/haute-savoie/annecy-le-vieux/
     - 17
     - 1
@@ -1719,14 +1778,14 @@ chiffres:
     - 17
     - 1
     - 5.8
-  - - /se-former/sessions/oise/vacances-hiver-2027/
+  - - /se-former/sessions/pas-de-calais/formation-generale/
     - 17
     - 1
-    - 6.2
-  - - /se-former/sessions/savoie/chambery/
+    - 6.4
+  - - /se-former/sessions/seine-saint-denis/saint-ouen-sur-seine/
     - 17
     - 1
-    - 8.9
+    - 6.8
   - - /se-former/sessions/yvelines/approfondissement/
     - 17
     - 1
@@ -1739,26 +1798,30 @@ chiffres:
     - 17
     - 0
     - 72.5
-  - - /se-former/sessions/ardennes/charleville-mezieres/
+  - - /recruter/stagiaire-bafa/bouches-du-rhone/
     - 17
     - 0
-    - 9.2
-  - - /se-former/sessions/ariege/psc1/
+    - 24.1
+  - - /se-former/sessions/aisne/
     - 17
     - 0
-    - 13.7
-  - - /se-former/sessions/aube/formation-generale/
+    - 7.0
+  - - /se-former/sessions/approfondissement/jeux/
     - 17
     - 0
-    - 12.2
+    - 26.4
   - - /se-former/sessions/aveyron/formation-generale/
     - 17
     - 0
     - 6.7
-  - - /se-former/sessions/charente-maritime/essouvert/
+  - - /se-former/sessions/bafa/avril-2027/
     - 17
     - 0
-    - 6.5
+    - 3.9
+  - - /se-former/sessions/bouches-du-rhone/psc1/marseille/
+    - 17
+    - 0
+    - 7.9
   - - /se-former/sessions/haute-garonne/
     - 16
     - 3
@@ -1771,10 +1834,10 @@ chiffres:
     - 16
     - 1
     - 62.5
-  - - /se-former/sessions/pas-de-calais/formation-generale/
+  - - /se-former/sessions/normandie/vacances-ete-2027/
     - 16
     - 1
-    - 6.4
+    - 5.5
   - - /enfants/colonie-de-vacances/nord/
     - 16
     - 0
@@ -1787,46 +1850,38 @@ chiffres:
     - 16
     - 0
     - 10.1
-  - - /se-former/sessions/aisne/
-    - 16
-    - 0
-    - 6.8
-  - - /se-former/sessions/approfondissement/jeux/
-    - 16
-    - 0
-    - 26.9
   - - /se-former/sessions/bafd/juin-2027/
     - 16
     - 0
     - 8.2
-  - - /se-former/sessions/bouches-du-rhone/psc1/marseille/
-    - 16
-    - 0
-    - 7.8
-  - - /se-former/sessions/bretagne/bafd/
-    - 16
-    - 0
-    - 10.1
-  - - /se-former/sessions/cher/bourges/
-    - 16
-    - 0
-    - 7.5
   - - /se-former/sessions/dordogne/
     - 15
     - 2
     - 5.9
-  - - /se-former/sessions/drome/vacances-hiver-2027/
+  - - /se-former/sessions/isere/psc1/
     - 15
     - 2
-    - 4.9
-  - - /se-former/sessions/var/formation-generale/
-    - 15
-    - 2
-    - 6.0
-  - - /se-former/sessions/normandie/vacances-ete-2027/
+    - 5.9
+  - - /se-former/ecoles/cpjeps/charente-maritime/
     - 15
     - 1
-    - 5.1
+    - 13.9
+  - - /se-former/ecoles/cpjeps/normandie/
+    - 15
+    - 1
+    - 11.2
+  - - /se-former/sessions/gard/psc1/
+    - 15
+    - 1
+    - 8.9
+  - - /se-former/sessions/morbihan/vannes/
+    - 15
+    - 1
+    - 4.6
+  - - /se-former/sessions/nord/psc1/lille/
+    - 15
+    - 1
+    - 5.5
   - - /se-former/sessions/pas-de-calais/calais/
     - 15
     - 1
@@ -1835,50 +1890,46 @@ chiffres:
     - 15
     - 0
     - 54.6
-  - - /recruter/stagiaire-bafa/bouches-du-rhone/
+  - - /enfants/centre-de-loisirs/somme/abbeville/
     - 15
     - 0
-    - 24.4
+    - 10.7
+  - - /lexique/bafa/
+    - 15
+    - 0
+    - 77.5
   - - /se-former/sessions/auvergne-rhone-alpes/psc1/
     - 15
     - 0
     - 7.2
-  - - /se-former/sessions/bafa/avril-2027/
-    - 15
-    - 0
-    - 4.1
+  - - /se-former/sessions/pyrenees-orientales/psc1/
+    - 14
+    - 5
+    - 4.3
   - - /se-former/sessions/herault/agde/
     - 14
     - 4
     - 5.1
-  - - /se-former/sessions/isere/psc1/
-    - 14
-    - 2
-    - 5.8
   - - /se-former/sessions/psc1/novembre-2026/
     - 14
     - 2
     - 3.8
-  - - /se-former/ecoles/cpjeps/charente-maritime/
+  - - /se-former/sessions/seine-saint-denis/approfondissement/
     - 14
-    - 1
-    - 14.9
-  - - /se-former/ecoles/cpjeps/normandie/
-    - 14
-    - 1
-    - 6.9
-  - - /se-former/sessions/gard/psc1/
-    - 14
-    - 1
-    - 8.8
+    - 2
+    - 7.4
   - - /se-former/sessions/haut-rhin/approfondissement/
     - 14
     - 1
     - 6.1
-  - - /se-former/sessions/seine-saint-denis/saint-ouen-sur-seine/
+  - - /se-former/sessions/pas-de-calais/boulogne-sur-mer/
     - 14
     - 1
-    - 6.9
+    - 4.4
+  - - /se-former/sessions/tarn/albi/
+    - 14
+    - 1
+    - 5.9
   - - /enfants/centre-de-loisirs/alpes-de-haute-provence/
     - 14
     - 0
@@ -1895,94 +1946,90 @@ chiffres:
     - 14
     - 0
     - 17.1
-  - - /se-former/sessions/ain/
+  - - /se-former/ecoles/bpjeps/saone-et-loire/
     - 14
     - 0
-    - 7.9
-  - - /se-former/sessions/cantal/le-lioran/
+    - 11.0
+  - - /se-former/sessions/ariege/
     - 14
     - 0
-    - 5.1
-  - - /se-former/sessions/pyrenees-orientales/psc1/
-    - 13
-    - 4
-    - 4.4
+    - 6.6
+  - - /se-former/sessions/bafd/decembre-2026/
+    - 14
+    - 0
+    - 3.6
   - - /se-former/ecoles/dejeps/vendee/
     - 13
     - 2
     - 4.7
-  - - /se-former/sessions/seine-saint-denis/approfondissement/
+  - - /se-former/sessions/ille-et-vilaine/
     - 13
     - 2
-    - 7.9
-  - - /se-former/ecoles/bpjeps/morbihan/
+    - 6.3
+  - - /se-former/sessions/pas-de-calais/approfondissement/
+    - 13
+    - 2
+    - 7.7
+  - - /se-former/sessions/seine-et-marne/savigny-le-temple/
+    - 13
+    - 2
+    - 4.5
+  - - /enfants/centre-de-loisirs/pas-de-calais/aire-sur-la-lys/
+    - 13
+    - 1
+    - 6.1
+  - - /se-former/ecoles/cpjeps/seine-maritime/
     - 13
     - 1
     - 6.6
-  - - /se-former/sessions/hauts-de-france/vacances-noel-2026/
+  - - /se-former/sessions/haute-loire/le-puy-en-velay/
     - 13
     - 1
-    - 5.8
+    - 4.8
   - - /se-former/sessions/herault/psc1/montpellier/
     - 13
     - 1
     - 14.5
-  - - /se-former/sessions/morbihan/vannes/
-    - 13
-    - 1
-    - 5.2
-  - - /se-former/sessions/nord/psc1/lille/
-    - 13
-    - 1
-    - 5.4
   - - /se-former/sessions/paris/psc1/paris/
     - 13
     - 1
     - 7.2
-  - - /se-former/sessions/pas-de-calais/boulogne-sur-mer/
-    - 13
-    - 1
-    - 4.6
   - - /se-former/sessions/seine-et-marne/torcy/
     - 13
     - 1
     - 4.1
+  - - /se-former/sessions/yonne/approfondissement/
+    - 13
+    - 1
+    - 12.0
   - - /a-propos/
     - 13
     - 0
     - 3.8
-  - - /blog/periscolaire-comment-ca-marche/
+  - - /enfants/centre-de-loisirs/cote-d-or/saint-apollinaire/
     - 13
     - 0
-    - 15.5
-  - - /enfants/centre-de-loisirs/somme/abbeville/
+    - 5.5
+  - - /se-former/sessions/ain/psc1/
     - 13
     - 0
-    - 11.2
-  - - /se-former/ecoles/bpjeps/finistere/brest/
-    - 13
-    - 0
-    - 7.9
-  - - /se-former/ecoles/bpjeps/saone-et-loire/
-    - 13
-    - 0
-    - 11.1
+    - 8.9
   - - /se-former/sessions/alpes-maritimes/psc1/
     - 13
     - 0
     - 7.8
-  - - /se-former/sessions/ariege/
+  - - /se-former/sessions/approfondissement/nature-plein-air/
     - 13
     - 0
-    - 6.5
-  - - /se-former/sessions/ille-et-vilaine/
+    - 6.6
+  - - /se-former/sessions/aveyron/naucelle/
+    - 13
+    - 0
+    - 7.8
+  - - /se-former/sessions/nord/vacances-noel-2026/
     - 12
     - 2
-    - 6.8
-  - - /se-former/sessions/pas-de-calais/approfondissement/
-    - 12
-    - 2
-    - 7.5
+    - 5.2
   - - /se-former/sessions/rhone/formation-generale/
     - 12
     - 2
@@ -1995,46 +2042,62 @@ chiffres:
     - 12
     - 2
     - 9.4
-  - - /enfants/centre-de-loisirs/pas-de-calais/aire-sur-la-lys/
+  - - /se-former/sessions/aude/psc1/
     - 12
     - 1
-    - 6.0
-  - - /se-former/ecoles/cpjeps/seine-maritime/
+    - 8.4
+  - - /se-former/sessions/aude/vacances-hiver-2027/
     - 12
     - 1
-    - 6.2
-  - - /se-former/sessions/haute-loire/le-puy-en-velay/
+    - 5.1
+  - - /se-former/sessions/finistere/formation-generale/
     - 12
     - 1
-    - 5.0
+    - 7.8
+  - - /se-former/sessions/hautes-alpes/approfondissement/
+    - 12
+    - 1
+    - 12.4
   - - /se-former/sessions/tarn/
     - 12
     - 1
     - 6.8
-  - - /se-former/sessions/yonne/approfondissement/
+  - - /trouver-un-poste/stage-pratique-bafa/hautes-alpes/
     - 12
     - 1
-    - 11.3
+    - 49.4
   - - /comment-ca-marche/
     - 12
     - 0
     - 37.8
+  - - /enfants/centre-de-loisirs/calvados/cormelles-le-royal/
+    - 12
+    - 0
+    - 5.2
+  - - /enfants/centre-de-loisirs/ille-et-vilaine/vitre-erbree/
+    - 12
+    - 0
+    - 9.8
+  - - /enfants/centre-de-loisirs/tarn-et-garonne/montauban/
+    - 12
+    - 0
+    - 8.9
   - - /se-former/
     - 12
     - 0
     - 17.8
+  - - /se-former/sessions/aisne/psc1/chateau-thierry/
+    - 12
+    - 0
+    - 7.6
   - - /se-former/sessions/aisne/vacances-hiver-2027/
     - 12
     - 0
     - 4.7
-  - - /se-former/sessions/approfondissement/nature-plein-air/
-    - 12
-    - 0
-    - 6.4
-  - - /se-former/sessions/bafd/decembre-2026/
-    - 12
-    - 0
-    - 3.7
+  - - /se-former/sessions/pas-de-calais/vacances-noel-2026/
+    - 11
+    - 6
+    - 3.5
   - - /se-former/sessions/morbihan/approfondissement/
     - 11
     - 3
@@ -2047,11 +2110,7 @@ chiffres:
     - 11
     - 2
     - 9.6
-  - - /se-former/sessions/nord/vacances-noel-2026/
-    - 11
-    - 2
-    - 4.9
-  - - /se-former/sessions/aude/psc1/
+  - - /se-former/ecoles/dejeps/nouvelle-aquitaine/
     - 11
     - 1
     - 8.5
@@ -2067,26 +2126,30 @@ chiffres:
     - 11
     - 1
     - 6.0
+  - - /se-former/sessions/essonne/palaiseau/
+    - 11
+    - 1
+    - 8.1
+  - - /se-former/sessions/gironde/vacances-noel-2026/
+    - 11
+    - 1
+    - 7.0
   - - /se-former/sessions/morbihan/vacances-hiver-2027/
     - 11
     - 1
     - 7.0
-  - - /se-former/sessions/nord/genech/
+  - - /blog/bafa-ou-bpjeps/
     - 11
-    - 1
-    - 3.2
-  - - /se-former/sessions/seine-et-marne/savigny-le-temple/
-    - 11
-    - 1
-    - 4.8
+    - 0
+    - 6.1
   - - /enfants/centre-de-loisirs/gironde/
     - 11
     - 0
     - 55.5
-  - - /se-former/sessions/aisne/psc1/chateau-thierry/
+  - - /enfants/centre-de-loisirs/hauts-de-seine/vanves/
     - 11
     - 0
-    - 7.8
+    - 8.0
   - - /se-former/sessions/bas-rhin/
     - 11
     - 0
@@ -2099,130 +2162,114 @@ chiffres:
     - 10
     - 2
     - 6.7
-  - - /se-former/ecoles/dejeps/nouvelle-aquitaine/
+  - - /se-former/sessions/indre-et-loire/amboise/
+    - 10
+    - 2
+    - 7.0
+  - - /se-former/sessions/paris/psc1/paris-13e/
+    - 10
+    - 2
+    - 6.0
+  - - /se-former/sessions/savoie/
+    - 10
+    - 2
+    - 7.7
+  - - /enfants/centre-de-loisirs/somme/amiens/
     - 10
     - 1
-    - 8.5
+    - 15.2
   - - /se-former/sessions/aveyron/saint-affrique/
     - 10
     - 1
     - 2.8
+  - - /se-former/sessions/centre-val-de-loire/
+    - 10
+    - 1
+    - 6.4
   - - /se-former/sessions/cotes-d-armor/plerin/
     - 10
     - 1
     - 4.4
-  - - /se-former/sessions/finistere/formation-generale/
-    - 10
-    - 1
-    - 8.0
-  - - /se-former/sessions/gironde/vacances-noel-2026/
-    - 10
-    - 1
-    - 7.5
   - - /se-former/sessions/haut-rhin/psc1/
     - 10
     - 1
     - 8.4
+  - - /se-former/sessions/pyrenees-atlantiques/
+    - 10
+    - 1
+    - 4.6
   - - /se-former/sessions/tarn/puygouzon/
     - 10
     - 1
     - 5.5
-  - - /blog/bafa-ou-bpjeps/
-    - 10
-    - 0
-    - 5.8
   - - /enfants/centre-de-loisirs/hauts-de-seine/asnieres-sur-seine/
     - 10
     - 0
     - 13.3
-  - - /enfants/centre-de-loisirs/hauts-de-seine/vanves/
+  - - /enfants/centre-de-loisirs/pyrenees-atlantiques/
     - 10
     - 0
-    - 7.7
-  - - /enfants/centre-de-loisirs/ille-et-vilaine/vitre-erbree/
+    - 41.4
+  - - /enfants/centre-de-loisirs/val-de-marne/nogent-sur-marne/
     - 10
     - 0
-    - 9.6
+    - 7.2
+  - - /recruter/directeur-bafd/gard/
+    - 10
+    - 0
+    - 6.2
+  - - /se-former/ecoles/bpjeps/aisne/saint-quentin/
+    - 10
+    - 0
+    - 9.5
   - - /se-former/ecoles/bpjeps/bretagne/
     - 10
     - 0
     - 10.5
+  - - /se-former/ecoles/bpjeps/pays-de-la-loire/
+    - 10
+    - 0
+    - 6.4
   - - /se-former/ecoles/bpjeps/savoie/
     - 10
     - 0
     - 13.0
+  - - /se-former/ecoles/bpjeps/vaucluse/
+    - 10
+    - 0
+    - 7.0
   - - /se-former/sessions/
     - 10
     - 0
     - 6.5
-  - - /se-former/sessions/ain/psc1/
+  - - /se-former/sessions/aube/vacances-hiver-2027/
     - 10
     - 0
-    - 9.3
-  - - /se-former/sessions/aveyron/naucelle/
-    - 10
-    - 0
-    - 7.1
-  - - /se-former/sessions/calvados/
-    - 10
-    - 0
-    - 8.1
-  - - /se-former/sessions/calvados/vacances-noel-2026/
-    - 10
-    - 0
-    - 8.3
-  - - /se-former/sessions/pas-de-calais/vacances-noel-2026/
-    - 9
-    - 5
-    - 4.0
+    - 5.6
   - - /se-former/sessions/bouches-du-rhone/miramas/
     - 9
     - 3
     - 25.2
-  - - /se-former/sessions/indre-et-loire/amboise/
+  - - /se-former/sessions/nord/wattignies/
+    - 9
+    - 3
+    - 3.3
+  - - /se-former/sessions/alpes-maritimes/vacances-noel-2026/
     - 9
     - 2
-    - 6.6
-  - - /se-former/sessions/paris/psc1/paris-13e/
-    - 9
-    - 2
-    - 5.7
-  - - /se-former/sessions/savoie/
-    - 9
-    - 2
-    - 7.4
-  - - /enfants/centre-de-loisirs/somme/amiens/
-    - 9
-    - 1
-    - 15.8
+    - 2.9
   - - /se-former/sessions/alpes-maritimes/saint-laurent-du-var/
     - 9
     - 1
     - 7.7
-  - - /se-former/sessions/aude/vacances-hiver-2027/
-    - 9
-    - 1
-    - 5.8
   - - /se-former/sessions/bafa/novembre-2026/
     - 9
     - 1
     - 4.2
-  - - /se-former/sessions/centre-val-de-loire/
-    - 9
-    - 1
-    - 6.2
-  - - /se-former/sessions/essonne/palaiseau/
-    - 9
-    - 1
-    - 7.9
   - - /se-former/sessions/grand-est/vacances-hiver-2027/
     - 9
     - 1
     - 6.2
-  - - /se-former/sessions/hautes-alpes/approfondissement/
-    - 9
-    - 1
-    - 15.3
   - - /se-former/sessions/loir-et-cher/romorantin/
     - 9
     - 1
@@ -2235,58 +2282,74 @@ chiffres:
     - 9
     - 1
     - 8.1
-  - - /se-former/sessions/pyrenees-atlantiques/
+  - - /se-former/sessions/pyrenees-atlantiques/vacances-ete-2027/
     - 9
     - 1
-    - 5.0
+    - 4.8
   - - /se-former/sessions/var/approfondissement/
     - 9
     - 1
     - 54.2
+  - - /se-former/sessions/vendee/fontenay-le-comte/
+    - 9
+    - 1
+    - 7.6
+  - - /blog/bafa-internat-ou-externat/
+    - 9
+    - 0
+    - 19.0
+  - - /enfants/centre-de-loisirs/haute-savoie/la-balme-de-sillingy/
+    - 9
+    - 0
+    - 9.0
   - - /enfants/centre-de-loisirs/maine-et-loire/angers/
     - 9
     - 0
     - 18.6
-  - - /enfants/centre-de-loisirs/pyrenees-atlantiques/
-    - 9
-    - 0
-    - 38.4
-  - - /enfants/centre-de-loisirs/tarn-et-garonne/montauban/
-    - 9
-    - 0
-    - 9.3
   - - /enfants/centre-de-loisirs/val-d-oise/franconville/
     - 9
     - 0
     - 7.3
+  - - /enfants/colonie-de-vacances/hauts-de-seine/
+    - 9
+    - 0
+    - 9.4
   - - /enfants/colonie-de-vacances/rhone/
     - 9
     - 0
     - 61.4
+  - - /enfants/periscolaire/vendee/
+    - 9
+    - 0
+    - 8.8
+  - - /lexique/bpjeps/
+    - 9
+    - 0
+    - 65.9
   - - /lexique/jury-bafa/
     - 9
     - 0
     - 17.4
-  - - /se-former/ecoles/bpjeps/aisne/saint-quentin/
+  - - /organismes-partenaires/
     - 9
     - 0
-    - 9.2
+    - 68.7
   - - /se-former/ecoles/bpjeps/cote-d-or/dijon/
     - 9
     - 0
     - 47.9
-  - - /se-former/ecoles/bpjeps/pays-de-la-loire/
+  - - /se-former/sessions/ain/formation-generale/
     - 9
     - 0
-    - 5.9
+    - 34.7
+  - - /se-former/sessions/alpes-de-haute-provence/approfondissement/
+    - 9
+    - 0
+    - 25.3
   - - /se-former/sessions/alpes-maritimes/pegomas/
     - 9
     - 0
     - 5.0
-  - - /se-former/sessions/aube/vacances-hiver-2027/
-    - 9
-    - 0
-    - 5.8
   - - /se-former/sessions/bafd/janvier-2027/
     - 9
     - 0
@@ -2295,18 +2358,18 @@ chiffres:
     - 9
     - 0
     - 58.6
-  - - /se-former/sessions/charente-maritime/approfondissement/
+  - - /se-former/sessions/bouches-du-rhone/bafd/marseille/
     - 9
     - 0
-    - 6.2
-  - - /se-former/sessions/nord/wattignies/
+    - 39.1
+  - - /se-former/ecoles/bpjeps/creuse/creuse/
     - 8
     - 3
-    - 3.6
-  - - /se-former/sessions/alpes-maritimes/vacances-noel-2026/
+    - 5.2
+  - - /se-former/sessions/seine-et-marne/approfondissement/
     - 8
     - 2
-    - 3.0
+    - 5.8
   - - /se-former/sessions/cher/formation-generale/
     - 8
     - 1
@@ -2319,6 +2382,14 @@ chiffres:
     - 8
     - 1
     - 4.9
+  - - /se-former/sessions/hauts-de-seine/bsb/bagneux/
+    - 8
+    - 1
+    - 4.5
+  - - /se-former/sessions/hauts-de-seine/vanves/
+    - 8
+    - 1
+    - 3.8
   - - /se-former/sessions/jura/chaux-des-crotenay/
     - 8
     - 1
@@ -2327,6 +2398,10 @@ chiffres:
     - 8
     - 1
     - 5.2
+  - - /se-former/sessions/maine-et-loire/
+    - 8
+    - 1
+    - 6.9
   - - /se-former/sessions/nord/armentieres/
     - 8
     - 1
@@ -2335,50 +2410,26 @@ chiffres:
     - 8
     - 1
     - 5.1
-  - - /se-former/sessions/pyrenees-atlantiques/vacances-ete-2027/
+  - - /se-former/sessions/savoie/psc1/
     - 8
     - 1
-    - 4.9
-  - - /se-former/sessions/vendee/fontenay-le-comte/
-    - 8
-    - 1
-    - 8.2
+    - 9.1
   - - /se-former/sessions/vosges/vacances-ete-2027/
     - 8
     - 1
     - 3.4
-  - - /trouver-un-poste/stage-pratique-bafa/hautes-alpes/
-    - 8
-    - 1
-    - 48.5
-  - - /blog/bafa-internat-ou-externat/
-    - 8
-    - 0
-    - 21.1
-  - - /enfants/centre-de-loisirs/val-de-marne/nogent-sur-marne/
+  - - /enfants/centre-de-loisirs/finistere/fouesnant/
     - 8
     - 0
     - 7.6
-  - - /enfants/colonie-de-vacances/hauts-de-seine/
-    - 8
-    - 0
-    - 9.4
   - - /enfants/periscolaire/doubs/
     - 8
     - 0
     - 10.1
-  - - /enfants/periscolaire/vendee/
+  - - /enfants/periscolaire/territoire-de-belfort/
     - 8
     - 0
-    - 8.9
-  - - /lexique/bafa/
-    - 8
-    - 0
-    - 73.9
-  - - /recruter/directeur-bafd/gard/
-    - 8
-    - 0
-    - 6.2
+    - 8.6
   - - /se-former/ecoles/bpjeps/aisne/
     - 8
     - 0
@@ -2391,14 +2442,10 @@ chiffres:
     - 8
     - 0
     - 8.8
-  - - /se-former/ecoles/bpjeps/vaucluse/
+  - - /se-former/ecoles/desjeps/loire-atlantique/
     - 8
     - 0
-    - 7.2
-  - - /se-former/sessions/ain/formation-generale/
-    - 8
-    - 0
-    - 38.9
+    - 10.9
   - - /se-former/sessions/aude/narbonne/
     - 8
     - 0
@@ -2411,30 +2458,30 @@ chiffres:
     - 8
     - 0
     - 24.1
-  - - /se-former/sessions/bretagne/psc1/
+  - - /se-former/sessions/bouches-du-rhone/vacances-noel-2026/
     - 8
     - 0
-    - 22.9
+    - 4.4
   - - /se-former/sessions/val-de-marne/approfondissement/
     - 7
     - 4
     - 8.4
-  - - /se-former/ecoles/bpjeps/creuse/creuse/
-    - 7
-    - 3
-    - 5.0
   - - /se-former/sessions/gironde/talence/
     - 7
     - 2
     - 4.1
-  - - /se-former/sessions/seine-et-marne/approfondissement/
+  - - /enfants/centre-de-loisirs/meurthe-et-moselle/nancy/
     - 7
-    - 2
-    - 5.1
+    - 1
+    - 22.6
   - - /recruter/animateurs-bafa/creuse/
     - 7
     - 1
     - 5.0
+  - - /se-former/ecoles/bpjeps/vendee/la-roche-sur-yon/
+    - 7
+    - 1
+    - 7.9
   - - /se-former/sessions/bas-rhin/approfondissement/
     - 7
     - 1
@@ -2459,10 +2506,6 @@ chiffres:
     - 7
     - 1
     - 3.4
-  - - /se-former/sessions/hauts-de-seine/bsb/bagneux/
-    - 7
-    - 1
-    - 5.0
   - - /se-former/sessions/indre-et-loire/vacances-printemps-2027/
     - 7
     - 1
@@ -2475,10 +2518,18 @@ chiffres:
     - 7
     - 1
     - 10.4
-  - - /enfants/centre-de-loisirs/finistere/fouesnant/
+  - - /se-former/sessions/somme/approfondissement/
     - 7
-    - 0
-    - 7.6
+    - 1
+    - 5.3
+  - - /se-former/sessions/somme/formation-generale/
+    - 7
+    - 1
+    - 17.1
+  - - /se-former/sessions/vosges/psc1/
+    - 7
+    - 1
+    - 4.7
   - - /enfants/centre-de-loisirs/isere/grenoble/
     - 7
     - 0
@@ -2491,34 +2542,38 @@ chiffres:
     - 7
     - 0
     - 27.0
-  - - /enfants/periscolaire/territoire-de-belfort/
+  - - /enfants/centre-de-loisirs/vaucluse/cavaillon/
     - 7
     - 0
-    - 8.9
+    - 7.9
   - - /se-former/ecoles/bpjeps/doubs/
     - 7
     - 0
     - 12.9
+  - - /se-former/ecoles/bpjeps/essonne/
+    - 7
+    - 0
+    - 6.4
   - - /se-former/ecoles/bpjeps/loire/
     - 7
     - 0
     - 9.6
+  - - /se-former/ecoles/bpjeps/var/
+    - 7
+    - 0
+    - 3.4
   - - /se-former/ecoles/cpjeps/nouvelle-aquitaine/
     - 7
     - 0
     - 5.9
+  - - /se-former/ecoles/dejeps/grand-est/
+    - 7
+    - 0
+    - 8.6
   - - /se-former/ecoles/dejeps/loire-atlantique/
     - 7
     - 0
     - 9.0
-  - - /se-former/ecoles/desjeps/loire-atlantique/
-    - 7
-    - 0
-    - 11.3
-  - - /se-former/sessions/alpes-de-haute-provence/approfondissement/
-    - 7
-    - 0
-    - 30.0
   - - /se-former/sessions/aube/approfondissement/
     - 7
     - 0
@@ -2527,38 +2582,14 @@ chiffres:
     - 7
     - 0
     - 7.7
-  - - /se-former/sessions/bouches-du-rhone/bafd/marseille/
-    - 7
-    - 0
-    - 38.0
   - - /se-former/sessions/bouches-du-rhone/gignac-la-nerthe/
     - 7
     - 0
     - 72.0
-  - - /se-former/sessions/bouches-du-rhone/vacances-noel-2026/
-    - 7
-    - 0
-    - 4.6
-  - - /se-former/sessions/centre-val-de-loire/bafd/
-    - 7
-    - 0
-    - 5.4
-  - - /se-former/sessions/charente-maritime/
-    - 7
-    - 0
-    - 13.4
   - - /se-former/sessions/vaucluse/bafd/
     - 6
     - 2
     - 15.7
-  - - /enfants/centre-de-loisirs/meurthe-et-moselle/nancy/
-    - 6
-    - 1
-    - 15.7
-  - - /se-former/ecoles/bpjeps/vendee/la-roche-sur-yon/
-    - 6
-    - 1
-    - 9.0
   - - /se-former/sessions/alpes-maritimes/formation-generale/
     - 6
     - 1
@@ -2575,6 +2606,10 @@ chiffres:
     - 6
     - 1
     - 13.0
+  - - /se-former/sessions/eure/vernon/
+    - 6
+    - 1
+    - 6.7
   - - /se-former/sessions/gard/vacances-printemps-2027/
     - 6
     - 1
@@ -2587,46 +2622,46 @@ chiffres:
     - 6
     - 1
     - 5.2
-  - - /se-former/sessions/hauts-de-seine/vanves/
-    - 6
-    - 1
-    - 4.0
   - - /se-former/sessions/ile-de-france/vacances-noel-2026/
     - 6
     - 1
     - 8.2
+  - - /se-former/sessions/indre-et-loire/approfondissement/
+    - 6
+    - 1
+    - 6.2
   - - /se-former/sessions/loire-atlantique/bafd/
     - 6
     - 1
     - 4.8
+  - - /se-former/sessions/loire/psc1/
+    - 6
+    - 1
+    - 8.3
   - - /se-former/sessions/nord/saint-pol-sur-mer/
     - 6
     - 1
     - 7.5
-  - - /se-former/sessions/somme/approfondissement/
+  - - /se-former/sessions/seine-et-marne/psc1/magny-le-hongre/
     - 6
     - 1
-    - 5.3
-  - - /se-former/sessions/vosges/psc1/
-    - 6
-    - 1
-    - 3.7
+    - 4.8
   - - /conditions-utilisation/
     - 6
     - 0
     - 6.8
-  - - /enfants/centre-de-loisirs/calvados/cormelles-le-royal/
+  - - /enfants/centre-de-loisirs/essonne/juvisy-sur-orge/
     - 6
     - 0
-    - 4.8
-  - - /enfants/centre-de-loisirs/cote-d-or/saint-apollinaire/
+    - 11.7
+  - - /enfants/periscolaire/haute-savoie/
     - 6
     - 0
-    - 6.7
-  - - /organismes-partenaires/
+    - 8.5
+  - - /lexique/cpjeps/
     - 6
     - 0
-    - 71.3
+    - 51.8
   - - /recruter/animateurs-bafa/hautes-alpes/
     - 6
     - 0
@@ -2639,18 +2674,10 @@ chiffres:
     - 6
     - 0
     - 7.7
-  - - /se-former/ecoles/bpjeps/essonne/
-    - 6
-    - 0
-    - 7.3
   - - /se-former/ecoles/bpjeps/somme/
     - 6
     - 0
     - 7.7
-  - - /se-former/ecoles/bpjeps/var/
-    - 6
-    - 0
-    - 2.7
   - - /se-former/ecoles/cpjeps/bas-rhin/
     - 6
     - 0
@@ -2659,10 +2686,10 @@ chiffres:
     - 6
     - 0
     - 3.7
-  - - /se-former/ecoles/dejeps/grand-est/
+  - - /se-former/ecoles/cpjeps/var/
     - 6
     - 0
-    - 8.2
+    - 3.8
   - - /se-former/sessions/alpes-de-haute-provence/ubay-serre-poncon/
     - 6
     - 0
@@ -2675,14 +2702,18 @@ chiffres:
     - 6
     - 0
     - 5.5
-  - - /se-former/sessions/bretagne/vacances-printemps-2027/
+  - - /se-former/sessions/bretagne/
     - 6
     - 0
-    - 3.3
-  - - /se-former/sessions/centre-val-de-loire/approfondissement/jeux/
-    - 6
-    - 0
-    - 17.7
+    - 7.8
+  - - /trouver-un-poste/emploi-animateur/var/toulon/
+    - 5
+    - 3
+    - 7.2
+  - - /se-former/sessions/bouches-du-rhone/plan-de-cuques/
+    - 5
+    - 2
+    - 3.2
   - - /se-former/sessions/creuse/
     - 5
     - 2
@@ -2695,6 +2726,10 @@ chiffres:
     - 5
     - 1
     - 6.6
+  - - /se-former/ecoles/cpjeps/val-d-oise/
+    - 5
+    - 1
+    - 5.0
   - - /se-former/sessions/aisne/saint-erme-outre-et-ramecourt/
     - 5
     - 1
@@ -2723,18 +2758,14 @@ chiffres:
     - 5
     - 1
     - 2.8
-  - - /se-former/sessions/indre-et-loire/approfondissement/
+  - - /se-former/sessions/ile-de-france/bsb/
     - 5
     - 1
-    - 6.6
+    - 1.8
   - - /se-former/sessions/loire-atlantique/vacances-printemps-2027/
     - 5
     - 1
     - 7.4
-  - - /se-former/sessions/loire/psc1/
-    - 5
-    - 1
-    - 8.4
   - - /se-former/sessions/maine-et-loire/vacances-hiver-2027/
     - 5
     - 1
@@ -2747,10 +2778,6 @@ chiffres:
     - 5
     - 1
     - 4.2
-  - - /se-former/sessions/seine-et-marne/psc1/magny-le-hongre/
-    - 5
-    - 1
-    - 4.6
   - - /se-former/sessions/val-d-oise/bafd/saint-prix/
     - 5
     - 1
@@ -2767,6 +2794,18 @@ chiffres:
     - 5
     - 1
     - 6.2
+  - - /se-former/sessions/yvelines/psc1/houilles/
+    - 5
+    - 1
+    - 5.0
+  - - /trouver-un-poste/stage-pratique-bafa/finistere/
+    - 5
+    - 1
+    - 4.2
+  - - /classement-des-sessions/
+    - 5
+    - 0
+    - 7.2
   - - /enfants/centre-de-loisirs/bas-rhin/strasbourg/
     - 5
     - 0
@@ -2779,14 +2818,14 @@ chiffres:
     - 5
     - 0
     - 20.0
-  - - /enfants/centre-de-loisirs/haute-savoie/la-balme-de-sillingy/
-    - 5
-    - 0
-    - 10.0
   - - /enfants/centre-de-loisirs/loire-atlantique/
     - 5
     - 0
     - 45.0
+  - - /enfants/centre-de-loisirs/nord/cambrai/
+    - 5
+    - 0
+    - 15.0
   - - /enfants/centre-de-loisirs/paris/bagneux/
     - 5
     - 0
@@ -2795,10 +2834,18 @@ chiffres:
     - 5
     - 0
     - 8.6
-  - - /enfants/periscolaire/haute-savoie/
+  - - /enfants/colonie-de-vacances/hautes-alpes/
     - 5
     - 0
-    - 9.0
+    - 84.2
+  - - /enfants/periscolaire/deux-sevres/
+    - 5
+    - 0
+    - 7.2
+  - - /enfants/periscolaire/loire/
+    - 5
+    - 0
+    - 7.2
   - - /enfants/periscolaire/meurthe-et-moselle/
     - 5
     - 0
@@ -2819,10 +2866,6 @@ chiffres:
     - 5
     - 0
     - 1.0
-  - - /se-former/ecoles/cpjeps/var/
-    - 5
-    - 0
-    - 4.2
   - - /se-former/sessions/approfondissement/
     - 5
     - 0
@@ -2835,38 +2878,54 @@ chiffres:
     - 5
     - 0
     - 5.6
+  - - /se-former/sessions/ardeche/psc1/
+    - 5
+    - 0
+    - 8.8
   - - /se-former/sessions/bafd/septembre-2027/
     - 5
     - 0
     - 4.8
-  - - /se-former/sessions/bretagne/
-    - 5
-    - 0
-    - 8.6
   - - /se-former/sessions/bretagne/approfondissement/multi-activites/
     - 5
     - 0
     - 6.0
-  - - /se-former/sessions/bretagne/approfondissement/sport/
-    - 5
-    - 0
-    - 10.8
-  - - /trouver-un-poste/emploi-animateur/var/toulon/
-    - 4
-    - 3
-    - 7.0
   - - /se-former/ecoles/bpjeps/saone-et-loire/macon/
     - 4
     - 2
     - 8.5
+  - - /se-former/sessions/ille-et-vilaine/breal-sous-montfort/
+    - 4
+    - 2
+    - 4.2
   - - /se-former/sessions/ille-et-vilaine/montauban-de-bretagne/
     - 4
     - 2
     - 3.8
+  - - /trouver-un-poste/stage-pratique-bafa/gironde/
+    - 4
+    - 2
+    - 1.8
   - - /enfants/centre-de-loisirs/eure/gisors/
     - 4
     - 1
     - 8.8
+  - - /enfants/centre-de-loisirs/oise/nogent-sur-oise/
+    - 4
+    - 1
+    - 8.0
+  - - /recruter/stagiaire-bafa/haute-garonne/
+    - 4
+    - 1
+    - 10.5
+  - - /recruter/stagiaire-bafa/haute-vienne/
+    - 4
+    - 1
+    - 5.5
+  - - /se-former/ecoles/bpjeps/seine-et-marne/
+    - 4
+    - 1
+    - 5.2
   - - /se-former/ecoles/cpjeps/paris/
     - 4
     - 1
@@ -2875,10 +2934,10 @@ chiffres:
     - 4
     - 1
     - 3.5
-  - - /se-former/ecoles/cpjeps/val-d-oise/
+  - - /se-former/sessions/approfondissement/sport/
     - 4
     - 1
-    - 4.5
+    - 6.8
   - - /se-former/sessions/ardeche/vacances-hiver-2027/
     - 4
     - 1
@@ -2907,10 +2966,18 @@ chiffres:
     - 4
     - 1
     - 19.0
-  - - /se-former/sessions/ile-de-france/bsb/
+  - - /se-former/sessions/hauts-de-seine/psc1/meudon/
     - 4
     - 1
-    - 2.0
+    - 4.8
+  - - /se-former/sessions/hauts-de-seine/vacances-hiver-2027/
+    - 4
+    - 1
+    - 9.5
+  - - /se-former/sessions/herault/bafd/montpellier/
+    - 4
+    - 1
+    - 8.2
   - - /se-former/sessions/landes/biscarrosse/
     - 4
     - 1
@@ -2935,30 +3002,50 @@ chiffres:
     - 4
     - 1
     - 4.5
-  - - /se-former/sessions/somme/formation-generale/
+  - - /se-former/sessions/territoire-de-belfort/psc1/belfort/
     - 4
     - 1
-    - 22.5
+    - 4.2
   - - /se-former/sessions/val-de-marne/saint-mande/
     - 4
     - 1
     - 5.8
+  - - /se-former/sessions/vaucluse/bafd/beaumont-du-ventoux/
+    - 4
+    - 1
+    - 6.8
   - - /se-former/sessions/vienne/vacances-hiver-2027/
     - 4
     - 1
     - 9.5
-  - - /trouver-un-poste/stage-pratique-bafa/finistere/
+  - - /se-former/sessions/yvelines/rambouillet/
     - 4
     - 1
-    - 5.0
+    - 21.0
+  - - /trouver-un-poste/stage-pratique-bafa/pyrenees-orientales/
+    - 4
+    - 1
+    - 7.2
   - - /trouver-un-poste/stage-pratique-bafa/rhone/
     - 4
     - 1
     - 4.8
-  - - /classement-des-sessions/
+  - - /enfants/centre-de-loisirs/cotes-d-armor/pabu/
     - 4
     - 0
-    - 6.8
+    - 6.2
+  - - /enfants/centre-de-loisirs/gers/
+    - 4
+    - 0
+    - 11.2
+  - - /enfants/centre-de-loisirs/gironde/la-teste-de-buch/
+    - 4
+    - 0
+    - 10.8
+  - - /enfants/centre-de-loisirs/haute-loire/
+    - 4
+    - 0
+    - 24.5
   - - /enfants/centre-de-loisirs/loire-atlantique/nort-sur-erdre/
     - 4
     - 0
@@ -2967,6 +3054,10 @@ chiffres:
     - 4
     - 0
     - 16.0
+  - - /enfants/centre-de-loisirs/lot-et-garonne/agen/
+    - 4
+    - 0
+    - 51.8
   - - /enfants/centre-de-loisirs/maine-et-loire/cholet/
     - 4
     - 0
@@ -2979,22 +3070,30 @@ chiffres:
     - 4
     - 0
     - 5.0
+  - - /enfants/centre-de-loisirs/morbihan/malansac/
+    - 4
+    - 0
+    - 7.2
   - - /enfants/centre-de-loisirs/moselle/montigny-les-metz/
     - 4
     - 0
     - 10.2
-  - - /enfants/centre-de-loisirs/nord/cambrai/
+  - - /enfants/centre-de-loisirs/puy-de-dome/clermont-ferrand/
     - 4
     - 0
-    - 16.0
+    - 36.5
   - - /enfants/centre-de-loisirs/seine-et-marne/coulommiers/
     - 4
     - 0
     - 10.0
-  - - /enfants/centre-de-loisirs/vaucluse/cavaillon/
+  - - /enfants/centre-de-loisirs/var/saint-raphael/
     - 4
     - 0
-    - 8.2
+    - 9.0
+  - - /enfants/centre-de-loisirs/vendee/notre-dame-de-monts/
+    - 4
+    - 0
+    - 7.5
   - - /enfants/centre-de-loisirs/vosges/la-bresse/
     - 4
     - 0
@@ -3007,14 +3106,14 @@ chiffres:
     - 4
     - 0
     - 25.2
+  - - /enfants/colonie-de-vacances/alpes-maritimes/
+    - 4
+    - 0
+    - 43.8
   - - /enfants/colonie-de-vacances/gard/
     - 4
     - 0
     - 32.5
-  - - /enfants/colonie-de-vacances/hautes-alpes/
-    - 4
-    - 0
-    - 84.0
   - - /enfants/colonie-de-vacances/indre/
     - 4
     - 0
@@ -3027,18 +3126,18 @@ chiffres:
     - 4
     - 0
     - 18.0
-  - - /enfants/periscolaire/deux-sevres/
+  - - /lexique/acm/
     - 4
     - 0
-    - 7.2
-  - - /lexique/bpjeps/
+    - 26.2
+  - - /recruter/stagiaire-bafa/cote-d-or/
     - 4
     - 0
-    - 49.2
-  - - /lexique/cpjeps/
+    - 5.8
+  - - /recruter/stagiaire-bafa/loire-atlantique/
     - 4
     - 0
-    - 44.5
+    - 13.5
   - - /se-former/ecoles/bpjeps/calvados/
     - 4
     - 0
@@ -3067,6 +3166,10 @@ chiffres:
     - 4
     - 0
     - 15.5
+  - - /se-former/ecoles/bpjeps/maine-et-loire/
+    - 4
+    - 0
+    - 3.5
   - - /se-former/ecoles/bpjeps/pyrenees-atlantiques/
     - 4
     - 0
@@ -3087,6 +3190,10 @@ chiffres:
     - 4
     - 0
     - 5.2
+  - - /se-former/ecoles/cpjeps/nord/
+    - 4
+    - 0
+    - 6.5
   - - /se-former/ecoles/cpjeps/occitanie/
     - 4
     - 0
@@ -3111,10 +3218,6 @@ chiffres:
     - 4
     - 0
     - 7.0
-  - - /se-former/sessions/ardeche/psc1/
-    - 4
-    - 0
-    - 8.2
   - - /se-former/sessions/ardennes/saint-laurent/
     - 4
     - 0
@@ -3123,6 +3226,10 @@ chiffres:
     - 4
     - 0
     - 7.2
+  - - /se-former/sessions/bafd/
+    - 4
+    - 0
+    - 9.0
   - - /se-former/sessions/bouches-du-rhone/psc1/aix-en-provence/
     - 4
     - 0
@@ -3135,46 +3242,34 @@ chiffres:
     - 4
     - 0
     - 30.0
-  - - /se-former/sessions/calvados/thury-harcourt-le-hom/
-    - 4
-    - 0
-    - 10.8
   - - /se-former/ecoles/cpjeps/eure-et-loir/
     - 3
     - 2
     - 1.7
-  - - /se-former/sessions/bouches-du-rhone/plan-de-cuques/
-    - 3
-    - 2
-    - 3.3
   - - /se-former/sessions/haute-vienne/vacances-noel-2026/
     - 3
     - 2
     - 1.3
-  - - /se-former/sessions/ille-et-vilaine/breal-sous-montfort/
-    - 3
-    - 2
-    - 4.0
-  - - /trouver-un-poste/stage-pratique-bafa/gironde/
-    - 3
-    - 2
-    - 2.0
   - - /enfants/centre-de-loisirs/haut-rhin/stosswihr/
     - 3
     - 1
     - 6.0
-  - - /enfants/centre-de-loisirs/oise/nogent-sur-oise/
+  - - /enfants/centre-de-loisirs/haute-loire/le-puy-en-velay/
     - 3
     - 1
-    - 8.3
+    - 7.0
+  - - /lexique/bafd/
+    - 3
+    - 1
+    - 21.0
   - - /recruter/directeur-bafd/lot/
     - 3
     - 1
     - 9.7
-  - - /se-former/ecoles/bpjeps/seine-et-marne/
+  - - /recruter/stagiaire-bafa/vendee/
     - 3
     - 1
-    - 6.3
+    - 4.0
   - - /se-former/ecoles/bpjeps/val-de-marne/
     - 3
     - 1
@@ -3184,10 +3279,6 @@ chiffres:
     - 1
     - 9.3
   - - /se-former/sessions/ain/bourg-en-bresse/
-    - 3
-    - 1
-    - 6.0
-  - - /se-former/sessions/approfondissement/sport/
     - 3
     - 1
     - 6.0
@@ -3207,6 +3298,14 @@ chiffres:
     - 3
     - 1
     - 4.7
+  - - /se-former/sessions/bretagne/bsb/
+    - 3
+    - 1
+    - 6.7
+  - - /se-former/sessions/cantal/approfondissement/
+    - 3
+    - 1
+    - 5.0
   - - /se-former/sessions/essonne/quincy-sous-senart/
     - 3
     - 1
@@ -3223,10 +3322,6 @@ chiffres:
     - 3
     - 1
     - 7.0
-  - - /se-former/sessions/herault/bafd/montpellier/
-    - 3
-    - 1
-    - 7.7
   - - /se-former/sessions/herault/vacances-noel-2026/
     - 3
     - 1
@@ -3259,10 +3354,10 @@ chiffres:
     - 3
     - 1
     - 6.7
-  - - /se-former/sessions/vaucluse/bafd/beaumont-du-ventoux/
+  - - /trouver-un-poste/emploi-animateur/calvados/caen/
     - 3
     - 1
-    - 5.3
+    - 21.3
   - - /trouver-un-poste/emploi-animateur/hauts-de-seine/colombes/
     - 3
     - 1
@@ -3279,10 +3374,6 @@ chiffres:
     - 3
     - 1
     - 1.3
-  - - /trouver-un-poste/stage-pratique-bafa/pyrenees-orientales/
-    - 3
-    - 1
-    - 6.7
   - - /enfants/centre-de-loisirs/charente-maritime/saintes/
     - 3
     - 0
@@ -3295,38 +3386,30 @@ chiffres:
     - 3
     - 0
     - 17.7
-  - - /enfants/centre-de-loisirs/essonne/juvisy-sur-orge/
+  - - /enfants/centre-de-loisirs/eure/
     - 3
     - 0
-    - 19.7
+    - 31.7
   - - /enfants/centre-de-loisirs/finistere/brest/
     - 3
     - 0
     - 15.0
-  - - /enfants/centre-de-loisirs/gers/
+  - - /enfants/centre-de-loisirs/loire-atlantique/piriac-sur-mer/
     - 3
     - 0
-    - 9.0
-  - - /enfants/centre-de-loisirs/gironde/la-teste-de-buch/
-    - 3
-    - 0
-    - 11.7
-  - - /enfants/centre-de-loisirs/haute-loire/
-    - 3
-    - 0
-    - 8.0
-  - - /enfants/centre-de-loisirs/lot-et-garonne/agen/
-    - 3
-    - 0
-    - 38.0
+    - 9.3
   - - /enfants/centre-de-loisirs/morbihan/
     - 3
     - 0
     - 42.3
-  - - /enfants/centre-de-loisirs/puy-de-dome/clermont-ferrand/
+  - - /enfants/centre-de-loisirs/pas-de-calais/saint-omer/
     - 3
     - 0
-    - 23.0
+    - 5.0
+  - - /enfants/centre-de-loisirs/sarthe/le-lude/
+    - 3
+    - 0
+    - 8.7
   - - /enfants/centre-de-loisirs/var/rians/
     - 3
     - 0
@@ -3335,18 +3418,10 @@ chiffres:
     - 3
     - 0
     - 49.3
-  - - /enfants/centre-de-loisirs/vendee/notre-dame-de-monts/
-    - 3
-    - 0
-    - 6.3
   - - /enfants/colonie-de-vacances/
     - 3
     - 0
     - 48.7
-  - - /enfants/colonie-de-vacances/alpes-maritimes/
-    - 3
-    - 0
-    - 38.0
   - - /enfants/colonie-de-vacances/seine-maritime/
     - 3
     - 0
@@ -3359,10 +3434,6 @@ chiffres:
     - 3
     - 0
     - 15.3
-  - - /enfants/periscolaire/loire/
-    - 3
-    - 0
-    - 5.7
   - - /enfants/periscolaire/maine-et-loire/
     - 3
     - 0
@@ -3371,6 +3442,10 @@ chiffres:
     - 3
     - 0
     - 6.7
+  - - /lexique/
+    - 3
+    - 0
+    - 2.7
   - - /lexique/stage-pratique/
     - 3
     - 0
@@ -3379,14 +3454,14 @@ chiffres:
     - 3
     - 0
     - 29.3
-  - - /recruter/stagiaire-bafa/haute-garonne/
+  - - /recruter/stagiaire-bafa/maine-et-loire/
     - 3
     - 0
-    - 8.0
-  - - /recruter/stagiaire-bafa/loire-atlantique/
+    - 8.3
+  - - /recruter/stagiaire-bafa/tarn-et-garonne/
     - 3
     - 0
-    - 14.7
+    - 6.3
   - - /recruter/stagiaire-bafa/val-d-oise/
     - 3
     - 0
@@ -3411,6 +3486,10 @@ chiffres:
     - 3
     - 0
     - 8.0
+  - - /se-former/ecoles/bpjeps/calvados/colombelles/
+    - 3
+    - 0
+    - 3.0
   - - /se-former/ecoles/bpjeps/centre-val-de-loire/
     - 3
     - 0
@@ -3439,6 +3518,10 @@ chiffres:
     - 3
     - 0
     - 10.0
+  - - /se-former/ecoles/bpjeps/herault/
+    - 3
+    - 0
+    - 11.0
   - - /se-former/ecoles/bpjeps/herault/montpellier/
     - 3
     - 0
@@ -3447,10 +3530,6 @@ chiffres:
     - 3
     - 0
     - 4.0
-  - - /se-former/ecoles/bpjeps/maine-et-loire/
-    - 3
-    - 0
-    - 4.3
   - - /se-former/ecoles/bpjeps/manche/saint-lo/
     - 3
     - 0
@@ -3463,6 +3542,10 @@ chiffres:
     - 3
     - 0
     - 25.7
+  - - /se-former/ecoles/cpjeps/finistere/
+    - 3
+    - 0
+    - 6.0
   - - /se-former/ecoles/cpjeps/morbihan/
     - 3
     - 0
@@ -3503,6 +3586,10 @@ chiffres:
     - 3
     - 0
     - 46.0
+  - - /se-former/sessions/ardeche/psc1/saint-peray/
+    - 3
+    - 0
+    - 6.7
   - - /se-former/sessions/ariege/formation-generale/
     - 3
     - 0
@@ -3523,10 +3610,6 @@ chiffres:
     - 3
     - 0
     - 10.0
-  - - /se-former/sessions/bafd/
-    - 3
-    - 0
-    - 8.7
   - - /se-former/sessions/bafd/novembre-2026/
     - 3
     - 0
@@ -3535,26 +3618,14 @@ chiffres:
     - 3
     - 0
     - 8.0
-  - - /se-former/sessions/cantal/formation-generale/
-    - 3
-    - 0
-    - 6.3
-  - - /se-former/sessions/charente-maritime/bafd/
-    - 3
-    - 0
-    - 64.7
-  - - /se-former/sessions/charente-maritime/la-rochelle-les-minimes/
-    - 3
-    - 0
-    - 2.7
-  - - /se-former/sessions/charente/psc1/
-    - 3
-    - 0
-    - 37.7
   - - /se-former/sessions/aude/pezens/
     - 2
     - 2
     - 2.0
+  - - /se-former/sessions/bsb/
+    - 2
+    - 2
+    - 1.0
   - - /se-former/sessions/finistere/plougastel-daoulas/
     - 2
     - 2
@@ -3567,18 +3638,10 @@ chiffres:
     - 2
     - 2
     - 7.5
-  - - /enfants/centre-de-loisirs/haute-loire/le-puy-en-velay/
-    - 2
-    - 1
-    - 5.5
   - - /recruter/stagiaire-bafa/loir-et-cher/
     - 2
     - 1
     - 10.5
-  - - /recruter/stagiaire-bafa/vendee/
-    - 2
-    - 1
-    - 4.5
   - - /se-former/ecoles/bpjeps/seine-maritime/dieppe/
     - 2
     - 1
@@ -3619,14 +3682,6 @@ chiffres:
     - 2
     - 1
     - 5.5
-  - - /se-former/sessions/bretagne/bsb/
-    - 2
-    - 1
-    - 5.5
-  - - /se-former/sessions/cantal/approfondissement/
-    - 2
-    - 1
-    - 3.0
   - - /se-former/sessions/eure-et-loir/psc1/auneau-bleury-st-symphorien/
     - 2
     - 1
@@ -3643,6 +3698,10 @@ chiffres:
     - 2
     - 1
     - 2.5
+  - - /se-former/sessions/loiret/psc1/amilly/
+    - 2
+    - 1
+    - 4.5
   - - /se-former/sessions/paris/psc1/paris-8e/
     - 2
     - 1
@@ -3659,6 +3718,10 @@ chiffres:
     - 2
     - 1
     - 3.5
+  - - /se-former/sessions/seine-maritime/petit-couronne/
+    - 2
+    - 1
+    - 3.0
   - - /se-former/sessions/somme/psc1/abbeville/
     - 2
     - 1
@@ -3667,18 +3730,10 @@ chiffres:
     - 2
     - 1
     - 14.5
-  - - /se-former/sessions/yvelines/rambouillet/
-    - 2
-    - 1
-    - 39.0
   - - /se-former/sessions/yvelines/velizy-villacoublay/
     - 2
     - 1
     - 6.5
-  - - /trouver-un-poste/emploi-animateur/calvados/caen/
-    - 2
-    - 1
-    - 18.0
   - - /trouver-un-poste/stage-pratique-bafa/cotes-d-armor/
     - 2
     - 1
@@ -3691,14 +3746,26 @@ chiffres:
     - 2
     - 1
     - 1.5
+  - - /blog/
+    - 2
+    - 0
+    - 13.0
   - - /enfants/centre-de-loisirs/alpes-maritimes/cannes/
     - 2
     - 0
     - 5.0
+  - - /enfants/centre-de-loisirs/aveyron/monteils/
+    - 2
+    - 0
+    - 9.0
   - - /enfants/centre-de-loisirs/charente/
     - 2
     - 0
     - 12.5
+  - - /enfants/centre-de-loisirs/cotes-d-armor/
+    - 2
+    - 0
+    - 6.5
   - - /enfants/centre-de-loisirs/dordogne/
     - 2
     - 0
@@ -3715,6 +3782,14 @@ chiffres:
     - 2
     - 0
     - 8.0
+  - - /enfants/centre-de-loisirs/haute-garonne/aussonne/
+    - 2
+    - 0
+    - 9.5
+  - - /enfants/centre-de-loisirs/hauts-de-seine/sceaux/
+    - 2
+    - 0
+    - 7.5
   - - /enfants/centre-de-loisirs/herault/gigean/
     - 2
     - 0
@@ -3731,10 +3806,6 @@ chiffres:
     - 2
     - 0
     - 12.0
-  - - /enfants/centre-de-loisirs/loire-atlantique/piriac-sur-mer/
-    - 2
-    - 0
-    - 9.0
   - - /enfants/centre-de-loisirs/manche/percy/
     - 2
     - 0
@@ -3747,10 +3818,6 @@ chiffres:
     - 2
     - 0
     - 12.0
-  - - /enfants/centre-de-loisirs/morbihan/malansac/
-    - 2
-    - 0
-    - 7.5
   - - /enfants/centre-de-loisirs/morbihan/questembert/
     - 2
     - 0
@@ -3759,14 +3826,14 @@ chiffres:
     - 2
     - 0
     - 25.5
+  - - /enfants/centre-de-loisirs/nord/armentieres/
+    - 2
+    - 0
+    - 40.5
   - - /enfants/centre-de-loisirs/nord/le-cateau-cambresis/
     - 2
     - 0
     - 27.0
-  - - /enfants/centre-de-loisirs/sarthe/le-lude/
-    - 2
-    - 0
-    - 7.5
   - - /enfants/centre-de-loisirs/seine-et-marne/melun/
     - 2
     - 0
@@ -3783,10 +3850,6 @@ chiffres:
     - 2
     - 0
     - 5.0
-  - - /enfants/centre-de-loisirs/var/saint-raphael/
-    - 2
-    - 0
-    - 10.0
   - - /enfants/centre-de-loisirs/vendee/
     - 2
     - 0
@@ -3799,6 +3862,14 @@ chiffres:
     - 2
     - 0
     - 6.0
+  - - /enfants/colonie-de-vacances/calvados/
+    - 2
+    - 0
+    - 75.5
+  - - /enfants/colonie-de-vacances/charente/
+    - 2
+    - 0
+    - 10.0
   - - /enfants/colonie-de-vacances/creuse/
     - 2
     - 0
@@ -3823,6 +3894,10 @@ chiffres:
     - 2
     - 0
     - 7.5
+  - - /enfants/periscolaire/nord/
+    - 2
+    - 0
+    - 8.0
   - - /enfants/periscolaire/pas-de-calais/
     - 2
     - 0
@@ -3851,14 +3926,6 @@ chiffres:
     - 2
     - 0
     - 5.5
-  - - /recruter/stagiaire-bafa/haute-vienne/
-    - 2
-    - 0
-    - 5.0
-  - - /recruter/stagiaire-bafa/tarn-et-garonne/
-    - 2
-    - 0
-    - 5.0
   - - /se-former/ecoles/bpjeps/aisne/laon/
     - 2
     - 0
@@ -3887,10 +3954,10 @@ chiffres:
     - 2
     - 0
     - 8.5
-  - - /se-former/ecoles/bpjeps/herault/
+  - - /se-former/ecoles/bpjeps/landes/
     - 2
     - 0
-    - 16.0
+    - 7.0
   - - /se-former/ecoles/bpjeps/nievre/
     - 2
     - 0
@@ -3903,6 +3970,10 @@ chiffres:
     - 2
     - 0
     - 9.5
+  - - /se-former/ecoles/bpjeps/pyrenees-atlantiques/ustaritz/
+    - 2
+    - 0
+    - 4.5
   - - /se-former/ecoles/bpjeps/pyrenees-orientales/saillagouse/
     - 2
     - 0
@@ -4003,6 +4074,10 @@ chiffres:
     - 2
     - 0
     - 10.0
+  - - /se-former/ecoles/desjeps/maine-et-loire/
+    - 2
+    - 0
+    - 4.0
   - - /se-former/sessions/alpes-maritimes/la-colle-sur-loup/
     - 2
     - 0
@@ -4015,10 +4090,6 @@ chiffres:
     - 2
     - 0
     - 11.0
-  - - /se-former/sessions/ardeche/psc1/saint-peray/
-    - 2
-    - 0
-    - 4.0
   - - /se-former/sessions/ardennes/formation-generale/
     - 2
     - 0
@@ -4075,42 +4146,6 @@ chiffres:
     - 2
     - 0
     - 6.5
-  - - /se-former/sessions/bretagne/approfondissement/sejours/
-    - 2
-    - 0
-    - 7.5
-  - - /se-former/sessions/centre-val-de-loire/approfondissement/
-    - 2
-    - 0
-    - 17.5
-  - - /se-former/sessions/centre-val-de-loire/approfondissement/multi-activites/
-    - 2
-    - 0
-    - 25.0
-  - - /se-former/sessions/centre-val-de-loire/approfondissement/sejours/
-    - 2
-    - 0
-    - 9.0
-  - - /se-former/sessions/charente-maritime/psc1/rochefort/
-    - 2
-    - 0
-    - 6.0
-  - - /se-former/sessions/charente-maritime/psc1/royan/
-    - 2
-    - 0
-    - 9.5
-  - - /se-former/sessions/charente-maritime/st-georges-d-oleron/
-    - 2
-    - 0
-    - 6.5
-  - - /se-former/sessions/charente/vacances-hiver-2027/
-    - 2
-    - 0
-    - 8.0
-  - - /se-former/sessions/cher/psc1/bourges/
-    - 2
-    - 0
-    - 7.5
   - - /recruter/animateurs-bafa/finistere/
     - 1
     - 1
@@ -4123,6 +4158,10 @@ chiffres:
     - 1
     - 1
     - 1.0
+  - - /se-former/ecoles/bpjeps/creuse/
+    - 1
+    - 1
+    - 8.0
   - - /se-former/ecoles/bpjeps/hauts-de-seine/colombes/
     - 1
     - 1
@@ -4147,10 +4186,10 @@ chiffres:
     - 1
     - 1
     - 6.0
-  - - /se-former/sessions/bsb/
+  - - /se-former/sessions/deux-sevres/lezay/
     - 1
     - 1
-    - 1.0
+    - 3.0
   - - /se-former/sessions/deux-sevres/secondigny/
     - 1
     - 1
@@ -4183,10 +4222,6 @@ chiffres:
     - 1
     - 1
     - 8.0
-  - - /se-former/sessions/loiret/psc1/amilly/
-    - 1
-    - 1
-    - 5.0
   - - /se-former/sessions/nord/proville/
     - 1
     - 1
@@ -4247,10 +4282,6 @@ chiffres:
     - 1
     - 0
     - 71.0
-  - - /enfants/centre-de-loisirs/aveyron/monteils/
-    - 1
-    - 0
-    - 8.0
   - - /enfants/centre-de-loisirs/calvados/balleroy/
     - 1
     - 0
@@ -4259,26 +4290,18 @@ chiffres:
     - 1
     - 0
     - 1.0
-  - - /enfants/centre-de-loisirs/cotes-d-armor/pabu/
-    - 1
-    - 0
-    - 6.0
   - - /enfants/centre-de-loisirs/eure/gaillon/
     - 1
     - 0
     - 2.0
-  - - /enfants/centre-de-loisirs/haute-garonne/aussonne/
-    - 1
-    - 0
-    - 8.0
-  - - /enfants/centre-de-loisirs/hauts-de-seine/sceaux/
-    - 1
-    - 0
-    - 3.0
   - - /enfants/centre-de-loisirs/ille-et-vilaine/rennes/
     - 1
     - 0
     - 6.0
+  - - /enfants/centre-de-loisirs/indre-et-loire/joue-les-tours/
+    - 1
+    - 0
+    - 10.0
   - - /enfants/centre-de-loisirs/loir-et-cher/blois/
     - 1
     - 0
@@ -4287,14 +4310,6 @@ chiffres:
     - 1
     - 0
     - 10.0
-  - - /enfants/centre-de-loisirs/nord/armentieres/
-    - 1
-    - 0
-    - 38.0
-  - - /enfants/centre-de-loisirs/pas-de-calais/saint-omer/
-    - 1
-    - 0
-    - 13.0
   - - /enfants/centre-de-loisirs/puy-de-dome/thiers/
     - 1
     - 0
@@ -4307,6 +4322,10 @@ chiffres:
     - 1
     - 0
     - 26.0
+  - - /enfants/centre-de-loisirs/tarn/albi/
+    - 1
+    - 0
+    - 35.0
   - - /enfants/centre-de-loisirs/val-de-marne/sucy-en-brie/
     - 1
     - 0
@@ -4315,14 +4334,6 @@ chiffres:
     - 1
     - 0
     - 18.0
-  - - /enfants/colonie-de-vacances/calvados/
-    - 1
-    - 0
-    - 73.0
-  - - /enfants/colonie-de-vacances/charente/
-    - 1
-    - 0
-    - 19.0
   - - /enfants/colonie-de-vacances/dordogne/
     - 1
     - 0
@@ -4335,6 +4346,10 @@ chiffres:
     - 1
     - 0
     - 11.0
+  - - /enfants/colonie-de-vacances/haute-vienne/
+    - 1
+    - 0
+    - 16.0
   - - /enfants/colonie-de-vacances/meurthe-et-moselle/
     - 1
     - 0
@@ -4355,10 +4370,10 @@ chiffres:
     - 1
     - 0
     - 13.0
-  - - /enfants/periscolaire/nord/
+  - - /enfants/periscolaire/seine-saint-denis/
     - 1
     - 0
-    - 11.0
+    - 10.0
   - - /enfants/periscolaire/tarn-et-garonne/
     - 1
     - 0
@@ -4375,10 +4390,6 @@ chiffres:
     - 1
     - 0
     - 11.0
-  - - /lexique/acm/
-    - 1
-    - 0
-    - 79.0
   - - /lexique/cpf/
     - 1
     - 0
@@ -4439,6 +4450,10 @@ chiffres:
     - 1
     - 0
     - 21.0
+  - - /recruter/directeur-bafd/eure-et-loir/
+    - 1
+    - 0
+    - 10.0
   - - /recruter/directeur-bafd/loir-et-cher/
     - 1
     - 0
@@ -4451,6 +4466,10 @@ chiffres:
     - 1
     - 0
     - 10.0
+  - - /recruter/saisonniers-ete/bourgogne-franche-comte/
+    - 1
+    - 0
+    - 1.0
   - - /recruter/sejours/
     - 1
     - 0
@@ -4459,10 +4478,6 @@ chiffres:
     - 1
     - 0
     - 89.0
-  - - /recruter/stagiaire-bafa/cote-d-or/
-    - 1
-    - 0
-    - 17.0
   - - /recruter/stagiaire-bafa/deux-sevres/
     - 1
     - 0
@@ -4484,6 +4499,10 @@ chiffres:
     - 0
     - 9.0
   - - /recruter/stagiaire-bafa/loire/
+    - 1
+    - 0
+    - 7.0
+  - - /recruter/stagiaire-bafa/saone-et-loire/
     - 1
     - 0
     - 7.0
@@ -4523,10 +4542,10 @@ chiffres:
     - 1
     - 0
     - 7.0
-  - - /se-former/ecoles/bpjeps/calvados/colombelles/
+  - - /se-former/ecoles/bpjeps/aveyron/rodez/
     - 1
     - 0
-    - 1.0
+    - 7.0
   - - /se-former/ecoles/bpjeps/cantal/
     - 1
     - 0
@@ -4591,6 +4610,10 @@ chiffres:
     - 1
     - 0
     - 3.0
+  - - /se-former/ecoles/bpjeps/haute-marne/
+    - 1
+    - 0
+    - 9.0
   - - /se-former/ecoles/bpjeps/haute-savoie/
     - 1
     - 0
@@ -4627,10 +4650,6 @@ chiffres:
     - 1
     - 0
     - 9.0
-  - - /se-former/ecoles/bpjeps/landes/
-    - 1
-    - 0
-    - 8.0
   - - /se-former/ecoles/bpjeps/landes/aire-sur-l-adour/
     - 1
     - 0
@@ -4655,6 +4674,10 @@ chiffres:
     - 1
     - 0
     - 4.0
+  - - /se-former/ecoles/bpjeps/meurthe-et-moselle/nancy/
+    - 1
+    - 0
+    - 1.0
   - - /se-former/ecoles/bpjeps/moselle/montigny-les-metz/
     - 1
     - 0
@@ -4679,6 +4702,10 @@ chiffres:
     - 1
     - 0
     - 6.0
+  - - /se-former/ecoles/bpjeps/puy-de-dome/
+    - 1
+    - 0
+    - 1.0
   - - /se-former/ecoles/bpjeps/pyrenees-orientales/perpignan/
     - 1
     - 0
@@ -4735,6 +4762,10 @@ chiffres:
     - 1
     - 0
     - 10.0
+  - - /se-former/ecoles/bpjeps/vosges/
+    - 1
+    - 0
+    - 1.0
   - - /se-former/ecoles/bpjeps/vosges/epinal/
     - 1
     - 0
@@ -4787,10 +4818,6 @@ chiffres:
     - 1
     - 0
     - 1.0
-  - - /se-former/ecoles/cpjeps/finistere/
-    - 1
-    - 0
-    - 5.0
   - - /se-former/ecoles/cpjeps/herault/herault/
     - 1
     - 0
@@ -4799,6 +4826,10 @@ chiffres:
     - 1
     - 0
     - 1.0
+  - - /se-former/ecoles/cpjeps/indre-et-loire/joue-les-tours/
+    - 1
+    - 0
+    - 6.0
   - - /se-former/ecoles/cpjeps/isere/isere/
     - 1
     - 0
@@ -4823,10 +4854,6 @@ chiffres:
     - 1
     - 0
     - 3.0
-  - - /se-former/ecoles/cpjeps/nord/
-    - 1
-    - 0
-    - 7.0
   - - /se-former/ecoles/cpjeps/oise/
     - 1
     - 0
@@ -4839,6 +4866,10 @@ chiffres:
     - 1
     - 0
     - 9.0
+  - - /se-former/ecoles/cpjeps/rhone/lyon/
+    - 1
+    - 0
+    - 4.0
   - - /se-former/ecoles/cpjeps/saone-et-loire/
     - 1
     - 0
@@ -4955,10 +4986,6 @@ chiffres:
     - 1
     - 0
     - 5.0
-  - - /se-former/ecoles/desjeps/maine-et-loire/
-    - 1
-    - 0
-    - 7.0
   - - /se-former/ecoles/desjeps/marne/reims/
     - 1
     - 0
@@ -4967,6 +4994,10 @@ chiffres:
     - 1
     - 0
     - 5.0
+  - - /se-former/ecoles/desjeps/paris/
+    - 1
+    - 0
+    - 6.0
   - - /se-former/ecoles/desjeps/pas-de-calais/
     - 1
     - 0
@@ -4979,6 +5010,10 @@ chiffres:
     - 1
     - 0
     - 11.0
+  - - /se-former/sessions/ain/psc1/saint-maurice-de-beynost/
+    - 1
+    - 0
+    - 1.0
   - - /se-former/sessions/aisne/vacances-noel-2026/
     - 1
     - 0
@@ -5003,6 +5038,10 @@ chiffres:
     - 1
     - 0
     - 12.0
+  - - /se-former/sessions/ardeche/psc1/guilherand-granges/
+    - 1
+    - 0
+    - 4.0
   - - /se-former/sessions/ardeche/psc1/le-pouzin/
     - 1
     - 0
@@ -5063,6 +5102,10 @@ chiffres:
     - 1
     - 0
     - 11.0
+  - - /se-former/sessions/bas-rhin/walbourg/
+    - 1
+    - 0
+    - 11.0
   - - /se-former/sessions/bouches-du-rhone/marignane/
     - 1
     - 0
@@ -5091,44 +5134,4 @@ chiffres:
     - 1
     - 0
     - 3.0
-  - - /se-former/sessions/calvados/bafd/cormelles-le-royal/
-    - 1
-    - 0
-    - 11.0
-  - - /se-former/sessions/cantal/
-    - 1
-    - 0
-    - 6.0
-  - - /se-former/sessions/cantal/psc1/
-    - 1
-    - 0
-    - 10.0
-  - - /se-former/sessions/centre-val-de-loire/formation-generale/
-    - 1
-    - 0
-    - 9.0
-  - - /se-former/sessions/centre-val-de-loire/psc1/
-    - 1
-    - 0
-    - 1.0
-  - - /se-former/sessions/centre-val-de-loire/vacances-noel-2026/
-    - 1
-    - 0
-    - 5.0
-  - - /se-former/sessions/charente-maritime/bafd/la-rochelle/
-    - 1
-    - 0
-    - 9.0
-  - - /se-former/sessions/charente-maritime/vacances-printemps-2027/
-    - 1
-    - 0
-    - 19.0
-  - - /se-former/sessions/charente/montmoreau/
-    - 1
-    - 0
-    - 6.0
-  - - /se-former/sessions/charente/ruffec/
-    - 1
-    - 0
-    - 6.0
   candidatures: 0
