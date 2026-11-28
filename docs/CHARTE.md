@@ -151,6 +151,11 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
 - **La barre du bas du site (téléphone)** : Se former, Animateurs, Structures, Parents, puis à droite « Connexion » (rond
   avec silhouette) qui devient « Mon espace » avec l'initiale dans un rond rouge quand la personne est connectée (telephone.js lit
   la session gardée dans le navigateur). L'accueil n'est plus un onglet : la page existe toujours (adresse du site).
+- **L'onglet « Connexion » (téléphone, /compte/ sans être connecté)** : copie de la page « Profil » de bonchoeur.fr
+  (`telephone-connexion.js`) : titre « Profil », « Connexion ou inscription » qui ouvre une feuille montant du bas (voile 200 ms,
+  feuille 300 ms ; l'e-mail, « Continuer », puis le mot de passe ; Google), « Vous êtes une structure ? », les lignes Paramètres
+  (données gardées sur l'appareil), Obtenir de l'aide, Confidentialité, Juridique (écrans #parametres, #aide…), « Ajouter à
+  l'écran d'accueil ». Pas de barre de recherche. Leur bleu devient notre encre #17191d.
 - Mon espace sur téléphone** (`statique/js/telephone-espace.js`, classe `tel-espace`) : le style du site (fond crème et halos,
   titres en Fraunces, cartes en verre, gros boutons arrondis). Le tableau de bord devient l'accueil de l'espace : « Bonjour
   *prénom* », la date, puis **toutes les fonctions** en tuiles à icônes 3D rangées par usage — celles de l'espace (elles ouvrent

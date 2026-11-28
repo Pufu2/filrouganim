@@ -1023,3 +1023,152 @@ html.tel-espace .ap-table-boite:has(table.tel-cartes) { overflow: visible !impor
 .tel-onglet-compte .tel-initiale { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #d61f35; color: #fff; font: 600 12px/1 "Inter", system-ui, sans-serif; font-style: normal;
   transition: transform .3s cubic-bezier(.2, 0, 0, 1); }
 .tel-onglet-compte[aria-current] .tel-initiale { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d61f35; }
+
+/* =========================================================================================
+   L'ONGLET « CONNEXION » (/compte/ sans être connecté) : la page « Profil » sur le modèle de bonchoeur.fr
+   (telephone-connexion.js). Mêmes mesures (relevées au pixel), mêmes effets ; leur bleu devient notre encre.
+   ========================================================================================= */
+html.tel-cnx-page .tel-barre, html.tel-cnx-page .tel-filtres, html.tel-cnx-page .tel-compte { display: none !important; }
+html.tel-cnx-page .auth-cote { display: none !important; }
+.tc { display: none; }
+html.tel-cnx .tc { display: block; }
+html.tel-cnx #auth > :not(.tc) { display: none !important; }
+html.tel-cnx #auth { display: block !important; min-height: 0 !important; padding: 0 !important; margin: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+html.tel-cnx main#contenu, html.tel-cnx #espace-compte { padding-top: 0 !important; margin-top: 0 !important; }
+html #auth .tc { --tc-encre: #17191d; --tc-doux: #5d636b; --tc-bord: #ddd7cc; color: var(--tc-encre); font: 400 15px/24px "Inter", system-ui, sans-serif; }
+html #auth .tc [hidden] { display: none !important; }
+html #auth .tc svg { flex: none; width: 23px; height: 23px; }
+html #auth .tc a { color: inherit; text-decoration: none; }
+html #auth .tc :is(h1, h2, p) { margin: 0; padding: 0; text-transform: none; }
+.tc-ecran { max-width: 576px; margin: 0 auto; padding: 22.5px 22.5px 7.5px; }
+html #auth .tc .tc-titre, html #auth .tc .tc-titre-2 { font: 500 29.6px/32px "Fraunces", Georgia, serif !important; letter-spacing: -.59px !important; color: var(--tc-encre) !important; }
+html #auth .tc .tc-intro { margin-top: 15px; font-size: 15.75px; line-height: 25.6px; color: var(--tc-doux); }
+.tc-cta { margin-top: 18px; }
+html #auth .tc .tc-bouton { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 49px; border: 0; border-radius: 17px; background: var(--tc-encre); color: #fffdf9;
+  font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html #auth .tc .tc-bouton:disabled { opacity: .5; }
+html #auth .tc .tc-bouton-c { display: flex; align-items: center; justify-content: center; gap: 9.4px; width: 100%; min-height: 49px; border: 0; border-radius: 17px; background: none; color: var(--tc-encre);
+  box-shadow: inset 0 0 0 1.5px var(--tc-encre); font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; cursor: pointer; }
+.tc-bouton-c svg { width: 19px !important; height: 19px !important; }
+html #auth .tc .tc-lien-s { display: flex; justify-content: center; margin-top: 15px; font-size: 13.8px; line-height: 22px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.tc-liste { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--tc-bord); }
+.tc-liste-1 { margin-top: 22.5px !important; }
+.tc-liste li { margin: 0; padding: 0; list-style: none; }
+.tc-liste li::before { display: none !important; }
+html #auth .tc .tc-ligne { display: flex; align-items: center; gap: 15px; width: 100%; min-height: 54px; padding: 15px 0; border: 0; background: none; color: inherit; font: 400 15.3px/24.5px "Inter", system-ui, sans-serif; text-align: left; cursor: pointer; }
+.tc-ligne > span { flex: 1; }
+.tc-ligne > svg:last-child { width: 19px !important; height: 19px !important; color: var(--tc-doux); }
+.tc-pied { margin-top: 7.5px; padding-top: 18.75px; border-top: 1px solid var(--tc-bord); }
+/* les écrans avec une barre de titre (Paramètres, Vie privée) */
+.tc-page { display: flex; flex-direction: column; min-height: calc(100dvh - var(--tel-onglets, 64px) - env(safe-area-inset-bottom)); padding: 0; }
+.tc-barre { display: flex; align-items: center; gap: 7.5px; min-height: 65px; padding: 11.25px 15px; border-bottom: 1px solid var(--tc-bord); }
+html #auth .tc .tc-barre h1 { flex: 1; padding-right: 33.75px; text-align: center; font: 600 15.75px/25.2px "Inter", system-ui, sans-serif !important; letter-spacing: 0 !important; color: var(--tc-encre) !important; }
+.tc-retour, .tc-retour-rond { display: grid; place-items: center; width: 41px; height: 41px; margin-left: -7.5px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--tc-encre); cursor: pointer; }
+.tc-retour-rond.tc-fond { margin-left: 0; background: #efebe3; }
+.tc-page-corps { flex: 1; display: flex; flex-direction: column; gap: 37.5px; padding: 26.25px 22.5px; }
+.tc-section { display: flex; flex-direction: column; gap: 11.25px; }
+html #auth .tc .tc-section h2 { font: 600 15px/24px "Inter", system-ui, sans-serif !important; letter-spacing: 0 !important; color: var(--tc-encre) !important; }
+.tc-h2-ic { display: flex !important; align-items: center; gap: 7.5px; }
+.tc-h2-ic svg { width: 18px !important; height: 18px !important; }
+html #auth .tc .tc-doux { font-size: 14.25px; line-height: 22.8px; color: var(--tc-doux); }
+html #auth .tc .tc-lien-b { align-self: flex-start; font-weight: 600; text-decoration: underline; color: #a8162a; }
+.tc-puces { margin: 0; padding-left: 18px; color: var(--tc-doux); font-size: 14.25px; }
+.tc-petit { min-height: 44px !important; margin-top: 4px; font-size: 14.25px !important; }
+.tc-texte { gap: 22.5px; padding: 22.5px; font-size: 15px; line-height: 24.4px; }
+html #auth .tc .tc-texte a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.tc-interrupteur { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+html #auth .tc .tc-interrupteur p { font-weight: 600; }
+.tc-interrupteur > span { display: flex; align-items: center; justify-content: flex-end; width: 52px; height: 30px; padding: 3.75px; border-radius: 99px; background: #cfc8bb; }
+.tc-interrupteur > span > span { display: grid; place-items: center; width: 22.5px; height: 22.5px; border-radius: 50%; background: #fff; }
+.tc-interrupteur svg { width: 13px !important; height: 13px !important; }
+html #auth .tc .tc-sous-inter { margin-top: -11px; }
+.tc-page-pied { padding: 15px 22.5px; border-top: 1px solid var(--tc-bord); }
+/* Aide */
+.tc-aide { padding: 0; }
+.tc-aide-haut { padding: 22.5px 22.5px 37.5px; }
+html #auth .tc .tc-titre-2 { margin-top: 22.5px; }
+.tc-aide .tc-cta { margin-top: 26.25px; }
+html #auth .tc .tc-h2 { margin-top: 37.5px; font: 500 22.5px/36px "Fraunces", Georgia, serif !important; letter-spacing: 0 !important; color: var(--tc-encre) !important; }
+.tc-liste-sep { margin-top: 7.5px !important; border-top: 0; }
+.tc-liste-sep li { border-bottom: 1px solid var(--tc-bord); }
+.tc-liste-sep li:last-child { border-bottom: 0; }
+.tc-plus { display: flex; flex-direction: column; gap: 11.25px; padding: 0 22.5px 45px; }
+html #auth .tc .tc-plus .tc-h2 { margin: 0; }
+html #auth .tc .tc-carte { display: flex; align-items: center; gap: 13px; padding: 15px; border: 1px solid var(--tc-bord); border-radius: 18.75px; background: #fffdf9; }
+.tc-carte-ic { display: grid; place-items: center; flex: none; width: 45px; height: 45px; border-radius: 11px; background: #f1ece3; color: var(--tc-encre); }
+.tc-carte b { display: block; font-weight: 600; }
+.tc-carte b + span { font-size: 12.75px; line-height: 18px; color: var(--tc-doux); }
+.tc-joindre { display: flex; flex-direction: column; gap: 11.25px; margin-top: 18.75px; padding: 18.75px; border-radius: 21px; background: linear-gradient(135deg, #17191d, #3a3e46); color: #fff; }
+html #auth .tc .tc-joindre p { font-size: 13.5px; line-height: 20px; color: rgba(255, 255, 255, .8); }
+html #auth .tc .tc-joindre .tc-joindre-t { font: 400 18.75px/1.2 "Fraunces", Georgia, serif; color: #fff; }
+html #auth .tc .tc-joindre a { display: flex; align-items: center; justify-content: center; min-height: 45px; border-radius: 13px; background: #fffdf9; color: #17191d; font-weight: 600; }
+/* Juridique */
+.tc-juridique { padding-bottom: 37.5px; }
+html #auth .tc .tc-titre-j { margin-top: 18.75px; }
+.tc-juridique .tc-liste { margin-top: 22.5px; border-top: 0; }
+/* la feuille qui monte du bas, par-dessus la barre : voile en 200 ms, feuille en 300 ms */
+html.tc-bloque, html.tc-bloque body { overflow: hidden !important; }
+.tc-voile { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; overscroll-behavior: none; touch-action: none; background: rgba(23, 25, 29, .35); opacity: 0; transition: opacity .2s; }
+.tc-voile.tc-ouvert { opacity: 1; }
+.tc-feuille { display: flex; flex-direction: column; width: 100%; height: 94dvh; padding: 0 22.5px calc(22.5px + env(safe-area-inset-bottom)); border-radius: 26.25px 26.25px 0 0; background: #fffdf9;
+  transform: translateY(100%); transition: transform .3s ease-out; touch-action: auto; overflow-y: auto; }
+.tc-feuille-courte { height: auto; max-height: 94dvh; }
+.tc-ouvert .tc-feuille { transform: none; }
+.tc-feuille-haut { display: flex; align-items: center; justify-content: space-between; padding-top: 15px; }
+.tc-fermer { display: grid; place-items: center; width: 41px; height: 41px; margin-right: -7.5px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--tc-encre); cursor: pointer; }
+.tc-feuille-corps { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18.75px; padding-bottom: 60px; }
+.tc-feuille-courte .tc-feuille-corps { padding-bottom: 8px; }
+.tc-feuille-tete { display: flex; flex-direction: column; align-items: center; gap: 18.75px; }
+.tc-feuille-tete img { width: 80px; height: auto; }
+html #auth .tc .tc-feuille h2 { text-align: center; font: 600 24px/38.4px "Inter", system-ui, sans-serif !important; letter-spacing: -.24px !important; color: var(--tc-encre) !important; }
+html #auth .tc .tc-form { display: flex; flex-direction: column; gap: 15px; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+html #auth .tc .tc-form .champ { margin: 0; }
+.tc-cache { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+html #auth .tc .tc-form input:is([type="email"], [type="password"], [type="text"]) { width: 100%; height: 53px; min-height: 53px; padding: 0 15px; border: 1px solid #d6d0c4; border-radius: 17px; background: #fff;
+  font: 400 15.3px/24.5px "Inter", system-ui, sans-serif; outline: none; box-shadow: none; }
+html #auth .tc .tc-form input:focus { border-color: var(--tc-encre); }
+html #auth .tc .tc-form button[type="submit"], html #auth .tc .tc-continuer { width: 100%; min-height: 53px; border: 0; border-radius: 17px; background: var(--tc-encre); color: #fffdf9; font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; box-shadow: none; }
+.tc-feuille:not([data-etape="2"]) .tc-form .champ:has(input[type="password"]), .tc-feuille:not([data-etape="2"]) .tc-form button[type="submit"], .tc-feuille:not([data-etape="2"]) .tc-nouveau { display: none !important; }
+.tc-feuille[data-etape="2"] .tc-continuer { display: none; }
+html #auth .tc .tc-form .champ-ligne { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7.5px; font: 600 14.3px/22.8px "Inter", system-ui, sans-serif; }
+html #auth .tc .tc-form .champ-ligne .petit-lien { padding: 0; border: 0; background: none; font: 600 13.1px/18.8px "Inter", system-ui, sans-serif; color: #a8162a; }
+.tc-ou { display: flex; align-items: center; gap: 15px; font-size: 13.1px; line-height: 18.8px; color: var(--tc-doux); }
+.tc-ou span { flex: 1; height: 1px; background: var(--tc-bord); }
+.tc-sociaux { display: flex; justify-content: center; gap: 15px; }
+.tc-social { display: grid; place-items: center; width: 60px; height: 60px; padding: 0; border: 0; border-radius: 15px; background: #fff; box-shadow: 0 0 0 1px #e4ded2; cursor: pointer; }
+.tc-social svg { width: 23px !important; height: 23px !important; }
+.tc-nouveau { display: flex; flex-direction: column; gap: 15px; }
+.tc-installer { align-items: center; text-align: center; gap: 13px; }
+.tc-installer img { width: 72px; height: auto; }
+.tc-etapes { align-self: stretch; margin: 6px 0 0; padding-left: 22px; text-align: left; font-size: 15px; line-height: 24px; }
+.tc-etapes li { padding: 4px 0; }
+html #auth .tc .tc-titre-2 { text-wrap: balance; }
+/* les feuilles sont posées sur <body> (au-dessus de la barre du bas) : leurs réglages sans le préfixe de la page */
+body > .tc-voile { color: #17191d; font: 400 15px/24px "Inter", system-ui, sans-serif; --tc-encre: #17191d; --tc-doux: #5d636b; --tc-bord: #ddd7cc; }
+body > .tc-voile svg { flex: none; width: 23px; height: 23px; }
+body > .tc-voile [hidden] { display: none !important; }
+body > .tc-voile h2 { margin: 0; text-align: center; font: 600 24px/38.4px "Inter", system-ui, sans-serif !important; letter-spacing: -.24px !important; color: #17191d !important; text-transform: none; }
+body > .tc-voile p { margin: 0; }
+body > .tc-voile .tc-bouton { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 49px; border: 0; border-radius: 17px; background: #17191d; color: #fffdf9; font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; }
+body > .tc-voile .tc-bouton:disabled { opacity: .5; }
+body > .tc-voile .tc-bouton-c { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 49px; border: 0; border-radius: 17px; background: none; color: #17191d; box-shadow: inset 0 0 0 1.5px #17191d; font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; text-decoration: none; }
+body > .tc-voile .tc-doux { font-size: 14.25px; line-height: 22.8px; color: #5d636b; }
+body > .tc-voile .tc-form { display: flex; flex-direction: column; gap: 15px; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+body > .tc-voile .tc-form .champ { margin: 0; }
+body > .tc-voile .tc-form input:is([type="email"], [type="password"], [type="text"]) { width: 100%; height: 53px; min-height: 53px; padding: 0 15px; border: 1px solid #d6d0c4; border-radius: 17px; background: #fff; font: 400 15.3px/24.5px "Inter", system-ui, sans-serif; outline: none; box-shadow: none; }
+body > .tc-voile .tc-form input:focus { border-color: #17191d; }
+body > .tc-voile .tc-form button[type="submit"], body > .tc-voile .tc-continuer { width: 100%; min-height: 53px; border: 0; border-radius: 17px; background: #17191d; color: #fffdf9; font: 600 15.3px/24.5px "Inter", system-ui, sans-serif; box-shadow: none; }
+body > .tc-voile .tc-form .champ-ligne { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7.5px; font: 600 14.3px/22.8px "Inter", system-ui, sans-serif; }
+body > .tc-voile .tc-form .champ-ligne .petit-lien { padding: 0; border: 0; background: none; font: 600 13.1px/18.8px "Inter", system-ui, sans-serif; color: #a8162a; }
+body > .tc-voile .tc-form .mdp { position: relative; display: block; }
+.tc-feuille[data-etape="2"] .tc-feuille-tete img { display: none; }
+/* les autres écrans de l'onglet (mot de passe oublié, nouveau mot de passe, inscription) : même fond, mêmes champs et boutons */
+html.tel-cnx-page #auth, html.tel-cnx-page #auth .auth-corps { background: none !important; border: 0 !important; box-shadow: none !important; }
+html.tel-cnx-page #auth .auth-corps { padding: 22.5px !important; }
+html.tel-cnx-page #auth .compte-vue > h2 { font: 500 29.6px/32px "Fraunces", Georgia, serif !important; letter-spacing: -.59px !important; color: #17191d !important; }
+html.tel-cnx-page #auth .auth-sous { font-size: 15.75px; line-height: 25.6px; color: #5d636b; }
+html.tel-cnx-page #auth .formulaire input:is([type="email"], [type="password"], [type="text"]) { height: 53px; border: 1px solid #d6d0c4 !important; border-radius: 17px !important; background: #fff !important; font-size: 15.3px !important; }
+html.tel-cnx-page #auth .formulaire .bouton-r { min-height: 53px; border-radius: 17px !important; background: #17191d !important; border-color: #17191d !important; color: #fffdf9 !important; font-size: 15.3px !important; }
+html.tel-cnx-page #auth .auth-lien .bouton-texte { color: #17191d !important; font-weight: 600; }
+html.tel-cnx body { background-color: #f6f4ef !important; }
+html.tel-cnx main#contenu, html.tel-cnx #espace-compte { background: transparent !important; }
