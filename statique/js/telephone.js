@@ -190,3 +190,24 @@
   window.addEventListener("resize", mesurer);
   mesurer(); defiler();
 })();
+
+// Téléphone, la barre du bas : le bouton « Connexion » (à droite) devient « Mon espace » avec l'initiale quand la
+// personne est connectée (la session Supabase est gardée dans ce navigateur : on la lit sans charger Supabase)
+(function () {
+  "use strict";
+  if (!window.matchMedia("(max-width: 700px)").matches) return;
+  var a = document.querySelector(".tel-onglet-compte"); if (!a) return;
+  var u = null;
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (/^sb-.+-auth-token$/.test(k)) { var j = JSON.parse(localStorage.getItem(k) || "null"); if (j && j.refresh_token && j.user) u = j.user; break; }
+    }
+  } catch (e) {}
+  if (!u) return;
+  var m = u.user_metadata || {}, nom = (m.full_name || m.name || u.email || "").trim();
+  var i2 = document.createElement("i"); i2.className = "tel-initiale"; i2.textContent = (nom.charAt(0) || "•").toUpperCase();
+  var svg = a.querySelector("svg"); if (svg) a.replaceChild(i2, svg); else a.insertBefore(i2, a.firstChild);
+  a.querySelector("span").textContent = "Mon espace";
+  a.classList.add("tel-connecte"); a.setAttribute("aria-label", "Mon espace");
+})();

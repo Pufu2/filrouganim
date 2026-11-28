@@ -148,7 +148,10 @@ bouger. La barre du haut et la feuille de recherche sont dans `gabarits/telephon
   pilule, en verre, flotte), titre en Fraunces avec la fin en italique rouge, cartes en verre (blanc translucide + flou),
   animateurs en petites cartes de couleur (rose, lavande, ciel, pêche, menthe, sable) rangées par poste dans des rangées qui
   défilent (« Tout voir » les met en grille), fin « Vous recrutez ? » en carte claire avec les initiales empilées.
-- **Mon espace sur téléphone** (`statique/js/telephone-espace.js`, classe `tel-espace`) : le style du site (fond crème et halos,
+- ****La barre du bas du site (téléphone)** : Se former, Animateurs, Structures, Parents, puis à droite « Connexion » (rond
+  avec silhouette) qui devient « Mon espace » avec l'initiale dans un rond rouge quand la personne est connectée (telephone.js lit
+  la session gardée dans le navigateur). L'accueil n'est plus un onglet : la page existe toujours (adresse du site).
+- Mon espace sur téléphone** (`statique/js/telephone-espace.js`, classe `tel-espace`) : le style du site (fond crème et halos,
   titres en Fraunces, cartes en verre, gros boutons arrondis). Le tableau de bord devient l'accueil de l'espace : « Bonjour
   *prénom* », la date, puis **toutes les fonctions** en tuiles à icônes 3D rangées par usage — celles de l'espace (elles ouvrent
   l'onglet, avec la pastille des nouveautés et un cadenas si la rubrique est réservée à l'abonnement) et celles du site (guides,
